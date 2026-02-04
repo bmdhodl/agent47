@@ -1,0 +1,73 @@
+from __future__ import annotations
+
+from collections import deque
+from dataclasses import dataclass
+from typing import Any, Deque, Dict, Optional, Tuple
+import json
+
+
+class LoopDetected(RuntimeError):
+    pass
+
+
+class BudgetExceeded(RuntimeError):
+    pass
+
+
+class LoopGuard:
+    def __init__(self, max_repeats: int = 3, window: int = 6) -> None:
+        if max_repeats < 2:
+            raise ValueError("max_repeats must be >= 2")
+        if window < max_repeats:
+            raise ValueError("window must be >= max_repeats")
+        self._max_repeats = max_repeats
+        self._history: Deque[Tuple[str, str]] = deque(maxlen=window)
+
+    def check(self, tool_name: str, tool_args: Optional[Dict[str, Any]] = None) -> None:
+        args = tool_args or {}
+        signature = (tool_name, _stable_json(args))
+        self._history.append(signature)
+        if len(self._history) < self._max_repeats:
+            return
+        last_n = list(self._history)[-self._max_repeats :]
+        if len(set(last_n)) == 1:
+            raise LoopDetected(
+                f"Detected repeated tool call {tool_name} {self._max_repeats} times"
+            )
+
+    def reset(self) -> None:
+        self._history.clear()
+
+
+@dataclass
+class BudgetState:
+    tokens_used: int = 0
+    calls_used: int = 0
+
+
+class BudgetGuard:
+    def __init__(self, max_tokens: Optional[int] = None, max_calls: Optional[int] = None) -> None:
+        if max_tokens is None and max_calls is None:
+            raise ValueError("Provide max_tokens or max_calls")
+        self._max_tokens = max_tokens
+        self._max_calls = max_calls
+        self.state = BudgetState()
+
+    def consume(self, tokens: int = 0, calls: int = 0) -> None:
+        self.state.tokens_used += tokens
+        self.state.calls_used += calls
+        if self._max_tokens is not None and self.state.tokens_used > self._max_tokens:
+            raise BudgetExceeded(
+                f"Token budget exceeded: {self.state.tokens_used} > {self._max_tokens}"
+            )
+        if self._max_calls is not None and self.state.calls_used > self._max_calls:
+            raise BudgetExceeded(
+                f"Call budget exceeded: {self.state.calls_used} > {self._max_calls}"
+            )
+
+    def reset(self) -> None:
+        self.state = BudgetState()
+
+
+def _stable_json(data: Dict[str, Any]) -> str:
+    return json.dumps(data, sort_keys=True, separators=(",", ":"))

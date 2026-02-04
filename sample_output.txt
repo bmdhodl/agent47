@@ -1,0 +1,8 @@
+AgentGuard report
+  Total events: 21
+  Spans: 6  Events: 15
+  Approx run time: 1.3 ms
+  Reasoning steps: 6
+  Tool results: 3
+  LLM results: 3
+  Loop guard triggered: 3 time(s)

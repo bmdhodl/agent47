@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.dist/
+.build/
+.eggs/
+.env/
+.venv/
+
+# Mac
+.DS_Store
+
+# Traces
+*.jsonl
+.vercel

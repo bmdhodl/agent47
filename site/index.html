@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgentGuard — Observability for AI Agents</title>
+    <meta name="description" content="Trace reasoning steps, detect loops, and replay agent runs deterministically." />
+    <style>
+      :root {
+        --bg: #f7f4ee;
+        --ink: #1e1b16;
+        --accent: #1b6c4a;
+        --muted: #6c645a;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+        color: var(--ink);
+      }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 56px 24px 80px; }
+      .badge { display: inline-block; padding: 6px 10px; border: 1px solid #d7d0c5; border-radius: 999px; color: var(--muted); font-size: 12px; letter-spacing: 0.04em; }
+      h1 { font-size: 44px; line-height: 1.1; margin: 16px 0; }
+      p { font-size: 18px; line-height: 1.6; }
+      .cta {
+        display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 40px;
+      }
+      .btn {
+        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
+        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
+      }
+      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+      .card { background: var(--card); padding: 18px; border-radius: 12px; border: 1px solid #e8e2d6; }
+      .code { background: #12110f; color: #f7f4ee; padding: 16px; border-radius: 12px; font-family: "IBM Plex Mono", monospace; font-size: 14px; overflow-x: auto; }
+      .muted { color: var(--muted); }
+      footer { margin-top: 40px; font-size: 14px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <span class="badge">OSS SDK · Self-hosted first</span>
+      <h1>AgentGuard makes AI agents visible, testable, and safe.</h1>
+      <p>Trace reasoning steps, detect loops, and replay runs deterministically. Built for solo builders and small teams shipping agentic workflows.</p>
+
+      <div class="cta">
+        <a class="btn" href="#demo">Run the demo</a>
+        <a class="btn secondary" href="#waitlist">Get early access</a>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <strong>Trace reasoning</strong>
+          <p class="muted">Follow agent decisions step-by-step, not just request latency.</p>
+        </div>
+        <div class="card">
+          <strong>Catch loops</strong>
+          <p class="muted">Detect repeated tool calls and stop runaway behavior early.</p>
+        </div>
+        <div class="card">
+          <strong>Replay tests</strong>
+          <p class="muted">Record real runs and replay deterministically for regression tests.</p>
+        </div>
+      </div>
+
+      <h2 id="demo">Demo</h2>
+      <div class="code">/Users/patrickhughes/Documents/New\ project/run_demo.sh</div>
+      <p class="muted">Produces a human-readable report and JSONL traces you can inspect.</p>
+
+      <h2 id="waitlist">Early access</h2>
+      <p>Want the hosted dashboard or LangChain deep integration? Drop your email:</p>
+      <div class="card">
+        <form id="lead-form">
+          <input id="lead-email" type="email" placeholder="you@company.com" required style="padding:10px;border-radius:8px;border:1px solid #d7d0c5;width:240px;" />
+          <button class="btn" type="submit">Notify me</button>
+        </form>
+        <p id="lead-status" class="muted"></p>
+      </div>
+
+      <footer>
+        Built for builders. Model-agnostic. MIT-licensed SDK.
+      </footer>
+    </div>
+    <script>
+      const form = document.getElementById("lead-form");
+      const emailInput = document.getElementById("lead-email");
+      const statusEl = document.getElementById("lead-status");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        statusEl.textContent = "Sending...";
+        try {
+          const resp = await fetch("/api/lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: emailInput.value, source: "landing" }),
+          });
+          if (!resp.ok) {
+            const data = await resp.json().catch(() => ({}));
+            statusEl.textContent = data.error || "Something went wrong.";
+            return;
+          }
+          statusEl.textContent = "Thanks! We'll reach out soon.";
+          emailInput.value = "";
+        } catch (err) {
+          statusEl.textContent = "Network error. Please try again.";
+        }
+      });
+    </script>
+  </body>
+</html>
