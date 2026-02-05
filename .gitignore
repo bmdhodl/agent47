@@ -20,3 +20,8 @@ build/
 
 # Misc artifacts
 sample_output.txt
+
+# Dashboard (Next.js)
+dashboard/node_modules/
+dashboard/.next/
+dashboard/.env.local
