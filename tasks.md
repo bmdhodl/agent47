@@ -23,6 +23,7 @@
 - [x] Add CI workflow + badge
 - [x] Add security policy
 - [x] Add changelog
+- [x] Add local trace viewer (browser UI)
 
 ## Blocked / Decisions Needed
 - [x] Choose public repo URL (needed for badges + launch links)

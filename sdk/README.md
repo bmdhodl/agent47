@@ -41,5 +41,10 @@ replayer = Replayer("runs.jsonl")
 resp = replayer.replay_call("llm", {"prompt": "hi"})
 ```
 
+## Trace viewer
+```bash
+python3 -m agentguard.cli view /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+```
+
 ## Integrations
 - LangChain stub in `agentguard.integrations.langchain`

@@ -91,11 +91,20 @@ def main() -> None:
     report = sub.add_parser("report", help="Human-readable report for a JSONL trace file")
     report.add_argument("path")
 
+    view = sub.add_parser("view", help="Open a local trace viewer in the browser")
+    view.add_argument("path")
+    view.add_argument("--port", type=int, default=8080)
+    view.add_argument("--no-open", action="store_true")
+
     args = parser.parse_args()
     if args.cmd == "summarize":
         _summarize(args.path)
     elif args.cmd == "report":
         _report(args.path)
+    elif args.cmd == "view":
+        from agentguard.viewer import serve
+
+        serve(args.path, port=args.port, open_browser=not args.no_open)
     else:
         parser.print_help()
 

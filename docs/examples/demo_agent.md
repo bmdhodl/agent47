@@ -17,6 +17,11 @@ python3 -m agentguard.cli summarize /Users/patrickhughes/Documents/New\\ project
 python3 -m agentguard.cli report /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
 ```
 
+## View in browser
+```bash
+python3 -m agentguard.cli view /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+```
+
 ## Output
 - `traces.jsonl` with reasoning, tool, and guard events
 - `replay.jsonl` with request/response pairs

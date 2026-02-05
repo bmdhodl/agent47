@@ -50,6 +50,11 @@ python3 /Users/patrickhughes/Documents/New\\ project/sdk/examples/demo_agent.py
 python3 -m agentguard.cli summarize /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
 ```
 
+## Trace viewer (local)
+```bash
+python3 -m agentguard.cli view /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+```
+
 ## One-command demo
 ```bash
 /Users/patrickhughes/Documents/New\\ project/run_demo.sh
