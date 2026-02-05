@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="/Users/patrickhughes/Documents/New project"
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SDK_DIR="$ROOT_DIR/sdk"
 DEMO_PY="$SDK_DIR/examples/demo_agent.py"
 TRACES="$SDK_DIR/examples/traces.jsonl"

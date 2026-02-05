@@ -4,22 +4,22 @@ This creates a real `traces.jsonl` file, triggers the loop guard, and shows repl
 
 ## Run
 ```bash
-python3 /Users/patrickhughes/Documents/New\\ project/sdk/examples/demo_agent.py
+python3 sdk/examples/demo_agent.py
 ```
 
 ## Summarize traces
 ```bash
-python3 -m agentguard.cli summarize /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+python3 -m agentguard.cli summarize sdk/examples/traces.jsonl
 ```
 
 ## Human-readable report
 ```bash
-python3 -m agentguard.cli report /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+python3 -m agentguard.cli report sdk/examples/traces.jsonl
 ```
 
 ## View in browser
 ```bash
-python3 -m agentguard.cli view /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+python3 -m agentguard.cli view sdk/examples/traces.jsonl
 ```
 
 ## Output

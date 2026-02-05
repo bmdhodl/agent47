@@ -28,36 +28,36 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 
 ## Quickstart (local SDK)
 ```bash
-python3 -m pip install -e /Users/patrickhughes/Documents/New\\ project/sdk
-python3 -m agentguard.cli summarize /Users/patrickhughes/Documents/New\\ project/sample_traces.jsonl
+python3 -m pip install -e ./sdk
+python3 -m agentguard.cli summarize sample_traces.jsonl
 ```
 
 ## Getting started (builders)
 ```bash
 # install SDK
-python3 -m pip install -e /Users/patrickhughes/Documents/New\\ project/sdk
+python3 -m pip install -e ./sdk
 
 # run demo
-python3 /Users/patrickhughes/Documents/New\\ project/sdk/examples/demo_agent.py
+python3 sdk/examples/demo_agent.py
 
 # view report
-python3 -m agentguard.cli report /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+python3 -m agentguard.cli report sdk/examples/traces.jsonl
 ```
 
 ## Demo (fast momentum)
 ```bash
-python3 /Users/patrickhughes/Documents/New\\ project/sdk/examples/demo_agent.py
-python3 -m agentguard.cli summarize /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+python3 sdk/examples/demo_agent.py
+python3 -m agentguard.cli summarize sdk/examples/traces.jsonl
 ```
 
 ## Trace viewer (local)
 ```bash
-python3 -m agentguard.cli view /Users/patrickhughes/Documents/New\\ project/sdk/examples/traces.jsonl
+python3 -m agentguard.cli view sdk/examples/traces.jsonl
 ```
 
 ## One-command demo
 ```bash
-/Users/patrickhughes/Documents/New\\ project/run_demo.sh
+./run_demo.sh
 ```
 
 ## Launch assets
