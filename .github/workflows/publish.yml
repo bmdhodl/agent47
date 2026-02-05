@@ -8,8 +8,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -27,3 +25,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: sdk/dist/
+          password: ${{ secrets.PYPI_TOKEN }}
