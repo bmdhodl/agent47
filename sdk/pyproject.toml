@@ -4,14 +4,35 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard"
-version = "0.1.0"
+version = "0.2.0"
 description = "Lightweight observability and evaluation primitives for multi-agent systems"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
   {name = "AgentGuard"}
 ]
+keywords = ["agents", "observability", "tracing", "multi-agent", "llm", "guardrails", "replay"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Testing",
+  "Topic :: System :: Monitoring",
+]
+
+[project.urls]
+Homepage = "https://github.com/bmdhodl/agent47"
+Repository = "https://github.com/bmdhodl/agent47"
+Issues = "https://github.com/bmdhodl/agent47/issues"
+
+[project.optional-dependencies]
+langchain = ["langchain-core>=0.1"]
 
 [project.scripts]
 agentguard = "agentguard.cli:main"

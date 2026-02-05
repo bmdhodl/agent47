@@ -4,6 +4,7 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Any, Deque, Dict, Optional, Tuple
 import json
+import time
 
 
 class LoopDetected(RuntimeError):
@@ -11,6 +12,10 @@ class LoopDetected(RuntimeError):
 
 
 class BudgetExceeded(RuntimeError):
+    pass
+
+
+class TimeoutExceeded(RuntimeError):
     pass
 
 
@@ -67,6 +72,28 @@ class BudgetGuard:
 
     def reset(self) -> None:
         self.state = BudgetState()
+
+
+class TimeoutGuard:
+    def __init__(self, max_seconds: float) -> None:
+        if max_seconds <= 0:
+            raise ValueError("max_seconds must be > 0")
+        self._max_seconds = max_seconds
+        self._start: Optional[float] = None
+
+    def start(self) -> None:
+        self._start = time.monotonic()
+
+    def check(self) -> None:
+        if self._start is None:
+            raise RuntimeError("TimeoutGuard.start() must be called before check()")
+        if (time.monotonic() - self._start) > self._max_seconds:
+            raise TimeoutExceeded(
+                f"Run exceeded {self._max_seconds}s timeout"
+            )
+
+    def reset(self) -> None:
+        self._start = None
 
 
 def _stable_json(data: Dict[str, Any]) -> str:

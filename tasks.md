@@ -31,6 +31,28 @@
 ## Execution Plan
 - [x] Create aligned execution plan doc (docs/execution_plan.md)
 
+## Phase 2: Ship & Distribute
+- [x] PyPI-ready packaging (pyproject.toml metadata, publish workflow, install instructions)
+- [x] TimeoutGuard (wall-clock time limit for agent runs)
+- [x] HTTP Sink (batched trace ingestion for future hosted dashboard)
+- [x] Real LangChain integration (BaseCallbackHandler, nested spans, guard wiring)
+- [x] CI hardening (Python 3.9–3.12 matrix, ruff lint)
+- [x] Blog post: "Why Your AI Agent Loops"
+- [x] Loop failure demo (sdk/examples/loop_failure_demo.py)
+- [x] Updated launch posts (LinkedIn/X + HN)
+- [ ] Publish to PyPI (tag v0.2.0, needs PyPI account + PYPI_TOKEN secret)
+- [ ] Post blog + HN launch
+- [ ] Collect 5–10 design partners
+
+## Phase 3: Hosted Dashboard (upcoming)
+- [ ] Trace ingestion API (Vercel serverless, POST /api/ingest)
+- [ ] Vercel Postgres schema (teams, api_keys, events)
+- [ ] Dashboard UI (vanilla JS, trace list + detail views)
+- [ ] API key provisioning
+- [ ] Retention cleanup cron (7-day free tier)
+- [ ] Stripe billing (after design partner validation)
+
 ## Decisions Made
 - [x] Primary integration target: LangChain
 - [x] Hosted direction: self-hosted first
+- [x] Dashboard stack: Vanilla JS + Vercel API routes (not Next.js)

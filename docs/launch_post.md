@@ -4,34 +4,40 @@
 Built a tiny observability SDK for AI agents.
 
 It traces reasoning steps, catches tool loops, and replays runs deterministically.
-Self-hosted, OSS-first, built for solo builders.
+Zero dependencies. Self-hosted. MIT-licensed.
 
-Demo output:
-AgentGuard report
-  Total events: 21
-  Spans: 6  Events: 15
-  Approx run time: 1.3 ms
-  Reasoning steps: 6
-  Tool results: 3
-  LLM results: 3
-  Loop guard triggered: 3 time(s)
+```
+pip install agentguard
+```
 
-Early access (dashboard pilot): https://github.com/bmdhodl/agent47
+3 lines of code to trace your agent. 1 guard to catch loops before they burn your budget.
 
-## Hacker News (technical)
-Title idea: "AgentGuard: OSS observability SDK for multi-agent systems"
+Blog post: "Why Your AI Agent Loops (And How to See It)" [link to blog]
+
+Repo: https://github.com/bmdhodl/agent47
+
+## Hacker News
+Title: "Show HN: AgentGuard -- Lightweight observability for multi-agent AI systems"
 
 Body:
-I built a minimal SDK that traces reasoning, detects loop failures, and replays runs deterministically. It emits JSONL traces, has guardrails for tool loops, and includes a LangChain integration stub. There’s a one-command demo and an E2E test script. Looking for early users to stress test the reliability layer.
+I built a zero-dependency Python SDK that traces agent reasoning, detects tool loops, and replays runs deterministically.
 
-Demo output (from local run):
-AgentGuard report
-  Total events: 21
-  Spans: 6  Events: 15
-  Approx run time: 1.3 ms
-  Reasoning steps: 6
-  Tool results: 3
-  LLM results: 3
-  Loop guard triggered: 3 time(s)
+The problem: multi-agent systems fail silently. Your agent calls the same tool 10 times in a row, burns $5 in API calls, and returns garbage. Normal observability tools show latency, not reasoning.
 
-Repo/landing: https://github.com/bmdhodl/agent47
+AgentGuard gives you:
+- Hierarchical tracing with span/event correlation
+- Loop detection (catches repeated tool calls automatically)
+- Budget and timeout guards
+- Deterministic replay for regression tests
+- CLI + browser-based trace viewer
+- LangChain integration
+
+```
+pip install agentguard
+```
+
+I wrote up the common failure mode: [Why Your AI Agent Loops](link to blog)
+
+Looking for early users building with LangChain, CrewAI, or custom agent frameworks.
+
+Repo: https://github.com/bmdhodl/agent47

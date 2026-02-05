@@ -3,12 +3,9 @@
 [![GitHub Repo](https://img.shields.io/badge/GitHub-agent47-181717?logo=github)](https://github.com/bmdhodl/agent47)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/agentguard)](https://pypi.org/project/agentguard/)
 
 AgentGuard is a lightweight observability and evaluation toolkit for multi-agent systems. It helps solo and small teams trace agent reasoning, catch loops, replay runs deterministically, and prevent runaway costs. The SDK is open source; the hosted dashboard is the commercial layer.
-
-Repo: https://github.com/bmdhodl/agent47
-
-This repo starts the business from first principles: product strategy, go-to-market, and a working SDK skeleton.
 
 ## Why this exists
 Multi-agent systems fail in ways normal software does not: infinite tool loops, silent cascade failures, and nondeterministic regressions. The current ecosystem is fragmented across model providers and frameworks. AgentGuard focuses on the runtime logic of agents, not the runtime engine.
@@ -26,56 +23,63 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 - Record and replay runs to create deterministic tests
 - JSONL export for local inspection (future: hosted dashboard)
 
-## Quickstart (local SDK)
+## Install
+
 ```bash
-python3 -m pip install -e ./sdk
-python3 -m agentguard.cli summarize sample_traces.jsonl
+pip install agentguard
 ```
 
-## Getting started (builders)
+With LangChain support:
 ```bash
-# install SDK
-python3 -m pip install -e ./sdk
+pip install agentguard[langchain]
+```
 
-# run demo
+## Quickstart
+
+```python
+from agentguard import Tracer, LoopGuard
+
+tracer = Tracer()
+guard = LoopGuard(max_repeats=3)
+
+with tracer.trace("agent.run") as span:
+    span.event("reasoning.step", data={"thought": "search docs"})
+    guard.check(tool_name="search", tool_args={"query": "agent loops"})
+    with span.span("tool.call", data={"tool": "search"}):
+        pass  # your tool here
+```
+
+## CLI
+
+```bash
+# human-readable report
+agentguard report traces.jsonl
+
+# open trace viewer in browser
+agentguard view traces.jsonl
+
+# summarize events
+agentguard summarize traces.jsonl
+```
+
+## Run the demo
+
+```bash
+pip install -e ./sdk
 python3 sdk/examples/demo_agent.py
-
-# view report
-python3 -m agentguard.cli report sdk/examples/traces.jsonl
+agentguard report sdk/examples/traces.jsonl
 ```
-
-## Demo (fast momentum)
-```bash
-python3 sdk/examples/demo_agent.py
-python3 -m agentguard.cli summarize sdk/examples/traces.jsonl
-```
-
-## Trace viewer (local)
-```bash
-python3 -m agentguard.cli view sdk/examples/traces.jsonl
-```
-
-## One-command demo
-```bash
-./run_demo.sh
-```
-
-## Launch assets
-- Draft post copy: `docs/launch_post.md`
-- Local screenshots: `site_screenshots/`
 
 ## What the report means
+
 The report summarizes a single agent run:
 - `Total events`: total trace records emitted
 - `Spans` vs `Events`: span start/end records vs in-run events
 - `Approx run time`: duration of the run (ms)
 - `Reasoning steps`: how many reasoning events were logged
-- `Tool results`: tool call outputs captured
-- `LLM results`: model outputs captured
-- `Loop guard triggered`: how many times a repeated-call loop was detected
-
-## Business principle
-Service-as-Software: sell outcomes, not tooling. AgentGuard's paid layer is a hosted dashboard and team features; the SDK is MIT and designed for self-serve adoption.
+- `Tool results` / `LLM results`: captured outputs
+- `Loop guard triggered`: repeated-call loops detected
 
 ## Status
-Early build. The SDK is intentionally minimal and framework-agnostic. Next steps are in `docs/prd.md`.
+
+Early build. The SDK is intentionally minimal and framework-agnostic. See `docs/prd.md` for roadmap.
