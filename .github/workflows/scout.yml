@@ -1,0 +1,90 @@
+name: Scout — Daily Issue Finder
+
+on:
+  schedule:
+    - cron: "0 14 * * *"  # 9am EST / 2pm UTC daily
+  workflow_dispatch: {}     # manual trigger
+
+permissions:
+  issues: write
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Search for fresh outreach targets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          echo "# AgentGuard Scout Report — $(date -u +%Y-%m-%d)" > report.md
+          echo "" >> report.md
+          echo "Fresh GitHub issues where people need agent loop/cost/debugging help." >> report.md
+          echo "Review each, then post a comment using \`docs/github_comments_draft.md\` as a template." >> report.md
+          echo "" >> report.md
+
+          FOUND=0
+
+          search_and_append() {
+            local query="$1"
+            local label="$2"
+            local results
+
+            results=$(gh search issues "$query" \
+              --sort created --order desc --limit 5 --state open \
+              --json title,url,repository,createdAt,comments \
+              --jq '.[] | select(.createdAt > (now - 172800 | todate)) | "- [\(.title)](\(.url)) — \(.repository.nameWithOwner) (\(.comments) comments, \(.createdAt | split("T")[0]))"' \
+              2>/dev/null || echo "")
+
+            if [ -n "$results" ]; then
+              echo "### $label" >> report.md
+              echo "$results" >> report.md
+              echo "" >> report.md
+              FOUND=$((FOUND + $(echo "$results" | wc -l)))
+            fi
+          }
+
+          search_and_append "agent infinite loop"          "Agent Infinite Loops"
+          search_and_append "agent loop tool call"          "Tool Call Loops"
+          search_and_append "agent runaway cost"            "Runaway Costs"
+          search_and_append "agent budget exceeded"         "Budget Issues"
+          search_and_append "agent retry loop"              "Retry Loops"
+          search_and_append "agent observability tracing"   "Observability/Tracing"
+
+          # Also search specific repos
+          for repo in langchain-ai/langchain crewAIInc/crewAI microsoft/autogen google/adk-python; do
+            results=$(gh search issues "loop OR cost OR retry" --repo "$repo" \
+              --sort created --order desc --limit 3 --state open \
+              --json title,url,createdAt,comments \
+              --jq '.[] | select(.createdAt > (now - 172800 | todate)) | "- [\(.title)](\(.url)) (\(.comments) comments, \(.createdAt | split("T")[0]))"' \
+              2>/dev/null || echo "")
+
+            if [ -n "$results" ]; then
+              echo "### $repo" >> report.md
+              echo "$results" >> report.md
+              echo "" >> report.md
+              FOUND=$((FOUND + $(echo "$results" | wc -l)))
+            fi
+          done
+
+          echo "---" >> report.md
+          echo "*Found $FOUND potential targets. Scout runs daily at 9am EST.*" >> report.md
+
+          # Create issue if we found anything
+          if [ "$FOUND" -gt 0 ]; then
+            gh issue create \
+              --title "Scout: $FOUND outreach targets found ($(date -u +%Y-%m-%d))" \
+              --body-file report.md \
+              --label "scout"
+          else
+            echo "No fresh targets found today."
+          fi
+
+      - name: Ensure scout label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create scout --description "Daily outreach targets from scout workflow" --color "0e8a16" 2>/dev/null || true
