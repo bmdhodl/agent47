@@ -11,17 +11,20 @@ AgentGuard is a lightweight observability and evaluation toolkit for multi-agent
 Multi-agent systems fail in ways normal software does not: infinite tool loops, silent cascade failures, and nondeterministic regressions. The current ecosystem is fragmented across model providers and frameworks. AgentGuard focuses on the runtime logic of agents, not the runtime engine.
 
 ## What is in this repo
-- `sdk/` Open-source SDK (Python) with tracing, guards, and replay primitives.
+- `sdk/` Open-source SDK (Python) with tracing, guards, evaluation, auto-instrumentation, and replay.
 - `docs/strategy/` Product strategy, PRD, architecture, pricing, and metrics.
 - `docs/examples/` Integration examples (starting with LangChain).
 - `docs/strategy/trace_schema.md` Trace event schema for JSONL output.
 - `site/` Minimal landing page for early users.
 - `scripts/` Deploy, demo, and test scripts.
 
-## MVP scope
+## Features
 - Trace agent reasoning steps and tool calls with correlation IDs
 - Detect common loop patterns and stop runaway executions
 - Record and replay runs to create deterministic tests
+- Evaluation as Code: assertion-based trace analysis (`EvalSuite`)
+- Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches
+- Gantt trace viewer: timeline visualization with click-to-expand details
 - JSONL export for local inspection (future: hosted dashboard)
 
 ## Install
@@ -56,11 +59,14 @@ with tracer.trace("agent.run") as span:
 # human-readable report
 agentguard report traces.jsonl
 
-# open trace viewer in browser
+# open Gantt trace viewer in browser
 agentguard view traces.jsonl
 
 # summarize events
 agentguard summarize traces.jsonl
+
+# run evaluation assertions
+agentguard eval traces.jsonl
 ```
 
 ## Run the demo
@@ -83,4 +89,4 @@ The report summarizes a single agent run:
 
 ## Status
 
-Early build. The SDK is intentionally minimal and framework-agnostic. See `docs/strategy/prd.md` for roadmap.
+v0.3.0 — 48 tests, zero-dependency, framework-agnostic. See `docs/strategy/prd.md` for roadmap.

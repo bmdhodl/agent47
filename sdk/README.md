@@ -80,6 +80,45 @@ replayer = Replayer("runs.jsonl")
 resp = replayer.replay_call("llm", {"prompt": "hi"})
 ```
 
+## Evaluation as Code
+
+```python
+from agentguard import EvalSuite
+
+result = (
+    EvalSuite("traces.jsonl")
+    .assert_no_loops()
+    .assert_tool_called("search", min_times=1)
+    .assert_budget_under(tokens=50000)
+    .assert_completes_within(30.0)
+    .assert_no_errors()
+    .run()
+)
+print(result.summary)
+```
+
+## Auto-Instrumentation
+
+```python
+from agentguard import Tracer
+from agentguard.instrument import trace_agent, trace_tool
+
+tracer = Tracer()
+
+@trace_agent(tracer)
+def my_agent(query):
+    return search(query)
+
+@trace_tool(tracer)
+def search(q):
+    return f"results for {q}"
+
+# Monkey-patch OpenAI/Anthropic (safe if not installed)
+from agentguard.instrument import patch_openai, patch_anthropic
+patch_openai(tracer)
+patch_anthropic(tracer)
+```
+
 ## CLI
 
 ```bash
@@ -89,8 +128,11 @@ agentguard summarize traces.jsonl
 # Human-readable report
 agentguard report traces.jsonl
 
-# Open trace viewer in browser
+# Open Gantt trace viewer in browser
 agentguard view traces.jsonl
+
+# Run evaluation assertions
+agentguard eval traces.jsonl
 ```
 
 ## Trace Viewer
@@ -98,6 +140,8 @@ agentguard view traces.jsonl
 ```bash
 agentguard view traces.jsonl --port 8080
 ```
+
+Gantt-style timeline with color-coded spans (reasoning, tool, LLM, guard, error), click-to-expand detail panel, and aggregate stats.
 
 ## Integrations
 

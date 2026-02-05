@@ -9,6 +9,7 @@ from .guards import (
 )
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
+from .evaluation import EvalSuite, EvalResult, AssertionResult
 
 __all__ = [
     "Tracer",
@@ -21,4 +22,7 @@ __all__ = [
     "Recorder",
     "Replayer",
     "HttpSink",
+    "EvalSuite",
+    "EvalResult",
+    "AssertionResult",
 ]

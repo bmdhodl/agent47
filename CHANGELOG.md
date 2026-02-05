@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+- Evaluation as Code: EvalSuite with chainable assertions (no_loops, tool_called, budget_under, completes_within, event_exists, no_errors)
+- Auto-instrumentation: @trace_agent and @trace_tool decorators, patch_openai() and patch_anthropic() monkey-patches
+- Gantt trace viewer: timeline visualization with color-coded spans, click-to-expand detail panel, aggregate stats
+- CLI: `agentguard eval traces.jsonl` runs default assertions with exit code
+- 48 tests (up from 17), zero lint errors
+
 ## 0.2.0
 - PyPI-ready packaging with full metadata and publish workflow
 - TimeoutGuard: wall-clock time limits for agent runs
