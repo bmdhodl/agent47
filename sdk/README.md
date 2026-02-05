@@ -1,6 +1,6 @@
 # AgentGuard SDK (Python)
 
-[![PyPI](https://img.shields.io/pypi/v/agentguard)](https://pypi.org/project/agentguard/)
+[![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/main/LICENSE)
 
 Lightweight, zero-dependency observability for multi-agent AI systems. Trace reasoning steps, catch loops, guard budgets, and replay runs deterministically.
@@ -8,12 +8,12 @@ Lightweight, zero-dependency observability for multi-agent AI systems. Trace rea
 ## Install
 
 ```bash
-pip install agentguard
+pip install agentguard47
 ```
 
 With LangChain support:
 ```bash
-pip install agentguard[langchain]
+pip install agentguard47[langchain]
 ```
 
 ## Quickstart

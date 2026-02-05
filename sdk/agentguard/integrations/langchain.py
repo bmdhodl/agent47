@@ -23,7 +23,7 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
 
     Works with ``langchain-core >= 0.1``. Install via::
 
-        pip install agentguard[langchain]
+        pip install agentguard47[langchain]
     """
 
     def __init__(

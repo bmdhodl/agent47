@@ -7,7 +7,7 @@ It traces reasoning steps, catches tool loops, and replays runs deterministicall
 Zero dependencies. Self-hosted. MIT-licensed.
 
 ```
-pip install agentguard
+pip install agentguard47
 ```
 
 3 lines of code to trace your agent. 1 guard to catch loops before they burn your budget.
@@ -33,7 +33,7 @@ AgentGuard gives you:
 - LangChain integration
 
 ```
-pip install agentguard
+pip install agentguard47
 ```
 
 I wrote up the common failure mode: [Why Your AI Agent Loops](link to blog)

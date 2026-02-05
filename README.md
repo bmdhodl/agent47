@@ -3,7 +3,7 @@
 [![GitHub Repo](https://img.shields.io/badge/GitHub-agent47-181717?logo=github)](https://github.com/bmdhodl/agent47)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/agentguard)](https://pypi.org/project/agentguard/)
+[![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 
 AgentGuard is a lightweight observability and evaluation toolkit for multi-agent systems. It helps solo and small teams trace agent reasoning, catch loops, replay runs deterministically, and prevent runaway costs. The SDK is open source; the hosted dashboard is the commercial layer.
 
@@ -26,12 +26,12 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 ## Install
 
 ```bash
-pip install agentguard
+pip install agentguard47
 ```
 
 With LangChain support:
 ```bash
-pip install agentguard[langchain]
+pip install agentguard47[langchain]
 ```
 
 ## Quickstart

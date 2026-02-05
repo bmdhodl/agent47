@@ -5,7 +5,7 @@ Wire AgentGuard tracing and guards into any LangChain chain or agent.
 ## Install
 
 ```bash
-pip install agentguard[langchain]
+pip install agentguard47[langchain]
 ```
 
 ## Basic usage

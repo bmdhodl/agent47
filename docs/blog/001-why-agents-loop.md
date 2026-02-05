@@ -22,7 +22,7 @@ With a real LLM, this burns through your token budget. With tool calls that have
 
 Install:
 ```bash
-pip install agentguard
+pip install agentguard47
 ```
 
 Add tracing and a loop guard:
@@ -90,13 +90,13 @@ AgentGuard gives you:
 ## Get started
 
 ```bash
-pip install agentguard
+pip install agentguard47
 ```
 
 The SDK is MIT-licensed, zero dependencies, and works with any agent framework. LangChain integration is built in:
 
 ```bash
-pip install agentguard[langchain]
+pip install agentguard47[langchain]
 ```
 
 Full docs and examples: [github.com/bmdhodl/agent47](https://github.com/bmdhodl/agent47)
