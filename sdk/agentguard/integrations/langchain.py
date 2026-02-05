@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional
 
 from agentguard.guards import BudgetGuard, LoopGuard
 from agentguard.tracing import Tracer, TraceContext
