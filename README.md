@@ -11,11 +11,12 @@ AgentGuard is a lightweight observability and evaluation toolkit for multi-agent
 Multi-agent systems fail in ways normal software does not: infinite tool loops, silent cascade failures, and nondeterministic regressions. The current ecosystem is fragmented across model providers and frameworks. AgentGuard focuses on the runtime logic of agents, not the runtime engine.
 
 ## What is in this repo
-- `docs/` Product strategy, PRD, architecture, pricing, and metrics.
 - `sdk/` Open-source SDK (Python) with tracing, guards, and replay primitives.
+- `docs/strategy/` Product strategy, PRD, architecture, pricing, and metrics.
 - `docs/examples/` Integration examples (starting with LangChain).
-- `docs/trace_schema.md` Trace event schema for JSONL output.
+- `docs/strategy/trace_schema.md` Trace event schema for JSONL output.
 - `site/` Minimal landing page for early users.
+- `scripts/` Deploy, demo, and test scripts.
 
 ## MVP scope
 - Trace agent reasoning steps and tool calls with correlation IDs
@@ -82,4 +83,4 @@ The report summarizes a single agent run:
 
 ## Status
 
-Early build. The SDK is intentionally minimal and framework-agnostic. See `docs/prd.md` for roadmap.
+Early build. The SDK is intentionally minimal and framework-agnostic. See `docs/strategy/prd.md` for roadmap.

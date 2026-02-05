@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
-./set_env.sh
+"$ROOT_DIR/set_env.sh"
 
 echo "Fetching deployment URL..."
 DEPLOY_URL=$(vercel ls --meta --token "${VERCEL_TOKEN:-}" 2>/dev/null | awk 'NR==1 {print $2}')
