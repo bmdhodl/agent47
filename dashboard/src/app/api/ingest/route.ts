@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   // 2. Look up API key
   const keyRows = await sql`
-    SELECT team_id FROM api_keys
+    SELECT id, team_id FROM api_keys
     WHERE key_hash = ${keyHash} AND revoked_at IS NULL
   `;
 
@@ -40,6 +40,7 @@ export async function POST(request: Request) {
   }
 
   const teamId = keyRows[0].team_id;
+  const apiKeyId = keyRows[0].id;
 
   // 3. Check usage limits
   const teamRows = await sql`
@@ -107,6 +108,7 @@ export async function POST(request: Request) {
     data: Record<string, unknown>;
     error: { type: string; message: string } | null;
     service: string;
+    api_key_id: string;
   }> = [];
   const errors: Array<{ line: number; error: string }> = [];
 
@@ -142,6 +144,7 @@ export async function POST(request: Request) {
       data: ev.data,
       error: ev.error,
       service: ev.service,
+      api_key_id: apiKeyId,
     });
   }
 
@@ -167,9 +170,10 @@ export async function POST(request: Request) {
     e.error ? JSON.stringify(e.error) : null,
   );
   const services = validEvents.map((e) => e.service);
+  const apiKeyIds = validEvents.map((e) => e.api_key_id);
 
   await sql`
-    INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service)
+    INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service, api_key_id)
     SELECT * FROM unnest(
       ${teamIds}::uuid[],
       ${traceIds}::text[],
@@ -182,7 +186,8 @@ export async function POST(request: Request) {
       ${durations}::double precision[],
       ${dataArr}::jsonb[],
       ${errorArr}::jsonb[],
-      ${services}::text[]
+      ${services}::text[],
+      ${apiKeyIds}::uuid[]
     )
   `;
 

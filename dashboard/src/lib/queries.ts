@@ -8,6 +8,8 @@ export interface TraceRow {
   error_count: number;
   duration_ms: number | null;
   started_at: string;
+  api_key_name: string | null;
+  api_key_prefix: string | null;
 }
 
 export interface EventRow {
@@ -24,22 +26,27 @@ export interface EventRow {
   error: { type: string; message: string } | null;
   service: string;
   created_at: string;
+  api_key_name: string | null;
+  api_key_prefix: string | null;
 }
 
 export async function getTraceList(teamId: string): Promise<TraceRow[]> {
   const rows = await sql`
     SELECT
-      trace_id,
-      MIN(service) as service,
-      MIN(name) FILTER (WHERE parent_id IS NULL AND phase = 'start') as root_name,
+      e.trace_id,
+      MIN(e.service) as service,
+      MIN(e.name) FILTER (WHERE e.parent_id IS NULL AND e.phase = 'start') as root_name,
       COUNT(*)::int as event_count,
-      COUNT(*) FILTER (WHERE error IS NOT NULL)::int as error_count,
-      MAX(duration_ms) as duration_ms,
-      MIN(created_at) as started_at
-    FROM events
-    WHERE team_id = ${teamId}
-    GROUP BY trace_id
-    ORDER BY MIN(created_at) DESC
+      COUNT(*) FILTER (WHERE e.error IS NOT NULL)::int as error_count,
+      MAX(e.duration_ms) as duration_ms,
+      MIN(e.created_at) as started_at,
+      MIN(ak.name) as api_key_name,
+      MIN(ak.prefix) as api_key_prefix
+    FROM events e
+    LEFT JOIN api_keys ak ON ak.id = e.api_key_id
+    WHERE e.team_id = ${teamId}
+    GROUP BY e.trace_id
+    ORDER BY MIN(e.created_at) DESC
     LIMIT 100
   `;
 
@@ -51,11 +58,13 @@ export async function getTraceEvents(
   traceId: string,
 ): Promise<EventRow[]> {
   const rows = await sql`
-    SELECT id, trace_id, span_id, parent_id, kind, phase, name, ts,
-           duration_ms, data, error, service, created_at
-    FROM events
-    WHERE team_id = ${teamId} AND trace_id = ${traceId}
-    ORDER BY ts ASC
+    SELECT e.id, e.trace_id, e.span_id, e.parent_id, e.kind, e.phase, e.name, e.ts,
+           e.duration_ms, e.data, e.error, e.service, e.created_at,
+           ak.name as api_key_name, ak.prefix as api_key_prefix
+    FROM events e
+    LEFT JOIN api_keys ak ON ak.id = e.api_key_id
+    WHERE e.team_id = ${teamId} AND e.trace_id = ${traceId}
+    ORDER BY e.ts ASC
   `;
 
   return rows as unknown as EventRow[];
@@ -77,12 +86,14 @@ export async function getUsageStats(teamId: string) {
 
 export async function getAlerts(teamId: string): Promise<EventRow[]> {
   const rows = await sql`
-    SELECT id, trace_id, span_id, parent_id, kind, phase, name, ts,
-           duration_ms, data, error, service, created_at
-    FROM events
-    WHERE team_id = ${teamId}
-      AND (name = 'guard.loop_detected' OR name = 'guard.budget_exceeded' OR error IS NOT NULL)
-    ORDER BY created_at DESC
+    SELECT e.id, e.trace_id, e.span_id, e.parent_id, e.kind, e.phase, e.name, e.ts,
+           e.duration_ms, e.data, e.error, e.service, e.created_at,
+           ak.name as api_key_name, ak.prefix as api_key_prefix
+    FROM events e
+    LEFT JOIN api_keys ak ON ak.id = e.api_key_id
+    WHERE e.team_id = ${teamId}
+      AND (e.name = 'guard.loop_detected' OR e.name = 'guard.budget_exceeded' OR e.error IS NOT NULL)
+    ORDER BY e.created_at DESC
     LIMIT 50
   `;
 

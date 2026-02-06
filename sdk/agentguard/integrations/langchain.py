@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import Any, Dict, List, Optional
 
-from agentguard.guards import BudgetGuard, LoopGuard
+from agentguard.guards import BudgetGuard, BudgetExceeded, LoopGuard, LoopDetected
 from agentguard.tracing import Tracer, TraceContext
 
 try:
@@ -125,7 +125,19 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         if usage:
             payload["token_usage"] = usage
             if self._budget_guard and "total_tokens" in usage:
-                self._budget_guard.consume(tokens=usage["total_tokens"])
+                try:
+                    self._budget_guard.consume(tokens=usage["total_tokens"])
+                except BudgetExceeded as e:
+                    ctx.event("guard.budget_exceeded", data={
+                        "tokens_used": self._budget_guard.state.tokens_used,
+                        "tokens_limit": self._budget_guard._max_tokens,
+                        "calls_used": self._budget_guard.state.calls_used,
+                        "calls_limit": self._budget_guard._max_calls,
+                        "error": str(e),
+                    })
+                    ctx.event("llm.end", data=payload)
+                    ctx.__exit__(None, None, None)
+                    raise
         ctx.event("llm.end", data=payload)
         ctx.__exit__(None, None, None)
 
@@ -155,9 +167,31 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         if isinstance(tool_name, list):
             tool_name = tool_name[-1]
         if self._loop_guard:
-            self._loop_guard.check(tool_name=tool_name, tool_args={"input": input_str})
+            try:
+                self._loop_guard.check(tool_name=tool_name, tool_args={"input": input_str})
+            except LoopDetected as e:
+                ctx = self._span_stack[-1] if self._span_stack else None
+                if ctx:
+                    ctx.event("guard.loop_detected", data={
+                        "tool_name": tool_name,
+                        "repeat_count": self._loop_guard._max_repeats,
+                        "error": str(e),
+                    })
+                raise
         if self._budget_guard:
-            self._budget_guard.consume(calls=1)
+            try:
+                self._budget_guard.consume(calls=1)
+            except BudgetExceeded as e:
+                ctx = self._span_stack[-1] if self._span_stack else None
+                if ctx:
+                    ctx.event("guard.budget_exceeded", data={
+                        "tokens_used": self._budget_guard.state.tokens_used,
+                        "tokens_limit": self._budget_guard._max_tokens,
+                        "calls_used": self._budget_guard.state.calls_used,
+                        "calls_limit": self._budget_guard._max_calls,
+                        "error": str(e),
+                    })
+                raise
         parent = self._span_stack[-1] if self._span_stack else None
         if parent is None:
             self.on_chain_start({"name": "tool"}, {"input": input_str}, run_id=run_id)

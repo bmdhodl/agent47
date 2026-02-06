@@ -40,6 +40,11 @@ export default async function TraceDetailPage({
         <h1 className="font-mono text-lg font-semibold">
           {params.traceId.slice(0, 8)}...
         </h1>
+        {events[0]?.api_key_name && (
+          <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+            {events[0].api_key_name}
+          </span>
+        )}
       </div>
       <TraceGantt events={events} />
     </div>

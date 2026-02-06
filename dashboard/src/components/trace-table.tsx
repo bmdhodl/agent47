@@ -13,20 +13,27 @@ export function TraceTable({ traces }: { traces: TraceRow[] }) {
     (t) =>
       t.root_name?.toLowerCase().includes(search.toLowerCase()) ||
       t.trace_id.toLowerCase().includes(search.toLowerCase()) ||
-      t.service?.toLowerCase().includes(search.toLowerCase()),
+      t.service?.toLowerCase().includes(search.toLowerCase()) ||
+      t.api_key_name?.toLowerCase().includes(search.toLowerCase()),
   );
 
   if (traces.length === 0) {
     return (
       <div className="rounded-md border p-12 text-center">
-        <p className="text-muted-foreground">No traces yet.</p>
+        <p className="text-lg font-medium text-muted-foreground">No traces yet</p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Connect the SDK with{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
-            HttpSink
-          </code>{" "}
-          to start sending traces.
+          Install the SDK and point it at your dashboard to start collecting traces.
         </p>
+        <div className="mx-auto mt-4 max-w-lg rounded-md bg-muted p-4 text-left">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Quick start — 4 lines of Python:</p>
+          <pre className="text-xs leading-relaxed">{`from agentguard47 import Tracer
+from agentguard47.sinks import HttpSink
+
+tracer = Tracer(sink=HttpSink(
+    url="https://your-dashboard.vercel.app/api/events",
+    api_key="ag_YOUR_KEY_HERE",
+))`}</pre>
+        </div>
       </div>
     );
   }
@@ -61,6 +68,9 @@ export function TraceTable({ traces }: { traces: TraceRow[] }) {
                   {trace.duration_ms
                     ? ` · ${trace.duration_ms.toFixed(1)}ms`
                     : ""}
+                  {trace.api_key_name && (
+                    <> · <span className="text-muted-foreground">{trace.api_key_name}</span></>
+                  )}
                 </div>
               </div>
               {trace.error_count > 0 && (

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export function BillingSection({
   currentPlan,
@@ -11,28 +12,56 @@ export function BillingSection({
   hasStripeCustomer: boolean;
 }) {
   const [loading, setLoading] = useState<string | null>(null);
+  const { toast } = useToast();
 
   async function handleUpgrade(plan: string) {
     setLoading(plan);
-    const res = await fetch("/api/billing/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan }),
-    });
+    try {
+      const res = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
 
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: "Billing service unavailable" }));
+        toast({ title: "Error", description: data.error, variant: "destructive" });
+        setLoading(null);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast({ title: "Error", description: "No checkout URL returned", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Could not reach billing service", variant: "destructive" });
     }
     setLoading(null);
   }
 
   async function handleManage() {
     setLoading("portal");
-    const res = await fetch("/api/billing/portal", { method: "POST" });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
+    try {
+      const res = await fetch("/api/billing/portal", { method: "POST" });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: "Billing service unavailable" }));
+        toast({ title: "Error", description: data.error, variant: "destructive" });
+        setLoading(null);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast({ title: "Error", description: "No portal URL returned", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Could not reach billing service", variant: "destructive" });
     }
     setLoading(null);
   }

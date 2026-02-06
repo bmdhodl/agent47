@@ -10,10 +10,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface ApiKey {
   id: string;
@@ -39,7 +41,9 @@ export function ApiKeyManager({
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
   const router = useRouter();
+  const { toast } = useToast();
 
   async function handleCreate() {
     setLoading(true);
@@ -50,6 +54,8 @@ export function ApiKeyManager({
     });
 
     if (!res.ok) {
+      const data = await res.json().catch(() => ({ error: "Failed to create key" }));
+      toast({ title: "Error", description: data.error, variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -57,11 +63,19 @@ export function ApiKeyManager({
     const data = await res.json();
     setRawKey(data.raw_key);
     setLoading(false);
+    toast({ title: "API key created" });
     router.refresh();
   }
 
   async function handleRevoke(keyId: string) {
-    await fetch(`/api/keys/${keyId}`, { method: "DELETE" });
+    const res = await fetch(`/api/keys/${keyId}`, { method: "DELETE" });
+    setRevokeTarget(null);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({ error: "Failed to revoke key" }));
+      toast({ title: "Error", description: data.error, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Key revoked" });
     router.refresh();
   }
 
@@ -179,7 +193,7 @@ export function ApiKeyManager({
                     variant="ghost"
                     size="sm"
                     className="text-destructive hover:text-destructive"
-                    onClick={() => handleRevoke(key.id)}
+                    onClick={() => setRevokeTarget(key.id)}
                   >
                     Revoke
                   </Button>
@@ -189,6 +203,25 @@ export function ApiKeyManager({
           </div>
         )}
       </div>
+
+      <Dialog open={revokeTarget !== null} onOpenChange={(open) => { if (!open) setRevokeTarget(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Revoke API key</DialogTitle>
+            <DialogDescription>
+              This key will stop working immediately. Any agents using it will lose access. Are you sure?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRevokeTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => revokeTarget && handleRevoke(revokeTarget)}>
+              Revoke key
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

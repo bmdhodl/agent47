@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Activity, Bell, BarChart3, Settings, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { href: "/traces", label: "Traces", icon: ">" },
-  { href: "/alerts", label: "Alerts", icon: "!" },
-  { href: "/usage", label: "Usage", icon: "#" },
-  { href: "/settings", label: "Settings", icon: "@" },
+const navItems: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/traces", label: "Traces", icon: Activity },
+  { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/usage", label: "Usage", icon: BarChart3 },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {
@@ -33,7 +34,7 @@ export function Sidebar() {
                 : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             )}
           >
-            <span className="font-mono text-xs opacity-50">{item.icon}</span>
+            <item.icon className="h-4 w-4 opacity-50" />
             {item.label}
           </Link>
         ))}

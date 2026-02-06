@@ -24,11 +24,22 @@ export async function POST(request: Request) {
     );
   }
 
-  const stripe = getStripe();
-  const portalSession = await stripe.billingPortal.sessions.create({
-    customer: teams[0].stripe_customer_id,
-    return_url: `${request.headers.get("origin")}/settings`,
-  });
+  try {
+    const stripe = getStripe();
+    const returnUrl = process.env.NEXTAUTH_URL
+      ? `${process.env.NEXTAUTH_URL}/settings`
+      : `${request.headers.get("origin")}/settings`;
 
-  return NextResponse.json({ url: portalSession.url });
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: teams[0].stripe_customer_id,
+      return_url: returnUrl,
+    });
+
+    return NextResponse.json({ url: portalSession.url });
+  } catch {
+    return NextResponse.json(
+      { error: "Billing service unavailable" },
+      { status: 502 },
+    );
+  }
 }

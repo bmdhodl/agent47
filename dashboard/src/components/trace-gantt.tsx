@@ -237,7 +237,7 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
               Close
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
             <div>
               <span className="text-muted-foreground">Kind:</span>{" "}
               {selected.event.kind}
@@ -254,6 +254,10 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
               <span className="text-muted-foreground">Service:</span>{" "}
               {selected.event.service}
             </div>
+            <div>
+              <span className="text-muted-foreground">Key:</span>{" "}
+              {selected.event.api_key_name || "\u2014"}
+            </div>
           </div>
           {selected.event.error && (
             <div className="rounded-md bg-red-500/10 p-3 text-xs">
@@ -265,11 +269,61 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
               </div>
             </div>
           )}
-          {Object.keys(selected.event.data).length > 0 && (
-            <pre className="max-h-48 overflow-auto rounded-md bg-muted p-3 text-xs">
-              {JSON.stringify(selected.event.data, null, 2)}
-            </pre>
-          )}
+          {(() => {
+            const data = (selected.endEvent?.data || selected.event.data || {}) as Record<string, unknown>;
+            const tokenUsage = (data.token_usage || data.usage) as Record<string, number> | undefined;
+            const isLlm = selected.type === "llm";
+            const isTool = selected.type === "tool";
+            const isGuard = selected.type === "guard";
+
+            return (
+              <>
+                {isLlm && tokenUsage && (
+                  <div className="rounded-md bg-purple-500/10 p-3 text-xs">
+                    <span className="font-medium text-purple-400">Tokens: </span>
+                    {tokenUsage.total_tokens ?? "?"}
+                    {tokenUsage.prompt_tokens != null && (
+                      <span className="text-muted-foreground"> (prompt: {tokenUsage.prompt_tokens}, completion: {tokenUsage.completion_tokens ?? "?"})</span>
+                    )}
+                  </div>
+                )}
+                {isTool && (data.input != null || data.output != null) && (
+                  <div className="space-y-2">
+                    {data.input != null && (
+                      <div className="rounded-md bg-green-500/10 p-3 text-xs">
+                        <span className="font-medium text-green-400">Input: </span>
+                        <span className="text-green-300">{String(data.input).slice(0, 500)}</span>
+                      </div>
+                    )}
+                    {data.output != null && (
+                      <div className="rounded-md bg-green-500/10 p-3 text-xs">
+                        <span className="font-medium text-green-400">Output: </span>
+                        <span className="text-green-300">{String(data.output).slice(0, 500)}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {isGuard && (
+                  <div className="rounded-md bg-yellow-500/10 p-3 text-xs">
+                    {data.tokens_used != null && (
+                      <div><span className="font-medium text-yellow-400">Budget: </span>{String(data.tokens_used)}/{String(data.tokens_limit ?? "?")} tokens, {String(data.calls_used ?? 0)}/{String(data.calls_limit ?? "?")} calls</div>
+                    )}
+                    {data.tool_name != null && (
+                      <div><span className="font-medium text-yellow-400">Loop: </span>Tool <code className="rounded bg-muted px-1">{String(data.tool_name)}</code> repeated {String(data.repeat_count ?? "?")} times</div>
+                    )}
+                  </div>
+                )}
+                {Object.keys(data).length > 0 && (
+                  <details>
+                    <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">Raw data</summary>
+                    <pre className="mt-2 max-h-48 overflow-auto rounded-md bg-muted p-3 text-xs">
+                      {JSON.stringify(data, null, 2)}
+                    </pre>
+                  </details>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
     </div>

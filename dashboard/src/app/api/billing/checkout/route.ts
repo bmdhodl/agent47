@@ -4,6 +4,15 @@ import { authOptions } from "@/lib/next-auth";
 import sql from "@/lib/db";
 import { getStripe, STRIPE_PLANS } from "@/lib/stripe";
 
+function getBaseUrl(request: Request): string {
+  const origin = request.headers.get("origin");
+  const allowed = process.env.NEXTAUTH_URL;
+  if (allowed && origin && new URL(origin).origin === new URL(allowed).origin) {
+    return origin;
+  }
+  return allowed || origin || "";
+}
+
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
@@ -28,29 +37,38 @@ export async function POST(request: Request) {
   }
 
   const team = teams[0];
-  const stripe = getStripe();
 
-  let customerId = team.stripe_customer_id;
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: session.user.email!,
+  try {
+    const stripe = getStripe();
+
+    let customerId = team.stripe_customer_id;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: session.user.email!,
+        metadata: { team_id: team.id },
+      });
+      customerId = customer.id;
+      await sql`
+        UPDATE teams SET stripe_customer_id = ${customerId}
+        WHERE id = ${team.id}
+      `;
+    }
+
+    const baseUrl = getBaseUrl(request);
+    const checkoutSession = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${baseUrl}/settings?upgraded=true`,
+      cancel_url: `${baseUrl}/settings`,
       metadata: { team_id: team.id },
     });
-    customerId = customer.id;
-    await sql`
-      UPDATE teams SET stripe_customer_id = ${customerId}
-      WHERE id = ${team.id}
-    `;
+
+    return NextResponse.json({ url: checkoutSession.url });
+  } catch {
+    return NextResponse.json(
+      { error: "Billing service unavailable" },
+      { status: 502 },
+    );
   }
-
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${request.headers.get("origin")}/settings?upgraded=true`,
-    cancel_url: `${request.headers.get("origin")}/settings`,
-    metadata: { team_id: team.id },
-  });
-
-  return NextResponse.json({ url: checkoutSession.url });
 }
