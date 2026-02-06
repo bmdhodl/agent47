@@ -40,7 +40,7 @@ export function Sidebar() {
         ))}
       </nav>
       <div className="border-t p-2 text-xs text-muted-foreground px-4 py-3">
-        agentguard47 v0.3.0
+        agentguard47 v0.4.0
       </div>
     </aside>
   );
