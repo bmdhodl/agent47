@@ -40,43 +40,44 @@ With LangChain support:
 pip install agentguard47[langchain]
 ```
 
-## Quickstart
+## Quickstart (2 minutes)
 
+**1. Install:**
+```bash
+pip install agentguard47
+```
+
+**2. Trace your agent:**
 ```python
 from agentguard import Tracer, LoopGuard
+from agentguard.tracing import JsonlFileSink
 
-tracer = Tracer()
+tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
 guard = LoopGuard(max_repeats=3)
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
     guard.check(tool_name="search", tool_args={"query": "agent loops"})
-    with span.span("tool.call", data={"tool": "search"}):
+    with span.span("tool.search"):
         pass  # your tool here
+    span.event("llm.result", data={"answer": "done"})
 ```
+
+**3. See what happened:**
+```bash
+agentguard report traces.jsonl   # summary table
+agentguard view traces.jsonl     # Gantt timeline in browser
+```
+
+That's it. You get a structured JSONL trace and a visual timeline. No config, no dependencies, no account needed.
 
 ## CLI
 
 ```bash
-# human-readable report
-agentguard report traces.jsonl
-
-# open Gantt trace viewer in browser
-agentguard view traces.jsonl
-
-# summarize events
-agentguard summarize traces.jsonl
-
-# run evaluation assertions
-agentguard eval traces.jsonl
-```
-
-## Run the demo
-
-```bash
-pip install -e ./sdk
-python3 sdk/examples/demo_agent.py
-agentguard report sdk/examples/traces.jsonl
+agentguard report traces.jsonl      # human-readable summary
+agentguard view traces.jsonl        # Gantt trace viewer in browser
+agentguard summarize traces.jsonl   # event-level breakdown
+agentguard eval traces.jsonl        # run evaluation assertions
 ```
 
 ## What the report means

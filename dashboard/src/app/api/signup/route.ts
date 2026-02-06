@@ -2,8 +2,16 @@ import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { randomUUID } from "crypto";
 import sql from "@/lib/db";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 signups per hour per IP
+  const ip = getClientIp(request);
+  const rl = rateLimit(`signup:${ip}`, 5, 3600_000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const { email, password } = await request.json();
 
   if (!email || !password || password.length < 6) {

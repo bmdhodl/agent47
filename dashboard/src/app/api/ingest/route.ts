@@ -4,8 +4,16 @@ import { hashApiKey } from "@/lib/api-key";
 import { eventSchema } from "@/lib/validation";
 import { PLANS } from "@/lib/plans";
 import type { PlanName } from "@/lib/plans";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 100 requests per minute per IP
+  const ip = getClientIp(request);
+  const rl = rateLimit(`ingest:${ip}`, 100, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   // 1. Extract Bearer token
   const auth = request.headers.get("authorization");
   if (!auth?.startsWith("Bearer ")) {
@@ -48,8 +56,23 @@ export async function POST(request: Request) {
 
   const currentCount = usageRows.length > 0 ? Number(usageRows[0].event_count) : 0;
 
-  // 4. Parse NDJSON body
+  // 4. Parse NDJSON body (limit: 1MB)
+  const contentLength = Number(request.headers.get("content-length") || 0);
+  if (contentLength > 1_048_576) {
+    return NextResponse.json(
+      { error: "Request body too large (max 1MB)" },
+      { status: 413 },
+    );
+  }
+
   const body = await request.text();
+  if (body.length > 1_048_576) {
+    return NextResponse.json(
+      { error: "Request body too large (max 1MB)" },
+      { status: 413 },
+    );
+  }
+
   const lines = body
     .split("\n")
     .map((l) => l.trim())
@@ -129,20 +152,46 @@ export async function POST(request: Request) {
     );
   }
 
-  // 6. Batch insert events
-  for (const ev of validEvents) {
-    await sql`
-      INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service)
-      VALUES (${ev.team_id}, ${ev.trace_id}, ${ev.span_id}, ${ev.parent_id}, ${ev.kind}, ${ev.phase}, ${ev.name}, ${ev.ts}, ${ev.duration_ms}, ${JSON.stringify(ev.data)}::jsonb, ${ev.error ? JSON.stringify(ev.error) : null}::jsonb, ${ev.service})
-    `;
-  }
+  // 6. Batch insert events (single query with unnest)
+  const teamIds = validEvents.map(() => teamId);
+  const traceIds = validEvents.map((e) => e.trace_id);
+  const spanIds = validEvents.map((e) => e.span_id);
+  const parentIds = validEvents.map((e) => e.parent_id);
+  const kinds = validEvents.map((e) => e.kind);
+  const phases = validEvents.map((e) => e.phase);
+  const names = validEvents.map((e) => e.name);
+  const timestamps = validEvents.map((e) => e.ts);
+  const durations = validEvents.map((e) => e.duration_ms);
+  const dataArr = validEvents.map((e) => JSON.stringify(e.data));
+  const errorArr = validEvents.map((e) =>
+    e.error ? JSON.stringify(e.error) : null,
+  );
+  const services = validEvents.map((e) => e.service);
 
-  // 7. Increment usage counter
+  await sql`
+    INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service)
+    SELECT * FROM unnest(
+      ${teamIds}::uuid[],
+      ${traceIds}::text[],
+      ${spanIds}::text[],
+      ${parentIds}::text[],
+      ${kinds}::text[],
+      ${phases}::text[],
+      ${names}::text[],
+      ${timestamps}::double precision[],
+      ${durations}::double precision[],
+      ${dataArr}::jsonb[],
+      ${errorArr}::jsonb[],
+      ${services}::text[]
+    )
+  `;
+
+  // 7. Increment usage counter (atomic — prevents race condition)
   await sql`
     INSERT INTO usage (team_id, month, event_count)
     VALUES (${teamId}, ${month}, ${validEvents.length})
     ON CONFLICT (team_id, month)
-    DO UPDATE SET event_count = usage.event_count + ${validEvents.length}
+    DO UPDATE SET event_count = usage.event_count + EXCLUDED.event_count
   `;
 
   return NextResponse.json({

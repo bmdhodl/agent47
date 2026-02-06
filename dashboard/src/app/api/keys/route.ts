@@ -5,8 +5,16 @@ import sql from "@/lib/db";
 import { generateApiKey } from "@/lib/api-key";
 import { PLANS } from "@/lib/plans";
 import type { PlanName } from "@/lib/plans";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 10 key generations per hour per IP
+  const ip = getClientIp(request);
+  const rl = rateLimit(`keys:${ip}`, 10, 3600_000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

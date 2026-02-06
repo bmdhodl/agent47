@@ -16,24 +16,32 @@ With LangChain support:
 pip install agentguard47[langchain]
 ```
 
-## Quickstart
+## Quickstart (2 minutes)
+
+```bash
+pip install agentguard47
+```
 
 ```python
-from agentguard import Tracer, LoopGuard, BudgetGuard
+from agentguard import Tracer, LoopGuard
+from agentguard.tracing import JsonlFileSink
 
-tracer = Tracer()
-loop_guard = LoopGuard(max_repeats=3)
-budget_guard = BudgetGuard(max_tokens=10000)
+tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
+guard = LoopGuard(max_repeats=3)
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
-
-    loop_guard.check(tool_name="search", tool_args={"query": "agent loops"})
-    budget_guard.record_tokens(150)
-
-    with span.span("tool.call", data={"tool": "search"}):
-        pass  # call your tool here
+    guard.check(tool_name="search", tool_args={"query": "agent loops"})
+    with span.span("tool.search"):
+        pass  # your tool here
 ```
+
+```bash
+agentguard report traces.jsonl   # summary table
+agentguard view traces.jsonl     # Gantt timeline in browser
+```
+
+No config, no dependencies, no account needed.
 
 ## Tracing
 
