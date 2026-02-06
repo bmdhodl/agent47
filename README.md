@@ -98,11 +98,11 @@ Send traces to the hosted dashboard instead of local files:
 from agentguard import Tracer
 from agentguard.sinks.http import HttpSink
 
-sink = HttpSink(url="https://app.agentguard.dev/api/ingest", api_key="ag_...")
+sink = HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_...")
 tracer = Tracer(sink=sink, service="my-agent")
 ```
 
-The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and team management. Free tier: 10K events/month. See [pricing](https://agentguard.dev#pricing).
+The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and team management. Free tier: 10K events/month. See [pricing](https://agentguard47.com#pricing).
 
 ## Status
 

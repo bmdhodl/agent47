@@ -163,18 +163,18 @@ Send traces to the hosted dashboard instead of local JSONL files:
 from agentguard import Tracer
 from agentguard.sinks.http import HttpSink
 
-sink = HttpSink(url="https://app.agentguard.dev/api/ingest", api_key="ag_...")
+sink = HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_...")
 tracer = Tracer(sink=sink, service="my-agent")
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
 ```
 
-Get your API key at [app.agentguard.dev](https://app.agentguard.dev). Free tier: 10K events/month.
+Get your API key at [app.agentguard47.com](https://app.agentguard47.com). Free tier: 10K events/month.
 
 ## Links
 
 - [GitHub](https://github.com/bmdhodl/agent47)
-- [Dashboard](https://app.agentguard.dev)
+- [Dashboard](https://app.agentguard47.com)
 - [Trace Schema](https://github.com/bmdhodl/agent47/blob/main/docs/trace_schema.md)
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/sdk/examples)

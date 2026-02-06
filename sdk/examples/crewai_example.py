@@ -28,7 +28,7 @@ local_sink = JsonlFileSink(os.path.join(here, "crewai_traces.jsonl"))
 dashboard_key = os.environ.get("AGENTGUARD_KEY")
 if dashboard_key:
     from agentguard.sinks.http import HttpSink
-    url = os.environ.get("AGENTGUARD_URL", "https://dashboard-brown-pi-97.vercel.app/api/ingest")
+    url = os.environ.get("AGENTGUARD_URL", "https://app.agentguard47.com/api/ingest")
     http_sink = HttpSink(url=url, api_key=dashboard_key)
     # Use a multiplex sink if you have both
     from dev_agent import MultiplexSink

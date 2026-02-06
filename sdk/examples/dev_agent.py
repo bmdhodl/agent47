@@ -13,7 +13,7 @@ Run:
   python dev_agent.py "What are the main API endpoints in this project?"
 
 Then open the dashboard to see the trace:
-  https://dashboard-brown-pi-97.vercel.app/traces
+  https://app.agentguard47.com/traces
 """
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ from agentguard.tracing import JsonlFileSink, Tracer, TraceSink
 # ---------------------------------------------------------------------------
 DASHBOARD_URL = os.environ.get(
     "AGENTGUARD_URL",
-    "https://dashboard-brown-pi-97.vercel.app/api/ingest",
+    "https://app.agentguard47.com/api/ingest",
 )
 AGENTGUARD_KEY = os.environ.get("AGENTGUARD_KEY", "")
 MODEL = os.environ.get("AGENT_MODEL", "claude-sonnet-4-5-20250929")

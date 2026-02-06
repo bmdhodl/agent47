@@ -35,7 +35,7 @@ dashboard_key = os.environ.get("AGENTGUARD_KEY")
 if dashboard_key:
     from agentguard.sinks.http import HttpSink
     from dev_agent import MultiplexSink
-    url = os.environ.get("AGENTGUARD_URL", "https://dashboard-brown-pi-97.vercel.app/api/ingest")
+    url = os.environ.get("AGENTGUARD_URL", "https://app.agentguard47.com/api/ingest")
     sink = MultiplexSink([sink, HttpSink(url=url, api_key=dashboard_key)])
 
 tracer = Tracer(sink=sink, service="openai-agent")
