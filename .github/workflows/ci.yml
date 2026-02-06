@@ -31,3 +31,20 @@ jobs:
         run: pip install ruff
       - name: Lint
         run: ruff check sdk/agentguard/
+
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: npm ci
+        working-directory: dashboard
+      - name: Lint
+        run: npm run lint
+        working-directory: dashboard
+      - name: Build
+        run: npm run build
+        working-directory: dashboard

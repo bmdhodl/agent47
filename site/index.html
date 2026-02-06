@@ -23,6 +23,7 @@
       .wrap { max-width: 980px; margin: 0 auto; padding: 56px 24px 80px; }
       .badge { display: inline-block; padding: 6px 10px; border: 1px solid #d7d0c5; border-radius: 999px; color: var(--muted); font-size: 12px; letter-spacing: 0.04em; }
       h1 { font-size: 44px; line-height: 1.1; margin: 16px 0; }
+      h2 { margin-top: 48px; }
       p { font-size: 18px; line-height: 1.6; }
       .cta {
         display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 40px;
@@ -36,18 +37,28 @@
       .card { background: var(--card); padding: 18px; border-radius: 12px; border: 1px solid #e8e2d6; }
       .code { background: #12110f; color: #f7f4ee; padding: 16px; border-radius: 12px; font-family: "IBM Plex Mono", monospace; font-size: 14px; overflow-x: auto; }
       .muted { color: var(--muted); }
+      .pricing-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 16px; }
+      .pricing-card { background: var(--card); padding: 24px; border-radius: 12px; border: 1px solid #e8e2d6; }
+      .pricing-card.highlight { border-color: var(--accent); }
+      .pricing-card h3 { margin: 0 0 4px; }
+      .pricing-card .price { font-size: 28px; font-weight: 700; margin: 8px 0 16px; }
+      .pricing-card ul { padding-left: 18px; margin: 0; }
+      .pricing-card li { margin: 6px 0; }
+      .steps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 16px; }
+      .step { text-align: center; padding: 16px; }
+      .step .num { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; }
       footer { margin-top: 40px; font-size: 14px; color: var(--muted); }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <span class="badge">OSS SDK · Self-hosted first</span>
+      <span class="badge">OSS SDK + Hosted Dashboard</span>
       <h1>AgentGuard makes AI agents visible, testable, and safe.</h1>
       <p>Trace reasoning steps, detect loops, and replay runs deterministically. Built for solo builders and small teams shipping agentic workflows.</p>
 
       <div class="cta">
-        <a class="btn" href="#demo">Run the demo</a>
-        <a class="btn secondary" href="#waitlist">Get early access</a>
+        <a class="btn" href="/dashboard">Open Dashboard</a>
+        <a class="btn secondary" href="https://github.com/bmdhodl/agent47">GitHub</a>
       </div>
 
       <div class="grid">
@@ -77,51 +88,73 @@
         </div>
       </div>
 
-      <h2 id="demo">Get started</h2>
-      <div class="code">pip install agentguard47</div>
-      <p class="muted" style="margin-top:8px;">Then run the demo:</p>
-      <div class="code">python3 -c "from agentguard import Tracer; print('ready')"</div>
-      <p class="muted">See the <a href="https://github.com/bmdhodl/agent47" style="color:var(--accent);">GitHub repo</a> for full quickstart and examples.</p>
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <p><strong>Install the SDK</strong></p>
+          <p class="muted">pip install agentguard47</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <p><strong>Add 3 lines</strong></p>
+          <p class="muted">Wrap your agent with Tracer and HttpSink</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <p><strong>See traces</strong></p>
+          <p class="muted">Gantt timelines, alerts, and usage in the dashboard</p>
+        </div>
+      </div>
 
-      <h2 id="waitlist">Early access</h2>
-      <p>Want the hosted dashboard or LangChain deep integration? Drop your email:</p>
-      <div class="card">
-        <form id="lead-form">
-          <input id="lead-email" type="email" placeholder="you@company.com" required style="padding:10px;border-radius:8px;border:1px solid #d7d0c5;width:240px;" />
-          <button class="btn" type="submit">Notify me</button>
-        </form>
-        <p id="lead-status" class="muted"></p>
+      <div class="code" style="margin-top: 24px;">from agentguard import Tracer
+from agentguard.sinks.http import HttpSink
+
+sink = HttpSink(url="https://app.agentguard.dev/api/ingest", api_key="ag_...")
+tracer = Tracer(sink=sink, service="my-agent")
+
+with tracer.trace("agent.run") as span:
+    span.event("reasoning.step", data={"thought": "search docs"})
+    with span.span("tool.search"):
+        pass  # your tool here</div>
+
+      <h2 id="pricing">Pricing</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0</div>
+          <ul>
+            <li>10,000 events/month</li>
+            <li>7-day retention</li>
+            <li>2 API keys</li>
+            <li>1 user</li>
+          </ul>
+        </div>
+        <div class="pricing-card highlight">
+          <h3>Pro</h3>
+          <div class="price">$39<span style="font-size:16px;font-weight:400">/mo</span></div>
+          <ul>
+            <li>500,000 events/month</li>
+            <li>30-day retention</li>
+            <li>5 API keys</li>
+            <li>1 user</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <h3>Team</h3>
+          <div class="price">$149<span style="font-size:16px;font-weight:400">/mo</span></div>
+          <ul>
+            <li>5,000,000 events/month</li>
+            <li>90-day retention</li>
+            <li>20 API keys</li>
+            <li>10 users</li>
+          </ul>
+        </div>
       </div>
 
       <footer>
         Built for builders. Model-agnostic. MIT-licensed SDK.
       </footer>
     </div>
-    <script>
-      const form = document.getElementById("lead-form");
-      const emailInput = document.getElementById("lead-email");
-      const statusEl = document.getElementById("lead-status");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        statusEl.textContent = "Sending...";
-        try {
-          const resp = await fetch("/api/lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: emailInput.value, source: "landing" }),
-          });
-          if (!resp.ok) {
-            const data = await resp.json().catch(() => ({}));
-            statusEl.textContent = data.error || "Something went wrong.";
-            return;
-          }
-          statusEl.textContent = "Thanks! We'll reach out soon.";
-          emailInput.value = "";
-        } catch (err) {
-          statusEl.textContent = "Network error. Please try again.";
-        }
-      });
-    </script>
   </body>
 </html>

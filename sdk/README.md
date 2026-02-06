@@ -147,8 +147,26 @@ Gantt-style timeline with color-coded spans (reasoning, tool, LLM, guard, error)
 
 - LangChain: `agentguard.integrations.langchain`
 
+## Cloud (Hosted Dashboard)
+
+Send traces to the hosted dashboard instead of local JSONL files:
+
+```python
+from agentguard import Tracer
+from agentguard.sinks.http import HttpSink
+
+sink = HttpSink(url="https://app.agentguard.dev/api/ingest", api_key="ag_...")
+tracer = Tracer(sink=sink, service="my-agent")
+
+with tracer.trace("agent.run") as span:
+    span.event("reasoning.step", data={"thought": "search docs"})
+```
+
+Get your API key at [app.agentguard.dev](https://app.agentguard.dev). Free tier: 10K events/month.
+
 ## Links
 
 - [GitHub](https://github.com/bmdhodl/agent47)
+- [Dashboard](https://app.agentguard.dev)
 - [Trace Schema](https://github.com/bmdhodl/agent47/blob/main/docs/trace_schema.md)
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/sdk/examples)

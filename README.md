@@ -15,7 +15,8 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 - `docs/strategy/` Product strategy, PRD, architecture, pricing, and metrics.
 - `docs/examples/` Integration examples (starting with LangChain).
 - `docs/strategy/trace_schema.md` Trace event schema for JSONL output.
-- `site/` Minimal landing page for early users.
+- `dashboard/` Hosted dashboard (Next.js 14) — auth, Gantt viewer, billing.
+- `site/` Landing page with pricing.
 - `scripts/` Deploy, demo, and test scripts.
 
 ## Features
@@ -25,7 +26,8 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 - Evaluation as Code: assertion-based trace analysis (`EvalSuite`)
 - Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches
 - Gantt trace viewer: timeline visualization with click-to-expand details
-- JSONL export for local inspection (future: hosted dashboard)
+- JSONL export for local inspection
+- Hosted dashboard: send traces via HttpSink, view Gantt timelines in the browser
 
 ## Install
 
@@ -86,6 +88,20 @@ The report summarizes a single agent run:
 - `Reasoning steps`: how many reasoning events were logged
 - `Tool results` / `LLM results`: captured outputs
 - `Loop guard triggered`: repeated-call loops detected
+
+## Hosted Dashboard
+
+Send traces to the hosted dashboard instead of local files:
+
+```python
+from agentguard import Tracer
+from agentguard.sinks.http import HttpSink
+
+sink = HttpSink(url="https://app.agentguard.dev/api/ingest", api_key="ag_...")
+tracer = Tracer(sink=sink, service="my-agent")
+```
+
+The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and team management. Free tier: 10K events/month. See [pricing](https://agentguard.dev#pricing).
 
 ## Status
 

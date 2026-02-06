@@ -80,16 +80,25 @@ git tag v0.X.0 && git push origin v0.X.0
 
 ## Dashboard (Commercial Layer)
 
-The dashboard is the monetization path. It receives traces via HttpSink, stores them, and provides:
-- Real-time trace timeline (Gantt visualization)
-- Loop/error/budget alerts
-- Run comparison and regression detection
-- Team sharing
+The dashboard is the monetization path. Stack: **Next.js 14 (App Router) + direct Postgres + NextAuth + Stripe**.
 
-**Pricing model (from docs/strategy/pricing.md):**
-- Free: single user, 7-day retention
-- Pro: $39/month, 30-day retention
-- Team: $149/month, 90-day retention, shared dashboards
+**Architecture:**
+- `dashboard/src/lib/db.ts` — Direct Postgres via `postgres` (postgresjs), connects via `DATABASE_URL`
+- `dashboard/src/lib/next-auth.ts` — NextAuth credentials provider with bcrypt password hashing
+- `dashboard/src/app/api/ingest/route.ts` — THE critical endpoint. Accepts NDJSON from HttpSink, validates with Zod, stores in `events` table, increments usage.
+- `dashboard/src/app/api/keys/` — API key generation (ag_ prefix, SHA-256 hashed) and revocation
+- `dashboard/src/components/trace-gantt.tsx` — React port of viewer.py Gantt JS
+- `dashboard/src/app/api/billing/` — Stripe checkout, portal, webhook
+- `dashboard/src/app/api/cron/retention/` — Vercel cron: deletes events past plan retention window
+
+**Database tables:** `users`, `teams`, `api_keys`, `events`, `usage`
+
+**Pricing:**
+- Free: 10K events/month, 7-day retention, 2 keys
+- Pro: $39/month, 500K events, 30-day retention, 5 keys
+- Team: $149/month, 5M events, 90-day retention, 20 keys, 10 users
+
+**No Supabase JS client.** We use the Supabase-hosted Postgres directly via connection string. Auth is NextAuth with credentials provider, not Supabase Auth.
 
 ## Key Decisions
 
