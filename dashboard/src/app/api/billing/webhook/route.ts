@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getStripe, planFromPriceId } from "@/lib/stripe";
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import sql from "@/lib/db";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -23,15 +23,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const admin = getSupabaseAdmin();
-
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
       const teamId = session.metadata?.team_id;
       if (!teamId) break;
 
-      // Get subscription to find the plan
       if (session.subscription) {
         const sub = await stripe.subscriptions.retrieve(
           session.subscription as string,
@@ -39,14 +36,13 @@ export async function POST(request: Request) {
         const priceId = sub.items.data[0]?.price.id;
         const plan = priceId ? planFromPriceId(priceId) : "pro";
 
-        await admin
-          .from("teams")
-          .update({
-            plan,
-            stripe_subscription_id: sub.id,
-            stripe_customer_id: session.customer as string,
-          })
-          .eq("id", teamId);
+        await sql`
+          UPDATE teams SET
+            plan = ${plan},
+            stripe_subscription_id = ${sub.id},
+            stripe_customer_id = ${session.customer as string}
+          WHERE id = ${teamId}
+        `;
       }
       break;
     }
@@ -56,19 +52,19 @@ export async function POST(request: Request) {
       const priceId = sub.items.data[0]?.price.id;
       const plan = priceId ? planFromPriceId(priceId) : "free";
 
-      await admin
-        .from("teams")
-        .update({ plan })
-        .eq("stripe_subscription_id", sub.id);
+      await sql`
+        UPDATE teams SET plan = ${plan}
+        WHERE stripe_subscription_id = ${sub.id}
+      `;
       break;
     }
 
     case "customer.subscription.deleted": {
       const sub = event.data.object;
-      await admin
-        .from("teams")
-        .update({ plan: "free", stripe_subscription_id: null })
-        .eq("stripe_subscription_id", sub.id);
+      await sql`
+        UPDATE teams SET plan = 'free', stripe_subscription_id = NULL
+        WHERE stripe_subscription_id = ${sub.id}
+      `;
       break;
     }
   }

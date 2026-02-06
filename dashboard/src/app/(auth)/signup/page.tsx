@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +19,6 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSignup(e: React.FormEvent) {
@@ -27,55 +26,33 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+    const res = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (error) {
-      setError(error.message);
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || "Signup failed");
       setLoading(false);
       return;
     }
 
-    setSuccess(true);
-    setLoading(false);
-  }
-
-  async function handleGoogleSignup() {
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+    // Auto-login after signup
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
     });
 
-    if (error) {
-      setError(error.message);
+    if (result?.error) {
+      setError("Account created but login failed. Try signing in.");
+      setLoading(false);
+      return;
     }
-  }
 
-  if (success) {
-    return (
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Check your email</CardTitle>
-          <CardDescription>
-            We sent a confirmation link to <strong>{email}</strong>
-          </CardDescription>
-        </CardHeader>
-        <CardFooter className="justify-center">
-          <Link href="/login" className="text-sm text-primary underline">
-            Back to login
-          </Link>
-        </CardFooter>
-      </Card>
-    );
+    window.location.href = "/traces";
   }
 
   return (
@@ -116,21 +93,6 @@ export default function SignupPage() {
             {loading ? "Creating account..." : "Create account"}
           </Button>
         </form>
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">or</span>
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={handleGoogleSignup}
-        >
-          Continue with Google
-        </Button>
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">

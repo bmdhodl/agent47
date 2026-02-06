@@ -1,26 +1,23 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/next-auth";
+import sql from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(request: Request) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const admin = getSupabaseAdmin();
-  const { data: team } = await admin
-    .from("teams")
-    .select("stripe_customer_id")
-    .eq("owner_id", user.id)
-    .single();
+  const userId = (session.user as { id: string }).id;
 
-  if (!team?.stripe_customer_id) {
+  const teams = await sql`
+    SELECT stripe_customer_id FROM teams
+    WHERE owner_id = ${userId}
+  `;
+
+  if (teams.length === 0 || !teams[0].stripe_customer_id) {
     return NextResponse.json(
       { error: "No billing account" },
       { status: 400 },
@@ -28,10 +25,10 @@ export async function POST(request: Request) {
   }
 
   const stripe = getStripe();
-  const session = await stripe.billingPortal.sessions.create({
-    customer: team.stripe_customer_id,
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: teams[0].stripe_customer_id,
     return_url: `${request.headers.get("origin")}/settings`,
   });
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json({ url: portalSession.url });
 }

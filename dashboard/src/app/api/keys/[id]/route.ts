@@ -1,42 +1,34 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/next-auth";
+import sql from "@/lib/db";
 
 export async function DELETE(
   _request: Request,
   { params }: { params: { id: string } },
 ) {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Verify user owns the key's team
-  const { data: key } = await supabase
-    .from("api_keys")
-    .select("id, team_id, teams!inner(owner_id)")
-    .eq("id", params.id)
-    .single();
+  const userId = (session.user as { id: string }).id;
 
-  if (
-    !key ||
-    (key.teams as unknown as { owner_id: string }).owner_id !== user.id
-  ) {
+  // Verify user owns the key's team
+  const keys = await sql`
+    SELECT ak.id FROM api_keys ak
+    JOIN teams t ON t.id = ak.team_id
+    WHERE ak.id = ${params.id} AND t.owner_id = ${userId}
+  `;
+
+  if (keys.length === 0) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const { error } = await supabase
-    .from("api_keys")
-    .update({ revoked_at: new Date().toISOString() })
-    .eq("id", params.id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  await sql`
+    UPDATE api_keys SET revoked_at = NOW()
+    WHERE id = ${params.id}
+  `;
 
   return NextResponse.json({ ok: true });
 }

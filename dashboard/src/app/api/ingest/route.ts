@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import sql from "@/lib/db";
 import { hashApiKey } from "@/lib/api-key";
 import { eventSchema } from "@/lib/validation";
 import { PLANS } from "@/lib/plans";
 import type { PlanName } from "@/lib/plans";
 
 export async function POST(request: Request) {
-  const supabaseAdmin = getSupabaseAdmin();
-
   // 1. Extract Bearer token
   const auth = request.headers.get("authorization");
   if (!auth?.startsWith("Bearer ")) {
@@ -21,40 +19,34 @@ export async function POST(request: Request) {
   const keyHash = hashApiKey(rawKey);
 
   // 2. Look up API key
-  const { data: keyRow } = await supabaseAdmin
-    .from("api_keys")
-    .select("team_id")
-    .eq("key_hash", keyHash)
-    .is("revoked_at", null)
-    .single();
+  const keyRows = await sql`
+    SELECT team_id FROM api_keys
+    WHERE key_hash = ${keyHash} AND revoked_at IS NULL
+  `;
 
-  if (!keyRow) {
+  if (keyRows.length === 0) {
     return NextResponse.json(
       { error: "Invalid or revoked API key" },
       { status: 401 },
     );
   }
 
-  const teamId = keyRow.team_id;
+  const teamId = keyRows[0].team_id;
 
   // 3. Check usage limits
-  const { data: team } = await supabaseAdmin
-    .from("teams")
-    .select("plan")
-    .eq("id", teamId)
-    .single();
+  const teamRows = await sql`
+    SELECT plan FROM teams WHERE id = ${teamId}
+  `;
 
-  const plan = PLANS[(team?.plan as PlanName) ?? "free"] ?? PLANS.free;
-  const month = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const plan = PLANS[(teamRows[0]?.plan as PlanName) ?? "free"] ?? PLANS.free;
+  const month = new Date().toISOString().slice(0, 7);
 
-  const { data: usage } = await supabaseAdmin
-    .from("usage")
-    .select("event_count")
-    .eq("team_id", teamId)
-    .eq("month", month)
-    .single();
+  const usageRows = await sql`
+    SELECT event_count FROM usage
+    WHERE team_id = ${teamId} AND month = ${month}
+  `;
 
-  const currentCount = usage?.event_count ?? 0;
+  const currentCount = usageRows.length > 0 ? Number(usageRows[0].event_count) : 0;
 
   // 4. Parse NDJSON body
   const body = await request.text();
@@ -79,7 +71,20 @@ export async function POST(request: Request) {
   }
 
   // 5. Validate and collect events
-  const rows: Array<Record<string, unknown>> = [];
+  const validEvents: Array<{
+    team_id: string;
+    trace_id: string;
+    span_id: string;
+    parent_id: string | null;
+    kind: string;
+    phase: string;
+    name: string;
+    ts: number;
+    duration_ms: number | null;
+    data: Record<string, unknown>;
+    error: { type: string; message: string } | null;
+    service: string;
+  }> = [];
   const errors: Array<{ line: number; error: string }> = [];
 
   for (let i = 0; i < lines.length; i++) {
@@ -101,7 +106,7 @@ export async function POST(request: Request) {
     }
 
     const ev = result.data;
-    rows.push({
+    validEvents.push({
       team_id: teamId,
       trace_id: ev.trace_id,
       span_id: ev.span_id,
@@ -117,34 +122,31 @@ export async function POST(request: Request) {
     });
   }
 
-  if (rows.length === 0) {
+  if (validEvents.length === 0) {
     return NextResponse.json(
       { error: "No valid events", details: errors },
       { status: 400 },
     );
   }
 
-  // 6. Batch insert
-  const { error: insertError } = await supabaseAdmin
-    .from("events")
-    .insert(rows);
-
-  if (insertError) {
-    return NextResponse.json(
-      { error: "Insert failed", details: insertError.message },
-      { status: 500 },
-    );
+  // 6. Batch insert events
+  for (const ev of validEvents) {
+    await sql`
+      INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service)
+      VALUES (${ev.team_id}, ${ev.trace_id}, ${ev.span_id}, ${ev.parent_id}, ${ev.kind}, ${ev.phase}, ${ev.name}, ${ev.ts}, ${ev.duration_ms}, ${JSON.stringify(ev.data)}::jsonb, ${ev.error ? JSON.stringify(ev.error) : null}::jsonb, ${ev.service})
+    `;
   }
 
   // 7. Increment usage counter
-  await supabaseAdmin.rpc("increment_usage", {
-    p_team_id: teamId,
-    p_month: month,
-    p_count: rows.length,
-  });
+  await sql`
+    INSERT INTO usage (team_id, month, event_count)
+    VALUES (${teamId}, ${month}, ${validEvents.length})
+    ON CONFLICT (team_id, month)
+    DO UPDATE SET event_count = usage.event_count + ${validEvents.length}
+  `;
 
   return NextResponse.json({
-    accepted: rows.length,
+    accepted: validEvents.length,
     rejected: errors.length,
     errors: errors.length > 0 ? errors : undefined,
   });

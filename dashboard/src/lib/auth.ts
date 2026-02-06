@@ -1,30 +1,26 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/next-auth";
+import sql from "@/lib/db";
 
 export async function getSessionOrRedirect() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getServerSession(authOptions);
 
-  if (!user) {
+  if (!session?.user) {
     redirect("/login");
   }
 
-  return user;
+  return session.user as { id: string; email: string };
 }
 
 export async function getTeamForUser(userId: string) {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("teams")
-    .select("*")
-    .eq("owner_id", userId)
-    .single();
+  const rows = await sql`
+    SELECT * FROM teams WHERE owner_id = ${userId}
+  `;
 
-  if (error || !data) {
+  if (rows.length === 0) {
     throw new Error("Team not found");
   }
 
-  return data;
+  return rows[0];
 }

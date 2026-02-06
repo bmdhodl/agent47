@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/next-auth";
+import sql from "@/lib/db";
 import { getStripe, STRIPE_PLANS } from "@/lib/stripe";
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(request: Request) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const userId = (session.user as { id: string }).id;
   const { plan } = await request.json();
   const priceId = STRIPE_PLANS[plan];
 
@@ -20,34 +18,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  const admin = getSupabaseAdmin();
-  const { data: team } = await admin
-    .from("teams")
-    .select("id, stripe_customer_id")
-    .eq("owner_id", user.id)
-    .single();
+  const teams = await sql`
+    SELECT id, stripe_customer_id FROM teams
+    WHERE owner_id = ${userId}
+  `;
 
-  if (!team) {
+  if (teams.length === 0) {
     return NextResponse.json({ error: "Team not found" }, { status: 404 });
   }
 
+  const team = teams[0];
   const stripe = getStripe();
 
-  // Create or reuse Stripe customer
   let customerId = team.stripe_customer_id;
   if (!customerId) {
     const customer = await stripe.customers.create({
-      email: user.email,
+      email: session.user.email!,
       metadata: { team_id: team.id },
     });
     customerId = customer.id;
-    await admin
-      .from("teams")
-      .update({ stripe_customer_id: customerId })
-      .eq("id", team.id);
+    await sql`
+      UPDATE teams SET stripe_customer_id = ${customerId}
+      WHERE id = ${team.id}
+    `;
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const checkoutSession = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
@@ -56,5 +52,5 @@ export async function POST(request: Request) {
     metadata: { team_id: team.id },
   });
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json({ url: checkoutSession.url });
 }

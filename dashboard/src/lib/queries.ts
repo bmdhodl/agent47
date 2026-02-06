@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import sql from "@/lib/db";
 
 export interface TraceRow {
   trace_id: string;
@@ -27,76 +27,64 @@ export interface EventRow {
 }
 
 export async function getTraceList(teamId: string): Promise<TraceRow[]> {
-  const supabase = createClient();
+  const rows = await sql`
+    SELECT
+      trace_id,
+      MIN(service) as service,
+      MIN(name) FILTER (WHERE parent_id IS NULL AND phase = 'start') as root_name,
+      COUNT(*)::int as event_count,
+      COUNT(*) FILTER (WHERE error IS NOT NULL)::int as error_count,
+      MAX(duration_ms) as duration_ms,
+      MIN(created_at) as started_at
+    FROM events
+    WHERE team_id = ${teamId}
+    GROUP BY trace_id
+    ORDER BY MIN(created_at) DESC
+    LIMIT 100
+  `;
 
-  // Use the trace_summary view
-  const { data, error } = await supabase
-    .from("trace_summary")
-    .select("*")
-    .eq("team_id", teamId)
-    .order("started_at", { ascending: false })
-    .limit(100);
-
-  if (error) {
-    console.error("getTraceList error:", error);
-    return [];
-  }
-
-  return (data ?? []) as TraceRow[];
+  return rows as unknown as TraceRow[];
 }
 
 export async function getTraceEvents(
   teamId: string,
   traceId: string,
 ): Promise<EventRow[]> {
-  const supabase = createClient();
+  const rows = await sql`
+    SELECT id, trace_id, span_id, parent_id, kind, phase, name, ts,
+           duration_ms, data, error, service, created_at
+    FROM events
+    WHERE team_id = ${teamId} AND trace_id = ${traceId}
+    ORDER BY ts ASC
+  `;
 
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("team_id", teamId)
-    .eq("trace_id", traceId)
-    .order("ts", { ascending: true });
-
-  if (error) {
-    console.error("getTraceEvents error:", error);
-    return [];
-  }
-
-  return (data ?? []) as EventRow[];
+  return rows as unknown as EventRow[];
 }
 
 export async function getUsageStats(teamId: string) {
-  const supabase = createClient();
   const month = new Date().toISOString().slice(0, 7);
 
-  const { data } = await supabase
-    .from("usage")
-    .select("event_count")
-    .eq("team_id", teamId)
-    .eq("month", month)
-    .single();
+  const rows = await sql`
+    SELECT event_count FROM usage
+    WHERE team_id = ${teamId} AND month = ${month}
+  `;
 
-  return { currentMonth: month, eventCount: data?.event_count ?? 0 };
+  return {
+    currentMonth: month,
+    eventCount: rows.length > 0 ? Number(rows[0].event_count) : 0,
+  };
 }
 
 export async function getAlerts(teamId: string): Promise<EventRow[]> {
-  const supabase = createClient();
+  const rows = await sql`
+    SELECT id, trace_id, span_id, parent_id, kind, phase, name, ts,
+           duration_ms, data, error, service, created_at
+    FROM events
+    WHERE team_id = ${teamId}
+      AND (name = 'guard.loop_detected' OR name = 'guard.budget_exceeded' OR error IS NOT NULL)
+    ORDER BY created_at DESC
+    LIMIT 50
+  `;
 
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("team_id", teamId)
-    .or(
-      "name.eq.guard.loop_detected,name.eq.guard.budget_exceeded,error.not.is.null",
-    )
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  if (error) {
-    console.error("getAlerts error:", error);
-    return [];
-  }
-
-  return (data ?? []) as EventRow[];
+  return rows as unknown as EventRow[];
 }

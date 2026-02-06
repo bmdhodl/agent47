@@ -1,5 +1,5 @@
 import { getSessionOrRedirect, getTeamForUser } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import sql from "@/lib/db";
 import { PLANS } from "@/lib/plans";
 import type { PlanName } from "@/lib/plans";
 import { ApiKeyManager } from "@/components/api-key-manager";
@@ -10,15 +10,15 @@ export default async function SettingsPage() {
   const user = await getSessionOrRedirect();
   const team = await getTeamForUser(user.id);
 
-  const supabase = createClient();
-  const { data: keys } = await supabase
-    .from("api_keys")
-    .select("id, prefix, name, created_at, revoked_at")
-    .eq("team_id", team.id)
-    .order("created_at", { ascending: false });
+  const keys = await sql`
+    SELECT id, prefix, name, created_at, revoked_at
+    FROM api_keys
+    WHERE team_id = ${team.id}
+    ORDER BY created_at DESC
+  `;
 
   const plan = PLANS[team.plan as PlanName] ?? PLANS.free;
-  const activeKeys = (keys ?? []).filter((k) => !k.revoked_at);
+  const activeKeys = keys.filter((k) => !k.revoked_at);
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -48,7 +48,13 @@ export default async function SettingsPage() {
 
       <ApiKeyManager
         teamId={team.id}
-        keys={keys ?? []}
+        keys={keys.map((k) => ({
+          id: k.id,
+          prefix: k.prefix,
+          name: k.name,
+          created_at: k.created_at,
+          revoked_at: k.revoked_at,
+        }))}
         maxKeys={plan.max_keys}
         activeCount={activeKeys.length}
       />
