@@ -67,6 +67,19 @@ class TestBudgetGuard(unittest.TestCase):
         with self.assertRaises(ValueError):
             BudgetGuard()
 
+    def test_reset_clears_all_state(self) -> None:
+        guard = BudgetGuard(max_tokens=100, max_calls=10, max_cost_usd=5.00)
+        guard.consume(tokens=50, calls=5, cost_usd=2.50)
+        self.assertEqual(guard.state.tokens_used, 50)
+        self.assertEqual(guard.state.calls_used, 5)
+        self.assertAlmostEqual(guard.state.cost_used, 2.50)
+        guard.reset()
+        self.assertEqual(guard.state.tokens_used, 0)
+        self.assertEqual(guard.state.calls_used, 0)
+        self.assertAlmostEqual(guard.state.cost_used, 0.0)
+        # Can consume again after reset
+        guard.consume(tokens=50, calls=5, cost_usd=2.00)
+
 
 class TestTimeoutGuard(unittest.TestCase):
     def test_no_timeout(self) -> None:

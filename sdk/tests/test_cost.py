@@ -78,6 +78,41 @@ class TestCostTracker(unittest.TestCase):
         self.assertEqual(cost, 0.0)
         self.assertEqual(tracker.total, 0.0)
 
+    def test_many_calls_accumulate(self) -> None:
+        tracker = CostTracker()
+        for _ in range(100):
+            tracker.add("gpt-4o", input_tokens=100, output_tokens=50, provider="openai")
+        self.assertEqual(len(tracker.to_dict()["calls"]), 100)
+        self.assertGreater(tracker.total, 0)
+
+
+class TestEstimateCostEdgeCases(unittest.TestCase):
+    def test_very_large_tokens(self) -> None:
+        cost = estimate_cost("gpt-4o", input_tokens=1_000_000, output_tokens=1_000_000, provider="openai")
+        # Should be a valid positive float, not overflow
+        self.assertIsInstance(cost, float)
+        self.assertGreater(cost, 0)
+
+    def test_single_token(self) -> None:
+        cost = estimate_cost("gpt-4o", input_tokens=1, output_tokens=1, provider="openai")
+        self.assertGreater(cost, 0)
+
+    def test_input_only(self) -> None:
+        cost = estimate_cost("gpt-4o", input_tokens=1000, output_tokens=0, provider="openai")
+        self.assertGreater(cost, 0)
+
+    def test_output_only(self) -> None:
+        cost = estimate_cost("gpt-4o", input_tokens=0, output_tokens=1000, provider="openai")
+        self.assertGreater(cost, 0)
+
+    def test_gemini_model(self) -> None:
+        cost = estimate_cost("gemini-1.5-pro", input_tokens=1000, output_tokens=500, provider="google")
+        self.assertGreater(cost, 0)
+
+    def test_mistral_model(self) -> None:
+        cost = estimate_cost("mistral-large-latest", input_tokens=1000, output_tokens=500, provider="mistral")
+        self.assertGreater(cost, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

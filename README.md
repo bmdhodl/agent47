@@ -109,4 +109,4 @@ The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and t
 
 ## Status
 
-v0.5.0 — 67 tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Cost tracking, dollar budget guards, and a costs dashboard.
+v0.5.0 — 88 tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Cost tracking, dollar budget guards, and a costs dashboard.
