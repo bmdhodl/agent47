@@ -19,20 +19,62 @@ export function TraceTable({ traces }: { traces: TraceRow[] }) {
 
   if (traces.length === 0) {
     return (
-      <div className="rounded-md border p-6 text-center sm:p-12">
-        <p className="text-lg font-medium text-muted-foreground">No traces yet</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Install the SDK and point it at your dashboard to start collecting traces.
+      <div className="rounded-md border p-6 sm:p-10">
+        <h2 className="text-lg font-semibold">Get started in 4 steps</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Your first trace will appear here once connected.
         </p>
-        <div className="mx-auto mt-4 max-w-lg rounded-md bg-muted p-3 text-left overflow-x-auto sm:p-4">
-          <p className="mb-2 text-xs font-medium text-muted-foreground">Quick start — 4 lines of Python:</p>
-          <pre className="text-xs leading-relaxed whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal">{`from agentguard47 import Tracer
+
+        <div className="mt-6 space-y-4">
+          <div className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</span>
+            <div>
+              <p className="text-sm font-medium">Generate an API key</p>
+              <p className="text-sm text-muted-foreground">
+                Go to{" "}
+                <Link href="/settings" className="underline hover:text-foreground">
+                  Settings
+                </Link>{" "}
+                and create a new API key. Copy it immediately — you won&apos;t see it again.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">2</span>
+            <div>
+              <p className="text-sm font-medium">Install the SDK</p>
+              <div className="mt-1 rounded-md bg-muted px-3 py-2">
+                <code className="text-xs">pip install agentguard47</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">3</span>
+            <div>
+              <p className="text-sm font-medium">Add 3 lines of Python</p>
+              <div className="mt-1 rounded-md bg-muted p-3 overflow-x-auto">
+                <pre className="text-xs leading-relaxed whitespace-pre">{`from agentguard47 import Tracer
 from agentguard47.sinks import HttpSink
 
 tracer = Tracer(sink=HttpSink(
-    url="https://your-dashboard.vercel.app/api/events",
+    url="https://app.agentguard47.com/api/ingest",
     api_key="ag_YOUR_KEY_HERE",
 ))`}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">4</span>
+            <div>
+              <p className="text-sm font-medium">Send a trace</p>
+              <p className="text-sm text-muted-foreground">
+                Run your agent — your first trace will appear here automatically.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );

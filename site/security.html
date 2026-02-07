@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security — AgentGuard</title>
+  <meta name="description" content="How AgentGuard protects your data. Zero dependencies, encrypted transport, isolated access, and responsible disclosure." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --ink: #1e1b16;
+      --accent: #1b6c4a;
+      --muted: #6c645a;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+      background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+      color: var(--ink);
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px 60px; }
+    .badge { display: inline-block; padding: 6px 10px; border: 1px solid #d7d0c5; border-radius: 999px; color: var(--muted); font-size: 11px; letter-spacing: 0.04em; }
+    h1 { font-size: 28px; line-height: 1.15; margin: 16px 0; }
+    h2 { margin-top: 40px; }
+    p { font-size: 16px; line-height: 1.6; }
+    @media (min-width: 640px) {
+      .wrap { padding: 56px 24px 80px; }
+      .badge { font-size: 12px; }
+      h1 { font-size: 44px; line-height: 1.1; }
+      h2 { margin-top: 48px; }
+      p { font-size: 18px; }
+    }
+    .muted { color: var(--muted); }
+    .card { background: var(--card); padding: 14px; border-radius: 12px; border: 1px solid #e8e2d6; }
+    .card p { font-size: 14px; }
+    @media (min-width: 640px) { .card { padding: 18px; } .card p { font-size: 16px; } }
+    .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    @media (min-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+    @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+    footer { margin-top: 40px; font-size: 14px; color: var(--muted); text-align: center; }
+    .footer-links {
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px;
+    }
+    .footer-links a { color: var(--accent); text-decoration: none; }
+    .footer-links a:hover { text-decoration: underline; }
+    .back-link { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .back-link:hover { text-decoration: underline; }
+    .card strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back-link" href="/">&larr; AgentGuard</a>
+    <h1>Security</h1>
+    <p class="muted">AgentGuard is designed with security as a first principle. Zero dependencies means zero supply chain risk. Here's how we protect your data.</p>
+
+    <div class="grid" style="margin-top: 32px;">
+      <div class="card">
+        <p><strong>Zero-dependency SDK</strong>Pure Python stdlib. No transitive dependencies, no supply chain risk. One package to audit.</p>
+      </div>
+      <div class="card">
+        <p><strong>Transport security</strong>All API traffic encrypted with TLS 1.3. No plaintext data in transit.</p>
+      </div>
+      <div class="card">
+        <p><strong>Data at rest</strong>Supabase Postgres with AES-256 encryption. Your trace data is encrypted on disk.</p>
+      </div>
+      <div class="card">
+        <p><strong>API key security</strong>Keys are hashed with SHA-256 before storage. Only the prefix is visible in the dashboard.</p>
+      </div>
+      <div class="card">
+        <p><strong>Data retention</strong>Automatic cleanup per plan tier: 7 days (Free), 30 days (Pro), 90 days (Team). No indefinite data hoarding.</p>
+      </div>
+      <div class="card">
+        <p><strong>Access isolation</strong>All queries are scoped to your team. No cross-tenant data access is possible.</p>
+      </div>
+      <div class="card">
+        <p><strong>Open source</strong>The SDK is MIT-licensed and available on GitHub. Audit the source code anytime.</p>
+      </div>
+      <div class="card">
+        <p><strong>Responsible disclosure</strong>Found a vulnerability? Email security@agentguard47.com. We respond within 48 hours.</p>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-links">
+        <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+        <a href="/index.html#pricing">Pricing</a>
+        <a href="/security.html">Security</a>
+      </div>
+      <span>&copy; 2025 AgentGuard &middot; MIT-licensed SDK &middot; Zero dependencies</span>
+    </footer>
+  </div>
+</body>
+</html>

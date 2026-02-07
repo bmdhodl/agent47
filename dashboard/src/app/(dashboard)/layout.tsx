@@ -17,7 +17,17 @@ export default async function DashboardLayout({
           <span className="font-semibold tracking-tight md:hidden">AgentGuard</span>
           <UserNav email={user.email ?? ""} />
         </header>
-        <main className="flex-1 overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">{children}</main>
+        <main className="flex flex-1 flex-col overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">
+          <div className="flex-1">{children}</div>
+          <footer className="mt-auto border-t pt-3 pb-1 text-xs text-muted-foreground md:mt-12">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <a href="/security" className="hover:underline">Security</a>
+              <a href="/help" className="hover:underline">Help</a>
+              <a href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer" className="hover:underline">GitHub</a>
+              <span className="ml-auto">agentguard47 v0.4.0</span>
+            </div>
+          </footer>
+        </main>
       </div>
     </div>
   );

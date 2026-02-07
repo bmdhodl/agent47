@@ -4,6 +4,7 @@ import { PLANS } from "@/lib/plans";
 import type { PlanName } from "@/lib/plans";
 import { ApiKeyManager } from "@/components/api-key-manager";
 import { BillingSection } from "@/components/billing-section";
+import { PasswordChangeForm } from "@/components/password-change-form";
 import { Separator } from "@/components/ui/separator";
 
 export default async function SettingsPage() {
@@ -65,6 +66,10 @@ export default async function SettingsPage() {
         currentPlan={team.plan}
         hasStripeCustomer={!!team.stripe_customer_id}
       />
+
+      <Separator />
+
+      <PasswordChangeForm />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bell, BarChart3, Settings, type LucideIcon } from "lucide-react";
+import { Activity, Bell, BarChart3, Settings, HelpCircle, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems: { href: string; label: string; icon: LucideIcon }[] = [
@@ -10,6 +10,7 @@ const navItems: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/alerts", label: "Alerts", icon: Bell },
   { href: "/usage", label: "Usage", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/help", label: "Help", icon: HelpCircle },
 ];
 
 export function Sidebar() {
@@ -41,8 +42,10 @@ export function Sidebar() {
             </Link>
           ))}
         </nav>
-        <div className="border-t text-xs text-muted-foreground px-4 py-3">
-          agentguard47 v0.4.0
+        <div className="border-t px-4 py-3">
+          <a href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:underline">
+            agentguard47 v0.4.0
+          </a>
         </div>
       </aside>
 
