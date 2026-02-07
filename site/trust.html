@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security &amp; Trust — AgentGuard</title>
+  <meta name="description" content="AgentGuard security posture, data handling, and trust documentation for procurement teams." />
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --ink: #1e1b16;
+      --accent: #1b6c4a;
+      --muted: #6c645a;
+      --card: #ffffff;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+      background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+      color: var(--ink);
+    }
+    .wrap { max-width: 800px; margin: 0 auto; padding: 32px 16px 60px; }
+    @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
+    h1 { font-size: 28px; margin: 16px 0; }
+    h2 { margin-top: 36px; font-size: 20px; }
+    @media (min-width: 640px) { h1 { font-size: 36px; } h2 { font-size: 22px; } }
+    p, li { font-size: 15px; line-height: 1.7; }
+    .muted { color: var(--muted); }
+    .back-link { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .back-link:hover { text-decoration: underline; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e8e2d6; }
+    th { font-weight: 600; background: rgba(0,0,0,0.02); }
+    .status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .status.current { background: #dcfce7; color: var(--green); }
+    .status.planned { background: #fef9c3; color: var(--yellow); }
+
+    footer { margin-top: 48px; font-size: 14px; color: var(--muted); text-align: center; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
+    .footer-links a { color: var(--accent); text-decoration: none; }
+    .footer-links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back-link" href="/">&larr; AgentGuard</a>
+    <h1>Security &amp; Trust</h1>
+    <p class="muted">This document answers common procurement and security review questions about AgentGuard. We're honest about what's shipped vs. planned — transparency builds trust faster than marketing.</p>
+
+    <h2>Authentication &amp; Access</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>User auth</td>
+        <td><span class="status current">Current</span></td>
+        <td>Email/password with bcrypt hashing, NextAuth JWT sessions</td>
+      </tr>
+      <tr>
+        <td>API key security</td>
+        <td><span class="status current">Current</span></td>
+        <td>SHA-256 hashed before storage, prefix-only display, soft-delete revocation</td>
+      </tr>
+      <tr>
+        <td>Password reset</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Token-based email reset flow (v0.6.0)</td>
+      </tr>
+      <tr>
+        <td>API key rotation &amp; expiry</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Key rotation, expiry dates, last-used tracking (v1.0)</td>
+      </tr>
+      <tr>
+        <td>SSO / SAML</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Planned for Team tier (post-1.0)</td>
+      </tr>
+    </table>
+
+    <h2>Encryption</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>In transit</td>
+        <td><span class="status current">Current</span></td>
+        <td>TLS 1.3 enforced by Vercel (dashboard) and Supabase (database)</td>
+      </tr>
+      <tr>
+        <td>At rest</td>
+        <td><span class="status current">Current</span></td>
+        <td>AES-256 via Supabase Postgres transparent encryption</td>
+      </tr>
+      <tr>
+        <td>Secret handling</td>
+        <td><span class="status current">Current</span></td>
+        <td>API keys never stored raw. Service secrets in env vars. No secrets in logs.</td>
+      </tr>
+    </table>
+
+    <h2>Data Handling &amp; Privacy</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>Tenant isolation</td>
+        <td><span class="status current">Current</span></td>
+        <td>All queries scoped by team_id. No cross-tenant access possible.</td>
+      </tr>
+      <tr>
+        <td>Data retention</td>
+        <td><span class="status current">Current</span></td>
+        <td>Auto-cleanup cron per plan: 7d (Free), 30d (Pro), 90d (Team)</td>
+      </tr>
+      <tr>
+        <td>Data capture</td>
+        <td><span class="status current">Current</span></td>
+        <td>SDK never auto-captures prompts or responses. Only what you explicitly send.</td>
+      </tr>
+      <tr>
+        <td>On-demand deletion</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>DELETE API for GDPR right-to-erasure (v1.0)</td>
+      </tr>
+    </table>
+
+    <h2>Team &amp; Access Controls</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>Team ownership</td>
+        <td><span class="status current">Current</span></td>
+        <td>Single owner per team with full control</td>
+      </tr>
+      <tr>
+        <td>RBAC</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Owner/admin/member roles with team_members table (v0.7.0)</td>
+      </tr>
+      <tr>
+        <td>Audit logs</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>API key CRUD, team changes, plan changes (v0.7.0)</td>
+      </tr>
+    </table>
+
+    <h2>Ingestion &amp; Reliability</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>SDK transport</td>
+        <td><span class="status current">Current</span></td>
+        <td>HttpSink: batched, background thread, atexit flush. Failures logged, never crash.</td>
+      </tr>
+      <tr>
+        <td>Rate limiting</td>
+        <td><span class="status current">Current</span></td>
+        <td>100 requests/min per IP on ingest. Quota enforcement per plan.</td>
+      </tr>
+      <tr>
+        <td>Gzip compression</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Client-side gzip for batches (v0.8.0)</td>
+      </tr>
+      <tr>
+        <td>Retry with backoff</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Exponential backoff on transient failures, idempotency keys (v0.8.0)</td>
+      </tr>
+      <tr>
+        <td>Backpressure</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>429 with Retry-After header, client-side backoff (v0.8.0)</td>
+      </tr>
+    </table>
+
+    <h2>Supply Chain &amp; Dependencies</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>SDK dependencies</td>
+        <td><span class="status current">Current</span></td>
+        <td><strong>Zero runtime dependencies.</strong> Pure Python stdlib. One package to audit.</td>
+      </tr>
+      <tr>
+        <td>Open source</td>
+        <td><span class="status current">Current</span></td>
+        <td>MIT-licensed. Full source on <a href="https://github.com/bmdhodl/agent47">GitHub</a>.</td>
+      </tr>
+      <tr>
+        <td>Optional integrations</td>
+        <td><span class="status current">Current</span></td>
+        <td>LangChain integration uses try/except ImportError. Never required.</td>
+      </tr>
+    </table>
+
+    <h2>Incident Response</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th><th>Details</th></tr>
+      <tr>
+        <td>Security contact</td>
+        <td><span class="status current">Current</span></td>
+        <td>security@agentguard47.com — 48-hour response commitment</td>
+      </tr>
+      <tr>
+        <td>Status page</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>Public status page for ingest uptime (v1.0)</td>
+      </tr>
+      <tr>
+        <td>SLA</td>
+        <td><span class="status planned">Planned</span></td>
+        <td>99.9% ingest uptime target (documented, not contractual until post-1.0)</td>
+      </tr>
+    </table>
+
+    <h2>Questions?</h2>
+    <p>For security inquiries: <strong>security@agentguard47.com</strong></p>
+    <p>For general questions: <a href="https://github.com/bmdhodl/agent47/issues">GitHub Issues</a></p>
+    <p class="muted" style="margin-top: 24px; font-size: 13px;">Last updated: February 2026 (v0.5.0)</p>
+
+    <footer>
+      <div class="footer-links">
+        <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+        <a href="/index.html#pricing">Pricing</a>
+        <a href="/trust.html">Security &amp; Trust</a>
+      </div>
+      <span>&copy; 2026 AgentGuard &middot; MIT-licensed SDK &middot; Zero dependencies</span>
+    </footer>
+  </div>
+</body>
+</html>

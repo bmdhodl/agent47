@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bell, BarChart3, Settings, HelpCircle, type LucideIcon } from "lucide-react";
+import { Activity, Bell, BarChart3, DollarSign, Settings, HelpCircle, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/traces", label: "Traces", icon: Activity },
   { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/costs", label: "Costs", icon: DollarSign },
   { href: "/usage", label: "Usage", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
   { href: "/help", label: "Help", icon: HelpCircle },
@@ -44,7 +45,7 @@ export function Sidebar() {
         </nav>
         <div className="border-t px-4 py-3">
           <a href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:underline">
-            agentguard47 v0.4.0
+            agentguard47 v0.5.0
           </a>
         </div>
       </aside>

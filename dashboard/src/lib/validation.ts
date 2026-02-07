@@ -17,6 +17,7 @@ export const eventSchema = z.object({
       message: z.string(),
     })
     .nullable(),
+  cost_usd: z.number().nullable().optional(),
 });
 
 export type IngestEvent = z.infer<typeof eventSchema>;

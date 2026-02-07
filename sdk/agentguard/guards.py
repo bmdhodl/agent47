@@ -48,19 +48,27 @@ class LoopGuard:
 class BudgetState:
     tokens_used: int = 0
     calls_used: int = 0
+    cost_used: float = 0.0
 
 
 class BudgetGuard:
-    def __init__(self, max_tokens: Optional[int] = None, max_calls: Optional[int] = None) -> None:
-        if max_tokens is None and max_calls is None:
-            raise ValueError("Provide max_tokens or max_calls")
+    def __init__(
+        self,
+        max_tokens: Optional[int] = None,
+        max_calls: Optional[int] = None,
+        max_cost_usd: Optional[float] = None,
+    ) -> None:
+        if max_tokens is None and max_calls is None and max_cost_usd is None:
+            raise ValueError("Provide max_tokens, max_calls, or max_cost_usd")
         self._max_tokens = max_tokens
         self._max_calls = max_calls
+        self._max_cost_usd = max_cost_usd
         self.state = BudgetState()
 
-    def consume(self, tokens: int = 0, calls: int = 0) -> None:
+    def consume(self, tokens: int = 0, calls: int = 0, cost_usd: float = 0.0) -> None:
         self.state.tokens_used += tokens
         self.state.calls_used += calls
+        self.state.cost_used += cost_usd
         if self._max_tokens is not None and self.state.tokens_used > self._max_tokens:
             raise BudgetExceeded(
                 f"Token budget exceeded: {self.state.tokens_used} > {self._max_tokens}"
@@ -68,6 +76,10 @@ class BudgetGuard:
         if self._max_calls is not None and self.state.calls_used > self._max_calls:
             raise BudgetExceeded(
                 f"Call budget exceeded: {self.state.calls_used} > {self._max_calls}"
+            )
+        if self._max_cost_usd is not None and self.state.cost_used > self._max_cost_usd:
+            raise BudgetExceeded(
+                f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.2f}"
             )
 
     def reset(self) -> None:
