@@ -5,7 +5,6 @@ import type { PlanName } from "@/lib/plans";
 import { ApiKeyManager } from "@/components/api-key-manager";
 import { BillingSection } from "@/components/billing-section";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { Separator } from "@/components/ui/separator";
 
 export default async function SettingsPage() {
   const user = await getSessionOrRedirect();
@@ -25,27 +24,28 @@ export default async function SettingsPage() {
     <div className="max-w-2xl space-y-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="mt-1 text-muted-foreground">
-          Manage your API keys and account.
+        <p className="mt-1 text-sm text-muted-foreground">
+          Manage your API keys, billing, and account.
         </p>
       </div>
 
-      <div className="space-y-2">
+      <section className="space-y-3">
         <h2 className="text-lg font-medium">Account</h2>
-        <div className="rounded-md border p-4 text-sm space-y-1">
-          <p>
-            <span className="text-muted-foreground">Email:</span> {user.email}
-          </p>
-          <p>
-            <span className="text-muted-foreground">Plan:</span> {plan.label}
-          </p>
-          <p>
-            <span className="text-muted-foreground">Team:</span> {team.name}
-          </p>
+        <div className="rounded-xl border bg-card p-5 text-sm space-y-2">
+          {[
+            { label: "Email", value: user.email },
+            { label: "Plan", value: plan.label },
+            { label: "Team", value: team.name },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              <span className="w-16 text-muted-foreground">{item.label}</span>
+              <span className="font-medium">{item.value}</span>
+            </div>
+          ))}
         </div>
-      </div>
+      </section>
 
-      <Separator />
+      <div className="h-px bg-border" />
 
       <ApiKeyManager
         teamId={team.id}
@@ -60,14 +60,14 @@ export default async function SettingsPage() {
         activeCount={activeKeys.length}
       />
 
-      <Separator />
+      <div className="h-px bg-border" />
 
       <BillingSection
         currentPlan={team.plan}
         hasStripeCustomer={!!team.stripe_customer_id}
       />
 
-      <Separator />
+      <div className="h-px bg-border" />
 
       <PasswordChangeForm />
     </div>
