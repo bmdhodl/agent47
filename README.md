@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 
-AgentGuard is a lightweight observability and evaluation toolkit for multi-agent systems. It helps solo and small teams trace agent reasoning, catch loops, replay runs deterministically, and prevent runaway costs. The SDK is open source; the hosted dashboard is the commercial layer.
+AgentGuard is a **zero-dependency** observability and runtime guard toolkit for AI agents. Trace reasoning steps, catch loops, enforce budgets, and replay runs deterministically — with nothing to install except one pure-Python package. No transitive supply chain risk. The SDK is open source; the hosted dashboard is the commercial layer.
 
 ## Why this exists
 Multi-agent systems fail in ways normal software does not: infinite tool loops, silent cascade failures, and nondeterministic regressions. The current ecosystem is fragmented across model providers and frameworks. AgentGuard focuses on the runtime logic of agents, not the runtime engine.
@@ -106,4 +106,4 @@ The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and t
 
 ## Status
 
-v0.3.0 — 48 tests, zero-dependency, framework-agnostic. See `docs/strategy/prd.md` for roadmap.
+v0.4.0 — 49 tests, **zero dependencies** (pure Python stdlib), framework-agnostic. See `docs/strategy/prd.md` for roadmap.

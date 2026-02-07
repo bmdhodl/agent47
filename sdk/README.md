@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/main/LICENSE)
 
-Lightweight, zero-dependency observability for multi-agent AI systems. Trace reasoning steps, catch loops, guard budgets, and replay runs deterministically.
+**Zero-dependency** observability and runtime guards for AI agents. Pure Python stdlib — nothing to audit, nothing that can break. Trace reasoning steps, catch loops, enforce budgets, and replay runs deterministically.
 
 ## Install
 
