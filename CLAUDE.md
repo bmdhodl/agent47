@@ -5,7 +5,7 @@
 AgentGuard is a lightweight observability and evaluation SDK for multi-agent AI systems. The SDK is open source (MIT); the hosted dashboard is the commercial layer.
 
 - **Repo:** github.com/bmdhodl/agent47
-- **Package:** `agentguard47` on PyPI (v0.3.0)
+- **Package:** `agentguard47` on PyPI (v0.4.0)
 - **Landing page:** site/index.html (deployed via Vercel)
 
 ## Architecture

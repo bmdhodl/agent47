@@ -3,16 +3,15 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 export default function SignupPage() {
@@ -56,10 +55,19 @@ export default function SignupPage() {
   }
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Create account</CardTitle>
-        <CardDescription>Get started with AgentGuard</CardDescription>
+    <Card className="border-0 shadow-lg sm:border">
+      <CardHeader className="space-y-4 text-center pb-2">
+        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
+          <Activity className="h-5 w-5 text-primary-foreground" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Create account
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Get started with AgentGuard
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSignup} className="space-y-4">
@@ -72,6 +80,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
           </div>
           <div className="space-y-2">
@@ -84,10 +93,13 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
               required
+              autoComplete="new-password"
             />
           </div>
           {error && (
-            <p className="text-sm text-destructive">{error}</p>
+            <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-3 py-2 text-sm text-destructive">
+              {error}
+            </div>
           )}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Creating account..." : "Create account"}
@@ -97,7 +109,10 @@ export default function SignupPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="text-primary underline">
+          <Link
+            href="/login"
+            className="font-medium text-foreground underline underline-offset-4 hover:no-underline"
+          >
             Sign in
           </Link>
         </p>

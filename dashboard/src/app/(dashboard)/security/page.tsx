@@ -1,3 +1,6 @@
+import { Shield, Lock, Database, Key, Users, Github, Mail } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 type Status = "current" | "planned";
 
 interface TrustItem {
@@ -8,12 +11,14 @@ interface TrustItem {
 
 interface TrustSection {
   title: string;
+  icon: LucideIcon;
   items: TrustItem[];
 }
 
 const trustSections: TrustSection[] = [
   {
     title: "Authentication & Access",
+    icon: Key,
     items: [
       { area: "User auth", status: "current", details: "Email/password with bcrypt hashing, NextAuth JWT sessions" },
       { area: "API key security", status: "current", details: "SHA-256 hashed before storage, prefix-only display, soft-delete revocation" },
@@ -24,6 +29,7 @@ const trustSections: TrustSection[] = [
   },
   {
     title: "Encryption",
+    icon: Lock,
     items: [
       { area: "In transit", status: "current", details: "TLS 1.3 enforced by Vercel (dashboard) and Supabase (database)" },
       { area: "At rest", status: "current", details: "AES-256 via Supabase Postgres transparent encryption" },
@@ -32,6 +38,7 @@ const trustSections: TrustSection[] = [
   },
   {
     title: "Data Handling & Privacy",
+    icon: Database,
     items: [
       { area: "Tenant isolation", status: "current", details: "All queries scoped by team_id. No cross-tenant access possible." },
       { area: "Data retention", status: "current", details: "Auto-cleanup cron per plan: 7d (Free), 30d (Pro), 90d (Team)" },
@@ -41,6 +48,7 @@ const trustSections: TrustSection[] = [
   },
   {
     title: "Team & Access Controls",
+    icon: Users,
     items: [
       { area: "Team ownership", status: "current", details: "Single owner per team with full control" },
       { area: "RBAC", status: "planned", details: "Owner/admin/member roles with team_members table (v0.7.0)" },
@@ -49,6 +57,7 @@ const trustSections: TrustSection[] = [
   },
   {
     title: "Ingestion & Reliability",
+    icon: Shield,
     items: [
       { area: "SDK transport", status: "current", details: "HttpSink: batched, background thread, atexit flush. Failures logged, never crash." },
       { area: "Rate limiting", status: "current", details: "100 requests/min per IP on ingest. Quota enforcement per plan." },
@@ -57,6 +66,7 @@ const trustSections: TrustSection[] = [
   },
   {
     title: "Supply Chain",
+    icon: Github,
     items: [
       { area: "SDK dependencies", status: "current", details: "Zero runtime dependencies. Pure Python stdlib." },
       { area: "Open source", status: "current", details: "MIT-licensed. Full source on GitHub." },
@@ -80,9 +90,9 @@ function StatusBadge({ status }: { status: Status }) {
 
 export default function SecurityPage() {
   return (
-    <div className="max-w-3xl space-y-8">
+    <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Security &amp; Trust</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Security & Trust</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Our security posture at a glance. We&apos;re transparent about what&apos;s shipped vs. planned.
         </p>
@@ -90,8 +100,13 @@ export default function SecurityPage() {
 
       {trustSections.map((section) => (
         <div key={section.title} className="space-y-2">
-          <h2 className="text-lg font-semibold">{section.title}</h2>
-          <div className="rounded-md border">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted">
+              <section.icon className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <h2 className="text-lg font-semibold">{section.title}</h2>
+          </div>
+          <div className="rounded-xl border bg-card">
             <div className="divide-y">
               {section.items.map((item) => (
                 <div key={item.area} className="flex items-start gap-3 px-4 py-3 text-sm">
@@ -109,11 +124,18 @@ export default function SecurityPage() {
         </div>
       ))}
 
-      <div className="rounded-md border p-4 text-sm">
-        <div className="font-medium">Security Contact</div>
-        <p className="mt-1 text-muted-foreground">
-          security@agentguard47.com — 48-hour response commitment
-        </p>
+      <div className="rounded-xl border bg-card p-5 transition-colors hover:bg-accent/30">
+        <div className="flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+            <Mail className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div>
+            <h3 className="font-medium">Security Contact</h3>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Found a vulnerability? Email security@agentguard47.com. We respond within 48 hours.
+            </p>
+          </div>
+        </div>
       </div>
 
       <p className="text-xs text-muted-foreground">

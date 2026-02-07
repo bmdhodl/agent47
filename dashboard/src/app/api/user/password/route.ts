@@ -16,7 +16,14 @@ export async function POST(request: Request) {
 
     const { currentPassword, newPassword } = await request.json();
 
-    if (!newPassword || newPassword.length < 6) {
+    if (!currentPassword || typeof currentPassword !== "string") {
+      return NextResponse.json(
+        { error: "Current password is required" },
+        { status: 400 },
+      );
+    }
+
+    if (!newPassword || typeof newPassword !== "string" || newPassword.length < 6) {
       return NextResponse.json(
         { error: "New password must be at least 6 characters" },
         { status: 400 },

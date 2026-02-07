@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 export function PasswordChangeForm() {
@@ -87,68 +88,60 @@ export function PasswordChangeForm() {
     }
   }
 
+  const fields = [
+    {
+      id: "current-password",
+      label: "Current Password",
+      value: currentPassword,
+      onChange: setCurrentPassword,
+      error: errors.currentPassword,
+      autoComplete: "current-password",
+    },
+    {
+      id: "new-password",
+      label: "New Password",
+      value: newPassword,
+      onChange: setNewPassword,
+      error: errors.newPassword,
+      autoComplete: "new-password",
+    },
+    {
+      id: "confirm-password",
+      label: "Confirm New Password",
+      value: confirmPassword,
+      onChange: setConfirmPassword,
+      error: errors.confirmPassword,
+      autoComplete: "new-password",
+    },
+  ];
+
   return (
-    <div className="space-y-4">
+    <section className="space-y-4">
       <h2 className="text-lg font-medium">Change Password</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1">
-          <label htmlFor="current-password" className="text-sm font-medium">
-            Current Password
-          </label>
-          <Input
-            id="current-password"
-            type="password"
-            className="max-w-sm"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            disabled={loading}
-          />
-          {errors.currentPassword && (
-            <p className="text-sm text-destructive">{errors.currentPassword}</p>
-          )}
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="new-password" className="text-sm font-medium">
-            New Password
-          </label>
-          <Input
-            id="new-password"
-            type="password"
-            className="max-w-sm"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            disabled={loading}
-          />
-          {errors.newPassword && (
-            <p className="text-sm text-destructive">{errors.newPassword}</p>
-          )}
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="confirm-password" className="text-sm font-medium">
-            Confirm New Password
-          </label>
-          <Input
-            id="confirm-password"
-            type="password"
-            className="max-w-sm"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            disabled={loading}
-          />
-          {errors.confirmPassword && (
-            <p className="text-sm text-destructive">
-              {errors.confirmPassword}
-            </p>
-          )}
-        </div>
+        {fields.map((field) => (
+          <div key={field.id} className="space-y-1.5">
+            <Label htmlFor={field.id}>{field.label}</Label>
+            <Input
+              id={field.id}
+              type="password"
+              className="max-w-sm"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+              disabled={loading}
+              autoComplete={field.autoComplete}
+            />
+            {field.error && (
+              <p className="text-sm text-destructive">{field.error}</p>
+            )}
+          </div>
+        ))}
 
         <Button type="submit" disabled={loading}>
           {loading ? "Updating..." : "Update Password"}
         </Button>
       </form>
-    </div>
+    </section>
   );
 }

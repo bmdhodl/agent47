@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Copy, Check, Plus, Trash2, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,8 +55,14 @@ export function ApiKeyManager({
     });
 
     if (!res.ok) {
-      const data = await res.json().catch(() => ({ error: "Failed to create key" }));
-      toast({ title: "Error", description: data.error, variant: "destructive" });
+      const data = await res
+        .json()
+        .catch(() => ({ error: "Failed to create key" }));
+      toast({
+        title: "Error",
+        description: data.error,
+        variant: "destructive",
+      });
       setLoading(false);
       return;
     }
@@ -71,8 +78,14 @@ export function ApiKeyManager({
     const res = await fetch(`/api/keys/${keyId}`, { method: "DELETE" });
     setRevokeTarget(null);
     if (!res.ok) {
-      const data = await res.json().catch(() => ({ error: "Failed to revoke key" }));
-      toast({ title: "Error", description: data.error, variant: "destructive" });
+      const data = await res
+        .json()
+        .catch(() => ({ error: "Failed to revoke key" }));
+      toast({
+        title: "Error",
+        description: data.error,
+        variant: "destructive",
+      });
       return;
     }
     toast({ title: "Key revoked" });
@@ -97,7 +110,7 @@ export function ApiKeyManager({
   }
 
   return (
-    <div className="space-y-4">
+    <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-medium">API Keys</h2>
@@ -112,7 +125,9 @@ export function ApiKeyManager({
               size="sm"
               disabled={activeCount >= maxKeys}
               onClick={() => setDialogOpen(true)}
+              className="gap-1.5"
             >
+              <Plus className="h-4 w-4" />
               Generate key
             </Button>
           </DialogTrigger>
@@ -130,11 +145,19 @@ export function ApiKeyManager({
 
             {rawKey ? (
               <div className="space-y-3">
-                <div className="rounded-md border bg-muted p-3 font-mono text-sm break-all">
+                <div className="rounded-lg border bg-muted p-3 font-mono text-sm break-all">
                   {rawKey}
                 </div>
-                <Button onClick={handleCopy} className="w-full">
-                  {copied ? "Copied!" : "Copy to clipboard"}
+                <Button onClick={handleCopy} className="w-full gap-2">
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" /> Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" /> Copy to clipboard
+                    </>
+                  )}
                 </Button>
               </div>
             ) : (
@@ -161,40 +184,49 @@ export function ApiKeyManager({
         </Dialog>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-xl border bg-card">
         {keys.length === 0 ? (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            No API keys yet. Generate one to start sending traces.
+          <div className="p-8 text-center">
+            <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+              <Key className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              No API keys yet. Generate one to start sending traces.
+            </p>
           </div>
         ) : (
           <div className="divide-y">
             {keys.map((key) => (
               <div
                 key={key.id}
-                className="flex items-center justify-between gap-2 px-3 py-3 sm:px-4"
+                className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5"
               >
                 <div className="min-w-0 space-y-1">
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <span className="font-mono text-sm">{key.prefix}...</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-sm font-medium">
+                      {key.prefix}...
+                    </span>
                     <span className="text-sm text-muted-foreground truncate">
                       {key.name}
                     </span>
                     {key.revoked_at && (
-                      <Badge variant="secondary">Revoked</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        Revoked
+                      </Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Created{" "}
-                    {new Date(key.created_at).toLocaleDateString()}
+                    Created {new Date(key.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 {!key.revoked_at && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="shrink-0 text-destructive hover:text-destructive"
+                    className="shrink-0 gap-1.5 text-destructive hover:text-destructive"
                     onClick={() => setRevokeTarget(key.id)}
                   >
+                    <Trash2 className="h-3.5 w-3.5" />
                     Revoke
                   </Button>
                 )}
@@ -204,24 +236,33 @@ export function ApiKeyManager({
         )}
       </div>
 
-      <Dialog open={revokeTarget !== null} onOpenChange={(open) => { if (!open) setRevokeTarget(null); }}>
+      <Dialog
+        open={revokeTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setRevokeTarget(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Revoke API key</DialogTitle>
             <DialogDescription>
-              This key will stop working immediately. Any agents using it will lose access. Are you sure?
+              This key will stop working immediately. Any agents using it will
+              lose access. Are you sure?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRevokeTarget(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={() => revokeTarget && handleRevoke(revokeTarget)}>
+            <Button
+              variant="destructive"
+              onClick={() => revokeTarget && handleRevoke(revokeTarget)}
+            >
               Revoke key
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </section>
   );
 }
