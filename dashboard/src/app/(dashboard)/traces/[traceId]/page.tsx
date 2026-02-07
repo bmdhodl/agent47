@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getSessionOrRedirect, getTeamForUser } from "@/lib/auth";
 import { getTraceEvents } from "@/lib/queries";
 import { TraceGantt } from "@/components/trace-gantt";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft } from "lucide-react";
 
 export default async function TraceDetailPage({
   params,
@@ -14,14 +16,15 @@ export default async function TraceDetailPage({
 
   if (events.length === 0) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <Link
           href="/traces"
-          className="text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          &larr; Back to traces
+          <ArrowLeft className="h-4 w-4" />
+          Back to traces
         </Link>
-        <div className="rounded-md border p-12 text-center text-muted-foreground">
+        <div className="rounded-xl border bg-card p-12 text-center text-muted-foreground">
           Trace not found
         </div>
       </div>
@@ -29,21 +32,23 @@ export default async function TraceDetailPage({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Link
           href="/traces"
-          className="text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          &larr; Back
+          <ArrowLeft className="h-4 w-4" />
+          Back
         </Link>
+        <div className="h-4 w-px bg-border" />
         <h1 className="font-mono text-lg font-semibold">
           {params.traceId.slice(0, 8)}...
         </h1>
         {events[0]?.api_key_name && (
-          <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+          <Badge variant="secondary" className="text-xs">
             {events[0].api_key_name}
-          </span>
+          </Badge>
         )}
       </div>
       <TraceGantt events={events} />
