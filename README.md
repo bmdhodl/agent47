@@ -15,8 +15,8 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 - `docs/strategy/` Product strategy, PRD, architecture, pricing, and metrics.
 - `docs/examples/` Integration examples (starting with LangChain).
 - `docs/strategy/trace_schema.md` Trace event schema for JSONL output.
-- `dashboard/` Hosted dashboard (Next.js 14) — auth, Gantt viewer, billing.
-- `site/` Landing page with pricing.
+- `dashboard/` Hosted dashboard (Next.js 14) — auth, Gantt viewer, billing, password management, security & help pages.
+- `site/` Landing page with pricing, trust signals, FAQ, and security page.
 - `scripts/` Deploy, demo, and test scripts.
 
 ## Features
