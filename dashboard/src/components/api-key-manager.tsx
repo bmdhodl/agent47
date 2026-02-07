@@ -171,12 +171,12 @@ export function ApiKeyManager({
             {keys.map((key) => (
               <div
                 key={key.id}
-                className="flex items-center justify-between px-4 py-3"
+                className="flex items-center justify-between gap-2 px-3 py-3 sm:px-4"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                     <span className="font-mono text-sm">{key.prefix}...</span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-muted-foreground truncate">
                       {key.name}
                     </span>
                     {key.revoked_at && (
@@ -192,7 +192,7 @@ export function ApiKeyManager({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-destructive hover:text-destructive"
+                    className="shrink-0 text-destructive hover:text-destructive"
                     onClick={() => setRevokeTarget(key.id)}
                   >
                     Revoke

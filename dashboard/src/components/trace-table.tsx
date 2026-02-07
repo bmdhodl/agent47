@@ -19,14 +19,14 @@ export function TraceTable({ traces }: { traces: TraceRow[] }) {
 
   if (traces.length === 0) {
     return (
-      <div className="rounded-md border p-12 text-center">
+      <div className="rounded-md border p-6 text-center sm:p-12">
         <p className="text-lg font-medium text-muted-foreground">No traces yet</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Install the SDK and point it at your dashboard to start collecting traces.
         </p>
-        <div className="mx-auto mt-4 max-w-lg rounded-md bg-muted p-4 text-left">
+        <div className="mx-auto mt-4 max-w-lg rounded-md bg-muted p-3 text-left overflow-x-auto sm:p-4">
           <p className="mb-2 text-xs font-medium text-muted-foreground">Quick start — 4 lines of Python:</p>
-          <pre className="text-xs leading-relaxed">{`from agentguard47 import Tracer
+          <pre className="text-xs leading-relaxed whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal">{`from agentguard47 import Tracer
 from agentguard47.sinks import HttpSink
 
 tracer = Tracer(sink=HttpSink(
@@ -52,10 +52,10 @@ tracer = Tracer(sink=HttpSink(
             <Link
               key={trace.trace_id}
               href={`/traces/${trace.trace_id}`}
-              className="flex items-center gap-4 px-4 py-3 text-sm transition-colors hover:bg-accent/50"
+              className="flex items-center gap-3 px-3 py-3 text-sm transition-colors hover:bg-accent/50 sm:gap-4 sm:px-4"
             >
               <div
-                className={`h-2 w-2 rounded-full ${
+                className={`h-2 w-2 shrink-0 rounded-full ${
                   trace.error_count > 0 ? "bg-red-400" : "bg-green-400"
                 }`}
               />
@@ -69,16 +69,16 @@ tracer = Tracer(sink=HttpSink(
                     ? ` · ${trace.duration_ms.toFixed(1)}ms`
                     : ""}
                   {trace.api_key_name && (
-                    <> · <span className="text-muted-foreground">{trace.api_key_name}</span></>
+                    <span className="hidden sm:inline"> · {trace.api_key_name}</span>
                   )}
                 </div>
               </div>
               {trace.error_count > 0 && (
-                <Badge variant="destructive" className="text-xs">
+                <Badge variant="destructive" className="text-xs shrink-0">
                   {trace.error_count} error{trace.error_count > 1 ? "s" : ""}
                 </Badge>
               )}
-              <div className="text-xs text-muted-foreground shrink-0">
+              <div className="hidden text-xs text-muted-foreground shrink-0 sm:block">
                 {new Date(trace.started_at).toLocaleString()}
               </div>
             </Link>

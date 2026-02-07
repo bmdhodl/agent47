@@ -14,17 +14,17 @@ export default async function UsagePage() {
     <div className="max-w-2xl space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Usage</h1>
 
-      <div className="rounded-md border p-6 space-y-4">
-        <div className="flex items-end justify-between">
+      <div className="rounded-md border p-4 space-y-4 sm:p-6">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="text-sm text-muted-foreground">
               Events this month ({usage.currentMonth})
             </div>
-            <div className="text-3xl font-semibold">
+            <div className="text-2xl font-semibold sm:text-3xl">
               {usage.eventCount.toLocaleString()}
             </div>
           </div>
-          <div className="text-right text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground sm:text-right">
             {plan.max_events.toLocaleString()} limit ({plan.label} plan)
           </div>
         </div>
@@ -43,7 +43,7 @@ export default async function UsagePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <div className="rounded-md border p-4 text-center">
           <div className="text-xs text-muted-foreground">Plan</div>
           <div className="mt-1 text-lg font-semibold">{plan.label}</div>

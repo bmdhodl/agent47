@@ -117,7 +117,7 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
   return (
     <div className="space-y-4">
       {/* Stats cards */}
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-9">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 sm:gap-3">
         {[
           { label: "Events", value: stats.events },
           { label: "Spans", value: stats.spans },
@@ -139,11 +139,11 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
         ].map((card) => (
           <div
             key={card.label}
-            className="rounded-md border bg-card p-3 text-center"
+            className="rounded-md border bg-card p-2 text-center sm:p-3"
           >
-            <div className="text-xs text-muted-foreground">{card.label}</div>
+            <div className="text-[10px] text-muted-foreground sm:text-xs">{card.label}</div>
             <div
-              className={`mt-1 text-lg font-semibold ${
+              className={`mt-0.5 text-sm font-semibold truncate sm:mt-1 sm:text-lg ${
                 "warn" in card && card.warn
                   ? "text-red-400"
                   : ""
@@ -169,13 +169,13 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
       </div>
 
       {/* Gantt chart */}
-      <div className="rounded-md border bg-card">
+      <div className="rounded-md border bg-card overflow-x-auto">
         {rows.length === 0 ? (
           <div className="p-8 text-center text-sm text-muted-foreground">
             No spans to display
           </div>
         ) : (
-          <div className="divide-y">
+          <div className="divide-y min-w-[480px]">
             {rows.map((row, i) => {
               const left = (row.startMs / timeRange) * 100;
               const width =
@@ -186,7 +186,7 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
               return (
                 <button
                   key={`${row.event.span_id}-${i}`}
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors hover:bg-accent/50 ${
+                  className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent/50 sm:gap-3 sm:px-4 ${
                     selected?.event.span_id === row.event.span_id
                       ? "bg-accent/30"
                       : ""
@@ -200,8 +200,8 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
                   }
                 >
                   <div
-                    className="w-48 shrink-0 truncate font-mono text-xs"
-                    style={{ paddingLeft: row.depth * 16 }}
+                    className="w-28 shrink-0 truncate font-mono text-xs sm:w-48"
+                    style={{ paddingLeft: row.depth * 12 }}
                   >
                     {row.name}
                   </div>
@@ -215,7 +215,7 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
                       }}
                     />
                   </div>
-                  <div className="w-20 shrink-0 text-right font-mono text-xs text-muted-foreground">
+                  <div className="w-16 shrink-0 text-right font-mono text-xs text-muted-foreground sm:w-20">
                     {row.durMs > 0 ? `${row.durMs.toFixed(1)}ms` : "-"}
                   </div>
                 </button>
@@ -237,7 +237,7 @@ export function TraceGantt({ events }: { events: EventRow[] }) {
               Close
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-3 md:grid-cols-5">
             <div>
               <span className="text-muted-foreground">Kind:</span>{" "}
               {selected.event.kind}

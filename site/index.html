@@ -20,13 +20,25 @@
         background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
         color: var(--ink);
       }
-      .wrap { max-width: 980px; margin: 0 auto; padding: 56px 24px 80px; }
-      .badge { display: inline-block; padding: 6px 10px; border: 1px solid #d7d0c5; border-radius: 999px; color: var(--muted); font-size: 12px; letter-spacing: 0.04em; }
-      h1 { font-size: 44px; line-height: 1.1; margin: 16px 0; }
-      h2 { margin-top: 48px; }
-      p { font-size: 18px; line-height: 1.6; }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px 60px; }
+      .badge { display: inline-block; padding: 6px 10px; border: 1px solid #d7d0c5; border-radius: 999px; color: var(--muted); font-size: 11px; letter-spacing: 0.04em; }
+      h1 { font-size: 28px; line-height: 1.15; margin: 16px 0; }
+      h2 { margin-top: 40px; }
+      p { font-size: 16px; line-height: 1.6; }
+      @media (min-width: 640px) {
+        .wrap { padding: 56px 24px 80px; }
+        .badge { font-size: 12px; }
+        h1 { font-size: 44px; line-height: 1.1; }
+        h2 { margin-top: 48px; }
+        p { font-size: 18px; }
+      }
       .cta {
-        display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 40px;
+        display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 32px;
+      }
+      .cta .btn { flex: 1; min-width: 140px; }
+      @media (min-width: 640px) {
+        .cta { margin: 24px 0 40px; }
+        .cta .btn { flex: none; min-width: auto; }
       }
       .btn {
         display: inline-block;
@@ -38,16 +50,23 @@
       .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
       .btn.secondary:hover { background: var(--accent); color: #fff; }
       .btn-sm { padding: 10px 16px; font-size: 14px; }
-      .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-      .card { background: var(--card); padding: 18px; border-radius: 12px; border: 1px solid #e8e2d6; }
+      .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+      @media (min-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+      @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+      .card { background: var(--card); padding: 14px; border-radius: 12px; border: 1px solid #e8e2d6; }
+      .card p { font-size: 14px; }
+      @media (min-width: 640px) { .card { padding: 18px; } .card p { font-size: 16px; } }
       .muted { color: var(--muted); }
 
       /* Code block */
       .code-wrap { position: relative; margin-top: 24px; }
       .code {
-        background: #0f1115; color: #e2e8f0; padding: 20px 24px; border-radius: 12px;
-        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 14px;
+        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
         line-height: 1.7; overflow-x: auto; white-space: pre; margin: 0;
+      }
+      @media (min-width: 640px) {
+        .code { padding: 20px 24px; font-size: 14px; }
       }
       .code .kw { color: #c084fc; }       /* purple — keywords */
       .code .fn { color: #60a5fa; }       /* blue — function names */
@@ -66,8 +85,10 @@
       .copy-btn svg { width: 14px; height: 14px; }
 
       /* Pricing */
-      .pricing-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 16px; }
-      .pricing-card { background: var(--card); padding: 24px; border-radius: 12px; border: 1px solid #e8e2d6; display: flex; flex-direction: column; }
+      .pricing-grid { display: grid; gap: 12px; grid-template-columns: 1fr; margin-top: 16px; }
+      @media (min-width: 640px) { .pricing-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; } }
+      .pricing-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #e8e2d6; display: flex; flex-direction: column; }
+      @media (min-width: 640px) { .pricing-card { padding: 24px; } }
       .pricing-card.highlight { border-color: var(--accent); border-width: 2px; }
       .pricing-card h3 { margin: 0 0 4px; }
       .pricing-card .price { font-size: 28px; font-weight: 700; margin: 8px 0 16px; }
