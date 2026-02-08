@@ -50,9 +50,7 @@ pip install agentguard47
 
 **2. Trace your agent with cost tracking:**
 ```python
-from agentguard import Tracer, BudgetGuard
-from agentguard.tracing import JsonlFileSink
-from agentguard.instrument import patch_openai
+from agentguard import Tracer, BudgetGuard, JsonlFileSink, patch_openai
 
 tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
 patch_openai(tracer)  # auto-tracks cost per call
@@ -61,6 +59,7 @@ guard = BudgetGuard(max_cost_usd=5.00)  # stop at $5
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
+    guard.consume(cost_usd=0.02)  # track each call's cost
     with span.span("tool.search"):
         pass  # your tool here
 ```
@@ -109,4 +108,4 @@ The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and t
 
 ## Status
 
-v0.5.0 — 88 tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Cost tracking, dollar budget guards, and a costs dashboard.
+v0.5.1 — 120+ tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Cost tracking, dollar budget guards, and a costs dashboard.

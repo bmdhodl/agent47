@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import functools
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
+
+# Store originals for unpatch support
+_originals: Dict[str, Any] = {}
 
 
 def trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
@@ -80,8 +83,9 @@ def trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
 
 
 def patch_openai(tracer: Any) -> None:
-    """Monkey-patch OpenAI's ChatCompletion.create to auto-trace calls.
+    """Monkey-patch OpenAI client to auto-trace chat completions.
 
+    Works with openai >= 1.0 (instance-based client) and < 1.0 (module-based).
     Safe to call even if openai is not installed — silently returns.
     """
     try:
@@ -89,65 +93,104 @@ def patch_openai(tracer: Any) -> None:
     except ImportError:
         return
 
-    _original = None
-
-    # Support openai >= 1.0 (client-based) and < 1.0 (module-based)
+    # openai >= 1.0: chat/completions are instance attributes, not class attrs.
+    # We wrap __init__ to patch each instance after construction.
     client_cls = getattr(openai, "OpenAI", None)
     if client_cls is not None:
-        # openai >= 1.0: patch the completions create method on the class
-        chat_completions = getattr(
-            getattr(client_cls, "chat", None), "completions", None
-        )
-        if chat_completions is not None:
-            _original = getattr(chat_completions, "create", None)
-    else:
-        # openai < 1.0
-        chat = getattr(openai, "ChatCompletion", None)
-        if chat is not None:
-            _original = getattr(chat, "create", None)
+        if "openai_init" in _originals:
+            return  # already patched
 
+        original_init = client_cls.__init__
+
+        @functools.wraps(original_init)
+        def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
+            original_init(self, *args, **kwargs)
+            _patch_openai_instance(self, tracer)
+
+        _originals["openai_init"] = original_init
+        _originals["openai_cls"] = client_cls
+        client_cls.__init__ = patched_init  # type: ignore[attr-defined]
+        return
+
+    # openai < 1.0: module-level ChatCompletion
+    chat = getattr(openai, "ChatCompletion", None)
+    if chat is None:
+        return
+    _original = getattr(chat, "create", None)
     if _original is None:
         return
 
+    _originals["openai_legacy_create"] = _original
+    _originals["openai_legacy_chat"] = chat
+
     @functools.wraps(_original)
     def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = kwargs.get("model", "unknown")
-        with tracer.trace(f"llm.openai.{model}") as ctx:
-            result = _original(*args, **kwargs)
-            # Try to extract usage
-            usage = getattr(result, "usage", None)
-            if usage is not None:
-                input_tokens = getattr(usage, "prompt_tokens", 0)
-                output_tokens = getattr(usage, "completion_tokens", 0)
-                total_tokens = getattr(usage, "total_tokens", 0)
-                from agentguard.cost import estimate_cost
+        return _traced_openai_create(_original, tracer, *args, **kwargs)
 
-                cost = estimate_cost(model, input_tokens, output_tokens, provider="openai")
-                event_data: dict = {
-                    "model": model,
-                    "usage": {
-                        "prompt_tokens": input_tokens,
-                        "completion_tokens": output_tokens,
-                        "total_tokens": total_tokens,
-                    },
-                }
-                if cost > 0:
-                    event_data["cost_usd"] = cost
-                ctx.event("llm.result", data=event_data)
-            return result
+    chat.create = traced_create  # type: ignore[attr-defined]
 
-    # Patch it back
-    if client_cls is not None and chat_completions is not None:
-        chat_completions.create = traced_create  # type: ignore[attr-defined]
-    else:
-        chat = getattr(openai, "ChatCompletion", None)
-        if chat is not None:
-            chat.create = traced_create  # type: ignore[attr-defined]
+
+def _patch_openai_instance(client: Any, tracer: Any) -> None:
+    """Patch a single OpenAI client instance's chat.completions.create."""
+    chat = getattr(client, "chat", None)
+    if chat is None:
+        return
+    completions = getattr(chat, "completions", None)
+    if completions is None:
+        return
+    original_create = completions.create
+
+    @functools.wraps(original_create)
+    def traced_create(*args: Any, **kwargs: Any) -> Any:
+        return _traced_openai_create(original_create, tracer, *args, **kwargs)
+
+    completions.create = traced_create  # type: ignore[attr-defined]
+
+
+def _traced_openai_create(original: Any, tracer: Any, *args: Any, **kwargs: Any) -> Any:
+    """Shared traced wrapper for OpenAI create calls."""
+    model = kwargs.get("model", "unknown")
+    with tracer.trace(f"llm.openai.{model}") as ctx:
+        result = original(*args, **kwargs)
+        usage = getattr(result, "usage", None)
+        if usage is not None:
+            input_tokens = getattr(usage, "prompt_tokens", 0)
+            output_tokens = getattr(usage, "completion_tokens", 0)
+            total_tokens = getattr(usage, "total_tokens", 0)
+            from agentguard.cost import estimate_cost
+
+            cost = estimate_cost(model, input_tokens, output_tokens, provider="openai")
+            event_data: dict = {
+                "model": model,
+                "usage": {
+                    "prompt_tokens": input_tokens,
+                    "completion_tokens": output_tokens,
+                    "total_tokens": total_tokens,
+                },
+            }
+            if cost > 0:
+                event_data["cost_usd"] = cost
+            ctx.event("llm.result", data=event_data)
+        return result
+
+
+def unpatch_openai() -> None:
+    """Restore original OpenAI client, undoing patch_openai().
+
+    Safe to call even if patch_openai() was never called.
+    """
+    if "openai_init" in _originals:
+        cls = _originals.pop("openai_cls")
+        cls.__init__ = _originals.pop("openai_init")
+    if "openai_legacy_create" in _originals:
+        chat = _originals.pop("openai_legacy_chat")
+        chat.create = _originals.pop("openai_legacy_create")
 
 
 def patch_anthropic(tracer: Any) -> None:
-    """Monkey-patch Anthropic's messages.create to auto-trace calls.
+    """Monkey-patch Anthropic client to auto-trace messages.create.
 
+    Works with the anthropic SDK where messages is an instance attribute.
     Safe to call even if anthropic is not installed — silently returns.
     """
     try:
@@ -159,19 +202,33 @@ def patch_anthropic(tracer: Any) -> None:
     if client_cls is None:
         return
 
-    messages = getattr(client_cls, "messages", None)
+    if "anthropic_init" in _originals:
+        return  # already patched
+
+    original_init = client_cls.__init__
+
+    @functools.wraps(original_init)
+    def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
+        original_init(self, *args, **kwargs)
+        _patch_anthropic_instance(self, tracer)
+
+    _originals["anthropic_init"] = original_init
+    _originals["anthropic_cls"] = client_cls
+    client_cls.__init__ = patched_init  # type: ignore[attr-defined]
+
+
+def _patch_anthropic_instance(client: Any, tracer: Any) -> None:
+    """Patch a single Anthropic client instance's messages.create."""
+    messages = getattr(client, "messages", None)
     if messages is None:
         return
+    original_create = messages.create
 
-    _original = getattr(messages, "create", None)
-    if _original is None:
-        return
-
-    @functools.wraps(_original)
+    @functools.wraps(original_create)
     def traced_create(*args: Any, **kwargs: Any) -> Any:
         model = kwargs.get("model", "unknown")
         with tracer.trace(f"llm.anthropic.{model}") as ctx:
-            result = _original(*args, **kwargs)
+            result = original_create(*args, **kwargs)
             usage = getattr(result, "usage", None)
             if usage is not None:
                 input_tokens = getattr(usage, "input_tokens", 0)
@@ -192,3 +249,13 @@ def patch_anthropic(tracer: Any) -> None:
             return result
 
     messages.create = traced_create  # type: ignore[attr-defined]
+
+
+def unpatch_anthropic() -> None:
+    """Restore original Anthropic client, undoing patch_anthropic().
+
+    Safe to call even if patch_anthropic() was never called.
+    """
+    if "anthropic_init" in _originals:
+        cls = _originals.pop("anthropic_cls")
+        cls.__init__ = _originals.pop("anthropic_init")

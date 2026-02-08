@@ -66,6 +66,18 @@ class BudgetGuard:
         self.state = BudgetState()
 
     def consume(self, tokens: int = 0, calls: int = 0, cost_usd: float = 0.0) -> None:
+        if not isinstance(tokens, (int, float)):
+            raise TypeError(
+                f"tokens must be a number, got {type(tokens).__name__}: {tokens!r}"
+            )
+        if not isinstance(calls, (int, float)):
+            raise TypeError(
+                f"calls must be a number, got {type(calls).__name__}: {calls!r}"
+            )
+        if not isinstance(cost_usd, (int, float)):
+            raise TypeError(
+                f"cost_usd must be a number, got {type(cost_usd).__name__}: {cost_usd!r}"
+            )
         self.state.tokens_used += tokens
         self.state.calls_used += calls
         self.state.cost_used += cost_usd
@@ -79,7 +91,7 @@ class BudgetGuard:
             )
         if self._max_cost_usd is not None and self.state.cost_used > self._max_cost_usd:
             raise BudgetExceeded(
-                f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.2f}"
+                f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.4f}"
             )
 
     def reset(self) -> None:

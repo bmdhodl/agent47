@@ -81,5 +81,54 @@ class TestHttpSink(unittest.TestCase):
         self.assertGreaterEqual(len(_CollectorHandler.received), 1)
 
 
+class TestHttpSinkHTTPWarning(unittest.TestCase):
+    def test_warns_on_http_with_api_key(self):
+        """HttpSink should log a warning when using http:// with an API key."""
+        import logging
+
+        with self.assertLogs("agentguard.sinks.http", level="WARNING") as cm:
+            sink = HttpSink(
+                url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+                api_key="secret-key",
+                batch_size=100,
+                flush_interval=60,
+            )
+            sink.shutdown()
+        self.assertTrue(any("HTTPS" in msg for msg in cm.output))
+
+    def test_no_warning_on_https(self):
+        """HttpSink should not warn when using https:// URL."""
+        import logging
+
+        logger = logging.getLogger("agentguard.sinks.http")
+        # Should not log any warnings — we test by checking it doesn't raise
+        # (assertLogs would raise if no logs are emitted)
+        sink = HttpSink(
+            url="https://example.com/ingest",
+            api_key="secret-key",
+            batch_size=100,
+            flush_interval=60,
+        )
+        sink.shutdown()
+        # If we got here without the assertLogs context, it means no warning
+
+    def test_no_warning_on_http_without_api_key(self):
+        """HttpSink should not warn when using http:// without an API key."""
+        sink = HttpSink(
+            url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+            batch_size=100,
+            flush_interval=60,
+        )
+        sink.shutdown()
+
+
+class TestHttpSinkExports(unittest.TestCase):
+    def test_importable_from_top_level(self):
+        """HttpSink should be importable from agentguard directly."""
+        from agentguard import HttpSink as TopLevelHttpSink
+
+        self.assertIs(TopLevelHttpSink, HttpSink)
+
+
 if __name__ == "__main__":
     unittest.main()

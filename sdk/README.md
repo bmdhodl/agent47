@@ -67,8 +67,7 @@ guard.check(tool_name="search", tool_args={"query": "agent loops"})
 
 # Track token and call budgets
 budget = BudgetGuard(max_tokens=50000, max_calls=100)
-budget.record_tokens(150)
-budget.record_call()
+budget.consume(tokens=150, calls=1)
 
 # Enforce wall-clock time limits
 timeout = TimeoutGuard(max_seconds=30)

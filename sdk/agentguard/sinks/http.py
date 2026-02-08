@@ -27,6 +27,12 @@ class HttpSink(TraceSink):
         batch_size: int = 10,
         flush_interval: float = 5.0,
     ) -> None:
+        if api_key and url.startswith("http://"):
+            logger.warning(
+                "HttpSink: sending API key over plain HTTP (%s). "
+                "Use HTTPS to protect credentials in transit.",
+                url,
+            )
         self._url = url
         self._api_key = api_key
         self._batch_size = batch_size
