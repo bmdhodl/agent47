@@ -181,9 +181,9 @@ _HTML = """<!doctype html>
           const width = r.durMs > 0 ? Math.max(r.durMs / timeRange * 100, 0.3).toFixed(4) : '0.3';
           const indent = r.depth > 0 ? '&nbsp;&nbsp;' : '';
           return `<div class="gantt-row" data-idx="${i}">
-            <div class="gantt-label" title="${r.name}">${indent}${r.name}</div>
+            <div class="gantt-label" title="${esc(r.name)}">${indent}${esc(r.name)}</div>
             <div class="gantt-track">
-              <div class="gantt-bar ${r.type}" style="left:${left}%;width:${width}%" title="${r.name} ${r.durMs > 0 ? r.durMs.toFixed(1)+'ms' : 'event'}"></div>
+              <div class="gantt-bar ${r.type}" style="left:${left}%;width:${width}%" title="${esc(r.name)} ${r.durMs > 0 ? r.durMs.toFixed(1)+'ms' : 'event'}"></div>
             </div>
           </div>`;
         }).join('');
@@ -198,15 +198,21 @@ _HTML = """<!doctype html>
           const ev = r.endEvent || r.event;
           detailEl.className = 'detail open';
           detailEl.innerHTML = `
-            <div class="dhead">${r.name}</div>
-            <p><strong>Kind:</strong> ${ev.kind} &nbsp; <strong>Phase:</strong> ${ev.phase}
+            <div class="dhead">${esc(r.name)}</div>
+            <p><strong>Kind:</strong> ${esc(ev.kind||'')} &nbsp; <strong>Phase:</strong> ${esc(ev.phase||'')}
             ${r.durMs > 0 ? '&nbsp; <strong>Duration:</strong> ' + r.durMs.toFixed(3) + ' ms' : ''}
-            ${ev.error ? '&nbsp; <strong style="color:var(--red)">Error:</strong> ' + ev.error.message : ''}
+            ${ev.error ? '&nbsp; <strong style="color:var(--red)">Error:</strong> ' + esc(ev.error.message||'') : ''}
             </p>
-            <p><strong>trace_id:</strong> ${ev.trace_id}<br><strong>span_id:</strong> ${ev.span_id}${ev.parent_id ? '<br><strong>parent_id:</strong> '+ev.parent_id : ''}</p>
-            <pre>${JSON.stringify(ev.data || {}, null, 2)}</pre>
+            <p><strong>trace_id:</strong> ${esc(ev.trace_id||'')}<br><strong>span_id:</strong> ${esc(ev.span_id||'')}${ev.parent_id ? '<br><strong>parent_id:</strong> '+esc(ev.parent_id) : ''}</p>
+            <pre>${esc(JSON.stringify(ev.data || {}, null, 2))}</pre>
           `;
         });
+      }
+
+      function esc(s) {
+        const d = document.createElement('div');
+        d.appendChild(document.createTextNode(s));
+        return d.innerHTML;
       }
 
       function classifyName(name) {

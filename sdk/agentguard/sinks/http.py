@@ -1,11 +1,24 @@
+"""HTTP sink for sending trace events to a remote endpoint.
+
+Usage::
+
+    from agentguard import Tracer, HttpSink
+
+    sink = HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_...")
+    tracer = Tracer(sink=sink, service="my-agent")
+"""
 from __future__ import annotations
 
 import atexit
+import gzip
 import json
 import logging
 import threading
+import time
 import urllib.request
+import uuid
 from typing import Any, Dict, List, Optional
+from urllib.error import HTTPError
 
 from agentguard.tracing import TraceSink
 
@@ -18,6 +31,30 @@ class HttpSink(TraceSink):
     Uses only stdlib (urllib.request). Events are buffered and flushed
     periodically in a background thread. Network failures are logged
     but never crash the calling agent.
+
+    Features:
+    - Gzip compression (stdlib gzip)
+    - Retry with exponential backoff (3 attempts, 1s/2s/4s)
+    - UUID idempotency keys per batch
+    - Respects 429 + Retry-After header
+
+    Usage::
+
+        sink = HttpSink(
+            url="https://app.agentguard47.com/api/ingest",
+            api_key="ag_...",
+            batch_size=10,
+            flush_interval=5.0,
+        )
+        tracer = Tracer(sink=sink, service="my-agent")
+
+    Args:
+        url: Endpoint URL to POST events to.
+        api_key: Optional API key sent as Bearer token.
+        batch_size: Flush when this many events are buffered.
+        flush_interval: Flush every N seconds regardless of buffer size.
+        compress: Enable gzip compression. Default True.
+        max_retries: Maximum retry attempts on failure. Default 3.
     """
 
     def __init__(
@@ -26,11 +63,30 @@ class HttpSink(TraceSink):
         api_key: Optional[str] = None,
         batch_size: int = 10,
         flush_interval: float = 5.0,
+        compress: bool = True,
+        max_retries: int = 3,
     ) -> None:
+        if api_key and url.startswith("http://"):
+            logger.warning(
+                "HttpSink: sending API key over plain HTTP (%s). "
+                "Use HTTPS to protect credentials in transit.",
+                url,
+            )
+        # Reject URLs with credentials in query string
+        if "?" in url:
+            query = url.split("?", 1)[1]
+            for param in ("key=", "api_key=", "token=", "secret=", "password="):
+                if param in query.lower():
+                    raise ValueError(
+                        f"HttpSink: URL contains credentials in query string ({param}...). "
+                        f"Use the api_key parameter instead."
+                    )
         self._url = url
         self._api_key = api_key
         self._batch_size = batch_size
         self._flush_interval = flush_interval
+        self._compress = compress
+        self._max_retries = max_retries
 
         self._buffer: List[Dict[str, Any]] = []
         self._lock = threading.Lock()
@@ -41,6 +97,7 @@ class HttpSink(TraceSink):
         atexit.register(self.shutdown)
 
     def emit(self, event: Dict[str, Any]) -> None:
+        """Buffer an event, flushing if batch_size is reached."""
         batch = None
         with self._lock:
             self._buffer.append(event)
@@ -65,19 +122,84 @@ class HttpSink(TraceSink):
     def _send(self, batch: List[Dict[str, Any]]) -> None:
         if not batch:
             return
-        body = "\n".join(json.dumps(e, sort_keys=True) for e in batch).encode("utf-8")
+        body_str = "\n".join(json.dumps(e, sort_keys=True) for e in batch)
+        body = body_str.encode("utf-8")
+
         headers: Dict[str, str] = {"Content-Type": "application/x-ndjson"}
         if self._api_key:
             headers["Authorization"] = f"Bearer {self._api_key}"
-        req = urllib.request.Request(self._url, data=body, headers=headers, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                resp.read()
-        except Exception:
-            logger.warning("Failed to send trace batch to %s", self._url, exc_info=True)
+
+        # Idempotency key
+        idempotency_key = uuid.uuid4().hex
+        headers["Idempotency-Key"] = idempotency_key
+
+        # Gzip compression
+        if self._compress:
+            body = gzip.compress(body)
+            headers["Content-Encoding"] = "gzip"
+
+        # Retry with exponential backoff
+        for attempt in range(self._max_retries):
+            try:
+                req = urllib.request.Request(
+                    self._url, data=body, headers=headers, method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    resp.read()
+                return  # success
+            except HTTPError as e:
+                if e.code == 429:
+                    # Respect Retry-After header (may be seconds or HTTP-date)
+                    retry_after = e.headers.get("Retry-After")
+                    wait = 2 ** attempt  # default fallback
+                    if retry_after:
+                        try:
+                            wait = float(retry_after)
+                        except ValueError:
+                            pass  # HTTP-date or unparseable — use default backoff
+                    logger.warning(
+                        "Rate limited (429) by %s, retrying in %.1fs",
+                        self._url, wait,
+                    )
+                    time.sleep(wait)
+                    continue
+                if e.code >= 500:
+                    # Server error — retry
+                    wait = 2 ** attempt
+                    logger.warning(
+                        "Server error (%d) from %s, retrying in %.1fs",
+                        e.code, self._url, wait,
+                    )
+                    time.sleep(wait)
+                    continue
+                # Client error (4xx except 429) — don't retry
+                logger.warning(
+                    "Client error (%d) sending to %s, not retrying",
+                    e.code, self._url,
+                )
+                return
+            except Exception:
+                if attempt < self._max_retries - 1:
+                    wait = 2 ** attempt
+                    logger.warning(
+                        "Failed to send trace batch to %s (attempt %d/%d), "
+                        "retrying in %.1fs",
+                        self._url, attempt + 1, self._max_retries, wait,
+                        exc_info=True,
+                    )
+                    time.sleep(wait)
+                else:
+                    logger.warning(
+                        "Failed to send trace batch to %s after %d attempts",
+                        self._url, self._max_retries,
+                        exc_info=True,
+                    )
 
     def shutdown(self) -> None:
         """Flush remaining events and stop the background thread."""
         self._stop.set()
         self._flush()
         self._thread.join(timeout=5)
+
+    def __repr__(self) -> str:
+        return f"HttpSink(url={self._url!r})"
