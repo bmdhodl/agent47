@@ -24,7 +24,7 @@ gh issue list --repo bmdhodl/agent47 --label component:api --state open --limit 
 ## Workflow
 
 1. **Start of session:** Run the commands above to see your current issues.
-2. **Pick work:** Take the highest-priority Todo item from the current phase (v0.5.1 first).
+2. **Pick work:** Take the highest-priority Todo item from the project board.
 3. **Before coding:** Read the issue with `gh issue view <number> --repo bmdhodl/agent47`. Understand the acceptance criteria.
 4. **While working:**
    - Comment on the issue with what you're doing.
@@ -48,10 +48,6 @@ gh issue list --repo bmdhodl/agent47 --label component:api --state open --limit 
   - `dashboard/src/app/api/keys/` — API key management
   - `dashboard/src/components/trace-gantt.tsx` — Trace visualization
 
-## Current Sprint (v0.5.1)
+## Current Work
 
-These are your priority — do these before anything else:
-- #12 CRITICAL — Create ingest API endpoint (POST /api/ingest)
-- #13 CRITICAL — Set up Postgres schema for trace storage
-- #43 CRITICAL — Real-time trace list view with filtering/search
-- #44 CRITICAL — Trace detail/waterfall view
+v1.0.0 is shipped. Check the project board for your current `component:dashboard` and `component:api` issues — active work is Phase 6 (Network Effects) and Phase 7 (Scale).

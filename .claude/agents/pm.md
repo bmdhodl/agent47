@@ -50,12 +50,8 @@ gh project item-list 4 --owner bmdhodl --format json
    - Create a milestone summary comment.
 
 5. **Quality gates:**
-   - v0.5.1: All critical bugs fixed, basic functionality works
-   - v0.6.0: Docs complete, DX polish
-   - v0.7.0: Async support, E2E tests passing
-   - v0.8.0: Advanced guards, alerting
-   - v0.9.0: Performance, resilience, OTLP
-   - v1.0.0: Security audit passed, 100% coverage, launch materials ready
+   - Phase 6: Team features working, new framework integrations tested, alerting live
+   - Phase 7: Multi-region deployed, search performant, SOC 2 compliant
 
 ## Board Field IDs (for GraphQL operations)
 
@@ -83,4 +79,4 @@ Phase:     PVTSSF_lAHOALAnAM4BOnP3zg9Q4Jg
 
 ## Current State
 
-Phase v0.5.1 is active. 10 items in Todo, 38 in Backlog.
+Current: v1.0.0 shipped. Active work: Phase 6 (Network Effects). Check the project board for current issues.
