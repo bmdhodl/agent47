@@ -149,9 +149,14 @@ class HttpSink(TraceSink):
                 return  # success
             except HTTPError as e:
                 if e.code == 429:
-                    # Respect Retry-After header
+                    # Respect Retry-After header (may be seconds or HTTP-date)
                     retry_after = e.headers.get("Retry-After")
-                    wait = float(retry_after) if retry_after else (2 ** attempt)
+                    wait = 2 ** attempt  # default fallback
+                    if retry_after:
+                        try:
+                            wait = float(retry_after)
+                        except ValueError:
+                            pass  # HTTP-date or unparseable — use default backoff
                     logger.warning(
                         "Rate limited (429) by %s, retrying in %.1fs",
                         self._url, wait,

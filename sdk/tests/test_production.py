@@ -91,6 +91,60 @@ class TestTracerSamplingRate(unittest.TestCase):
         self.assertGreater(len(captured), 0)
         self.assertLess(len(captured), 200)
 
+    def test_sampling_concurrent_traces_isolated(self):
+        """Concurrent traces should not interfere with each other's sampling."""
+        captured = []
+
+        class CaptureSink:
+            def emit(self, event):
+                captured.append(event)
+
+        # One tracer, rate=1.0 — all traces must emit all events
+        tracer = Tracer(sink=CaptureSink(), service="test", sampling_rate=1.0)
+
+        import threading
+
+        def run_trace(name):
+            with tracer.trace(name) as span:
+                span.event(f"{name}.step")
+
+        threads = [threading.Thread(target=run_trace, args=(f"t{i}",)) for i in range(10)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        # 10 traces x 3 events each (start, event, end) = 30
+        self.assertEqual(len(captured), 30)
+
+    def test_sampling_nested_traces_isolated(self):
+        """Nested traces should each get their own sampling decision."""
+        captured = []
+
+        class CaptureSink:
+            def emit(self, event):
+                captured.append(event)
+
+        # rate=0.0 means nothing should emit
+        tracer = Tracer(sink=CaptureSink(), service="test", sampling_rate=0.0)
+        with tracer.trace("outer") as outer:
+            outer.event("outer.step")
+            with tracer.trace("inner") as inner:
+                inner.event("inner.step")
+
+        self.assertEqual(len(captured), 0)
+
+        # rate=1.0 — nested traces should all emit
+        captured.clear()
+        tracer2 = Tracer(sink=CaptureSink(), service="test", sampling_rate=1.0)
+        with tracer2.trace("outer") as outer:
+            outer.event("outer.step")
+            with tracer2.trace("inner") as inner:
+                inner.event("inner.step")
+
+        # outer: start + event + end = 3, inner: start + event + end = 3 = 6
+        self.assertEqual(len(captured), 6)
+
 
 class _GzipCollectorHandler(BaseHTTPRequestHandler):
     received: list = []

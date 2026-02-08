@@ -103,6 +103,7 @@ class TraceContext:
     data: Optional[Dict[str, Any]]
     _start_time: Optional[float] = None
     _cost_tracker: Optional[Any] = None
+    _sampled: bool = True
 
     @property
     def cost(self) -> "CostTracker":
@@ -119,15 +120,16 @@ class TraceContext:
 
     def __enter__(self) -> "TraceContext":
         self._start_time = time.perf_counter()
-        self.tracer._emit(
-            kind="span",
-            phase="start",
-            trace_id=self.trace_id,
-            span_id=self.span_id,
-            parent_id=self.parent_id,
-            name=self.name,
-            data=self.data,
-        )
+        if self._sampled:
+            self.tracer._emit(
+                kind="span",
+                phase="start",
+                trace_id=self.trace_id,
+                span_id=self.span_id,
+                parent_id=self.parent_id,
+                name=self.name,
+                data=self.data,
+            )
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
@@ -141,17 +143,18 @@ class TraceContext:
                 "type": getattr(exc_type, "__name__", "Exception"),
                 "message": str(exc),
             }
-        self.tracer._emit(
-            kind="span",
-            phase="end",
-            trace_id=self.trace_id,
-            span_id=self.span_id,
-            parent_id=self.parent_id,
-            name=self.name,
-            data=self.data,
-            duration_ms=duration_ms,
-            error=error,
-        )
+        if self._sampled:
+            self.tracer._emit(
+                kind="span",
+                phase="end",
+                trace_id=self.trace_id,
+                span_id=self.span_id,
+                parent_id=self.parent_id,
+                name=self.name,
+                data=self.data,
+                duration_ms=duration_ms,
+                error=error,
+            )
         # Do not suppress exceptions
         return False
 
@@ -172,6 +175,7 @@ class TraceContext:
             parent_id=self.span_id,
             name=name,
             data=data,
+            _sampled=self._sampled,
         )
 
     def event(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
@@ -181,15 +185,16 @@ class TraceContext:
             name: Name of the event.
             data: Optional data to attach to the event.
         """
-        self.tracer._emit(
-            kind="event",
-            phase="emit",
-            trace_id=self.trace_id,
-            span_id=self.span_id,
-            parent_id=self.parent_id,
-            name=name,
-            data=data,
-        )
+        if self._sampled:
+            self.tracer._emit(
+                kind="event",
+                phase="emit",
+                trace_id=self.trace_id,
+                span_id=self.span_id,
+                parent_id=self.parent_id,
+                name=name,
+                data=data,
+            )
 
 
 class Tracer:
@@ -224,13 +229,14 @@ class Tracer:
         self._guards = guards or []
         self._metadata = metadata or {}
         self._sampling_rate = sampling_rate
-        self._sampled: Optional[bool] = None
 
     @contextmanager
     def trace(self, name: str, data: Optional[Dict[str, Any]] = None) -> TraceContext:
         """Start a new top-level trace span.
 
         If sampling_rate < 1.0, this trace may be silently skipped.
+        The sampling decision is local to this trace — concurrent and
+        nested traces do not interfere with each other.
 
         Args:
             name: Name of the trace span.
@@ -239,8 +245,7 @@ class Tracer:
         Yields:
             A TraceContext for creating child spans and events.
         """
-        # Decide sampling for this trace
-        self._sampled = random.random() < self._sampling_rate
+        sampled = random.random() < self._sampling_rate
         ctx = TraceContext(
             tracer=self,
             trace_id=_new_id(),
@@ -248,10 +253,10 @@ class Tracer:
             parent_id=None,
             name=name,
             data=data,
+            _sampled=sampled,
         )
         with ctx:
             yield ctx
-        self._sampled = None
 
     def _emit(
         self,
@@ -270,29 +275,27 @@ class Tracer:
         """Internal: build and emit a trace event.
 
         Also runs any attached guards on event emission.
-        Skips emission if this trace was not sampled.
+        Note: sampling is handled by TraceContext — if this method is
+        called, the event should be emitted.
         """
-        # Skip if not sampled (but still run guards)
-        sampled = self._sampled if self._sampled is not None else True
-        if sampled:
-            event: Dict[str, Any] = {
-                "service": self._service,
-                "kind": kind,
-                "phase": phase,
-                "trace_id": trace_id,
-                "span_id": span_id,
-                "parent_id": parent_id,
-                "name": name,
-                "ts": time.time(),
-                "duration_ms": duration_ms,
-                "data": data or {},
-                "error": error,
-            }
-            if cost_usd is not None:
-                event["cost_usd"] = cost_usd
-            if self._metadata:
-                event["metadata"] = self._metadata
-            self._sink.emit(event)
+        event: Dict[str, Any] = {
+            "service": self._service,
+            "kind": kind,
+            "phase": phase,
+            "trace_id": trace_id,
+            "span_id": span_id,
+            "parent_id": parent_id,
+            "name": name,
+            "ts": time.time(),
+            "duration_ms": duration_ms,
+            "data": data or {},
+            "error": error,
+        }
+        if cost_usd is not None:
+            event["cost_usd"] = cost_usd
+        if self._metadata:
+            event["metadata"] = self._metadata
+        self._sink.emit(event)
 
         # Auto-check guards
         for guard in self._guards:

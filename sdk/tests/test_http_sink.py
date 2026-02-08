@@ -128,6 +128,63 @@ class TestHttpSinkHTTPWarning(unittest.TestCase):
         sink.shutdown()
 
 
+class _429DateHandler(BaseHTTPRequestHandler):
+    """Returns 429 with HTTP-date Retry-After, then 200."""
+    call_count = 0
+
+    def do_POST(self):
+        import gzip as _gzip
+
+        length = int(self.headers.get("Content-Length", 0))
+        self.rfile.read(length)
+        self.__class__.call_count += 1
+        if self.__class__.call_count == 1:
+            self.send_response(429)
+            # HTTP-date format — not numeric seconds
+            self.send_header("Retry-After", "Sat, 01 Jan 2000 00:00:00 GMT")
+            self.end_headers()
+            self.wfile.write(b"rate limited")
+        else:
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"ok")
+
+    def log_message(self, *args):
+        pass
+
+
+class TestHttpSinkRetryAfterHttpDate(unittest.TestCase):
+    """Verify HttpSink handles HTTP-date Retry-After without crashing."""
+
+    @classmethod
+    def setUpClass(cls):
+        _429DateHandler.call_count = 0
+        cls.server = HTTPServer(("127.0.0.1", 0), _429DateHandler)
+        cls.port = cls.server.server_address[1]
+        cls.server_thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
+        cls.server_thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def test_http_date_retry_after_does_not_crash(self):
+        """Retry-After with HTTP-date should fall back to default backoff."""
+        _429DateHandler.call_count = 0
+        sink = HttpSink(
+            url=f"http://127.0.0.1:{self.port}/ingest",
+            batch_size=1,
+            flush_interval=60,
+            compress=False,
+            max_retries=3,
+        )
+        sink.emit({"event": "test"})
+        time.sleep(2)  # allow retry cycle
+        sink.shutdown()
+        # Should have retried: first call = 429, second = 200
+        self.assertGreaterEqual(_429DateHandler.call_count, 2)
+
+
 class TestHttpSinkExports(unittest.TestCase):
     def test_importable_from_top_level(self):
         """HttpSink should be importable from agentguard directly."""
