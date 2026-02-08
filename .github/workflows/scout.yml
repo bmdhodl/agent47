@@ -14,19 +14,49 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate scout context from pyproject.toml
+        run: python scripts/update_scout_context.py
+
       - name: Search for fresh outreach targets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
+          # Read dynamic variables from generated context
+          VERSION=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['version'])")
+          PACKAGE=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['package'])")
+          INSTALL=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['install_cmd'])")
+          INSTALL_LC=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['install_langchain_cmd'])")
+          REPO_URL=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['repo_url'])")
+          WHATS_NEW=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['whats_new_bullets'])")
+          SNIPPET_LOOP=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['snippets']['loop_guard'])")
+          SNIPPET_BUDGET=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['snippets']['budget_guard'])")
+          SNIPPET_LC=$(python -c "import json; print(json.load(open('docs/outreach/scout_context.json'))['snippets']['langchain'])")
+
           CUTOFF=$(date -u -d '7 days ago' +%Y-%m-%dT00:00:00Z 2>/dev/null || date -u -v-7d +%Y-%m-%dT00:00:00Z)
 
-          echo "# AgentGuard Scout Report — $(date -u +%Y-%m-%d)" > report.md
-          echo "" >> report.md
-          echo "Fresh GitHub issues (last 7 days) where people need agent loop/cost/debugging help." >> report.md
-          echo "Review each, then post a helpful comment using \`docs/github_comments_draft.md\` as a template." >> report.md
-          echo "" >> report.md
+          # --- Build report header ---
+          cat > report.md << HEADER
+          # AgentGuard Scout Report — $(date -u +%Y-%m-%d)
+
+          **SDK version:** v${VERSION} | **Install:** \`${INSTALL}\`
+
+          ### What's new
+          ${WHATS_NEW}
+
+          ---
+
+          ## Targets
+
+          Fresh GitHub issues (last 7 days) where people need agent loop/cost/debugging help.
+          Pick a target, grab the matching template below, and post.
+
+          HEADER
 
           FOUND=0
 
@@ -77,8 +107,73 @@ jobs:
             fi
           done
 
-          echo "---" >> report.md
-          echo "*Found $FOUND potential targets. Scout runs daily at 9am EST.*" >> report.md
+          # --- Append ready-to-paste templates (with current version/snippets) ---
+          cat >> report.md << TEMPLATES
+
+          ---
+
+          ## Ready-to-paste comment templates (v${VERSION})
+
+          ### Template A: Loop issue reply
+
+          \`\`\`
+          I built an open-source guard for exactly this — detects repeated tool calls and kills the run before it burns your budget.
+
+          \`\`\`python
+          ${SNIPPET_LOOP}
+          \`\`\`
+
+          Works with LangChain too:
+
+          \`\`\`python
+          ${SNIPPET_LC}
+          \`\`\`
+
+          Zero dependencies. \`${INSTALL}\`
+
+          ${REPO_URL}
+
+          Happy to help debug your specific loop if you share more details.
+          \`\`\`
+
+          ### Template B: Cost/budget issue reply
+
+          \`\`\`
+          Had the same problem. Built a budget guard that kills runs at a dollar threshold:
+
+          \`\`\`python
+          ${SNIPPET_BUDGET}
+          \`\`\`
+
+          Also auto-estimates cost per LLM call (OpenAI, Anthropic, Gemini, Mistral) so you can see exactly how much each agent run costs. Zero deps: \`${INSTALL}\`
+
+          ${REPO_URL}
+          \`\`\`
+
+          ### Template C: Debugging/observability reply
+
+          \`\`\`
+          I built AgentGuard for this — it traces every reasoning step and tool call, then gives you a report + Gantt timeline in your browser:
+
+          \`\`\`bash
+          agentguard report traces.jsonl   # summary table with cost
+          agentguard view traces.jsonl     # Gantt timeline in browser
+          \`\`\`
+
+          Also has dollar cost per call, loop detection, and budget guards. Works with LangChain or any custom agent. \`${INSTALL}\`
+
+          ${REPO_URL}
+          \`\`\`
+
+          ---
+          *Found ${FOUND} targets. Scout runs daily at 9am EST. Templates auto-updated from v${VERSION}.*
+          TEMPLATES
+
+          # Close previous scout issues before creating new one
+          PREV_ISSUES=$(gh issue list --label scout --state open --json number --jq '.[].number' 2>/dev/null || echo "")
+          for num in $PREV_ISSUES; do
+            gh issue close "$num" --comment "Superseded by today's scout report." 2>/dev/null || true
+          done
 
           # Create issue if we found anything
           if [ "$FOUND" -gt 0 ]; then
