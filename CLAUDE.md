@@ -1,116 +1,183 @@
-# CLAUDE.md — AgentGuard (agent47)
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## What This Is
 
-AgentGuard is a lightweight observability and evaluation SDK for multi-agent AI systems. The SDK is open source (MIT); the hosted dashboard is the commercial layer.
+AgentGuard — a lightweight observability and runtime-guards SDK for multi-agent AI systems. The SDK is open source (MIT, zero dependencies); the hosted dashboard is the commercial SaaS layer.
 
 - **Repo:** github.com/bmdhodl/agent47
-- **Package:** `agentguard47` on PyPI (v0.4.0)
-- **Landing page:** site/index.html (deployed via Vercel)
+- **Package:** `agentguard47` on PyPI (v0.5.0)
+- **Landing page:** site/index.html (Vercel)
+
+## Commands
+
+### SDK (Python)
+
+```bash
+# Run all tests (from repo root)
+PYTHONPATH=sdk python3 -m unittest discover -s sdk/tests -v
+
+# Run a single test file
+PYTHONPATH=sdk python3 -m unittest sdk.tests.test_guards -v
+
+# Run a single test case
+PYTHONPATH=sdk python3 -m unittest sdk.tests.test_guards.TestLoopGuard.test_loop_detected -v
+
+# Lint
+ruff check sdk/agentguard/
+
+# Install SDK in editable mode
+pip install -e ./sdk
+```
+
+### Dashboard (Next.js)
+
+```bash
+cd dashboard
+npm ci                # Install deps
+npm run dev           # Dev server on localhost:3000
+npm run build         # Production build
+npm run lint          # ESLint (next lint)
+```
+
+### MCP Server
+
+```bash
+cd mcp-server
+npm ci                # Install deps
+npm run build         # Compile TypeScript
+npm start             # Run (requires AGENTGUARD_API_KEY env var)
+```
+
+### Publishing
+
+```bash
+# Bump version in sdk/pyproject.toml, then:
+git tag v0.X.0 && git push origin v0.X.0
+# publish.yml auto-publishes to PyPI via PYPI_TOKEN
+```
 
 ## Architecture
 
+**Three products in one repo:**
+
+1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.9+. All tests use `unittest` (no pytest). Public API exports from `agentguard/__init__.py`.
+
+2. **dashboard/** — Next.js 14 App Router + direct Postgres (`postgres` lib, not Supabase JS) + NextAuth (credentials provider, JWT) + Stripe. Deployed to Vercel.
+
+3. **mcp-server/** — MCP server (`@agentguard47/mcp-server`). TypeScript, `@modelcontextprotocol/sdk`. Connects AI agents to the read API via stdio transport.
+
+### SDK Key Modules
+
+| Module | Purpose |
+|--------|---------|
+| `tracing.py` | Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink |
+| `guards.py` | LoopGuard, BudgetGuard, TimeoutGuard + exceptions |
+| `instrument.py` | @trace_agent, @trace_tool, patch_openai, patch_anthropic |
+| `sinks/` | HttpSink (batched background thread) — bridge to dashboard |
+| `integrations/` | LangChain BaseCallbackHandler |
+| `evaluation.py` | EvalSuite — chainable assertion-based trace analysis |
+| `recording.py` | Recorder, Replayer (deterministic replay) |
+| `cli.py` | CLI: report, summarize, view, eval |
+
+### Dashboard Data Flow
+
 ```
-agent47/
-├── sdk/                     # Python SDK (the OSS product)
-│   ├── agentguard/          # Source — zero dependencies, stdlib only
-│   │   ├── tracing.py       # Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink
-│   │   ├── guards.py        # LoopGuard, BudgetGuard, TimeoutGuard + exceptions
-│   │   ├── recording.py     # Recorder, Replayer (deterministic replay)
-│   │   ├── evaluation.py    # EvalSuite — chainable assertion-based trace analysis
-│   │   ├── instrument.py    # @trace_agent, @trace_tool, patch_openai, patch_anthropic
-│   │   ├── viewer.py        # Gantt trace viewer (self-contained HTML + stdlib HTTP server)
-│   │   ├── cli.py           # CLI: report, summarize, view, eval
-│   │   ├── sinks/           # HttpSink (batched background thread)
-│   │   └── integrations/    # LangChain BaseCallbackHandler
-│   ├── tests/               # 48 tests, unittest
-│   ├── examples/            # demo_agent.py + sample traces.jsonl
-│   └── pyproject.toml       # Package config
-├── dashboard/               # Hosted dashboard (Next.js) — THE COMMERCIAL LAYER
-├── api/                     # Vercel serverless functions
-│   └── lead.js              # Email capture endpoint
-├── site/                    # Landing page (static HTML)
-├── scripts/                 # deploy.sh, run_demo.sh, e2e_test.sh
-├── docs/
-│   ├── strategy/            # prd.md, architecture.md, pricing.md, etc.
-│   └── outreach/            # Distribution drafts
-└── .github/workflows/       # ci.yml, publish.yml, scout.yml
+Ingest (write):
+  SDK HttpSink → POST /api/ingest (NDJSON, Bearer ag_xxx)
+    → rate limit (100/min per IP)
+    → API key hash lookup → team resolution
+    → usage quota check against plan
+    → Zod schema validation
+    → batch INSERT INTO events (unnest)
+    → usage counter increment (INSERT...ON CONFLICT)
+
+Read API:
+  GET /api/v1/* (Bearer ag_xxx)
+    → rate limit (60/min per IP)
+    → API key auth (api-auth.ts)
+    → query functions (queries.ts)
+    → JSON response
+
+MCP Server:
+  AI Agent → stdio → MCP Server → HTTP → Read API → Postgres
 ```
+
+### Dashboard Key Files
+
+- `src/lib/db.ts` — Lazy-init Postgres via `DATABASE_URL`, proxy wrapper for tagged template `sql`
+- `src/lib/next-auth.ts` — Credentials provider, bcryptjs (12 rounds), rate-limited login
+- `src/lib/auth.ts` — `getSessionOrRedirect()`, `getTeamForUser()`
+- `src/lib/api-auth.ts` — Reusable Bearer token auth for read API (rate limited 60/min)
+- `src/lib/queries.ts` — ~20 SQL query functions (traces, usage, costs, alerts)
+- `src/lib/plans.ts` — Plan definitions (free/pro/team limits)
+- `src/lib/validation.ts` — Zod schemas for ingest events
+- `src/lib/stripe.ts` — Stripe singleton, price mapping
+- `src/lib/api-key.ts` — `ag_` prefix key generation, SHA-256 hashed storage
+- `src/app/api/ingest/route.ts` — **The critical ingest endpoint**
+- `src/app/api/v1/` — **Read API** (traces, alerts, usage, costs) + trace sharing
+- `src/app/api/billing/` — Stripe checkout, portal, webhook
+- `src/app/api/cron/retention/route.ts` — Daily cleanup (3am UTC via Vercel cron)
+- `src/app/share/[slug]/page.tsx` — Public shared trace page (no auth)
+- `src/components/share-button.tsx` — Client component for trace sharing
+- `src/middleware.ts` — Protects dashboard routes via NextAuth
+
+### Dashboard Path Alias
+
+TypeScript paths: `@/*` maps to `./src/*` (e.g., `import { sql } from "@/lib/db"`)
+
+### Dashboard Route Groups
+
+- `(auth)/` — Login, signup (public)
+- `(dashboard)/` — Protected: traces, costs, usage, alerts, settings, security, help
+- `share/` — Public shared trace pages (no auth)
+- `api/v1/` — Versioned read API (Bearer auth, separate from session auth)
 
 ## SDK Conventions
 
-- **Zero dependencies.** The SDK uses only Python stdlib. Optional deps (langchain-core) are extras.
-- **Python 3.9+** compatibility. CI tests 3.9, 3.10, 3.11, 3.12.
-- **Trace format:** JSONL. Each line is a JSON object with: service, kind (span/event), phase (start/end/emit), trace_id, span_id, parent_id, name, ts, duration_ms, data, error.
-- **Guards raise exceptions:** LoopDetected, BudgetExceeded, TimeoutExceeded.
-- **TraceSink interface:** All sinks implement `emit(event: Dict)`. Built-in: StdoutSink, JsonlFileSink, HttpSink.
-- **Exports:** All public API surfaces through `agentguard/__init__.py`.
+- **Zero dependencies.** Stdlib only. Optional extras: `langchain-core>=0.1`.
+- **Trace format:** JSONL — `{service, kind, phase, trace_id, span_id, parent_id, name, ts, duration_ms, data, error, cost_usd}`
+- **Guards raise exceptions:** `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`
+- **TraceSink interface:** All sinks implement `emit(event: Dict)`
 
-## Testing
+## Dashboard Environment Variables
 
 ```bash
-# From repo root:
-PYTHONPATH=sdk python3 -m unittest discover -s sdk/tests -v
-
-# Lint:
-ruff check sdk/agentguard/
+DATABASE_URL=postgresql://...          # Direct Postgres (Supabase-hosted)
+NEXTAUTH_SECRET=...                    # JWT signing (openssl rand -base64 32)
+NEXTAUTH_URL=http://localhost:3000
+STRIPE_SECRET_KEY=sk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_PRO=price_...
+STRIPE_PRICE_TEAM=price_...
+CRON_SECRET=...                        # Vercel cron auth
 ```
 
-- All tests use `unittest` (no pytest dependency).
-- Test files: test_guards.py, test_recording.py, test_tracing.py, test_cli_report.py, test_http_sink.py, test_langchain_integration.py, test_evaluation.py, test_instrument.py, test_viewer.py.
+## Pricing Tiers
 
-## Publishing
-
-```bash
-# Bump version in sdk/pyproject.toml
-# Update CHANGELOG.md
-# Commit, tag, push:
-git tag v0.X.0 && git push origin v0.X.0
-# publish.yml triggers automatically on v* tags → PyPI
-```
-
-- Package name: `agentguard47` (not `agentguard` — that was taken)
-- Auth: API token via PYPI_TOKEN secret (not OIDC — repo was private when first published)
+- **Free:** 10K events/month, 7-day retention, 2 keys
+- **Pro ($39/mo):** 500K events, 30-day retention, 5 keys
+- **Team ($149/mo):** 5M events, 90-day retention, 20 keys, 10 users
 
 ## CI/CD
 
-- **ci.yml:** Python 3.9-3.12 matrix + ruff lint. Runs on push to main and PRs.
-- **publish.yml:** Builds and publishes to PyPI on v* tags.
-- **scout.yml:** Daily cron (9am EST) — searches GitHub for fresh issues mentioning agent loops/observability, creates a GitHub Issue with outreach targets.
-
-## Dashboard (Commercial Layer)
-
-The dashboard is the monetization path. Stack: **Next.js 14 (App Router) + direct Postgres + NextAuth + Stripe**.
-
-**Architecture:**
-- `dashboard/src/lib/db.ts` — Direct Postgres via `postgres` (postgresjs), connects via `DATABASE_URL`
-- `dashboard/src/lib/next-auth.ts` — NextAuth credentials provider with bcrypt password hashing
-- `dashboard/src/app/api/ingest/route.ts` — THE critical endpoint. Accepts NDJSON from HttpSink, validates with Zod, stores in `events` table, increments usage.
-- `dashboard/src/app/api/keys/` — API key generation (ag_ prefix, SHA-256 hashed) and revocation
-- `dashboard/src/components/trace-gantt.tsx` — React port of viewer.py Gantt JS
-- `dashboard/src/app/api/billing/` — Stripe checkout, portal, webhook
-- `dashboard/src/app/api/cron/retention/` — Vercel cron: deletes events past plan retention window
-
-**Database tables:** `users`, `teams`, `api_keys`, `events`, `usage`
-
-**Pricing:**
-- Free: 10K events/month, 7-day retention, 2 keys
-- Pro: $39/month, 500K events, 30-day retention, 5 keys
-- Team: $149/month, 5M events, 90-day retention, 20 keys, 10 users
-
-**No Supabase JS client.** We use the Supabase-hosted Postgres directly via connection string. Auth is NextAuth with credentials provider, not Supabase Auth.
+- **ci.yml:** Python 3.9-3.12 matrix tests + ruff lint + dashboard lint/build. Runs on push/PR.
+- **deploy.yml:** Vercel deploy on push to main (dashboard changes) or PR preview.
+- **publish.yml:** PyPI publish on `v*` tags.
+- **scout.yml:** Daily cron — finds GitHub issues for outreach, creates tracking Issue.
 
 ## Key Decisions
 
-- The SDK is the acquisition channel. It must stay free, MIT, zero-dependency.
-- The dashboard is the paywall. Users who outgrow local JSONL files upgrade.
-- HttpSink already exists — it's the bridge. Point it at the dashboard API and traces flow automatically.
-- No vendor lock-in: users can always export to JSONL and use the local CLI.
+- SDK is the acquisition funnel. Must stay free, MIT, zero-dependency.
+- Dashboard is the paywall. Users who outgrow local JSONL files upgrade.
+- HttpSink is the bridge — point it at `/api/ingest` and traces flow to dashboard.
+- No Supabase JS client. Direct Postgres via connection string. Auth is NextAuth, not Supabase Auth.
 
 ## What NOT To Do
 
-- Do not add hard dependencies to the SDK. Ever.
+- Do not add hard dependencies to the SDK.
 - Do not use absolute paths in code or scripts.
 - Do not commit .env files or secrets.
-- Do not create outreach content without verifying the repo is public and the package is installable.
+- Do not create outreach content without verifying the repo is public and package is installable.
 - Do not mix implementation, testing, deployment, and strategy in one mega-session.

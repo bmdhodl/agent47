@@ -1,46 +1,17 @@
 import { NextResponse } from "next/server";
 import sql from "@/lib/db";
-import { hashApiKey } from "@/lib/api-key";
 import { eventSchema } from "@/lib/validation";
 import { PLANS } from "@/lib/plans";
 import type { PlanName } from "@/lib/plans";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { authenticateApiKey, isAuthSuccess } from "@/lib/api-auth";
 
 export async function POST(request: Request) {
-  // Rate limit: 100 requests per minute per IP
-  const ip = getClientIp(request);
-  const rl = rateLimit(`ingest:${ip}`, 100, 60_000);
-  if (!rl.ok) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
+  // Auth + rate limit (100/min for ingest scope)
+  const auth = await authenticateApiKey(request, "ingest");
+  if (!isAuthSuccess(auth)) return auth;
 
-  // 1. Extract Bearer token
-  const auth = request.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) {
-    return NextResponse.json(
-      { error: "Missing or invalid Authorization header" },
-      { status: 401 },
-    );
-  }
-
-  const rawKey = auth.slice(7);
-  const keyHash = hashApiKey(rawKey);
-
-  // 2. Look up API key
-  const keyRows = await sql`
-    SELECT id, team_id FROM api_keys
-    WHERE key_hash = ${keyHash} AND revoked_at IS NULL
-  `;
-
-  if (keyRows.length === 0) {
-    return NextResponse.json(
-      { error: "Invalid or revoked API key" },
-      { status: 401 },
-    );
-  }
-
-  const teamId = keyRows[0].team_id;
-  const apiKeyId = keyRows[0].id;
+  const teamId = auth.teamId;
+  const apiKeyId = auth.apiKeyId;
 
   // 3. Check usage limits
   const teamRows = await sql`
