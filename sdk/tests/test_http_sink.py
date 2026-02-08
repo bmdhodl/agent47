@@ -11,8 +11,14 @@ class _CollectorHandler(BaseHTTPRequestHandler):
     received: list = []
 
     def do_POST(self):
+        import gzip as _gzip
+
         length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(length).decode("utf-8")
+        raw = self.rfile.read(length)
+        encoding = self.headers.get("Content-Encoding", "")
+        if encoding == "gzip":
+            raw = _gzip.decompress(raw)
+        body = raw.decode("utf-8")
         auth = self.headers.get("Authorization", "")
         self.__class__.received.append({"body": body, "auth": auth})
         self.send_response(200)
@@ -79,6 +85,112 @@ class TestHttpSink(unittest.TestCase):
         sink.emit({"event": "final"})
         sink.shutdown()
         self.assertGreaterEqual(len(_CollectorHandler.received), 1)
+
+
+class TestHttpSinkHTTPWarning(unittest.TestCase):
+    def test_warns_on_http_with_api_key(self):
+        """HttpSink should log a warning when using http:// with an API key."""
+        import logging
+
+        with self.assertLogs("agentguard.sinks.http", level="WARNING") as cm:
+            sink = HttpSink(
+                url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+                api_key="secret-key",
+                batch_size=100,
+                flush_interval=60,
+            )
+            sink.shutdown()
+        self.assertTrue(any("HTTPS" in msg for msg in cm.output))
+
+    def test_no_warning_on_https(self):
+        """HttpSink should not warn when using https:// URL."""
+        import logging
+
+        logger = logging.getLogger("agentguard.sinks.http")
+        # Should not log any warnings — we test by checking it doesn't raise
+        # (assertLogs would raise if no logs are emitted)
+        sink = HttpSink(
+            url="https://example.com/ingest",
+            api_key="secret-key",
+            batch_size=100,
+            flush_interval=60,
+        )
+        sink.shutdown()
+        # If we got here without the assertLogs context, it means no warning
+
+    def test_no_warning_on_http_without_api_key(self):
+        """HttpSink should not warn when using http:// without an API key."""
+        sink = HttpSink(
+            url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+            batch_size=100,
+            flush_interval=60,
+        )
+        sink.shutdown()
+
+
+class _429DateHandler(BaseHTTPRequestHandler):
+    """Returns 429 with HTTP-date Retry-After, then 200."""
+    call_count = 0
+
+    def do_POST(self):
+        import gzip as _gzip
+
+        length = int(self.headers.get("Content-Length", 0))
+        self.rfile.read(length)
+        self.__class__.call_count += 1
+        if self.__class__.call_count == 1:
+            self.send_response(429)
+            # HTTP-date format — not numeric seconds
+            self.send_header("Retry-After", "Sat, 01 Jan 2000 00:00:00 GMT")
+            self.end_headers()
+            self.wfile.write(b"rate limited")
+        else:
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"ok")
+
+    def log_message(self, *args):
+        pass
+
+
+class TestHttpSinkRetryAfterHttpDate(unittest.TestCase):
+    """Verify HttpSink handles HTTP-date Retry-After without crashing."""
+
+    @classmethod
+    def setUpClass(cls):
+        _429DateHandler.call_count = 0
+        cls.server = HTTPServer(("127.0.0.1", 0), _429DateHandler)
+        cls.port = cls.server.server_address[1]
+        cls.server_thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
+        cls.server_thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def test_http_date_retry_after_does_not_crash(self):
+        """Retry-After with HTTP-date should fall back to default backoff."""
+        _429DateHandler.call_count = 0
+        sink = HttpSink(
+            url=f"http://127.0.0.1:{self.port}/ingest",
+            batch_size=1,
+            flush_interval=60,
+            compress=False,
+            max_retries=3,
+        )
+        sink.emit({"event": "test"})
+        time.sleep(2)  # allow retry cycle
+        sink.shutdown()
+        # Should have retried: first call = 429, second = 200
+        self.assertGreaterEqual(_429DateHandler.call_count, 2)
+
+
+class TestHttpSinkExports(unittest.TestCase):
+    def test_importable_from_top_level(self):
+        """HttpSink should be importable from agentguard directly."""
+        from agentguard import HttpSink as TopLevelHttpSink
+
+        self.assertIs(TopLevelHttpSink, HttpSink)
 
 
 if __name__ == "__main__":

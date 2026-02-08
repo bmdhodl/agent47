@@ -8,6 +8,9 @@ on:
   pull_request:
     paths: ['dashboard/**']
 
+permissions:
+  pull-requests: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

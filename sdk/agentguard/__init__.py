@@ -1,24 +1,48 @@
-from .tracing import Tracer
+from .tracing import Tracer, JsonlFileSink, StdoutSink, TraceSink
 from .guards import (
     LoopGuard,
     BudgetGuard,
     TimeoutGuard,
+    FuzzyLoopGuard,
+    RateLimitGuard,
     LoopDetected,
     BudgetExceeded,
+    BudgetWarning,
     TimeoutExceeded,
 )
 from .cost import CostTracker, estimate_cost, update_prices
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
 from .evaluation import EvalSuite, EvalResult, AssertionResult
+from .atracing import AsyncTracer, AsyncTraceContext
+from .instrument import (
+    trace_agent,
+    trace_tool,
+    patch_openai,
+    patch_anthropic,
+    unpatch_openai,
+    unpatch_anthropic,
+    async_trace_agent,
+    async_trace_tool,
+    patch_openai_async,
+    patch_anthropic_async,
+    unpatch_openai_async,
+    unpatch_anthropic_async,
+)
 
 __all__ = [
     "Tracer",
+    "JsonlFileSink",
+    "StdoutSink",
+    "TraceSink",
     "LoopGuard",
     "BudgetGuard",
     "TimeoutGuard",
+    "FuzzyLoopGuard",
+    "RateLimitGuard",
     "LoopDetected",
     "BudgetExceeded",
+    "BudgetWarning",
     "TimeoutExceeded",
     "CostTracker",
     "estimate_cost",
@@ -29,4 +53,18 @@ __all__ = [
     "EvalSuite",
     "EvalResult",
     "AssertionResult",
+    "trace_agent",
+    "trace_tool",
+    "patch_openai",
+    "patch_anthropic",
+    "unpatch_openai",
+    "unpatch_anthropic",
+    "AsyncTracer",
+    "AsyncTraceContext",
+    "async_trace_agent",
+    "async_trace_tool",
+    "patch_openai_async",
+    "patch_anthropic_async",
+    "unpatch_openai_async",
+    "unpatch_anthropic_async",
 ]
