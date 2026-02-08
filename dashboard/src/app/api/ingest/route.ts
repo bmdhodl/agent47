@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       error: ev.error,
       service: ev.service,
       api_key_id: apiKeyId,
-      cost_usd: ev.cost_usd ?? null,
+      cost_usd: ev.cost_usd ?? (ev.data as Record<string, unknown>)?.cost_usd as number ?? null,
     });
   }
 

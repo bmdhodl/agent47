@@ -136,7 +136,10 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
                     payload["cost_usd"] = cost
             if self._budget_guard and "total_tokens" in usage:
                 try:
-                    self._budget_guard.consume(tokens=usage["total_tokens"])
+                    consume_kwargs: Dict[str, Any] = {"tokens": usage["total_tokens"]}
+                    if "cost_usd" in payload:
+                        consume_kwargs["cost_usd"] = payload["cost_usd"]
+                    self._budget_guard.consume(**consume_kwargs)
                 except BudgetExceeded as e:
                     ctx.event("guard.budget_exceeded", data={
                         "tokens_used": self._budget_guard.state.tokens_used,

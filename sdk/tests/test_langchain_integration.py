@@ -90,6 +90,23 @@ class TestLangChainIntegration(unittest.TestCase):
 
         self.assertEqual(guard.state.calls_used, 2)
 
+    def test_budget_guard_cost_usd_on_llm_end(self):
+        """on_llm_end with a known model should pass cost_usd to BudgetGuard.consume."""
+        guard = BudgetGuard(max_cost_usd=1.00)
+        handler = AgentGuardCallbackHandler(
+            tracer=self.tracer, budget_guard=guard
+        )
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_llm_end(
+            _MockResponseWithModel(model="gpt-4o", input_t=1000, output_t=500),
+            run_id=llm_id,
+        )
+
+        self.assertGreater(guard.state.cost_used, 0)
 
     def test_llm_end_includes_cost_for_known_model(self):
         """on_llm_end with a known model and token usage should include cost_usd."""
