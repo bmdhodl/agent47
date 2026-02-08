@@ -11,8 +11,14 @@ class _CollectorHandler(BaseHTTPRequestHandler):
     received: list = []
 
     def do_POST(self):
+        import gzip as _gzip
+
         length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(length).decode("utf-8")
+        raw = self.rfile.read(length)
+        encoding = self.headers.get("Content-Encoding", "")
+        if encoding == "gzip":
+            raw = _gzip.decompress(raw)
+        body = raw.decode("utf-8")
         auth = self.headers.get("Authorization", "")
         self.__class__.received.append({"body": body, "auth": auth})
         self.send_response(200)

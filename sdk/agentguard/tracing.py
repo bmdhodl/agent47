@@ -21,6 +21,7 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
 import json
+import random
 import threading
 import time
 import uuid
@@ -206,6 +207,8 @@ class Tracer:
         sink: Where to send trace events. Defaults to StdoutSink.
         service: Name of the service being traced.
         guards: Optional list of guards to auto-check on each event.
+        metadata: Dict of metadata attached to every event (e.g. env, git SHA).
+        sampling_rate: Float 0.0-1.0. Fraction of traces to emit. 1.0 = all, 0.0 = none.
     """
 
     def __init__(
@@ -213,14 +216,21 @@ class Tracer:
         sink: Optional[TraceSink] = None,
         service: str = "app",
         guards: Optional[List[Any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        sampling_rate: float = 1.0,
     ) -> None:
         self._sink = sink or StdoutSink()
         self._service = service
         self._guards = guards or []
+        self._metadata = metadata or {}
+        self._sampling_rate = sampling_rate
+        self._sampled: Optional[bool] = None
 
     @contextmanager
     def trace(self, name: str, data: Optional[Dict[str, Any]] = None) -> TraceContext:
         """Start a new top-level trace span.
+
+        If sampling_rate < 1.0, this trace may be silently skipped.
 
         Args:
             name: Name of the trace span.
@@ -229,6 +239,8 @@ class Tracer:
         Yields:
             A TraceContext for creating child spans and events.
         """
+        # Decide sampling for this trace
+        self._sampled = random.random() < self._sampling_rate
         ctx = TraceContext(
             tracer=self,
             trace_id=_new_id(),
@@ -239,6 +251,7 @@ class Tracer:
         )
         with ctx:
             yield ctx
+        self._sampled = None
 
     def _emit(
         self,
@@ -257,23 +270,29 @@ class Tracer:
         """Internal: build and emit a trace event.
 
         Also runs any attached guards on event emission.
+        Skips emission if this trace was not sampled.
         """
-        event: Dict[str, Any] = {
-            "service": self._service,
-            "kind": kind,
-            "phase": phase,
-            "trace_id": trace_id,
-            "span_id": span_id,
-            "parent_id": parent_id,
-            "name": name,
-            "ts": time.time(),
-            "duration_ms": duration_ms,
-            "data": data or {},
-            "error": error,
-        }
-        if cost_usd is not None:
-            event["cost_usd"] = cost_usd
-        self._sink.emit(event)
+        # Skip if not sampled (but still run guards)
+        sampled = self._sampled if self._sampled is not None else True
+        if sampled:
+            event: Dict[str, Any] = {
+                "service": self._service,
+                "kind": kind,
+                "phase": phase,
+                "trace_id": trace_id,
+                "span_id": span_id,
+                "parent_id": parent_id,
+                "name": name,
+                "ts": time.time(),
+                "duration_ms": duration_ms,
+                "data": data or {},
+                "error": error,
+            }
+            if cost_usd is not None:
+                event["cost_usd"] = cost_usd
+            if self._metadata:
+                event["metadata"] = self._metadata
+            self._sink.emit(event)
 
         # Auto-check guards
         for guard in self._guards:
