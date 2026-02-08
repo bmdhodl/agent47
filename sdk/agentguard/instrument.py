@@ -259,3 +259,224 @@ def unpatch_anthropic() -> None:
     if "anthropic_init" in _originals:
         cls = _originals.pop("anthropic_cls")
         cls.__init__ = _originals.pop("anthropic_init")
+
+
+# --- Async decorators ---
+
+
+def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
+    """Decorator that wraps an async function in a top-level trace span.
+
+    Usage::
+
+        @async_trace_agent(tracer)
+        async def my_agent(query: str) -> str:
+            ...
+    """
+
+    def decorator(fn: F) -> F:
+        span_name = name or f"agent.{fn.__name__}"
+
+        @functools.wraps(fn)
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
+            async with tracer.trace(span_name) as ctx:
+                kwargs["_trace_ctx"] = ctx
+                try:
+                    return await fn(*args, **kwargs)
+                except Exception:
+                    raise
+                finally:
+                    kwargs.pop("_trace_ctx", None)
+
+        @functools.wraps(fn)
+        async def simple_wrapper(*args: Any, **kwargs: Any) -> Any:
+            async with tracer.trace(span_name):
+                return await fn(*args, **kwargs)
+
+        import inspect
+
+        sig = inspect.signature(fn)
+        has_var_keyword = any(
+            p.kind == inspect.Parameter.VAR_KEYWORD
+            for p in sig.parameters.values()
+        )
+        has_trace_ctx = "_trace_ctx" in sig.parameters
+
+        if has_var_keyword or has_trace_ctx:
+            return wrapper  # type: ignore[return-value]
+        return simple_wrapper  # type: ignore[return-value]
+
+    return decorator
+
+
+def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
+    """Decorator that wraps an async function in a tool span.
+
+    Usage::
+
+        @async_trace_tool(tracer)
+        async def search(query: str) -> str:
+            ...
+    """
+
+    def decorator(fn: F) -> F:
+        span_name = name or f"tool.{fn.__name__}"
+
+        @functools.wraps(fn)
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
+            async with tracer.trace(span_name) as ctx:
+                result = await fn(*args, **kwargs)
+                ctx.event("tool.result", data={"result": str(result)[:500]})
+                return result
+
+        return wrapper  # type: ignore[return-value]
+
+    return decorator
+
+
+# --- Async patches ---
+
+
+def patch_openai_async(tracer: Any) -> None:
+    """Monkey-patch OpenAI AsyncOpenAI client to auto-trace async completions.
+
+    Safe to call even if openai is not installed — silently returns.
+    """
+    try:
+        import openai  # noqa: F811
+    except ImportError:
+        return
+
+    client_cls = getattr(openai, "AsyncOpenAI", None)
+    if client_cls is None:
+        return
+
+    if "openai_async_init" in _originals:
+        return  # already patched
+
+    original_init = client_cls.__init__
+
+    @functools.wraps(original_init)
+    def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
+        original_init(self, *args, **kwargs)
+        _patch_openai_async_instance(self, tracer)
+
+    _originals["openai_async_init"] = original_init
+    _originals["openai_async_cls"] = client_cls
+    client_cls.__init__ = patched_init  # type: ignore[attr-defined]
+
+
+def _patch_openai_async_instance(client: Any, tracer: Any) -> None:
+    """Patch a single AsyncOpenAI client instance."""
+    chat = getattr(client, "chat", None)
+    if chat is None:
+        return
+    completions = getattr(chat, "completions", None)
+    if completions is None:
+        return
+    original_create = completions.create
+
+    @functools.wraps(original_create)
+    async def traced_create(*args: Any, **kwargs: Any) -> Any:
+        model = kwargs.get("model", "unknown")
+        async with tracer.trace(f"llm.openai.{model}") as ctx:
+            result = await original_create(*args, **kwargs)
+            usage = getattr(result, "usage", None)
+            if usage is not None:
+                input_tokens = getattr(usage, "prompt_tokens", 0)
+                output_tokens = getattr(usage, "completion_tokens", 0)
+                total_tokens = getattr(usage, "total_tokens", 0)
+                from agentguard.cost import estimate_cost
+
+                cost = estimate_cost(model, input_tokens, output_tokens, provider="openai")
+                event_data: dict = {
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": input_tokens,
+                        "completion_tokens": output_tokens,
+                        "total_tokens": total_tokens,
+                    },
+                }
+                if cost > 0:
+                    event_data["cost_usd"] = cost
+                ctx.event("llm.result", data=event_data)
+            return result
+
+    completions.create = traced_create  # type: ignore[attr-defined]
+
+
+def unpatch_openai_async() -> None:
+    """Restore original AsyncOpenAI client."""
+    if "openai_async_init" in _originals:
+        cls = _originals.pop("openai_async_cls")
+        cls.__init__ = _originals.pop("openai_async_init")
+
+
+def patch_anthropic_async(tracer: Any) -> None:
+    """Monkey-patch Anthropic AsyncAnthropic client to auto-trace async calls.
+
+    Safe to call even if anthropic is not installed — silently returns.
+    """
+    try:
+        import anthropic  # noqa: F811
+    except ImportError:
+        return
+
+    client_cls = getattr(anthropic, "AsyncAnthropic", None)
+    if client_cls is None:
+        return
+
+    if "anthropic_async_init" in _originals:
+        return
+
+    original_init = client_cls.__init__
+
+    @functools.wraps(original_init)
+    def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
+        original_init(self, *args, **kwargs)
+        _patch_anthropic_async_instance(self, tracer)
+
+    _originals["anthropic_async_init"] = original_init
+    _originals["anthropic_async_cls"] = client_cls
+    client_cls.__init__ = patched_init  # type: ignore[attr-defined]
+
+
+def _patch_anthropic_async_instance(client: Any, tracer: Any) -> None:
+    """Patch a single AsyncAnthropic client instance."""
+    messages = getattr(client, "messages", None)
+    if messages is None:
+        return
+    original_create = messages.create
+
+    @functools.wraps(original_create)
+    async def traced_create(*args: Any, **kwargs: Any) -> Any:
+        model = kwargs.get("model", "unknown")
+        async with tracer.trace(f"llm.anthropic.{model}") as ctx:
+            result = await original_create(*args, **kwargs)
+            usage = getattr(result, "usage", None)
+            if usage is not None:
+                input_tokens = getattr(usage, "input_tokens", 0)
+                output_tokens = getattr(usage, "output_tokens", 0)
+                from agentguard.cost import estimate_cost
+
+                cost = estimate_cost(model, input_tokens, output_tokens, provider="anthropic")
+                event_data: dict = {
+                    "model": model,
+                    "usage": {
+                        "input_tokens": input_tokens,
+                        "output_tokens": output_tokens,
+                    },
+                }
+                if cost > 0:
+                    event_data["cost_usd"] = cost
+                ctx.event("llm.result", data=event_data)
+            return result
+
+    messages.create = traced_create  # type: ignore[attr-defined]
+
+
+def unpatch_anthropic_async() -> None:
+    """Restore original AsyncAnthropic client."""
+    if "anthropic_async_init" in _originals:
+        cls = _originals.pop("anthropic_async_cls")
+        cls.__init__ = _originals.pop("anthropic_async_init")

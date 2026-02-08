@@ -79,6 +79,10 @@ class TestTopLevelExports(unittest.TestCase):
             "trace_agent", "trace_tool",
             "patch_openai", "patch_anthropic",
             "unpatch_openai", "unpatch_anthropic",
+            "AsyncTracer", "AsyncTraceContext",
+            "async_trace_agent", "async_trace_tool",
+            "patch_openai_async", "patch_anthropic_async",
+            "unpatch_openai_async", "unpatch_anthropic_async",
         }
         self.assertEqual(set(agentguard.__all__), expected)
 

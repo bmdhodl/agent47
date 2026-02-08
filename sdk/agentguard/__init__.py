@@ -11,6 +11,7 @@ from .cost import CostTracker, estimate_cost, update_prices
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
 from .evaluation import EvalSuite, EvalResult, AssertionResult
+from .atracing import AsyncTracer, AsyncTraceContext
 from .instrument import (
     trace_agent,
     trace_tool,
@@ -18,6 +19,12 @@ from .instrument import (
     patch_anthropic,
     unpatch_openai,
     unpatch_anthropic,
+    async_trace_agent,
+    async_trace_tool,
+    patch_openai_async,
+    patch_anthropic_async,
+    unpatch_openai_async,
+    unpatch_anthropic_async,
 )
 
 __all__ = [
@@ -46,4 +53,12 @@ __all__ = [
     "patch_anthropic",
     "unpatch_openai",
     "unpatch_anthropic",
+    "AsyncTracer",
+    "AsyncTraceContext",
+    "async_trace_agent",
+    "async_trace_tool",
+    "patch_openai_async",
+    "patch_anthropic_async",
+    "unpatch_openai_async",
+    "unpatch_anthropic_async",
 ]
