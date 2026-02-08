@@ -83,15 +83,27 @@ export async function POST(
     // No body or invalid JSON — that's fine, no expiry
   }
 
-  const slug = generateSlug();
-
-  await sql`
-    INSERT INTO shared_traces (team_id, trace_id, slug, expires_at)
-    VALUES (${auth.teamId}, ${traceId}, ${slug}, ${expiresAt})
-  `;
-
+  // Retry slug generation on collision (up to 3 attempts)
   const origin = new URL(request.url).origin;
-  return NextResponse.json({ slug, url: `${origin}/share/${slug}` });
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const slug = generateSlug();
+    try {
+      await sql`
+        INSERT INTO shared_traces (team_id, trace_id, slug, expires_at)
+        VALUES (${auth.teamId}, ${traceId}, ${slug}, ${expiresAt})
+      `;
+      return NextResponse.json({ slug, url: `${origin}/share/${slug}` });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("unique") || msg.includes("duplicate")) continue;
+      throw err;
+    }
+  }
+
+  return NextResponse.json(
+    { error: "Failed to generate unique share link. Try again." },
+    { status: 500 },
+  );
 }
 
 export async function DELETE(
