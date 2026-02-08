@@ -174,6 +174,34 @@ CRON_SECRET=...                        # Vercel cron auth
 - HttpSink is the bridge — point it at `/api/ingest` and traces flow to dashboard.
 - No Supabase JS client. Direct Postgres via connection string. Auth is NextAuth, not Supabase Auth.
 
+## Agent Workflow
+
+This project uses role-based Claude Code agents. Each agent has a prompt file in `.claude/agents/`.
+
+| Role | File | Scope |
+|------|------|-------|
+| **PM** | `.claude/agents/pm.md` | Triage, prioritize, coordinate, unblock |
+| **SDK Dev** | `.claude/agents/sdk-dev.md` | `component:sdk` — Python SDK code + tests |
+| **Dashboard Dev** | `.claude/agents/dashboard-dev.md` | `component:dashboard` + `component:api` |
+| **Marketing** | `.claude/agents/marketing.md` | Docs, README, launch materials, outreach |
+
+**To start an agent session:** Open Claude Code in this repo and say:
+```
+Read .claude/agents/sdk-dev.md and follow those instructions.
+```
+
+**Project board:** https://github.com/users/bmdhodl/projects/4
+
+**How agents coordinate:**
+- The GitHub project board is the single source of truth.
+- Issues are separated by `component:` labels (sdk, dashboard, api, infra).
+- Agents pick up Todo items, move to In Progress, do the work, close when done.
+- Cross-agent dependencies are handled via issue comments and references.
+- When blocked, agents comment on the issue and tag the blocking issue number.
+- New work discovered during implementation gets filed as new issues with proper labels.
+
+**Phase progression:** v0.5.1 → v0.6.0 → v0.7.0 → v0.8.0 → v0.9.0 → v1.0.0
+
 ## What NOT To Do
 
 - Do not add hard dependencies to the SDK.
