@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
@@ -31,6 +32,12 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
+        <Script
+          defer
+          data-domain="app.agentguard47.com"
+          src="https://plausible.io/js/script.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

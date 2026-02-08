@@ -5,14 +5,29 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "agentguard47"
 version = "0.8.0"
-description = "Zero-dependency observability and runtime guards for AI agents"
+description = "Zero-dependency observability and runtime guards for AI agents — loop detection, budget enforcement, cost tracking, and structured tracing"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [
   {name = "AgentGuard"}
 ]
-keywords = ["agents", "observability", "tracing", "multi-agent", "llm", "guardrails", "replay"]
+keywords = [
+  "agents",
+  "ai-agents",
+  "observability",
+  "tracing",
+  "multi-agent",
+  "llm",
+  "guardrails",
+  "loop-detection",
+  "budget-guard",
+  "cost-tracking",
+  "langchain",
+  "openai",
+  "runtime-safety",
+  "replay",
+]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
@@ -22,14 +37,18 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Software Development :: Testing",
   "Topic :: System :: Monitoring",
+  "Typing :: Typed",
 ]
 
 [project.urls]
-Homepage = "https://github.com/bmdhodl/agent47"
+Homepage = "https://agentguard47.com"
+Documentation = "https://github.com/bmdhodl/agent47#readme"
 Repository = "https://github.com/bmdhodl/agent47"
 Issues = "https://github.com/bmdhodl/agent47/issues"
+Changelog = "https://github.com/bmdhodl/agent47/releases"
 
 [project.optional-dependencies]
 langchain = ["langchain-core>=0.1"]

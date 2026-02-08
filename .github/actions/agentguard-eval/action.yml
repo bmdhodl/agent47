@@ -1,0 +1,158 @@
+name: "AgentGuard Eval"
+description: "Run AgentGuard evaluation suite on trace files and post results as a PR comment"
+author: "AgentGuard"
+branding:
+  icon: "shield"
+  color: "green"
+
+inputs:
+  trace-file:
+    description: "Path to the JSONL trace file to evaluate"
+    required: true
+  python-version:
+    description: "Python version to use"
+    required: false
+    default: "3.11"
+  assertions:
+    description: "Comma-separated list of assertions to run (e.g., 'no_errors,max_cost:5.00,max_duration:30')"
+    required: false
+    default: "no_errors"
+  post-comment:
+    description: "Whether to post results as a PR comment (requires pull_request event)"
+    required: false
+    default: "true"
+
+outputs:
+  passed:
+    description: "Whether all assertions passed (true/false)"
+    value: ${{ steps.eval.outputs.passed }}
+  summary:
+    description: "Human-readable summary of eval results"
+    value: ${{ steps.eval.outputs.summary }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install AgentGuard
+      shell: bash
+      run: pip install agentguard47
+
+    - name: Run evaluation
+      id: eval
+      shell: bash
+      run: |
+        python3 - <<'PYEOF'
+        import json
+        import os
+        import sys
+
+        trace_file = "${{ inputs.trace-file }}"
+        assertions_raw = "${{ inputs.assertions }}"
+
+        # Load trace events
+        events = []
+        try:
+            with open(trace_file) as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        events.append(json.loads(line))
+        except FileNotFoundError:
+            print(f"::error::Trace file not found: {trace_file}")
+            sys.exit(1)
+
+        if not events:
+            print(f"::warning::Trace file is empty: {trace_file}")
+
+        # Run assertions
+        results = []
+        passed_all = True
+
+        for assertion in assertions_raw.split(","):
+            assertion = assertion.strip()
+            if not assertion:
+                continue
+
+            if assertion == "no_errors":
+                errors = [e for e in events if e.get("error")]
+                ok = len(errors) == 0
+                results.append({
+                    "name": "no_errors",
+                    "passed": ok,
+                    "detail": f"{len(errors)} errors found" if not ok else "No errors",
+                })
+                if not ok:
+                    passed_all = False
+
+            elif assertion.startswith("max_cost:"):
+                limit = float(assertion.split(":")[1])
+                total_cost = sum(e.get("cost_usd", 0) for e in events)
+                ok = total_cost <= limit
+                results.append({
+                    "name": f"max_cost <= ${limit:.2f}",
+                    "passed": ok,
+                    "detail": f"Total cost: ${total_cost:.4f}",
+                })
+                if not ok:
+                    passed_all = False
+
+            elif assertion.startswith("max_duration:"):
+                limit = float(assertion.split(":")[1])
+                max_dur = max((e.get("duration_ms", 0) for e in events), default=0) / 1000
+                ok = max_dur <= limit
+                results.append({
+                    "name": f"max_duration <= {limit}s",
+                    "passed": ok,
+                    "detail": f"Max duration: {max_dur:.2f}s",
+                })
+                if not ok:
+                    passed_all = False
+
+            elif assertion.startswith("max_events:"):
+                limit = int(assertion.split(":")[1])
+                ok = len(events) <= limit
+                results.append({
+                    "name": f"max_events <= {limit}",
+                    "passed": ok,
+                    "detail": f"Event count: {len(events)}",
+                })
+                if not ok:
+                    passed_all = False
+
+        # Build summary
+        lines = ["## AgentGuard Eval Results\n"]
+        lines.append(f"**Trace file:** `{trace_file}`")
+        lines.append(f"**Events:** {len(events)}")
+        lines.append(f"**Status:** {'PASSED' if passed_all else 'FAILED'}\n")
+        lines.append("| Assertion | Result | Detail |")
+        lines.append("|-----------|--------|--------|")
+        for r in results:
+            icon = "PASS" if r["passed"] else "FAIL"
+            lines.append(f"| {r['name']} | {icon} | {r['detail']} |")
+
+        summary = "\n".join(lines)
+        print(summary)
+
+        # Write outputs
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"passed={'true' if passed_all else 'false'}\n")
+            # Multiline output
+            f.write(f"summary<<EOFSUM\n{summary}\nEOFSUM\n")
+
+        if not passed_all:
+            sys.exit(1)
+        PYEOF
+
+    - name: Post PR comment
+      if: inputs.post-comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh pr comment ${{ github.event.pull_request.number }} \
+          --body "${{ steps.eval.outputs.summary }}"

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 AgentGuard — a lightweight observability and runtime-guards SDK for multi-agent AI systems. The SDK is open source (MIT, zero dependencies); the hosted dashboard is the commercial SaaS layer.
 
 - **Repo:** github.com/bmdhodl/agent47
-- **Package:** `agentguard47` on PyPI (v0.6.0)
+- **Package:** `agentguard47` on PyPI (v0.8.0)
 - **Landing page:** site/index.html (Vercel)
 
 ## Commands
@@ -80,6 +80,9 @@ git tag v0.X.0 && git push origin v0.X.0
 | `evaluation.py` | EvalSuite — chainable assertion-based trace analysis |
 | `recording.py` | Recorder, Replayer (deterministic replay) |
 | `cli.py` | CLI: report, summarize, view, eval |
+| `atracing.py` | AsyncTracer, AsyncTraceContext — async support |
+| `cost.py` | CostTracker, estimate_cost, update_prices — per-model pricing |
+| `export.py` | JSON, CSV, JSONL conversion utilities |
 
 ### Dashboard Data Flow
 
@@ -200,7 +203,7 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 - When blocked, agents comment on the issue and tag the blocking issue number.
 - New work discovered during implementation gets filed as new issues with proper labels.
 
-**Phase progression:** v0.5.1 → v0.6.0 → v0.7.0 → v0.8.0 → v0.9.0 → v1.0.0
+**Current:** v1.0.0 shipped. Next work: Phase 6 (Network Effects) and Phase 7 (Scale). See `docs/strategy/execution_plan.md`.
 
 ## What NOT To Do
 
@@ -209,3 +212,57 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 - Do not commit .env files or secrets.
 - Do not create outreach content without verifying the repo is public and package is installable.
 - Do not mix implementation, testing, deployment, and strategy in one mega-session.
+
+## For AI Agents
+
+Structured context for AI agents working on or with this project.
+
+### Identity
+
+- **Package:** `agentguard47`
+- **Version:** 1.0.0
+- **Repo:** https://github.com/bmdhodl/agent47
+- **License:** SDK = MIT, Dashboard = source-available
+
+### Public API Surface
+
+**Tracing:** `Tracer`, `TraceContext`, `TraceSink`, `JsonlFileSink`, `StdoutSink`, `HttpSink`
+**Guards:** `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`
+**Exceptions:** `LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`
+**Instrumentation:** `trace_agent`, `trace_tool`, `patch_openai`, `patch_anthropic`, `unpatch_openai`, `unpatch_anthropic`
+**Async:** `AsyncTracer`, `AsyncTraceContext`, `async_trace_agent`, `async_trace_tool`, `patch_openai_async`, `patch_anthropic_async`, `unpatch_openai_async`, `unpatch_anthropic_async`
+**Cost:** `CostTracker`, `estimate_cost`, `update_prices`
+**Evaluation:** `EvalSuite`, `EvalResult`, `AssertionResult`
+**Recording:** `Recorder`, `Replayer`
+
+### File Layout
+
+```
+agent47/
+├── sdk/agentguard/    # Python SDK (PyPI: agentguard47)
+├── dashboard/         # Next.js 14 SaaS dashboard
+├── mcp-server/        # MCP server for AI agent access
+├── site/              # Landing page
+├── scripts/           # Automation scripts
+├── docs/              # Strategy, outreach, examples
+├── .claude/agents/    # Agent role prompts
+└── .github/workflows/ # CI, deploy, publish, scout
+```
+
+### Constraints
+
+- Zero dependencies (Python stdlib only, Python 3.9+)
+- All tests use `unittest` (no pytest)
+- Guards raise exceptions (not return codes)
+- All public API exports from `sdk/agentguard/__init__.py`
+
+### Current State
+
+v1.0.0 shipped. Phases 1-5 complete (SDK, dashboard, read API, MCP server, public traces). Phase 6 (Network Effects) and Phase 7 (Scale) are next.
+
+### Key Links
+
+- **Project board:** https://github.com/users/bmdhodl/projects/4
+- **Execution plan:** `docs/strategy/execution_plan.md`
+- **Architecture:** `docs/strategy/architecture.md`
+- **PRD:** `docs/strategy/prd.md`
