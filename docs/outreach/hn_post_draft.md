@@ -30,8 +30,7 @@ budget_guard = BudgetGuard(max_tokens=100000, max_calls=500)
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search documentation"})
     loop_guard.check(tool_name="search", tool_args={"query": "agent loops"})
-    budget_guard.record_tokens(150)
-    budget_guard.record_call()
+    budget_guard.consume(tokens=150, calls=1)
 ```
 
 **Why it's different:**

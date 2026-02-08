@@ -15,7 +15,7 @@ from agentguard import LoopGuard
 from agentguard.integrations.langchain import AgentGuardCallbackHandler
 
 loop_guard = LoopGuard(max_repeats=3)
-callback = AgentGuardCallbackHandler(guards=[loop_guard])
+callback = AgentGuardCallbackHandler(loop_guard=loop_guard)
 
 agent.run("your query", callbacks=[callback])
 ```
@@ -101,8 +101,7 @@ timeout_guard.start()
 with tracer.trace("multi_agent.run") as span:
     for agent in agents:
         loop_guard.check(tool_name=agent.tool, tool_args=agent.args)
-        budget_guard.record_call()
-        budget_guard.record_tokens(agent.token_count)
+        budget_guard.consume(tokens=agent.token_count, calls=1)
         timeout_guard.check()  # raises TimeoutExceeded if over limit
 
         agent.execute()
@@ -149,7 +148,7 @@ budget_guard = BudgetGuard(max_tokens=50000)
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
     loop_guard.check(tool_name="search", tool_args={"query": "..."})
-    budget_guard.record_tokens(150)
+    budget_guard.consume(tokens=150)
 ```
 
 It's MIT licensed, has zero dependencies (pure stdlib Python), and works with any framework (LangChain, CrewAI, AutoGen, or custom).

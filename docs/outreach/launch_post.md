@@ -12,8 +12,6 @@ pip install agentguard47
 
 3 lines of code to trace your agent. 1 guard to catch loops before they burn your budget.
 
-Blog post: "Why Your AI Agent Loops (And How to See It)" [link to blog]
-
 Repo: https://github.com/bmdhodl/agent47
 
 ## Hacker News
@@ -35,8 +33,6 @@ AgentGuard gives you:
 ```
 pip install agentguard47
 ```
-
-I wrote up the common failure mode: [Why Your AI Agent Loops](link to blog)
 
 Looking for early users building with LangChain, CrewAI, or custom agent frameworks.
 
