@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 
-AgentGuard is a **zero-dependency** observability and runtime guard toolkit for AI agents. Trace reasoning steps, catch loops, enforce budgets, and replay runs deterministically — with nothing to install except one pure-Python package. No transitive supply chain risk. The SDK is open source; the hosted dashboard is the commercial layer.
+AgentGuard is a **zero-dependency** runtime guardrails toolkit for AI agents. Track costs per LLM call, catch loops, enforce dollar budgets, and replay failures deterministically — with nothing to install except one pure-Python package. No transitive supply chain risk. The SDK is open source; the hosted dashboard is the commercial layer.
 
 ## Why this exists
 Multi-agent systems fail in ways normal software does not: infinite tool loops, silent cascade failures, and nondeterministic regressions. The current ecosystem is fragmented across model providers and frameworks. AgentGuard focuses on the runtime logic of agents, not the runtime engine.
@@ -20,14 +20,15 @@ Multi-agent systems fail in ways normal software does not: infinite tool loops, 
 - `scripts/` Deploy, demo, and test scripts.
 
 ## Features
-- Trace agent reasoning steps and tool calls with correlation IDs
+- **Cost tracking**: dollar estimates per LLM call, per trace, per month (OpenAI, Anthropic, Gemini, Mistral)
+- **Budget guards**: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget
 - Detect common loop patterns and stop runaway executions
 - Record and replay runs to create deterministic tests
 - Evaluation as Code: assertion-based trace analysis (`EvalSuite`)
 - Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches
 - Gantt trace viewer: timeline visualization with click-to-expand details
 - JSONL export for local inspection
-- Hosted dashboard: send traces via HttpSink, view Gantt timelines in the browser
+- Hosted dashboard: cost dashboard, Gantt timelines, loop/error alerts, usage tracking
 
 ## Install
 
@@ -47,20 +48,21 @@ pip install agentguard47[langchain]
 pip install agentguard47
 ```
 
-**2. Trace your agent:**
+**2. Trace your agent with cost tracking:**
 ```python
-from agentguard import Tracer, LoopGuard
+from agentguard import Tracer, BudgetGuard
 from agentguard.tracing import JsonlFileSink
+from agentguard.instrument import patch_openai
 
 tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
-guard = LoopGuard(max_repeats=3)
+patch_openai(tracer)  # auto-tracks cost per call
+
+guard = BudgetGuard(max_cost_usd=5.00)  # stop at $5
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
-    guard.check(tool_name="search", tool_args={"query": "agent loops"})
     with span.span("tool.search"):
         pass  # your tool here
-    span.event("llm.result", data={"answer": "done"})
 ```
 
 **3. See what happened:**
@@ -88,6 +90,7 @@ The report summarizes a single agent run:
 - `Approx run time`: duration of the run (ms)
 - `Reasoning steps`: how many reasoning events were logged
 - `Tool results` / `LLM results`: captured outputs
+- `Estimated cost`: total dollar cost across all LLM calls
 - `Loop guard triggered`: repeated-call loops detected
 
 ## Hosted Dashboard
@@ -106,4 +109,4 @@ The dashboard provides Gantt timelines, loop/error alerts, usage tracking, and t
 
 ## Status
 
-v0.4.0 — 49 tests, **zero dependencies** (pure Python stdlib), framework-agnostic. See `docs/strategy/prd.md` for roadmap.
+v0.5.0 — 88 tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Cost tracking, dollar budget guards, and a costs dashboard.

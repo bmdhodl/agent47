@@ -90,6 +90,104 @@ class TestLangChainIntegration(unittest.TestCase):
 
         self.assertEqual(guard.state.calls_used, 2)
 
+    def test_budget_guard_cost_usd_on_llm_end(self):
+        """on_llm_end with a known model should pass cost_usd to BudgetGuard.consume."""
+        guard = BudgetGuard(max_cost_usd=1.00)
+        handler = AgentGuardCallbackHandler(
+            tracer=self.tracer, budget_guard=guard
+        )
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_llm_end(
+            _MockResponseWithModel(model="gpt-4o", input_t=1000, output_t=500),
+            run_id=llm_id,
+        )
+
+        self.assertGreater(guard.state.cost_used, 0)
+
+    def test_llm_end_includes_cost_for_known_model(self):
+        """on_llm_end with a known model and token usage should include cost_usd."""
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_llm_end(
+            _MockResponseWithModel(model="gpt-4o", input_t=1000, output_t=500),
+            run_id=llm_id,
+        )
+        handler.on_chain_end({}, run_id=chain_id)
+
+        events = self._read_events()
+        llm_end_events = [e for e in events if e["name"] == "llm.end"]
+        self.assertTrue(len(llm_end_events) >= 1)
+        data = llm_end_events[0].get("data", {})
+        self.assertIn("cost_usd", data)
+        self.assertGreater(data["cost_usd"], 0)
+
+    def test_llm_end_no_cost_for_unknown_model(self):
+        """on_llm_end with an unknown model should not have cost_usd."""
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_llm_end(
+            _MockResponseWithModel(model="totally-fake-model-xyz", input_t=100, output_t=50),
+            run_id=llm_id,
+        )
+        handler.on_chain_end({}, run_id=chain_id)
+
+        events = self._read_events()
+        llm_end_events = [e for e in events if e["name"] == "llm.end"]
+        self.assertTrue(len(llm_end_events) >= 1)
+        data = llm_end_events[0].get("data", {})
+        self.assertNotIn("cost_usd", data)
+
+
+class TestExtractModelName(unittest.TestCase):
+    def test_from_llm_output(self):
+        from agentguard.integrations.langchain import _extract_model_name
+
+        class R:
+            llm_output = {"model_name": "gpt-4o"}
+        self.assertEqual(_extract_model_name(R()), "gpt-4o")
+
+    def test_from_response_metadata(self):
+        from agentguard.integrations.langchain import _extract_model_name
+
+        class R:
+            response_metadata = {"model": "claude-3-5-sonnet-20241022"}
+        self.assertEqual(_extract_model_name(R()), "claude-3-5-sonnet-20241022")
+
+    def test_from_metadata_model_id(self):
+        from agentguard.integrations.langchain import _extract_model_name
+
+        class R:
+            metadata = {"model_id": "gemini-1.5-pro"}
+        self.assertEqual(_extract_model_name(R()), "gemini-1.5-pro")
+
+    def test_returns_unknown_when_no_model(self):
+        from agentguard.integrations.langchain import _extract_model_name
+
+        class R:
+            pass
+        self.assertEqual(_extract_model_name(R()), "unknown")
+
+    def test_returns_unknown_for_empty_dicts(self):
+        from agentguard.integrations.langchain import _extract_model_name
+
+        class R:
+            llm_output = {}
+            response_metadata = {}
+            metadata = {}
+        self.assertEqual(_extract_model_name(R()), "unknown")
+
 
 class _MockResponse:
     """Minimal mock for LangChain LLMResult."""
@@ -98,6 +196,24 @@ class _MockResponse:
         self.llm_output = {
             "token_usage": {"total_tokens": tokens, "prompt_tokens": 0, "completion_tokens": tokens}
         } if tokens else {}
+
+    def dict(self):
+        return {"generations": [], "llm_output": self.llm_output}
+
+
+class _MockResponseWithModel:
+    """Mock LangChain LLMResult with model info and token usage."""
+
+    def __init__(self, model: str = "unknown", input_t: int = 0, output_t: int = 0):
+        total = input_t + output_t
+        self.llm_output = {
+            "model_name": model,
+            "token_usage": {
+                "total_tokens": total,
+                "prompt_tokens": input_t,
+                "completion_tokens": output_t,
+            },
+        }
 
     def dict(self):
         return {"generations": [], "llm_output": self.llm_output}

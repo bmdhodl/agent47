@@ -109,6 +109,7 @@ export async function POST(request: Request) {
     error: { type: string; message: string } | null;
     service: string;
     api_key_id: string;
+    cost_usd: number | null;
   }> = [];
   const errors: Array<{ line: number; error: string }> = [];
 
@@ -145,6 +146,7 @@ export async function POST(request: Request) {
       error: ev.error,
       service: ev.service,
       api_key_id: apiKeyId,
+      cost_usd: ev.cost_usd ?? (ev.data as Record<string, unknown>)?.cost_usd as number ?? null,
     });
   }
 
@@ -171,9 +173,10 @@ export async function POST(request: Request) {
   );
   const services = validEvents.map((e) => e.service);
   const apiKeyIds = validEvents.map((e) => e.api_key_id);
+  const costs = validEvents.map((e) => e.cost_usd);
 
   await sql`
-    INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service, api_key_id)
+    INSERT INTO events (team_id, trace_id, span_id, parent_id, kind, phase, name, ts, duration_ms, data, error, service, api_key_id, cost_usd)
     SELECT * FROM unnest(
       ${teamIds}::uuid[],
       ${traceIds}::text[],
@@ -187,7 +190,8 @@ export async function POST(request: Request) {
       ${dataArr}::jsonb[],
       ${errorArr}::jsonb[],
       ${services}::text[],
-      ${apiKeyIds}::uuid[]
+      ${apiKeyIds}::uuid[],
+      ${costs}::double precision[]
     )
   `;
 

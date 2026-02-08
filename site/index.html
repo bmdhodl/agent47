@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AgentGuard — Observability for AI Agents</title>
-    <meta name="description" content="Trace reasoning steps, detect loops, and replay agent runs deterministically." />
+    <title>AgentGuard — Runtime Guardrails for AI Agents</title>
+    <meta name="description" content="Stop runaway agents, track costs per call, and replay failures deterministically. Zero dependencies." />
     <style>
       :root {
         --bg: #f7f4ee;
@@ -149,8 +149,8 @@
   <body>
     <div class="wrap">
       <span class="badge">Zero Dependencies &middot; OSS SDK + Hosted Dashboard</span>
-      <h1>AgentGuard makes AI agents visible, testable, and safe.</h1>
-      <p>Trace reasoning steps, detect loops, and replay runs deterministically. Zero dependencies — nothing to audit, nothing that can break. Built for solo builders and small teams shipping agentic workflows.</p>
+      <h1>AgentGuard stops runaway agents and shows you the receipt.</h1>
+      <p>Runtime guardrails that catch loops, enforce budgets, and track costs per LLM call. See exactly how much each agent run costs — and how much you saved. Zero dependencies, nothing to audit.</p>
 
       <div class="cta">
         <a class="btn" href="https://app.agentguard47.com">Open Dashboard</a>
@@ -167,24 +167,24 @@
 
       <div class="grid">
         <div class="card">
-          <strong>Trace reasoning</strong>
-          <p class="muted">Follow agent decisions step-by-step, not just request latency.</p>
+          <strong>Cost tracking</strong>
+          <p class="muted">See exactly how much each agent run costs. Dollar amounts per LLM call, per trace, per month.</p>
+        </div>
+        <div class="card">
+          <strong>Budget guards</strong>
+          <p class="muted">Set <code>BudgetGuard(max_cost_usd=5.00)</code> and stop agents before they blow your API budget.</p>
         </div>
         <div class="card">
           <strong>Catch loops</strong>
-          <p class="muted">Detect repeated tool calls and stop runaway behavior early.</p>
+          <p class="muted">Detect repeated tool calls and stop runaway behavior before it costs you.</p>
         </div>
         <div class="card">
           <strong>Replay tests</strong>
           <p class="muted">Record real runs and replay deterministically for regression tests.</p>
         </div>
         <div class="card">
-          <strong>Eval as Code</strong>
-          <p class="muted">Chain assertions on traces: no loops, budget under limit, completes within time.</p>
-        </div>
-        <div class="card">
           <strong>Auto-instrument</strong>
-          <p class="muted">Decorate functions with @trace_agent and @trace_tool. Patch OpenAI/Anthropic in one line.</p>
+          <p class="muted">Patch OpenAI/Anthropic in one line. Costs and traces flow automatically.</p>
         </div>
         <div class="card">
           <strong>Gantt viewer</strong>
@@ -192,7 +192,7 @@
         </div>
         <div class="card">
           <strong>Zero dependencies</strong>
-          <p class="muted">Pure Python stdlib. No transitive supply chain risk. One package to audit: yours.</p>
+          <p class="muted">Pure Python stdlib. No transitive supply chain risk. One package to audit.</p>
         </div>
       </div>
 
@@ -220,11 +220,15 @@
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
           Copy
         </button>
-<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard
 <span class="kw">from</span> agentguard.sinks.http <span class="kw">import</span> HttpSink
+<span class="kw">from</span> agentguard.instrument <span class="kw">import</span> patch_openai
 
 sink = <span class="fn">HttpSink</span>(url=<span class="str">"https://app.agentguard47.com/api/ingest"</span>, api_key=<span class="str">"ag_..."</span>)
 tracer = <span class="fn">Tracer</span>(sink=sink, service=<span class="str">"my-agent"</span>)
+<span class="fn">patch_openai</span>(tracer)  <span class="comment"># auto-tracks cost per call</span>
+
+guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>)  <span class="comment"># stop at $5</span>
 
 <span class="kw">with</span> tracer.<span class="fn">trace</span>(<span class="str">"agent.run"</span>) <span class="kw">as</span> span:
     span.<span class="fn">event</span>(<span class="str">"reasoning.step"</span>, data={<span class="str">"thought"</span>: <span class="str">"search docs"</span>})
@@ -327,9 +331,9 @@ tracer = <span class="fn">Tracer</span>(sink=sink, service=<span class="str">"my
         <div class="footer-links">
           <a href="https://github.com/bmdhodl/agent47">GitHub</a>
           <a href="#pricing">Pricing</a>
-          <a href="security.html">Security</a>
+          <a href="trust.html">Security &amp; Trust</a>
         </div>
-        <p class="muted">&copy; 2025 AgentGuard &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+        <p class="muted">&copy; 2026 AgentGuard &middot; MIT-licensed SDK &middot; Zero dependencies</p>
       </footer>
     </div>
 

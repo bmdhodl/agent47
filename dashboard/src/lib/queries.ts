@@ -10,6 +10,7 @@ export interface TraceRow {
   started_at: string;
   api_key_name: string | null;
   api_key_prefix: string | null;
+  total_cost: number | null;
 }
 
 export interface EventRow {
@@ -41,7 +42,8 @@ export async function getTraceList(teamId: string): Promise<TraceRow[]> {
       MAX(e.duration_ms) as duration_ms,
       MIN(e.created_at) as started_at,
       MIN(ak.name) as api_key_name,
-      MIN(ak.prefix) as api_key_prefix
+      MIN(ak.prefix) as api_key_prefix,
+      SUM(e.cost_usd) as total_cost
     FROM events e
     LEFT JOIN api_keys ak ON ak.id = e.api_key_id
     WHERE e.team_id = ${teamId}
@@ -98,4 +100,128 @@ export async function getAlerts(teamId: string): Promise<EventRow[]> {
   `;
 
   return rows as unknown as EventRow[];
+}
+
+export interface SavingsStats {
+  guard_events: number;
+  estimated_savings: number;
+}
+
+export async function getSavingsStats(teamId: string): Promise<SavingsStats> {
+  const rows = await sql`
+    SELECT
+      COUNT(*)::int as guard_events,
+      COALESCE(SUM(
+        CASE WHEN e.cost_usd IS NOT NULL THEN e.cost_usd ELSE 0.50 END
+      ), 0) as estimated_savings
+    FROM events e
+    WHERE e.team_id = ${teamId}
+      AND e.name IN ('guard.loop_detected', 'guard.budget_exceeded')
+      AND e.created_at >= date_trunc('month', now())
+  `;
+
+  return {
+    guard_events: rows.length > 0 ? Number(rows[0].guard_events) : 0,
+    estimated_savings: rows.length > 0 ? Number(rows[0].estimated_savings) : 0,
+  };
+}
+
+export interface MonthlyCost {
+  total_cost: number;
+  trace_count: number;
+}
+
+export async function getMonthlyCost(teamId: string): Promise<MonthlyCost> {
+  const rows = await sql`
+    SELECT
+      COALESCE(SUM(e.cost_usd), 0) as total_cost,
+      COUNT(DISTINCT e.trace_id)::int as trace_count
+    FROM events e
+    WHERE e.team_id = ${teamId}
+      AND e.created_at >= date_trunc('month', now())
+  `;
+
+  return {
+    total_cost: rows.length > 0 ? Number(rows[0].total_cost) : 0,
+    trace_count: rows.length > 0 ? Number(rows[0].trace_count) : 0,
+  };
+}
+
+export interface CostByModel {
+  model: string;
+  total_cost: number;
+  call_count: number;
+}
+
+export async function getCostByModel(teamId: string): Promise<CostByModel[]> {
+  const rows = await sql`
+    SELECT
+      COALESCE(e.data->>'model', 'unknown') as model,
+      SUM(e.cost_usd) as total_cost,
+      COUNT(*)::int as call_count
+    FROM events e
+    WHERE e.team_id = ${teamId}
+      AND e.cost_usd IS NOT NULL
+      AND e.created_at >= date_trunc('month', now())
+    GROUP BY e.data->>'model'
+    ORDER BY SUM(e.cost_usd) DESC
+    LIMIT 20
+  `;
+
+  return rows as unknown as CostByModel[];
+}
+
+export interface CostByKey {
+  api_key_name: string;
+  api_key_prefix: string;
+  total_cost: number;
+  trace_count: number;
+}
+
+export async function getCostByKey(teamId: string): Promise<CostByKey[]> {
+  const rows = await sql`
+    SELECT
+      COALESCE(ak.name, 'Unknown') as api_key_name,
+      COALESCE(ak.prefix, '—') as api_key_prefix,
+      SUM(e.cost_usd) as total_cost,
+      COUNT(DISTINCT e.trace_id)::int as trace_count
+    FROM events e
+    LEFT JOIN api_keys ak ON ak.id = e.api_key_id
+    WHERE e.team_id = ${teamId}
+      AND e.cost_usd IS NOT NULL
+      AND e.created_at >= date_trunc('month', now())
+    GROUP BY ak.name, ak.prefix
+    ORDER BY SUM(e.cost_usd) DESC
+    LIMIT 10
+  `;
+
+  return rows as unknown as CostByKey[];
+}
+
+export interface ExpensiveTrace {
+  trace_id: string;
+  root_name: string;
+  total_cost: number;
+  event_count: number;
+  started_at: string;
+}
+
+export async function getExpensiveTraces(teamId: string): Promise<ExpensiveTrace[]> {
+  const rows = await sql`
+    SELECT
+      e.trace_id,
+      MIN(e.name) FILTER (WHERE e.parent_id IS NULL AND e.phase = 'start') as root_name,
+      SUM(e.cost_usd) as total_cost,
+      COUNT(*)::int as event_count,
+      MIN(e.created_at) as started_at
+    FROM events e
+    WHERE e.team_id = ${teamId}
+      AND e.created_at >= date_trunc('month', now())
+    GROUP BY e.trace_id
+    HAVING SUM(e.cost_usd) > 0
+    ORDER BY SUM(e.cost_usd) DESC
+    LIMIT 10
+  `;
+
+  return rows as unknown as ExpensiveTrace[];
 }

@@ -7,6 +7,7 @@ from .guards import (
     BudgetExceeded,
     TimeoutExceeded,
 )
+from .cost import CostTracker, estimate_cost, update_prices
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
 from .evaluation import EvalSuite, EvalResult, AssertionResult
@@ -19,6 +20,9 @@ __all__ = [
     "LoopDetected",
     "BudgetExceeded",
     "TimeoutExceeded",
+    "CostTracker",
+    "estimate_cost",
+    "update_prices",
     "Recorder",
     "Replayer",
     "HttpSink",

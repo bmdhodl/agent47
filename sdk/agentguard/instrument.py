@@ -117,17 +117,23 @@ def patch_openai(tracer: Any) -> None:
             # Try to extract usage
             usage = getattr(result, "usage", None)
             if usage is not None:
-                ctx.event(
-                    "llm.result",
-                    data={
-                        "model": model,
-                        "usage": {
-                            "prompt_tokens": getattr(usage, "prompt_tokens", 0),
-                            "completion_tokens": getattr(usage, "completion_tokens", 0),
-                            "total_tokens": getattr(usage, "total_tokens", 0),
-                        },
+                input_tokens = getattr(usage, "prompt_tokens", 0)
+                output_tokens = getattr(usage, "completion_tokens", 0)
+                total_tokens = getattr(usage, "total_tokens", 0)
+                from agentguard.cost import estimate_cost
+
+                cost = estimate_cost(model, input_tokens, output_tokens, provider="openai")
+                event_data: dict = {
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": input_tokens,
+                        "completion_tokens": output_tokens,
+                        "total_tokens": total_tokens,
                     },
-                )
+                }
+                if cost > 0:
+                    event_data["cost_usd"] = cost
+                ctx.event("llm.result", data=event_data)
             return result
 
     # Patch it back
@@ -168,16 +174,21 @@ def patch_anthropic(tracer: Any) -> None:
             result = _original(*args, **kwargs)
             usage = getattr(result, "usage", None)
             if usage is not None:
-                ctx.event(
-                    "llm.result",
-                    data={
-                        "model": model,
-                        "usage": {
-                            "input_tokens": getattr(usage, "input_tokens", 0),
-                            "output_tokens": getattr(usage, "output_tokens", 0),
-                        },
+                input_tokens = getattr(usage, "input_tokens", 0)
+                output_tokens = getattr(usage, "output_tokens", 0)
+                from agentguard.cost import estimate_cost
+
+                cost = estimate_cost(model, input_tokens, output_tokens, provider="anthropic")
+                event_data: dict = {
+                    "model": model,
+                    "usage": {
+                        "input_tokens": input_tokens,
+                        "output_tokens": output_tokens,
                     },
-                )
+                }
+                if cost > 0:
+                    event_data["cost_usd"] = cost
+                ctx.event("llm.result", data=event_data)
             return result
 
     messages.create = traced_create  # type: ignore[attr-defined]

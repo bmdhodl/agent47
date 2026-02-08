@@ -57,11 +57,22 @@ def _report(path: str) -> None:
     loop_hits = names.get("guard.loop_detected", 0)
 
     span_durations: List[float] = []
+    total_cost: float = 0.0
     for e in events:
         if e.get("kind") == "span" and e.get("phase") == "end":
             dur = e.get("duration_ms")
             if isinstance(dur, (int, float)):
                 span_durations.append(float(dur))
+        # Sum cost from top-level cost_usd field
+        cost = e.get("cost_usd")
+        if isinstance(cost, (int, float)):
+            total_cost += float(cost)
+        # Also check data.cost_usd (from instrument patches)
+        data = e.get("data", {})
+        if isinstance(data, dict):
+            dcost = data.get("cost_usd")
+            if isinstance(dcost, (int, float)):
+                total_cost += float(dcost)
 
     total_ms: Optional[float] = None
     if span_durations:
@@ -75,6 +86,10 @@ def _report(path: str) -> None:
     print(f"  Reasoning steps: {names.get('reasoning.step', 0)}")
     print(f"  Tool results: {names.get('tool.result', 0)}")
     print(f"  LLM results: {names.get('llm.result', 0)}")
+    if total_cost > 0:
+        print(f"  Estimated cost: ${total_cost:.4f}")
+    else:
+        print("  Estimated cost: $0.00")
     if loop_hits:
         print(f"  Loop guard triggered: {loop_hits} time(s)")
     else:

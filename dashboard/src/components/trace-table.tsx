@@ -138,6 +138,14 @@ tracer = Tracer(sink=HttpSink(
                       <span>{trace.duration_ms.toFixed(1)}ms</span>
                     </>
                   )}
+                  {trace.total_cost != null && trace.total_cost > 0 && (
+                    <>
+                      <span className="text-border">|</span>
+                      <span className="text-green-600 dark:text-green-400">
+                        ${trace.total_cost < 0.01 ? trace.total_cost.toFixed(4) : trace.total_cost.toFixed(2)}
+                      </span>
+                    </>
+                  )}
                   {trace.api_key_name && (
                     <span className="hidden sm:inline">
                       <span className="text-border">|</span>{" "}

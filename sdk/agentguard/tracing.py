@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agentguard.cost import CostTracker
 import json
 import threading
 import time
@@ -40,6 +43,16 @@ class TraceContext:
     name: str
     data: Optional[Dict[str, Any]]
     _start_time: Optional[float] = None
+    _cost_tracker: Optional[Any] = None
+
+    @property
+    def cost(self) -> "CostTracker":
+        """Lazy-initialized CostTracker for this trace."""
+        if self._cost_tracker is None:
+            from agentguard.cost import CostTracker
+
+            self._cost_tracker = CostTracker()
+        return self._cost_tracker
 
     def __enter__(self) -> "TraceContext":
         self._start_time = time.perf_counter()
@@ -131,8 +144,9 @@ class Tracer:
         data: Optional[Dict[str, Any]] = None,
         duration_ms: Optional[float] = None,
         error: Optional[Dict[str, Any]] = None,
+        cost_usd: Optional[float] = None,
     ) -> None:
-        event = {
+        event: Dict[str, Any] = {
             "service": self._service,
             "kind": kind,
             "phase": phase,
@@ -145,6 +159,8 @@ class Tracer:
             "data": data or {},
             "error": error,
         }
+        if cost_usd is not None:
+            event["cost_usd"] = cost_usd
         self._sink.emit(event)
 
 

@@ -124,9 +124,22 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         payload: Dict[str, Any] = {"response": _safe_response(response)}
         if usage:
             payload["token_usage"] = usage
+            # Estimate cost from token usage
+            input_t = usage.get("prompt_tokens", 0) or usage.get("input_tokens", 0)
+            output_t = usage.get("completion_tokens", 0) or usage.get("output_tokens", 0)
+            model_name = _extract_model_name(response)
+            if input_t or output_t:
+                from agentguard.cost import estimate_cost
+
+                cost = estimate_cost(model_name, input_t, output_t)
+                if cost > 0:
+                    payload["cost_usd"] = cost
             if self._budget_guard and "total_tokens" in usage:
                 try:
-                    self._budget_guard.consume(tokens=usage["total_tokens"])
+                    consume_kwargs: Dict[str, Any] = {"tokens": usage["total_tokens"]}
+                    if "cost_usd" in payload:
+                        consume_kwargs["cost_usd"] = payload["cost_usd"]
+                    self._budget_guard.consume(**consume_kwargs)
                 except BudgetExceeded as e:
                     ctx.event("guard.budget_exceeded", data={
                         "tokens_used": self._budget_guard.state.tokens_used,
@@ -258,6 +271,21 @@ def _safe_response(response: Any) -> Dict[str, Any]:
     except Exception:
         pass
     return {"repr": repr(response)}
+
+
+def _extract_model_name(response: Any) -> str:
+    """Try to extract model name from a LangChain LLM response."""
+    for attr in ("llm_output", "response_metadata", "metadata"):
+        if hasattr(response, attr):
+            try:
+                data = getattr(response, attr)
+                if isinstance(data, dict):
+                    model = data.get("model_name") or data.get("model") or data.get("model_id")
+                    if model:
+                        return str(model)
+            except Exception:
+                continue
+    return "unknown"
 
 
 def _extract_token_usage(response: Any) -> Optional[Dict[str, Any]]:

@@ -13,6 +13,7 @@ import {
   Activity,
   Bell,
   BarChart3,
+  DollarSign,
   Settings,
   HelpCircle,
   Menu,
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils";
 const navItems: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/traces", label: "Traces", icon: Activity },
   { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/costs", label: "Costs", icon: DollarSign },
   { href: "/usage", label: "Usage", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
@@ -165,7 +167,7 @@ function SidebarContent() {
           className="flex items-center gap-2 text-xs text-muted-foreground/70 transition-colors hover:text-muted-foreground"
         >
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500" />
-          agentguard47 v0.4.0
+          agentguard47 v0.5.0
         </a>
       </div>
     </>
