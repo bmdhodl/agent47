@@ -17,20 +17,17 @@ import os
 import re
 import subprocess
 
-try:
-    import tomllib
-except ImportError:
-    import tomli as tomllib  # type: ignore[no-redef]
-
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def read_version() -> tuple[str, str]:
-    """Read version and package name from pyproject.toml."""
+    """Read version and package name from pyproject.toml via regex (no tomllib needed)."""
     path = os.path.join(REPO_ROOT, "sdk", "pyproject.toml")
-    with open(path, "rb") as f:
-        data = tomllib.load(f)
-    return data["project"]["version"], data["project"]["name"]
+    with open(path) as f:
+        content = f.read()
+    version = re.search(r'^version\s*=\s*"([^"]+)"', content, re.MULTILINE)
+    name = re.search(r'^name\s*=\s*"([^"]+)"', content, re.MULTILINE)
+    return (version.group(1) if version else "0.0.0"), (name.group(1) if name else "agentguard47")
 
 
 def read_features() -> list[str]:

@@ -42,13 +42,11 @@ class TestScoutContext(unittest.TestCase):
 
     def test_version_matches_pyproject(self) -> None:
         """Context version matches sdk/pyproject.toml."""
-        try:
-            import tomllib
-        except ImportError:
-            import tomli as tomllib  # type: ignore[no-redef]
-
-        with open(os.path.join(REPO_ROOT, "sdk", "pyproject.toml"), "rb") as f:
-            expected = tomllib.load(f)["project"]["version"]
+        import re as _re
+        with open(os.path.join(REPO_ROOT, "sdk", "pyproject.toml")) as f:
+            content = f.read()
+        match = _re.search(r'^version\s*=\s*"([^"]+)"', content, _re.MULTILINE)
+        expected = match.group(1) if match else "unknown"
 
         from update_scout_context import read_version
         version, _ = read_version()
