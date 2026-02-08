@@ -31,7 +31,7 @@ from agentguard.integrations.langchain import AgentGuardCallbackHandler
 from agentguard import Tracer
 
 tracer = Tracer()
-handler = AgentGuardCallbackHandler(tracer)
+handler = AgentGuardCallbackHandler(tracer=tracer)
 agent.run("your query", callbacks=[handler])
 ```
 
@@ -50,8 +50,10 @@ from agentguard.integrations.langchain import AgentGuardCallbackHandler
 from agentguard import Tracer, LoopGuard
 
 tracer = Tracer()
-handler = AgentGuardCallbackHandler(tracer)
-loop_guard = LoopGuard(max_repeats=3)
+handler = AgentGuardCallbackHandler(
+    tracer=tracer,
+    loop_guard=LoopGuard(max_repeats=3),
+)
 
 # Use with any LangChain agent
 agent.run("question", callbacks=[handler])
@@ -79,8 +81,7 @@ budget = BudgetGuard(max_tokens=50000, max_calls=100)
 
 # After each LLM call:
 try:
-    budget.record_tokens(response.usage.total_tokens)
-    budget.record_call()
+    budget.consume(tokens=response.usage.total_tokens, calls=1)
 except BudgetExceeded as e:
     print(f"Budget hit: {e}")
     # stop the crew
@@ -114,7 +115,7 @@ budget = BudgetGuard(max_tokens=50000)
 
 with tracer.trace("crew.task") as span:
     # your CrewAI task here
-    budget.record_tokens(response.usage.total_tokens)
+    budget.consume(tokens=response.usage.total_tokens)
 ```
 
 Track token usage per agent. Catch budget overruns. See retry counts. Replay runs deterministically for regression tests.
@@ -142,8 +143,7 @@ timeout = TimeoutGuard(max_seconds=60)
 
 timeout.start()
 for step in agent_loop():
-    budget.record_tokens(output.tokens)
-    budget.record_call()
+    budget.consume(tokens=output.tokens, calls=1)
     timeout.check()  # raises TimeoutExceeded if over limit
 ```
 
@@ -177,7 +177,7 @@ budget = BudgetGuard(max_tokens=50000)
 with tracer.trace("agent.run") as span:
     # your Hugging Face model call
     span.event("model.response", data={"tokens": tokens})
-    budget.record_tokens(tokens)
+    budget.consume(tokens=tokens)
 ```
 
 Catch loops. Guard budgets. Replay runs. See reasoning traces in your browser.
