@@ -16,9 +16,9 @@ Usage::
 """
 from __future__ import annotations
 
-from collections import deque
+from collections import Counter, deque
 from dataclasses import dataclass
-from typing import Any, Deque, Dict, Optional, Tuple
+from typing import Any, Callable, Deque, Dict, List, Optional, Tuple
 import json
 import time
 
@@ -30,6 +30,11 @@ class LoopDetected(RuntimeError):
 
 class BudgetExceeded(RuntimeError):
     """Raised when a budget limit is exceeded by BudgetGuard."""
+    pass
+
+
+class BudgetWarning(UserWarning):
+    """Emitted when budget usage crosses the warn_at_pct threshold."""
     pass
 
 
@@ -110,16 +115,26 @@ class BudgetGuard:
     """Enforce token, call, and dollar cost budgets.
 
     Raises ``BudgetExceeded`` when any configured limit is exceeded.
+    Optionally calls ``on_warning`` when usage crosses ``warn_at_pct``.
 
     Usage::
 
         guard = BudgetGuard(max_cost_usd=5.00, max_calls=100)
         guard.consume(tokens=150, calls=1, cost_usd=0.02)
 
+        # With warning callback at 80%:
+        guard = BudgetGuard(
+            max_cost_usd=5.00,
+            warn_at_pct=0.8,
+            on_warning=lambda msg: print(f"WARNING: {msg}"),
+        )
+
     Args:
         max_tokens: Maximum total tokens allowed. None = unlimited.
         max_calls: Maximum total calls allowed. None = unlimited.
         max_cost_usd: Maximum total cost in USD. None = unlimited.
+        warn_at_pct: Fraction (0.0-1.0) at which to trigger a warning. None = no warning.
+        on_warning: Callback invoked with a message when warn_at_pct is crossed.
     """
 
     def __init__(
@@ -127,12 +142,17 @@ class BudgetGuard:
         max_tokens: Optional[int] = None,
         max_calls: Optional[int] = None,
         max_cost_usd: Optional[float] = None,
+        warn_at_pct: Optional[float] = None,
+        on_warning: Optional[Callable[[str], None]] = None,
     ) -> None:
         if max_tokens is None and max_calls is None and max_cost_usd is None:
             raise ValueError("Provide max_tokens, max_calls, or max_cost_usd")
         self._max_tokens = max_tokens
         self._max_calls = max_calls
         self._max_cost_usd = max_cost_usd
+        self._warn_at_pct = warn_at_pct
+        self._on_warning = on_warning
+        self._warned = False
         self.state = BudgetState()
 
     def consume(self, tokens: int = 0, calls: int = 0, cost_usd: float = 0.0) -> None:
@@ -177,10 +197,42 @@ class BudgetGuard:
                 f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.4f} "
                 f"(this call added ${cost_usd:.4f})"
             )
+        # Check warning threshold
+        if self._warn_at_pct is not None and not self._warned:
+            self._check_warning()
+
+    def _check_warning(self) -> None:
+        """Emit a warning if usage crosses the warn_at_pct threshold."""
+        pct = self._warn_at_pct
+        if pct is None:
+            return
+        triggered = False
+        parts = []
+        if self._max_tokens is not None:
+            ratio = self.state.tokens_used / self._max_tokens
+            if ratio >= pct:
+                triggered = True
+                parts.append(f"tokens {ratio:.0%}")
+        if self._max_calls is not None:
+            ratio = self.state.calls_used / self._max_calls
+            if ratio >= pct:
+                triggered = True
+                parts.append(f"calls {ratio:.0%}")
+        if self._max_cost_usd is not None:
+            ratio = self.state.cost_used / self._max_cost_usd
+            if ratio >= pct:
+                triggered = True
+                parts.append(f"cost {ratio:.0%}")
+        if triggered:
+            self._warned = True
+            msg = f"Budget warning: {', '.join(parts)} of limit reached (threshold: {pct:.0%})"
+            if self._on_warning:
+                self._on_warning(msg)
 
     def reset(self) -> None:
         """Reset all usage counters to zero."""
         self.state = BudgetState()
+        self._warned = False
 
     def __repr__(self) -> str:
         parts = []
@@ -239,6 +291,130 @@ class TimeoutGuard:
 
     def __repr__(self) -> str:
         return f"TimeoutGuard(max_seconds={self._max_seconds})"
+
+
+class FuzzyLoopGuard:
+    """Detect loops even when tool args vary, and A-B-A-B alternation patterns.
+
+    Unlike LoopGuard (exact match only), FuzzyLoopGuard catches:
+    - Same tool called repeatedly with different args (frequency check)
+    - Two tools alternating: A-B-A-B-A-B (alternation check)
+
+    Usage::
+
+        guard = FuzzyLoopGuard(max_tool_repeats=5, max_alternations=3, window=10)
+        guard.check("search", {"q": "docs"})
+        guard.check("search", {"q": "api"})    # same tool, different args
+        guard.check("search", {"q": "help"})   # still same tool...
+
+    Args:
+        max_tool_repeats: Max times the same tool name (any args) can appear in window.
+        max_alternations: Max A-B-A-B cycles before triggering.
+        window: Sliding window size.
+    """
+
+    def __init__(
+        self,
+        max_tool_repeats: int = 5,
+        max_alternations: int = 3,
+        window: int = 10,
+    ) -> None:
+        if max_tool_repeats < 2:
+            raise ValueError("max_tool_repeats must be >= 2")
+        if max_alternations < 2:
+            raise ValueError("max_alternations must be >= 2")
+        self._max_tool_repeats = max_tool_repeats
+        self._max_alternations = max_alternations
+        self._window = window
+        self._history: Deque[str] = deque(maxlen=window)
+
+    def check(self, tool_name: str, tool_args: Optional[Dict[str, Any]] = None) -> None:
+        """Record a tool call and check for fuzzy loop patterns.
+
+        Args:
+            tool_name: Name of the tool being called.
+            tool_args: Arguments (used for reporting, not matching).
+
+        Raises:
+            LoopDetected: If a fuzzy loop pattern is detected.
+        """
+        self._history.append(tool_name)
+
+        # Frequency check: same tool name too many times in window
+        counts = Counter(self._history)
+        if counts[tool_name] >= self._max_tool_repeats:
+            raise LoopDetected(
+                f"Fuzzy loop: {tool_name} called {counts[tool_name]} times "
+                f"in last {len(self._history)} calls (limit: {self._max_tool_repeats})"
+            )
+
+        # Alternation check: A-B-A-B pattern
+        if len(self._history) >= self._max_alternations * 2:
+            history_list = list(self._history)
+            tail = history_list[-(self._max_alternations * 2):]
+            a, b = tail[0], tail[1]
+            if a != b and all(
+                tail[i] == (a if i % 2 == 0 else b) for i in range(len(tail))
+            ):
+                raise LoopDetected(
+                    f"Alternation loop: {a} ↔ {b} repeated "
+                    f"{self._max_alternations} times"
+                )
+
+    def reset(self) -> None:
+        """Clear the call history."""
+        self._history.clear()
+
+    def __repr__(self) -> str:
+        return (
+            f"FuzzyLoopGuard(max_tool_repeats={self._max_tool_repeats}, "
+            f"max_alternations={self._max_alternations}, window={self._window})"
+        )
+
+
+class RateLimitGuard:
+    """Enforce a maximum call rate using a sliding time window.
+
+    Usage::
+
+        guard = RateLimitGuard(max_calls_per_minute=60)
+        guard.check()  # call before each API request
+
+    Args:
+        max_calls_per_minute: Maximum calls allowed in a 60-second window.
+    """
+
+    def __init__(self, max_calls_per_minute: int) -> None:
+        if max_calls_per_minute < 1:
+            raise ValueError("max_calls_per_minute must be >= 1")
+        self._max_calls = max_calls_per_minute
+        self._window_seconds = 60.0
+        self._timestamps: Deque[float] = deque()
+
+    def check(self) -> None:
+        """Record a call and check the rate limit.
+
+        Raises:
+            BudgetExceeded: If the call rate exceeds the limit.
+        """
+        now = time.monotonic()
+        cutoff = now - self._window_seconds
+        # Remove expired timestamps
+        while self._timestamps and self._timestamps[0] < cutoff:
+            self._timestamps.popleft()
+        if len(self._timestamps) >= self._max_calls:
+            raise BudgetExceeded(
+                f"Rate limit exceeded: {len(self._timestamps)} calls "
+                f"in the last 60s (limit: {self._max_calls}/min)"
+            )
+        self._timestamps.append(now)
+
+    def reset(self) -> None:
+        """Clear the call history."""
+        self._timestamps.clear()
+
+    def __repr__(self) -> str:
+        return f"RateLimitGuard(max_calls_per_minute={self._max_calls})"
 
 
 def _stable_json(data: Dict[str, Any]) -> str:

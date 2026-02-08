@@ -3,8 +3,11 @@ from .guards import (
     LoopGuard,
     BudgetGuard,
     TimeoutGuard,
+    FuzzyLoopGuard,
+    RateLimitGuard,
     LoopDetected,
     BudgetExceeded,
+    BudgetWarning,
     TimeoutExceeded,
 )
 from .cost import CostTracker, estimate_cost, update_prices
@@ -35,8 +38,11 @@ __all__ = [
     "LoopGuard",
     "BudgetGuard",
     "TimeoutGuard",
+    "FuzzyLoopGuard",
+    "RateLimitGuard",
     "LoopDetected",
     "BudgetExceeded",
+    "BudgetWarning",
     "TimeoutExceeded",
     "CostTracker",
     "estimate_cost",

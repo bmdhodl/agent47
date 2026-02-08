@@ -72,7 +72,8 @@ class TestTopLevelExports(unittest.TestCase):
         expected = {
             "Tracer", "JsonlFileSink", "StdoutSink", "TraceSink",
             "LoopGuard", "BudgetGuard", "TimeoutGuard",
-            "LoopDetected", "BudgetExceeded", "TimeoutExceeded",
+            "FuzzyLoopGuard", "RateLimitGuard",
+            "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
             "CostTracker", "estimate_cost", "update_prices",
             "Recorder", "Replayer", "HttpSink",
             "EvalSuite", "EvalResult", "AssertionResult",
