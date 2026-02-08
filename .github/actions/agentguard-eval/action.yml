@@ -91,7 +91,14 @@ runs:
 
             elif assertion.startswith("max_cost:"):
                 limit = float(assertion.split(":")[1])
-                total_cost = sum(e.get("cost_usd", 0) for e in events)
+                def _get_cost(e):
+                    c = e.get("cost_usd")
+                    if c is not None:
+                        return float(c)
+                    data = e.get("data") or {}
+                    dc = data.get("cost_usd")
+                    return float(dc) if dc is not None else 0.0
+                total_cost = sum(_get_cost(e) for e in events)
                 ok = total_cost <= limit
                 results.append({
                     "name": f"max_cost <= ${limit:.2f}",
@@ -103,7 +110,8 @@ runs:
 
             elif assertion.startswith("max_duration:"):
                 limit = float(assertion.split(":")[1])
-                max_dur = max((e.get("duration_ms", 0) for e in events), default=0) / 1000
+                durations = [e.get("duration_ms") for e in events if e.get("duration_ms") is not None]
+                max_dur = max(durations, default=0) / 1000
                 ok = max_dur <= limit
                 results.append({
                     "name": f"max_duration <= {limit}s",
@@ -149,7 +157,7 @@ runs:
         PYEOF
 
     - name: Post PR comment
-      if: inputs.post-comment == 'true' && github.event_name == 'pull_request'
+      if: always() && steps.eval.outputs.summary && inputs.post-comment == 'true' && github.event_name == 'pull_request'
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
