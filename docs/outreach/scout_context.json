@@ -6,27 +6,28 @@
   "repo_url": "https://github.com/bmdhodl/agent47",
   "pypi_url": "https://pypi.org/project/agentguard47/",
   "features": [
-    "Cost tracking: dollar estimates per LLM call (OpenAI, Anthropic, Gemini, Mistral)",
+    "Cost tracking: dollar estimates per LLM call, per trace, per month (OpenAI, Anthropic, Gemini, Mistral)",
     "Budget guards: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget",
-    "Loop detection: catches repeated tool calls in a sliding window",
-    "Replay: record and replay runs for deterministic testing",
-    "LangChain integration: drop-in callback handler with auto cost + guard wiring",
-    "Gantt trace viewer: timeline visualization in your browser",
-    "Zero dependencies: pure Python stdlib, nothing to audit"
+    "Detect common loop patterns and stop runaway executions",
+    "Record and replay runs to create deterministic tests",
+    "Evaluation as Code: assertion-based trace analysis (`EvalSuite`)",
+    "Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches",
+    "Gantt trace viewer: timeline visualization with click-to-expand details",
+    "JSONL export for local inspection",
+    "Hosted dashboard: cost dashboard, Gantt timelines, loop/error alerts, usage tracking"
   ],
-  "features_bullets": "- Cost tracking: dollar estimates per LLM call (OpenAI, Anthropic, Gemini, Mistral)\n- Budget guards: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget\n- Loop detection: catches repeated tool calls in a sliding window\n- Replay: record and replay runs for deterministic testing\n- LangChain integration: drop-in callback handler with auto cost + guard wiring\n- Gantt trace viewer: timeline visualization in your browser\n- Zero dependencies: pure Python stdlib, nothing to audit",
+  "features_bullets": "- Cost tracking: dollar estimates per LLM call, per trace, per month (OpenAI, Anthropic, Gemini, Mistral)\n- Budget guards: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget\n- Detect common loop patterns and stop runaway executions\n- Record and replay runs to create deterministic tests\n- Evaluation as Code: assertion-based trace analysis (`EvalSuite`)\n- Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches\n- Gantt trace viewer: timeline visualization with click-to-expand details\n- JSONL export for local inspection\n- Hosted dashboard: cost dashboard, Gantt timelines, loop/error alerts, usage tracking",
   "snippets": {
     "loop_guard": "from agentguard import LoopGuard\n\nguard = LoopGuard(max_repeats=3)\nguard.check(tool_name=\"search\", tool_args={\"query\": \"...\"})\n# raises LoopDetected after 3 identical calls",
     "budget_guard": "from agentguard import BudgetGuard\n\nguard = BudgetGuard(max_cost_usd=5.00)  # stop at $5\nguard.consume(cost_usd=0.12)  # track per-call cost\n# raises BudgetExceeded when over budget",
-    "langchain": "from agentguard.integrations.langchain import AgentGuardCallbackHandler\nfrom agentguard import LoopGuard, BudgetGuard\n\nhandler = AgentGuardCallbackHandler(\n    loop_guard=LoopGuard(max_repeats=3),\n    budget_guard=BudgetGuard(max_cost_usd=5.00),\n)\nllm = ChatOpenAI(callbacks=[handler])  # auto-tracks cost per call",
-    "quickstart": "from agentguard import Tracer, BudgetGuard\nfrom agentguard.instrument import patch_openai\n\ntracer = Tracer(sink=JsonlFileSink(\"traces.jsonl\"))\npatch_openai(tracer)  # auto-tracks cost per call\n\nwith tracer.trace(\"agent.run\") as span:\n    span.event(\"step\", data={\"thought\": \"search docs\"})"
+    "langchain": "from agentguard.integrations.langchain import AgentGuardCallbackHandler\nfrom agentguard import LoopGuard, BudgetGuard\n\nhandler = AgentGuardCallbackHandler(\n    loop_guard=LoopGuard(max_repeats=3),\n    budget_guard=BudgetGuard(max_cost_usd=5.00),\n)\nllm = ChatOpenAI(callbacks=[handler])  # auto-tracks cost per call"
   },
   "whats_new": [
-    "v0.5.0: Cost tracking + dollar budget guards",
-    "Estimated cost per LLM call (auto-detected from token usage)",
-    "`BudgetGuard(max_cost_usd=N)` \u2014 dollar-based budget enforcement",
-    "LangChain integration now auto-estimates cost and enforces budgets",
-    "Hosted dashboard with costs page, savings banner"
+    "Automate scout workflow with dynamic variables from pyproject.toml",
+    "Fix cost_usd not flowing through ingest and LangChain budget guard",
+    "Fix ruff F821: add TYPE_CHECKING import for CostTracker",
+    "Comprehensive dashboard UI overhaul",
+    "Fix review issues: version ref, input validation, package excludes"
   ],
-  "whats_new_bullets": "- v0.5.0: Cost tracking + dollar budget guards\n- Estimated cost per LLM call (auto-detected from token usage)\n- `BudgetGuard(max_cost_usd=N)` \u2014 dollar-based budget enforcement\n- LangChain integration now auto-estimates cost and enforces budgets\n- Hosted dashboard with costs page, savings banner"
+  "whats_new_bullets": "- Automate scout workflow with dynamic variables from pyproject.toml\n- Fix cost_usd not flowing through ingest and LangChain budget guard\n- Fix ruff F821: add TYPE_CHECKING import for CostTracker\n- Comprehensive dashboard UI overhaul\n- Fix review issues: version ref, input validation, package excludes"
 }
