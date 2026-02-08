@@ -31,7 +31,21 @@ export interface EventRow {
   api_key_prefix: string | null;
 }
 
-export async function getTraceList(teamId: string): Promise<TraceRow[]> {
+export interface TraceListOpts {
+  limit?: number;
+  offset?: number;
+  service?: string;
+  since?: string;
+  until?: string;
+}
+
+export async function getTraceList(
+  teamId: string,
+  opts?: TraceListOpts,
+): Promise<TraceRow[]> {
+  const limit = Math.min(opts?.limit ?? 100, 500);
+  const offset = opts?.offset ?? 0;
+
   const rows = await sql`
     SELECT
       e.trace_id,
@@ -47,9 +61,12 @@ export async function getTraceList(teamId: string): Promise<TraceRow[]> {
     FROM events e
     LEFT JOIN api_keys ak ON ak.id = e.api_key_id
     WHERE e.team_id = ${teamId}
+      ${opts?.service ? sql`AND e.service = ${opts.service}` : sql``}
+      ${opts?.since ? sql`AND e.created_at >= ${opts.since}::timestamptz` : sql``}
+      ${opts?.until ? sql`AND e.created_at <= ${opts.until}::timestamptz` : sql``}
     GROUP BY e.trace_id
     ORDER BY MIN(e.created_at) DESC
-    LIMIT 100
+    LIMIT ${limit} OFFSET ${offset}
   `;
 
   return rows as unknown as TraceRow[];
@@ -86,7 +103,17 @@ export async function getUsageStats(teamId: string) {
   };
 }
 
-export async function getAlerts(teamId: string): Promise<EventRow[]> {
+export interface AlertsOpts {
+  limit?: number;
+  since?: string;
+}
+
+export async function getAlerts(
+  teamId: string,
+  opts?: AlertsOpts,
+): Promise<EventRow[]> {
+  const limit = Math.min(opts?.limit ?? 50, 200);
+
   const rows = await sql`
     SELECT e.id, e.trace_id, e.span_id, e.parent_id, e.kind, e.phase, e.name, e.ts,
            e.duration_ms, e.data, e.error, e.service, e.created_at,
@@ -95,8 +122,9 @@ export async function getAlerts(teamId: string): Promise<EventRow[]> {
     LEFT JOIN api_keys ak ON ak.id = e.api_key_id
     WHERE e.team_id = ${teamId}
       AND (e.name = 'guard.loop_detected' OR e.name = 'guard.budget_exceeded' OR e.error IS NOT NULL)
+      ${opts?.since ? sql`AND e.created_at >= ${opts.since}::timestamptz` : sql``}
     ORDER BY e.created_at DESC
-    LIMIT 50
+    LIMIT ${limit}
   `;
 
   return rows as unknown as EventRow[];

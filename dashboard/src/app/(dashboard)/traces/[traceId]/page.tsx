@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSessionOrRedirect, getTeamForUser } from "@/lib/auth";
 import { getTraceEvents } from "@/lib/queries";
 import { TraceGantt } from "@/components/trace-gantt";
+import { ShareButton } from "@/components/share-button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 
@@ -50,6 +51,8 @@ export default async function TraceDetailPage({
             {events[0].api_key_name}
           </Badge>
         )}
+        <div className="flex-1" />
+        <ShareButton traceId={params.traceId} />
       </div>
       <TraceGantt events={events} />
     </div>
