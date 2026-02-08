@@ -1,8 +1,22 @@
+"""Tracing primitives: Tracer, TraceContext, and sinks.
+
+Usage::
+
+    from agentguard import Tracer, JsonlFileSink, LoopGuard
+
+    tracer = Tracer(
+        sink=JsonlFileSink("traces.jsonl"),
+        service="my-agent",
+        guards=[LoopGuard(max_repeats=3)],
+    )
+    with tracer.trace("agent.run") as span:
+        span.event("reasoning.step", data={"thought": "search docs"})
+"""
 from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
@@ -13,29 +27,73 @@ import uuid
 
 
 class TraceSink:
+    """Base class for trace event sinks.
+
+    Subclass and implement ``emit()`` to send events to your backend.
+    """
+
     def emit(self, event: Dict[str, Any]) -> None:  # pragma: no cover - interface
         raise NotImplementedError
 
 
 class StdoutSink(TraceSink):
+    """Sink that prints events to stdout as JSON.
+
+    Usage::
+
+        tracer = Tracer(sink=StdoutSink())
+    """
+
     def emit(self, event: Dict[str, Any]) -> None:
         print(json.dumps(event, sort_keys=True))
 
+    def __repr__(self) -> str:
+        return "StdoutSink()"
+
 
 class JsonlFileSink(TraceSink):
+    """Sink that appends events as JSONL to a file.
+
+    Thread-safe. Each event is written as a single JSON line.
+
+    Usage::
+
+        sink = JsonlFileSink("traces.jsonl")
+        tracer = Tracer(sink=sink)
+
+    Args:
+        path: Path to the output JSONL file.
+    """
+
     def __init__(self, path: str) -> None:
         self._path = path
         self._lock = threading.Lock()
 
     def emit(self, event: Dict[str, Any]) -> None:
+        """Append an event as a JSON line to the file."""
         line = json.dumps(event, sort_keys=True)
         with self._lock:
             with open(self._path, "a", encoding="utf-8") as f:
                 f.write(line + "\n")
 
+    def __repr__(self) -> str:
+        return f"JsonlFileSink({self._path!r})"
+
 
 @dataclass
 class TraceContext:
+    """Context for a trace span. Used as a context manager.
+
+    Provides methods to create child spans and emit events within a trace.
+
+    Usage::
+
+        with tracer.trace("agent.run") as ctx:
+            ctx.event("reasoning.step", data={"step": 1})
+            with ctx.span("tool.search") as child:
+                child.event("tool.result", data={"result": "found"})
+    """
+
     tracer: "Tracer"
     trace_id: str
     span_id: str
@@ -47,7 +105,11 @@ class TraceContext:
 
     @property
     def cost(self) -> "CostTracker":
-        """Lazy-initialized CostTracker for this trace."""
+        """Lazy-initialized CostTracker for this trace.
+
+        Returns:
+            A CostTracker instance that accumulates costs for this span.
+        """
         if self._cost_tracker is None:
             from agentguard.cost import CostTracker
 
@@ -93,6 +155,15 @@ class TraceContext:
         return False
 
     def span(self, name: str, data: Optional[Dict[str, Any]] = None) -> "TraceContext":
+        """Create a child span within this trace.
+
+        Args:
+            name: Name of the child span.
+            data: Optional data to attach to the span.
+
+        Returns:
+            A new TraceContext to use as a context manager.
+        """
         return TraceContext(
             tracer=self.tracer,
             trace_id=self.trace_id,
@@ -103,6 +174,12 @@ class TraceContext:
         )
 
     def event(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+        """Emit a point-in-time event within this span.
+
+        Args:
+            name: Name of the event.
+            data: Optional data to attach to the event.
+        """
         self.tracer._emit(
             kind="event",
             phase="emit",
@@ -115,12 +192,43 @@ class TraceContext:
 
 
 class Tracer:
-    def __init__(self, sink: Optional[TraceSink] = None, service: str = "app") -> None:
+    """Core tracer that manages spans and emits events to a sink.
+
+    Usage::
+
+        from agentguard import Tracer, JsonlFileSink
+
+        tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
+        with tracer.trace("agent.run") as span:
+            span.event("step", data={"thought": "search"})
+
+    Args:
+        sink: Where to send trace events. Defaults to StdoutSink.
+        service: Name of the service being traced.
+        guards: Optional list of guards to auto-check on each event.
+    """
+
+    def __init__(
+        self,
+        sink: Optional[TraceSink] = None,
+        service: str = "app",
+        guards: Optional[List[Any]] = None,
+    ) -> None:
         self._sink = sink or StdoutSink()
         self._service = service
+        self._guards = guards or []
 
     @contextmanager
     def trace(self, name: str, data: Optional[Dict[str, Any]] = None) -> TraceContext:
+        """Start a new top-level trace span.
+
+        Args:
+            name: Name of the trace span.
+            data: Optional data to attach to the span.
+
+        Yields:
+            A TraceContext for creating child spans and events.
+        """
         ctx = TraceContext(
             tracer=self,
             trace_id=_new_id(),
@@ -146,6 +254,10 @@ class Tracer:
         error: Optional[Dict[str, Any]] = None,
         cost_usd: Optional[float] = None,
     ) -> None:
+        """Internal: build and emit a trace event.
+
+        Also runs any attached guards on event emission.
+        """
         event: Dict[str, Any] = {
             "service": self._service,
             "kind": kind,
@@ -162,6 +274,22 @@ class Tracer:
         if cost_usd is not None:
             event["cost_usd"] = cost_usd
         self._sink.emit(event)
+
+        # Auto-check guards
+        for guard in self._guards:
+            if hasattr(guard, "check") and kind == "event":
+                # LoopGuard-style: pass name as tool_name
+                try:
+                    guard.check(name, data)
+                except TypeError:
+                    # Guard.check() doesn't accept these args (e.g. TimeoutGuard)
+                    try:
+                        guard.check()
+                    except TypeError:
+                        pass
+
+    def __repr__(self) -> str:
+        return f"Tracer(service={self._service!r}, sink={self._sink!r})"
 
 
 def _new_id() -> str:

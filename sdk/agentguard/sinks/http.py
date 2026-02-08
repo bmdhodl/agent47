@@ -1,3 +1,12 @@
+"""HTTP sink for sending trace events to a remote endpoint.
+
+Usage::
+
+    from agentguard import Tracer, HttpSink
+
+    sink = HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_...")
+    tracer = Tracer(sink=sink, service="my-agent")
+"""
 from __future__ import annotations
 
 import atexit
@@ -18,6 +27,22 @@ class HttpSink(TraceSink):
     Uses only stdlib (urllib.request). Events are buffered and flushed
     periodically in a background thread. Network failures are logged
     but never crash the calling agent.
+
+    Usage::
+
+        sink = HttpSink(
+            url="https://app.agentguard47.com/api/ingest",
+            api_key="ag_...",
+            batch_size=10,
+            flush_interval=5.0,
+        )
+        tracer = Tracer(sink=sink, service="my-agent")
+
+    Args:
+        url: Endpoint URL to POST events to.
+        api_key: Optional API key sent as Bearer token.
+        batch_size: Flush when this many events are buffered.
+        flush_interval: Flush every N seconds regardless of buffer size.
     """
 
     def __init__(
@@ -47,6 +72,7 @@ class HttpSink(TraceSink):
         atexit.register(self.shutdown)
 
     def emit(self, event: Dict[str, Any]) -> None:
+        """Buffer an event, flushing if batch_size is reached."""
         batch = None
         with self._lock:
             self._buffer.append(event)
@@ -87,3 +113,6 @@ class HttpSink(TraceSink):
         self._stop.set()
         self._flush()
         self._thread.join(timeout=5)
+
+    def __repr__(self) -> str:
+        return f"HttpSink(url={self._url!r})"

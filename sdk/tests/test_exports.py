@@ -62,6 +62,11 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertIsNotNone(patch_openai)
         self.assertIsNotNone(patch_anthropic)
 
+    def test_instrument_unpatches(self):
+        from agentguard import unpatch_openai, unpatch_anthropic
+        self.assertIsNotNone(unpatch_openai)
+        self.assertIsNotNone(unpatch_anthropic)
+
     def test_all_list_complete(self):
         import agentguard
         expected = {
@@ -71,7 +76,9 @@ class TestTopLevelExports(unittest.TestCase):
             "CostTracker", "estimate_cost", "update_prices",
             "Recorder", "Replayer", "HttpSink",
             "EvalSuite", "EvalResult", "AssertionResult",
-            "trace_agent", "trace_tool", "patch_openai", "patch_anthropic",
+            "trace_agent", "trace_tool",
+            "patch_openai", "patch_anthropic",
+            "unpatch_openai", "unpatch_anthropic",
         }
         self.assertEqual(set(agentguard.__all__), expected)
 

@@ -1,4 +1,18 @@
-"""Evaluation as Code — assertion-based trace analysis."""
+"""Evaluation as Code — assertion-based trace analysis.
+
+Usage::
+
+    from agentguard import EvalSuite
+
+    result = (
+        EvalSuite("traces.jsonl")
+        .assert_no_loops()
+        .assert_budget_under(tokens=50000)
+        .assert_completes_within(30.0)
+        .run()
+    )
+    print(result.summary)
+"""
 from __future__ import annotations
 
 import json
@@ -8,6 +22,7 @@ from typing import Any, Dict, List, Optional
 
 @dataclass
 class AssertionResult:
+    """Result of a single evaluation assertion."""
     name: str
     passed: bool
     message: str
@@ -15,14 +30,21 @@ class AssertionResult:
 
 @dataclass
 class EvalResult:
+    """Aggregated results from an EvalSuite run.
+
+    Attributes:
+        assertions: List of individual assertion results.
+    """
     assertions: List[AssertionResult] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
+        """True if all assertions passed."""
         return all(a.passed for a in self.assertions)
 
     @property
     def summary(self) -> str:
+        """Human-readable summary of all assertion results."""
         total = len(self.assertions)
         passed = sum(1 for a in self.assertions if a.passed)
         failed = total - passed
@@ -34,7 +56,22 @@ class EvalResult:
 
 
 class EvalSuite:
-    """Load a trace from JSONL and run assertions against it."""
+    """Load a trace from JSONL and run assertions against it.
+
+    Usage::
+
+        result = (
+            EvalSuite("traces.jsonl")
+            .assert_no_loops()
+            .assert_tool_called("search", min_times=1)
+            .assert_budget_under(tokens=50000)
+            .run()
+        )
+        print(result.summary)
+
+    Args:
+        path: Path to a JSONL trace file.
+    """
 
     def __init__(self, path: str) -> None:
         self._events = _load_events(path)

@@ -11,7 +11,14 @@ from .cost import CostTracker, estimate_cost, update_prices
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
 from .evaluation import EvalSuite, EvalResult, AssertionResult
-from .instrument import trace_agent, trace_tool, patch_openai, patch_anthropic
+from .instrument import (
+    trace_agent,
+    trace_tool,
+    patch_openai,
+    patch_anthropic,
+    unpatch_openai,
+    unpatch_anthropic,
+)
 
 __all__ = [
     "Tracer",
@@ -37,4 +44,6 @@ __all__ = [
     "trace_tool",
     "patch_openai",
     "patch_anthropic",
+    "unpatch_openai",
+    "unpatch_anthropic",
 ]

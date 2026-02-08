@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard47"
-version = "0.5.1"
+version = "0.6.0"
 description = "Zero-dependency observability and runtime guards for AI agents"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -44,3 +44,6 @@ package-dir = {"" = "."}
 where = ["."]
 include = ["agentguard*"]
 exclude = ["tests*", "examples*"]
+
+[tool.setuptools.package-data]
+agentguard = ["py.typed"]
