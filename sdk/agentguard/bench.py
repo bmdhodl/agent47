@@ -8,10 +8,8 @@ to verify < 0.1ms per operation.
 """
 from __future__ import annotations
 
-import io
-import json
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 
 def _bench(name: str, fn, iterations: int = 10000) -> float:
@@ -33,7 +31,7 @@ class _NullSink:
 
 def main() -> None:
     from agentguard.tracing import Tracer, JsonlFileSink
-    from agentguard.guards import LoopGuard, BudgetGuard, TimeoutGuard
+    from agentguard.guards import LoopGuard, BudgetGuard
 
     print("AgentGuard SDK Benchmark")
     print("=" * 50)
