@@ -1,6 +1,7 @@
 name: Deploy Dashboard
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths: ['dashboard/**']
