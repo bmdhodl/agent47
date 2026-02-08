@@ -23,11 +23,9 @@
     "langchain": "from agentguard.integrations.langchain import AgentGuardCallbackHandler\nfrom agentguard import LoopGuard, BudgetGuard\n\nhandler = AgentGuardCallbackHandler(\n    loop_guard=LoopGuard(max_repeats=3),\n    budget_guard=BudgetGuard(max_cost_usd=5.00),\n)\nllm = ChatOpenAI(callbacks=[handler])  # auto-tracks cost per call"
   },
   "whats_new": [
-    "Automate scout workflow with dynamic variables from pyproject.toml",
-    "Fix cost_usd not flowing through ingest and LangChain budget guard",
-    "Fix ruff F821: add TYPE_CHECKING import for CostTracker",
-    "Comprehensive dashboard UI overhaul",
-    "Fix review issues: version ref, input validation, package excludes"
+    "Fix deploy workflow: treat workflow_dispatch as production",
+    "Add workflow_dispatch trigger to deploy workflow",
+    "Fix CI: remove tomllib dependency for Python 3.9/3.10 compat"
   ],
-  "whats_new_bullets": "- Automate scout workflow with dynamic variables from pyproject.toml\n- Fix cost_usd not flowing through ingest and LangChain budget guard\n- Fix ruff F821: add TYPE_CHECKING import for CostTracker\n- Comprehensive dashboard UI overhaul\n- Fix review issues: version ref, input validation, package excludes"
+  "whats_new_bullets": "- Fix deploy workflow: treat workflow_dispatch as production\n- Add workflow_dispatch trigger to deploy workflow\n- Fix CI: remove tomllib dependency for Python 3.9/3.10 compat"
 }
