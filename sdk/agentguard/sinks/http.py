@@ -72,6 +72,15 @@ class HttpSink(TraceSink):
                 "Use HTTPS to protect credentials in transit.",
                 url,
             )
+        # Reject URLs with credentials in query string
+        if "?" in url:
+            query = url.split("?", 1)[1]
+            for param in ("key=", "api_key=", "token=", "secret=", "password="):
+                if param in query.lower():
+                    raise ValueError(
+                        f"HttpSink: URL contains credentials in query string ({param}...). "
+                        f"Use the api_key parameter instead."
+                    )
         self._url = url
         self._api_key = api_key
         self._batch_size = batch_size

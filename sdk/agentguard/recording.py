@@ -115,7 +115,10 @@ def _load_entries(path: str) -> Dict[Tuple[str, str], Dict[str, Any]]:
                 line = line.strip()
                 if not line:
                     continue
-                data = json.loads(line)
+                try:
+                    data = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
                 name = data.get("name")
                 request = data.get("request")
                 response = data.get("response")

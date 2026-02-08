@@ -11,27 +11,20 @@
 pip install agentguard47
 ```
 
-With LangChain support:
-```bash
-pip install agentguard47[langchain]
-```
-
-## Quickstart (2 minutes)
-
-```bash
-pip install agentguard47
-```
+## Quickstart
 
 ```python
-from agentguard import Tracer, LoopGuard
-from agentguard.tracing import JsonlFileSink
+from agentguard import Tracer, LoopGuard, BudgetGuard, JsonlFileSink
 
-tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
-guard = LoopGuard(max_repeats=3)
+sink = JsonlFileSink("traces.jsonl")
+tracer = Tracer(
+    sink=sink,
+    service="my-agent",
+    guards=[LoopGuard(max_repeats=3), BudgetGuard(max_cost_usd=5.00)],
+)
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search docs"})
-    guard.check(tool_name="search", tool_args={"query": "agent loops"})
     with span.span("tool.search"):
         pass  # your tool here
 ```
@@ -41,74 +34,42 @@ agentguard report traces.jsonl   # summary table
 agentguard view traces.jsonl     # Gantt timeline in browser
 ```
 
-No config, no dependencies, no account needed.
-
-## Tracing
-
-```python
-from agentguard.tracing import Tracer
-
-tracer = Tracer()
-
-with tracer.trace("agent.run", data={"user_id": "u123"}) as span:
-    span.event("reasoning.step", data={"step": 1, "thought": "search docs"})
-    with span.span("tool.call", data={"tool": "search", "query": "agent loops"}):
-        pass
-```
-
 ## Guards
 
 ```python
-from agentguard.guards import LoopGuard, BudgetGuard, TimeoutGuard
+from agentguard import LoopGuard, BudgetGuard, TimeoutGuard, FuzzyLoopGuard, RateLimitGuard
 
-# Detect repeated tool calls
+# Exact loop detection
 guard = LoopGuard(max_repeats=3)
 guard.check(tool_name="search", tool_args={"query": "agent loops"})
 
-# Track token and call budgets
-budget = BudgetGuard(max_tokens=50000, max_calls=100)
-budget.consume(tokens=150, calls=1)
+# Fuzzy loop detection (same tool, different args + A-B-A-B patterns)
+fuzzy = FuzzyLoopGuard(max_tool_repeats=5, max_alternations=3)
+fuzzy.check("search", {"q": "docs"})
 
-# Enforce wall-clock time limits
+# Budget enforcement with warning callback
+budget = BudgetGuard(
+    max_cost_usd=5.00,
+    warn_at_pct=0.8,
+    on_warning=lambda msg: print(f"WARNING: {msg}"),
+)
+budget.consume(tokens=150, calls=1, cost_usd=0.02)
+
+# Wall-clock timeout
 timeout = TimeoutGuard(max_seconds=30)
 timeout.start()
-timeout.check()  # raises TimeoutExceeded if over limit
-```
+timeout.check()
 
-## Replay
-
-```python
-from agentguard.recording import Recorder, Replayer
-
-recorder = Recorder("runs.jsonl")
-recorder.record_call("llm", {"prompt": "hi"}, {"text": "hello"})
-
-replayer = Replayer("runs.jsonl")
-resp = replayer.replay_call("llm", {"prompt": "hi"})
-```
-
-## Evaluation as Code
-
-```python
-from agentguard import EvalSuite
-
-result = (
-    EvalSuite("traces.jsonl")
-    .assert_no_loops()
-    .assert_tool_called("search", min_times=1)
-    .assert_budget_under(tokens=50000)
-    .assert_completes_within(30.0)
-    .assert_no_errors()
-    .run()
-)
-print(result.summary)
+# Rate limiting
+rate = RateLimitGuard(max_calls_per_minute=60)
+rate.check()
 ```
 
 ## Auto-Instrumentation
 
 ```python
-from agentguard import Tracer
-from agentguard.instrument import trace_agent, trace_tool
+from agentguard import Tracer, patch_openai, patch_anthropic
+from agentguard import trace_agent, trace_tool
 
 tracer = Tracer()
 
@@ -121,59 +82,123 @@ def search(q):
     return f"results for {q}"
 
 # Monkey-patch OpenAI/Anthropic (safe if not installed)
-from agentguard.instrument import patch_openai, patch_anthropic
 patch_openai(tracer)
 patch_anthropic(tracer)
+```
+
+## Async Support
+
+```python
+from agentguard import AsyncTracer, JsonlFileSink
+from agentguard import async_trace_agent, async_trace_tool, patch_openai_async
+
+tracer = AsyncTracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
+patch_openai_async(tracer)
+
+@async_trace_agent(tracer)
+async def my_agent(query: str) -> str:
+    return await search(query)
+
+@async_trace_tool(tracer)
+async def search(q: str) -> str:
+    return f"results for {q}"
+```
+
+## Evaluation as Code
+
+```python
+from agentguard import EvalSuite
+
+result = (
+    EvalSuite("traces.jsonl")
+    .assert_no_loops()
+    .assert_tool_called("search", min_times=1)
+    .assert_budget_under(tokens=50000)
+    .assert_cost_under(max_cost_usd=1.00)
+    .assert_completes_within(30.0)
+    .assert_no_errors()
+    .assert_no_budget_warnings()
+    .run()
+)
+print(result.summary)
+```
+
+## Replay
+
+```python
+from agentguard import Recorder, Replayer
+
+recorder = Recorder("runs.jsonl")
+recorder.record_call("llm", {"prompt": "hi"}, {"text": "hello"})
+
+replayer = Replayer("runs.jsonl")
+resp = replayer.replay_call("llm", {"prompt": "hi"})
+```
+
+## Production Features
+
+```python
+# Metadata attached to every event
+tracer = Tracer(
+    sink=sink,
+    metadata={"env": "production", "git_sha": "abc123"},
+)
+
+# Probabilistic sampling (emit 10% of traces)
+tracer = Tracer(sink=sink, sampling_rate=0.1)
+
+# HttpSink with gzip, retry, idempotency
+from agentguard import HttpSink
+sink = HttpSink(
+    url="https://app.agentguard47.com/api/ingest",
+    api_key="ag_...",
+    compress=True,
+    max_retries=3,
+)
 ```
 
 ## CLI
 
 ```bash
-# Summarize trace events
-agentguard summarize traces.jsonl
-
-# Human-readable report
-agentguard report traces.jsonl
-
-# Open Gantt trace viewer in browser
-agentguard view traces.jsonl
-
-# Run evaluation assertions
-agentguard eval traces.jsonl
+agentguard report traces.jsonl      # human-readable summary
+agentguard view traces.jsonl        # Gantt trace viewer in browser
+agentguard summarize traces.jsonl   # event-level breakdown
+agentguard eval traces.jsonl        # run evaluation assertions
+agentguard eval traces.jsonl --ci   # CI mode (stricter checks, exit code)
 ```
 
-## Trace Viewer
-
-```bash
-agentguard view traces.jsonl --port 8080
-```
-
-Gantt-style timeline with color-coded spans (reasoning, tool, LLM, guard, error), click-to-expand detail panel, and aggregate stats.
-
-## Integrations
-
-- LangChain: `agentguard.integrations.langchain`
-
-## Cloud (Hosted Dashboard)
-
-Send traces to the hosted dashboard instead of local JSONL files:
+## Export
 
 ```python
-from agentguard import Tracer
-from agentguard.sinks.http import HttpSink
+from agentguard.export import export_json, export_csv
 
-sink = HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_...")
-tracer = Tracer(sink=sink, service="my-agent")
-
-with tracer.trace("agent.run") as span:
-    span.event("reasoning.step", data={"thought": "search docs"})
+export_json("traces.jsonl", "traces.json")
+export_csv("traces.jsonl", "traces.csv")
 ```
 
-Get your API key at [app.agentguard47.com](https://app.agentguard47.com). Free tier: 10K events/month.
+## Benchmark
+
+```bash
+python -m agentguard.bench
+```
+
+## Migration Guide (v0.5 → v1.0)
+
+| v0.5 | v1.0 |
+|------|------|
+| `from agentguard.tracing import JsonlFileSink` | `from agentguard import JsonlFileSink` |
+| `from agentguard.instrument import trace_agent` | `from agentguard import trace_agent` |
+| `from agentguard.instrument import patch_openai` | `from agentguard import patch_openai` |
+| `budget.record_tokens(150)` | `budget.consume(tokens=150)` |
+| (no async support) | `AsyncTracer`, `async_trace_agent`, `patch_openai_async` |
+| (no fuzzy loops) | `FuzzyLoopGuard`, `RateLimitGuard` |
+| (no budget warnings) | `BudgetGuard(warn_at_pct=0.8, on_warning=...)` |
+| (no sampling) | `Tracer(sampling_rate=0.1)` |
+| (no metadata) | `Tracer(metadata={"env": "prod"})` |
+| (no gzip) | `HttpSink(compress=True)` |
 
 ## Links
 
 - [GitHub](https://github.com/bmdhodl/agent47)
 - [Dashboard](https://app.agentguard47.com)
-- [Trace Schema](https://github.com/bmdhodl/agent47/blob/main/docs/trace_schema.md)
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/sdk/examples)
