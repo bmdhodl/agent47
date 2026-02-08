@@ -18,13 +18,28 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
+type ApiKeyScope = "ingest" | "read" | "full";
+
 interface ApiKey {
   id: string;
   prefix: string;
   name: string;
+  scope: ApiKeyScope;
   created_at: string;
   revoked_at: string | null;
 }
+
+const SCOPE_LABELS: Record<ApiKeyScope, string> = {
+  ingest: "Ingest only",
+  read: "Read only",
+  full: "Full access",
+};
+
+const SCOPE_COLORS: Record<ApiKeyScope, string> = {
+  ingest: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  read: "bg-green-500/10 text-green-400 border-green-500/20",
+  full: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+};
 
 export function ApiKeyManager({
   teamId,
@@ -38,6 +53,7 @@ export function ApiKeyManager({
   activeCount: number;
 }) {
   const [newKeyName, setNewKeyName] = useState("Default");
+  const [newKeyScope, setNewKeyScope] = useState<ApiKeyScope>("full");
   const [rawKey, setRawKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -51,7 +67,7 @@ export function ApiKeyManager({
     const res = await fetch("/api/keys", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newKeyName, team_id: teamId }),
+      body: JSON.stringify({ name: newKeyName, team_id: teamId, scope: newKeyScope }),
     });
 
     if (!res.ok) {
@@ -106,6 +122,7 @@ export function ApiKeyManager({
       setRawKey(null);
       setCopied(false);
       setNewKeyName("Default");
+      setNewKeyScope("full");
     }
   }
 
@@ -171,6 +188,30 @@ export function ApiKeyManager({
                     placeholder="e.g. production, staging"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label>Permissions</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(["ingest", "read", "full"] as const).map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setNewKeyScope(s)}
+                        className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                          newKeyScope === s
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border text-muted-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        <div>{SCOPE_LABELS[s]}</div>
+                        <div className="mt-0.5 font-normal text-[10px] opacity-70">
+                          {s === "ingest" && "Send traces"}
+                          {s === "read" && "Query data"}
+                          {s === "full" && "Both"}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <Button
                   onClick={handleCreate}
                   className="w-full"
@@ -208,6 +249,9 @@ export function ApiKeyManager({
                     </span>
                     <span className="text-sm text-muted-foreground truncate">
                       {key.name}
+                    </span>
+                    <span className={`inline-flex rounded-md border px-1.5 py-0.5 text-[10px] font-medium ${SCOPE_COLORS[key.scope]}`}>
+                      {SCOPE_LABELS[key.scope]}
                     </span>
                     {key.revoked_at && (
                       <Badge variant="secondary" className="text-xs">

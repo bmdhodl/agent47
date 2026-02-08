@@ -21,7 +21,9 @@ export async function POST(request: Request) {
   }
 
   const userId = (session.user as { id: string }).id;
-  const { name, team_id } = await request.json();
+  const { name, team_id, scope: rawScope } = await request.json();
+  const VALID_SCOPES = ["ingest", "read", "full"] as const;
+  const scope = VALID_SCOPES.includes(rawScope) ? rawScope : "full";
 
   // Verify user owns the team
   const teams = await sql`
@@ -52,8 +54,8 @@ export async function POST(request: Request) {
   const { raw, hash, prefix } = generateApiKey();
 
   await sql`
-    INSERT INTO api_keys (team_id, key_hash, prefix, name)
-    VALUES (${team_id}, ${hash}, ${prefix}, ${name || "Default"})
+    INSERT INTO api_keys (team_id, key_hash, prefix, name, scope)
+    VALUES (${team_id}, ${hash}, ${prefix}, ${name || "Default"}, ${scope})
   `;
 
   return NextResponse.json({ raw_key: raw, prefix });

@@ -11,7 +11,7 @@ export default async function SettingsPage() {
   const team = await getTeamForUser(user.id);
 
   const keys = await sql`
-    SELECT id, prefix, name, created_at, revoked_at
+    SELECT id, prefix, name, scope, created_at, revoked_at
     FROM api_keys
     WHERE team_id = ${team.id}
     ORDER BY created_at DESC
@@ -53,6 +53,7 @@ export default async function SettingsPage() {
           id: k.id,
           prefix: k.prefix,
           name: k.name,
+          scope: k.scope ?? "full",
           created_at: k.created_at,
           revoked_at: k.revoked_at,
         }))}
