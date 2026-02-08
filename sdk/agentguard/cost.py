@@ -96,7 +96,7 @@ class CostTracker:
 
     def __init__(self) -> None:
         self._total: float = 0.0
-        self._calls: list = []
+        self._calls: list[Dict[str, Any]] = []
 
     def add(
         self,

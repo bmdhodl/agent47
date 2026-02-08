@@ -1,4 +1,18 @@
-"""Evaluation as Code — assertion-based trace analysis."""
+"""Evaluation as Code — assertion-based trace analysis.
+
+Usage::
+
+    from agentguard import EvalSuite
+
+    result = (
+        EvalSuite("traces.jsonl")
+        .assert_no_loops()
+        .assert_budget_under(tokens=50000)
+        .assert_completes_within(30.0)
+        .run()
+    )
+    print(result.summary)
+"""
 from __future__ import annotations
 
 import json
@@ -8,6 +22,7 @@ from typing import Any, Dict, List, Optional
 
 @dataclass
 class AssertionResult:
+    """Result of a single evaluation assertion."""
     name: str
     passed: bool
     message: str
@@ -15,14 +30,21 @@ class AssertionResult:
 
 @dataclass
 class EvalResult:
+    """Aggregated results from an EvalSuite run.
+
+    Attributes:
+        assertions: List of individual assertion results.
+    """
     assertions: List[AssertionResult] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
+        """True if all assertions passed."""
         return all(a.passed for a in self.assertions)
 
     @property
     def summary(self) -> str:
+        """Human-readable summary of all assertion results."""
         total = len(self.assertions)
         passed = sum(1 for a in self.assertions if a.passed)
         failed = total - passed
@@ -34,7 +56,22 @@ class EvalResult:
 
 
 class EvalSuite:
-    """Load a trace from JSONL and run assertions against it."""
+    """Load a trace from JSONL and run assertions against it.
+
+    Usage::
+
+        result = (
+            EvalSuite("traces.jsonl")
+            .assert_no_loops()
+            .assert_tool_called("search", min_times=1)
+            .assert_budget_under(tokens=50000)
+            .run()
+        )
+        print(result.summary)
+
+    Args:
+        path: Path to a JSONL trace file.
+    """
 
     def __init__(self, path: str) -> None:
         self._events = _load_events(path)
@@ -94,6 +131,22 @@ class EvalSuite:
         self._assertions.append(_Assertion(
             name="no_errors",
             check=_check_no_errors,
+        ))
+        return self
+
+    def assert_cost_under(self, max_cost_usd: float) -> "EvalSuite":
+        """Assert total estimated cost is under a dollar limit."""
+        self._assertions.append(_Assertion(
+            name=f"cost_under:${max_cost_usd}",
+            check=lambda events, m=max_cost_usd: _check_cost_under(events, m),
+        ))
+        return self
+
+    def assert_no_budget_warnings(self) -> "EvalSuite":
+        """Assert no budget warning events were recorded."""
+        self._assertions.append(_Assertion(
+            name="no_budget_warnings",
+            check=_check_no_budget_warnings,
         ))
         return self
 
@@ -201,6 +254,36 @@ def _check_no_errors(events: List[Dict[str, Any]]) -> AssertionResult:
             message=f"Found {len(errors)} event(s) with errors",
         )
     return AssertionResult(name="no_errors", passed=True, message="No errors found")
+
+
+def _check_cost_under(events: List[Dict[str, Any]], max_cost_usd: float) -> AssertionResult:
+    name = f"cost_under:${max_cost_usd}"
+    total_cost = 0.0
+    for e in events:
+        # Check top-level cost_usd
+        cost = e.get("cost_usd")
+        if isinstance(cost, (int, float)):
+            total_cost += cost
+        # Check inside data dict
+        data = e.get("data", {})
+        if isinstance(data, dict):
+            data_cost = data.get("cost_usd")
+            if isinstance(data_cost, (int, float)):
+                total_cost += data_cost
+    if total_cost < max_cost_usd:
+        return AssertionResult(name=name, passed=True, message=f"Cost ${total_cost:.4f} < ${max_cost_usd:.4f}")
+    return AssertionResult(name=name, passed=False, message=f"Cost ${total_cost:.4f} >= ${max_cost_usd:.4f}")
+
+
+def _check_no_budget_warnings(events: List[Dict[str, Any]]) -> AssertionResult:
+    warnings = [e for e in events if e.get("name") == "guard.budget_warning"]
+    if warnings:
+        return AssertionResult(
+            name="no_budget_warnings",
+            passed=False,
+            message=f"Found {len(warnings)} budget warning(s)",
+        )
+    return AssertionResult(name="no_budget_warnings", passed=True, message="No budget warnings")
 
 
 # --- loader ---

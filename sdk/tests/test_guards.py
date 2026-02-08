@@ -108,5 +108,94 @@ class TestTimeoutGuard(unittest.TestCase):
         guard.check()  # fresh start, should not raise
 
 
+class TestBudgetGuardInputValidation(unittest.TestCase):
+    def test_string_tokens_raises_type_error(self) -> None:
+        guard = BudgetGuard(max_tokens=100)
+        with self.assertRaises(TypeError) as ctx:
+            guard.consume(tokens="five")  # type: ignore[arg-type]
+        self.assertIn("tokens must be a number", str(ctx.exception))
+        self.assertIn("str", str(ctx.exception))
+
+    def test_string_calls_raises_type_error(self) -> None:
+        guard = BudgetGuard(max_calls=10)
+        with self.assertRaises(TypeError) as ctx:
+            guard.consume(calls="one")  # type: ignore[arg-type]
+        self.assertIn("calls must be a number", str(ctx.exception))
+
+    def test_string_cost_raises_type_error(self) -> None:
+        guard = BudgetGuard(max_cost_usd=5.00)
+        with self.assertRaises(TypeError) as ctx:
+            guard.consume(cost_usd="cheap")  # type: ignore[arg-type]
+        self.assertIn("cost_usd must be a number", str(ctx.exception))
+
+    def test_none_tokens_raises_type_error(self) -> None:
+        guard = BudgetGuard(max_tokens=100)
+        with self.assertRaises(TypeError):
+            guard.consume(tokens=None)  # type: ignore[arg-type]
+
+    def test_list_cost_raises_type_error(self) -> None:
+        guard = BudgetGuard(max_cost_usd=5.00)
+        with self.assertRaises(TypeError):
+            guard.consume(cost_usd=[1.0])  # type: ignore[arg-type]
+
+    def test_float_tokens_accepted(self) -> None:
+        guard = BudgetGuard(max_tokens=100)
+        guard.consume(tokens=5.5)  # float is valid for numeric params
+
+
+class TestBudgetExceededPrecision(unittest.TestCase):
+    def test_cost_exceeded_uses_consistent_precision(self) -> None:
+        guard = BudgetGuard(max_cost_usd=1.00)
+        with self.assertRaises(BudgetExceeded) as ctx:
+            guard.consume(cost_usd=1.50)
+        msg = str(ctx.exception)
+        # Both values should use .4f precision
+        self.assertIn("$1.5000", msg)
+        self.assertIn("$1.0000", msg)
+
+
+class TestLoopGuardWindowBehavior(unittest.TestCase):
+    def test_repeats_separated_by_different_calls_pass(self) -> None:
+        """Repeated calls separated by enough different calls should not trigger."""
+        guard = LoopGuard(max_repeats=3, window=4)
+        guard.check("search", {"q": "a"})
+        guard.check("search", {"q": "a"})
+        # Insert different calls to push the first two out of the window
+        guard.check("lookup", {"key": "b"})
+        guard.check("lookup", {"key": "c"})
+        # Now this "search" call should not trigger since window only has 4 items
+        guard.check("search", {"q": "a"})  # should not raise
+
+    def test_window_maxlen_limits_history(self) -> None:
+        """History should be bounded by window size."""
+        guard = LoopGuard(max_repeats=2, window=3)
+        guard.check("a", {})
+        guard.check("b", {})
+        guard.check("c", {})
+        # "a" should be pushed out of window
+        guard.check("a", {})  # should not raise — only 1 "a" in window
+
+    def test_exact_window_boundary(self) -> None:
+        """Repeats at exact window boundary should still trigger."""
+        guard = LoopGuard(max_repeats=3, window=3)
+        guard.check("search", {"q": "a"})
+        guard.check("search", {"q": "a"})
+        with self.assertRaises(LoopDetected):
+            guard.check("search", {"q": "a"})
+
+    def test_different_args_dont_trigger(self) -> None:
+        """Same tool name with different args should not trigger."""
+        guard = LoopGuard(max_repeats=2, window=4)
+        guard.check("search", {"q": "a"})
+        guard.check("search", {"q": "b"})
+        guard.check("search", {"q": "c"})  # should not raise
+
+    def test_reset_clears_history(self) -> None:
+        guard = LoopGuard(max_repeats=2, window=4)
+        guard.check("search", {"q": "a"})
+        guard.reset()
+        guard.check("search", {"q": "a"})  # should not raise — history cleared
+
+
 if __name__ == "__main__":
     unittest.main()

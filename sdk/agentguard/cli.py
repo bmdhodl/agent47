@@ -96,16 +96,18 @@ def _report(path: str) -> None:
         print("  Loop guard triggered: 0")
 
 
-def _eval(path: str) -> None:
+def _eval(path: str, ci: bool = False) -> None:
     from agentguard.evaluation import EvalSuite
 
-    result = (
+    suite = (
         EvalSuite(path)
         .assert_no_loops()
         .assert_no_errors()
         .assert_completes_within(30.0)
-        .run()
     )
+    if ci:
+        suite = suite.assert_no_budget_warnings()
+    result = suite.run()
     print(result.summary)
     if not result.passed:
         raise SystemExit(1)
@@ -128,6 +130,7 @@ def main() -> None:
 
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
     eval_cmd.add_argument("path")
+    eval_cmd.add_argument("--ci", action="store_true", help="CI mode: also assert no budget warnings")
 
     args = parser.parse_args()
     if args.cmd == "summarize":
@@ -139,7 +142,7 @@ def main() -> None:
 
         serve(args.path, port=args.port, open_browser=not args.no_open)
     elif args.cmd == "eval":
-        _eval(args.path)
+        _eval(args.path, ci=args.ci)
     else:
         parser.print_help()
 
