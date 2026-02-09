@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 AgentGuard — a lightweight observability and runtime-guards SDK for multi-agent AI systems. The SDK is open source (MIT, zero dependencies); the hosted dashboard is the commercial SaaS layer.
 
 - **Repo:** github.com/bmdhodl/agent47
-- **Package:** `agentguard47` on PyPI (v0.5.0)
+- **Package:** `agentguard47` on PyPI (v0.6.0)
 - **Landing page:** site/index.html (Vercel)
 
 ## Commands

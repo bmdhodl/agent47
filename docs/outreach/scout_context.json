@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "package": "agentguard47",
   "install_cmd": "pip install agentguard47",
   "install_langchain_cmd": "pip install agentguard47[langchain]",
@@ -8,24 +8,30 @@
   "features": [
     "Cost tracking: dollar estimates per LLM call, per trace, per month (OpenAI, Anthropic, Gemini, Mistral)",
     "Budget guards: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget",
-    "Detect common loop patterns and stop runaway executions",
-    "Record and replay runs to create deterministic tests",
+    "Budget warnings: `warn_at_pct=0.8` callback before hitting the limit",
+    "Loop detection: exact match (`LoopGuard`) and fuzzy patterns (`FuzzyLoopGuard` \u2014 A-B-A-B alternation, same-tool frequency)",
+    "Rate limiting: `RateLimitGuard(max_calls_per_minute=60)`",
+    "Async support: `AsyncTracer`, `async_trace_agent`, `patch_openai_async`",
+    "Production hardening: gzip compression, retry with backoff, 429 handling, idempotency keys, sampling, metadata",
     "Evaluation as Code: assertion-based trace analysis (`EvalSuite`)",
-    "Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches",
-    "Gantt trace viewer: timeline visualization with click-to-expand details",
-    "JSONL export for local inspection",
+    "Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches (sync + async)",
+    "Gantt trace viewer: timeline visualization with XSS-safe rendering",
+    "Export: JSON, CSV, JSONL conversion",
+    "Record and replay: runs to create deterministic tests",
     "Hosted dashboard: cost dashboard, Gantt timelines, loop/error alerts, usage tracking"
   ],
-  "features_bullets": "- Cost tracking: dollar estimates per LLM call, per trace, per month (OpenAI, Anthropic, Gemini, Mistral)\n- Budget guards: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget\n- Detect common loop patterns and stop runaway executions\n- Record and replay runs to create deterministic tests\n- Evaluation as Code: assertion-based trace analysis (`EvalSuite`)\n- Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches\n- Gantt trace viewer: timeline visualization with click-to-expand details\n- JSONL export for local inspection\n- Hosted dashboard: cost dashboard, Gantt timelines, loop/error alerts, usage tracking",
+  "features_bullets": "- Cost tracking: dollar estimates per LLM call, per trace, per month (OpenAI, Anthropic, Gemini, Mistral)\n- Budget guards: `BudgetGuard(max_cost_usd=5.00)` stops agents before they blow your API budget\n- Budget warnings: `warn_at_pct=0.8` callback before hitting the limit\n- Loop detection: exact match (`LoopGuard`) and fuzzy patterns (`FuzzyLoopGuard` \u2014 A-B-A-B alternation, same-tool frequency)\n- Rate limiting: `RateLimitGuard(max_calls_per_minute=60)`\n- Async support: `AsyncTracer`, `async_trace_agent`, `patch_openai_async`\n- Production hardening: gzip compression, retry with backoff, 429 handling, idempotency keys, sampling, metadata\n- Evaluation as Code: assertion-based trace analysis (`EvalSuite`)\n- Auto-instrumentation: `@trace_agent` / `@trace_tool` decorators, OpenAI/Anthropic monkey-patches (sync + async)\n- Gantt trace viewer: timeline visualization with XSS-safe rendering\n- Export: JSON, CSV, JSONL conversion\n- Record and replay: runs to create deterministic tests\n- Hosted dashboard: cost dashboard, Gantt timelines, loop/error alerts, usage tracking",
   "snippets": {
     "loop_guard": "from agentguard import LoopGuard\n\nguard = LoopGuard(max_repeats=3)\nguard.check(tool_name=\"search\", tool_args={\"query\": \"...\"})\n# raises LoopDetected after 3 identical calls",
     "budget_guard": "from agentguard import BudgetGuard\n\nguard = BudgetGuard(max_cost_usd=5.00)  # stop at $5\nguard.consume(cost_usd=0.12)  # track per-call cost\n# raises BudgetExceeded when over budget",
     "langchain": "from agentguard.integrations.langchain import AgentGuardCallbackHandler\nfrom agentguard import LoopGuard, BudgetGuard\n\nhandler = AgentGuardCallbackHandler(\n    loop_guard=LoopGuard(max_repeats=3),\n    budget_guard=BudgetGuard(max_cost_usd=5.00),\n)\nllm = ChatOpenAI(callbacks=[handler])  # auto-tracks cost per call"
   },
   "whats_new": [
-    "Fix deploy workflow: treat workflow_dispatch as production",
-    "Add workflow_dispatch trigger to deploy workflow",
-    "Fix CI: remove tomllib dependency for Python 3.9/3.10 compat"
+    "Add agent workflow prompts and update CLAUDE.md",
+    "Remove ignoreCommand from root vercel.json",
+    "Trigger redeploy after Vercel root directory fix",
+    "CI: install pytest and use pytest runner for test suite",
+    "Add rigorous local testing infrastructure: E2E pipeline, smoke test, ingest server"
   ],
-  "whats_new_bullets": "- Fix deploy workflow: treat workflow_dispatch as production\n- Add workflow_dispatch trigger to deploy workflow\n- Fix CI: remove tomllib dependency for Python 3.9/3.10 compat"
+  "whats_new_bullets": "- Add agent workflow prompts and update CLAUDE.md\n- Remove ignoreCommand from root vercel.json\n- Trigger redeploy after Vercel root directory fix\n- CI: install pytest and use pytest runner for test suite\n- Add rigorous local testing infrastructure: E2E pipeline, smoke test, ingest server"
 }
