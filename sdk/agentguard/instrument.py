@@ -10,6 +10,43 @@ F = TypeVar("F", bound=Callable[..., Any])
 _originals: Dict[str, Any] = {}
 
 
+def _consume_budget(
+    budget_guard: Any,
+    ctx: Any,
+    tokens: int,
+    calls: int,
+    cost_usd: float,
+    model: str,
+) -> None:
+    """Feed consumption into BudgetGuard, emitting trace events for warnings/exceeded.
+
+    T5: Emits ``guard.budget_exceeded`` event before re-raising BudgetExceeded.
+    T6: Emits ``guard.budget_warning`` event when warning threshold is crossed.
+    """
+    from agentguard.guards import BudgetExceeded
+
+    was_warned = getattr(budget_guard, "_warned", False)
+    try:
+        budget_guard.consume(tokens=tokens, calls=calls, cost_usd=cost_usd)
+    except BudgetExceeded as exc:
+        ctx.event("guard.budget_exceeded", data={
+            "message": str(exc),
+            "model": model,
+            "cost_usd": cost_usd,
+            "tokens": tokens,
+        })
+        raise
+    # Check if warning threshold was just crossed (T6)
+    if not was_warned and getattr(budget_guard, "_warned", False):
+        state = getattr(budget_guard, "state", None)
+        ctx.event("guard.budget_warning", data={
+            "model": model,
+            "tokens_used": getattr(state, "tokens_used", 0) if state else 0,
+            "calls_used": getattr(state, "calls_used", 0) if state else 0,
+            "cost_used": getattr(state, "cost_used", 0.0) if state else 0.0,
+        })
+
+
 def trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
     """Decorator that wraps a function in a top-level trace span.
 
@@ -82,11 +119,16 @@ def trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
     return decorator
 
 
-def patch_openai(tracer: Any) -> None:
+def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
     """Monkey-patch OpenAI client to auto-trace chat completions.
 
     Works with openai >= 1.0 (instance-based client) and < 1.0 (module-based).
     Safe to call even if openai is not installed — silently returns.
+
+    Args:
+        tracer: Tracer instance for emitting events.
+        budget_guard: Optional BudgetGuard. Each call's cost/tokens are
+            fed into ``guard.consume()`` automatically.
     """
     try:
         import openai  # noqa: F811
@@ -105,7 +147,7 @@ def patch_openai(tracer: Any) -> None:
         @functools.wraps(original_init)
         def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
             original_init(self, *args, **kwargs)
-            _patch_openai_instance(self, tracer)
+            _patch_openai_instance(self, tracer, budget_guard)
 
         _originals["openai_init"] = original_init
         _originals["openai_cls"] = client_cls
@@ -125,12 +167,12 @@ def patch_openai(tracer: Any) -> None:
 
     @functools.wraps(_original)
     def traced_create(*args: Any, **kwargs: Any) -> Any:
-        return _traced_openai_create(_original, tracer, *args, **kwargs)
+        return _traced_openai_create(_original, tracer, budget_guard, *args, **kwargs)
 
     chat.create = traced_create  # type: ignore[attr-defined]
 
 
-def _patch_openai_instance(client: Any, tracer: Any) -> None:
+def _patch_openai_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
     """Patch a single OpenAI client instance's chat.completions.create."""
     chat = getattr(client, "chat", None)
     if chat is None:
@@ -142,12 +184,14 @@ def _patch_openai_instance(client: Any, tracer: Any) -> None:
 
     @functools.wraps(original_create)
     def traced_create(*args: Any, **kwargs: Any) -> Any:
-        return _traced_openai_create(original_create, tracer, *args, **kwargs)
+        return _traced_openai_create(original_create, tracer, budget_guard, *args, **kwargs)
 
     completions.create = traced_create  # type: ignore[attr-defined]
 
 
-def _traced_openai_create(original: Any, tracer: Any, *args: Any, **kwargs: Any) -> Any:
+def _traced_openai_create(
+    original: Any, tracer: Any, budget_guard: Any, *args: Any, **kwargs: Any
+) -> Any:
     """Shared traced wrapper for OpenAI create calls."""
     model = kwargs.get("model", "unknown")
     with tracer.trace(f"llm.openai.{model}") as ctx:
@@ -168,9 +212,9 @@ def _traced_openai_create(original: Any, tracer: Any, *args: Any, **kwargs: Any)
                     "total_tokens": total_tokens,
                 },
             }
-            if cost > 0:
-                event_data["cost_usd"] = cost
-            ctx.event("llm.result", data=event_data)
+            ctx.event("llm.result", data=event_data, cost_usd=cost if cost > 0 else None)
+            if budget_guard is not None:
+                _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
         return result
 
 
@@ -187,11 +231,16 @@ def unpatch_openai() -> None:
         chat.create = _originals.pop("openai_legacy_create")
 
 
-def patch_anthropic(tracer: Any) -> None:
+def patch_anthropic(tracer: Any, budget_guard: Any = None) -> None:
     """Monkey-patch Anthropic client to auto-trace messages.create.
 
     Works with the anthropic SDK where messages is an instance attribute.
     Safe to call even if anthropic is not installed — silently returns.
+
+    Args:
+        tracer: Tracer instance for emitting events.
+        budget_guard: Optional BudgetGuard. Each call's cost/tokens are
+            fed into ``guard.consume()`` automatically.
     """
     try:
         import anthropic  # noqa: F811
@@ -210,14 +259,14 @@ def patch_anthropic(tracer: Any) -> None:
     @functools.wraps(original_init)
     def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
         original_init(self, *args, **kwargs)
-        _patch_anthropic_instance(self, tracer)
+        _patch_anthropic_instance(self, tracer, budget_guard)
 
     _originals["anthropic_init"] = original_init
     _originals["anthropic_cls"] = client_cls
     client_cls.__init__ = patched_init  # type: ignore[attr-defined]
 
 
-def _patch_anthropic_instance(client: Any, tracer: Any) -> None:
+def _patch_anthropic_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
     """Patch a single Anthropic client instance's messages.create."""
     messages = getattr(client, "messages", None)
     if messages is None:
@@ -233,6 +282,7 @@ def _patch_anthropic_instance(client: Any, tracer: Any) -> None:
             if usage is not None:
                 input_tokens = getattr(usage, "input_tokens", 0)
                 output_tokens = getattr(usage, "output_tokens", 0)
+                total_tokens = input_tokens + output_tokens
                 from agentguard.cost import estimate_cost
 
                 cost = estimate_cost(model, input_tokens, output_tokens, provider="anthropic")
@@ -243,9 +293,9 @@ def _patch_anthropic_instance(client: Any, tracer: Any) -> None:
                         "output_tokens": output_tokens,
                     },
                 }
-                if cost > 0:
-                    event_data["cost_usd"] = cost
-                ctx.event("llm.result", data=event_data)
+                ctx.event("llm.result", data=event_data, cost_usd=cost if cost > 0 else None)
+                if budget_guard is not None:
+                    _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
             return result
 
     messages.create = traced_create  # type: ignore[attr-defined]
@@ -337,10 +387,15 @@ def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F
 # --- Async patches ---
 
 
-def patch_openai_async(tracer: Any) -> None:
+def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
     """Monkey-patch OpenAI AsyncOpenAI client to auto-trace async completions.
 
     Safe to call even if openai is not installed — silently returns.
+
+    Args:
+        tracer: Tracer instance for emitting events.
+        budget_guard: Optional BudgetGuard. Each call's cost/tokens are
+            fed into ``guard.consume()`` automatically.
     """
     try:
         import openai  # noqa: F811
@@ -359,14 +414,14 @@ def patch_openai_async(tracer: Any) -> None:
     @functools.wraps(original_init)
     def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
         original_init(self, *args, **kwargs)
-        _patch_openai_async_instance(self, tracer)
+        _patch_openai_async_instance(self, tracer, budget_guard)
 
     _originals["openai_async_init"] = original_init
     _originals["openai_async_cls"] = client_cls
     client_cls.__init__ = patched_init  # type: ignore[attr-defined]
 
 
-def _patch_openai_async_instance(client: Any, tracer: Any) -> None:
+def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
     """Patch a single AsyncOpenAI client instance."""
     chat = getattr(client, "chat", None)
     if chat is None:
@@ -397,9 +452,9 @@ def _patch_openai_async_instance(client: Any, tracer: Any) -> None:
                         "total_tokens": total_tokens,
                     },
                 }
-                if cost > 0:
-                    event_data["cost_usd"] = cost
-                ctx.event("llm.result", data=event_data)
+                ctx.event("llm.result", data=event_data, cost_usd=cost if cost > 0 else None)
+                if budget_guard is not None:
+                    _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
             return result
 
     completions.create = traced_create  # type: ignore[attr-defined]
@@ -412,10 +467,15 @@ def unpatch_openai_async() -> None:
         cls.__init__ = _originals.pop("openai_async_init")
 
 
-def patch_anthropic_async(tracer: Any) -> None:
+def patch_anthropic_async(tracer: Any, budget_guard: Any = None) -> None:
     """Monkey-patch Anthropic AsyncAnthropic client to auto-trace async calls.
 
     Safe to call even if anthropic is not installed — silently returns.
+
+    Args:
+        tracer: Tracer instance for emitting events.
+        budget_guard: Optional BudgetGuard. Each call's cost/tokens are
+            fed into ``guard.consume()`` automatically.
     """
     try:
         import anthropic  # noqa: F811
@@ -434,14 +494,14 @@ def patch_anthropic_async(tracer: Any) -> None:
     @functools.wraps(original_init)
     def patched_init(self: Any, *args: Any, **kwargs: Any) -> None:
         original_init(self, *args, **kwargs)
-        _patch_anthropic_async_instance(self, tracer)
+        _patch_anthropic_async_instance(self, tracer, budget_guard)
 
     _originals["anthropic_async_init"] = original_init
     _originals["anthropic_async_cls"] = client_cls
     client_cls.__init__ = patched_init  # type: ignore[attr-defined]
 
 
-def _patch_anthropic_async_instance(client: Any, tracer: Any) -> None:
+def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
     """Patch a single AsyncAnthropic client instance."""
     messages = getattr(client, "messages", None)
     if messages is None:
@@ -457,6 +517,7 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any) -> None:
             if usage is not None:
                 input_tokens = getattr(usage, "input_tokens", 0)
                 output_tokens = getattr(usage, "output_tokens", 0)
+                total_tokens = input_tokens + output_tokens
                 from agentguard.cost import estimate_cost
 
                 cost = estimate_cost(model, input_tokens, output_tokens, provider="anthropic")
@@ -467,9 +528,9 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any) -> None:
                         "output_tokens": output_tokens,
                     },
                 }
-                if cost > 0:
-                    event_data["cost_usd"] = cost
-                ctx.event("llm.result", data=event_data)
+                ctx.event("llm.result", data=event_data, cost_usd=cost if cost > 0 else None)
+                if budget_guard is not None:
+                    _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
             return result
 
     messages.create = traced_create  # type: ignore[attr-defined]

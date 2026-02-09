@@ -5,6 +5,8 @@ import json
 from collections import Counter
 from typing import Any, Dict, List, Optional
 
+from agentguard.evaluation import _extract_cost
+
 
 def _summarize(path: str) -> None:
     total = 0
@@ -63,16 +65,10 @@ def _report(path: str) -> None:
             dur = e.get("duration_ms")
             if isinstance(dur, (int, float)):
                 span_durations.append(float(dur))
-        # Sum cost from top-level cost_usd field
-        cost = e.get("cost_usd")
-        if isinstance(cost, (int, float)):
-            total_cost += float(cost)
-        # Also check data.cost_usd (from instrument patches)
-        data = e.get("data", {})
-        if isinstance(data, dict):
-            dcost = data.get("cost_usd")
-            if isinstance(dcost, (int, float)):
-                total_cost += float(dcost)
+        # Cost: prefer top-level, fall back to data (never sum both)
+        cost = _extract_cost(e)
+        if cost is not None:
+            total_cost += cost
 
     total_ms: Optional[float] = None
     if span_durations:

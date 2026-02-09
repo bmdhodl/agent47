@@ -114,10 +114,20 @@ class AsyncTraceContext:
         async with ctx:
             yield ctx
 
-    def event(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+    def event(
+        self,
+        name: str,
+        data: Optional[Dict[str, Any]] = None,
+        cost_usd: Optional[float] = None,
+    ) -> None:
         """Emit a point-in-time event within this span.
 
         Note: event() is synchronous — no I/O is performed directly.
+
+        Args:
+            name: Name of the event.
+            data: Optional data to attach to the event.
+            cost_usd: Optional cost in USD for this event.
         """
         self.tracer._emit(
             kind="event",
@@ -127,6 +137,7 @@ class AsyncTraceContext:
             parent_id=self.parent_id,
             name=name,
             data=data,
+            cost_usd=cost_usd,
         )
 
 
