@@ -31,24 +31,45 @@ def read_version() -> tuple[str, str]:
 
 
 def read_features() -> list[str]:
-    """Parse feature bullets from README.md ## Features section."""
+    """Parse feature bullets from README.md.
+
+    Extracts from ## Features section (legacy) or ## Why AgentGuard +
+    ## Guards sections (current structure).
+    """
     path = os.path.join(REPO_ROOT, "README.md")
     with open(path) as f:
         content = f.read()
 
-    # Extract the ## Features section
-    match = re.search(r"## Features\n(.*?)(?=\n## |\Z)", content, re.DOTALL)
-    if not match:
-        return ["Zero-dependency runtime guardrails for AI agents"]
+    features: list[str] = []
 
-    features = []
-    for line in match.group(1).strip().splitlines():
-        line = line.strip()
-        if line.startswith("- "):
-            # Strip markdown bold and leading dash
-            clean = re.sub(r"\*\*(.*?)\*\*:?", r"\1:", line[2:]).strip()
-            if clean:
-                features.append(clean)
+    # Try legacy ## Features section first
+    match = re.search(r"## Features\n(.*?)(?=\n## |\Z)", content, re.DOTALL)
+    if match:
+        for line in match.group(1).strip().splitlines():
+            line = line.strip()
+            if line.startswith("- "):
+                clean = re.sub(r"\*\*(.*?)\*\*:?", r"\1:", line[2:]).strip()
+                if clean:
+                    features.append(clean)
+
+    # Parse "What makes it different" bullets from Why AgentGuard section
+    why_match = re.search(r"## Why AgentGuard\n(.*?)(?=\n## |\Z)", content, re.DOTALL)
+    if why_match:
+        for line in why_match.group(1).strip().splitlines():
+            line = line.strip()
+            if line.startswith("- "):
+                clean = re.sub(r"\*\*(.*?)\*\*", r"\1", line[2:]).strip()
+                if clean and clean not in features:
+                    features.append(clean)
+
+    # Parse guard names from Guards table
+    guards_match = re.search(r"## Guards\n(.*?)(?=\n## |\Z)", content, re.DOTALL)
+    if guards_match:
+        for line in guards_match.group(1).strip().splitlines():
+            row = re.match(r"\|\s*`(\w+)`\s*\|\s*(.+?)\s*\|", line)
+            if row:
+                features.append(f"{row.group(1)}: {row.group(2).strip().rstrip('|').strip()}")
+
     return features or ["Zero-dependency runtime guardrails for AI agents"]
 
 
