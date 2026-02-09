@@ -31,7 +31,13 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
    - Run tests: `PYTHONPATH=sdk python3 -m unittest discover -s sdk/tests -v`
    - Run lint: `ruff check sdk/agentguard/`
 5. **When done:** Commit, push, comment on the issue with what was done, close it.
-6. **If blocked:** Comment on the issue explaining the blocker. If it's a dependency on another component, reference that issue number.
+6. **If blocked:** Create a new issue assigned to the owner so they can unblock you:
+   ```bash
+   gh issue create --repo bmdhodl/agent47 --title "BLOCKED: <what you need>" \
+     --body "Blocked on: #<issue>\nWhat I need: <specific ask>\nContext: <why>" \
+     --label "blocked:owner" --assignee bmdhodl
+   ```
+   Then comment on your original issue linking the blocker. Common blockers: API keys, env setup, external service access, design decisions.
 7. **If you find gaps:** Create new issues with `component:sdk` + appropriate `phase:`, `priority:`, and `type:` labels. Add to project board: `gh project item-add 4 --owner bmdhodl --url <issue-url>`
 
 ## Conventions
