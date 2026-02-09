@@ -17,7 +17,7 @@ from agentguard.integrations.langchain import AgentGuardCallbackHandler
 loop_guard = LoopGuard(max_repeats=3)
 callback = AgentGuardCallbackHandler(loop_guard=loop_guard)
 
-agent.run("your query", callbacks=[callback])
+agent.invoke({"input": "your query"}, config={"callbacks": [callback]})
 ```
 
 That's it. If the agent calls the same tool with identical arguments more than 3 times, it raises an exception and stops execution.

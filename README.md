@@ -79,6 +79,32 @@ sink = HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_...")
 tracer = Tracer(sink=sink, service="my-agent")
 ```
 
+## MCP Server
+
+AI agents can query their own observability data via MCP (Model Context Protocol):
+
+```json
+{
+  "mcpServers": {
+    "agentguard": {
+      "command": "node",
+      "args": ["./mcp-server/dist/index.js"],
+      "env": { "AGENTGUARD_API_KEY": "ag_..." }
+    }
+  }
+}
+```
+
+6 tools: `query_traces`, `get_trace`, `get_alerts`, `get_usage`, `get_costs`, `check_budget`. See `mcp-server/README.md` for details.
+
 ## Status
 
-v0.6.0 (Beta) — 100+ tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Full async support, production-hardened HttpSink, smarter guards.
+v0.8.0 (Beta) — 100+ tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Full async support, production-hardened HttpSink, smarter guards.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, test commands, and PR guidelines. See [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## License
+
+SDK is MIT licensed (BMD PAT LLC). Dashboard is source-available (BSL 1.1).

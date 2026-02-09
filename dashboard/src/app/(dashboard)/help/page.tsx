@@ -29,7 +29,7 @@ const faqs = [
   {
     question: "I need help — how do I contact support?",
     answer:
-      "Open an issue on GitHub at github.com/bmdhodl/agent47 or email support@agentguard47.com. We typically respond within 24 hours.",
+      "Open an issue on GitHub at github.com/bmdhodl/agent47 or email pat@bmdpat.com. We typically respond within 24 hours.",
   },
 ];
 

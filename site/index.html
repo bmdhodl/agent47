@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AgentGuard — Runtime Guardrails for AI Agents</title>
     <meta name="description" content="Stop runaway agents, track costs per call, and replay failures deterministically. Zero dependencies." />
+    <script defer src="/_vercel/insights/script.js"></script>
     <style>
       :root {
         --bg: #f7f4ee;
@@ -103,6 +104,19 @@
 
       footer { margin-top: 40px; font-size: 14px; color: var(--muted); text-align: center; }
 
+      /* Stats bar */
+      .stats {
+        display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;
+        margin: 32px 0; padding: 20px 0; border-top: 1px solid #e8e2d6; border-bottom: 1px solid #e8e2d6;
+      }
+      .stat { text-align: center; }
+      .stat .num { font-size: 28px; font-weight: 700; color: var(--accent); display: block; }
+      .stat .label { font-size: 13px; color: var(--muted); }
+      @media (min-width: 640px) {
+        .stats { gap: 48px; }
+        .stat .num { font-size: 32px; }
+      }
+
       /* Integration badges */
       .integrations {
         display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px;
@@ -180,6 +194,25 @@
         <span class="integration-badge">OpenAI</span>
         <span class="integration-badge">Anthropic</span>
         <span class="integration-badge">Any Python agent</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="num">106</span>
+          <span class="label">Tests passing</span>
+        </div>
+        <div class="stat">
+          <span class="num">0</span>
+          <span class="label">Dependencies</span>
+        </div>
+        <div class="stat">
+          <span class="num">3.9+</span>
+          <span class="label">Python support</span>
+        </div>
+        <div class="stat">
+          <span class="num">MIT</span>
+          <span class="label">Licensed</span>
+        </div>
       </div>
 
       <div class="grid">
@@ -360,7 +393,7 @@ guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00<
           <a href="#pricing">Pricing</a>
           <a href="trust.html">Security &amp; Trust</a>
         </div>
-        <p class="muted">&copy; 2026 AgentGuard &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+        <p class="muted">&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</p>
       </footer>
     </div>
 

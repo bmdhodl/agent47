@@ -132,7 +132,7 @@ export default function SecurityPage() {
           <div>
             <h3 className="font-medium">Security Contact</h3>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              Found a vulnerability? Email security@agentguard47.com. We respond within 48 hours.
+              Found a vulnerability? Email pat@bmdpat.com. We respond within 48 hours.
             </p>
           </div>
         </div>

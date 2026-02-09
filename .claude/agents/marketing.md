@@ -20,17 +20,12 @@ https://github.com/users/bmdhodl/projects/4
 gh issue list --repo bmdhodl/agent47 --label component:infra --state open --limit 50
 ```
 
-Key issues in your scope:
-- #10 [v0.6.0] HIGH — Project-level docs (architecture, contributing, ADRs)
-- #16 [v1.0.0] HIGH — GA launch materials (README, demo, blog)
-- #39 [v1.0.0] CRITICAL — Rewrite README (quickstart, API ref, architecture) — shared with SDK Dev
-
-Also monitor for content needs surfaced by other agents via issue comments.
+Check the project board for current `component:infra` issues related to docs and content. v1.0.0 is shipped — focus on Phase 6/7 content needs.
 
 ## Workflow
 
 1. **Start of session:** Check the issue list and look for docs/content gaps.
-2. **Pick work:** Focus on whatever the current phase needs. If we're in v0.5.1, help with release notes and quickstart docs. If v1.0.0, focus on launch materials.
+2. **Pick work:** Focus on whatever the current phase needs. Check the project board for priority items.
 3. **Before writing:** Read the issue, understand what exists already. Check the current README, docs/ folder, and site/.
 4. **While working:**
    - Content goes in `docs/`, `site/`, or inline in READMEs.

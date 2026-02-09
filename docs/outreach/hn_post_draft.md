@@ -46,7 +46,7 @@ Install: `pip install agentguard47`
 
 Repo: https://github.com/bmdhodl/agent47
 
-I'm building this solo as an open-source foundation with plans for an optional hosted dashboard later. Would love feedback from anyone building autonomous agents and dealing with reliability issues.
+I'm building this solo. The SDK is open-source, and there's an optional hosted dashboard (app.agentguard47.com) for teams that want Gantt timelines, alerts, cost analytics, and usage tracking. Would love feedback from anyone building autonomous agents and dealing with reliability issues.
 
 ---
 

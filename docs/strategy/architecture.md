@@ -2,10 +2,11 @@
 
 ## System overview
 
-Two products in one repo:
+Three products in one repo:
 
 1. **SDK** (`sdk/`) — Python package `agentguard47`. Zero stdlib-only dependencies, Python 3.9+.
 2. **Dashboard** (`dashboard/`) — Next.js 14 App Router SaaS. Direct Postgres, NextAuth, Stripe.
+3. **MCP Server** (`mcp-server/`) — TypeScript MCP server (`@agentguard47/mcp-server`). Connects AI agents to the Read API via stdio transport.
 
 ## SDK architecture
 

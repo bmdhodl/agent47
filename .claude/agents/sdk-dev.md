@@ -22,7 +22,7 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
 ## Workflow
 
 1. **Start of session:** Run the command above to see your current issues and their states.
-2. **Pick work:** Take the highest-priority Todo item from the current phase (v0.5.1 first, then v0.6.0, etc).
+2. **Pick work:** Take the highest-priority Todo item from the project board.
 3. **Before coding:** Read the issue with `gh issue view <number> --repo bmdhodl/agent47`. Understand the acceptance criteria.
 4. **While working:**
    - Move issue to In Progress: `gh issue edit <number> --repo bmdhodl/agent47 --add-label "status:in-progress"` and comment what you're doing.
@@ -43,11 +43,6 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
 - Guards raise exceptions: `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`.
 - TraceSink interface: all sinks implement `emit(event: Dict)`.
 
-## Current Sprint (v0.5.1)
+## Current Work
 
-These are your priority — do these before anything else:
-- #20 CRITICAL — Fix patch_openai for openai>=1.0 client instances
-- #21 CRITICAL — Fix patch_anthropic for real client instances
-- #22 HIGH — Fix missing exports in __init__.py
-- #23 HIGH — Add input validation to all public constructors
-- #24 HIGH — Release v0.5.1 to PyPI (after #20-#23 are done)
+v1.0.0 is shipped. Check the project board for your current `component:sdk` issues — active work is Phase 6 (Network Effects) and Phase 7 (Scale).
