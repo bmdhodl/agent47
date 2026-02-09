@@ -34,8 +34,7 @@ pip install agentguard47
 Add tracing and a loop guard:
 
 ```python
-from agentguard import Tracer, LoopGuard, LoopDetected
-from agentguard.tracing import JsonlFileSink
+from agentguard import Tracer, LoopGuard, LoopDetected, JsonlFileSink
 
 tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
 guard = LoopGuard(max_repeats=3)

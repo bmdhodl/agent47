@@ -8,7 +8,7 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (v1.0.0)
+- **Package:** `agentguard47` on PyPI (v1.0.0 GA)
 - **Landing page:** site/index.html (Vercel)
 
 ## Commands
@@ -17,19 +17,22 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 ```bash
 # Run all tests (from repo root)
-PYTHONPATH=sdk python3 -m unittest discover -s sdk/tests -v
+python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing
 
 # Run a single test file
-PYTHONPATH=sdk python3 -m unittest sdk.tests.test_guards -v
+python -m pytest sdk/tests/test_guards.py -v
 
 # Run a single test case
-PYTHONPATH=sdk python3 -m unittest sdk.tests.test_guards.TestLoopGuard.test_loop_detected -v
+python -m pytest sdk/tests/test_guards.py::TestLoopGuard::test_loop_detected -v
 
 # Lint
 ruff check sdk/agentguard/
 
 # Install SDK in editable mode
 pip install -e ./sdk
+
+# Install dev tools
+pip install pytest pytest-cov ruff
 ```
 
 ### MCP Server
@@ -45,7 +48,7 @@ npm start             # Run (requires AGENTGUARD_API_KEY env var)
 
 ```bash
 # Bump version in sdk/pyproject.toml, then:
-git tag v0.X.0 && git push origin v0.X.0
+git tag v1.X.0 && git push origin v1.X.0
 # publish.yml auto-publishes to PyPI via PYPI_TOKEN
 ```
 
@@ -53,7 +56,7 @@ git tag v0.X.0 && git push origin v0.X.0
 
 **Two products in this repo (dashboard split to private repo `agent47-dashboard`):**
 
-1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.9+. All tests use `unittest` (no pytest). Public API exports from `agentguard/__init__.py`.
+1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.9+. CI uses `pytest` with coverage enforcement (80% minimum). Public API exports from `agentguard/__init__.py`.
 
 2. **mcp-server/** — MCP server (`@agentguard47/mcp-server`). TypeScript, `@modelcontextprotocol/sdk`. Connects AI agents to the read API via stdio transport.
 
@@ -62,10 +65,13 @@ git tag v0.X.0 && git push origin v0.X.0
 | Module | Purpose |
 |--------|---------|
 | `tracing.py` | Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink |
-| `guards.py` | LoopGuard, BudgetGuard, TimeoutGuard + exceptions |
+| `guards.py` | LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard + exceptions |
 | `instrument.py` | @trace_agent, @trace_tool, patch_openai, patch_anthropic |
-| `sinks/` | HttpSink (batched background thread) — bridge to dashboard |
-| `integrations/` | LangChain BaseCallbackHandler |
+| `sinks/http.py` | HttpSink (batched, gzip, retry, SSRF protection) |
+| `sinks/otel.py` | OtelTraceSink (OpenTelemetry bridge) |
+| `integrations/langchain.py` | LangChain BaseCallbackHandler |
+| `integrations/langgraph.py` | LangGraph guarded_node, guard_node |
+| `integrations/crewai.py` | CrewAI AgentGuardCrewHandler |
 | `evaluation.py` | EvalSuite — chainable assertion-based trace analysis |
 | `recording.py` | Recorder, Replayer (deterministic replay) |
 | `cli.py` | CLI: report, summarize, view, eval |
@@ -75,14 +81,14 @@ git tag v0.X.0 && git push origin v0.X.0
 
 ## SDK Conventions
 
-- **Zero dependencies.** Stdlib only. Optional extras: `langchain-core>=0.1`.
+- **Zero dependencies.** Stdlib only. Optional extras: `langchain-core`, `langgraph`, `crewai`, `opentelemetry-api`.
 - **Trace format:** JSONL — `{service, kind, phase, trace_id, span_id, parent_id, name, ts, duration_ms, data, error, cost_usd}`
-- **Guards raise exceptions:** `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`
+- **Guards raise exceptions:** `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`, `RateLimitExceeded`
 - **TraceSink interface:** All sinks implement `emit(event: Dict)`
 
 ## CI/CD
 
-- **ci.yml:** Python 3.9-3.12 matrix tests + ruff lint. Runs on push/PR.
+- **ci.yml:** Python 3.9-3.12 matrix, `pytest` with `--cov-fail-under=80`, ruff lint. Runs on push/PR.
 - **publish.yml:** PyPI publish on `v*` tags.
 
 ## Key Decisions
@@ -113,10 +119,8 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 - Issues are separated by `component:` labels (sdk, dashboard, api, infra).
 - Agents pick up Todo items, move to In Progress, do the work, close when done.
 - Cross-agent dependencies are handled via issue comments and references.
-- When blocked, agents comment on the issue and tag the blocking issue number.
-- New work discovered during implementation gets filed as new issues with proper labels.
 
-**Current:** See project board for priorities.
+**Current:** v1.0.0 GA shipped. See project board for priorities.
 
 ## What NOT To Do
 
@@ -148,30 +152,14 @@ Structured context for AI agents working on or with this project.
 **Cost:** `CostTracker`, `estimate_cost`, `update_prices`
 **Evaluation:** `EvalSuite`, `EvalResult`, `AssertionResult`
 **Recording:** `Recorder`, `Replayer`
-
-### File Layout
-
-```
-agent47/
-├── sdk/agentguard/    # Python SDK (PyPI: agentguard47)
-├── mcp-server/        # MCP server for AI agent access
-├── site/              # Landing page
-├── scripts/           # Automation scripts
-├── docs/              # Public examples and blog posts
-├── .claude/agents/    # Agent role prompts
-└── .github/workflows/ # CI, publish, deploy
-```
+**Integrations:** `AgentGuardCallbackHandler` (LangChain), `guarded_node`/`guard_node` (LangGraph), `AgentGuardCrewHandler` (CrewAI), `OtelTraceSink` (OpenTelemetry)
 
 ### Constraints
 
 - Zero dependencies (Python stdlib only, Python 3.9+)
-- All tests use `unittest` (no pytest)
+- CI uses `pytest` with coverage enforcement (80% min)
 - Guards raise exceptions (not return codes)
 - All public API exports from `sdk/agentguard/__init__.py`
-
-### Current State
-
-v1.0.0 shipped. See project board for current priorities.
 
 ### Key Links
 

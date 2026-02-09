@@ -14,8 +14,7 @@ pip install agentguard47[langchain]
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 
-from agentguard.tracing import JsonlFileSink, Tracer
-from agentguard.guards import LoopGuard, BudgetGuard
+from agentguard import Tracer, JsonlFileSink, LoopGuard, BudgetGuard
 from agentguard.integrations.langchain import AgentGuardCallbackHandler
 
 tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="demo")
