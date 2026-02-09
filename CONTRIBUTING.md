@@ -9,11 +9,10 @@ agent47/
 ├── sdk/           # Python SDK (agentguard47) — MIT licensed
 │   ├── agentguard/    # Source code
 │   └── tests/         # Test suite (unittest)
-├── dashboard/     # Next.js 14 SaaS dashboard
 ├── mcp-server/    # MCP server for AI agent access
 ├── site/          # Landing page
 ├── scripts/       # Automation and deploy scripts
-├── docs/          # Strategy, outreach, blog, examples
+├── docs/          # Examples and guides
 └── .github/       # CI/CD workflows
 ```
 
