@@ -8,7 +8,7 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (v0.8.0)
+- **Package:** `agentguard47` on PyPI (v1.0.0)
 - **Landing page:** site/index.html (Vercel)
 
 ## Commands

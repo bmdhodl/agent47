@@ -284,9 +284,10 @@ Your Agent Code
 | Directory | Description | License |
 |-----------|-------------|---------|
 | `sdk/` | Python SDK — tracing, guards, evaluation, integrations | MIT |
-| `dashboard/` | Hosted dashboard — auth, Gantt viewer, billing | BSL 1.1 |
 | `site/` | Landing page | MIT |
 | `mcp-server/` | MCP server — agents query their own traces | MIT |
+
+> Dashboard is in a separate private repo ([agent47-dashboard](https://github.com/bmdhodl/agent47-dashboard)).
 
 ## Contributing
 
@@ -294,4 +295,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, test commands, and PR guid
 
 ## License
 
-SDK is MIT licensed (BMD PAT LLC). Dashboard is source-available (BSL 1.1 → Apache 2.0 in 2030).
+SDK is MIT licensed (BMD PAT LLC).
