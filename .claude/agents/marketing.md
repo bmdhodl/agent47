@@ -48,8 +48,7 @@ Before publishing or distributing anything:
 - **Package:** `agentguard47` on PyPI
 - **Repo:** https://github.com/bmdhodl/agent47
 - **Landing page:** `site/index.html` (Vercel)
-- **Existing docs:** `docs/strategy/` (PRD, architecture, pricing)
-- **Existing outreach:** `docs/outreach/`
+- **Internal docs:** `docs/strategy/` and `docs/outreach/` (local only, gitignored — do not commit)
 
 ## Voice & Positioning
 
