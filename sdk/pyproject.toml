@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard47"
-version = "0.8.0"
+version = "1.0.0"
 description = "Zero-dependency observability and runtime guards for AI agents — loop detection, budget enforcement, cost tracking, and structured tracing"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -29,7 +29,7 @@ keywords = [
   "replay",
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
