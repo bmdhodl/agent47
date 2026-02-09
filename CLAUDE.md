@@ -114,12 +114,6 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**How agents coordinate:**
-- The GitHub project board is the single source of truth.
-- Issues are separated by `component:` labels (sdk, dashboard, api, infra).
-- Agents pick up Todo items, move to In Progress, do the work, close when done.
-- Cross-agent dependencies are handled via issue comments and references.
-
 **Current:** v1.0.0 GA shipped. See project board for priorities.
 
 ## What NOT To Do
@@ -128,11 +122,8 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 - Do not use absolute paths in code or scripts.
 - Do not commit .env files or secrets.
 - Do not create outreach content without verifying the repo is public and package is installable.
-- Do not mix implementation, testing, deployment, and strategy in one mega-session.
 
 ## For AI Agents
-
-Structured context for AI agents working on or with this project.
 
 ### Identity
 
