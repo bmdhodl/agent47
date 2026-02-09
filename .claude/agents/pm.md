@@ -43,6 +43,12 @@ gh project item-list 4 --owner bmdhodl --format json
    - Current sprint is determined by the lowest incomplete phase.
    - Move items from Backlog → Todo when the sprint needs them.
    - Escalate blockers — if an agent is stuck, intervene or reassign.
+   - When you can't unblock something yourself (needs API key, env setup, external access, user decision), create a blocker issue:
+     ```bash
+     gh issue create --repo bmdhodl/agent47 --title "BLOCKED: <what is needed>" \
+       --body "Blocked on: #<issue>\nWhat is needed: <specific ask>\nContext: <why>" \
+       --label "blocked:owner" --assignee bmdhodl
+     ```
 
 4. **Phase transitions:**
    - When all Todo items for a phase are Done, announce the phase complete.

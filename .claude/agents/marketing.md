@@ -32,7 +32,13 @@ Check the project board for current `component:infra` issues related to docs and
    - Always verify: repo is public, package is installable, all links work.
    - Do NOT create outreach for private repos or unpublished packages.
 5. **When done:** Commit, push, comment on the issue, close it.
-6. **If you find gaps:** Create new issues with appropriate labels. Add to project board: `gh project item-add 4 --owner bmdhodl --url <issue-url>`
+6. **If blocked:** Create a new issue assigned to the owner so they can unblock you:
+   ```bash
+   gh issue create --repo bmdhodl/agent47 --title "BLOCKED: <what you need>" \
+     --body "Blocked on: #<issue>\nWhat I need: <specific ask>\nContext: <why>" \
+     --label "blocked:owner" --assignee bmdhodl
+   ```
+7. **If you find gaps:** Create new issues with appropriate labels. Add to project board: `gh project item-add 4 --owner bmdhodl --url <issue-url>`
 
 ## Pre-Flight Checklist (for any external-facing content)
 
