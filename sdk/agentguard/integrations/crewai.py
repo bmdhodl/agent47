@@ -29,15 +29,10 @@ Requires ``crewai`` (optional dependency). Core SDK remains zero-dep.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from agentguard.guards import (
-    BudgetGuard,
-    BudgetExceeded,
-    LoopGuard,
-    LoopDetected,
-)
-from agentguard.tracing import Tracer, TraceContext
+from agentguard.guards import BudgetGuard, LoopGuard
+from agentguard.tracing import Tracer
 
 
 class AgentGuardCrewHandler:
@@ -60,7 +55,6 @@ class AgentGuardCrewHandler:
         self._tracer = tracer or Tracer()
         self._loop_guard = loop_guard
         self._budget_guard = budget_guard
-        self._task_spans: Dict[str, Any] = {}  # task_id -> (ctx_mgr, ctx)
 
     def step_callback(self, step_output: Any) -> None:
         """CrewAI step callback — called after each agent step (tool use or thought).
