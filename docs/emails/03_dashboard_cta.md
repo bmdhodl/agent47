@@ -2,7 +2,7 @@
 
 **Send:** Day 7 after signup
 **Subject:** Your agents are running in production. Are you watching?
-**From:** AgentGuard <hello@agentguard47.com>
+**From:** AgentGuard <pat@bmdpat.com>
 
 ---
 
@@ -49,7 +49,7 @@ sink = HttpSink(
 
 That's it. Traces start flowing immediately.
 
-— The AgentGuard team
+— Pat, BMD PAT LLC
 
 ---
 

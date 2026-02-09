@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [
-  {name = "AgentGuard"}
+  {name = "BMD PAT LLC", email = "pat@bmdpat.com"}
 ]
 keywords = [
   "agents",

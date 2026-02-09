@@ -2,7 +2,7 @@
 
 **Send:** Immediately on signup (Day 0)
 **Subject:** You're in — here's how to get your first trace in 60 seconds
-**From:** AgentGuard <hello@agentguard47.com>
+**From:** AgentGuard <pat@bmdpat.com>
 
 ---
 
@@ -43,7 +43,7 @@ If you're using LangChain, we have a drop-in callback handler too. Just `pip ins
 
 Questions? Reply to this email.
 
-— The AgentGuard team
+— Pat, BMD PAT LLC
 
 ---
 

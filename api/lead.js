@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Missing RESEND_API_KEY" });
     }
 
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "AgentGuard <onboarding@resend.dev>";
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "AgentGuard <pat@bmdpat.com>";
     const toEmail = process.env.RESEND_TO_EMAIL || "pat@bmdpat.com";
 
     const payload = {

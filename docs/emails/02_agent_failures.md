@@ -2,7 +2,7 @@
 
 **Send:** Day 3 after signup
 **Subject:** 3 ways your AI agents are failing (and you don't know it)
-**From:** AgentGuard <hello@agentguard47.com>
+**From:** AgentGuard <pat@bmdpat.com>
 
 ---
 
@@ -54,7 +54,7 @@ with tracer.trace("agent.run") as span:
 
 All of these are caught automatically when you add AgentGuard. The SDK is 3 lines to set up and the dashboard shows you everything.
 
-— The AgentGuard team
+— Pat, BMD PAT LLC
 
 ---
 
