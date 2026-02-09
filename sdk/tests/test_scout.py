@@ -4,14 +4,14 @@ Verifies that:
   1. Scout context generation works (reads pyproject.toml + README)
   2. All code snippets in templates actually compile against the SDK
   3. Issue classification returns valid categories
-  4. Comment templates render with all required fields
-  5. If the SDK API changes, these tests break — preventing stale outreach
+  4. Comment templates render correctly (short, no code blocks)
+  5. URL parsing and relevance filtering work correctly
+  6. If the SDK API changes, these tests break — preventing stale outreach
 """
 import json
 import os
 import subprocess
 import sys
-import textwrap
 import unittest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -134,8 +134,83 @@ class TestClassification(unittest.TestCase):
         self.assertEqual(classify("infinite loop burning budget"), "loop")
 
 
+class TestParseIssueUrl(unittest.TestCase):
+    """Test URL parsing helper."""
+
+    def test_valid_url(self) -> None:
+        from scout import parse_issue_url
+        result = parse_issue_url("https://github.com/owner/repo/issues/123")
+        self.assertEqual(result, ("owner/repo", "123"))
+
+    def test_trailing_slash(self) -> None:
+        from scout import parse_issue_url
+        result = parse_issue_url("https://github.com/owner/repo/issues/456/")
+        self.assertEqual(result, ("owner/repo", "456"))
+
+    def test_malformed_url(self) -> None:
+        from scout import parse_issue_url
+        self.assertIsNone(parse_issue_url("https://short"))
+        self.assertIsNone(parse_issue_url(""))
+
+    def test_real_world_urls(self) -> None:
+        from scout import parse_issue_url
+        result = parse_issue_url("https://github.com/langchain-ai/langchain/issues/34884")
+        self.assertEqual(result, ("langchain-ai/langchain", "34884"))
+        result = parse_issue_url("https://github.com/google/adk-python/issues/4179")
+        self.assertEqual(result, ("google/adk-python", "4179"))
+
+
+class TestIsRelevant(unittest.TestCase):
+    """Test issue content relevance filtering."""
+
+    def test_python_mentioned_is_relevant(self) -> None:
+        from scout import is_relevant
+        self.assertTrue(is_relevant({"title": "Python agent loop", "body": ""}))
+        self.assertTrue(is_relevant({"title": "Loop issue", "body": "Using Python 3.12"}))
+
+    def test_typescript_skipped(self) -> None:
+        from scout import is_relevant
+        self.assertFalse(is_relevant({
+            "title": "Agent infinite loop",
+            "body": "Using TypeScript with LangChain.js"
+        }))
+
+    def test_javascript_skipped(self) -> None:
+        from scout import is_relevant
+        self.assertFalse(is_relevant({
+            "title": "Tool call loop",
+            "body": "My JavaScript agent keeps looping"
+        }))
+
+    def test_rust_skipped(self) -> None:
+        from scout import is_relevant
+        self.assertFalse(is_relevant({
+            "title": "Budget exceeded",
+            "body": "Running a Rust-based agent"
+        }))
+
+    def test_language_neutral_is_relevant(self) -> None:
+        from scout import is_relevant
+        self.assertTrue(is_relevant({
+            "title": "Agent stuck in infinite loop",
+            "body": "My agent keeps calling the same tool over and over"
+        }))
+
+    def test_python_overrides_other_languages(self) -> None:
+        from scout import is_relevant
+        self.assertTrue(is_relevant({
+            "title": "Agent loop in Python",
+            "body": "Also affects JavaScript but I need Python fix"
+        }))
+
+    def test_empty_body(self) -> None:
+        from scout import is_relevant
+        self.assertTrue(is_relevant({"title": "Agent loop", "body": None}))
+        self.assertTrue(is_relevant({"title": "Agent loop", "body": ""}))
+
+
 class TestTemplateRendering(unittest.TestCase):
-    """Test that rendered comments contain all required elements."""
+    """Test that rendered comments are short, human, and correct."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -151,21 +226,7 @@ class TestTemplateRendering(unittest.TestCase):
         from scout import render_comment
         for category in ("loop", "cost", "debug"):
             comment = render_comment(category, self.ctx)
-            self.assertGreater(len(comment), 100, f"{category} template too short")
-
-    def test_templates_include_version(self) -> None:
-        from scout import render_comment
-        for category in ("loop", "cost", "debug"):
-            comment = render_comment(category, self.ctx)
-            self.assertIn(self.ctx["version"], comment,
-                          f"{category} template missing version")
-
-    def test_templates_include_install_cmd(self) -> None:
-        from scout import render_comment
-        for category in ("loop", "cost", "debug"):
-            comment = render_comment(category, self.ctx)
-            self.assertIn("agentguard47", comment,
-                          f"{category} template missing package name")
+            self.assertGreater(len(comment), 50, f"{category} template too short")
 
     def test_templates_include_repo_url(self) -> None:
         from scout import render_comment
@@ -174,22 +235,44 @@ class TestTemplateRendering(unittest.TestCase):
             self.assertIn("bmdhodl/agent47", comment,
                           f"{category} template missing repo URL")
 
-    def test_loop_template_has_code(self) -> None:
+    def test_templates_mention_agentguard(self) -> None:
         from scout import render_comment
-        comment = render_comment("loop", self.ctx)
-        self.assertIn("LoopGuard", comment)
-        self.assertIn("```python", comment)
+        for category in ("loop", "cost", "debug"):
+            comment = render_comment(category, self.ctx)
+            self.assertIn("agentguard", comment.lower(),
+                          f"{category} template missing agentguard mention")
 
-    def test_cost_template_has_code(self) -> None:
+    def test_no_code_blocks(self) -> None:
+        """Templates should NOT contain code blocks — keep it casual."""
         from scout import render_comment
-        comment = render_comment("cost", self.ctx)
-        self.assertIn("BudgetGuard", comment)
-        self.assertIn("max_cost_usd", comment)
+        for category in ("loop", "cost", "debug"):
+            comment = render_comment(category, self.ctx)
+            self.assertNotIn("```", comment,
+                             f"{category} template has code block — should be short and human")
 
-    def test_debug_template_has_cli(self) -> None:
+    def test_no_install_command(self) -> None:
+        """Templates should NOT contain pip install commands."""
         from scout import render_comment
-        comment = render_comment("debug", self.ctx)
-        self.assertIn("agentguard report", comment)
+        for category in ("loop", "cost", "debug"):
+            comment = render_comment(category, self.ctx)
+            self.assertNotIn("pip install", comment,
+                             f"{category} template has install command — too promotional")
+
+    def test_no_version_number(self) -> None:
+        """Templates should NOT contain version numbers."""
+        from scout import render_comment
+        for category in ("loop", "cost", "debug"):
+            comment = render_comment(category, self.ctx)
+            self.assertNotIn(self.ctx["version"], comment,
+                             f"{category} template has version number — too promotional")
+
+    def test_templates_are_short(self) -> None:
+        """Each template should be under 400 characters."""
+        from scout import render_comment
+        for category in ("loop", "cost", "debug"):
+            comment = render_comment(category, self.ctx)
+            self.assertLess(len(comment), 400,
+                            f"{category} template is {len(comment)} chars — should be under 400")
 
 
 if __name__ == "__main__":

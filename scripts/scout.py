@@ -6,9 +6,9 @@ Run by the scout GitHub Actions workflow. Requires GH_TOKEN env var (or gh CLI a
 Flow:
   1. Generate scout_context.json from pyproject.toml
   2. Search GitHub for relevant issues (last 7 days)
-  3. Dedup: skip issues where bmdhodl already commented
+  3. Filter: skip non-Python repos, already-commented, noisy threads, irrelevant content
   4. Classify each issue (loop / cost / debug) by keywords
-  5. Post a comment with the right template (max 3 per run)
+  5. Post a short, human comment (max 1 per run)
   6. Close old scout issues, create summary issue with what was posted
 """
 from __future__ import annotations
@@ -23,7 +23,7 @@ from typing import Any
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUR_REPO = "bmdhodl/agent47"
 OUR_USER = "bmdhodl"
-MAX_COMMENTS_PER_RUN = 3
+MAX_COMMENTS_PER_RUN = 1
 MAX_ISSUE_COMMENTS = 10  # skip noisy threads
 SEARCH_DAYS = 7
 REPO_SEARCH_DAYS = 14
@@ -51,6 +51,15 @@ LOOP_KEYWORDS = ["loop", "infinite", "repeat", "recursion", "stuck", "cycling", 
 COST_KEYWORDS = ["cost", "budget", "expensive", "billing", "spending", "price", "token usage", "money", "$"]
 # If neither matches → debugging/observability template
 
+# Languages that signal the issue is NOT Python-related
+SKIP_LANGUAGES = {
+    "typescript", "javascript", "rust", "go", "golang", "java",
+    "c#", "csharp", "swift", "kotlin", "ruby", "php", "dart", "flutter",
+}
+
+# Repo-level languages we'll comment on (Python or unknown)
+ALLOWED_REPO_LANGUAGES = {"Python", "Jupyter Notebook", None}
+
 
 def gh(*args: str, json_output: bool = False) -> Any:
     """Run a gh CLI command. Returns parsed JSON if json_output=True, else stdout string."""
@@ -73,33 +82,70 @@ def load_context() -> dict:
         return json.load(f)
 
 
+def parse_issue_url(url: str) -> tuple[str, str] | None:
+    """Extract (owner/repo, number) from a GitHub issue URL.
+
+    Returns None for malformed URLs.
+    """
+    parts = url.rstrip("/").split("/")
+    if len(parts) < 5:
+        return None
+    return f"{parts[-4]}/{parts[-3]}", parts[-1]
+
+
+def get_repo_language(owner_repo: str) -> str | None:
+    """Get the primary language of a repo via GitHub API."""
+    result = gh("api", f"repos/{owner_repo}", "--jq", ".language")
+    lang = result.strip() if result else None
+    if lang == "null" or lang == "":
+        return None
+    return lang
+
+
 def search_issues(query: str, cutoff: str, limit: int = 5, repo: str | None = None) -> list[dict]:
     """Search GitHub for open issues matching query created after cutoff."""
     args = ["search", "issues", query, "--sort", "created", "--order", "desc",
             "--limit", str(limit), "--state", "open", "--created", f">={cutoff}",
-            "--json", "title,url,repository,number,commentsCount,createdAt"]
+            "--json", "title,url,body,repository,number,commentsCount,createdAt"]
     if repo:
         args.extend(["--repo", repo])
     return gh(*args, json_output=True) or []
 
 
-def already_commented(issue_url: str) -> bool:
-    """Check if bmdhodl has already commented on this issue."""
-    # Extract owner/repo and issue number from URL
-    # URL format: https://github.com/owner/repo/issues/123
-    parts = issue_url.rstrip("/").split("/")
-    if len(parts) < 5:
-        return True  # skip malformed
-    owner_repo = f"{parts[-4]}/{parts[-3]}"
-    number = parts[-1]
+def already_commented(owner_repo: str, number: str) -> bool:
+    """Check if bmdhodl has already commented on this issue.
 
-    comments = gh("api", f"repos/{owner_repo}/issues/{number}/comments",
-                   "--jq", f'[.[] | select(.user.login == "{OUR_USER}")] | length',
-                   json_output=False)
+    Uses --paginate to check ALL comment pages, not just the first 30.
+    """
+    result = gh("api", f"repos/{owner_repo}/issues/{number}/comments",
+                "--paginate", "--jq",
+                f'[.[] | select(.user.login == "{OUR_USER}")] | length')
     try:
-        return int(comments.strip()) > 0
+        return int(result.strip()) > 0
     except (ValueError, AttributeError):
         return True  # err on the side of not posting
+
+
+def is_relevant(issue: dict) -> bool:
+    """Check if issue is relevant (Python-related or language-neutral).
+
+    Reads both title and body. If another language is explicitly mentioned
+    and Python is not, skip it.
+    """
+    body = (issue.get("body") or "").lower()
+    title = (issue.get("title") or "").lower()
+    text = title + " " + body
+
+    # If Python is explicitly mentioned, always relevant
+    if "python" in text:
+        return True
+
+    # If another language is mentioned and Python isn't, skip
+    for lang in SKIP_LANGUAGES:
+        if lang in text:
+            return False
+
+    return True  # language-neutral issues are fair game
 
 
 def classify(title: str) -> str:
@@ -118,51 +164,36 @@ def classify(title: str) -> str:
 
 
 def render_comment(category: str, ctx: dict) -> str:
-    """Render a comment template for the given category using current context."""
-    version = ctx["version"]
-    install = ctx["install_cmd"]
+    """Render a short, human comment for the given category.
+
+    Rules: no code blocks, no install commands, no version numbers.
+    Casual dev tone. Max 3 sentences. Just the repo link.
+    """
     repo_url = ctx["repo_url"]
-    s = ctx["snippets"]
 
     if category == "loop":
         return (
-            f"I built an open-source guard for exactly this — detects repeated tool calls "
-            f"and kills the run before it burns your budget.\n\n"
-            f"```python\n{s['loop_guard']}\n```\n\n"
-            f"Works with LangChain too:\n\n"
-            f"```python\n{s['langchain']}\n```\n\n"
-            f"Zero dependencies, v{version}. `{install}`\n\n"
-            f"{repo_url}\n\n"
-            f"Happy to help debug your specific loop if you share more details."
+            "ran into the same thing. i ended up writing a small guard that watches "
+            "for repeated tool calls and kills the loop automatically — saved me a "
+            f"bunch of debugging time. it's called agentguard: {repo_url}\n\n"
+            "happy to help if you want a hand with your specific case."
         )
     elif category == "cost":
         return (
-            f"Had the same problem. Built a budget guard that kills runs at a dollar threshold:\n\n"
-            f"```python\n{s['budget_guard']}\n```\n\n"
-            f"Also auto-estimates cost per LLM call (OpenAI, Anthropic, Gemini, Mistral) "
-            f"so you can see exactly how much each agent run costs. "
-            f"Zero deps, v{version}: `{install}`\n\n"
-            f"{repo_url}"
+            "been there. i wrote a budget guard that caps spend per run so this "
+            "can't happen — it just stops the agent when you hit a dollar threshold. "
+            f"check out agentguard if useful: {repo_url}"
         )
     else:  # debug
         return (
-            f"I built AgentGuard for this — it traces every reasoning step and tool call, "
-            f"then gives you a report + Gantt timeline in your browser:\n\n"
-            f"```bash\n"
-            f"agentguard report traces.jsonl   # summary table with cost\n"
-            f"agentguard view traces.jsonl     # Gantt timeline in browser\n"
-            f"```\n\n"
-            f"Also has dollar cost per call, loop detection, and budget guards. "
-            f"Works with LangChain or any custom agent. v{version}: `{install}`\n\n"
-            f"{repo_url}"
+            "if it helps, i built a lightweight tracer that captures every step + "
+            "tool call and gives you a timeline view. makes it way easier to see "
+            f"what the agent is actually doing. it's called agentguard: {repo_url}"
         )
 
 
-def post_comment(issue_url: str, body: str) -> bool:
+def post_comment(owner_repo: str, number: str, body: str) -> bool:
     """Post a comment on a GitHub issue. Returns True on success."""
-    parts = issue_url.rstrip("/").split("/")
-    owner_repo = f"{parts[-4]}/{parts[-3]}"
-    number = parts[-1]
     result = gh("issue", "comment", number, "--repo", owner_repo, "--body", body)
     return result is not None
 
@@ -184,7 +215,7 @@ def create_summary_issue(posted: list[dict], skipped: int, total: int, ctx: dict
     lines = [
         f"# Scout Run — {date}\n",
         f"**SDK version:** v{version} | **Targets found:** {total} | "
-        f"**Comments posted:** {len(posted)} | **Skipped (already commented):** {skipped}\n",
+        f"**Comments posted:** {len(posted)} | **Skipped:** {skipped}\n",
     ]
 
     if posted:
@@ -242,6 +273,8 @@ def main() -> None:
     # 3. Filter, classify, and post
     posted: list[dict] = []
     skipped = 0
+    # Cache repo language lookups to avoid redundant API calls
+    repo_lang_cache: dict[str, str | None] = {}
 
     for target in all_targets:
         if len(posted) >= MAX_COMMENTS_PER_RUN:
@@ -251,13 +284,35 @@ def main() -> None:
         title = target.get("title", "")
         comment_count = target.get("commentsCount", 0)
 
+        parsed = parse_issue_url(url)
+        if not parsed:
+            skipped += 1
+            continue
+        owner_repo, number = parsed
+
         # Skip noisy threads
         if comment_count > MAX_ISSUE_COMMENTS:
+            print(f"  Skipping (noisy, {comment_count} comments): {title}")
+            skipped += 1
+            continue
+
+        # Check repo language — only post on Python repos
+        if owner_repo not in repo_lang_cache:
+            repo_lang_cache[owner_repo] = get_repo_language(owner_repo)
+        repo_lang = repo_lang_cache[owner_repo]
+        if repo_lang not in ALLOWED_REPO_LANGUAGES:
+            print(f"  Skipping (repo language: {repo_lang}): {title}")
+            skipped += 1
+            continue
+
+        # Check issue content relevance
+        if not is_relevant(target):
+            print(f"  Skipping (non-Python content): {title}")
             skipped += 1
             continue
 
         # Skip if we already commented
-        if already_commented(url):
+        if already_commented(owner_repo, number):
             skipped += 1
             continue
 
@@ -268,7 +323,7 @@ def main() -> None:
         print(f"Posting '{category}' comment on: {title}")
         print(f"  URL: {url}")
 
-        if post_comment(url, comment):
+        if post_comment(owner_repo, number, comment):
             posted.append({"title": title, "url": url, "category": category})
         else:
             print(f"  Failed to post comment")
