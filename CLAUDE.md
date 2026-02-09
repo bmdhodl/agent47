@@ -159,7 +159,7 @@ agent47/
 ├── scripts/           # Automation scripts
 ├── docs/              # Public examples and blog posts
 ├── .claude/agents/    # Agent role prompts
-└── .github/workflows/ # CI, publish, scout
+└── .github/workflows/ # CI, publish, deploy
 ```
 
 ### Constraints
