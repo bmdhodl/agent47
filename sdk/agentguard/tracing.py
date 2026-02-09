@@ -14,6 +14,7 @@ Usage::
 """
 from __future__ import annotations
 
+import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
@@ -25,6 +26,10 @@ import random
 import threading
 import time
 import uuid
+
+logger = logging.getLogger("agentguard.tracing")
+
+_MAX_NAME_LENGTH = 1000
 
 
 class TraceSink:
@@ -79,6 +84,17 @@ class JsonlFileSink(TraceSink):
 
     def __repr__(self) -> str:
         return f"JsonlFileSink({self._path!r})"
+
+
+def _truncate_name(name: str) -> str:
+    """Truncate a name to _MAX_NAME_LENGTH chars, logging a warning if needed."""
+    if len(name) <= _MAX_NAME_LENGTH:
+        return name
+    logger.warning(
+        "Name truncated from %d to %d chars: %s...",
+        len(name), _MAX_NAME_LENGTH, name[:50],
+    )
+    return name[:_MAX_NAME_LENGTH]
 
 
 @dataclass
@@ -173,7 +189,7 @@ class TraceContext:
             trace_id=self.trace_id,
             span_id=_new_id(),
             parent_id=self.span_id,
-            name=name,
+            name=_truncate_name(name),
             data=data,
             _sampled=self._sampled,
         )
@@ -192,7 +208,7 @@ class TraceContext:
                 trace_id=self.trace_id,
                 span_id=self.span_id,
                 parent_id=self.parent_id,
-                name=name,
+                name=_truncate_name(name),
                 data=data,
             )
 
@@ -200,13 +216,12 @@ class TraceContext:
 class Tracer:
     """Core tracer that manages spans and emits events to a sink.
 
-    Usage::
+    Can be used as a context manager for clean shutdown::
 
-        from agentguard import Tracer, JsonlFileSink
-
-        tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
-        with tracer.trace("agent.run") as span:
-            span.event("step", data={"thought": "search"})
+        with Tracer(sink=HttpSink(...), service="my-agent") as tracer:
+            with tracer.trace("agent.run") as span:
+                span.event("step", data={"thought": "search"})
+        # sink.shutdown() called automatically on exit
 
     Args:
         sink: Where to send trace events. Defaults to StdoutSink.
@@ -225,10 +240,18 @@ class Tracer:
         sampling_rate: float = 1.0,
     ) -> None:
         self._sink = sink or StdoutSink()
-        self._service = service
+        self._service = _truncate_name(service)
         self._guards = guards or []
         self._metadata = metadata or {}
         self._sampling_rate = sampling_rate
+
+    def __enter__(self) -> "Tracer":
+        return self
+
+    def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> bool:
+        if hasattr(self._sink, "shutdown"):
+            self._sink.shutdown()
+        return False
 
     @contextmanager
     def trace(self, name: str, data: Optional[Dict[str, Any]] = None) -> TraceContext:
@@ -251,7 +274,7 @@ class Tracer:
             trace_id=_new_id(),
             span_id=_new_id(),
             parent_id=None,
-            name=name,
+            name=_truncate_name(name),
             data=data,
             _sampled=sampled,
         )
@@ -298,17 +321,19 @@ class Tracer:
         self._sink.emit(event)
 
         # Auto-check guards
-        for guard in self._guards:
-            if hasattr(guard, "check") and kind == "event":
-                # LoopGuard-style: pass name as tool_name
-                try:
-                    guard.check(name, data)
-                except TypeError:
-                    # Guard.check() doesn't accept these args (e.g. TimeoutGuard)
+        if kind == "event":
+            for guard in self._guards:
+                if hasattr(guard, "auto_check"):
+                    guard.auto_check(name, data)
+                elif hasattr(guard, "check"):
+                    # Backward compat: try check(name, data), then check()
                     try:
-                        guard.check()
+                        guard.check(name, data)
                     except TypeError:
-                        pass
+                        try:
+                            guard.check()
+                        except TypeError:
+                            pass
 
     def __repr__(self) -> str:
         return f"Tracer(service={self._service!r}, sink={self._sink!r})"
