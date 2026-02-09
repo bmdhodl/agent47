@@ -16,12 +16,14 @@ import types
 _mock_trace = types.ModuleType("opentelemetry.trace")
 _mock_trace.StatusCode = type("StatusCode", (), {"OK": 1, "ERROR": 2})()
 _mock_trace.SpanKind = type("SpanKind", (), {"INTERNAL": 1})()
+_mock_trace.set_span_in_context = lambda span, context=None: {"parent_span": span}
 
 _mock_context = types.ModuleType("opentelemetry.context")
 _mock_context.Context = type("Context", (), {})
 
 _mock_otel = types.ModuleType("opentelemetry")
 _mock_otel.trace = _mock_trace
+_mock_otel.context = _mock_context
 
 
 class FakeSpan:
@@ -34,6 +36,7 @@ class FakeSpan:
         self.status_code: Any = None
         self.status_message: str = ""
         self.ended = False
+        self.parent_context: Any = None
 
     def set_attribute(self, key: str, value: Any) -> None:
         self.attributes[key] = value
@@ -55,8 +58,9 @@ class FakeTracer:
     def __init__(self):
         self.spans: List[FakeSpan] = []
 
-    def start_span(self, name: str, kind: Any = None) -> FakeSpan:
+    def start_span(self, name: str, kind: Any = None, context: Any = None) -> FakeSpan:
         span = FakeSpan(name)
+        span.parent_context = context
         self.spans.append(span)
         return span
 
@@ -251,6 +255,57 @@ class TestOtelTraceSink(unittest.TestCase):
         sink = self.OtelTraceSink(provider, tracer_name="custom-agent")
         # Tracer was requested — just verify no error
         self.assertIsNotNone(sink)
+
+    def test_parent_child_linking(self):
+        """Child span receives parent context for proper OTel linking."""
+        sink = self.OtelTraceSink(self.provider)
+
+        # Start parent
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "parent",
+            "name": "agent.run", "ts": 100.0, "service": "test",
+        })
+        # Start child with parent_id
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "child", "parent_id": "parent",
+            "name": "tool.search", "ts": 100.1, "service": "test",
+        })
+
+        tracer = self.provider._tracer
+        self.assertEqual(len(tracer.spans), 2)
+        parent_span = tracer.spans[0]
+        child_span = tracer.spans[1]
+
+        # Child should have received a context containing the parent span
+        self.assertIsNotNone(child_span.parent_context)
+        self.assertEqual(child_span.parent_context["parent_span"], parent_span)
+
+        # Parent should have no parent context
+        self.assertIsNone(parent_span.parent_context)
+
+    def test_string_error_handling(self):
+        """Error field as string (not dict) doesn't crash."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 100.0, "service": "test",
+        })
+        sink.emit({
+            "kind": "span", "phase": "end",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 101.0, "duration_ms": 1000.0,
+            "error": "something broke",
+        })
+
+        span = self.provider._tracer.spans[0]
+        self.assertTrue(span.ended)
+        self.assertEqual(span.status_code, 2)  # ERROR
+        self.assertEqual(span.attributes["agentguard.error.message"], "something broke")
+        self.assertEqual(span.attributes["agentguard.error.type"], "str")
 
 
 if __name__ == "__main__":

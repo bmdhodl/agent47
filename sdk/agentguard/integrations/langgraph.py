@@ -29,12 +29,7 @@ from __future__ import annotations
 import functools
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from agentguard.guards import (
-    BudgetGuard,
-    BudgetExceeded,
-    LoopGuard,
-    LoopDetected,
-)
+from agentguard.guards import BudgetGuard, LoopGuard
 from agentguard.tracing import Tracer
 
 F = TypeVar("F", bound=Callable[..., Any])
@@ -72,30 +67,23 @@ def guarded_node(
             state = args[0] if args else kwargs.get("state", {})
             state_summary = _summarize_state(state)
 
-            # Check loop guard before execution
-            if loop_guard:
-                loop_guard.check(
-                    tool_name=node_name,
-                    tool_args=state_summary,
-                )
-
-            # Check budget guard before execution
-            if budget_guard:
-                budget_guard.consume(calls=1)
-
-            # Execute node inside a traced span
+            # Guards fire inside the span so rejections are visible in traces
             with _tracer.trace(node_name, data=state_summary) as ctx:
-                try:
-                    result = fn(*args, **kwargs)
-                    ctx.event(
-                        f"{node_name}.result",
-                        data=_summarize_state(result) if result else {},
+                if loop_guard:
+                    loop_guard.check(
+                        tool_name=node_name,
+                        tool_args=state_summary,
                     )
-                    return result
-                except (LoopDetected, BudgetExceeded):
-                    raise
-                except Exception:
-                    raise
+
+                if budget_guard:
+                    budget_guard.consume(calls=1)
+
+                result = fn(*args, **kwargs)
+                ctx.event(
+                    f"{node_name}.result",
+                    data=_summarize_state(result) if result else {},
+                )
+                return result
 
         return wrapper  # type: ignore[return-value]
 
@@ -134,10 +122,10 @@ def guard_node(
 
 
 def _summarize_state(state: Any) -> Dict[str, Any]:
-    """Extract a safe summary dict from LangGraph state.
+    """Extract a JSON-safe summary dict from LangGraph state.
 
-    Handles dict states (most common), dataclass-like objects, and fallbacks.
-    Truncates large values to avoid bloating trace events.
+    Handles dict states (most common) and arbitrary objects via repr.
+    All values are coerced to JSON-serializable types (str, int, float, bool).
     """
     if state is None:
         return {}
@@ -150,8 +138,9 @@ def _summarize_state(state: Any) -> Dict[str, Any]:
                     last = v[-1]
                     content = getattr(last, "content", str(last))
                     summary["last_message"] = str(content)[:200]
+            elif isinstance(v, (str, int, float, bool)):
+                summary[k] = v
             else:
-                s = repr(v)
-                summary[k] = s[:200] if len(s) > 200 else v
+                summary[k] = repr(v)[:200]
         return summary
     return {"state": repr(state)[:500]}

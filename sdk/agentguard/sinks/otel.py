@@ -26,15 +26,13 @@ Core SDK remains zero-dep.
 """
 from __future__ import annotations
 
-import time
+import threading
 from typing import Any, Dict, Optional
 
 from agentguard.tracing import TraceSink
 
 try:
-    from opentelemetry import trace as otel_trace
-    from opentelemetry.trace import StatusCode, SpanKind
-    from opentelemetry.context import Context
+    from opentelemetry.trace import StatusCode, SpanKind  # noqa: F401
 
     _HAS_OTEL = True
 except ImportError:
@@ -68,6 +66,7 @@ class OtelTraceSink(TraceSink):
                 "Install with: pip install opentelemetry-api opentelemetry-sdk"
             )
         self._otel_tracer = tracer_provider.get_tracer(tracer_name)
+        self._lock = threading.Lock()
         self._spans: Dict[str, Any] = {}  # span_id -> OTel Span
 
     def emit(self, event: Dict[str, Any]) -> None:
@@ -91,13 +90,23 @@ class OtelTraceSink(TraceSink):
     def _start_span(
         self, event: Dict[str, Any], name: str, span_id: Optional[str]
     ) -> None:
-        """Start a new OTel span."""
+        """Start a new OTel span, linking to parent if one exists."""
         parent_id = event.get("parent_id")
 
-        # Start span — OTel manages context internally
+        # If there's a parent span we already track, set it as OTel context
+        ctx = None
+        if parent_id:
+            with self._lock:
+                parent_span = self._spans.get(parent_id)
+            if parent_span and _HAS_OTEL:
+                from opentelemetry.trace import set_span_in_context
+
+                ctx = set_span_in_context(parent_span)
+
         span = self._otel_tracer.start_span(
             name=name,
             kind=SpanKind.INTERNAL,
+            context=ctx,
         )
 
         # Set initial attributes
@@ -119,14 +128,15 @@ class OtelTraceSink(TraceSink):
             span.set_attribute(k, v)
 
         if span_id:
-            self._spans[span_id] = span
+            with self._lock:
+                self._spans[span_id] = span
 
     def _end_span(self, event: Dict[str, Any], span_id: Optional[str]) -> None:
         """End an existing OTel span."""
-        if not span_id or span_id not in self._spans:
-            return
-
-        span = self._spans.pop(span_id)
+        with self._lock:
+            if not span_id or span_id not in self._spans:
+                return
+            span = self._spans.pop(span_id)
 
         # Set duration and cost attributes
         duration_ms = event.get("duration_ms")
@@ -142,12 +152,18 @@ class OtelTraceSink(TraceSink):
             for k, v in event["data"].items():
                 span.set_attribute(f"agentguard.data.{k}", str(v)[:256])
 
-        # Set error status
+        # Set error status — handle both dict and string error values
         error = event.get("error")
         if error:
-            span.set_status(StatusCode.ERROR, str(error.get("message", "")))
-            span.set_attribute("agentguard.error.type", error.get("type", ""))
-            span.set_attribute("agentguard.error.message", str(error.get("message", ""))[:500])
+            if isinstance(error, dict):
+                msg = str(error.get("message", ""))
+                err_type = error.get("type", "")
+            else:
+                msg = str(error)
+                err_type = type(error).__name__
+            span.set_status(StatusCode.ERROR, msg)
+            span.set_attribute("agentguard.error.type", err_type)
+            span.set_attribute("agentguard.error.message", msg[:500])
         else:
             span.set_status(StatusCode.OK)
 
@@ -158,10 +174,11 @@ class OtelTraceSink(TraceSink):
     ) -> None:
         """Add an event to the parent span."""
         parent_id = event.get("parent_id") or span_id
-        if not parent_id or parent_id not in self._spans:
-            return
+        with self._lock:
+            if not parent_id or parent_id not in self._spans:
+                return
+            span = self._spans[parent_id]
 
-        span = self._spans[parent_id]
         attrs: Dict[str, Any] = {}
         if event.get("data"):
             for k, v in event["data"].items():
@@ -171,10 +188,12 @@ class OtelTraceSink(TraceSink):
 
     def shutdown(self) -> None:
         """End any orphaned spans (safety net)."""
-        for span_id, span in list(self._spans.items()):
+        with self._lock:
+            spans = list(self._spans.items())
+            self._spans.clear()
+        for _span_id, span in spans:
             try:
                 span.set_status(StatusCode.ERROR, "orphaned span")
                 span.end()
             except Exception:
                 pass
-        self._spans.clear()
