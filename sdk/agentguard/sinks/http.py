@@ -63,8 +63,23 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
     if allow_private:
         return
 
-    # Resolve hostname and check against blocked networks
+    # IDN/Punycode normalization: reject non-ASCII hostnames that could bypass
+    # string-based checks (e.g. Unicode lookalikes like "ⅼocalhost")
     hostname = parsed.hostname
+    try:
+        ascii_hostname = hostname.encode("idna").decode("ascii")
+    except (UnicodeError, UnicodeDecodeError):
+        raise ValueError(
+            f"URL hostname {hostname!r} contains invalid characters "
+            f"(failed IDNA encoding)"
+        )
+    if ascii_hostname.lower() != hostname.lower():
+        raise ValueError(
+            f"URL hostname {hostname!r} contains non-ASCII characters "
+            f"(IDNA-encoded: {ascii_hostname!r}). Use the ASCII form."
+        )
+
+    # Resolve hostname and check against blocked networks
     try:
         addr = ipaddress.ip_address(hostname)
     except ValueError:

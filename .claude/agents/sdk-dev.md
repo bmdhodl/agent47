@@ -12,7 +12,7 @@ https://github.com/users/bmdhodl/projects/4
 
 ## Your Issues
 
-Filter: `component:sdk` label. Currently 22 issues (#20-#41).
+Filter: `component:sdk` label.
 
 List them:
 ```bash
@@ -25,30 +25,23 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
 2. **Pick work:** Take the highest-priority Todo item from the project board.
 3. **Before coding:** Read the issue with `gh issue view <number> --repo bmdhodl/agent47`. Understand the acceptance criteria.
 4. **While working:**
-   - Move issue to In Progress: `gh issue edit <number> --repo bmdhodl/agent47 --add-label "status:in-progress"` and comment what you're doing.
    - Write code in `sdk/agentguard/`.
    - Write tests in `sdk/tests/`.
-   - Run tests: `PYTHONPATH=sdk python3 -m unittest discover -s sdk/tests -v`
+   - Run tests: `python -m pytest sdk/tests/ -v --cov=agentguard --cov-fail-under=80`
    - Run lint: `ruff check sdk/agentguard/`
-5. **When done:** Commit, push, comment on the issue with what was done, close it.
-6. **If blocked:** Create a new issue assigned to the owner so they can unblock you:
-   ```bash
-   gh issue create --repo bmdhodl/agent47 --title "BLOCKED: <what you need>" \
-     --body "Blocked on: #<issue>\nWhat I need: <specific ask>\nContext: <why>" \
-     --label "blocked:owner" --assignee bmdhodl
-   ```
-   Then comment on your original issue linking the blocker. Common blockers: API keys, env setup, external service access, design decisions.
-7. **If you find gaps:** Create new issues with `component:sdk` + appropriate `phase:`, `priority:`, and `type:` labels. Add to project board: `gh project item-add 4 --owner bmdhodl --url <issue-url>`
+5. **When done:** Create a feature branch, commit, push, open a PR, and close the issue.
+6. **If blocked:** Comment on the issue explaining the blocker and tag the blocking issue number.
+7. **If you find gaps:** Create new issues with `component:sdk` + appropriate `priority:` and `type:` labels.
 
 ## Conventions
 
 - Zero dependencies. Python stdlib only. Optional extras are fine (e.g., `langchain-core`).
 - Python 3.9+ compatibility.
-- All tests use `unittest` (no pytest).
+- CI uses `pytest` with `--cov-fail-under=80`.
 - All public API surfaces through `agentguard/__init__.py`.
 - Guards raise exceptions: `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`.
 - TraceSink interface: all sinks implement `emit(event: Dict)`.
 
 ## Current Work
 
-v1.0.0 is shipped. Check the project board for your current `component:sdk` issues — active work is Phase 6 (Network Effects) and Phase 7 (Scale).
+v1.0.0 GA is shipped. Check the project board for current `component:sdk` issues.

@@ -1,5 +1,6 @@
 from .tracing import Tracer, JsonlFileSink, StdoutSink, TraceSink
 from .guards import (
+    BaseGuard,
     LoopGuard,
     BudgetGuard,
     TimeoutGuard,
@@ -13,7 +14,7 @@ from .guards import (
 from .cost import CostTracker, estimate_cost, update_prices
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
-from .evaluation import EvalSuite, EvalResult, AssertionResult
+from .evaluation import EvalSuite, EvalResult, AssertionResult, summarize_trace
 from .atracing import AsyncTracer, AsyncTraceContext
 from .instrument import (
     trace_agent,
@@ -50,9 +51,11 @@ __all__ = [
     "Recorder",
     "Replayer",
     "HttpSink",
+    "BaseGuard",
     "EvalSuite",
     "EvalResult",
     "AssertionResult",
+    "summarize_trace",
     "trace_agent",
     "trace_tool",
     "patch_openai",
