@@ -71,12 +71,12 @@ class TestTopLevelExports(unittest.TestCase):
         import agentguard
         expected = {
             "Tracer", "JsonlFileSink", "StdoutSink", "TraceSink",
-            "LoopGuard", "BudgetGuard", "TimeoutGuard",
+            "BaseGuard", "LoopGuard", "BudgetGuard", "TimeoutGuard",
             "FuzzyLoopGuard", "RateLimitGuard",
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
             "CostTracker", "estimate_cost", "update_prices",
             "Recorder", "Replayer", "HttpSink",
-            "EvalSuite", "EvalResult", "AssertionResult",
+            "EvalSuite", "EvalResult", "AssertionResult", "summarize_trace",
             "trace_agent", "trace_tool",
             "patch_openai", "patch_anthropic",
             "unpatch_openai", "unpatch_anthropic",

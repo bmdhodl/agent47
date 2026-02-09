@@ -11,16 +11,17 @@ Usage::
     budget.consume(tokens=150, calls=1, cost_usd=0.02)
 
     timeout = TimeoutGuard(max_seconds=30)
-    timeout.start()
-    timeout.check()
+    with timeout:
+        timeout.check()
 """
 from __future__ import annotations
 
+import json
+import threading
+import time
 from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Any, Callable, Deque, Dict, Optional, Tuple
-import json
-import time
 
 
 class LoopDetected(RuntimeError):
@@ -43,7 +44,36 @@ class TimeoutExceeded(RuntimeError):
     pass
 
 
-class LoopGuard:
+class BaseGuard:
+    """Base class for all guards.
+
+    Subclass and override ``auto_check()`` to integrate with the Tracer's
+    automatic guard dispatch. Override ``reset()`` to clear state.
+
+    Usage::
+
+        class MyGuard(BaseGuard):
+            def auto_check(self, event_name, event_data=None):
+                if event_name == "tool.dangerous":
+                    raise RuntimeError("Blocked!")
+    """
+
+    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
+        """Called automatically by the Tracer on each emitted event.
+
+        Override in subclasses to participate in auto-checking.
+        The default implementation is a no-op.
+
+        Args:
+            event_name: Name of the event being emitted.
+            event_data: Optional data attached to the event.
+        """
+
+    def reset(self) -> None:
+        """Reset guard state. Override in subclasses."""
+
+
+class LoopGuard(BaseGuard):
     """Detect repeated identical tool calls within a sliding window.
 
     Tracks the last ``window`` tool calls and raises ``LoopDetected`` if
@@ -95,6 +125,10 @@ class LoopGuard:
                 f"Consider varying the arguments or breaking the loop."
             )
 
+    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
+        """Auto-check: delegates to check(event_name, event_data)."""
+        self.check(event_name, event_data)
+
     def reset(self) -> None:
         """Clear the call history."""
         self._history.clear()
@@ -111,11 +145,12 @@ class BudgetState:
     cost_used: float = 0.0
 
 
-class BudgetGuard:
+class BudgetGuard(BaseGuard):
     """Enforce token, call, and dollar cost budgets.
 
-    Raises ``BudgetExceeded`` when any configured limit is exceeded.
-    Optionally calls ``on_warning`` when usage crosses ``warn_at_pct``.
+    Thread-safe. Raises ``BudgetExceeded`` when any configured limit is
+    exceeded. Optionally calls ``on_warning`` when usage crosses
+    ``warn_at_pct``.
 
     Usage::
 
@@ -153,10 +188,13 @@ class BudgetGuard:
         self._warn_at_pct = warn_at_pct
         self._on_warning = on_warning
         self._warned = False
+        self._lock = threading.Lock()
         self.state = BudgetState()
 
     def consume(self, tokens: int = 0, calls: int = 0, cost_usd: float = 0.0) -> None:
         """Record resource consumption and check limits.
+
+        Thread-safe: uses a lock to protect state mutations.
 
         Args:
             tokens: Number of tokens consumed.
@@ -179,30 +217,34 @@ class BudgetGuard:
             raise TypeError(
                 f"cost_usd must be a number, got {type(cost_usd).__name__}: {cost_usd!r}"
             )
-        self.state.tokens_used += tokens
-        self.state.calls_used += calls
-        self.state.cost_used += cost_usd
-        if self._max_tokens is not None and self.state.tokens_used > self._max_tokens:
-            raise BudgetExceeded(
-                f"Token budget exceeded: {self.state.tokens_used} > {self._max_tokens} "
-                f"(this call added {tokens} tokens)"
-            )
-        if self._max_calls is not None and self.state.calls_used > self._max_calls:
-            raise BudgetExceeded(
-                f"Call budget exceeded: {self.state.calls_used} > {self._max_calls} "
-                f"(this call added {calls} calls)"
-            )
-        if self._max_cost_usd is not None and self.state.cost_used > self._max_cost_usd:
-            raise BudgetExceeded(
-                f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.4f} "
-                f"(this call added ${cost_usd:.4f})"
-            )
-        # Check warning threshold
-        if self._warn_at_pct is not None and not self._warned:
-            self._check_warning()
+        with self._lock:
+            self.state.tokens_used += tokens
+            self.state.calls_used += calls
+            self.state.cost_used += cost_usd
+            if self._max_tokens is not None and self.state.tokens_used > self._max_tokens:
+                raise BudgetExceeded(
+                    f"Token budget exceeded: {self.state.tokens_used} > {self._max_tokens} "
+                    f"(this call added {tokens} tokens)"
+                )
+            if self._max_calls is not None and self.state.calls_used > self._max_calls:
+                raise BudgetExceeded(
+                    f"Call budget exceeded: {self.state.calls_used} > {self._max_calls} "
+                    f"(this call added {calls} calls)"
+                )
+            if self._max_cost_usd is not None and self.state.cost_used > self._max_cost_usd:
+                raise BudgetExceeded(
+                    f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.4f} "
+                    f"(this call added ${cost_usd:.4f})"
+                )
+            # Check warning threshold
+            if self._warn_at_pct is not None and not self._warned:
+                self._check_warning()
 
     def _check_warning(self) -> None:
-        """Emit a warning if usage crosses the warn_at_pct threshold."""
+        """Emit a warning if usage crosses the warn_at_pct threshold.
+
+        Must be called while holding self._lock.
+        """
         pct = self._warn_at_pct
         if pct is None:
             return
@@ -231,8 +273,9 @@ class BudgetGuard:
 
     def reset(self) -> None:
         """Reset all usage counters to zero."""
-        self.state = BudgetState()
-        self._warned = False
+        with self._lock:
+            self.state = BudgetState()
+            self._warned = False
 
     def __repr__(self) -> str:
         parts = []
@@ -245,15 +288,21 @@ class BudgetGuard:
         return f"BudgetGuard({', '.join(parts)})"
 
 
-class TimeoutGuard:
+class TimeoutGuard(BaseGuard):
     """Enforce a wall-clock time limit on agent runs.
 
-    Usage::
+    Can be used as a context manager for convenience::
+
+        with TimeoutGuard(max_seconds=30) as guard:
+            # ... do work ...
+            guard.check()  # optional mid-run check
+
+    Or manually::
 
         guard = TimeoutGuard(max_seconds=30)
         guard.start()
         # ... do work ...
-        guard.check()  # raises TimeoutExceeded if over limit
+        guard.check()
 
     Args:
         max_seconds: Maximum allowed elapsed time in seconds.
@@ -285,6 +334,20 @@ class TimeoutGuard:
                 f"(elapsed: {elapsed:.2f}s)"
             )
 
+    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
+        """Auto-check: delegates to check() if the timer has been started."""
+        if self._start is not None:
+            self.check()
+
+    def __enter__(self) -> "TimeoutGuard":
+        self.start()
+        return self
+
+    def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> bool:
+        if exc_type is None and self._start is not None:
+            self.check()
+        return False
+
     def reset(self) -> None:
         """Reset the timer."""
         self._start = None
@@ -293,7 +356,7 @@ class TimeoutGuard:
         return f"TimeoutGuard(max_seconds={self._max_seconds})"
 
 
-class FuzzyLoopGuard:
+class FuzzyLoopGuard(BaseGuard):
     """Detect loops even when tool args vary, and A-B-A-B alternation patterns.
 
     Unlike LoopGuard (exact match only), FuzzyLoopGuard catches:
@@ -361,6 +424,10 @@ class FuzzyLoopGuard:
                     f"{self._max_alternations} times"
                 )
 
+    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
+        """Auto-check: delegates to check(event_name, event_data)."""
+        self.check(event_name, event_data)
+
     def reset(self) -> None:
         """Clear the call history."""
         self._history.clear()
@@ -372,8 +439,10 @@ class FuzzyLoopGuard:
         )
 
 
-class RateLimitGuard:
+class RateLimitGuard(BaseGuard):
     """Enforce a maximum call rate using a sliding time window.
+
+    Thread-safe. Uses a lock to protect timestamp mutations.
 
     Usage::
 
@@ -390,28 +459,37 @@ class RateLimitGuard:
         self._max_calls = max_calls_per_minute
         self._window_seconds = 60.0
         self._timestamps: Deque[float] = deque()
+        self._lock = threading.Lock()
 
     def check(self) -> None:
         """Record a call and check the rate limit.
 
+        Thread-safe: uses a lock to protect timestamp mutations.
+
         Raises:
             BudgetExceeded: If the call rate exceeds the limit.
         """
-        now = time.monotonic()
-        cutoff = now - self._window_seconds
-        # Remove expired timestamps
-        while self._timestamps and self._timestamps[0] < cutoff:
-            self._timestamps.popleft()
-        if len(self._timestamps) >= self._max_calls:
-            raise BudgetExceeded(
-                f"Rate limit exceeded: {len(self._timestamps)} calls "
-                f"in the last 60s (limit: {self._max_calls}/min)"
-            )
-        self._timestamps.append(now)
+        with self._lock:
+            now = time.monotonic()
+            cutoff = now - self._window_seconds
+            # Remove expired timestamps
+            while self._timestamps and self._timestamps[0] < cutoff:
+                self._timestamps.popleft()
+            if len(self._timestamps) >= self._max_calls:
+                raise BudgetExceeded(
+                    f"Rate limit exceeded: {len(self._timestamps)} calls "
+                    f"in the last 60s (limit: {self._max_calls}/min)"
+                )
+            self._timestamps.append(now)
+
+    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
+        """Auto-check: delegates to check()."""
+        self.check()
 
     def reset(self) -> None:
         """Clear the call history."""
-        self._timestamps.clear()
+        with self._lock:
+            self._timestamps.clear()
 
     def __repr__(self) -> str:
         return f"RateLimitGuard(max_calls_per_minute={self._max_calls})"

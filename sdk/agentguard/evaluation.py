@@ -286,6 +286,100 @@ def _check_no_budget_warnings(events: List[Dict[str, Any]]) -> AssertionResult:
     return AssertionResult(name="no_budget_warnings", passed=True, message="No budget warnings")
 
 
+# --- summarize ---
+
+
+def summarize_trace(
+    path_or_events: Any,
+) -> Dict[str, Any]:
+    """Summarize a trace as a dict with totals and breakdowns.
+
+    Accepts either a file path (str) to a JSONL trace file or a list of
+    event dicts.
+
+    Returns a dict with keys:
+        total_events, spans, events, cost_usd, duration_ms,
+        tool_calls, llm_calls, errors, loop_detections
+
+    Usage::
+
+        from agentguard import summarize_trace
+
+        summary = summarize_trace("traces.jsonl")
+        print(f"Cost: ${summary['cost_usd']:.4f}")
+        print(f"Duration: {summary['duration_ms']:.1f}ms")
+    """
+    if isinstance(path_or_events, str):
+        events = _load_events(path_or_events)
+    elif isinstance(path_or_events, list):
+        events = path_or_events
+    else:
+        raise TypeError(
+            f"Expected str (file path) or list of events, got {type(path_or_events).__name__}"
+        )
+
+    total = len(events)
+    spans = 0
+    event_count = 0
+    total_cost = 0.0
+    max_duration_ms = 0.0
+    tool_calls = 0
+    llm_calls = 0
+    error_count = 0
+    loop_detections = 0
+
+    for e in events:
+        kind = e.get("kind", "")
+        name = e.get("name", "")
+
+        if kind == "span":
+            spans += 1
+            if e.get("phase") == "end":
+                dur = e.get("duration_ms")
+                if isinstance(dur, (int, float)) and dur > max_duration_ms:
+                    max_duration_ms = float(dur)
+        elif kind == "event":
+            event_count += 1
+
+        # Cost from top-level or data dict
+        cost = e.get("cost_usd")
+        if isinstance(cost, (int, float)):
+            total_cost += float(cost)
+        data = e.get("data", {})
+        if isinstance(data, dict):
+            dcost = data.get("cost_usd")
+            if isinstance(dcost, (int, float)):
+                total_cost += float(dcost)
+
+        # Tool calls
+        if name.startswith("tool.") and kind == "span" and e.get("phase") == "start":
+            tool_calls += 1
+
+        # LLM calls
+        if name in ("llm.call", "llm.result") and e.get("phase") == "start":
+            llm_calls += 1
+
+        # Errors
+        if e.get("error") is not None:
+            error_count += 1
+
+        # Loop detections
+        if name == "guard.loop_detected":
+            loop_detections += 1
+
+    return {
+        "total_events": total,
+        "spans": spans,
+        "events": event_count,
+        "cost_usd": total_cost,
+        "duration_ms": max_duration_ms,
+        "tool_calls": tool_calls,
+        "llm_calls": llm_calls,
+        "errors": error_count,
+        "loop_detections": loop_detections,
+    }
+
+
 # --- loader ---
 
 
