@@ -47,7 +47,7 @@ class TestHttpSink(unittest.TestCase):
 
     def test_batch_flush(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             api_key="test-key",
             batch_size=3,
             flush_interval=60,
@@ -64,7 +64,7 @@ class TestHttpSink(unittest.TestCase):
 
     def test_interval_flush(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=100,
             flush_interval=0.2,
         )
@@ -78,7 +78,7 @@ class TestHttpSink(unittest.TestCase):
 
     def test_shutdown_flushes_remaining(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=100,
             flush_interval=60,
         )
@@ -94,7 +94,7 @@ class TestHttpSinkHTTPWarning(unittest.TestCase):
 
         with self.assertLogs("agentguard.sinks.http", level="WARNING") as cm:
             sink = HttpSink(
-                url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+                url=f"http://127.0.0.1:{TestHttpSink.port}/ingest", _allow_private=True,
                 api_key="secret-key",
                 batch_size=100,
                 flush_interval=60,
@@ -121,7 +121,7 @@ class TestHttpSinkHTTPWarning(unittest.TestCase):
     def test_no_warning_on_http_without_api_key(self):
         """HttpSink should not warn when using http:// without an API key."""
         sink = HttpSink(
-            url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+            url=f"http://127.0.0.1:{TestHttpSink.port}/ingest", _allow_private=True,
             batch_size=100,
             flush_interval=60,
         )
@@ -172,7 +172,7 @@ class TestHttpSinkRetryAfterHttpDate(unittest.TestCase):
         """Retry-After with HTTP-date should fall back to default backoff."""
         _429DateHandler.call_count = 0
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=1,
             flush_interval=60,
             compress=False,
@@ -191,6 +191,72 @@ class TestHttpSinkExports(unittest.TestCase):
         from agentguard import HttpSink as TopLevelHttpSink
 
         self.assertIs(TopLevelHttpSink, HttpSink)
+
+
+class TestHttpSinkSSRF(unittest.TestCase):
+    """Verify SSRF protection blocks private/reserved IPs."""
+
+    def test_blocks_localhost_ip(self):
+        with self.assertRaises(ValueError) as ctx:
+            HttpSink(url="http://127.0.0.1/steal", batch_size=1, flush_interval=60)
+        self.assertIn("private/reserved", str(ctx.exception))
+
+    def test_blocks_localhost_127_range(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://127.0.0.2:8080/exfil", batch_size=1, flush_interval=60)
+
+    def test_blocks_10_range(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://10.0.0.1/internal", batch_size=1, flush_interval=60)
+
+    def test_blocks_172_16_range(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://172.16.0.1/internal", batch_size=1, flush_interval=60)
+
+    def test_blocks_192_168_range(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://192.168.1.1/internal", batch_size=1, flush_interval=60)
+
+    def test_blocks_link_local(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://169.254.169.254/metadata", batch_size=1, flush_interval=60)
+
+    def test_blocks_zero_network(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://0.0.0.0/steal", batch_size=1, flush_interval=60)
+
+    def test_blocks_ipv6_loopback(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://[::1]/steal", batch_size=1, flush_interval=60)
+
+    def test_blocks_invalid_scheme(self):
+        with self.assertRaises(ValueError) as ctx:
+            HttpSink(url="ftp://example.com/data", batch_size=1, flush_interval=60)
+        self.assertIn("scheme", str(ctx.exception))
+
+    def test_blocks_no_hostname(self):
+        with self.assertRaises(ValueError):
+            HttpSink(url="http://", batch_size=1, flush_interval=60)
+
+    def test_allows_public_ip(self):
+        """Public IP addresses should be allowed."""
+        # This won't actually connect, but shouldn't raise ValueError
+        sink = HttpSink(
+            url="https://203.0.113.1/ingest",
+            batch_size=100,
+            flush_interval=60,
+        )
+        sink.shutdown()
+
+    def test_allow_private_flag(self):
+        """_allow_private=True bypasses SSRF checks (for testing)."""
+        sink = HttpSink(
+            url="http://127.0.0.1:9999/test",
+            _allow_private=True,
+            batch_size=100,
+            flush_interval=60,
+        )
+        sink.shutdown()
 
 
 if __name__ == "__main__":

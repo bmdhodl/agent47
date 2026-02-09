@@ -187,7 +187,7 @@ class TestHttpSinkGzip(unittest.TestCase):
 
     def test_gzip_compressed(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=2,
             flush_interval=60,
             compress=True,
@@ -201,7 +201,7 @@ class TestHttpSinkGzip(unittest.TestCase):
 
     def test_no_compression(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=2,
             flush_interval=60,
             compress=False,
@@ -215,7 +215,7 @@ class TestHttpSinkGzip(unittest.TestCase):
 
     def test_idempotency_key_present(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=1,
             flush_interval=60,
         )
@@ -228,7 +228,7 @@ class TestHttpSinkGzip(unittest.TestCase):
 
     def test_unique_idempotency_keys(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest",
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
             batch_size=1,
             flush_interval=60,
         )

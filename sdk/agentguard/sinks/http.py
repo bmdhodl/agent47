@@ -11,18 +11,86 @@ from __future__ import annotations
 
 import atexit
 import gzip
+import ipaddress
 import json
 import logging
+import socket
 import threading
 import time
 import urllib.request
 import uuid
 from typing import Any, Dict, List, Optional
 from urllib.error import HTTPError
+from urllib.parse import urlparse
 
 from agentguard.tracing import TraceSink
 
 logger = logging.getLogger("agentguard.sinks.http")
+
+
+# Private/reserved IP ranges that should never be used as sink endpoints
+_BLOCKED_NETWORKS = [
+    ipaddress.ip_network("127.0.0.0/8"),      # loopback
+    ipaddress.ip_network("10.0.0.0/8"),        # RFC 1918
+    ipaddress.ip_network("172.16.0.0/12"),     # RFC 1918
+    ipaddress.ip_network("192.168.0.0/16"),    # RFC 1918
+    ipaddress.ip_network("169.254.0.0/16"),    # link-local
+    ipaddress.ip_network("0.0.0.0/8"),         # "this" network
+    ipaddress.ip_network("::1/128"),           # IPv6 loopback
+    ipaddress.ip_network("fc00::/7"),          # IPv6 unique local
+    ipaddress.ip_network("fe80::/10"),         # IPv6 link-local
+]
+
+
+def _validate_url(url: str, allow_private: bool = False) -> None:
+    """Validate a URL is safe for use as a sink endpoint.
+
+    Args:
+        url: URL to validate.
+        allow_private: If True, skip private IP checks (for testing).
+
+    Raises:
+        ValueError: If the URL is invalid or points to a private/reserved IP.
+    """
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(
+            f"URL scheme must be http or https, got {parsed.scheme!r}"
+        )
+    if not parsed.hostname:
+        raise ValueError("URL must include a hostname")
+
+    if allow_private:
+        return
+
+    # Resolve hostname and check against blocked networks
+    hostname = parsed.hostname
+    try:
+        addr = ipaddress.ip_address(hostname)
+    except ValueError:
+        # It's a hostname, not an IP — resolve it
+        try:
+            resolved = socket.getaddrinfo(hostname, None, socket.AF_UNSPEC)
+            addrs = {ipaddress.ip_address(r[4][0]) for r in resolved}
+        except (socket.gaierror, OSError):
+            # Can't resolve — allow it (may be valid later)
+            return
+        for addr in addrs:
+            for network in _BLOCKED_NETWORKS:
+                if addr in network:
+                    raise ValueError(
+                        f"URL resolves to private/reserved IP {addr} "
+                        f"({network}). Use a public endpoint."
+                    )
+        return
+
+    # Direct IP address in URL
+    for network in _BLOCKED_NETWORKS:
+        if addr in network:
+            raise ValueError(
+                f"URL points to private/reserved IP {addr} "
+                f"({network}). Use a public endpoint."
+            )
 
 
 class HttpSink(TraceSink):
@@ -65,7 +133,9 @@ class HttpSink(TraceSink):
         flush_interval: float = 5.0,
         compress: bool = True,
         max_retries: int = 3,
+        _allow_private: bool = False,
     ) -> None:
+        _validate_url(url, allow_private=_allow_private)
         if api_key and url.startswith("http://"):
             logger.warning(
                 "HttpSink: sending API key over plain HTTP (%s). "
@@ -97,7 +167,6 @@ class HttpSink(TraceSink):
         atexit.register(self.shutdown)
 
     def emit(self, event: Dict[str, Any]) -> None:
-        """Buffer an event, flushing if batch_size is reached."""
         batch = None
         with self._lock:
             self._buffer.append(event)

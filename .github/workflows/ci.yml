@@ -18,9 +18,20 @@ jobs:
       - name: Install
         run: |
           python -m pip install -e ./sdk
-          python -m pip install pytest
-      - name: Tests
-        run: python -m pytest sdk/tests/ -v
+          python -m pip install pytest pytest-cov
+      - name: Tests with coverage
+        run: |
+          python -m pytest sdk/tests/ -v \
+            --cov=agentguard \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-fail-under=80
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
 
   lint:
     runs-on: ubuntu-latest

@@ -71,6 +71,7 @@ class TestE2EPipeline:
             batch_size=5,
             flush_interval=0.3,
             compress=True,
+            _allow_private=True,
         )
         sink = _MultiplexSink(file_sink, http_sink)
 
@@ -324,6 +325,7 @@ class TestSamplingIsolation:
             api_key="ag_test_key_e2e",
             batch_size=1,
             flush_interval=0.1,
+            _allow_private=True,
         )
         tracer = Tracer(sink=sink, service="sample-zero", sampling_rate=0.0)
         with tracer.trace("should.not.appear") as ctx:
@@ -344,6 +346,7 @@ class TestAuthFailure:
             api_key="wrong_key",
             batch_size=1,
             flush_interval=0.1,
+            _allow_private=True,
         )
         tracer = Tracer(sink=sink, service="auth-fail")
         with tracer.trace("auth.fail"):
