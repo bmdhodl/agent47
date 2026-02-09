@@ -50,7 +50,7 @@ agentguard view traces.jsonl
 
 ## 3. Add a loop guard
 
-Stop agents that repeat themselves:
+Stop agents that repeat themselves. Guards auto-check on every `span.event()` call:
 
 ```python
 from agentguard import Tracer, LoopGuard, LoopDetected, JsonlFileSink
@@ -61,8 +61,14 @@ tracer = Tracer(
     guards=[LoopGuard(max_repeats=3)],
 )
 
-# If your agent calls the same tool with the same args 3 times,
-# LoopGuard raises LoopDetected automatically.
+with tracer.trace("agent.run") as span:
+    for step in range(10):
+        try:
+            # LoopGuard checks fire on event(), not on span()
+            span.event("tool.call", data={"tool": "search", "query": "test"})
+        except LoopDetected as e:
+            print(f"Loop caught: {e}")
+            break
 ```
 
 ## 4. Add a budget guard

@@ -33,21 +33,35 @@ This is the simplest pattern. Set a dollar amount, consume after each call, catc
 Get a heads-up at 80% of the budget so you can gracefully wrap up:
 
 ```python
-from agentguard import BudgetGuard, BudgetWarning, BudgetExceeded
+from agentguard import BudgetGuard, BudgetExceeded
 
-guard = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+wrapping_up = False
 
-try:
-    guard.consume(cost_usd=4.10)  # crosses 80% threshold
-except BudgetWarning:
-    # 80% of budget used — tell the agent to wrap up
-    print("Budget warning: finishing current task, no new tool calls")
-except BudgetExceeded:
-    # Hard stop
-    print("Budget exceeded, stopping execution")
+def on_budget_warning(msg):
+    global wrapping_up
+    wrapping_up = True
+    print(f"Budget warning: {msg} — finishing current task, no new tool calls")
+
+guard = BudgetGuard(
+    max_cost_usd=5.00,
+    warn_at_pct=0.8,
+    on_warning=on_budget_warning,
+)
+
+# In your agent loop:
+for step in range(100):
+    try:
+        guard.consume(cost_usd=0.12)
+    except BudgetExceeded:
+        print("Hard stop — budget exceeded")
+        break
+
+    if wrapping_up:
+        # Finish current task but don't start new tool calls
+        break
 ```
 
-This lets you build a two-phase shutdown: soft warning first, then hard stop.
+The `on_warning` callback fires at 80%. `BudgetExceeded` is the hard stop. This gives you a two-phase shutdown.
 
 ## Pattern 3: Auto-tracking with OpenAI patching
 
@@ -73,7 +87,7 @@ The cost estimates use published token pricing. You can override prices for cust
 ```python
 from agentguard import update_prices
 
-update_prices({"my-fine-tuned-model": {"input": 0.003, "output": 0.006}})
+update_prices({("openai", "my-fine-tuned-model"): (0.003, 0.006)})
 ```
 
 ## Combining with loop detection
