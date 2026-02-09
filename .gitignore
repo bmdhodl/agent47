@@ -25,7 +25,3 @@ sample_output.txt
 docs/strategy/
 docs/outreach/
 
-# Dashboard (Next.js)
-dashboard/node_modules/
-dashboard/.next/
-dashboard/.env.local

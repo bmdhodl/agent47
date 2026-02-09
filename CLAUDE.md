@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-AgentGuard — a lightweight observability and runtime-guards SDK for multi-agent AI systems. The SDK is open source (MIT, zero dependencies); the hosted dashboard is the commercial SaaS layer.
+AgentGuard — a lightweight observability and runtime-guards SDK for multi-agent AI systems. The SDK is open source (MIT, zero dependencies).
 
 - **Repo:** github.com/bmdhodl/agent47
+- **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
 - **Package:** `agentguard47` on PyPI (v0.8.0)
 - **Landing page:** site/index.html (Vercel)
 
@@ -31,16 +32,6 @@ ruff check sdk/agentguard/
 pip install -e ./sdk
 ```
 
-### Dashboard (Next.js)
-
-```bash
-cd dashboard
-npm ci                # Install deps
-npm run dev           # Dev server on localhost:3000
-npm run build         # Production build
-npm run lint          # ESLint (next lint)
-```
-
 ### MCP Server
 
 ```bash
@@ -60,13 +51,11 @@ git tag v0.X.0 && git push origin v0.X.0
 
 ## Architecture
 
-**Three products in one repo:**
+**Two products in this repo (dashboard split to private repo `agent47-dashboard`):**
 
 1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.9+. All tests use `unittest` (no pytest). Public API exports from `agentguard/__init__.py`.
 
-2. **dashboard/** — Next.js 14 App Router + direct Postgres (`postgres` lib, not Supabase JS) + NextAuth (credentials provider, JWT) + Stripe. Deployed to Vercel.
-
-3. **mcp-server/** — MCP server (`@agentguard47/mcp-server`). TypeScript, `@modelcontextprotocol/sdk`. Connects AI agents to the read API via stdio transport.
+2. **mcp-server/** — MCP server (`@agentguard47/mcp-server`). TypeScript, `@modelcontextprotocol/sdk`. Connects AI agents to the read API via stdio transport.
 
 ### SDK Key Modules
 
@@ -84,10 +73,6 @@ git tag v0.X.0 && git push origin v0.X.0
 | `cost.py` | CostTracker, estimate_cost, update_prices — per-model pricing |
 | `export.py` | JSON, CSV, JSONL conversion utilities |
 
-### Dashboard
-
-See `dashboard/` directory. Next.js 14 App Router + Postgres + NextAuth + Stripe. Detailed architecture docs are local-only (gitignored).
-
 ## SDK Conventions
 
 - **Zero dependencies.** Stdlib only. Optional extras: `langchain-core>=0.1`.
@@ -97,7 +82,7 @@ See `dashboard/` directory. Next.js 14 App Router + Postgres + NextAuth + Stripe
 
 ## CI/CD
 
-- **ci.yml:** Python 3.9-3.12 matrix tests + ruff lint + dashboard lint/build. Runs on push/PR.
+- **ci.yml:** Python 3.9-3.12 matrix tests + ruff lint. Runs on push/PR.
 - **publish.yml:** PyPI publish on `v*` tags.
 
 ## Key Decisions
@@ -113,7 +98,7 @@ This project uses role-based Claude Code agents. Each agent has a prompt file in
 |------|------|-------|
 | **PM** | `.claude/agents/pm.md` | Triage, prioritize, coordinate, unblock |
 | **SDK Dev** | `.claude/agents/sdk-dev.md` | `component:sdk` — Python SDK code + tests |
-| **Dashboard Dev** | `.claude/agents/dashboard-dev.md` | `component:dashboard` + `component:api` |
+| **Dashboard Dev** | `.claude/agents/dashboard-dev.md` | Dashboard (private repo: `agent47-dashboard`) |
 | **Marketing** | `.claude/agents/marketing.md` | Docs, README, launch materials, outreach |
 
 **To start an agent session:** Open Claude Code in this repo and say:
@@ -150,7 +135,8 @@ Structured context for AI agents working on or with this project.
 - **Package:** `agentguard47`
 - **Version:** 1.0.0
 - **Repo:** https://github.com/bmdhodl/agent47
-- **License:** SDK = MIT, Dashboard = source-available
+- **License:** MIT
+- **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)
 
 ### Public API Surface
 
@@ -168,13 +154,12 @@ Structured context for AI agents working on or with this project.
 ```
 agent47/
 ├── sdk/agentguard/    # Python SDK (PyPI: agentguard47)
-├── dashboard/         # Next.js 14 SaaS dashboard
 ├── mcp-server/        # MCP server for AI agent access
 ├── site/              # Landing page
 ├── scripts/           # Automation scripts
 ├── docs/              # Public examples and blog posts
 ├── .claude/agents/    # Agent role prompts
-└── .github/workflows/ # CI, deploy, publish, scout
+└── .github/workflows/ # CI, publish, scout
 ```
 
 ### Constraints
