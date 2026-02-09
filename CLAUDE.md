@@ -84,58 +84,9 @@ git tag v0.X.0 && git push origin v0.X.0
 | `cost.py` | CostTracker, estimate_cost, update_prices — per-model pricing |
 | `export.py` | JSON, CSV, JSONL conversion utilities |
 
-### Dashboard Data Flow
+### Dashboard
 
-```
-Ingest (write):
-  SDK HttpSink → POST /api/ingest (NDJSON, Bearer ag_xxx)
-    → rate limit (100/min per IP)
-    → API key hash lookup → team resolution
-    → usage quota check against plan
-    → Zod schema validation
-    → batch INSERT INTO events (unnest)
-    → usage counter increment (INSERT...ON CONFLICT)
-
-Read API:
-  GET /api/v1/* (Bearer ag_xxx)
-    → rate limit (60/min per IP)
-    → API key auth (api-auth.ts)
-    → query functions (queries.ts)
-    → JSON response
-
-MCP Server:
-  AI Agent → stdio → MCP Server → HTTP → Read API → Postgres
-```
-
-### Dashboard Key Files
-
-- `src/lib/db.ts` — Lazy-init Postgres via `DATABASE_URL`, proxy wrapper for tagged template `sql`
-- `src/lib/next-auth.ts` — Credentials provider, bcryptjs (12 rounds), rate-limited login
-- `src/lib/auth.ts` — `getSessionOrRedirect()`, `getTeamForUser()`
-- `src/lib/api-auth.ts` — Reusable Bearer token auth for read API (rate limited 60/min)
-- `src/lib/queries.ts` — ~20 SQL query functions (traces, usage, costs, alerts)
-- `src/lib/plans.ts` — Plan definitions (free/pro/team limits)
-- `src/lib/validation.ts` — Zod schemas for ingest events
-- `src/lib/stripe.ts` — Stripe singleton, price mapping
-- `src/lib/api-key.ts` — `ag_` prefix key generation, SHA-256 hashed storage
-- `src/app/api/ingest/route.ts` — **The critical ingest endpoint**
-- `src/app/api/v1/` — **Read API** (traces, alerts, usage, costs) + trace sharing
-- `src/app/api/billing/` — Stripe checkout, portal, webhook
-- `src/app/api/cron/retention/route.ts` — Daily cleanup (3am UTC via Vercel cron)
-- `src/app/share/[slug]/page.tsx` — Public shared trace page (no auth)
-- `src/components/share-button.tsx` — Client component for trace sharing
-- `src/middleware.ts` — Protects dashboard routes via NextAuth
-
-### Dashboard Path Alias
-
-TypeScript paths: `@/*` maps to `./src/*` (e.g., `import { sql } from "@/lib/db"`)
-
-### Dashboard Route Groups
-
-- `(auth)/` — Login, signup (public)
-- `(dashboard)/` — Protected: traces, costs, usage, alerts, settings, security, help
-- `share/` — Public shared trace pages (no auth)
-- `api/v1/` — Versioned read API (Bearer auth, separate from session auth)
+See `dashboard/` directory. Next.js 14 App Router + Postgres + NextAuth + Stripe. Detailed architecture docs are local-only (gitignored).
 
 ## SDK Conventions
 
@@ -144,38 +95,15 @@ TypeScript paths: `@/*` maps to `./src/*` (e.g., `import { sql } from "@/lib/db"
 - **Guards raise exceptions:** `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`
 - **TraceSink interface:** All sinks implement `emit(event: Dict)`
 
-## Dashboard Environment Variables
-
-```bash
-DATABASE_URL=postgresql://...          # Direct Postgres (Supabase-hosted)
-NEXTAUTH_SECRET=...                    # JWT signing (openssl rand -base64 32)
-NEXTAUTH_URL=http://localhost:3000
-STRIPE_SECRET_KEY=sk_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_PRO=price_...
-STRIPE_PRICE_TEAM=price_...
-CRON_SECRET=...                        # Vercel cron auth
-```
-
-## Pricing Tiers
-
-- **Free:** 10K events/month, 7-day retention, 2 keys
-- **Pro ($39/mo):** 500K events, 30-day retention, 5 keys
-- **Team ($149/mo):** 5M events, 90-day retention, 20 keys, 10 users
-
 ## CI/CD
 
 - **ci.yml:** Python 3.9-3.12 matrix tests + ruff lint + dashboard lint/build. Runs on push/PR.
-- **deploy.yml:** Vercel deploy on push to main (dashboard changes) or PR preview.
 - **publish.yml:** PyPI publish on `v*` tags.
-- **scout.yml:** Daily cron — finds GitHub issues for outreach, creates tracking Issue.
 
 ## Key Decisions
 
 - SDK is the acquisition funnel. Must stay free, MIT, zero-dependency.
-- Dashboard is the paywall. Users who outgrow local JSONL files upgrade.
-- HttpSink is the bridge — point it at `/api/ingest` and traces flow to dashboard.
-- No Supabase JS client. Direct Postgres via connection string. Auth is NextAuth, not Supabase Auth.
+- HttpSink bridges SDK to hosted dashboard.
 
 ## Agent Workflow
 
@@ -203,7 +131,7 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 - When blocked, agents comment on the issue and tag the blocking issue number.
 - New work discovered during implementation gets filed as new issues with proper labels.
 
-**Current:** v1.0.0 shipped. Next work: Phase 6 (Network Effects) and Phase 7 (Scale). See `docs/strategy/execution_plan.md`.
+**Current:** See project board for priorities.
 
 ## What NOT To Do
 
@@ -244,7 +172,7 @@ agent47/
 ├── mcp-server/        # MCP server for AI agent access
 ├── site/              # Landing page
 ├── scripts/           # Automation scripts
-├── docs/              # Strategy, outreach, examples
+├── docs/              # Public examples and blog posts
 ├── .claude/agents/    # Agent role prompts
 └── .github/workflows/ # CI, deploy, publish, scout
 ```
@@ -258,11 +186,8 @@ agent47/
 
 ### Current State
 
-v1.0.0 shipped. Phases 1-5 complete (SDK, dashboard, read API, MCP server, public traces). Phase 6 (Network Effects) and Phase 7 (Scale) are next.
+v1.0.0 shipped. See project board for current priorities.
 
 ### Key Links
 
 - **Project board:** https://github.com/users/bmdhodl/projects/4
-- **Execution plan:** `docs/strategy/execution_plan.md`
-- **Architecture:** `docs/strategy/architecture.md`
-- **PRD:** `docs/strategy/prd.md`

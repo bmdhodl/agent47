@@ -21,6 +21,10 @@ build/
 # Misc artifacts
 sample_output.txt
 
+# Internal strategy & outreach (not for public repo)
+docs/strategy/
+docs/outreach/
+
 # Dashboard (Next.js)
 dashboard/node_modules/
 dashboard/.next/
