@@ -81,4 +81,4 @@ tracer = Tracer(sink=sink, service="my-agent")
 
 ## Status
 
-v1.0.0 — 250+ tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Full async support, production-hardened HttpSink, smarter guards.
+v0.6.0 (Beta) — 100+ tests, **zero dependencies** (pure Python stdlib), framework-agnostic. Full async support, production-hardened HttpSink, smarter guards.
