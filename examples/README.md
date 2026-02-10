@@ -6,6 +6,7 @@ Working examples showing AgentGuard integrated with popular AI agent frameworks.
 
 | File | Framework | What it shows |
 |------|-----------|---------------|
+| **`cost_guardrail.py`** | **OpenAI** | **Full cost guardrail pipeline: auto-budget enforcement, warning/exceeded events, dashboard sync** |
 | `langchain_rag_with_guards.py` | LangChain | RAG pipeline with loop detection + budget enforcement via callback handler |
 | `crewai_with_guards.py` | CrewAI | Multi-agent crew with auto-traced OpenAI calls and budget limits |
 | `openai_agents_with_guards.py` | OpenAI | Function-calling agent with LoopGuard, BudgetGuard, and structured tracing |
@@ -16,7 +17,14 @@ Working examples showing AgentGuard integrated with popular AI agent frameworks.
 pip install agentguard47
 export OPENAI_API_KEY=sk-...
 
-# Run any example
+# Cost guardrail demo (recommended first example)
+python examples/cost_guardrail.py
+
+# Or with dashboard integration
+export AGENTGUARD_API_KEY=ag_...
+python examples/cost_guardrail.py
+
+# Run any other example
 python examples/openai_agents_with_guards.py
 ```
 
