@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.1.0
+
+### Cost Guardrail Pipeline
+- **BudgetGuard in auto-patchers:** `patch_openai(tracer, budget_guard=guard)` — every LLM call's cost/tokens automatically fed into the guard. Works with all 4 patchers (OpenAI/Anthropic, sync/async).
+- **guard.budget_exceeded event:** Emitted to the trace sink before `BudgetExceeded` is raised, so the event appears in your dashboard even when the agent is killed.
+- **guard.budget_warning event:** Emitted when the `warn_at_pct` threshold is crossed during an auto-patched call.
+- **cost_usd promoted to top-level:** Auto-patchers now emit `cost_usd` as a top-level event field instead of burying it inside `data`. Dashboard-compatible (uses `ev.cost_usd ?? ev.data.cost_usd`).
+
+### Bug Fixes
+- **Cost double-counting fix:** `_extract_cost()` helper prefers top-level `cost_usd`, falls back to `data.cost_usd`, never sums both. Used by `summarize_trace()`, CLI `report`, and `EvalSuite`.
+- **sampling_rate validation:** `Tracer(sampling_rate=...)` now rejects values outside [0.0, 1.0].
+- **Guards fire when sampled out:** Guards check every event even when `sampling_rate < 1.0` causes trace emission to be skipped.
+
+### Hardening
+- **HttpSink max_buffer_size:** Default 10,000 events. Drops oldest events when buffer is full to prevent OOM on unreachable endpoints.
+- **AsyncTraceContext.event()** now accepts `cost_usd` parameter (parity with sync `TraceContext`).
+
+### Security (from v1.1.0-rc)
+- BaseGuard abstract class with clean `auto_check()` dispatch
+- Thread safety: `threading.Lock` on BudgetGuard and RateLimitGuard
+- IDN/Punycode SSRF bypass protection in HttpSink URL validation
+- Span/event name length limits (1000 chars, logged warning on truncation)
+- TimeoutGuard context manager support
+- Tracer context manager for clean `sink.shutdown()` on exit
+
+### Testing
+- 35 new cost guardrail tests, 19-check e2e verification script
+- 422+ tests passing, lint clean
+
 ## 1.0.0
 
 - Production-stable GA release
