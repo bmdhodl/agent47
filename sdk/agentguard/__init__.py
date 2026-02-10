@@ -1,3 +1,4 @@
+from .setup import init, shutdown, get_tracer, get_budget_guard
 from .tracing import Tracer, JsonlFileSink, StdoutSink, TraceSink
 from .guards import (
     BaseGuard,
@@ -32,6 +33,10 @@ from .instrument import (
 )
 
 __all__ = [
+    "init",
+    "shutdown",
+    "get_tracer",
+    "get_budget_guard",
     "Tracer",
     "JsonlFileSink",
     "StdoutSink",
