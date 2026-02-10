@@ -194,13 +194,20 @@ class TraceContext:
             _sampled=self._sampled,
         )
 
-    def event(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+    def event(
+        self,
+        name: str,
+        data: Optional[Dict[str, Any]] = None,
+        cost_usd: Optional[float] = None,
+    ) -> None:
         """Emit a point-in-time event within this span.
 
         Args:
             name: Name of the event.
             data: Optional data to attach to the event.
+            cost_usd: Optional cost in USD for this event.
         """
+        truncated_name = _truncate_name(name)
         if self._sampled:
             self.tracer._emit(
                 kind="event",
@@ -208,9 +215,13 @@ class TraceContext:
                 trace_id=self.trace_id,
                 span_id=self.span_id,
                 parent_id=self.parent_id,
-                name=_truncate_name(name),
+                name=truncated_name,
                 data=data,
+                cost_usd=cost_usd,
             )
+        else:
+            # Guards must still fire even when trace is sampled out
+            self.tracer._check_guards(truncated_name, data)
 
 
 class Tracer:
@@ -239,6 +250,10 @@ class Tracer:
         metadata: Optional[Dict[str, Any]] = None,
         sampling_rate: float = 1.0,
     ) -> None:
+        if not (0.0 <= sampling_rate <= 1.0):
+            raise ValueError(
+                f"sampling_rate must be between 0.0 and 1.0, got {sampling_rate}"
+            )
         self._sink = sink or StdoutSink()
         self._service = _truncate_name(service)
         self._guards = guards or []
@@ -322,18 +337,22 @@ class Tracer:
 
         # Auto-check guards
         if kind == "event":
-            for guard in self._guards:
-                if hasattr(guard, "auto_check"):
-                    guard.auto_check(name, data)
-                elif hasattr(guard, "check"):
-                    # Backward compat: try check(name, data), then check()
+            self._check_guards(name, data)
+
+    def _check_guards(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+        """Run all attached guards. Called on every event, even sampled-out ones."""
+        for guard in self._guards:
+            if hasattr(guard, "auto_check"):
+                guard.auto_check(name, data)
+            elif hasattr(guard, "check"):
+                # Backward compat: try check(name, data), then check()
+                try:
+                    guard.check(name, data)
+                except TypeError:
                     try:
-                        guard.check(name, data)
+                        guard.check()
                     except TypeError:
-                        try:
-                            guard.check()
-                        except TypeError:
-                            pass
+                        pass
 
     def __repr__(self) -> str:
         return f"Tracer(service={self._service!r}, sink={self._sink!r})"

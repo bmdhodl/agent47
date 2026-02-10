@@ -138,6 +138,7 @@ class HttpSink(TraceSink):
         flush_interval: Flush every N seconds regardless of buffer size.
         compress: Enable gzip compression. Default True.
         max_retries: Maximum retry attempts on failure. Default 3.
+        max_buffer_size: Maximum events to buffer before dropping oldest. Default 10000.
     """
 
     def __init__(
@@ -148,6 +149,7 @@ class HttpSink(TraceSink):
         flush_interval: float = 5.0,
         compress: bool = True,
         max_retries: int = 3,
+        max_buffer_size: int = 10_000,
         _allow_private: bool = False,
     ) -> None:
         _validate_url(url, allow_private=_allow_private)
@@ -172,6 +174,8 @@ class HttpSink(TraceSink):
         self._flush_interval = flush_interval
         self._compress = compress
         self._max_retries = max_retries
+        self._max_buffer_size = max_buffer_size
+        self._dropped_count = 0
 
         self._buffer: List[Dict[str, Any]] = []
         self._lock = threading.Lock()
@@ -184,6 +188,16 @@ class HttpSink(TraceSink):
     def emit(self, event: Dict[str, Any]) -> None:
         batch = None
         with self._lock:
+            if len(self._buffer) >= self._max_buffer_size:
+                # Drop oldest events to prevent OOM
+                drop = len(self._buffer) - self._max_buffer_size + 1
+                self._buffer = self._buffer[drop:]
+                self._dropped_count += drop
+                logger.warning(
+                    "HttpSink buffer full (%d max), dropped %d oldest event(s). "
+                    "Total dropped: %d",
+                    self._max_buffer_size, drop, self._dropped_count,
+                )
             self._buffer.append(event)
             if len(self._buffer) >= self._batch_size:
                 batch = self._buffer[:]

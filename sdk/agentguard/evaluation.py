@@ -260,16 +260,9 @@ def _check_cost_under(events: List[Dict[str, Any]], max_cost_usd: float) -> Asse
     name = f"cost_under:${max_cost_usd}"
     total_cost = 0.0
     for e in events:
-        # Check top-level cost_usd
-        cost = e.get("cost_usd")
-        if isinstance(cost, (int, float)):
+        cost = _extract_cost(e)
+        if cost is not None:
             total_cost += cost
-        # Check inside data dict
-        data = e.get("data", {})
-        if isinstance(data, dict):
-            data_cost = data.get("cost_usd")
-            if isinstance(data_cost, (int, float)):
-                total_cost += data_cost
     if total_cost < max_cost_usd:
         return AssertionResult(name=name, passed=True, message=f"Cost ${total_cost:.4f} < ${max_cost_usd:.4f}")
     return AssertionResult(name=name, passed=False, message=f"Cost ${total_cost:.4f} >= ${max_cost_usd:.4f}")
@@ -341,15 +334,10 @@ def summarize_trace(
         elif kind == "event":
             event_count += 1
 
-        # Cost from top-level or data dict
-        cost = e.get("cost_usd")
-        if isinstance(cost, (int, float)):
-            total_cost += float(cost)
-        data = e.get("data", {})
-        if isinstance(data, dict):
-            dcost = data.get("cost_usd")
-            if isinstance(dcost, (int, float)):
-                total_cost += float(dcost)
+        # Cost: prefer top-level, fall back to data (never sum both)
+        cost = _extract_cost(e)
+        if cost is not None:
+            total_cost += cost
 
         # Tool calls
         if name.startswith("tool.") and kind == "span" and e.get("phase") == "start":
@@ -378,6 +366,27 @@ def summarize_trace(
         "errors": error_count,
         "loop_detections": loop_detections,
     }
+
+
+# --- helpers ---
+
+
+def _extract_cost(event: Dict[str, Any]) -> Optional[float]:
+    """Extract cost_usd from an event, preferring top-level over data dict.
+
+    Returns the cost as a float, or None if not present.
+    Never sums both locations — prevents double-counting.
+    """
+    cost = event.get("cost_usd")
+    if isinstance(cost, (int, float)):
+        return float(cost)
+    # Backward compat: fall back to data.cost_usd for old traces
+    data = event.get("data", {})
+    if isinstance(data, dict):
+        data_cost = data.get("cost_usd")
+        if isinstance(data_cost, (int, float)):
+            return float(data_cost)
+    return None
 
 
 # --- loader ---
