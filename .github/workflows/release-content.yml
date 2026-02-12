@@ -1,0 +1,107 @@
+name: Release Content — Auto-generate announcements
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for changelog
+
+      - name: Get release info
+        id: release
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          # Find previous tag
+          PREV_TAG=$(git tag --sort=-creatordate | sed -n '2p')
+          if [ -z "$PREV_TAG" ]; then
+            PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+          echo "prev_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
+
+          # Generate changelog
+          CHANGELOG=$(git log --oneline "$PREV_TAG".."$TAG" -- sdk/ | head -20)
+          echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGELOG" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Discussion
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          CHANGELOG="${{ steps.release.outputs.changelog }}"
+
+          BODY="## AgentGuard $TAG Released
+
+          Install or upgrade:
+          \`\`\`bash
+          pip install --upgrade agentguard47
+          \`\`\`
+
+          ### What changed
+          $CHANGELOG
+
+          ---
+          Full changelog: https://github.com/bmdhodl/agent47/compare/${{ steps.release.outputs.prev_tag }}...$TAG
+
+          PyPI: https://pypi.org/project/agentguard47/"
+
+          # Create discussion in Announcements category
+          gh api graphql -f query='
+            mutation {
+              createDiscussion(input: {
+                repositoryId: "'$(gh api repos/bmdhodl/agent47 --jq '.node_id')'"
+                categoryId: "'$(gh api repos/bmdhodl/agent47/discussions/categories --jq '.[] | select(.name=="Announcements") | .node_id' 2>/dev/null || echo "")'"
+                title: "AgentGuard '"$TAG"' released"
+                body: "'"$(echo "$BODY" | sed 's/"/\\"/g')"'"
+              }) { discussion { url } }
+            }' 2>/dev/null || echo "Discussion creation skipped (no Announcements category)"
+
+      - name: Add to social queue (dashboard repo)
+        env:
+          GH_TOKEN: ${{ secrets.DASHBOARD_PAT }}
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+
+          # Skip if no DASHBOARD_PAT configured
+          if [ -z "$GH_TOKEN" ]; then
+            echo "No DASHBOARD_PAT — skipping social queue"
+            exit 0
+          fi
+
+          # Trigger X post
+          gh workflow run add-social-post.yml \
+            --repo bmdhodl/agent47-dashboard \
+            -f platform=x \
+            -f title="$TAG released" \
+            -f body="agentguard $TAG is out.
+
+          pip install --upgrade agentguard47
+
+          changelog: https://github.com/bmdhodl/agent47/releases/tag/$TAG" || echo "Failed to trigger X post workflow"
+
+          # Trigger LinkedIn post
+          gh workflow run add-social-post.yml \
+            --repo bmdhodl/agent47-dashboard \
+            -f platform=linkedin \
+            -f title="$TAG released" \
+            -f body="AgentGuard $TAG is now available on PyPI.
+
+          Runtime guardrails for AI agents — loop detection, budget enforcement, cost tracking. Zero dependencies.
+
+          Upgrade: pip install --upgrade agentguard47
+
+          Changelog: https://github.com/bmdhodl/agent47/releases/tag/$TAG
+          Repo: https://github.com/bmdhodl/agent47" || echo "Failed to trigger LinkedIn post workflow"
