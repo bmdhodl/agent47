@@ -77,7 +77,7 @@ class TestTopLevelExports(unittest.TestCase):
             "BaseGuard", "LoopGuard", "BudgetGuard", "TimeoutGuard",
             "FuzzyLoopGuard", "RateLimitGuard",
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
-            "CostTracker", "estimate_cost", "update_prices",
+            "CostTracker", "estimate_cost", "update_prices", "UnknownModelWarning",
             "Recorder", "Replayer", "HttpSink",
             "EvalSuite", "EvalResult", "AssertionResult", "summarize_trace",
             "trace_agent", "trace_tool",
