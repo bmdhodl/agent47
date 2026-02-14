@@ -1,6 +1,10 @@
+import logging
+from importlib.metadata import version, PackageNotFoundError
+
 from .setup import init, shutdown, get_tracer, get_budget_guard
 from .tracing import Tracer, JsonlFileSink, StdoutSink, TraceSink
 from .guards import (
+    AgentGuardError,
     BaseGuard,
     LoopGuard,
     BudgetGuard,
@@ -32,7 +36,17 @@ from .instrument import (
     unpatch_anthropic_async,
 )
 
+try:
+    __version__ = version("agentguard47")
+except PackageNotFoundError:
+    __version__ = "0.0.0-dev"
+
+# Libraries should not configure logging — only add NullHandler
+# so consumers don't see "No handler found" warnings.
+logging.getLogger("agentguard").addHandler(logging.NullHandler())
+
 __all__ = [
+    "__version__",
     "init",
     "shutdown",
     "get_tracer",
@@ -41,6 +55,7 @@ __all__ = [
     "JsonlFileSink",
     "StdoutSink",
     "TraceSink",
+    "AgentGuardError",
     "LoopGuard",
     "BudgetGuard",
     "TimeoutGuard",

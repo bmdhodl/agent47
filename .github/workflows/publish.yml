@@ -5,24 +5,42 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install build tools
         run: pip install build
 
       - name: Build package
         run: python -m build ./sdk
+        env:
+          SOURCE_DATE_EPOCH: "0"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: sdk/dist/*
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: sdk/dist/
           password: ${{ secrets.PYPI_TOKEN }}
+          # To enable PyPI attestations, switch to Trusted Publishing:
+          # 1. Configure at pypi.org -> agentguard47 -> Settings -> Publishing
+          # 2. Remove the 'password' line above
+          # 3. Add: attestations: true

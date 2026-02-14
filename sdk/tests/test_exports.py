@@ -70,8 +70,10 @@ class TestTopLevelExports(unittest.TestCase):
     def test_all_list_complete(self):
         import agentguard
         expected = {
+            "__version__",
             "init", "shutdown", "get_tracer", "get_budget_guard",
             "Tracer", "JsonlFileSink", "StdoutSink", "TraceSink",
+            "AgentGuardError",
             "BaseGuard", "LoopGuard", "BudgetGuard", "TimeoutGuard",
             "FuzzyLoopGuard", "RateLimitGuard",
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",

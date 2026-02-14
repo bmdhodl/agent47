@@ -79,6 +79,17 @@ def init(
             "to re-initialize, or use the returned tracer directly."
         )
 
+    # --- Validate inputs ---
+    if not (0.0 <= warn_pct <= 1.0):
+        raise ValueError(
+            f"warn_pct must be between 0.0 and 1.0, got {warn_pct}"
+        )
+    if api_key and ("\n" in api_key or "\r" in api_key):
+        raise ValueError(
+            "api_key must not contain newline or carriage return characters "
+            "(possible HTTP header injection)"
+        )
+
     # --- Resolve config: kwargs > env vars > defaults ---
     resolved_key = api_key or os.environ.get("AGENTGUARD_API_KEY")
     resolved_service = service or os.environ.get("AGENTGUARD_SERVICE", "default")
