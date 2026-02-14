@@ -5,7 +5,13 @@ Override with update_prices() for custom or new models.
 """
 from __future__ import annotations
 
+import warnings
 from typing import Any, Dict, Optional, Tuple
+
+
+class UnknownModelWarning(UserWarning):
+    """Issued when estimate_cost() encounters an unrecognized model name."""
+    pass
 
 # Prices per 1K tokens: (input_price, output_price)
 # Last updated: 2026-02-01
@@ -67,6 +73,12 @@ def estimate_cost(
         for (p, m), prices in _PRICES.items():
             if m == model:
                 return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
+    warnings.warn(
+        f"Unknown model '{model}'. Pricing data last updated {LAST_UPDATED}. "
+        f"Cost estimate is $0.00. Use update_prices() to add custom pricing.",
+        UnknownModelWarning,
+        stacklevel=2,
+    )
     return 0.0
 
 
