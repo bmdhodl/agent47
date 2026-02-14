@@ -31,7 +31,7 @@ jobs:
           SOURCE_DATE_EPOCH: "0"
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: sdk/dist/*
 
