@@ -16,7 +16,7 @@ from .guards import (
     BudgetWarning,
     TimeoutExceeded,
 )
-from .cost import CostTracker, estimate_cost, update_prices
+from .cost import CostTracker, estimate_cost, update_prices, UnknownModelWarning
 from .recording import Recorder, Replayer
 from .sinks import HttpSink
 from .evaluation import EvalSuite, EvalResult, AssertionResult, summarize_trace
@@ -68,6 +68,7 @@ __all__ = [
     "CostTracker",
     "estimate_cost",
     "update_prices",
+    "UnknownModelWarning",
     "Recorder",
     "Replayer",
     "HttpSink",
