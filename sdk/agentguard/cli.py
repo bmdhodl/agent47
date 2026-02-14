@@ -37,7 +37,7 @@ def _summarize(path: str) -> None:
         print(f"  {name}: {count}")
 
 
-def _report(path: str) -> None:
+def _report(path: str, as_json: bool = False) -> None:
     events: List[Dict[str, Any]] = []
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
@@ -50,7 +50,10 @@ def _report(path: str) -> None:
                 continue
 
     if not events:
-        print("No events found.")
+        if as_json:
+            print(json.dumps({"error": "No events found"}))
+        else:
+            print("No events found.")
         return
 
     total = len(events)
@@ -73,6 +76,21 @@ def _report(path: str) -> None:
     total_ms: Optional[float] = None
     if span_durations:
         total_ms = max(span_durations)
+
+    if as_json:
+        result = {
+            "total_events": total,
+            "spans": kinds.get("span", 0),
+            "events": kinds.get("event", 0),
+            "approx_run_time_ms": total_ms,
+            "reasoning_steps": names.get("reasoning.step", 0),
+            "tool_results": names.get("tool.result", 0),
+            "llm_results": names.get("llm.result", 0),
+            "estimated_cost_usd": round(total_cost, 4),
+            "loop_guard_triggered": loop_hits,
+        }
+        print(json.dumps(result))
+        return
 
     print("AgentGuard report")
     print(f"  Total events: {total}")
@@ -118,6 +136,8 @@ def main() -> None:
 
     report = sub.add_parser("report", help="Human-readable report for a JSONL trace file")
     report.add_argument("path")
+    report.add_argument("--json", "-j", action="store_true", dest="json_output",
+                        help="Output machine-readable JSON (for CI pipelines)")
 
     view = sub.add_parser("view", help="Open a local trace viewer in the browser")
     view.add_argument("path")
@@ -132,7 +152,7 @@ def main() -> None:
     if args.cmd == "summarize":
         _summarize(args.path)
     elif args.cmd == "report":
-        _report(args.path)
+        _report(args.path, as_json=args.json_output)
     elif args.cmd == "view":
         from agentguard.viewer import serve
 

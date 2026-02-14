@@ -1,4 +1,4 @@
-const DEFAULT_URL = "https://agentguard.dev";
+const DEFAULT_URL = "https://app.agentguard47.com";
 
 export class AgentGuardClient {
   private baseUrl: string;
