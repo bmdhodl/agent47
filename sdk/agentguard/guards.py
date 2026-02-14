@@ -24,12 +24,25 @@ from dataclasses import dataclass
 from typing import Any, Callable, Deque, Dict, Optional, Tuple
 
 
-class LoopDetected(RuntimeError):
+class AgentGuardError(Exception):
+    """Base exception for all AgentGuard errors.
+
+    Catch this to handle any error raised by the AgentGuard SDK::
+
+        try:
+            guard.check("tool", args)
+        except AgentGuardError:
+            # handle any AgentGuard error
+            pass
+    """
+
+
+class LoopDetected(AgentGuardError, RuntimeError):
     """Raised when a tool call loop is detected by LoopGuard."""
     pass
 
 
-class BudgetExceeded(RuntimeError):
+class BudgetExceeded(AgentGuardError, RuntimeError):
     """Raised when a budget limit is exceeded by BudgetGuard."""
     pass
 
@@ -39,7 +52,7 @@ class BudgetWarning(UserWarning):
     pass
 
 
-class TimeoutExceeded(RuntimeError):
+class TimeoutExceeded(AgentGuardError, RuntimeError):
     """Raised when an agent run exceeds its time limit."""
     pass
 
@@ -76,6 +89,8 @@ class BaseGuard:
 class LoopGuard(BaseGuard):
     """Detect repeated identical tool calls within a sliding window.
 
+    Thread-safe. Uses a lock to protect history mutations.
+
     Tracks the last ``window`` tool calls and raises ``LoopDetected`` if
     the same (tool_name, tool_args) pair appears ``max_repeats`` times
     consecutively at the end of the window.
@@ -100,9 +115,12 @@ class LoopGuard(BaseGuard):
         self._max_repeats = max_repeats
         self._window = window
         self._history: Deque[Tuple[str, str]] = deque(maxlen=window)
+        self._lock = threading.Lock()
 
     def check(self, tool_name: str, tool_args: Optional[Dict[str, Any]] = None) -> None:
         """Record a tool call and check for loops.
+
+        Thread-safe: uses a lock to protect history mutations.
 
         Args:
             tool_name: Name of the tool being called.
@@ -113,17 +131,18 @@ class LoopGuard(BaseGuard):
         """
         args = tool_args or {}
         signature = (tool_name, _stable_json(args))
-        self._history.append(signature)
-        if len(self._history) < self._max_repeats:
-            return
-        last_n = list(self._history)[-self._max_repeats:]
-        if len(set(last_n)) == 1:
-            args_str = _stable_json(args)
-            raise LoopDetected(
-                f"Loop detected: {tool_name}({args_str}) repeated "
-                f"{self._max_repeats} times in last {len(self._history)} calls. "
-                f"Consider varying the arguments or breaking the loop."
-            )
+        with self._lock:
+            self._history.append(signature)
+            if len(self._history) < self._max_repeats:
+                return
+            last_n = list(self._history)[-self._max_repeats:]
+            if len(set(last_n)) == 1:
+                args_str = _stable_json(args)
+                raise LoopDetected(
+                    f"Loop detected: {tool_name}({args_str}) repeated "
+                    f"{self._max_repeats} times in last {len(self._history)} calls. "
+                    f"Consider varying the arguments or breaking the loop."
+                )
 
     def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
         """Auto-check: delegates to check(event_name, event_data)."""
@@ -131,7 +150,8 @@ class LoopGuard(BaseGuard):
 
     def reset(self) -> None:
         """Clear the call history."""
-        self._history.clear()
+        with self._lock:
+            self._history.clear()
 
     def __repr__(self) -> str:
         return f"LoopGuard(max_repeats={self._max_repeats}, window={self._window})"
@@ -359,6 +379,8 @@ class TimeoutGuard(BaseGuard):
 class FuzzyLoopGuard(BaseGuard):
     """Detect loops even when tool args vary, and A-B-A-B alternation patterns.
 
+    Thread-safe. Uses a lock to protect history mutations.
+
     Unlike LoopGuard (exact match only), FuzzyLoopGuard catches:
     - Same tool called repeatedly with different args (frequency check)
     - Two tools alternating: A-B-A-B-A-B (alternation check)
@@ -390,9 +412,12 @@ class FuzzyLoopGuard(BaseGuard):
         self._max_alternations = max_alternations
         self._window = window
         self._history: Deque[str] = deque(maxlen=window)
+        self._lock = threading.Lock()
 
     def check(self, tool_name: str, tool_args: Optional[Dict[str, Any]] = None) -> None:
         """Record a tool call and check for fuzzy loop patterns.
+
+        Thread-safe: uses a lock to protect history mutations.
 
         Args:
             tool_name: Name of the tool being called.
@@ -401,28 +426,29 @@ class FuzzyLoopGuard(BaseGuard):
         Raises:
             LoopDetected: If a fuzzy loop pattern is detected.
         """
-        self._history.append(tool_name)
+        with self._lock:
+            self._history.append(tool_name)
 
-        # Frequency check: same tool name too many times in window
-        counts = Counter(self._history)
-        if counts[tool_name] >= self._max_tool_repeats:
-            raise LoopDetected(
-                f"Fuzzy loop: {tool_name} called {counts[tool_name]} times "
-                f"in last {len(self._history)} calls (limit: {self._max_tool_repeats})"
-            )
-
-        # Alternation check: A-B-A-B pattern
-        if len(self._history) >= self._max_alternations * 2:
-            history_list = list(self._history)
-            tail = history_list[-(self._max_alternations * 2):]
-            a, b = tail[0], tail[1]
-            if a != b and all(
-                tail[i] == (a if i % 2 == 0 else b) for i in range(len(tail))
-            ):
+            # Frequency check: same tool name too many times in window
+            counts = Counter(self._history)
+            if counts[tool_name] >= self._max_tool_repeats:
                 raise LoopDetected(
-                    f"Alternation loop: {a} ↔ {b} repeated "
-                    f"{self._max_alternations} times"
+                    f"Fuzzy loop: {tool_name} called {counts[tool_name]} times "
+                    f"in last {len(self._history)} calls (limit: {self._max_tool_repeats})"
                 )
+
+            # Alternation check: A-B-A-B pattern
+            if len(self._history) >= self._max_alternations * 2:
+                history_list = list(self._history)
+                tail = history_list[-(self._max_alternations * 2):]
+                a, b = tail[0], tail[1]
+                if a != b and all(
+                    tail[i] == (a if i % 2 == 0 else b) for i in range(len(tail))
+                ):
+                    raise LoopDetected(
+                        f"Alternation loop: {a} ↔ {b} repeated "
+                        f"{self._max_alternations} times"
+                    )
 
     def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
         """Auto-check: delegates to check(event_name, event_data)."""
@@ -430,7 +456,8 @@ class FuzzyLoopGuard(BaseGuard):
 
     def reset(self) -> None:
         """Clear the call history."""
-        self._history.clear()
+        with self._lock:
+            self._history.clear()
 
     def __repr__(self) -> str:
         return (

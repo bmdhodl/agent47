@@ -29,12 +29,13 @@ logger = logging.getLogger("agentguard.sinks.http")
 
 
 # Private/reserved IP ranges that should never be used as sink endpoints
+# Includes 169.254.169.254 (AWS/GCP/Azure metadata endpoint) via 169.254.0.0/16
 _BLOCKED_NETWORKS = [
     ipaddress.ip_network("127.0.0.0/8"),      # loopback
     ipaddress.ip_network("10.0.0.0/8"),        # RFC 1918
     ipaddress.ip_network("172.16.0.0/12"),     # RFC 1918
     ipaddress.ip_network("192.168.0.0/16"),    # RFC 1918
-    ipaddress.ip_network("169.254.0.0/16"),    # link-local
+    ipaddress.ip_network("169.254.0.0/16"),    # link-local + cloud metadata
     ipaddress.ip_network("0.0.0.0/8"),         # "this" network
     ipaddress.ip_network("::1/128"),           # IPv6 loopback
     ipaddress.ip_network("fc00::/7"),          # IPv6 unique local
@@ -108,6 +109,47 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
             )
 
 
+def _validate_api_key(api_key: str) -> None:
+    """Validate an API key does not contain header injection characters.
+
+    Args:
+        api_key: The API key to validate.
+
+    Raises:
+        ValueError: If the key contains newline or carriage return characters.
+    """
+    if "\n" in api_key or "\r" in api_key:
+        raise ValueError(
+            "API key must not contain newline or carriage return characters "
+            "(possible HTTP header injection)"
+        )
+
+
+class _SsrfSafeRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Redirect handler that re-validates redirect targets against SSRF checks.
+
+    Prevents redirect-based SSRF where an attacker controls a public URL
+    that redirects to an internal endpoint (e.g., cloud metadata at
+    169.254.169.254).
+    """
+
+    def redirect_request(
+        self,
+        req: urllib.request.Request,
+        fp: Any,
+        code: int,
+        msg: str,
+        headers: Any,
+        newurl: str,
+    ) -> Optional[urllib.request.Request]:
+        _validate_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+# Build an opener that uses our SSRF-safe redirect handler
+_opener = urllib.request.build_opener(_SsrfSafeRedirectHandler)
+
+
 class HttpSink(TraceSink):
     """Batched HTTP sink that POSTs JSONL trace events to a remote endpoint.
 
@@ -120,6 +162,7 @@ class HttpSink(TraceSink):
     - Retry with exponential backoff (3 attempts, 1s/2s/4s)
     - UUID idempotency keys per batch
     - Respects 429 + Retry-After header
+    - SSRF protection on redirects
 
     Usage::
 
@@ -153,6 +196,8 @@ class HttpSink(TraceSink):
         _allow_private: bool = False,
     ) -> None:
         _validate_url(url, allow_private=_allow_private)
+        if api_key:
+            _validate_api_key(api_key)
         if api_key and url.startswith("http://"):
             logger.warning(
                 "HttpSink: sending API key over plain HTTP (%s). "
@@ -242,7 +287,7 @@ class HttpSink(TraceSink):
                 req = urllib.request.Request(
                     self._url, data=body, headers=headers, method="POST"
                 )
-                with urllib.request.urlopen(req, timeout=10) as resp:
+                with _opener.open(req, timeout=10) as resp:
                     resp.read()
                 return  # success
             except HTTPError as e:

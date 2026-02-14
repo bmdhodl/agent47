@@ -30,6 +30,7 @@ import uuid
 logger = logging.getLogger("agentguard.tracing")
 
 _MAX_NAME_LENGTH = 1000
+_MAX_EVENT_DATA_BYTES = 65_536  # 64 KB
 
 
 class TraceSink:
@@ -95,6 +96,28 @@ def _truncate_name(name: str) -> str:
         len(name), _MAX_NAME_LENGTH, name[:50],
     )
     return name[:_MAX_NAME_LENGTH]
+
+
+def _sanitize_data(data: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Validate event data size, replacing oversized payloads with a marker.
+
+    Prevents OOM from malicious or buggy callers passing enormous data dicts.
+    """
+    if data is None:
+        return None
+    try:
+        serialized = json.dumps(data, sort_keys=True)
+    except (TypeError, ValueError):
+        logger.warning("Event data is not JSON-serializable, replacing with marker")
+        return {"_error": "not_serializable"}
+    size = len(serialized.encode("utf-8"))
+    if size > _MAX_EVENT_DATA_BYTES:
+        logger.warning(
+            "Event data truncated: %d bytes > %d limit",
+            size, _MAX_EVENT_DATA_BYTES,
+        )
+        return {"_truncated": True, "_original_size_bytes": size}
+    return data
 
 
 @dataclass
@@ -204,10 +227,11 @@ class TraceContext:
 
         Args:
             name: Name of the event.
-            data: Optional data to attach to the event.
+            data: Optional data to attach to the event (max 64 KB serialized).
             cost_usd: Optional cost in USD for this event.
         """
         truncated_name = _truncate_name(name)
+        safe_data = _sanitize_data(data)
         if self._sampled:
             self.tracer._emit(
                 kind="event",
@@ -216,12 +240,12 @@ class TraceContext:
                 span_id=self.span_id,
                 parent_id=self.parent_id,
                 name=truncated_name,
-                data=data,
+                data=safe_data,
                 cost_usd=cost_usd,
             )
         else:
             # Guards must still fire even when trace is sampled out
-            self.tracer._check_guards(truncated_name, data)
+            self.tracer._check_guards(truncated_name, safe_data)
 
 
 class Tracer:
