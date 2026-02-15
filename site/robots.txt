@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://agentguard47.com/sitemap.xml
