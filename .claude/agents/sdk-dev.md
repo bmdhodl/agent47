@@ -16,20 +16,34 @@ https://github.com/users/bmdhodl/projects/4
 gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 50
 ```
 
-## Current Focus: Cost Guardrail
+## Current Focus: Strategic Execution Plan — Phase 1
 
-The active work is the cost guardrail feature pipeline (8-gate plan). Your gates:
+v1.2.1 is shipped. The active work is the 3-phase strategic plan to get to $5K MRR.
 
-| Gate | Name | Issues | What to Build |
-|------|------|--------|---------------|
-| Gate 1 | CostTracker hardening | #129-#131 | Per-model pricing accuracy, warning on unknown models, price update mechanism |
-| Gate 2 | Budget pipeline | #132-#134 | BudgetGuard enhancements, budget warning thresholds, cost aggregation |
-| Gate 3 | Rate limiting + alerts | #135-#136 | RateLimitGuard improvements, alert callback hooks |
-| Gate 4 | Ship v1.1.0 | #137 | Release with all Gate 1-3 work |
-| Gate 7 | Docs + polish | #138-#140 | Cost guardrail docs, README rewrite, landing page update |
-| Gate 8 | Close loop | #141-#144 | Remote config, integration tests, pilot outreach, v1.2.0 release |
+### Phase 1 SDK Tickets (current)
 
-Filter by label: `focus:cost-guardrail`
+| Ticket | Title | Priority |
+|--------|-------|----------|
+| T02 | README rewrite: cost guardrail as hero (#139) | Critical |
+| T07 | 30-second demo GIF: BudgetGuard kills agent | Critical |
+| T08 | Show HN post draft + launch prep | Critical |
+
+### Phase 2 SDK Tickets (next)
+
+| Ticket | Title | Priority |
+|--------|-------|----------|
+| T15 | SEO blog posts (3 targeting cost keywords) | High |
+| T18 | LangChain community engagement plan | High |
+| T19 | GitHub Discussions + issue templates | Medium |
+| T20 | SDK examples expansion (3 real-world) | Medium |
+
+### Phase 3 SDK Tickets
+
+| Ticket | Title | Priority |
+|--------|-------|----------|
+| T26 | SDK virality watermark | Medium |
+
+**Critical path:** T02 (README) → T07 (GIF) → T08 (Show HN) → **LAUNCH**
 
 ## Workflow
 

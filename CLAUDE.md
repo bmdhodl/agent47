@@ -8,7 +8,7 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (v1.0.0 GA)
+- **Package:** `agentguard47` on PyPI (v1.2.1)
 - **Landing page:** site/index.html (Vercel)
 
 ## Commands
@@ -144,7 +144,34 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** v1.0.0 GA shipped. See project board for priorities.
+**Current:** v1.2.1 shipped. Active: **Strategic Execution Plan — Phase 1 (Foundation).**
+
+## Current Phase: Phase 1 — Foundation
+
+Goal: Ship, secure, launch. Get to Show HN.
+
+**Critical path:** T01 (PyPI publish) → T02 (README) → T07 (demo GIF) → T08 (Show HN) → **LAUNCH**
+
+| Ticket | Title | Track | Status |
+|--------|-------|-------|--------|
+| T01 | Publish v1.2.1 to PyPI + GitHub Release | Growth | Done (PyPI live) |
+| T02 | README rewrite: cost guardrail as hero (SDK #139) | Growth | Todo |
+| T07 | 30-second demo GIF: BudgetGuard kills agent | Growth | Todo |
+| T08 | Show HN post draft + launch prep | Growth | Todo |
+| T15 | SEO blog posts (3 targeting cost keywords) | Growth | Phase 2 |
+
+**Security path (parallel):**
+
+| Ticket | Title | Repo | Status |
+|--------|-------|------|--------|
+| T03 | Zod validation on 7 POST routes (Dashboard #45) | Dashboard | Todo |
+| T04 | Split queries.ts into domain modules (Dashboard #44) | Dashboard | Todo |
+| T05 | Move SQL from 8 routes to queries (Dashboard #46) | Dashboard | Todo |
+| T06 | CSP header + Sentry monitoring | Dashboard | Todo |
+| T09 | Welcome email drip (3 emails) | Dashboard | Todo |
+| T10 | Audit logging foundation | Dashboard | Todo |
+
+Full plan: See `.claude/plans/` or project board.
 
 ## Agent Navigation Guide
 
@@ -188,7 +215,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** 1.0.0
+- **Version:** 1.2.1
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)
