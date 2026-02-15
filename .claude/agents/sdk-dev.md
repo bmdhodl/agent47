@@ -12,36 +12,79 @@ https://github.com/users/bmdhodl/projects/4
 
 ## Your Issues
 
-Filter: `component:sdk` label.
-
-List them:
 ```bash
 gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 50
 ```
 
+## Current Focus: Cost Guardrail
+
+The active work is the cost guardrail feature pipeline (8-gate plan). Your gates:
+
+| Gate | Name | Issues | What to Build |
+|------|------|--------|---------------|
+| Gate 1 | CostTracker hardening | #129-#131 | Per-model pricing accuracy, warning on unknown models, price update mechanism |
+| Gate 2 | Budget pipeline | #132-#134 | BudgetGuard enhancements, budget warning thresholds, cost aggregation |
+| Gate 3 | Rate limiting + alerts | #135-#136 | RateLimitGuard improvements, alert callback hooks |
+| Gate 4 | Ship v1.1.0 | #137 | Release with all Gate 1-3 work |
+| Gate 7 | Docs + polish | #138-#140 | Cost guardrail docs, README rewrite, landing page update |
+| Gate 8 | Close loop | #141-#144 | Remote config, integration tests, pilot outreach, v1.2.0 release |
+
+Filter by label: `focus:cost-guardrail`
+
 ## Workflow
 
-1. **Start of session:** Run the command above to see your current issues and their states.
-2. **Pick work:** Take the highest-priority Todo item from the project board.
-3. **Before coding:** Read the issue with `gh issue view <number> --repo bmdhodl/agent47`. Understand the acceptance criteria.
+1. **Start of session:**
+   - Run the issue list command above.
+   - Run `git status` and `git branch` to check for stale state from other agents.
+   - Run `make check` to verify the codebase is clean.
+2. **Pick work:** Take the highest-priority Todo item. Cost guardrail gates take precedence.
+3. **Before coding:** Read the issue with `gh issue view <number> --repo bmdhodl/agent47`. Understand acceptance criteria.
 4. **While working:**
-   - Write code in `sdk/agentguard/`.
-   - Write tests in `sdk/tests/`.
-   - Run tests: `python -m pytest sdk/tests/ -v --cov=agentguard --cov-fail-under=80`
-   - Run lint: `ruff check sdk/agentguard/`
-5. **When done:** Create a feature branch, commit, push, open a PR, and close the issue.
-6. **If blocked:** Comment on the issue explaining the blocker and tag the blocking issue number.
-7. **If you find gaps:** Create new issues with `component:sdk` + appropriate `priority:` and `type:` labels.
+   - Write code in `sdk/agentguard/`
+   - Write tests in `sdk/tests/`
+   - Run `make check` (lint + full test suite with coverage)
+   - Run `make structural` to verify architectural invariants
+5. **When done:** Commit, push, close the issue.
+6. **If blocked:** Comment on the issue explaining the blocker.
+7. **If you find gaps:** Create new issues with `component:sdk` + appropriate labels.
+
+## Golden Principles
+
+See [GOLDEN_PRINCIPLES.md](../GOLDEN_PRINCIPLES.md) for 10 mechanical rules enforced by `sdk/tests/test_architecture.py`. Key ones:
+1. **Zero dependencies** — stdlib only in core modules
+2. **One-way imports** — integrations → core, never reverse
+3. **Guards raise exceptions** — `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`, `RateLimitExceeded`
+4. **Module size < 800 lines** — split if exceeded
+5. **All public symbols have docstrings**
+
+Run `make structural` to check compliance.
 
 ## Conventions
 
-- Zero dependencies. Python stdlib only. Optional extras are fine (e.g., `langchain-core`).
+- Zero dependencies. Python stdlib only. Optional extras: `langchain-core`, `langgraph`, `crewai`, `opentelemetry-api`.
 - Python 3.9+ compatibility.
 - CI uses `pytest` with `--cov-fail-under=80`.
-- All public API surfaces through `agentguard/__init__.py`.
-- Guards raise exceptions: `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`.
+- All public API surfaces through `agentguard/__init__.py` and `__all__`.
 - TraceSink interface: all sinks implement `emit(event: Dict)`.
 
-## Current Work
+## Decision Trees
 
-v1.0.0 GA is shipped. Check the project board for current `component:sdk` issues.
+**When to add a new guard:**
+1. Create class in `guards.py` inheriting `BaseGuard`
+2. `check()` must raise an exception, never return bool
+3. Add `self._lock = threading.Lock()` if it has mutable state
+4. Export from `__init__.py` and add to `__all__`
+5. Add to `THREAD_SAFE_CLASSES` in `test_architecture.py`
+6. Run `make check`
+
+**When to modify cost.py:**
+- Adding a new model's pricing → update `MODEL_PRICES` dict
+- Changing cost calculation logic → update `estimate_cost()`
+- Always update `LAST_UPDATED` date when changing prices
+
+**When to add an integration:**
+1. Create module in `integrations/`
+2. Guard imports with `try/except ImportError`
+3. Never import integrations from core modules
+4. Add optional dep to `pyproject.toml`
+5. Run `make check`
