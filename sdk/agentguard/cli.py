@@ -13,7 +13,7 @@ def _summarize(path: str) -> None:
     name_counts = Counter()
     kind_counts = Counter()
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -39,7 +39,7 @@ def _summarize(path: str) -> None:
 
 def _report(path: str, as_json: bool = False) -> None:
     events: List[Dict[str, Any]] = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:

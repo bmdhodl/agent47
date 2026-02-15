@@ -13,26 +13,25 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 ## Commands
 
-### SDK (Python)
+All common commands are available via `make`:
 
 ```bash
-# Run all tests (from repo root)
-python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing
+make check       # lint + full test suite (mirrors CI)
+make test        # full test suite with coverage
+make structural  # architectural invariant tests only
+make lint        # ruff check
+make fix         # ruff auto-fix
+make security    # bandit security lint
+make lines       # module line counts (entropy check)
+make install     # pip install SDK + dev tools
+make clean       # remove build artifacts
+```
 
-# Run a single test file
-python -m pytest sdk/tests/test_guards.py -v
+### Running specific tests
 
-# Run a single test case
-python -m pytest sdk/tests/test_guards.py::TestLoopGuard::test_loop_detected -v
-
-# Lint
-ruff check sdk/agentguard/
-
-# Install SDK in editable mode
-pip install -e ./sdk
-
-# Install dev tools
-pip install pytest pytest-cov ruff
+```bash
+python -m pytest sdk/tests/test_guards.py -v              # single file
+python -m pytest sdk/tests/test_guards.py::TestLoopGuard -v  # single class
 ```
 
 ### MCP Server
@@ -59,6 +58,37 @@ git tag v1.X.0 && git push origin v1.X.0
 1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.9+. CI uses `pytest` with coverage enforcement (80% minimum). Public API exports from `agentguard/__init__.py`.
 
 2. **mcp-server/** — MCP server (`@agentguard47/mcp-server`). TypeScript, `@modelcontextprotocol/sdk`. Connects AI agents to the read API via stdio transport.
+
+### Golden Principles
+
+See [GOLDEN_PRINCIPLES.md](GOLDEN_PRINCIPLES.md) for the 10 mechanical rules enforced by CI.
+Every rule maps to a structural test in `sdk/tests/test_architecture.py`.
+
+### Module Dependency Graph
+
+Core modules form a DAG — no cycles, no reverse dependencies:
+
+```
+__init__.py (public API surface)
+    ├── setup.py ──→ tracing.py, guards.py, instrument.py, sinks/http.py
+    ├── tracing.py (standalone)
+    ├── guards.py (standalone)
+    ├── instrument.py ──→ guards.py, cost.py
+    ├── atracing.py ──→ tracing.py
+    ├── cost.py (standalone)
+    ├── evaluation.py (standalone)
+    ├── recording.py (standalone)
+    ├── export.py (standalone)
+    ├── cli.py ──→ evaluation.py
+    ├── viewer.py (standalone)
+    └── sinks/http.py ──→ tracing.py
+
+Integration modules (allowed to import core, never the reverse):
+    integrations/langchain.py ──→ guards.py, tracing.py
+    integrations/langgraph.py ──→ guards.py, tracing.py
+    integrations/crewai.py ──→ guards.py, tracing.py
+    sinks/otel.py ──→ tracing.py
+```
 
 ### SDK Key Modules
 
@@ -115,6 +145,36 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
 **Current:** v1.0.0 GA shipped. See project board for priorities.
+
+## Agent Navigation Guide
+
+Step-by-step instructions for common tasks. Follow these patterns for consistency.
+
+### Adding a New Guard
+
+1. Create class in `guards.py` inheriting `BaseGuard`
+2. Implement `check()` — must raise an exception (LoopDetected, BudgetExceeded, etc.), never return bool
+3. Implement `auto_check(event_name, event_data)` for Tracer integration
+4. Add `self._lock = threading.Lock()` if it has mutable state
+5. Export from `__init__.py` and add to `__all__`
+6. Add to `THREAD_SAFE_CLASSES` in `test_architecture.py` if thread-safe
+7. Run `make check`
+
+### Adding a New Sink
+
+1. Create class in `sinks/` inheriting `TraceSink`
+2. Implement `emit(event: Dict[str, Any]) -> None`
+3. If it uses optional deps, guard with `try/except ImportError`
+4. Export from `sinks/__init__.py` and `agentguard/__init__.py`
+5. Run `make check`
+
+### Adding a New Integration
+
+1. Create module in `integrations/`
+2. Guard third-party imports with `try/except ImportError`
+3. Import core modules freely, never the reverse
+4. Add optional dependency to `pyproject.toml` `[project.optional-dependencies]`
+5. Run `make check`
 
 ## What NOT To Do
 

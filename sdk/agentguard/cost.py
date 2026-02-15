@@ -5,6 +5,7 @@ Override with update_prices() for custom or new models.
 """
 from __future__ import annotations
 
+import threading
 import warnings
 from typing import Any, Dict, Optional, Tuple
 
@@ -70,7 +71,7 @@ def estimate_cost(
             return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
     else:
         # Try all providers
-        for (p, m), prices in _PRICES.items():
+        for (_p, m), prices in _PRICES.items():
             if m == model:
                 return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
     warnings.warn(
@@ -96,7 +97,7 @@ def update_prices(overrides: Dict[Tuple[str, str], Tuple[float, float]]) -> None
 
 
 class CostTracker:
-    """Accumulates cost across a trace.
+    """Accumulates cost across a trace. Thread-safe.
 
     Usage::
 
@@ -107,6 +108,7 @@ class CostTracker:
     """
 
     def __init__(self) -> None:
+        self._lock = threading.Lock()
         self._total: float = 0.0
         self._calls: list[Dict[str, Any]] = []
 
@@ -119,13 +121,14 @@ class CostTracker:
     ) -> float:
         """Add a call's cost. Returns the cost of this individual call."""
         cost = estimate_cost(model, input_tokens, output_tokens, provider)
-        self._total += cost
-        self._calls.append({
-            "model": model,
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
-            "cost_usd": cost,
-        })
+        with self._lock:
+            self._total += cost
+            self._calls.append({
+                "model": model,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "cost_usd": cost,
+            })
         return cost
 
     @property
@@ -135,8 +138,9 @@ class CostTracker:
 
     def to_dict(self) -> Dict[str, Any]:
         """Return summary as a dict for event data."""
-        return {
-            "total_cost_usd": self._total,
-            "call_count": len(self._calls),
-            "calls": list(self._calls),
-        }
+        with self._lock:
+            return {
+                "total_cost_usd": self._total,
+                "call_count": len(self._calls),
+                "calls": list(self._calls),
+            }

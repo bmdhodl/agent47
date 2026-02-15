@@ -1,0 +1,55 @@
+name: Entropy Check
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday 8am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  entropy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+
+      - name: Install
+        run: |
+          python -m pip install -e ./sdk
+          python -m pip install pytest pytest-cov ruff bandit
+
+      - name: Structural tests
+        run: python -m pytest sdk/tests/test_architecture.py -v
+
+      - name: Module line counts
+        run: |
+          echo "## Module Line Counts" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          wc -l sdk/agentguard/*.py sdk/agentguard/sinks/*.py sdk/agentguard/integrations/*.py | sort -n >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Code debt markers
+        run: |
+          echo "## Code Debt Markers (TODO/FIXME/HACK)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          grep -rn 'TODO\|FIXME\|HACK\|XXX' sdk/agentguard/ >> $GITHUB_STEP_SUMMARY 2>&1 || echo "None found" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Lint report
+        run: |
+          echo "## Lint Report" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ruff check sdk/agentguard/ >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Coverage snapshot
+        run: |
+          echo "## Coverage Snapshot" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          python -m pytest sdk/tests/ --cov=agentguard --cov-report=term-missing --tb=no -q 2>&1 | tail -20 >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY

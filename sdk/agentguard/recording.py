@@ -12,10 +12,10 @@ Usage::
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Dict, Optional, Tuple
 import json
 import time
+from dataclasses import dataclass
+from typing import Any, Dict, Optional, Tuple
 
 
 class Recorder:
@@ -110,7 +110,7 @@ class Replayer:
 def _load_entries(path: str) -> Dict[Tuple[str, str], Dict[str, Any]]:
     entries: Dict[Tuple[str, str], Dict[str, Any]] = {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
