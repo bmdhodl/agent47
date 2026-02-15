@@ -1,18 +1,18 @@
 """Cost estimation for LLM API calls.
 
 Hardcoded pricing dict — no network calls, no dependencies.
-Override with update_prices() for custom or new models.
 """
 from __future__ import annotations
 
 import threading
 import warnings
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class UnknownModelWarning(UserWarning):
     """Issued when estimate_cost() encounters an unrecognized model name."""
     pass
+
 
 # Prices per 1K tokens: (input_price, output_price)
 # Last updated: 2026-02-01
@@ -76,41 +76,29 @@ def estimate_cost(
                 return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
     warnings.warn(
         f"Unknown model '{model}'. Pricing data last updated {LAST_UPDATED}. "
-        f"Cost estimate is $0.00. Use update_prices() to add custom pricing.",
+        f"Cost estimate is $0.00.",
         UnknownModelWarning,
         stacklevel=2,
     )
     return 0.0
 
 
-def update_prices(overrides: Dict[Tuple[str, str], Tuple[float, float]]) -> None:
-    """Override or add model pricing.
-
-    Args:
-        overrides: Dict mapping (provider, model) to (input_price/1K, output_price/1K).
-
-    Example::
-
-        update_prices({("openai", "gpt-5"): (0.05, 0.15)})
-    """
-    _PRICES.update(overrides)
-
-
 class CostTracker:
-    """Accumulates cost across a trace. Thread-safe.
+    """Internal cost accumulator used by TraceContext.cost property.
 
-    Usage::
-
-        tracker = CostTracker()
-        tracker.add("gpt-4o", input_tokens=500, output_tokens=200)
-        tracker.add("gpt-4o", input_tokens=300, output_tokens=100)
-        print(f"Total: ${tracker.total:.4f}")
+    Thread-safe. Tracks per-call costs and maintains a running total.
+    Not part of the public API — use BudgetGuard for budget enforcement.
     """
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
+        self._calls: List[Dict[str, Any]] = []
         self._total: float = 0.0
-        self._calls: list[Dict[str, Any]] = []
+
+    @property
+    def total(self) -> float:
+        """Total accumulated cost in USD."""
+        return self._total
 
     def add(
         self,
@@ -119,25 +107,21 @@ class CostTracker:
         output_tokens: int = 0,
         provider: Optional[str] = None,
     ) -> float:
-        """Add a call's cost. Returns the cost of this individual call."""
+        """Add a call's cost. Returns the cost of this call."""
         cost = estimate_cost(model, input_tokens, output_tokens, provider)
         with self._lock:
-            self._total += cost
             self._calls.append({
                 "model": model,
+                "provider": provider,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
                 "cost_usd": cost,
             })
+            self._total += cost
         return cost
 
-    @property
-    def total(self) -> float:
-        """Total accumulated cost in USD."""
-        return self._total
-
     def to_dict(self) -> Dict[str, Any]:
-        """Return summary as a dict for event data."""
+        """Return a summary dict."""
         with self._lock:
             return {
                 "total_cost_usd": self._total,

@@ -1,14 +1,15 @@
-"""Tests for export module: load_trace, export_json, export_csv, export_jsonl."""
+"""Tests for export module: export_json, export_csv, export_jsonl."""
 import csv
 import json
 import os
 import tempfile
 import unittest
 
-from agentguard.export import export_csv, export_json, export_jsonl, load_trace
+from agentguard.evaluation import _load_events
+from agentguard.export import export_csv, export_json, export_jsonl
 
 
-class TestLoadTrace(unittest.TestCase):
+class TestLoadEvents(unittest.TestCase):
     def _write_jsonl(self, lines):
         f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
         for line in lines:
@@ -22,7 +23,7 @@ class TestLoadTrace(unittest.TestCase):
             '{"kind": "event", "name": "step"}',
         ])
         try:
-            events = load_trace(path)
+            events = _load_events(path)
             self.assertEqual(len(events), 2)
             self.assertEqual(events[0]["kind"], "span")
         finally:
@@ -35,7 +36,7 @@ class TestLoadTrace(unittest.TestCase):
             '{"kind": "event"}',
         ])
         try:
-            events = load_trace(path)
+            events = _load_events(path)
             self.assertEqual(len(events), 2)
         finally:
             os.unlink(path)
@@ -48,7 +49,7 @@ class TestLoadTrace(unittest.TestCase):
             '{"kind": "event"}',
         ])
         try:
-            events = load_trace(path)
+            events = _load_events(path)
             self.assertEqual(len(events), 2)
         finally:
             os.unlink(path)
@@ -56,7 +57,7 @@ class TestLoadTrace(unittest.TestCase):
     def test_empty_file(self):
         path = self._write_jsonl([])
         try:
-            events = load_trace(path)
+            events = _load_events(path)
             self.assertEqual(events, [])
         finally:
             os.unlink(path)

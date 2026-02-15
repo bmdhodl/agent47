@@ -17,7 +17,7 @@ import time
 
 
 def smoke_test() -> bool:
-    """Run 10 smoke checks. Returns True on success."""
+    """Run 9 smoke checks. Returns True on success."""
     start = time.perf_counter()
     errors = []
 
@@ -27,8 +27,7 @@ def smoke_test() -> bool:
             Tracer, JsonlFileSink, StdoutSink, TraceSink,
             LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard,
             LoopDetected, BudgetExceeded, BudgetWarning, TimeoutExceeded,
-            CostTracker, estimate_cost, update_prices,
-            Recorder, Replayer,
+            estimate_cost,
             HttpSink,
             EvalSuite, EvalResult, AssertionResult,
             AsyncTracer, AsyncTraceContext,
@@ -39,14 +38,13 @@ def smoke_test() -> bool:
             patch_openai_async, patch_anthropic_async,
             unpatch_openai_async, unpatch_anthropic_async,
         )
-        print("[PASS] 1/10  All 36 imports successful")
+        print("[PASS] 1/9   All imports successful")
     except ImportError as e:
-        print(f"[FAIL] 1/10  Import failed: {e}")
+        print(f"[FAIL] 1/9   Import failed: {e}")
         return False
 
     with tempfile.TemporaryDirectory() as tmpdir:
         trace_path = os.path.join(tmpdir, "smoke.jsonl")
-        replay_path = os.path.join(tmpdir, "smoke_replay.jsonl")
 
         # --- 2. Create tracer with guards + metadata + sampling ---
         try:
@@ -57,27 +55,25 @@ def smoke_test() -> bool:
                 metadata={"test": "smoke"},
                 sampling_rate=1.0,
             )
-            print("[PASS] 2/10  Tracer created with guards, metadata, sampling")
+            print("[PASS] 2/9   Tracer created with guards, metadata, sampling")
         except Exception as e:
             errors.append(f"Tracer creation: {e}")
-            print(f"[FAIL] 2/10  Tracer creation: {e}")
+            print(f"[FAIL] 2/9   Tracer creation: {e}")
             return False
 
         # --- 3. Run traced agent ---
         try:
-            recorder = Recorder(replay_path)
             with tracer.trace("agent.smoke", data={"task": "test"}) as ctx:
                 ctx.event("reasoning.step", data={"thought": "planning"})
                 with ctx.span("tool.search") as tool_ctx:
                     tool_ctx.event("tool.result", data={"result": "found"})
-                    recorder.record_call("search", {"q": "test"}, {"result": "found"})
                 cost = estimate_cost("gpt-4o", input_tokens=100, output_tokens=50)
                 ctx.cost.add("gpt-4o", input_tokens=100, output_tokens=50)
                 ctx.event("llm.result", data={"model": "gpt-4o", "cost_usd": cost})
-            print("[PASS] 3/10  Traced agent run completed")
+            print("[PASS] 3/9   Traced agent run completed")
         except Exception as e:
             errors.append(f"Agent run: {e}")
-            print(f"[FAIL] 3/10  Agent run: {e}")
+            print(f"[FAIL] 3/9   Agent run: {e}")
             return False
 
         # --- 4. Verify JSONL output ---
@@ -87,22 +83,12 @@ def smoke_test() -> bool:
             assert len(events) >= 6, f"got {len(events)}"
             assert all(e.get("service") == "smoke-test" for e in events)
             assert all("metadata" in e for e in events)
-            print(f"[PASS] 4/10  {len(events)} events in JSONL, all valid")
+            print(f"[PASS] 4/9   {len(events)} events in JSONL, all valid")
         except Exception as e:
             errors.append(f"JSONL verify: {e}")
-            print(f"[FAIL] 4/10  JSONL verify: {e}")
+            print(f"[FAIL] 4/9   JSONL verify: {e}")
 
-        # --- 5. Recorder/Replayer roundtrip ---
-        try:
-            replayer = Replayer(replay_path)
-            result = replayer.replay_call("search", {"q": "test"})
-            assert result["result"] == "found"
-            print("[PASS] 5/10  Recorder/Replayer roundtrip works")
-        except Exception as e:
-            errors.append(f"Replay: {e}")
-            print(f"[FAIL] 5/10  Replay: {e}")
-
-        # --- 6. EvalSuite ---
+        # --- 5. EvalSuite ---
         try:
             eval_result = (
                 EvalSuite(trace_path)
@@ -113,12 +99,12 @@ def smoke_test() -> bool:
                 .run()
             )
             assert eval_result.passed, eval_result.summary
-            print("[PASS] 6/10  EvalSuite assertions passed")
+            print("[PASS] 5/9   EvalSuite assertions passed")
         except Exception as e:
             errors.append(f"EvalSuite: {e}")
-            print(f"[FAIL] 6/10  EvalSuite: {e}")
+            print(f"[FAIL] 5/9   EvalSuite: {e}")
 
-        # --- 7. All 5 guard types ---
+        # --- 6. All 5 guard types ---
         try:
             # LoopGuard
             g = LoopGuard(max_repeats=2, window=4)
@@ -160,21 +146,21 @@ def smoke_test() -> bool:
                 caught = True
             assert caught, "FuzzyLoopGuard didn't fire"
 
-            print("[PASS] 7/10  All 5 guard types fire correctly")
+            print("[PASS] 6/9   All 5 guard types fire correctly")
         except Exception as e:
             errors.append(f"Guards: {e}")
-            print(f"[FAIL] 7/10  Guards: {e}")
+            print(f"[FAIL] 6/9   Guards: {e}")
 
-        # --- 8. Cost estimation ---
+        # --- 7. Cost estimation ---
         try:
             c = estimate_cost("gpt-4o", input_tokens=1000, output_tokens=500)
             assert c > 0
-            print(f"[PASS] 8/10  Cost estimate: gpt-4o 1K/500 = ${c:.4f}")
+            print(f"[PASS] 7/9   Cost estimate: gpt-4o 1K/500 = ${c:.4f}")
         except Exception as e:
             errors.append(f"Cost: {e}")
-            print(f"[FAIL] 8/10  Cost: {e}")
+            print(f"[FAIL] 7/9   Cost: {e}")
 
-        # --- 9. Export ---
+        # --- 8. Export ---
         try:
             from agentguard.export import export_json, export_csv
             json_out = os.path.join(tmpdir, "smoke.json")
@@ -183,12 +169,12 @@ def smoke_test() -> bool:
             export_csv(trace_path, csv_out)
             assert os.path.getsize(json_out) > 0
             assert os.path.getsize(csv_out) > 0
-            print("[PASS] 9/10  Export to JSON + CSV works")
+            print("[PASS] 8/9   Export to JSON + CSV works")
         except Exception as e:
             errors.append(f"Export: {e}")
-            print(f"[FAIL] 9/10  Export: {e}")
+            print(f"[FAIL] 8/9   Export: {e}")
 
-        # --- 10. CLI report ---
+        # --- 9. CLI report ---
         try:
             import io
             from agentguard.cli import _report
@@ -200,10 +186,10 @@ def smoke_test() -> bool:
             finally:
                 sys.stdout = old
             assert "AgentGuard report" in buf.getvalue()
-            print("[PASS] 10/10 CLI report works")
+            print("[PASS] 9/9   CLI report works")
         except Exception as e:
             errors.append(f"CLI: {e}")
-            print(f"[FAIL] 10/10 CLI: {e}")
+            print(f"[FAIL] 9/9   CLI: {e}")
 
     elapsed = time.perf_counter() - start
     print(f"\n{'='*50}")

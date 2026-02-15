@@ -77,10 +77,8 @@ __init__.py (public API surface)
     ├── atracing.py ──→ tracing.py
     ├── cost.py (standalone)
     ├── evaluation.py (standalone)
-    ├── recording.py (standalone)
-    ├── export.py (standalone)
+    ├── export.py ──→ evaluation.py
     ├── cli.py ──→ evaluation.py
-    ├── viewer.py (standalone)
     └── sinks/http.py ──→ tracing.py
 
 Integration modules (allowed to import core, never the reverse):
@@ -103,10 +101,9 @@ Integration modules (allowed to import core, never the reverse):
 | `integrations/langgraph.py` | LangGraph guarded_node, guard_node |
 | `integrations/crewai.py` | CrewAI AgentGuardCrewHandler |
 | `evaluation.py` | EvalSuite — chainable assertion-based trace analysis |
-| `recording.py` | Recorder, Replayer (deterministic replay) |
-| `cli.py` | CLI: report, summarize, view, eval |
+| `cli.py` | CLI: report, summarize, eval |
 | `atracing.py` | AsyncTracer, AsyncTraceContext — async support |
-| `cost.py` | CostTracker, estimate_cost, update_prices — per-model pricing |
+| `cost.py` | estimate_cost — per-model pricing |
 | `export.py` | JSON, CSV, JSONL conversion utilities |
 
 ## SDK Conventions
@@ -118,7 +115,7 @@ Integration modules (allowed to import core, never the reverse):
 
 ## CI/CD
 
-- **ci.yml:** Python 3.9-3.12 matrix, `pytest` with `--cov-fail-under=80`, ruff lint. Runs on push/PR.
+- **ci.yml:** Python 3.9+3.12 on PRs, full 3.9-3.12 matrix on push to main. `pytest` with `--cov-fail-under=80`, ruff lint.
 - **publish.yml:** PyPI publish on `v*` tags.
 
 ## Key Decisions
@@ -227,9 +224,8 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 **Exceptions:** `LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`
 **Instrumentation:** `trace_agent`, `trace_tool`, `patch_openai`, `patch_anthropic`, `unpatch_openai`, `unpatch_anthropic`
 **Async:** `AsyncTracer`, `AsyncTraceContext`, `async_trace_agent`, `async_trace_tool`, `patch_openai_async`, `patch_anthropic_async`, `unpatch_openai_async`, `unpatch_anthropic_async`
-**Cost:** `CostTracker`, `estimate_cost`, `update_prices`
+**Cost:** `estimate_cost`
 **Evaluation:** `EvalSuite`, `EvalResult`, `AssertionResult`
-**Recording:** `Recorder`, `Replayer`
 **Integrations:** `AgentGuardCallbackHandler` (LangChain), `guarded_node`/`guard_node` (LangGraph), `AgentGuardCrewHandler` (CrewAI), `OtelTraceSink` (OpenTelemetry)
 
 ### Constraints

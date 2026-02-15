@@ -1,14 +1,12 @@
-"""Additional tests for v1.0 coverage: sinks, CLI, recording, security."""
+"""Additional tests for v1.0 coverage: sinks, CLI, security."""
 import io
 import json
 import os
-import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
 from agentguard.tracing import StdoutSink, JsonlFileSink, Tracer
-from agentguard.recording import Recorder, Replayer
 from agentguard.sinks.http import HttpSink
 from agentguard.cli import _summarize, _report, _eval
 
@@ -51,41 +49,6 @@ class TestJsonlFileSinkEdgeCases(unittest.TestCase):
         # Verify all lines are valid JSON
         for line in lines:
             json.loads(line)
-        os.unlink(path)
-
-
-class TestReplayerCorruptJsonl(unittest.TestCase):
-    def test_corrupt_file_skipped(self):
-        fd, path = tempfile.mkstemp(suffix=".jsonl")
-        with os.fdopen(fd, "w") as f:
-            f.write("not json\n")
-            f.write(json.dumps({
-                "name": "llm",
-                "request": {"prompt": "hi"},
-                "response": {"text": "hello"},
-            }) + "\n")
-            f.write("{bad\n")
-        replayer = Replayer(path)
-        resp = replayer.replay_call("llm", {"prompt": "hi"})
-        self.assertEqual(resp["text"], "hello")
-        os.unlink(path)
-
-    def test_missing_file(self):
-        replayer = Replayer("/nonexistent/file.jsonl")
-        with self.assertRaises(KeyError):
-            replayer.replay_call("llm", {"prompt": "hi"})
-
-
-class TestRecorderReplayRoundtrip(unittest.TestCase):
-    def test_roundtrip(self):
-        fd, path = tempfile.mkstemp(suffix=".jsonl")
-        os.close(fd)
-        recorder = Recorder(path)
-        recorder.record_call("search", {"q": "docs"}, {"results": ["a", "b"]})
-        recorder.record_call("llm", {"prompt": "hi"}, {"text": "hello"})
-        replayer = Replayer(path)
-        self.assertEqual(replayer.replay_call("search", {"q": "docs"})["results"], ["a", "b"])
-        self.assertEqual(replayer.replay_call("llm", {"prompt": "hi"})["text"], "hello")
         os.unlink(path)
 
 
@@ -166,31 +129,15 @@ class TestHttpSinkUrlValidation(unittest.TestCase):
         sink.shutdown()
 
 
-class TestViewerXssEscape(unittest.TestCase):
-    def test_html_contains_esc_function(self):
-        from agentguard.viewer import _HTML
-        self.assertIn("function esc(s)", _HTML)
-
-    def test_gantt_labels_use_esc(self):
-        from agentguard.viewer import _HTML
-        self.assertIn("esc(r.name)", _HTML)
-
-    def test_detail_panel_uses_esc(self):
-        from agentguard.viewer import _HTML
-        self.assertIn("esc(ev.trace_id", _HTML)
-
-
 class TestTracerGuardsWithBudgetGuard(unittest.TestCase):
     def test_tracer_with_budget_guard(self):
-        from agentguard import BudgetGuard, BudgetExceeded
+        from agentguard import BudgetGuard
         captured = []
 
         class CaptureSink:
             def emit(self, event):
                 captured.append(event)
 
-        # BudgetGuard doesn't auto-consume on check(), so this tests
-        # that TimeoutGuard-style guards work via the auto-check mechanism
         tracer = Tracer(sink=CaptureSink(), service="test")
         with tracer.trace("agent.run") as span:
             span.event("step1")

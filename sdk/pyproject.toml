@@ -26,7 +26,6 @@ keywords = [
   "langchain",
   "openai",
   "runtime-safety",
-  "replay",
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -92,8 +91,6 @@ ignore = [
 "tests/**" = ["T20", "B011", "B017"]
 "agentguard/cli.py" = ["T201"]
 "agentguard/tracing.py" = ["T201"]
-"agentguard/viewer.py" = ["T201"]
-"agentguard/bench.py" = ["T201"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["agentguard"]

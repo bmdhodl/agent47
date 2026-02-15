@@ -53,7 +53,7 @@ Any class with mutable instance state that may be shared across threads
 must have a `_lock = threading.Lock()` attribute and use it for all mutations.
 
 Known thread-safe classes: LoopGuard, FuzzyLoopGuard, BudgetGuard,
-RateLimitGuard, JsonlFileSink, HttpSink, CostTracker.
+RateLimitGuard, JsonlFileSink, HttpSink.
 
 - **Enforced by:** `test_thread_safe_classes_have_lock`
 - **Why:** SDK users run agents concurrently. Data races are silent and deadly.

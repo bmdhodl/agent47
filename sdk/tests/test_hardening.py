@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import threading
 import types
 from typing import Any, Dict, List
@@ -19,7 +20,7 @@ from agentguard.guards import (
     TimeoutExceeded,
 )
 from agentguard.sinks.http import _validate_api_key, _validate_url
-from agentguard.tracing import _sanitize_data
+from agentguard.tracing import _MAX_NAME_LENGTH, _sanitize_data, _truncate_name, Tracer
 
 
 # --- AgentGuardError base exception ---
@@ -250,3 +251,95 @@ class TestInitValidation:
         agentguard.shutdown()
         tracer = agentguard.init(budget_usd=5.0, warn_pct=1.0, auto_patch=False)
         assert tracer is not None
+
+
+# --- IDN/SSRF protection (from v1.1.0) ---
+
+
+class TestIdnSsrfProtection:
+    def test_ascii_hostname_allowed(self):
+        _validate_url("https://example.com/api/ingest")
+
+    def test_ip_address_allowed(self):
+        _validate_url("https://93.184.216.34/api/ingest")
+
+    def test_private_ip_blocked(self):
+        with pytest.raises(ValueError, match="private"):
+            _validate_url("https://127.0.0.1/api/ingest")
+
+    def test_allow_private_flag(self):
+        _validate_url("https://127.0.0.1/api/ingest", allow_private=True)
+
+    def test_non_ascii_hostname_rejected(self):
+        with pytest.raises(ValueError, match="non-ASCII"):
+            _validate_url("https://\u2139ocalhost/api/ingest")
+
+    def test_punycode_direct_allowed(self):
+        _validate_url("https://xn--nxasmq6b.example.com/api", allow_private=True)
+
+    def test_invalid_scheme_rejected(self):
+        with pytest.raises(ValueError):
+            _validate_url("ftp://example.com/api")
+
+    def test_missing_hostname_rejected(self):
+        with pytest.raises(ValueError):
+            _validate_url("https:///api")
+
+
+# --- Name length limits (from v1.1.0) ---
+
+
+class TestNameLengthLimits:
+    def test_short_name_passes_through(self):
+        result = _truncate_name("tool.search")
+        assert result == "tool.search"
+
+    def test_exact_limit_passes_through(self):
+        name = "x" * _MAX_NAME_LENGTH
+        result = _truncate_name(name)
+        assert result == name
+
+    def test_long_name_truncated(self):
+        name = "x" * (_MAX_NAME_LENGTH + 500)
+        result = _truncate_name(name)
+        assert len(result) == _MAX_NAME_LENGTH
+
+    def test_truncation_logs_warning(self, caplog):
+        name = "y" * (_MAX_NAME_LENGTH + 100)
+        with caplog.at_level(logging.WARNING, logger="agentguard.tracing"):
+            _truncate_name(name)
+        assert any("truncated" in r.message.lower() for r in caplog.records)
+
+    def test_tracer_truncates_service_name(self):
+        long_service = "svc" * 500
+        tracer = Tracer(service=long_service)
+        assert len(tracer._service) == _MAX_NAME_LENGTH
+
+    def test_span_name_truncated(self):
+        collected = []
+
+        class CollectorSink:
+            def emit(self, event):
+                collected.append(event)
+
+        tracer = Tracer(sink=CollectorSink())
+        long_name = "span." + "a" * _MAX_NAME_LENGTH
+        with tracer.trace(long_name):
+            pass
+        for event in collected:
+            assert len(event["name"]) <= _MAX_NAME_LENGTH
+
+    def test_event_name_truncated(self):
+        collected = []
+
+        class CollectorSink:
+            def emit(self, event):
+                collected.append(event)
+
+        tracer = Tracer(sink=CollectorSink())
+        long_event_name = "event." + "b" * _MAX_NAME_LENGTH
+        with tracer.trace("test") as ctx:
+            ctx.event(long_event_name)
+        event_names = [e["name"] for e in collected if e["kind"] == "event"]
+        for name in event_names:
+            assert len(name) <= _MAX_NAME_LENGTH
