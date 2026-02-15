@@ -32,15 +32,8 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertTrue(issubclass(TimeoutExceeded, RuntimeError))
 
     def test_cost(self):
-        from agentguard import CostTracker, estimate_cost, update_prices
-        self.assertIsNotNone(CostTracker)
+        from agentguard import estimate_cost
         self.assertIsNotNone(estimate_cost)
-        self.assertIsNotNone(update_prices)
-
-    def test_recording(self):
-        from agentguard import Recorder, Replayer
-        self.assertIsNotNone(Recorder)
-        self.assertIsNotNone(Replayer)
 
     def test_http_sink(self):
         from agentguard import HttpSink
@@ -77,8 +70,8 @@ class TestTopLevelExports(unittest.TestCase):
             "BaseGuard", "LoopGuard", "BudgetGuard", "TimeoutGuard",
             "FuzzyLoopGuard", "RateLimitGuard",
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
-            "CostTracker", "estimate_cost", "update_prices", "UnknownModelWarning",
-            "Recorder", "Replayer", "HttpSink",
+            "estimate_cost",
+            "HttpSink",
             "EvalSuite", "EvalResult", "AssertionResult", "summarize_trace",
             "trace_agent", "trace_tool",
             "patch_openai", "patch_anthropic",

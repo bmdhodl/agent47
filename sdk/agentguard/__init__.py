@@ -2,7 +2,7 @@ import logging
 from importlib.metadata import PackageNotFoundError, version
 
 from .atracing import AsyncTraceContext, AsyncTracer
-from .cost import CostTracker, UnknownModelWarning, estimate_cost, update_prices
+from .cost import estimate_cost
 from .evaluation import AssertionResult, EvalResult, EvalSuite, summarize_trace
 from .guards import (
     AgentGuardError,
@@ -31,7 +31,6 @@ from .instrument import (
     unpatch_openai,
     unpatch_openai_async,
 )
-from .recording import Recorder, Replayer
 from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
@@ -54,7 +53,6 @@ __all__ = [
     "BudgetExceeded",
     "BudgetGuard",
     "BudgetWarning",
-    "CostTracker",
     "EvalResult",
     "EvalSuite",
     "FuzzyLoopGuard",
@@ -63,14 +61,11 @@ __all__ = [
     "LoopDetected",
     "LoopGuard",
     "RateLimitGuard",
-    "Recorder",
-    "Replayer",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",
     "TraceSink",
     "Tracer",
-    "UnknownModelWarning",
     "__version__",
     "async_trace_agent",
     "async_trace_tool",
@@ -90,5 +85,4 @@ __all__ = [
     "unpatch_anthropic_async",
     "unpatch_openai",
     "unpatch_openai_async",
-    "update_prices",
 ]

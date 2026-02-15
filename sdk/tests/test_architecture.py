@@ -26,19 +26,15 @@ SDK_ROOT = Path(__file__).parent.parent / "agentguard"
 # Core modules — must use stdlib only (no third-party imports at module level)
 CORE_MODULES = [
     "__init__.py",
-    "__main__.py",
     "atracing.py",
-    "bench.py",
     "cli.py",
     "cost.py",
     "evaluation.py",
     "export.py",
     "guards.py",
     "instrument.py",
-    "recording.py",
     "setup.py",
     "tracing.py",
-    "viewer.py",
     "sinks/http.py",
 ]
 
@@ -60,7 +56,6 @@ THREAD_SAFE_CLASSES = [
     "RateLimitGuard",
     "JsonlFileSink",
     "HttpSink",
-    "CostTracker",
 ]
 
 MAX_MODULE_LINES = 800

@@ -11,7 +11,8 @@ from urllib.error import HTTPError
 
 from agentguard import Tracer, JsonlFileSink
 from agentguard.sinks.http import HttpSink
-from agentguard.export import load_trace, export_json, export_csv, export_jsonl
+from agentguard.evaluation import _load_events
+from agentguard.export import export_json, export_csv, export_jsonl
 
 
 class TestTracerMetadata(unittest.TestCase):
@@ -306,33 +307,13 @@ class TestExportJsonl(unittest.TestCase):
         os.unlink(out)
 
 
-class TestLoadTrace(unittest.TestCase):
-    def test_load_trace(self):
-        fd, path = tempfile.mkstemp(suffix=".jsonl")
-        with os.fdopen(fd, "w") as f:
-            f.write('{"name":"a"}\n{"name":"b"}\n')
-        events = load_trace(path)
-        self.assertEqual(len(events), 2)
-        os.unlink(path)
-
-
 class TestCliEvalCi(unittest.TestCase):
     def test_eval_ci_flag_exists(self):
         """Verify the --ci flag is accepted by the eval subcommand."""
-        from agentguard.cli import main
-        import argparse
-        # Just verify argparse doesn't reject --ci
         from agentguard.cli import _eval
-        # _eval accepts ci param
         import inspect
         sig = inspect.signature(_eval)
         self.assertIn("ci", sig.parameters)
-
-
-class TestBenchRunnable(unittest.TestCase):
-    def test_bench_imports(self):
-        from agentguard.bench import main
-        self.assertIsNotNone(main)
 
 
 if __name__ == "__main__":

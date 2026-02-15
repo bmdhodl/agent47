@@ -3,30 +3,22 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-from agentguard.evaluation import _extract_cost
+from agentguard.evaluation import _extract_cost, _load_events
 
 
 def _summarize(path: str) -> None:
-    total = 0
-    name_counts = Counter()
-    kind_counts = Counter()
+    events = _load_events(path)
+    total = len(events)
+    name_counts: Counter = Counter()
+    kind_counts: Counter = Counter()
 
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                event: Dict[str, Any] = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            total += 1
-            name = event.get("name", "(unknown)")
-            kind = event.get("kind", "(unknown)")
-            name_counts[name] += 1
-            kind_counts[kind] += 1
+    for event in events:
+        name = event.get("name", "(unknown)")
+        kind = event.get("kind", "(unknown)")
+        name_counts[name] += 1
+        kind_counts[kind] += 1
 
     print(f"events: {total}")
     print("kinds:")
@@ -38,16 +30,7 @@ def _summarize(path: str) -> None:
 
 
 def _report(path: str, as_json: bool = False) -> None:
-    events: List[Dict[str, Any]] = []
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                events.append(json.loads(line))
-            except json.JSONDecodeError:
-                continue
+    events = _load_events(path)
 
     if not events:
         if as_json:
@@ -139,11 +122,6 @@ def main() -> None:  # pragma: no cover
     report.add_argument("--json", "-j", action="store_true", dest="json_output",
                         help="Output machine-readable JSON (for CI pipelines)")
 
-    view = sub.add_parser("view", help="Open a local trace viewer in the browser")
-    view.add_argument("path")
-    view.add_argument("--port", type=int, default=8080)
-    view.add_argument("--no-open", action="store_true")
-
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
     eval_cmd.add_argument("path")
     eval_cmd.add_argument("--ci", action="store_true", help="CI mode: also assert no budget warnings")
@@ -153,10 +131,6 @@ def main() -> None:  # pragma: no cover
         _summarize(args.path)
     elif args.cmd == "report":
         _report(args.path, as_json=args.json_output)
-    elif args.cmd == "view":
-        from agentguard.viewer import serve
-
-        serve(args.path, port=args.port, open_browser=not args.no_open)
     elif args.cmd == "eval":
         _eval(args.path, ci=args.ci)
     else:
