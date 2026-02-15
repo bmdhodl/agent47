@@ -20,18 +20,28 @@ https://github.com/users/bmdhodl/projects/4
 gh issue list --repo bmdhodl/agent47 --label component:infra --state open --limit 50
 ```
 
-## Current Focus: Cost Guardrail Content
+## Current Focus: Strategic Execution Plan — Phase 1
 
-Content gates in the 8-gate plan:
+Content deliverables in the 3-phase plan:
 
-| Gate | Content Milestone |
-|------|-------------------|
-| Gate 4 | 30-second GIF demo: BudgetGuard kills an agent mid-run |
-| Gate 6 | Dashboard demo video: budget monitoring + kill switch UI |
-| Gate 7 | README rewrite + cost guardrail docs + landing page update |
-| Gate 8 | Paid pilot outreach to 10 teams |
+### Phase 1 (current) — Launch content
 
-Relevant issues: SDK #138-#140 (Gate 7), #142 (Gate 8).
+| Ticket | Deliverable | Priority |
+|--------|-------------|----------|
+| T02 | README rewrite: cost guardrail as hero (#139) | Critical |
+| T07 | 30-second demo GIF: BudgetGuard kills agent | Critical |
+| T08 | Show HN post draft + launch prep | Critical |
+
+### Phase 2 — Growth content
+
+| Ticket | Deliverable | Priority |
+|--------|-------------|----------|
+| T15 | SEO blog posts (3 targeting cost keywords) | High |
+| T18 | LangChain community engagement plan | High |
+| T19 | GitHub Discussions + issue templates + CONTRIBUTING | Medium |
+| T20 | SDK examples expansion (3 real-world) | Medium |
+
+**Critical path:** T02 (README) → T07 (GIF) → T08 (Show HN) → **LAUNCH**
 
 ## Positioning
 
