@@ -1,4 +1,4 @@
 """Allow running `python -m agentguard` as the CLI."""
-from agentguard.cli import main
+from agentguard.cli import main  # pragma: no cover
 
-main()
+main()  # pragma: no cover

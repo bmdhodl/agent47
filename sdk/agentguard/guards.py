@@ -266,7 +266,7 @@ class BudgetGuard(BaseGuard):
         Must be called while holding self._lock.
         """
         pct = self._warn_at_pct
-        if pct is None:
+        if pct is None:  # pragma: no cover — defensive; caller checks first
             return
         triggered = False
         parts = []

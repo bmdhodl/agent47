@@ -12,7 +12,7 @@ import time
 from typing import Any, Dict
 
 
-def _bench(name: str, fn, iterations: int = 10000) -> float:
+def _bench(name: str, fn, iterations: int = 10000) -> float:  # pragma: no cover
     """Run fn() for iterations and return avg time in microseconds."""
     start = time.perf_counter()
     for _ in range(iterations):
@@ -23,13 +23,13 @@ def _bench(name: str, fn, iterations: int = 10000) -> float:
     return avg_us
 
 
-class _NullSink:
+class _NullSink:  # pragma: no cover
     """Sink that discards events (for measuring tracer overhead only)."""
     def emit(self, event: Dict[str, Any]) -> None:
         pass
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     from agentguard.guards import BudgetGuard, LoopGuard
     from agentguard.tracing import JsonlFileSink, Tracer
 
@@ -96,5 +96,5 @@ def main() -> None:
     print("Done.")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
