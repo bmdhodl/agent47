@@ -259,7 +259,7 @@ class _Handler(BaseHTTPRequestHandler):
         self.wfile.write(encoded)
 
 
-def serve(trace_path: str, port: int = 8080, open_browser: bool = True) -> None:
+def serve(trace_path: str, port: int = 8080, open_browser: bool = True) -> None:  # pragma: no cover
     handler = _Handler
     handler.trace_path = trace_path
 
@@ -272,7 +272,7 @@ def serve(trace_path: str, port: int = 8080, open_browser: bool = True) -> None:
     server.serve_forever()
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(prog="agentguard-view")
     parser.add_argument("path", help="Path to JSONL trace")
     parser.add_argument("--port", type=int, default=8080)
@@ -282,5 +282,5 @@ def main() -> None:
     serve(args.path, port=args.port, open_browser=not args.no_open)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

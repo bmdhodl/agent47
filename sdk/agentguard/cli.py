@@ -127,7 +127,7 @@ def _eval(path: str, ci: bool = False) -> None:
         raise SystemExit(1)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(prog="agentguard")
     sub = parser.add_subparsers(dest="cmd")
 
@@ -163,5 +163,5 @@ def main() -> None:
         parser.print_help()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

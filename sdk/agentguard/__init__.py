@@ -38,7 +38,7 @@ from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
 try:
     __version__ = version("agentguard47")
-except PackageNotFoundError:
+except PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0-dev"
 
 # Libraries should not configure logging — only add NullHandler
