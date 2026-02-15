@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
@@ -79,9 +79,8 @@ class JsonlFileSink(TraceSink):
     def emit(self, event: Dict[str, Any]) -> None:
         """Append an event as a JSON line to the file."""
         line = json.dumps(event, sort_keys=True)
-        with self._lock:
-            with open(self._path, "a", encoding="utf-8") as f:
-                f.write(line + "\n")
+        with self._lock, open(self._path, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
 
     def __repr__(self) -> str:
         return f"JsonlFileSink({self._path!r})"

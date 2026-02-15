@@ -394,7 +394,7 @@ def _extract_cost(event: Dict[str, Any]) -> Optional[float]:
 
 def _load_events(path: str) -> List[Dict[str, Any]]:
     events: List[Dict[str, Any]] = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:

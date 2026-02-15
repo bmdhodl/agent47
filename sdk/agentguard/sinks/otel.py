@@ -32,7 +32,7 @@ from typing import Any, Dict, Optional
 from agentguard.tracing import TraceSink
 
 try:
-    from opentelemetry.trace import StatusCode, SpanKind  # noqa: F401
+    from opentelemetry.trace import SpanKind, StatusCode
 
     _HAS_OTEL = True
 except ImportError:
