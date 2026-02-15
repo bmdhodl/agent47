@@ -30,8 +30,8 @@ class _NullSink:
 
 
 def main() -> None:
-    from agentguard.tracing import Tracer, JsonlFileSink
-    from agentguard.guards import LoopGuard, BudgetGuard
+    from agentguard.guards import BudgetGuard, LoopGuard
+    from agentguard.tracing import JsonlFileSink, Tracer
 
     print("AgentGuard SDK Benchmark")
     print("=" * 50)
@@ -76,8 +76,8 @@ def main() -> None:
 
     # 5. JsonlFileSink
     print("\nJsonlFileSink (write):")
-    import tempfile
     import os
+    import tempfile
     fd, path = tempfile.mkstemp(suffix=".jsonl")
     os.close(fd)
     sink = JsonlFileSink(path)

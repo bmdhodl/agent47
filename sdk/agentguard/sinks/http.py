@@ -65,15 +65,15 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
         return
 
     # IDN/Punycode normalization: reject non-ASCII hostnames that could bypass
-    # string-based checks (e.g. Unicode lookalikes like "ⅼocalhost")
+    # string-based checks (e.g. Unicode lookalikes like "localhost")
     hostname = parsed.hostname
     try:
         ascii_hostname = hostname.encode("idna").decode("ascii")
-    except (UnicodeError, UnicodeDecodeError):
+    except (UnicodeError, UnicodeDecodeError) as err:
         raise ValueError(
             f"URL hostname {hostname!r} contains invalid characters "
             f"(failed IDNA encoding)"
-        )
+        ) from err
     if ascii_hostname.lower() != hostname.lower():
         raise ValueError(
             f"URL hostname {hostname!r} contains non-ASCII characters "
@@ -97,7 +97,7 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
                     raise ValueError(
                         f"URL resolves to private/reserved IP {addr} "
                         f"({network}). Use a public endpoint."
-                    )
+                    ) from None
         return
 
     # Direct IP address in URL

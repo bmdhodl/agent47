@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from typing import Any, AsyncIterator, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, AsyncIterator, Dict, List, Optional
 
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 import time
 import uuid
 
-from agentguard.tracing import TraceSink, StdoutSink
+from agentguard.tracing import StdoutSink, TraceSink
 
 
 @dataclass

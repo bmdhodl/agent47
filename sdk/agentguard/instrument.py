@@ -131,7 +131,7 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
             fed into ``guard.consume()`` automatically.
     """
     try:
-        import openai  # noqa: F811
+        import openai
     except ImportError:
         return
 
@@ -243,7 +243,7 @@ def patch_anthropic(tracer: Any, budget_guard: Any = None) -> None:
             fed into ``guard.consume()`` automatically.
     """
     try:
-        import anthropic  # noqa: F811
+        import anthropic
     except ImportError:
         return
 
@@ -398,7 +398,7 @@ def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
             fed into ``guard.consume()`` automatically.
     """
     try:
-        import openai  # noqa: F811
+        import openai
     except ImportError:
         return
 
@@ -478,7 +478,7 @@ def patch_anthropic_async(tracer: Any, budget_guard: Any = None) -> None:
             fed into ``guard.consume()`` automatically.
     """
     try:
-        import anthropic  # noqa: F811
+        import anthropic
     except ImportError:
         return
 

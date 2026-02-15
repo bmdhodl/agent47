@@ -8,7 +8,6 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import Optional
 
-
 _HTML = """<!doctype html>
 <html lang="en">
   <head>
@@ -234,7 +233,7 @@ _HTML = """<!doctype html>
 class _Handler(BaseHTTPRequestHandler):
     trace_path: Optional[str] = None
 
-    def do_GET(self) -> None:  # noqa: N802
+    def do_GET(self) -> None:
         if self.path == "/":
             self._send(200, _HTML, content_type="text/html")
             return
@@ -242,13 +241,13 @@ class _Handler(BaseHTTPRequestHandler):
             if not self.trace_path or not os.path.exists(self.trace_path):
                 self._send(404, "trace not found")
                 return
-            with open(self.trace_path, "r", encoding="utf-8") as f:
+            with open(self.trace_path, encoding="utf-8") as f:
                 data = f.read()
             self._send(200, data, content_type="text/plain")
             return
         self._send(404, "not found")
 
-    def log_message(self, format: str, *args) -> None:  # noqa: A003
+    def log_message(self, format: str, *args) -> None:
         return
 
     def _send(self, status: int, body: str, content_type: str = "text/plain") -> None:
