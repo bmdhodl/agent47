@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard47"
-version = "1.2.0"
+version = "1.2.1"
 description = "Zero-dependency observability and runtime guards for AI agents — loop detection, budget enforcement, cost tracking, and structured tracing"
 readme = "README.md"
 requires-python = ">=3.9"

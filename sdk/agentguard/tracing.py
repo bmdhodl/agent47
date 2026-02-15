@@ -181,6 +181,10 @@ class TraceContext:
                 "type": getattr(exc_type, "__name__", "Exception"),
                 "message": str(exc),
             }
+        # Include accumulated cost from CostTracker if any
+        cost_usd = None
+        if self._cost_tracker is not None and self._cost_tracker.total > 0:
+            cost_usd = self._cost_tracker.total
         if self._sampled:
             self.tracer._emit(
                 kind="span",
@@ -192,6 +196,7 @@ class TraceContext:
                 data=self.data,
                 duration_ms=duration_ms,
                 error=error,
+                cost_usd=cost_usd,
             )
         # Do not suppress exceptions
         return False
