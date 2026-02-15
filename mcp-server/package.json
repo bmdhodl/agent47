@@ -1,6 +1,6 @@
 {
   "name": "@agentguard47/mcp-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server for AgentGuard — query traces, alerts, usage, and costs from AI coding agents",
   "license": "MIT",
   "type": "module",
