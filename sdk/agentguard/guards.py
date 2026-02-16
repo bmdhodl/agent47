@@ -148,6 +148,16 @@ class LoopGuard(BaseGuard):
         """Auto-check: delegates to check(event_name, event_data)."""
         self.check(event_name, event_data)
 
+    @property
+    def max_repeats(self) -> int:
+        """Maximum identical calls before triggering detection."""
+        return self._max_repeats
+
+    @property
+    def window(self) -> int:
+        """Size of the sliding history window."""
+        return self._window
+
     def reset(self) -> None:
         """Clear the call history."""
         with self._lock:
@@ -210,6 +220,21 @@ class BudgetGuard(BaseGuard):
         self._warned = False
         self._lock = threading.Lock()
         self.state = BudgetState()
+
+    @property
+    def max_tokens(self) -> Optional[int]:
+        """Maximum total tokens allowed, or None if unlimited."""
+        return self._max_tokens
+
+    @property
+    def max_calls(self) -> Optional[int]:
+        """Maximum total calls allowed, or None if unlimited."""
+        return self._max_calls
+
+    @property
+    def max_cost_usd(self) -> Optional[float]:
+        """Maximum total cost in USD, or None if unlimited."""
+        return self._max_cost_usd
 
     def consume(self, tokens: int = 0, calls: int = 0, cost_usd: float = 0.0) -> None:
         """Record resource consumption and check limits.
