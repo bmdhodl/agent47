@@ -21,6 +21,7 @@ def _summarize(path: str) -> None:
     print("names:")
     for name, count in name_counts.most_common(10):
         print(f"  {name}: {count}")
+    print("\nTraced by AgentGuard | agentguard47.com")
 
 
 def _report(path: str, as_json: bool = False) -> None:
@@ -84,6 +85,7 @@ def _report(path: str, as_json: bool = False) -> None:
         print(f"  Loop guard triggered: {loop_hits} time(s)")
     else:
         print("  Loop guard triggered: 0")
+    print("\nTraced by AgentGuard | agentguard47.com")
 
 
 def _eval(path: str, ci: bool = False) -> None:
