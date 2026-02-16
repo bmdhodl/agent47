@@ -43,3 +43,27 @@ body:
       description: Who benefits and why?
     validations:
       required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How will we know this is done? Be specific.
+      placeholder: |
+        - [ ] Guard raises exception when budget exceeds $5
+        - [ ] Works with LangChain AgentGuardCallbackHandler
+        - [ ] Test coverage for new code
+    validations:
+      required: true
+
+  - type: dropdown
+    id: roadmap
+    attributes:
+      label: Roadmap alignment
+      description: Does this relate to an existing ops/03-ROADMAP item?
+      options:
+        - "Yes — existing Now/Next item"
+        - "Yes — existing Later item"
+        - "No — new idea"
+    validations:
+      required: true
