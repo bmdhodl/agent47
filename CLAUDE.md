@@ -11,6 +11,20 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 - **Package:** `agentguard47` on PyPI (v1.2.1)
 - **Landing page:** site/index.html (Vercel)
 
+## Agent Contract (MANDATORY)
+
+**Every Claude session in this repo MUST follow these rules. No exceptions.**
+
+1. **Read ops/ docs first.** Before starting any task, read `ops/00-NORTHSTAR.md`, `ops/03-ROADMAP_NOW_NEXT_LATER.md`, and `ops/04-DEFINITION_OF_DONE.md`.
+2. **Stop on conflict.** If your task conflicts with NORTHSTAR or ROADMAP, stop and propose a correction — do not proceed.
+3. **Restate before coding.** Before writing any code, explicitly restate:
+   - **(a) Goal** — what are we achieving?
+   - **(b) Scope** — what files/modules are touched?
+   - **(c) Non-goals** — what are we NOT doing?
+   - **(d) Done criteria** — how do we know it's done? (reference `ops/04-DEFINITION_OF_DONE.md`)
+4. **Structured output.** Every task must include: **plan → diff summary → tests → docs updates needed**.
+5. **Check staleness.** Run `git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md` and `git log -1 --format='%cr' -- ops/02-ARCHITECTURE.md`. If ROADMAP is >5 days old or ARCHITECTURE is >14 days old, warn the user before starting any task.
+
 ## Commands
 
 All common commands are available via `make`:
