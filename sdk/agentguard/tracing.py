@@ -277,6 +277,7 @@ class Tracer:
         guards: Optional[List[Any]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         sampling_rate: float = 1.0,
+        watermark: bool = True,
     ) -> None:
         if not (0.0 <= sampling_rate <= 1.0):
             raise ValueError(
@@ -287,6 +288,8 @@ class Tracer:
         self._guards = guards or []
         self._metadata = metadata or {}
         self._sampling_rate = sampling_rate
+        self._watermark = watermark
+        self._watermark_emitted = False
 
     def __enter__(self) -> "Tracer":
         return self
@@ -361,6 +364,18 @@ class Tracer:
             event["cost_usd"] = cost_usd
         if self._metadata:
             event["metadata"] = self._metadata
+        if self._watermark and not self._watermark_emitted:
+            self._watermark_emitted = True
+            wm: Dict[str, Any] = {
+                "service": self._service,
+                "kind": "meta",
+                "name": "watermark",
+                "message": "Traced by AgentGuard | agentguard47.com",
+                "ts": time.time(),
+            }
+            if self._metadata:
+                wm["metadata"] = self._metadata
+            self._sink.emit(wm)
         self._sink.emit(event)
 
         # Auto-check guards
@@ -383,7 +398,7 @@ class Tracer:
                         pass
 
     def __repr__(self) -> str:
-        return f"Tracer(service={self._service!r}, sink={self._sink!r})"
+        return f"Tracer(service={self._service!r}, sink={self._sink!r}, watermark={self._watermark!r})"
 
 
 def _new_id() -> str:
