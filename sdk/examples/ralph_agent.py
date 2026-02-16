@@ -15,7 +15,6 @@ AgentGuard provides the safety rails:
   - LoopGuard / FuzzyLoopGuard: catch stuck iterations
   - BudgetGuard: enforce dollar cap across all iterations
   - Cost tracking: per-call estimates
-  - Gantt viewer: visualize the full run
 
 Run:
     cd sdk
@@ -23,7 +22,6 @@ Run:
 
     # Then inspect:
     agentguard report examples/ralph_traces.jsonl
-    agentguard view examples/ralph_traces.jsonl
 """
 from __future__ import annotations
 
@@ -42,7 +40,6 @@ from agentguard import (
     BudgetExceeded,
     BudgetWarning,
     LoopDetected,
-    Recorder,
     EvalSuite,
     estimate_cost,
 )
@@ -52,7 +49,6 @@ from agentguard import (
 # ---------------------------------------------------------------------------
 HERE = os.path.dirname(os.path.abspath(__file__))
 TRACE_FILE = os.path.join(HERE, "ralph_traces.jsonl")
-REPLAY_FILE = os.path.join(HERE, "ralph_replay.jsonl")
 PROGRESS_FILE = os.path.join(HERE, "ralph_progress.txt")
 MAX_ITERATIONS = 8
 BUDGET_USD = 0.50  # dollar cap for the entire run
@@ -177,7 +173,7 @@ def write_progress(iteration: int, summary: str) -> None:
 # ---------------------------------------------------------------------------
 def ralph_loop() -> None:
     # Clean slate
-    for f in [TRACE_FILE, REPLAY_FILE, PROGRESS_FILE]:
+    for f in [TRACE_FILE, PROGRESS_FILE]:
         if os.path.exists(f):
             os.remove(f)
 
@@ -186,7 +182,7 @@ def ralph_loop() -> None:
 
     def on_budget_warning(msg: str) -> None:
         budget_warnings.append(msg)
-        print(f"  ⚠ BUDGET WARNING: {msg}")
+        print(f"  WARNING: {msg}")
 
     tracer = Tracer(
         sink=JsonlFileSink(TRACE_FILE),
@@ -203,7 +199,6 @@ def ralph_loop() -> None:
         on_warning=on_budget_warning,
     )
     loop_guard = LoopGuard(max_repeats=3, window=6)
-    recorder = Recorder(REPLAY_FILE)
     llm = SimulatedLLM()
 
     print(f"Ralph Loop Agent")
@@ -273,7 +268,6 @@ def ralph_loop() -> None:
                         "cost_usd": cost,
                         "tokens": response["input_tokens"] + response["output_tokens"],
                     })
-                    recorder.record_call("llm.chat", {"prompt": prompt[:100]}, response)
 
                 print(f"  LLM: {response['reasoning']}")
                 print(f"  Cost: ${cost:.4f} (budget used: ${budget.state.cost_used:.4f}/${BUDGET_USD})")
@@ -282,7 +276,6 @@ def ralph_loop() -> None:
                 with span.span("ralph.verify") as verify_span:
                     test_result = run_tests(response["code"])
                     verify_span.event("test.result", data=test_result)
-                    recorder.record_call("verify", {"code": response["code"][:100]}, test_result)
 
                 passed = test_result["passed"]
                 n_pass = sum(1 for r in test_result["results"] if r.get("pass"))
@@ -353,7 +346,6 @@ def ralph_loop() -> None:
 
     print(f"\n  View traces:")
     print(f"    agentguard report examples/ralph_traces.jsonl")
-    print(f"    agentguard view examples/ralph_traces.jsonl")
 
 
 if __name__ == "__main__":

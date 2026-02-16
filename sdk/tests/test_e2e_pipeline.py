@@ -2,7 +2,7 @@
 
 Exercises every SDK feature in a single pipeline, then verifies the output
 at every layer: local JSONL file, remote ingest server, EvalSuite, CLI,
-export, replay.
+export.
 """
 from __future__ import annotations
 
@@ -26,13 +26,12 @@ from agentguard import (
     RateLimitGuard,
     LoopDetected,
     BudgetExceeded,
-    Recorder,
-    Replayer,
     EvalSuite,
     estimate_cost,
 )
 from agentguard.sinks.http import HttpSink
-from agentguard.export import load_trace, export_json, export_csv, export_jsonl
+from agentguard.evaluation import _load_events
+from agentguard.export import export_json, export_csv, export_jsonl
 
 from conftest import IngestHandler
 
@@ -61,7 +60,6 @@ class TestE2EPipeline:
     def test_full_pipeline(self, ingest_url, tmp_path):
         """Run the complete SDK pipeline and verify at every layer."""
         trace_path = str(tmp_path / "e2e_traces.jsonl")
-        replay_path = str(tmp_path / "e2e_replay.jsonl")
 
         # --- Setup sinks ---
         file_sink = JsonlFileSink(trace_path)
@@ -96,7 +94,6 @@ class TestE2EPipeline:
             metadata={"env": "test", "version": "1.0.0"},
             sampling_rate=1.0,
         )
-        recorder = Recorder(replay_path)
 
         # --- Run agent simulation ---
         timeout_guard.start()
@@ -110,7 +107,6 @@ class TestE2EPipeline:
             # Step 2: Tool calls with child spans
             with root.span("tool.search") as tool_span:
                 tool_span.event("tool.result", data={"result": "fibonacci definition"})
-                recorder.record_call("search", {"q": "fibonacci"}, {"result": "fibonacci definition"})
 
             with root.span("tool.search") as tool_span:
                 tool_span.event("tool.result", data={"result": "fib algorithm"})
@@ -166,7 +162,7 @@ class TestE2EPipeline:
         # =====================================================================
         # Phase D: Assertions on local JSONL
         # =====================================================================
-        events = load_trace(trace_path)
+        events = _load_events(trace_path)
 
         # D1: Enough events
         assert len(events) >= 15, f"Expected >=15 events, got {len(events)}"
@@ -249,16 +245,7 @@ class TestE2EPipeline:
         assert eval_result.passed, f"EvalSuite failed:\n{eval_result.summary}"
 
         # =====================================================================
-        # Phase G: Recorder/Replayer
-        # =====================================================================
-        replayer = Replayer(replay_path)
-        replayed = replayer.replay_call("search", {"q": "fibonacci"})
-        assert replayed["result"] == "fibonacci definition"
-        with pytest.raises(KeyError):
-            replayer.replay_call("search", {"q": "nonexistent"})
-
-        # =====================================================================
-        # Phase H: CLI commands
+        # Phase G: CLI commands
         # =====================================================================
         from agentguard.cli import _report, _summarize
 
@@ -284,7 +271,7 @@ class TestE2EPipeline:
         assert "events:" in summarize_out
 
         # =====================================================================
-        # Phase I: Export
+        # Phase H: Export
         # =====================================================================
         json_path = str(tmp_path / "export.json")
         csv_path = str(tmp_path / "export.csv")
@@ -303,7 +290,7 @@ class TestE2EPipeline:
         assert count_jsonl >= 15
 
         # =====================================================================
-        # Phase J: CostTracker
+        # Phase I: CostTracker
         # =====================================================================
         assert root_cost_tracker.total > 0
         cost_dict = root_cost_tracker.to_dict()
@@ -375,7 +362,7 @@ class TestConcurrentTraces:
         for t in threads:
             t.join()
 
-        events = load_trace(path)
+        events = _load_events(path)
         # 5 threads x (1 span start + 10 events + 1 span end) = 60
         assert len(events) == 60
         for e in events:
