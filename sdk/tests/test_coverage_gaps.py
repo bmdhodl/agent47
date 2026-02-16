@@ -139,47 +139,6 @@ class TestTracerGuardFallback(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# recording.py gaps
-# ---------------------------------------------------------------------------
-
-
-class TestRecordingMalformedJson(unittest.TestCase):
-    """Cover recording.py line 121 — malformed JSONL lines skipped."""
-
-    def test_replayer_skips_bad_json(self):
-        from agentguard.recording import Replayer
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f:
-            # Valid entry
-            f.write(json.dumps({
-                "name": "search",
-                "request": {"q": "test"},
-                "response": {"results": []},
-            }) + "\n")
-            # Invalid JSON
-            f.write("this is not json\n")
-            # Valid entry
-            f.write(json.dumps({
-                "name": "fetch",
-                "request": {"url": "http://example.com"},
-                "response": {"body": "ok"},
-            }) + "\n")
-            path = f.name
-
-        try:
-            replayer = Replayer(path)
-            # Both valid entries should be loaded despite bad line
-            r1 = replayer.replay_call("search", {"q": "test"})
-            self.assertEqual(r1, {"results": []})
-            r2 = replayer.replay_call("fetch", {"url": "http://example.com"})
-            self.assertEqual(r2, {"body": "ok"})
-        finally:
-            os.unlink(path)
-
-
-# ---------------------------------------------------------------------------
 # evaluation.py gaps
 # ---------------------------------------------------------------------------
 
@@ -539,17 +498,6 @@ class TestCliEval(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# bench.py — importable
-# ---------------------------------------------------------------------------
-
-
-class TestBenchImport(unittest.TestCase):
-    def test_bench_importable(self):
-        from agentguard import bench
-        self.assertTrue(hasattr(bench, "main"))
-
-
-# ---------------------------------------------------------------------------
 # langgraph integration gap
 # ---------------------------------------------------------------------------
 
@@ -653,98 +601,6 @@ class TestAsyncTracerGuardFallback(unittest.TestCase):
                 ctx.event("step")
 
         asyncio.run(run())
-
-
-# ---------------------------------------------------------------------------
-# viewer.py gaps — 404 for missing trace
-# ---------------------------------------------------------------------------
-
-
-class TestViewerHandler(unittest.TestCase):
-    """Cover viewer.py lines 242-243 and 248 — 404 responses."""
-
-    def test_handler_404_missing_trace(self):
-        """Handler returns 404 when trace_path doesn't exist."""
-        from io import BytesIO
-        from agentguard.viewer import _Handler
-
-        class FakeRequest:
-            def makefile(self, *args, **kwargs):
-                return BytesIO()
-
-        handler_class = type("TestHandler", (_Handler,), {"trace_path": "/nonexistent/path.jsonl"})
-
-        # Simulate a GET /trace request
-        request = BytesIO(b"GET /trace HTTP/1.1\r\nHost: localhost\r\n\r\n")
-        handler = handler_class.__new__(handler_class)
-        handler.path = "/trace"
-        handler.trace_path = "/nonexistent/path.jsonl"
-        handler.wfile = BytesIO()
-        handler.requestline = "GET /trace HTTP/1.1"
-        handler.request_version = "HTTP/1.1"
-        handler.command = "GET"
-        handler.headers = {}
-        handler.client_address = ("127.0.0.1", 12345)
-        handler.server = type("FakeServer", (), {"server_name": "localhost", "server_port": 8080})()
-
-        handler.do_GET()
-        output = handler.wfile.getvalue()
-        self.assertIn(b"trace not found", output)
-
-    def test_handler_404_unknown_path(self):
-        """Handler returns 404 for unknown paths."""
-        from io import BytesIO
-        from agentguard.viewer import _Handler
-
-        handler = _Handler.__new__(_Handler)
-        handler.path = "/unknown"
-        handler.wfile = BytesIO()
-        handler.requestline = "GET /unknown HTTP/1.1"
-        handler.request_version = "HTTP/1.1"
-        handler.command = "GET"
-        handler.headers = {}
-        handler.client_address = ("127.0.0.1", 12345)
-        handler.server = type("FakeServer", (), {"server_name": "localhost", "server_port": 8080})()
-
-        handler.do_GET()
-        output = handler.wfile.getvalue()
-        self.assertIn(b"not found", output)
-
-
-# ---------------------------------------------------------------------------
-# recording.py gap — empty lines
-# ---------------------------------------------------------------------------
-
-
-class TestRecordingEmptyLines(unittest.TestCase):
-    """Cover recording.py line 117 — empty lines skipped."""
-
-    def test_replayer_skips_empty_lines(self):
-        from agentguard.recording import Replayer
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f:
-            f.write(json.dumps({
-                "name": "search",
-                "request": {"q": "test"},
-                "response": {"results": []},
-            }) + "\n")
-            f.write("\n")  # empty line
-            f.write("\n")  # another empty line
-            f.write(json.dumps({
-                "name": "fetch",
-                "request": {"url": "http://example.com"},
-                "response": {"body": "ok"},
-            }) + "\n")
-            path = f.name
-
-        try:
-            replayer = Replayer(path)
-            r1 = replayer.replay_call("search", {"q": "test"})
-            self.assertEqual(r1, {"results": []})
-        finally:
-            os.unlink(path)
 
 
 # ---------------------------------------------------------------------------

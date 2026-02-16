@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
-from typing import List, Optional
+from typing import Optional
 
 from agentguard.evaluation import _extract_cost, _load_events
 
@@ -11,14 +11,8 @@ from agentguard.evaluation import _extract_cost, _load_events
 def _summarize(path: str) -> None:
     events = _load_events(path)
     total = len(events)
-    name_counts: Counter = Counter()
-    kind_counts: Counter = Counter()
-
-    for event in events:
-        name = event.get("name", "(unknown)")
-        kind = event.get("kind", "(unknown)")
-        name_counts[name] += 1
-        kind_counts[kind] += 1
+    name_counts = Counter(e.get("name", "(unknown)") for e in events)
+    kind_counts = Counter(e.get("kind", "(unknown)") for e in events)
 
     print(f"events: {total}")
     print("kinds:")
@@ -44,14 +38,13 @@ def _report(path: str, as_json: bool = False) -> None:
     names = Counter(e.get("name", "(unknown)") for e in events)
     loop_hits = names.get("guard.loop_detected", 0)
 
-    span_durations: List[float] = []
+    span_durations: list[float] = []
     total_cost: float = 0.0
     for e in events:
         if e.get("kind") == "span" and e.get("phase") == "end":
             dur = e.get("duration_ms")
             if isinstance(dur, (int, float)):
                 span_durations.append(float(dur))
-        # Cost: prefer top-level, fall back to data (never sum both)
         cost = _extract_cost(e)
         if cost is not None:
             total_cost += cost
