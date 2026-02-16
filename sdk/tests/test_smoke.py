@@ -82,7 +82,11 @@ def smoke_test() -> bool:
                 events = [json.loads(line) for line in f if line.strip()]
             assert len(events) >= 6, f"got {len(events)}"
             assert all(e.get("service") == "smoke-test" for e in events)
-            assert all("metadata" in e for e in events)
+            trace_events = [e for e in events if e.get("kind") != "meta"]
+            assert all("metadata" in e for e in trace_events)
+            # Verify watermark event exists
+            watermarks = [e for e in events if e.get("name") == "watermark"]
+            assert len(watermarks) == 1, f"expected 1 watermark, got {len(watermarks)}"
             print(f"[PASS] 4/9   {len(events)} events in JSONL, all valid")
         except Exception as e:
             errors.append(f"JSONL verify: {e}")

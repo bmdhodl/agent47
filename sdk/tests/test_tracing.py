@@ -62,7 +62,7 @@ class TestEmitCostUsd(unittest.TestCase):
             def emit(self, event):
                 captured.append(event)
 
-        tracer = Tracer(sink=CaptureSink())
+        tracer = Tracer(sink=CaptureSink(), watermark=False)
         tracer._emit(
             kind="event", phase="emit", trace_id="t1", span_id="s1",
             parent_id=None, name="llm.result", cost_usd=0.005,
@@ -79,7 +79,7 @@ class TestEmitCostUsd(unittest.TestCase):
             def emit(self, event):
                 captured.append(event)
 
-        tracer = Tracer(sink=CaptureSink())
+        tracer = Tracer(sink=CaptureSink(), watermark=False)
         tracer._emit(
             kind="event", phase="emit", trace_id="t1", span_id="s1",
             parent_id=None, name="llm.result",
@@ -95,7 +95,7 @@ class TestEmitCostUsd(unittest.TestCase):
             def emit(self, event):
                 captured.append(event)
 
-        tracer = Tracer(sink=CaptureSink())
+        tracer = Tracer(sink=CaptureSink(), watermark=False)
         tracer._emit(
             kind="event", phase="emit", trace_id="t1", span_id="s1",
             parent_id=None, name="llm.result", cost_usd=0.0,

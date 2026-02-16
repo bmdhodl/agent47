@@ -58,14 +58,14 @@ class TestSinkRepr(unittest.TestCase):
 class TestTracerRepr(unittest.TestCase):
     def test_tracer_repr_default(self):
         tracer = Tracer()
-        self.assertEqual(repr(tracer), "Tracer(service='app', sink=StdoutSink())")
+        self.assertEqual(repr(tracer), "Tracer(service='app', sink=StdoutSink(), watermark=True)")
 
     def test_tracer_repr_custom(self):
         sink = JsonlFileSink("test.jsonl")
         tracer = Tracer(sink=sink, service="my-agent")
         self.assertEqual(
             repr(tracer),
-            "Tracer(service='my-agent', sink=JsonlFileSink('test.jsonl'))",
+            "Tracer(service='my-agent', sink=JsonlFileSink('test.jsonl'), watermark=True)",
         )
 
 
@@ -342,6 +342,72 @@ class TestSummarizeTrace(unittest.TestCase):
             self.assertGreater(result["total_events"], 0)
         finally:
             os.unlink(path)
+
+
+# ---------------------------------------------------------------------------
+# Watermark
+# ---------------------------------------------------------------------------
+
+
+class TestWatermark(unittest.TestCase):
+    def setUp(self):
+        self.fd, self.path = tempfile.mkstemp(suffix=".jsonl")
+        os.close(self.fd)
+
+    def tearDown(self):
+        os.unlink(self.path)
+
+    def _read_events(self):
+        with open(self.path) as f:
+            return [json.loads(line) for line in f if line.strip()]
+
+    def test_watermark_emitted_by_default(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+        with tracer.trace("agent.run") as ctx:
+            ctx.event("step")
+        events = self._read_events()
+        watermarks = [e for e in events if e.get("name") == "watermark"]
+        self.assertEqual(len(watermarks), 1)
+        self.assertEqual(watermarks[0]["kind"], "meta")
+        self.assertIn("agentguard47.com", watermarks[0]["message"])
+
+    def test_watermark_disabled(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test", watermark=False)
+        with tracer.trace("agent.run") as ctx:
+            ctx.event("step")
+        events = self._read_events()
+        watermarks = [e for e in events if e.get("name") == "watermark"]
+        self.assertEqual(len(watermarks), 0)
+
+    def test_watermark_emitted_only_once(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+        with tracer.trace("run1") as ctx:
+            ctx.event("step")
+        with tracer.trace("run2") as ctx:
+            ctx.event("step")
+        events = self._read_events()
+        watermarks = [e for e in events if e.get("name") == "watermark"]
+        self.assertEqual(len(watermarks), 1)
+
+    def test_watermark_includes_metadata(self):
+        tracer = Tracer(
+            sink=JsonlFileSink(self.path),
+            service="test",
+            metadata={"env": "ci"},
+        )
+        with tracer.trace("agent.run") as ctx:
+            ctx.event("step")
+        events = self._read_events()
+        watermarks = [e for e in events if e.get("name") == "watermark"]
+        self.assertEqual(len(watermarks), 1)
+        self.assertEqual(watermarks[0]["metadata"], {"env": "ci"})
+
+    def test_watermark_is_first_event(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+        with tracer.trace("agent.run") as ctx:
+            ctx.event("step")
+        events = self._read_events()
+        self.assertEqual(events[0]["name"], "watermark")
 
 
 if __name__ == "__main__":
