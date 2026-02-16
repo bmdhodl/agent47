@@ -85,7 +85,7 @@ async def agentguard_middleware(request: Request, call_next):
             ctx.event("guard.budget_exceeded", data={"error": str(e)})
             return JSONResponse(
                 status_code=429,
-                content={"error": "Budget exceeded", "detail": str(e)},
+                content={"error": "Budget exceeded"},
             )
 
         elapsed_ms = (time.perf_counter() - start) * 1000

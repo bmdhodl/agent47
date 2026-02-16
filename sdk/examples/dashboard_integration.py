@@ -127,7 +127,7 @@ if __name__ == "__main__":
     print("=== AgentGuard Dashboard Integration ===\n")
 
     if api_key:
-        print(f"  API key: {api_key[:8]}...")
+        print("  API key: configured")
         print("  Using init() → HttpSink → Dashboard\n")
         run_with_init()
         print("  Events sent to dashboard!")
