@@ -16,6 +16,9 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 pip install agentguard47
 ```
 
+<!-- Replace with recorded GIF: vhs examples/demo.tape -->
+![AgentGuard BudgetGuard Demo](examples/demo.gif)
+
 ## Quickstart: Stop Runaway Costs in 4 Lines
 
 ```python
