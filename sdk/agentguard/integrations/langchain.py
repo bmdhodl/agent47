@@ -143,9 +143,9 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
                 except BudgetExceeded as e:
                     ctx.event("guard.budget_exceeded", data={
                         "tokens_used": self._budget_guard.state.tokens_used,
-                        "tokens_limit": self._budget_guard._max_tokens,
+                        "tokens_limit": self._budget_guard.max_tokens,
                         "calls_used": self._budget_guard.state.calls_used,
-                        "calls_limit": self._budget_guard._max_calls,
+                        "calls_limit": self._budget_guard.max_calls,
                         "error": str(e),
                     })
                     ctx.event("llm.end", data=payload)
@@ -187,7 +187,7 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
                 if ctx:
                     ctx.event("guard.loop_detected", data={
                         "tool_name": tool_name,
-                        "repeat_count": self._loop_guard._max_repeats,
+                        "repeat_count": self._loop_guard.max_repeats,
                         "error": str(e),
                     })
                 raise
@@ -199,9 +199,9 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
                 if ctx:
                     ctx.event("guard.budget_exceeded", data={
                         "tokens_used": self._budget_guard.state.tokens_used,
-                        "tokens_limit": self._budget_guard._max_tokens,
+                        "tokens_limit": self._budget_guard.max_tokens,
                         "calls_used": self._budget_guard.state.calls_used,
-                        "calls_limit": self._budget_guard._max_calls,
+                        "calls_limit": self._budget_guard.max_calls,
                         "error": str(e),
                     })
                 raise

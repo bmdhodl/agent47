@@ -164,11 +164,14 @@ class TestE2EPipeline:
         # =====================================================================
         events = _load_events(trace_path)
 
+        # Filter out watermark meta event
+        trace_events = [e for e in events if e.get("kind") != "meta"]
+
         # D1: Enough events
-        assert len(events) >= 15, f"Expected >=15 events, got {len(events)}"
+        assert len(trace_events) >= 15, f"Expected >=15 events, got {len(trace_events)}"
 
         # D2: Required fields
-        for e in events:
+        for e in trace_events:
             assert e.get("service") == "e2e-test"
             assert e.get("kind") in ("span", "event")
             assert e.get("phase") in ("start", "end", "emit")
@@ -178,7 +181,7 @@ class TestE2EPipeline:
             assert isinstance(e.get("ts"), (int, float))
 
         # D3: Metadata on every event
-        for e in events:
+        for e in trace_events:
             assert e.get("metadata", {}).get("env") == "test"
             assert e.get("metadata", {}).get("version") == "1.0.0"
 
@@ -204,7 +207,7 @@ class TestE2EPipeline:
         assert len(tool_events) >= 3
 
         # D8: Single trace_id
-        trace_ids = set(e["trace_id"] for e in events)
+        trace_ids = set(e["trace_id"] for e in trace_events)
         assert len(trace_ids) == 1
 
         # D9: Budget warning fired
@@ -214,10 +217,11 @@ class TestE2EPipeline:
         # Phase E: Assertions on ingest server
         # =====================================================================
         server_events = IngestHandler.events
-        assert len(server_events) >= 15, f"Server got {len(server_events)} events"
+        server_trace_events = [e for e in server_events if e.get("kind") != "meta"]
+        assert len(server_trace_events) >= 15, f"Server got {len(server_trace_events)} trace events"
 
         # E1: All valid (server accepted them)
-        for e in server_events:
+        for e in server_trace_events:
             assert e["kind"] in ("span", "event")
 
         # E2: Idempotency keys unique
@@ -226,7 +230,7 @@ class TestE2EPipeline:
         assert len(keys) == len(set(keys))
 
         # E3: Metadata in server events
-        for e in server_events:
+        for e in server_trace_events:
             assert e.get("metadata", {}).get("env") == "test"
 
         # =====================================================================
@@ -363,7 +367,8 @@ class TestConcurrentTraces:
             t.join()
 
         events = _load_events(path)
-        # 5 threads x (1 span start + 10 events + 1 span end) = 60
-        assert len(events) == 60
-        for e in events:
+        # 1 watermark + 5 threads x (1 span start + 10 events + 1 span end) = 61
+        trace_events = [e for e in events if e.get("kind") != "meta"]
+        assert len(trace_events) == 60
+        for e in trace_events:
             assert e.get("service") == "concurrent-test"

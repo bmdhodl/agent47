@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://github.com/bmdhodl/agent47#readme
+    about: Check the README and examples before opening an issue.
+  - name: PyPI Package
+    url: https://pypi.org/project/agentguard47/
+    about: Install the latest version from PyPI.

@@ -49,6 +49,7 @@ def init(
     warn_pct: float = 0.8,
     loop_max: int = 5,
     auto_patch: bool = True,
+    watermark: bool = True,
 ) -> Any:
     """Initialize AgentGuard with one call.
 
@@ -64,6 +65,7 @@ def init(
         warn_pct: Budget warning threshold (0.0-1.0). Default: 0.8.
         loop_max: Max identical calls before LoopGuard fires. Default: 5.
         auto_patch: Auto-patch OpenAI/Anthropic clients. Default: True.
+        watermark: Emit "Traced by AgentGuard" in trace output. Default: True.
 
     Returns:
         The configured Tracer instance.
@@ -135,7 +137,7 @@ def init(
     # --- Build tracer ---
     from agentguard.tracing import Tracer
 
-    _tracer = Tracer(sink=sink, service=resolved_service, guards=guards)
+    _tracer = Tracer(sink=sink, service=resolved_service, guards=guards, watermark=watermark)
 
     # --- Auto-patch LLM clients ---
     if auto_patch:

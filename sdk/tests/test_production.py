@@ -115,8 +115,9 @@ class TestTracerSamplingRate(unittest.TestCase):
         for t in threads:
             t.join()
 
-        # 10 traces x 3 events each (start, event, end) = 30
-        self.assertEqual(len(captured), 30)
+        # 1 watermark + 10 traces x 3 events each (start, event, end) = 31
+        trace_events = [e for e in captured if e.get("kind") != "meta"]
+        self.assertEqual(len(trace_events), 30)
 
     def test_sampling_nested_traces_isolated(self):
         """Nested traces should each get their own sampling decision."""
@@ -143,8 +144,9 @@ class TestTracerSamplingRate(unittest.TestCase):
             with tracer2.trace("inner") as inner:
                 inner.event("inner.step")
 
-        # outer: start + event + end = 3, inner: start + event + end = 3 = 6
-        self.assertEqual(len(captured), 6)
+        # 1 watermark + outer: start + event + end = 3, inner: start + event + end = 3 = 7
+        trace_events = [e for e in captured if e.get("kind") != "meta"]
+        self.assertEqual(len(trace_events), 6)
 
 
 class _GzipCollectorHandler(BaseHTTPRequestHandler):
