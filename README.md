@@ -247,13 +247,13 @@ tracer = Tracer(
 )
 ```
 
-| | Free | Pro ($39/mo) |
-|---|---|---|
-| SDK + local guards | Unlimited | Unlimited |
-| Dashboard traces | - | 100K/mo |
-| Budget alerts (email/webhook) | - | Yes |
-| Remote kill switch | - | Yes |
-| Team members | - | 1 |
+| | Free | Pro ($39/mo) | Team ($79/mo) |
+|---|---|---|---|
+| SDK + local guards | Unlimited | Unlimited | Unlimited |
+| Dashboard traces | - | 100K/mo | 500K/mo |
+| Budget alerts (email/webhook) | - | Yes | Yes |
+| Remote kill switch | - | Yes | Yes |
+| Team members | - | 1 | 10 |
 
 [Start free](https://app.agentguard47.com) | [View pricing](https://agentguard47.com/#pricing)
 
