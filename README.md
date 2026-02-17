@@ -8,7 +8,7 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)](https://github.com/bmdhodl/agent47)
+[![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -247,13 +247,13 @@ tracer = Tracer(
 )
 ```
 
-| | Free | Pro ($39/mo) | Team ($79/mo) |
-|---|---|---|---|
-| SDK + local guards | Unlimited | Unlimited | Unlimited |
-| Dashboard traces | - | 100K/mo | 500K/mo |
-| Budget alerts (email/webhook) | - | Yes | Yes |
-| Remote kill switch | - | Yes | Yes |
-| Team members | - | 1 | 10 |
+| | Free | Pro ($39/mo) |
+|---|---|---|
+| SDK + local guards | Unlimited | Unlimited |
+| Dashboard traces | - | 100K/mo |
+| Budget alerts (email/webhook) | - | Yes |
+| Remote kill switch | - | Yes |
+| Team members | - | 1 |
 
 [Start free](https://app.agentguard47.com) | [View pricing](https://agentguard47.com/#pricing)
 
