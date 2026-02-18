@@ -19,6 +19,16 @@ pip install agentguard47
 <!-- Replace with recorded GIF: vhs examples/demo.tape -->
 ![AgentGuard BudgetGuard Demo](examples/demo.gif)
 
+## Try it in 60 seconds
+
+No API keys. No config. Just run it:
+
+```bash
+pip install agentguard47 && python examples/try_it_now.py
+```
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
+
 ## Quickstart: Stop Runaway Costs in 4 Lines
 
 ```python
