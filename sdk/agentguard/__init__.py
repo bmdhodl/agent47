@@ -66,14 +66,14 @@ def _show_first_run_prompt() -> None:
         if marker.exists():
             return
         marker_dir.mkdir(parents=True, exist_ok=True)
-        print(
+        print(  # noqa: T201
             f"agentguard47 v{__version__} \u2014 runtime guards for AI agents\n"
             f"Docs: https://github.com/bmdhodl/agent47\n"
             f"\u2b50 Star us if this helps: https://github.com/bmdhodl/agent47",
             file=sys.stderr,
         )
         marker.write_text("shown\n")
-    except Exception:  # noqa: BLE001
+    except Exception:
         pass  # Never crash on first-run prompt failure
 
 
