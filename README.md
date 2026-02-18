@@ -158,20 +158,17 @@ patch_anthropic(tracer)   # auto-tracks all Messages calls
 Built-in pricing for OpenAI, Anthropic, Google, Mistral, and Meta models. Updated monthly.
 
 ```python
-from agentguard import estimate_cost, CostTracker, update_prices
+from agentguard import estimate_cost
 
 # Single call estimate
 cost = estimate_cost("gpt-4o", input_tokens=1000, output_tokens=500)
 # → $0.00625
 
-# Track across a trace
+# Track across a trace — cost is auto-accumulated per span
 with tracer.trace("agent.run") as span:
     span.cost.add("gpt-4o", input_tokens=1200, output_tokens=450)
     span.cost.add("claude-sonnet-4-5-20250929", input_tokens=800, output_tokens=300)
     # cost_usd included in trace end event
-
-# Add custom model pricing (input $/1M, output $/1M)
-update_prices({("openai", "gpt-5"): (0.05, 0.15)})
 ```
 
 ## Tracing
