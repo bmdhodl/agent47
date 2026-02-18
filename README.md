@@ -8,7 +8,7 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)](https://github.com/bmdhodl/agent47)
+[![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
