@@ -11,6 +11,8 @@ from unittest.mock import MagicMock
 from agentguard import (
     AsyncTracer,
     AsyncTraceContext,
+    BudgetExceeded,
+    BudgetGuard,
     JsonlFileSink,
     LoopGuard,
     LoopDetected,
@@ -123,6 +125,174 @@ class TestAsyncTracer(unittest.TestCase):
                 self.assertGreater(span.cost.total, 0)
 
         asyncio.run(run())
+
+
+    def test_guards_auto_check_uses_auto_check_method(self):
+        """Verify AsyncTracer calls auto_check() (not just check()) for guards that have it."""
+        auto_check_calls = []
+
+        class MockGuard:
+            def auto_check(self, name, data=None):
+                auto_check_calls.append((name, data))
+
+            def check(self, name, data=None):
+                raise AssertionError("check() should not be called when auto_check() exists")
+
+        async def run():
+            guard = MockGuard()
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                guards=[guard],
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("tool.search", data={"q": "test"})
+
+        asyncio.run(run())
+        self.assertEqual(len(auto_check_calls), 1)
+        self.assertEqual(auto_check_calls[0][0], "tool.search")
+
+    def test_budget_guard_fires_via_consume(self):
+        """Verify BudgetGuard raises BudgetExceeded when used with AsyncTracer context."""
+        async def run():
+            guard = BudgetGuard(max_calls=2)
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+            )
+            async with tracer.trace("agent.run") as span:
+                guard.consume(calls=1)
+                span.event("tool.call1")
+                guard.consume(calls=1)
+                span.event("tool.call2")
+                with self.assertRaises(BudgetExceeded):
+                    guard.consume(calls=1)
+
+        asyncio.run(run())
+
+    def test_sampling_rate_zero_emits_nothing(self):
+        """With sampling_rate=0.0, no events should be emitted to the sink."""
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                sampling_rate=0.0,
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("reasoning.step", data={"step": 1})
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        self.assertEqual(len(events), 0)
+
+    def test_sampling_rate_one_emits_all(self):
+        """With sampling_rate=1.0, all events should be emitted."""
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                sampling_rate=1.0,
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("reasoning.step")
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        # watermark + span start + event + span end = 4
+        self.assertGreaterEqual(len(events), 3)
+
+    def test_sampling_rate_invalid_raises(self):
+        """sampling_rate outside 0.0-1.0 should raise ValueError."""
+        with self.assertRaises(ValueError):
+            AsyncTracer(sampling_rate=1.5)
+        with self.assertRaises(ValueError):
+            AsyncTracer(sampling_rate=-0.1)
+
+    def test_guards_fire_when_sampled_out(self):
+        """Guards must still fire even when trace is sampled out."""
+        async def run():
+            guard = LoopGuard(max_repeats=3)
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                guards=[guard],
+                sampling_rate=0.0,
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("tool.search", data={"q": "a"})
+                span.event("tool.search", data={"q": "a"})
+                with self.assertRaises(LoopDetected):
+                    span.event("tool.search", data={"q": "a"})
+
+        asyncio.run(run())
+
+        # No events emitted to sink (sampled out)
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        self.assertEqual(len(events), 0)
+
+    def test_metadata_attached_to_events(self):
+        """metadata dict should appear on every emitted event."""
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                metadata={"env": "test", "git_sha": "abc123"},
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("step")
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        # All non-watermark events should have metadata
+        for event in events:
+            self.assertIn("metadata", event)
+            self.assertEqual(event["metadata"]["env"], "test")
+            self.assertEqual(event["metadata"]["git_sha"], "abc123")
+
+    def test_watermark_emitted_once(self):
+        """Watermark event should be emitted exactly once."""
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                watermark=True,
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("step1")
+                span.event("step2")
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        watermarks = [e for e in events if e.get("name") == "watermark"]
+        self.assertEqual(len(watermarks), 1)
+        self.assertIn("AgentGuard", watermarks[0]["message"])
+
+    def test_watermark_disabled(self):
+        """watermark=False should suppress the watermark event."""
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                watermark=False,
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("step")
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        watermarks = [e for e in events if e.get("name") == "watermark"]
+        self.assertEqual(len(watermarks), 0)
 
 
 class TestAsyncTracerRepr(unittest.TestCase):

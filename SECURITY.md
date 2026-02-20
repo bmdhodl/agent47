@@ -4,9 +4,9 @@
 
 | Version | Supported          |
 |---------|--------------------|
-| 1.1.x   | Yes                |
-| 1.0.x   | Security fixes only |
-| < 1.0   | No                 |
+| 1.2.x   | Yes                |
+| 1.1.x   | Security fixes only |
+| < 1.1   | No                 |
 
 ## Reporting a Vulnerability
 
@@ -27,6 +27,7 @@ Include:
 - **Triage:** Within 7 days
 - **Fix:** Target 30 days for critical, 90 days for others
 - **Disclosure:** Coordinated with reporter, following 90-day standard
+- **Credit:** Reporters are credited in release notes and this file unless they prefer to remain anonymous
 
 ## Scope
 
