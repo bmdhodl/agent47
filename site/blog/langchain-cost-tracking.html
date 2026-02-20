@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LangChain Cost Tracking: Complete Guide | AgentGuard</title>
+    <meta name="description" content="Track and control LangChain agent costs with automatic token counting, budget enforcement, and per-run cost reports. Works with LangGraph too." />
+    <meta name="keywords" content="langchain cost tracking, langchain budget, langchain token usage, langgraph cost tracking, langchain agent cost" />
+    <meta name="author" content="AgentGuard Team" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://agentguard47.com/blog/langchain-cost-tracking.html" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentguard47.com/blog/langchain-cost-tracking.html" />
+    <meta property="og:title" content="LangChain Cost Tracking: Complete Guide" />
+    <meta property="og:description" content="Track and control LangChain agent costs with automatic token counting, budget enforcement, and per-run cost reports. Works with LangGraph too." />
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+    <meta property="og:site_name" content="AgentGuard" />
+    <meta property="article:published_time" content="2026-02-20T00:00:00Z" />
+    <meta property="article:author" content="AgentGuard Team" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="LangChain Cost Tracking: Complete Guide" />
+    <meta name="twitter:description" content="Track and control LangChain agent costs with automatic token counting, budget enforcement, and per-run cost reports." />
+    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "LangChain Cost Tracking: Complete Guide",
+      "description": "Track and control LangChain agent costs with automatic token counting, budget enforcement, and per-run cost reports. Works with LangGraph too.",
+      "url": "https://agentguard47.com/blog/langchain-cost-tracking.html",
+      "datePublished": "2026-02-20T00:00:00Z",
+      "dateModified": "2026-02-20T00:00:00Z",
+      "author": {
+        "@type": "Organization",
+        "name": "AgentGuard Team",
+        "url": "https://agentguard47.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AgentGuard",
+        "url": "https://agentguard47.com"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://agentguard47.com/blog/langchain-cost-tracking.html"
+      },
+      "keywords": ["langchain cost tracking", "langchain budget", "langchain token usage"]
+    }
+    </script>
+
+    <script defer src="/_vercel/insights/script.js"></script>
+    <style>
+      :root {
+        --bg: #f7f4ee;
+        --ink: #1e1b16;
+        --accent: #1b6c4a;
+        --muted: #6c645a;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+        color: var(--ink);
+      }
+      .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 60px; }
+      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
+      .nav { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 14px; flex-wrap: wrap; }
+      .nav a { color: var(--accent); text-decoration: none; }
+      .nav a:hover { text-decoration: underline; }
+      .nav .sep { color: var(--muted); }
+      .muted { color: var(--muted); }
+      .meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+      h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px; }
+      h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; line-height: 1.3; }
+      h3 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
+      @media (min-width: 640px) { h1 { font-size: 38px; } h2 { font-size: 26px; } h3 { font-size: 20px; } }
+      p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; }
+      @media (min-width: 640px) { p { font-size: 18px; } }
+      ul, ol { font-size: 16px; line-height: 1.7; padding-left: 24px; margin: 0 0 16px; }
+      @media (min-width: 640px) { ul, ol { font-size: 18px; } }
+      li { margin-bottom: 8px; }
+      strong { color: var(--ink); }
+      a { color: var(--accent); }
+      a:hover { text-decoration: underline; }
+      code {
+        background: #e8e2d6; padding: 2px 6px; border-radius: 4px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 0.88em;
+      }
+
+      /* Code blocks */
+      .code {
+        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
+        line-height: 1.7; overflow-x: auto; white-space: pre; margin: 16px 0 24px;
+      }
+      @media (min-width: 640px) { .code { padding: 20px 24px; font-size: 14px; } }
+      .code .kw { color: #c084fc; }
+      .code .fn { color: #60a5fa; }
+      .code .str { color: #4ade80; }
+      .code .comment { color: #6b7280; }
+
+      /* Callout box */
+      .callout {
+        background: var(--card); border-left: 4px solid var(--accent);
+        padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0;
+      }
+      .callout p { margin: 0; font-size: 15px; }
+      @media (min-width: 640px) { .callout p { font-size: 16px; } }
+
+      /* Step cards */
+      .step-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 24px 0; }
+      @media (min-width: 640px) { .step-grid { grid-template-columns: repeat(2, 1fr); } }
+      .step-card {
+        background: var(--card); padding: 20px; border-radius: 12px;
+        border: 1px solid #e8e2d6;
+      }
+      .step-card strong { display: block; margin-bottom: 8px; font-size: 16px; }
+      .step-card p { font-size: 14px; margin: 0; }
+
+      /* CTA section */
+      .cta-section {
+        background: var(--card); border: 1px solid #e8e2d6; border-radius: 12px;
+        padding: 24px; margin: 40px 0; text-align: center;
+      }
+      .cta-section h2 { margin-top: 0; }
+      .btn {
+        display: inline-block;
+        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
+        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
+        font-size: 15px; text-align: center;
+      }
+      .btn:hover { opacity: 0.9; text-decoration: none; }
+      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .btn.secondary:hover { background: var(--accent); color: #fff; }
+      .cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+
+      footer { margin-top: 48px; font-size: 14px; color: var(--muted); text-align: center; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
+      .footer-links a { color: var(--accent); text-decoration: none; }
+      .footer-links a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/">AgentGuard</a>
+        <span class="sep">/</span>
+        <a href="/blog/">Blog</a>
+        <span class="sep">/</span>
+        <span>LangChain Cost Tracking</span>
+      </nav>
+
+      <article>
+        <h1>LangChain Cost Tracking: Complete Guide</h1>
+        <div class="meta">By AgentGuard Team &middot; February 20, 2026 &middot; 8 min read</div>
+
+        <p>LangChain is the most popular framework for building AI agents. But it has a blind spot: <strong>there is no built-in way to track or enforce cost limits</strong>. You can build a ReAct agent in 10 lines of code, but you have no idea what it will cost until the bill arrives.</p>
+
+        <p>This guide covers everything you need to add cost tracking and budget enforcement to LangChain and LangGraph agents using AgentGuard. From basic token counting to CI cost gates, you will have full visibility and control over agent spend.</p>
+
+        <h2>Why LangChain Cost Tracking Matters</h2>
+
+        <p>LangChain agents are autonomous. They decide how many LLM calls to make, which tools to invoke, and when to stop. This is powerful for building useful agents, but it means costs are inherently unpredictable:</p>
+
+        <ul>
+          <li><strong>ReAct agents</strong> loop until they decide they have an answer. A simple question might take 2 steps or 20.</li>
+          <li><strong>Tool-using agents</strong> generate tool calls that return data, which gets appended to context. Each step is more expensive than the last.</li>
+          <li><strong>Multi-agent systems</strong> compound the problem. Agent A calls Agent B, which calls Agent C. One user request triggers dozens of LLM calls across multiple agents.</li>
+        </ul>
+
+        <p>Without cost tracking, you are flying blind. Without budget enforcement, you have no safety net.</p>
+
+        <h2>Step 1: Install AgentGuard with LangChain Support</h2>
+
+<pre class="code">pip install agentguard47[langchain]</pre>
+
+        <p>This installs the core SDK (zero dependencies) plus the optional <code>langchain-core</code> integration. If you are using LangGraph, that is included automatically since LangGraph depends on <code>langchain-core</code>.</p>
+
+        <h2>Step 2: Set Up the Callback Handler</h2>
+
+        <p>AgentGuard integrates with LangChain through its callback system. The <code>AgentGuardCallbackHandler</code> hooks into every LLM call, chain run, and tool invocation to automatically track costs and check guards.</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, LoopGuard
+<span class="kw">from</span> agentguard.integrations.langchain <span class="kw">import</span> AgentGuardCallbackHandler
+
+<span class="comment"># Set up guards</span>
+budget = <span class="fn">BudgetGuard</span>(
+    max_cost_usd=<span class="str">5.00</span>,
+    warn_at_pct=<span class="str">0.8</span>,
+    on_warning=<span class="kw">lambda</span> msg: <span class="fn">print</span>(<span class="str">f"Budget warning: {msg}"</span>),
+)
+loops = <span class="fn">LoopGuard</span>(max_repeats=<span class="str">3</span>, window=<span class="str">6</span>)
+
+<span class="comment"># Create tracer with JSONL output</span>
+tracer = <span class="fn">Tracer</span>(service=<span class="str">"langchain-agent"</span>)
+
+<span class="comment"># Create the callback handler</span>
+handler = <span class="fn">AgentGuardCallbackHandler</span>(
+    tracer=tracer,
+    budget_guard=budget,
+    loop_guard=loops,
+)
+
+<span class="comment"># Use with any LangChain agent or chain</span>
+result = agent.<span class="fn">invoke</span>(
+    {<span class="str">"input"</span>: <span class="str">"Research the latest AI papers"</span>},
+    config={<span class="str">"callbacks"</span>: [handler]},
+)</pre>
+
+        <p>That is it. Every LLM call the agent makes now flows through AgentGuard. Token usage is extracted automatically from the LLM response metadata. If the agent exceeds $5 or loops 3 times, it gets a <code>BudgetExceeded</code> or <code>LoopDetected</code> exception.</p>
+
+        <h2>Step 3: Auto-Extract Token Usage</h2>
+
+        <p>The callback handler automatically extracts token counts from LangChain's LLM response objects. This works with any LLM provider that LangChain supports -- OpenAI, Anthropic, Google, Cohere, and others.</p>
+
+        <div class="step-grid">
+          <div class="step-card">
+            <strong>What gets tracked</strong>
+            <p class="muted">Prompt tokens, completion tokens, total tokens, model name, and estimated cost in USD for every LLM call.</p>
+          </div>
+          <div class="step-card">
+            <strong>How cost is calculated</strong>
+            <p class="muted">AgentGuard's built-in <code>estimate_cost()</code> uses per-model pricing tables for GPT-4, GPT-4o, Claude, Gemini, and more. Updated regularly.</p>
+          </div>
+          <div class="step-card">
+            <strong>What gets guarded</strong>
+            <p class="muted">BudgetGuard checks cumulative cost after each call. LoopGuard checks for repeated tool invocations. Both raise exceptions on violation.</p>
+          </div>
+          <div class="step-card">
+            <strong>What gets traced</strong>
+            <p class="muted">Every chain start/end, LLM call, and tool invocation is emitted as a structured JSONL event with timing, cost, and span hierarchy.</p>
+          </div>
+        </div>
+
+        <h2>Step 4: LangGraph with guarded_node</h2>
+
+        <p>If you are using LangGraph, AgentGuard provides a <code>guarded_node</code> decorator that wraps individual graph nodes with tracing and guard checks. This gives you per-node cost tracking across your entire graph.</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, LoopGuard
+<span class="kw">from</span> agentguard.integrations.langgraph <span class="kw">import</span> guarded_node
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph
+
+budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">10.00</span>)
+loops = <span class="fn">LoopGuard</span>(max_repeats=<span class="str">3</span>)
+tracer = <span class="fn">Tracer</span>(service=<span class="str">"langgraph-agent"</span>)
+
+<span class="comment"># Decorate each node — tracing + guards applied automatically</span>
+@<span class="fn">guarded_node</span>(tracer=tracer, budget_guard=budget, loop_guard=loops)
+<span class="kw">def</span> <span class="fn">research_node</span>(state):
+    <span class="comment"># Your node logic here</span>
+    result = llm.<span class="fn">invoke</span>(state[<span class="str">"query"</span>])
+    <span class="kw">return</span> {<span class="str">"research"</span>: result.content}
+
+@<span class="fn">guarded_node</span>(tracer=tracer, budget_guard=budget, loop_guard=loops)
+<span class="kw">def</span> <span class="fn">summarize_node</span>(state):
+    result = llm.<span class="fn">invoke</span>(<span class="str">f"Summarize: {state['research']}"</span>)
+    <span class="kw">return</span> {<span class="str">"summary"</span>: result.content}
+
+<span class="comment"># Build graph normally</span>
+graph = <span class="fn">StateGraph</span>(dict)
+graph.<span class="fn">add_node</span>(<span class="str">"research"</span>, research_node)
+graph.<span class="fn">add_node</span>(<span class="str">"summarize"</span>, summarize_node)
+graph.<span class="fn">add_edge</span>(<span class="str">"research"</span>, <span class="str">"summarize"</span>)
+graph.<span class="fn">set_entry_point</span>(<span class="str">"research"</span>)
+app = graph.<span class="fn">compile</span>()</pre>
+
+        <p>Each node execution is traced as a separate span. The BudgetGuard tracks cumulative cost across all nodes, so a $10 limit applies to the entire graph run, not per node. If one node exhausts the budget, subsequent nodes are never reached.</p>
+
+        <div class="callout">
+          <p><strong>Tip:</strong> For existing graphs where you cannot use decorators, use the <code>guard_node</code> function instead: <code>graph.add_node("research", guard_node(research_fn, tracer=tracer, budget_guard=budget))</code></p>
+        </div>
+
+        <h2>Step 5: View Cost Reports</h2>
+
+        <p>AgentGuard writes structured JSONL trace files by default. Use the CLI to generate human-readable cost reports from these traces:</p>
+
+<pre class="code"><span class="comment"># Generate a cost report from trace data</span>
+agentguard report traces.jsonl
+
+<span class="comment"># Output:</span>
+<span class="comment"># ┌──────────────────────┬────────┬──────────┬──────────┐</span>
+<span class="comment"># │ Span                 │ Calls  │ Tokens   │ Cost     │</span>
+<span class="comment"># ├──────────────────────┼────────┼──────────┼──────────┤</span>
+<span class="comment"># │ research_node        │ 3      │ 12,450   │ $0.37    │</span>
+<span class="comment"># │ summarize_node       │ 1      │ 2,100    │ $0.06    │</span>
+<span class="comment"># │ TOTAL                │ 4      │ 14,550   │ $0.43    │</span>
+<span class="comment"># └──────────────────────┴────────┴──────────┴──────────┘</span></pre>
+
+        <p>This gives you per-node and per-agent cost breakdowns. You can see exactly which part of your pipeline is expensive and optimize accordingly.</p>
+
+        <h2>Step 6: CI Cost Gates with GitHub Actions</h2>
+
+        <p>The final piece is preventing cost regressions in CI. AgentGuard includes a GitHub Action that runs your agent test suite and fails the build if costs exceed a threshold.</p>
+
+<pre class="code"><span class="comment"># .github/workflows/cost-gate.yml</span>
+name: Cost Gate
+on: [pull_request]
+jobs:
+  cost-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+      - run: pip install agentguard47
+      - run: python -m pytest tests/ -v
+      - name: Check costs
+        run: |
+          agentguard eval traces.jsonl \
+            --assert-max-cost <span class="str">2.00</span> \
+            --assert-max-calls <span class="str">50</span></pre>
+
+        <p>If any test run generates traces exceeding $2.00 total cost or 50 LLM calls, the CI build fails. This catches cost regressions before they reach production -- a new prompt template that accidentally doubles token usage, a tool that triggers extra LLM calls, or a loop that was not caught in local testing.</p>
+
+        <h2>Putting It All Together</h2>
+
+        <p>Here is a complete example that combines everything: LangChain callback handler, budget enforcement, loop detection, and JSONL trace output.</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> (
+    Tracer, BudgetGuard, LoopGuard,
+    JsonlFileSink, BudgetExceeded, LoopDetected,
+)
+<span class="kw">from</span> agentguard.integrations.langchain <span class="kw">import</span> AgentGuardCallbackHandler
+<span class="kw">from</span> langchain_openai <span class="kw">import</span> ChatOpenAI
+<span class="kw">from</span> langchain.agents <span class="kw">import</span> create_react_agent, AgentExecutor
+
+<span class="comment"># Guards</span>
+budget = <span class="fn">BudgetGuard</span>(
+    max_cost_usd=<span class="str">5.00</span>,
+    warn_at_pct=<span class="str">0.8</span>,
+    on_warning=<span class="kw">lambda</span> msg: <span class="fn">print</span>(<span class="str">f"[WARN] {msg}"</span>),
+)
+loops = <span class="fn">LoopGuard</span>(max_repeats=<span class="str">3</span>, window=<span class="str">6</span>)
+
+<span class="comment"># Tracer with file output</span>
+sink = <span class="fn">JsonlFileSink</span>(<span class="str">"traces.jsonl"</span>)
+tracer = <span class="fn">Tracer</span>(sink=sink, service=<span class="str">"my-agent"</span>, guards=[budget, loops])
+
+<span class="comment"># LangChain setup</span>
+handler = <span class="fn">AgentGuardCallbackHandler</span>(
+    tracer=tracer,
+    budget_guard=budget,
+    loop_guard=loops,
+)
+llm = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4"</span>, callbacks=[handler])
+
+<span class="comment"># Run agent with protection</span>
+<span class="kw">try</span>:
+    result = agent_executor.<span class="fn">invoke</span>(
+        {<span class="str">"input"</span>: <span class="str">"Analyze Q4 sales data"</span>},
+        config={<span class="str">"callbacks"</span>: [handler]},
+    )
+    <span class="fn">print</span>(<span class="str">f"Result: {result}"</span>)
+<span class="kw">except</span> BudgetExceeded <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Agent stopped — budget exceeded: {e}"</span>)
+<span class="kw">except</span> LoopDetected <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Agent stopped — loop detected: {e}"</span>)
+
+<span class="comment"># View the report</span>
+<span class="comment"># $ agentguard report traces.jsonl</span></pre>
+
+        <h2>What You Get</h2>
+
+        <ul>
+          <li><strong>Automatic token counting</strong> for every LLM call via the callback handler</li>
+          <li><strong>Hard budget limits</strong> that stop the agent at a dollar amount you set</li>
+          <li><strong>Loop detection</strong> that catches repeated tool calls before they compound</li>
+          <li><strong>Per-node cost tracking</strong> in LangGraph with the <code>guarded_node</code> decorator</li>
+          <li><strong>CLI cost reports</strong> showing per-span breakdowns</li>
+          <li><strong>CI cost gates</strong> that prevent cost regressions in pull requests</li>
+        </ul>
+
+        <p>All of this with zero hard dependencies. The core SDK uses Python stdlib only. The LangChain integration requires <code>langchain-core</code>, which you already have if you are using LangChain.</p>
+
+        <div class="cta-section">
+          <h2>Add cost tracking to your LangChain agent</h2>
+          <p class="muted">One callback handler. Zero hard dependencies. Budget enforcement that actually stops the agent.</p>
+<pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47[langchain]</pre>
+          <div class="cta-buttons">
+            <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+            <a class="btn secondary" href="https://pypi.org/project/agentguard47/" target="_blank" rel="noopener noreferrer">PyPI Package</a>
+          </div>
+        </div>
+      </article>
+
+      <footer>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Security &amp; Trust</a>
+        </div>
+        <p class="muted">&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+      </footer>
+    </div>
+  </body>
+</html>

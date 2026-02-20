@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to Set Budget Limits on AI Agents | AgentGuard</title>
+    <meta name="description" content="Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python — from basic caps to auto-tracking." />
+    <meta name="keywords" content="ai agent budget limits, openai budget enforcement, agent cost control python, ai agent cost cap, budget guard python" />
+    <meta name="author" content="AgentGuard Team" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://agentguard47.com/blog/budget-limits-ai-agents.html" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentguard47.com/blog/budget-limits-ai-agents.html" />
+    <meta property="og:title" content="How to Set Budget Limits on AI Agents" />
+    <meta property="og:description" content="Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python — from basic caps to auto-tracking." />
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+    <meta property="og:site_name" content="AgentGuard" />
+    <meta property="article:published_time" content="2026-02-20T00:00:00Z" />
+    <meta property="article:author" content="AgentGuard Team" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="How to Set Budget Limits on AI Agents" />
+    <meta name="twitter:description" content="Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python." />
+    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "How to Set Budget Limits on AI Agents",
+      "description": "Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python — from basic caps to auto-tracking.",
+      "url": "https://agentguard47.com/blog/budget-limits-ai-agents.html",
+      "datePublished": "2026-02-20T00:00:00Z",
+      "dateModified": "2026-02-20T00:00:00Z",
+      "author": {
+        "@type": "Organization",
+        "name": "AgentGuard Team",
+        "url": "https://agentguard47.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AgentGuard",
+        "url": "https://agentguard47.com"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://agentguard47.com/blog/budget-limits-ai-agents.html"
+      },
+      "keywords": ["ai agent budget limits", "openai budget enforcement", "agent cost control python"]
+    }
+    </script>
+
+    <script defer src="/_vercel/insights/script.js"></script>
+    <style>
+      :root {
+        --bg: #f7f4ee;
+        --ink: #1e1b16;
+        --accent: #1b6c4a;
+        --muted: #6c645a;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+        color: var(--ink);
+      }
+      .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 60px; }
+      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
+      .nav { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 14px; flex-wrap: wrap; }
+      .nav a { color: var(--accent); text-decoration: none; }
+      .nav a:hover { text-decoration: underline; }
+      .nav .sep { color: var(--muted); }
+      .muted { color: var(--muted); }
+      .meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+      h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px; }
+      h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; line-height: 1.3; }
+      h3 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
+      @media (min-width: 640px) { h1 { font-size: 38px; } h2 { font-size: 26px; } h3 { font-size: 20px; } }
+      p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; }
+      @media (min-width: 640px) { p { font-size: 18px; } }
+      ul, ol { font-size: 16px; line-height: 1.7; padding-left: 24px; margin: 0 0 16px; }
+      @media (min-width: 640px) { ul, ol { font-size: 18px; } }
+      li { margin-bottom: 8px; }
+      strong { color: var(--ink); }
+      a { color: var(--accent); }
+      a:hover { text-decoration: underline; }
+      code {
+        background: #e8e2d6; padding: 2px 6px; border-radius: 4px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 0.88em;
+      }
+
+      /* Code blocks */
+      .code {
+        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
+        line-height: 1.7; overflow-x: auto; white-space: pre; margin: 16px 0 24px;
+      }
+      @media (min-width: 640px) { .code { padding: 20px 24px; font-size: 14px; } }
+      .code .kw { color: #c084fc; }
+      .code .fn { color: #60a5fa; }
+      .code .str { color: #4ade80; }
+      .code .comment { color: #6b7280; }
+
+      /* Callout box */
+      .callout {
+        background: var(--card); border-left: 4px solid var(--accent);
+        padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0;
+      }
+      .callout p { margin: 0; font-size: 15px; }
+      @media (min-width: 640px) { .callout p { font-size: 16px; } }
+
+      /* CTA section */
+      .cta-section {
+        background: var(--card); border: 1px solid #e8e2d6; border-radius: 12px;
+        padding: 24px; margin: 40px 0; text-align: center;
+      }
+      .cta-section h2 { margin-top: 0; }
+      .btn {
+        display: inline-block;
+        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
+        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
+        font-size: 15px; text-align: center;
+      }
+      .btn:hover { opacity: 0.9; text-decoration: none; }
+      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .btn.secondary:hover { background: var(--accent); color: #fff; }
+      .cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+
+      footer { margin-top: 48px; font-size: 14px; color: var(--muted); text-align: center; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
+      .footer-links a { color: var(--accent); text-decoration: none; }
+      .footer-links a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/">AgentGuard</a>
+        <span class="sep">/</span>
+        <a href="/blog/">Blog</a>
+        <span class="sep">/</span>
+        <span>Budget Limits</span>
+      </nav>
+
+      <article>
+        <h1>How to Set Budget Limits on AI Agents</h1>
+        <div class="meta">By AgentGuard Team &middot; February 20, 2026 &middot; 6 min read</div>
+
+        <p>AI agents are powerful, but they are also expensive and unpredictable. An autonomous agent with access to GPT-4 can burn through $50 in minutes if it gets stuck in a reasoning loop or decides to call an API 200 times to "be thorough." According to internal benchmarks, <strong>cost overruns on autonomous agent tasks average 340%</strong> above the expected budget.</p>
+
+        <p>The problem is not that agents are expensive. The problem is that nothing stops them once they start spending. Most observability tools track costs after the fact. By the time you see the dashboard, the damage is done.</p>
+
+        <p>This guide shows three patterns for setting hard budget limits on AI agents using Python. Each pattern builds on the last, from manual caps to fully automatic cost tracking.</p>
+
+        <h2>Pattern 1: Hard Dollar Cap</h2>
+
+        <p>The simplest pattern. Create a <code>BudgetGuard</code> with a dollar limit and call <code>consume()</code> after each LLM call. When the limit is hit, it raises <code>BudgetExceeded</code> and your agent stops immediately.</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> BudgetGuard, BudgetExceeded
+
+<span class="comment"># Create a guard with a $5 limit</span>
+guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>)
+
+<span class="kw">def</span> <span class="fn">call_llm</span>(prompt):
+    response = openai_client.chat.completions.<span class="fn">create</span>(
+        model=<span class="str">"gpt-4"</span>,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}]
+    )
+    cost = response.usage.total_tokens * <span class="str">0.00003</span>  <span class="comment"># approximate</span>
+    guard.<span class="fn">consume</span>(cost_usd=cost)  <span class="comment"># raises BudgetExceeded at $5</span>
+    <span class="kw">return</span> response
+
+<span class="kw">try</span>:
+    <span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(<span class="str">100</span>):
+        result = <span class="fn">call_llm</span>(<span class="str">"Next step in research..."</span>)
+<span class="kw">except</span> BudgetExceeded <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Agent stopped: {e}"</span>)
+    <span class="comment"># BudgetExceeded: cost_usd 5.02 exceeds limit 5.00</span></pre>
+
+        <p>This is a hard stop. The exception propagates up and kills the agent loop. No graceful degradation, no warnings -- just a circuit breaker. For many use cases, this is exactly what you want.</p>
+
+        <p>You can also set limits on tokens and call counts:</p>
+
+<pre class="code">guard = <span class="fn">BudgetGuard</span>(
+    max_cost_usd=<span class="str">5.00</span>,   <span class="comment"># dollar cap</span>
+    max_tokens=<span class="str">500000</span>,    <span class="comment"># token cap</span>
+    max_calls=<span class="str">50</span>,         <span class="comment"># call count cap</span>
+)
+guard.<span class="fn">consume</span>(tokens=<span class="str">1500</span>, calls=<span class="str">1</span>, cost_usd=<span class="str">0.045</span>)</pre>
+
+        <p>Any limit that gets hit first triggers <code>BudgetExceeded</code>. This is useful when you want to guard against both cost and runaway call volume.</p>
+
+        <h2>Pattern 2: Warning at 80%</h2>
+
+        <p>Sometimes you want a heads-up before the hard stop. The <code>warn_at_pct</code> parameter fires a callback when usage crosses a threshold, giving your agent a chance to wrap up gracefully.</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> BudgetGuard
+
+<span class="kw">def</span> <span class="fn">on_budget_warning</span>(msg):
+    <span class="fn">print</span>(<span class="str">f"WARNING: {msg}"</span>)
+    <span class="comment"># Could also: switch to cheaper model, save state, notify Slack</span>
+
+guard = <span class="fn">BudgetGuard</span>(
+    max_cost_usd=<span class="str">5.00</span>,
+    warn_at_pct=<span class="str">0.8</span>,         <span class="comment"># warn at 80% ($4.00)</span>
+    on_warning=on_budget_warning,
+)
+
+<span class="comment"># After consuming $4.01:</span>
+<span class="comment"># WARNING: cost_usd at 80.2% of limit 5.00 (used 4.01)</span>
+
+<span class="comment"># After consuming $5.01:</span>
+<span class="comment"># raises BudgetExceeded</span></pre>
+
+        <p>The warning fires once. After that, the agent keeps running until it hits the hard cap. This gives you a two-stage system: warn at 80%, kill at 100%.</p>
+
+        <div class="callout">
+          <p><strong>Tip:</strong> Use the warning callback to switch to a cheaper model (GPT-4o-mini instead of GPT-4) when you are approaching the budget. This lets the agent finish its current task without blowing the cap.</p>
+        </div>
+
+        <h2>Pattern 3: Auto-Tracking with patch_openai</h2>
+
+        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function eliminates this by automatically intercepting every OpenAI API call, extracting token usage from the response, and feeding it to the BudgetGuard.</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, patch_openai
+
+<span class="comment"># Set up budget guard and tracer</span>
+budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>, warn_at_pct=<span class="str">0.8</span>)
+tracer = <span class="fn">Tracer</span>(service=<span class="str">"my-agent"</span>, guards=[budget])
+
+<span class="comment"># Patch OpenAI — every call is now auto-tracked</span>
+<span class="fn">patch_openai</span>(tracer, budget_guard=budget)
+
+<span class="comment"># Use OpenAI normally. No manual consume() calls needed.</span>
+<span class="kw">import</span> openai
+client = openai.<span class="fn">OpenAI</span>()
+
+<span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(<span class="str">100</span>):
+    response = client.chat.completions.<span class="fn">create</span>(
+        model=<span class="str">"gpt-4"</span>,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Research step..."</span>}]
+    )
+    <span class="comment"># BudgetGuard.consume() is called automatically</span>
+    <span class="comment"># with real token counts and cost from the response</span></pre>
+
+        <p>No manual bookkeeping. Every <code>chat.completions.create</code> call is intercepted, the token usage is extracted from the response, the cost is estimated using built-in per-model pricing, and <code>consume()</code> is called automatically. When the budget is hit, <code>BudgetExceeded</code> raises just like before.</p>
+
+        <p>The same pattern works for Anthropic:</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> patch_anthropic
+
+<span class="fn">patch_anthropic</span>(tracer, budget_guard=budget)
+
+<span class="comment"># Now Anthropic calls are auto-tracked too</span></pre>
+
+        <h2>Which Pattern Should You Use?</h2>
+
+        <ul>
+          <li><strong>Pattern 1 (hard cap)</strong> -- Use when you want maximum control and are already tracking costs yourself. Good for custom agent frameworks.</li>
+          <li><strong>Pattern 2 (warning + cap)</strong> -- Use when your agent can degrade gracefully, like switching to a cheaper model or reducing output quality.</li>
+          <li><strong>Pattern 3 (auto-tracking)</strong> -- Use for OpenAI and Anthropic workloads where you want zero-effort cost tracking. Best for most production deployments.</li>
+        </ul>
+
+        <p>All three patterns can be combined. Use <code>patch_openai</code> for automatic tracking and add a <code>warn_at_pct</code> callback for early warnings. The hard cap is always enforced regardless of which pattern you choose.</p>
+
+        <h2>What Happens When the Budget Is Hit?</h2>
+
+        <p><code>BudgetExceeded</code> is a regular Python exception. It propagates up the call stack and can be caught with a standard <code>try/except</code>. This means it integrates naturally with any agent framework:</p>
+
+        <ul>
+          <li><strong>LangChain:</strong> The exception stops the agent executor loop.</li>
+          <li><strong>LangGraph:</strong> The exception halts the graph traversal.</li>
+          <li><strong>Custom loops:</strong> The exception breaks out of your <code>while</code> or <code>for</code> loop.</li>
+        </ul>
+
+        <p>No special handling needed. The agent stops, and you get the last valid state.</p>
+
+        <div class="cta-section">
+          <h2>Start enforcing budgets in 60 seconds</h2>
+          <p class="muted">Zero dependencies. MIT licensed. Works with any Python agent.</p>
+<pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47</pre>
+          <div class="cta-buttons">
+            <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+            <a class="btn secondary" href="https://pypi.org/project/agentguard47/" target="_blank" rel="noopener noreferrer">PyPI Package</a>
+          </div>
+        </div>
+      </article>
+
+      <footer>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Security &amp; Trust</a>
+        </div>
+        <p class="muted">&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+      </footer>
+    </div>
+  </body>
+</html>
