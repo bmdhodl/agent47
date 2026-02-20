@@ -19,6 +19,10 @@ build/
 # Traces (exclude root-level, keep examples)
 /*.jsonl
 
+# Test coverage
+.coverage
+htmlcov/
+
 # Misc artifacts
 sample_output.txt
 
