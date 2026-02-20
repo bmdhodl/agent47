@@ -1,7 +1,7 @@
-# Landing Page (Archived Copy)
+# Site Assets
 
-The source of truth for the AgentGuard landing page is in the dashboard repo:
-`agent47-dashboard/public/landing/`
+Static files served via Vercel (robots.txt, sitemap.xml, security.html, trust.html).
 
-That copy is served via Clerk middleware when users visit `agentguard47.com`.
-This copy exists for reference only and may be out of date.
+The landing page HTML (`index.html`) is a reference copy. The live landing page
+is served from `agent47-dashboard/public/landing/` via Clerk middleware at
+`agentguard47.com`.
