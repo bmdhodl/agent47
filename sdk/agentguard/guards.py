@@ -22,6 +22,7 @@ import time
 from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Any, Callable, Deque, Dict, Optional, Tuple
+from urllib.parse import urlparse
 
 
 class AgentGuardError(Exception):
@@ -373,6 +374,10 @@ class BudgetGuard(BaseGuard):
         import urllib.request as _urllib_request
         from urllib.error import HTTPError as _HTTPError
 
+        parsed = urlparse(dashboard_url)
+        if parsed.scheme not in ("http", "https"):
+            raise ValueError(f"dashboard_url scheme must be http or https, got {parsed.scheme!r}")
+
         url = f"{dashboard_url.rstrip('/')}/api/v1/budgets?name={name}"
         headers = {"Authorization": f"Bearer {api_key}"}
 
@@ -382,7 +387,7 @@ class BudgetGuard(BaseGuard):
 
         try:
             req = _urllib_request.Request(url, headers=headers, method="GET")
-            with _urllib_request.urlopen(req, timeout=10) as resp:
+            with _urllib_request.urlopen(req, timeout=10) as resp:  # nosec B310 — scheme validated above
                 data = json.loads(resp.read().decode("utf-8"))
             if "max_cost_usd" in data:
                 max_cost_usd = float(data["max_cost_usd"])
@@ -665,6 +670,9 @@ class RemoteGuard(BaseGuard):
             raise ValueError("api_key is required for RemoteGuard")
         if poll_interval <= 0:
             raise ValueError("poll_interval must be > 0")
+        parsed = urlparse(dashboard_url)
+        if parsed.scheme not in ("http", "https"):
+            raise ValueError(f"dashboard_url scheme must be http or https, got {parsed.scheme!r}")
 
         self._api_key = api_key
         self._poll_interval = poll_interval
@@ -681,11 +689,7 @@ class RemoteGuard(BaseGuard):
         self._started = False
 
     def start(self) -> None:
-        """Start the background polling thread.
-
-        Must be called before ``check()`` can detect remote signals.
-        Idempotent — calling start() multiple times is safe.
-        """
+        """Start the background polling thread. Idempotent."""
         with self._lock:
             if self._started:
                 return
@@ -703,11 +707,7 @@ class RemoteGuard(BaseGuard):
             self._thread.join(timeout=5)
 
     def check(self) -> None:
-        """Check if the agent has been killed remotely.
-
-        Raises:
-            AgentKilled: If a kill signal has been received from the dashboard.
-        """
+        """Check if the agent has been killed remotely. Raises AgentKilled."""
         with self._lock:
             if self._killed:
                 reason = self._kill_reason or "Agent killed via remote dashboard signal"
@@ -756,7 +756,7 @@ class RemoteGuard(BaseGuard):
 
         try:
             req = _urllib_request.Request(url, headers=headers, method="GET")
-            with _urllib_request.urlopen(req, timeout=10) as resp:
+            with _urllib_request.urlopen(req, timeout=10) as resp:  # nosec B310 — scheme validated in __init__
                 data = json.loads(resp.read().decode("utf-8"))
         except (_HTTPError, OSError, json.JSONDecodeError, ValueError):
             # Network failure — fall back gracefully, agent keeps running
