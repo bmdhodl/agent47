@@ -25,8 +25,8 @@ AgentGuard is different: it kills the agent mid-run.
 
 - BudgetGuard: set a dollar limit ($5, $50, whatever). Get a warning at 80%. Agent dies at 100%.
 - LoopGuard: detects repeated tool calls and A-B-A-B patterns. Raises an exception.
-- CostTracker: built-in pricing for GPT-4o, Claude, Gemini, Llama, etc. Updated monthly.
-- Full tracing: JSONL output, spans, events, cost data. CLI reports and Gantt viewer.
+- Cost tracking: built-in pricing for GPT-4o, Claude, Gemini, Llama, etc. Updated monthly.
+- Full tracing: JSONL output, spans, events, cost data. CLI reports and eval assertions.
 
 **4 lines to stop runaway costs:**
 
@@ -62,7 +62,7 @@ Docs: https://agentguard47.com
 
 - [ ] `pip install agentguard47==1.2.1` works
 - [ ] README hero is cost guardrail (done)
-- [ ] Demo GIF embedded in README (need to record with VHS)
+- [x] Try-it-now terminal output in README
 - [ ] All README links resolve (no 404s)
 - [ ] `examples/demo_budget_kill.py` runs without API keys
 - [ ] Repo description updated (done)

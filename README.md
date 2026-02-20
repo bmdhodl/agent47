@@ -17,15 +17,28 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 pip install agentguard47
 ```
 
-<!-- Replace with recorded GIF: vhs examples/demo.tape -->
-![AgentGuard BudgetGuard Demo](examples/demo.gif)
-
 ## Try it in 60 seconds
 
 No API keys. No config. Just run it:
 
 ```bash
 pip install agentguard47 && python examples/try_it_now.py
+```
+
+```
+Simulating agent making LLM calls with a $1.00 budget...
+
+  Call 1: $0.12 spent
+  Call 2: $0.24 spent
+  ...
+  WARNING: Budget warning: cost 84% of limit reached (threshold: 80%)
+  Call 7: $0.84 spent
+  Call 8: $0.96 spent
+
+  STOPPED at call 9: Cost budget exceeded: $1.08 > $1.00
+  Total: $1.08 | 9 calls
+
+  Without AgentGuard, this agent would have kept spending.
 ```
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
