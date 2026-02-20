@@ -155,32 +155,41 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** v1.2.1 shipped. Active: **Strategic Execution Plan — Phase 1 (Foundation).**
+**Current:** v1.2.1 shipped. Phase 1 complete. Active: **Phase 2 — Traction.**
 
-## Current Phase: Phase 1 — Foundation
+## Phase 1 — Foundation (COMPLETE, 2026-02-16)
 
-Goal: Ship, secure, launch. Get to Show HN.
+All 11 tickets done (T01–T11). Commit `c175288` on main.
 
-**Critical path:** T01 (PyPI publish) → T02 (README) → T07 (demo GIF) → T08 (Show HN) → **LAUNCH**
+| Ticket | Title | Status |
+|--------|-------|--------|
+| T01 | Publish v1.2.1 to PyPI + GitHub Release | Done |
+| T02 | README rewrite: cost guardrail as hero | Done |
+| T03 | Zod validation on 7 POST routes (Dashboard) | Done |
+| T04 | Split queries.ts into domain modules (Dashboard) | Done |
+| T05 | Move SQL from 8 routes to queries (Dashboard) | Done |
+| T06 | CSP header + Sentry monitoring (Dashboard) | Done |
+| T07 | 30-second demo GIF: BudgetGuard kills agent | Done |
+| T08 | Show HN post draft + launch prep | Done |
+| T09 | Welcome email drip (3 emails, Dashboard) | Done |
+| T10 | Audit logging foundation (Dashboard) | Done |
+| T11 | CLAUDE.md updates | Done |
+
+## Current Phase: Phase 2 — Traction
+
+Goal: 10 free users, 1+ paying user.
 
 | Ticket | Title | Track | Status |
 |--------|-------|-------|--------|
-| T01 | Publish v1.2.1 to PyPI + GitHub Release | Growth | Done (PyPI live) |
-| T02 | README rewrite: cost guardrail as hero (SDK #139) | Growth | Todo |
-| T07 | 30-second demo GIF: BudgetGuard kills agent | Growth | Todo |
-| T08 | Show HN post draft + launch prep | Growth | Todo |
-| T15 | SEO blog posts (3 targeting cost keywords) | Growth | Phase 2 |
-
-**Security path (parallel):**
-
-| Ticket | Title | Repo | Status |
-|--------|-------|------|--------|
-| T03 | Zod validation on 7 POST routes (Dashboard #45) | Dashboard | Todo |
-| T04 | Split queries.ts into domain modules (Dashboard #44) | Dashboard | Todo |
-| T05 | Move SQL from 8 routes to queries (Dashboard #46) | Dashboard | Todo |
-| T06 | CSP header + Sentry monitoring | Dashboard | Todo |
-| T09 | Welcome email drip (3 emails) | Dashboard | Todo |
-| T10 | Audit logging foundation | Dashboard | Todo |
+| T12 | Weekly digest email | Revenue | Todo |
+| T13 | Upgrade nudge banner | Revenue | Todo |
+| T14 | Annual pricing toggle | Revenue | Todo |
+| T15 | SEO blog posts (3 targeting cost keywords) | Growth | Done |
+| T16 | Community — LangChain Discord, GitHub Discussions | Growth | Todo |
+| T17 | RBAC: admin/member roles | Security | Todo |
+| T18 | API rate limiting | Production | Todo |
+| T19 | Error tracking improvements | Production | Todo |
+| T20 | Onboarding flow polish | Growth | Todo |
 
 Full plan: See `.claude/plans/` or project board.
 
