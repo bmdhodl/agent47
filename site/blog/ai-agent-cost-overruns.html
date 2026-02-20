@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Agent Cost Overruns: Why They Happen and How to Prevent Them | AgentGuard</title>
+    <meta name="description" content="AI agent cost overruns average 340% on autonomous tasks. Learn why agents spiral out of control and how to enforce runtime budget limits." />
+    <meta name="keywords" content="ai agent cost overruns, prevent ai agent costs, agent spending control, ai agent budget, llm cost management" />
+    <meta name="author" content="AgentGuard Team" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://agentguard47.com/blog/ai-agent-cost-overruns.html" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentguard47.com/blog/ai-agent-cost-overruns.html" />
+    <meta property="og:title" content="AI Agent Cost Overruns: Why They Happen and How to Prevent Them" />
+    <meta property="og:description" content="AI agent cost overruns average 340% on autonomous tasks. Learn why agents spiral out of control and how to enforce runtime budget limits." />
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+    <meta property="og:site_name" content="AgentGuard" />
+    <meta property="article:published_time" content="2026-02-20T00:00:00Z" />
+    <meta property="article:author" content="AgentGuard Team" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI Agent Cost Overruns: Why They Happen and How to Prevent Them" />
+    <meta name="twitter:description" content="AI agent cost overruns average 340% on autonomous tasks. Learn why they spiral and how to stop them." />
+    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "AI Agent Cost Overruns: Why They Happen and How to Prevent Them",
+      "description": "AI agent cost overruns average 340% on autonomous tasks. Learn why agents spiral out of control and how to enforce runtime budget limits.",
+      "url": "https://agentguard47.com/blog/ai-agent-cost-overruns.html",
+      "datePublished": "2026-02-20T00:00:00Z",
+      "dateModified": "2026-02-20T00:00:00Z",
+      "author": {
+        "@type": "Organization",
+        "name": "AgentGuard Team",
+        "url": "https://agentguard47.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AgentGuard",
+        "url": "https://agentguard47.com"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://agentguard47.com/blog/ai-agent-cost-overruns.html"
+      },
+      "keywords": ["ai agent cost overruns", "prevent ai agent costs", "agent spending control"]
+    }
+    </script>
+
+    <script defer src="/_vercel/insights/script.js"></script>
+    <style>
+      :root {
+        --bg: #f7f4ee;
+        --ink: #1e1b16;
+        --accent: #1b6c4a;
+        --muted: #6c645a;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+        color: var(--ink);
+      }
+      .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 60px; }
+      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
+      .nav { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 14px; flex-wrap: wrap; }
+      .nav a { color: var(--accent); text-decoration: none; }
+      .nav a:hover { text-decoration: underline; }
+      .nav .sep { color: var(--muted); }
+      .muted { color: var(--muted); }
+      .meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+      h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px; }
+      h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; line-height: 1.3; }
+      h3 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
+      @media (min-width: 640px) { h1 { font-size: 38px; } h2 { font-size: 26px; } h3 { font-size: 20px; } }
+      p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; }
+      @media (min-width: 640px) { p { font-size: 18px; } }
+      ul, ol { font-size: 16px; line-height: 1.7; padding-left: 24px; margin: 0 0 16px; }
+      @media (min-width: 640px) { ul, ol { font-size: 18px; } }
+      li { margin-bottom: 8px; }
+      strong { color: var(--ink); }
+      a { color: var(--accent); }
+      a:hover { text-decoration: underline; }
+      code {
+        background: #e8e2d6; padding: 2px 6px; border-radius: 4px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 0.88em;
+      }
+
+      /* Code blocks */
+      .code {
+        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
+        line-height: 1.7; overflow-x: auto; white-space: pre; margin: 16px 0 24px;
+      }
+      @media (min-width: 640px) { .code { padding: 20px 24px; font-size: 14px; } }
+      .code .kw { color: #c084fc; }
+      .code .fn { color: #60a5fa; }
+      .code .str { color: #4ade80; }
+      .code .comment { color: #6b7280; }
+
+      /* Callout box */
+      .callout {
+        background: var(--card); border-left: 4px solid var(--accent);
+        padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0;
+      }
+      .callout p { margin: 0; font-size: 15px; }
+      @media (min-width: 640px) { .callout p { font-size: 16px; } }
+
+      /* Danger callout */
+      .callout-danger {
+        background: var(--card); border-left: 4px solid #b91c1c;
+        padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0;
+      }
+      .callout-danger p { margin: 0; font-size: 15px; }
+      @media (min-width: 640px) { .callout-danger p { font-size: 16px; } }
+
+      /* Comparison table */
+      .table-wrap { overflow-x: auto; margin: 16px 0 24px; -webkit-overflow-scrolling: touch; }
+      table { width: 100%; border-collapse: collapse; min-width: 400px; }
+      th, td { text-align: left; padding: 12px 14px; font-size: 14px; border-bottom: 1px solid #e8e2d6; }
+      @media (min-width: 640px) { th, td { padding: 14px 18px; font-size: 15px; } }
+      th { background: #f0ede5; font-weight: 600; }
+      .yes { color: var(--accent); font-weight: 600; }
+      .no { color: #b91c1c; }
+
+      /* Failure mode cards */
+      .failure-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 24px 0; }
+      @media (min-width: 640px) { .failure-grid { grid-template-columns: repeat(3, 1fr); } }
+      .failure-card {
+        background: var(--card); padding: 20px; border-radius: 12px;
+        border: 1px solid #e8e2d6;
+      }
+      .failure-card strong { display: block; margin-bottom: 8px; font-size: 16px; }
+      .failure-card p { font-size: 14px; margin: 0; }
+
+      /* CTA section */
+      .cta-section {
+        background: var(--card); border: 1px solid #e8e2d6; border-radius: 12px;
+        padding: 24px; margin: 40px 0; text-align: center;
+      }
+      .cta-section h2 { margin-top: 0; }
+      .btn {
+        display: inline-block;
+        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
+        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
+        font-size: 15px; text-align: center;
+      }
+      .btn:hover { opacity: 0.9; text-decoration: none; }
+      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .btn.secondary:hover { background: var(--accent); color: #fff; }
+      .cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+
+      footer { margin-top: 48px; font-size: 14px; color: var(--muted); text-align: center; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
+      .footer-links a { color: var(--accent); text-decoration: none; }
+      .footer-links a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/">AgentGuard</a>
+        <span class="sep">/</span>
+        <a href="/blog/">Blog</a>
+        <span class="sep">/</span>
+        <span>Cost Overruns</span>
+      </nav>
+
+      <article>
+        <h1>AI Agent Cost Overruns: Why They Happen and How to Prevent Them</h1>
+        <div class="meta">By AgentGuard Team &middot; February 20, 2026 &middot; 7 min read</div>
+
+        <p>AI agents are moving from demos to production. With that shift comes a problem nobody talks about until it hits their invoice: <strong>cost overruns averaging 340%</strong> on autonomous tasks.</p>
+
+        <p>A research agent tasked with a $2 job returns a $9 bill. A code review agent loops 47 times on a single file. A customer support agent escalates to GPT-4 for every message, burning through $200 in an afternoon. These are not edge cases. They are the default behavior of autonomous agents without runtime budget enforcement.</p>
+
+        <h2>The Scale of the Problem</h2>
+
+        <p>LLM API costs are deceptively linear in documentation and exponential in practice. Here is why:</p>
+
+        <ul>
+          <li><strong>Agents decide their own workload.</strong> Unlike a batch job with a fixed input set, an autonomous agent generates its own next steps. A "summarize this document" task can become "read 50 pages, cross-reference 12 sources, draft 3 versions" if the agent decides that is necessary.</li>
+          <li><strong>Context windows grow with every step.</strong> Each tool call result gets appended to the conversation. By step 20, the agent is sending 100K tokens per request -- mostly prior context that the model charges you to re-read.</li>
+          <li><strong>Failures are invisible.</strong> An agent stuck in a loop looks like an agent that is "thinking." There is no error. There is no timeout. There is just a growing bill.</li>
+        </ul>
+
+        <div class="callout-danger">
+          <p><strong>Real scenario:</strong> A LangChain ReAct agent with access to a web search tool was asked to "find the best restaurant in Austin." It called the search tool 83 times, each time refining its query, spending $47 on a task that should have cost $0.50.</p>
+        </div>
+
+        <h2>Three Failure Modes That Drain Budgets</h2>
+
+        <div class="failure-grid">
+          <div class="failure-card">
+            <strong>1. Infinite Loops</strong>
+            <p class="muted">Agent calls the same tool with the same arguments, gets the same result, and tries again. Common with ReAct agents that misinterpret tool output as an error. Each loop iteration costs $0.03-0.30 depending on context size.</p>
+          </div>
+          <div class="failure-card">
+            <strong>2. Escalating Retries</strong>
+            <p class="muted">Agent encounters an error and retries with progressively longer prompts. "Add more context" is the default recovery strategy for most LLMs. Each retry is more expensive than the last because the context window grows.</p>
+          </div>
+          <div class="failure-card">
+            <strong>3. Model Cascading</strong>
+            <p class="muted">Agent decides its current model is not capable enough and routes to a more expensive one. GPT-3.5 to GPT-4, Claude Haiku to Opus. A single cascade can 10x the cost of a step, and the agent may cascade on every step.</p>
+          </div>
+        </div>
+
+        <h2>Why Existing Tools Do Not Fix This</h2>
+
+        <p>The AI observability market is full of tools that track costs. LangSmith, Langfuse, Portkey -- they all show you beautiful dashboards of what your agents spent. The problem is timing. These tools are <strong>post-hoc</strong>. They tell you what happened after the damage is done.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Capability</th>
+                <th>Monitoring Tools</th>
+                <th>Runtime Enforcement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Track cost per call</td>
+                <td class="yes">Yes</td>
+                <td class="yes">Yes</td>
+              </tr>
+              <tr>
+                <td>Dashboard visualization</td>
+                <td class="yes">Yes</td>
+                <td>Optional</td>
+              </tr>
+              <tr>
+                <td>Stop agent at dollar limit</td>
+                <td class="no">No</td>
+                <td class="yes">Yes</td>
+              </tr>
+              <tr>
+                <td>Detect infinite loops</td>
+                <td class="no">No</td>
+                <td class="yes">Yes</td>
+              </tr>
+              <tr>
+                <td>Warn before budget hit</td>
+                <td class="no">No</td>
+                <td class="yes">Yes</td>
+              </tr>
+              <tr>
+                <td>Enforce in CI/CD</td>
+                <td class="no">No</td>
+                <td class="yes">Yes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Monitoring tells you the house burned down. Enforcement prevents the fire. You need both, but enforcement is the one that saves money.</p>
+
+        <h2>The Solution: Runtime Budget Enforcement</h2>
+
+        <p>Runtime enforcement means the guard runs <em>inside</em> your agent process. Every LLM call checks the budget before returning. When the limit is hit, the guard raises an exception and the agent stops immediately.</p>
+
+        <p>Here is what it looks like with AgentGuard:</p>
+
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, LoopGuard, patch_openai
+
+<span class="comment"># Two guards: budget cap + loop detection</span>
+budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>, warn_at_pct=<span class="str">0.8</span>)
+loops = <span class="fn">LoopGuard</span>(max_repeats=<span class="str">3</span>, window=<span class="str">6</span>)
+
+tracer = <span class="fn">Tracer</span>(
+    service=<span class="str">"research-agent"</span>,
+    guards=[budget, loops],  <span class="comment"># auto-check on every event</span>
+)
+<span class="fn">patch_openai</span>(tracer, budget_guard=budget)
+
+<span class="comment"># Agent runs normally. Guards enforce limits automatically.</span>
+<span class="comment"># - BudgetExceeded raised at $5.00</span>
+<span class="comment"># - LoopDetected raised if same tool called 3x in 6 events</span></pre>
+
+        <p>Three things happen automatically:</p>
+
+        <ol>
+          <li><strong>Every OpenAI call is intercepted.</strong> Token usage and cost are extracted from the response and fed to the BudgetGuard.</li>
+          <li><strong>Every tool call is checked for loops.</strong> The LoopGuard tracks the last N events and detects repeated patterns.</li>
+          <li><strong>Exceptions propagate up.</strong> <code>BudgetExceeded</code> and <code>LoopDetected</code> are standard Python exceptions. They stop the agent cleanly, no matter what framework you use.</li>
+        </ol>
+
+        <div class="callout">
+          <p><strong>Key insight:</strong> Guards that raise exceptions are fundamentally different from alerts. An alert requires a human to notice and act. An exception requires no human -- it stops the agent immediately, even at 3 AM.</p>
+        </div>
+
+        <h2>The Cost of Inaction</h2>
+
+        <p>Every day you run agents without budget enforcement is a day you are betting on best-case behavior from a system designed to be unpredictable. The math is simple:</p>
+
+        <ul>
+          <li><strong>10 agents</strong> running tasks at $2 expected cost each</li>
+          <li><strong>340% average overrun</strong> = $6.80 per task actual</li>
+          <li><strong>50 tasks per day</strong> = $340/day instead of $100/day</li>
+          <li><strong>$7,200 per month in overspend</strong></li>
+        </ul>
+
+        <p>Adding a budget guard takes three lines of code and costs nothing. The SDK is free, MIT-licensed, and has zero dependencies.</p>
+
+        <div class="cta-section">
+          <h2>Stop overspending on AI agents</h2>
+          <p class="muted">Three lines of Python. Zero dependencies. Hard budget limits that actually stop the agent.</p>
+<pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47</pre>
+          <div class="cta-buttons">
+            <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+            <a class="btn secondary" href="/blog/budget-limits-ai-agents.html">Read the Tutorial</a>
+          </div>
+        </div>
+      </article>
+
+      <footer>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Security &amp; Trust</a>
+        </div>
+        <p class="muted">&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+      </footer>
+    </div>
+  </body>
+</html>
