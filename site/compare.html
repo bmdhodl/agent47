@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgentGuard vs LangSmith vs Langfuse vs Portkey — AI Agent Cost Tracking Comparison</title>
+    <meta name="description" content="Compare AgentGuard with LangSmith, Langfuse, and Portkey. Runtime budget enforcement, loop detection, and cost tracking for AI agents. Free, zero dependencies, MIT licensed." />
+    <link rel="canonical" href="https://agentguard47.com/compare.html" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://agentguard47.com/compare.html" />
+    <meta property="og:title" content="AgentGuard vs LangSmith vs Langfuse vs Portkey" />
+    <meta property="og:description" content="The only tool that kills agents mid-run when they exceed spend limits. Compare features, pricing, and integrations." />
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AgentGuard vs LangSmith vs Langfuse vs Portkey" />
+    <meta name="twitter:description" content="The only tool that kills agents mid-run when they exceed spend limits. Compare features, pricing, and integrations." />
+
+    <!-- SEO keywords -->
+    <meta name="keywords" content="langsmith alternative, langfuse alternative, ai agent cost tracking, agent budget enforcement, ai agent observability, langchain cost tracking" />
+
+    <script defer src="/_vercel/insights/script.js"></script>
+    <style>
+      :root {
+        --bg: #f7f4ee;
+        --ink: #1e1b16;
+        --accent: #1b6c4a;
+        --muted: #6c645a;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+        color: var(--ink);
+      }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px 60px; }
+      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
+      .nav { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; font-size: 14px; }
+      .nav a { color: var(--accent); text-decoration: none; }
+      .nav a:hover { text-decoration: underline; }
+      h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; }
+      h2 { margin-top: 48px; font-size: 22px; }
+      @media (min-width: 640px) { h1 { font-size: 40px; } h2 { font-size: 26px; } }
+      p { font-size: 16px; line-height: 1.6; }
+      @media (min-width: 640px) { p { font-size: 18px; } }
+      .muted { color: var(--muted); }
+      .btn {
+        display: inline-block;
+        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
+        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
+        font-size: 15px; text-align: center;
+      }
+      .btn:hover { opacity: 0.9; }
+      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .btn.secondary:hover { background: var(--accent); color: #fff; }
+      .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 32px; }
+
+      /* Comparison table */
+      .table-wrap { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; }
+      table { width: 100%; border-collapse: collapse; min-width: 600px; }
+      th, td { text-align: left; padding: 12px 14px; font-size: 14px; border-bottom: 1px solid #e8e2d6; }
+      @media (min-width: 640px) { th, td { padding: 14px 18px; font-size: 15px; } }
+      th { background: #f0ede5; font-weight: 600; position: sticky; top: 0; }
+      th:first-child, td:first-child { font-weight: 600; min-width: 180px; }
+      .col-ag { background: rgba(27, 108, 74, 0.04); }
+      .yes { color: var(--accent); font-weight: 600; }
+      .no { color: #b91c1c; }
+      .partial { color: #ca8a04; }
+
+      /* Highlight cards */
+      .highlights { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 24px; }
+      @media (min-width: 640px) { .highlights { grid-template-columns: repeat(3, 1fr); } }
+      .highlight-card {
+        background: var(--card); padding: 20px; border-radius: 12px;
+        border: 1px solid #e8e2d6;
+      }
+      .highlight-card strong { display: block; margin-bottom: 8px; }
+      .highlight-card p { font-size: 14px; margin: 0; }
+
+      /* Detail sections */
+      .detail-grid { display: grid; gap: 20px; grid-template-columns: 1fr; margin-top: 20px; }
+      @media (min-width: 640px) { .detail-grid { grid-template-columns: repeat(2, 1fr); } }
+      .detail-card {
+        background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #e8e2d6;
+      }
+      .detail-card h3 { margin: 0 0 8px; font-size: 17px; }
+      .detail-card p { font-size: 14px; margin: 8px 0 0; }
+
+      /* Code block */
+      .code {
+        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
+        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
+        line-height: 1.7; overflow-x: auto; white-space: pre; margin: 16px 0 0;
+      }
+      @media (min-width: 640px) { .code { padding: 20px 24px; font-size: 14px; } }
+      .code .kw { color: #c084fc; }
+      .code .fn { color: #60a5fa; }
+      .code .str { color: #4ade80; }
+      .code .comment { color: #6b7280; }
+
+      footer { margin-top: 48px; font-size: 14px; color: var(--muted); text-align: center; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
+      .footer-links a { color: var(--accent); text-decoration: none; }
+      .footer-links a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/">AgentGuard</a>
+        <span class="muted">/</span>
+        <span>Compare</span>
+      </nav>
+
+      <h1>AgentGuard vs LangSmith vs Langfuse vs Portkey</h1>
+      <p class="muted">The only AI agent observability tool with runtime budget enforcement. Compare features, pricing, and integrations side-by-side.</p>
+
+      <div class="cta">
+        <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        <a class="btn secondary" href="https://app.agentguard47.com/sign-up">Try Free Dashboard</a>
+      </div>
+
+      <!-- Key differentiators -->
+      <div class="highlights">
+        <div class="highlight-card">
+          <strong>Runtime intervention</strong>
+          <p class="muted">AgentGuard kills agents mid-run when they exceed spend limits. Others only report after the damage is done.</p>
+        </div>
+        <div class="highlight-card">
+          <strong>Zero dependencies</strong>
+          <p class="muted">Pure Python stdlib. One package, nothing to audit. No supply chain risk, no dependency conflicts.</p>
+        </div>
+        <div class="highlight-card">
+          <strong>Free and open source</strong>
+          <p class="muted">MIT-licensed SDK. No per-trace pricing for local use. Dashboard optional.</p>
+        </div>
+      </div>
+
+      <!-- Main comparison table -->
+      <h2>Feature comparison</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="col-ag">AgentGuard</th>
+              <th>LangSmith</th>
+              <th>Langfuse</th>
+              <th>Portkey</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Hard budget enforcement</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; raises exception at limit</td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>Kill agent mid-run</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; BudgetExceeded stops execution</td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>Loop detection</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; exact + fuzzy + A-B-A-B</td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>Cost tracking</td>
+              <td class="col-ag"><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+            </tr>
+            <tr>
+              <td>Tracing / spans</td>
+              <td class="col-ag"><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+            </tr>
+            <tr>
+              <td>Timeout guard</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; wall-clock enforcement</td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="partial">Partial</span> &mdash; gateway-level only</td>
+            </tr>
+            <tr>
+              <td>Rate limit guard</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; per-minute throttling</td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="yes">Yes</span> &mdash; gateway-level</td>
+            </tr>
+            <tr>
+              <td>Runtime dependencies</td>
+              <td class="col-ag"><span class="yes">Zero</span></td>
+              <td>5+</td>
+              <td>3+</td>
+              <td>3+</td>
+            </tr>
+            <tr>
+              <td>Open source SDK</td>
+              <td class="col-ag"><span class="yes">MIT</span></td>
+              <td><span class="no">Proprietary</span></td>
+              <td><span class="yes">MIT</span></td>
+              <td><span class="partial">Partial</span></td>
+            </tr>
+            <tr>
+              <td>Self-hosted option</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; SDK works fully offline</td>
+              <td><span class="no">No</span></td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>CI cost gates</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; GitHub Action included</td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>LangChain integration</td>
+              <td class="col-ag"><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span> &mdash; native</td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span></td>
+            </tr>
+            <tr>
+              <td>LangGraph integration</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; guarded_node decorator</td>
+              <td><span class="yes">Yes</span> &mdash; native</td>
+              <td><span class="partial">Partial</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>CrewAI integration</td>
+              <td class="col-ag"><span class="yes">Yes</span></td>
+              <td><span class="no">No</span></td>
+              <td><span class="partial">Partial</span></td>
+              <td><span class="no">No</span></td>
+            </tr>
+            <tr>
+              <td>OpenAI/Anthropic auto-patch</td>
+              <td class="col-ag"><span class="yes">Yes</span> &mdash; one-line patching</td>
+              <td><span class="partial">Via wrapper</span></td>
+              <td><span class="yes">Yes</span></td>
+              <td><span class="yes">Yes</span> &mdash; gateway proxy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pricing comparison -->
+      <h2>Pricing comparison</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th class="col-ag">AgentGuard</th>
+              <th>LangSmith</th>
+              <th>Langfuse</th>
+              <th>Portkey</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Free tier</td>
+              <td class="col-ag"><span class="yes">Unlimited local use</span><br>+ 10K dashboard events/mo</td>
+              <td>5K traces/mo</td>
+              <td>50K observations/mo</td>
+              <td>10K requests/mo</td>
+            </tr>
+            <tr>
+              <td>Paid plans</td>
+              <td class="col-ag">$39/mo (Pro)<br>$79/mo (Team)</td>
+              <td>$39/mo + $2.50/1K traces</td>
+              <td>$59/mo (Pro)</td>
+              <td>$49/mo</td>
+            </tr>
+            <tr>
+              <td>Per-trace pricing</td>
+              <td class="col-ag"><span class="yes">No</span> &mdash; flat rate</td>
+              <td><span class="no">Yes</span> &mdash; $2.50/1K traces</td>
+              <td><span class="no">Yes</span> &mdash; overage charges</td>
+              <td><span class="yes">No</span></td>
+            </tr>
+            <tr>
+              <td>SDK cost</td>
+              <td class="col-ag"><span class="yes">Free forever (MIT)</span></td>
+              <td>Free (proprietary)</td>
+              <td>Free (MIT)</td>
+              <td>Free</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Detail sections -->
+      <h2>Why AgentGuard for budget enforcement?</h2>
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h3>LangSmith tracks costs. AgentGuard enforces them.</h3>
+          <p class="muted">LangSmith shows you what an agent spent after it finishes. AgentGuard raises <code>BudgetExceeded</code> at the dollar limit you set and stops the agent immediately. The difference between a dashboard alert and a circuit breaker.</p>
+        </div>
+        <div class="detail-card">
+          <h3>Langfuse is open source. So is AgentGuard.</h3>
+          <p class="muted">Both are MIT-licensed. Langfuse focuses on tracing and prompt management. AgentGuard adds runtime guards &mdash; budget limits, loop detection, and timeout enforcement that stop agents before they cause damage.</p>
+        </div>
+        <div class="detail-card">
+          <h3>Portkey is a gateway. AgentGuard is a library.</h3>
+          <p class="muted">Portkey proxies all LLM traffic through their servers. AgentGuard runs in your process with zero network calls. No latency overhead, no data leaving your infrastructure, no single point of failure.</p>
+        </div>
+        <div class="detail-card">
+          <h3>Zero dependencies means zero risk.</h3>
+          <p class="muted">Every dependency is supply chain attack surface. AgentGuard uses Python stdlib only. One package to install, one package to audit. No transitive vulnerabilities, no version conflicts.</p>
+        </div>
+      </div>
+
+      <!-- Code example -->
+      <h2>Add budget enforcement in 3 lines</h2>
+      <p class="muted">No signup required. No API keys. Works offline.</p>
+<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, patch_openai
+
+tracer = <span class="fn">Tracer</span>(guards=[<span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>, warn_at_pct=<span class="str">0.8</span>)])
+<span class="fn">patch_openai</span>(tracer)  <span class="comment"># auto-tracks every OpenAI call</span>
+
+<span class="comment"># Use OpenAI normally — agent stops at $5</span></pre>
+
+      <div class="cta" style="margin-top: 32px;">
+        <a class="btn" href="https://github.com/bmdhodl/agent47">View on GitHub</a>
+        <a class="btn secondary" href="https://pypi.org/project/agentguard47/" target="_blank" rel="noopener noreferrer">pip install agentguard47</a>
+      </div>
+
+      <footer>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="trust.html">Security &amp; Trust</a>
+        </div>
+        <p class="muted">&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+        <p class="muted" style="font-size: 12px; margin-top: 12px;">Comparison data gathered from public documentation as of February 2026. Feature availability may change. All trademarks belong to their respective owners.</p>
+      </footer>
+    </div>
+  </body>
+</html>
