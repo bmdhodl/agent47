@@ -10,6 +10,7 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
 ```bash
@@ -220,6 +221,32 @@ result = (
 agentguard eval traces.jsonl --ci   # exits non-zero on failure
 ```
 
+## CI Cost Gates
+
+Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offers this.
+
+```yaml
+# .github/workflows/cost-gate.yml (simplified)
+- name: Run agent with budget guard
+  run: |
+    python3 -c "
+    from agentguard import Tracer, BudgetGuard, JsonlFileSink
+    tracer = Tracer(
+        sink=JsonlFileSink('ci_traces.jsonl'),
+        guards=[BudgetGuard(max_cost_usd=5.00)],
+    )
+    # ... your agent run here ...
+    "
+
+- name: Evaluate traces
+  uses: bmdhodl/agent47/.github/actions/agentguard-eval@main
+  with:
+    trace-file: ci_traces.jsonl
+    assertions: "no_errors,max_cost:5.00"
+```
+
+Full workflow: [`docs/ci/cost-gate-workflow.yml`](docs/ci/cost-gate-workflow.yml)
+
 ## Async Support
 
 Full async API mirrors the sync API.
@@ -293,6 +320,13 @@ Your Agent Code
 | `site/` | Landing page | MIT |
 
 > Dashboard is in a separate private repo ([agent47-dashboard](https://github.com/bmdhodl/agent47-dashboard)).
+
+## Security
+
+- **Zero runtime dependencies** — one package, nothing to audit, no supply chain risk
+- **[OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)** — automated security analysis on every push
+- **CodeQL scanning** — GitHub's semantic code analysis on every PR
+- **Bandit security linting** — Python-specific security checks in CI
 
 ## Contributing
 

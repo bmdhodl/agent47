@@ -1,0 +1,57 @@
+# AgentGuard CI Cost Gate
+# Fail CI if your AI agent exceeds a cost budget during tests.
+#
+# Usage: Copy this file to .github/workflows/cost-gate.yml
+# Customize BUDGET_LIMIT and your agent run command.
+
+name: Cost Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  cost-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install agentguard47
+
+      - name: Run agent with budget guard
+        env:
+          BUDGET_LIMIT: "5.00"  # Max dollars per CI run
+        run: |
+          python3 - <<'EOF'
+          import os, sys
+          from agentguard import Tracer, BudgetGuard, JsonlFileSink, BudgetExceeded
+
+          budget = float(os.environ["BUDGET_LIMIT"])
+          tracer = Tracer(
+              sink=JsonlFileSink("ci_traces.jsonl"),
+              service="ci-agent-test",
+              guards=[BudgetGuard(max_cost_usd=budget, warn_at_pct=0.8)],
+          )
+
+          # --- Replace this section with your actual agent run ---
+          with tracer.trace("ci.agent_run") as span:
+              # Your agent code here. Example:
+              # from my_agent import run_agent
+              # run_agent(tracer=tracer)
+              span.event("placeholder", data={"note": "Replace with your agent run"})
+          # --- End of agent run ---
+
+          print(f"Agent completed within ${budget:.2f} budget")
+          EOF
+
+      - name: Evaluate traces
+        if: always()
+        uses: ./.github/actions/agentguard-eval
+        with:
+          trace-file: ci_traces.jsonl
+          assertions: "no_errors,max_cost:5.00"
