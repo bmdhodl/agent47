@@ -259,5 +259,91 @@ class TestHttpSinkSSRF(unittest.TestCase):
         sink.shutdown()
 
 
+class _HeartbeatCollectorHandler(BaseHTTPRequestHandler):
+    received: list = []
+
+    def do_POST(self):
+        import gzip as _gzip
+
+        length = int(self.headers.get("Content-Length", 0))
+        raw = self.rfile.read(length)
+        encoding = self.headers.get("Content-Encoding", "")
+        if encoding == "gzip":
+            raw = _gzip.decompress(raw)
+        body = raw.decode("utf-8")
+        self.__class__.received.append(body)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"ok")
+
+    def log_message(self, *args):
+        pass
+
+
+class TestHttpSinkHeartbeat(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _HeartbeatCollectorHandler.received = []
+        cls.server = HTTPServer(("127.0.0.1", 0), _HeartbeatCollectorHandler)
+        cls.port = cls.server.server_address[1]
+        cls.server_thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
+        cls.server_thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def setUp(self):
+        _HeartbeatCollectorHandler.received.clear()
+
+    def test_heartbeat_emits_events(self):
+        from agentguard.guards import BudgetGuard
+
+        budget = BudgetGuard(max_cost_usd=10.0)
+        budget.consume(cost_usd=2.50)
+
+        sink = HttpSink(
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
+            batch_size=1,
+            flush_interval=60,
+            heartbeat_interval=0.2,
+            heartbeat_guards=[budget],
+        )
+        time.sleep(0.5)
+        sink.shutdown()
+
+        # Should have received at least one heartbeat
+        self.assertGreaterEqual(len(_HeartbeatCollectorHandler.received), 1)
+        # Parse the first heartbeat
+        first_batch = _HeartbeatCollectorHandler.received[0]
+        events = [json.loads(line) for line in first_batch.strip().split("\n")]
+        heartbeats = [e for e in events if e.get("kind") == "heartbeat"]
+        self.assertGreaterEqual(len(heartbeats), 1)
+        hb = heartbeats[0]
+        self.assertEqual(hb["name"], "agent.heartbeat")
+        self.assertIn("BudgetGuard", hb["data"]["guards"])
+        self.assertAlmostEqual(
+            hb["data"]["guards"]["BudgetGuard"]["cost_used"], 2.50
+        )
+
+    def test_heartbeat_disabled_by_default(self):
+        sink = HttpSink(
+            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
+            batch_size=100,
+            flush_interval=60,
+        )
+        time.sleep(0.3)
+        sink.shutdown()
+        # No heartbeat events should be emitted
+        heartbeat_found = False
+        for batch in _HeartbeatCollectorHandler.received:
+            for line in batch.strip().split("\n"):
+                if line:
+                    event = json.loads(line)
+                    if event.get("kind") == "heartbeat":
+                        heartbeat_found = True
+        self.assertFalse(heartbeat_found)
+
+
 if __name__ == "__main__":
     unittest.main()

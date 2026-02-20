@@ -54,6 +54,7 @@ THREAD_SAFE_CLASSES = [
     "FuzzyLoopGuard",
     "BudgetGuard",
     "RateLimitGuard",
+    "RemoteGuard",
     "JsonlFileSink",
     "HttpSink",
 ]
