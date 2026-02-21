@@ -9,6 +9,7 @@ from .cost import estimate_cost
 from .evaluation import AssertionResult, EvalResult, EvalSuite, summarize_trace
 from .guards import (
     AgentGuardError,
+    AgentKilled,
     BaseGuard,
     BudgetExceeded,
     BudgetGuard,
@@ -17,6 +18,7 @@ from .guards import (
     LoopDetected,
     LoopGuard,
     RateLimitGuard,
+    RemoteGuard,
     TimeoutExceeded,
     TimeoutGuard,
 )
@@ -81,6 +83,7 @@ _show_first_run_prompt()
 
 __all__ = [
     "AgentGuardError",
+    "AgentKilled",
     "AssertionResult",
     "AsyncTraceContext",
     "AsyncTracer",
@@ -96,6 +99,7 @@ __all__ = [
     "LoopDetected",
     "LoopGuard",
     "RateLimitGuard",
+    "RemoteGuard",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",

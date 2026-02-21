@@ -1,11 +1,14 @@
-"""Tests for guards: LoopGuard, BudgetGuard, TimeoutGuard, FuzzyLoopGuard, RateLimitGuard."""
+"""Tests for guards: LoopGuard, BudgetGuard, TimeoutGuard, FuzzyLoopGuard, RateLimitGuard, RemoteGuard."""
 import json
 import os
 import tempfile
+import threading
 import time
 import unittest
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from agentguard.guards import (
+    AgentKilled,
     BaseGuard,
     BudgetExceeded,
     BudgetGuard,
@@ -13,6 +16,7 @@ from agentguard.guards import (
     LoopDetected,
     LoopGuard,
     RateLimitGuard,
+    RemoteGuard,
     TimeoutExceeded,
     TimeoutGuard,
 )
@@ -590,6 +594,240 @@ class TestEvalNoBudgetWarnings(unittest.TestCase):
         result = EvalSuite(path).assert_no_budget_warnings().run()
         os.unlink(path)
         self.assertFalse(result.passed)
+
+
+# ---------------------------------------------------------------------------
+# RemoteGuard
+# ---------------------------------------------------------------------------
+
+
+class _MockStatusHandler(BaseHTTPRequestHandler):
+    """Mock dashboard status API handler."""
+    response_data: dict = {"action": "continue"}
+
+    def do_GET(self):
+        body = json.dumps(self.__class__.response_data).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *args):
+        pass
+
+
+class _MockBudgetHandler(BaseHTTPRequestHandler):
+    """Mock dashboard budget API handler."""
+    response_data: dict = {"max_cost_usd": 25.0, "max_calls": 500}
+
+    def do_GET(self):
+        body = json.dumps(self.__class__.response_data).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *args):
+        pass
+
+
+class _Mock500Handler(BaseHTTPRequestHandler):
+    """Always returns 500."""
+    def do_GET(self):
+        self.send_response(500)
+        self.end_headers()
+
+    def log_message(self, *args):
+        pass
+
+
+class TestRemoteGuard(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _MockStatusHandler.response_data = {"action": "continue"}
+        cls.server = HTTPServer(("127.0.0.1", 0), _MockStatusHandler)
+        cls.port = cls.server.server_address[1]
+        cls.server_thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
+        cls.server_thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def test_no_kill_signal(self):
+        _MockStatusHandler.response_data = {"action": "continue"}
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=0.1,
+        )
+        guard.start()
+        time.sleep(0.3)
+        guard.check()  # should not raise
+        guard.stop()
+
+    def test_kill_signal_raises(self):
+        _MockStatusHandler.response_data = {
+            "action": "kill",
+            "reason": "Stopped by admin",
+        }
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=0.1,
+        )
+        guard.start()
+        time.sleep(0.3)
+        with self.assertRaises(AgentKilled) as ctx:
+            guard.check()
+        self.assertIn("Stopped by admin", str(ctx.exception))
+        guard.stop()
+
+    def test_kill_signal_default_reason(self):
+        _MockStatusHandler.response_data = {"action": "kill"}
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=0.1,
+        )
+        guard.start()
+        time.sleep(0.3)
+        with self.assertRaises(AgentKilled) as ctx:
+            guard.check()
+        self.assertIn("remote dashboard", str(ctx.exception))
+        guard.stop()
+
+    def test_budget_update(self):
+        budget = BudgetGuard(max_cost_usd=10.00)
+        _MockStatusHandler.response_data = {
+            "action": "continue",
+            "budget": {"max_cost_usd": 25.0},
+        }
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=0.1,
+            budget_guard=budget,
+        )
+        guard.start()
+        time.sleep(0.3)
+        self.assertAlmostEqual(budget.max_cost_usd, 25.0)
+        guard.stop()
+
+    def test_auto_check_delegates(self):
+        _MockStatusHandler.response_data = {"action": "kill"}
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=0.1,
+        )
+        guard.start()
+        time.sleep(0.3)
+        with self.assertRaises(AgentKilled):
+            guard.auto_check("tool.search", {"q": "test"})
+        guard.stop()
+
+    def test_reset_clears_kill(self):
+        _MockStatusHandler.response_data = {"action": "kill"}
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=0.1,
+        )
+        guard.start()
+        time.sleep(0.3)
+        self.assertTrue(guard.is_killed)
+        guard.reset()
+        self.assertFalse(guard.is_killed)
+        guard.check()  # should not raise after reset
+        guard.stop()
+
+    def test_repr(self):
+        guard = RemoteGuard(api_key="ag_test", agent_id="test-agent-1")
+        r = repr(guard)
+        self.assertIn("RemoteGuard", r)
+        self.assertIn("test-agent-1", r)
+        self.assertIn("idle", r)
+
+    def test_agent_id_auto_generated(self):
+        guard = RemoteGuard(api_key="ag_test")
+        self.assertTrue(len(guard.agent_id) > 0)
+
+    def test_invalid_api_key(self):
+        with self.assertRaises(ValueError):
+            RemoteGuard(api_key="")
+
+    def test_invalid_poll_interval(self):
+        with self.assertRaises(ValueError):
+            RemoteGuard(api_key="ag_test", poll_interval=0)
+
+    def test_start_is_idempotent(self):
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+            poll_interval=60,
+        )
+        guard.start()
+        guard.start()  # second call should be safe
+        guard.stop()
+
+    def test_check_without_start_does_not_raise(self):
+        guard = RemoteGuard(api_key="ag_test")
+        guard.check()  # no poll thread = no kill signal = no raise
+
+    def test_isinstance_base_guard(self):
+        guard = RemoteGuard(api_key="ag_test")
+        self.assertIsInstance(guard, BaseGuard)
+
+
+class TestRemoteGuardNetworkFailure(unittest.TestCase):
+    def test_network_failure_falls_back(self):
+        guard = RemoteGuard(
+            api_key="ag_test",
+            dashboard_url="http://127.0.0.1:1",  # nothing listening
+            poll_interval=0.1,
+        )
+        guard.start()
+        time.sleep(0.3)
+        guard.check()  # should not raise — graceful fallback
+        guard.stop()
+
+
+class TestBudgetGuardFromRemote(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _MockBudgetHandler.response_data = {"max_cost_usd": 25.0, "max_calls": 500}
+        cls.server = HTTPServer(("127.0.0.1", 0), _MockBudgetHandler)
+        cls.port = cls.server.server_address[1]
+        cls.server_thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
+        cls.server_thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def test_fetches_remote_config(self):
+        guard = BudgetGuard.from_remote(
+            api_key="ag_test",
+            dashboard_url=f"http://127.0.0.1:{self.port}",
+        )
+        self.assertAlmostEqual(guard.max_cost_usd, 25.0)
+        self.assertEqual(guard.max_calls, 500)
+
+    def test_fallback_on_network_failure(self):
+        guard = BudgetGuard.from_remote(
+            api_key="ag_test",
+            dashboard_url="http://127.0.0.1:1",  # nothing listening
+            fallback_max_cost_usd=10.0,
+        )
+        self.assertAlmostEqual(guard.max_cost_usd, 10.0)
+
+    def test_fallback_no_limits_raises(self):
+        with self.assertRaises(ValueError):
+            BudgetGuard.from_remote(
+                api_key="ag_test",
+                dashboard_url="http://127.0.0.1:1",
+            )
 
 
 if __name__ == "__main__":

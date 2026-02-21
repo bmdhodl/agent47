@@ -182,6 +182,8 @@ class HttpSink(TraceSink):
         compress: Enable gzip compression. Default True.
         max_retries: Maximum retry attempts on failure. Default 3.
         max_buffer_size: Maximum events to buffer before dropping oldest. Default 10000.
+        heartbeat_interval: Seconds between heartbeat events. None disables heartbeats.
+        heartbeat_guards: List of guards whose state to include in heartbeats.
     """
 
     def __init__(
@@ -193,6 +195,8 @@ class HttpSink(TraceSink):
         compress: bool = True,
         max_retries: int = 3,
         max_buffer_size: int = 10_000,
+        heartbeat_interval: Optional[float] = None,
+        heartbeat_guards: Optional[List[Any]] = None,
         _allow_private: bool = False,
     ) -> None:
         _validate_url(url, allow_private=_allow_private)
@@ -222,12 +226,23 @@ class HttpSink(TraceSink):
         self._max_buffer_size = max_buffer_size
         self._dropped_count = 0
 
+        self._heartbeat_interval = heartbeat_interval
+        self._heartbeat_guards = heartbeat_guards or []
+
         self._buffer: List[Dict[str, Any]] = []
         self._lock = threading.Lock()
         self._stop = threading.Event()
 
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
+
+        self._heartbeat_thread: Optional[threading.Thread] = None
+        if heartbeat_interval is not None and heartbeat_interval > 0:
+            self._heartbeat_thread = threading.Thread(
+                target=self._heartbeat_loop, daemon=True
+            )
+            self._heartbeat_thread.start()
+
         atexit.register(self.shutdown)
 
     def emit(self, event: Dict[str, Any]) -> None:
@@ -338,11 +353,40 @@ class HttpSink(TraceSink):
                         exc_info=True,
                     )
 
+    def _heartbeat_loop(self) -> None:
+        """Background loop: emit heartbeat events at the configured interval."""
+        while not self._stop.wait(self._heartbeat_interval):
+            self._emit_heartbeat()
+
+    def _emit_heartbeat(self) -> None:
+        """Emit a single heartbeat event with current guard state."""
+        guard_state = {}
+        for guard in self._heartbeat_guards:
+            name = type(guard).__name__
+            state = getattr(guard, "state", None)
+            if state is not None:
+                guard_state[name] = {
+                    k: v for k, v in state.__dict__.items()
+                    if not k.startswith("_")
+                }
+            elif hasattr(guard, "is_killed"):
+                guard_state[name] = {"is_killed": guard.is_killed}
+
+        event = {
+            "kind": "heartbeat",
+            "name": "agent.heartbeat",
+            "ts": time.time(),
+            "data": {"guards": guard_state},
+        }
+        self.emit(event)
+
     def shutdown(self) -> None:
-        """Flush remaining events and stop the background thread."""
+        """Flush remaining events and stop the background threads."""
         self._stop.set()
         self._flush()
         self._thread.join(timeout=5)
+        if self._heartbeat_thread is not None:
+            self._heartbeat_thread.join(timeout=5)
 
     def __repr__(self) -> str:
         return f"HttpSink(url={self._url!r})"
