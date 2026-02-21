@@ -36,6 +36,8 @@ class IngestHandler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/api/events":
             self._handle_query()
+        elif path == "/api/v1/traces":
+            self._handle_traces()
         else:
             self.send_response(404)
             self.end_headers()
@@ -115,6 +117,45 @@ class IngestHandler(BaseHTTPRequestHandler):
             result = [e for e in result if e.get("kind") == kind]
 
         resp = json.dumps(result)
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(resp.encode())
+
+    def _handle_traces(self) -> None:
+        """Aggregate stored events by trace_id, return trace summaries."""
+        qs = parse_qs(urlparse(self.path).query)
+
+        with self.__class__._lock:
+            all_events = list(self.__class__.events)
+
+        # Group by trace_id
+        traces: Dict[str, List[Dict[str, Any]]] = {}
+        for e in all_events:
+            tid = e.get("trace_id", "unknown")
+            traces.setdefault(tid, []).append(e)
+
+        # Optional filter
+        if "trace_id" in qs:
+            tid = qs["trace_id"][0]
+            traces = {tid: traces[tid]} if tid in traces else {}
+
+        result = []
+        for tid, events in traces.items():
+            total_cost = 0.0
+            for e in events:
+                cost = e.get("cost_usd")
+                if cost is None and isinstance(e.get("data"), dict):
+                    cost = e["data"].get("cost_usd")
+                if isinstance(cost, (int, float)):
+                    total_cost += cost
+            result.append({
+                "trace_id": tid,
+                "event_count": len(events),
+                "total_cost": total_cost,
+            })
+
+        resp = json.dumps({"traces": result})
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
