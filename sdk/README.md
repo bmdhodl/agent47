@@ -31,7 +31,6 @@ with tracer.trace("agent.run") as span:
 
 ```bash
 agentguard report traces.jsonl   # summary table
-agentguard view traces.jsonl     # Gantt timeline in browser
 ```
 
 ## Guards
@@ -161,7 +160,6 @@ sink = HttpSink(
 
 ```bash
 agentguard report traces.jsonl      # human-readable summary
-agentguard view traces.jsonl        # Gantt trace viewer in browser
 agentguard summarize traces.jsonl   # event-level breakdown
 agentguard eval traces.jsonl        # run evaluation assertions
 agentguard eval traces.jsonl --ci   # CI mode (stricter checks, exit code)

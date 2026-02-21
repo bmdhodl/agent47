@@ -50,7 +50,7 @@ async def main():
     result = await agent("how to detect agent loops")
     print(result)
     print("\nTrace written to async_traces.jsonl")
-    print("Run: agentguard view async_traces.jsonl")
+    print("Run: agentguard report async_traces.jsonl")
 
 
 if __name__ == "__main__":

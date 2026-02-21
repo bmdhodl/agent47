@@ -42,12 +42,6 @@ AgentGuard report
   Approx run time: 0.3 ms
 ```
 
-Open a timeline in your browser:
-
-```bash
-agentguard view traces.jsonl
-```
-
 ## 3. Add a loop guard
 
 Stop agents that repeat themselves. Guards auto-check on every `span.event()` call:

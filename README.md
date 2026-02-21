@@ -113,12 +113,13 @@ pip install agentguard47[langchain]
 ```
 
 ```python
-from agentguard import Tracer, BudgetGuard
+from agentguard import Tracer, BudgetGuard, LoopGuard
 from agentguard.integrations.langchain import AgentGuardCallbackHandler
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00)])
+tracer = Tracer(service="my-agent")
 handler = AgentGuardCallbackHandler(
     tracer=tracer,
+    loop_guard=LoopGuard(max_repeats=3),
     budget_guard=BudgetGuard(max_cost_usd=5.00),
 )
 

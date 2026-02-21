@@ -22,6 +22,7 @@ import time
 from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Any, Callable, Deque, Dict, Optional, Tuple
+from urllib.parse import urlparse
 
 
 class AgentGuardError(Exception):
