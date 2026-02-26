@@ -242,14 +242,15 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 
 ### Public API Surface
 
-**Tracing:** `Tracer`, `TraceContext`, `TraceSink`, `JsonlFileSink`, `StdoutSink`, `HttpSink`
+**Tracing:** `Tracer`, `TraceSink`, `JsonlFileSink`, `StdoutSink`, `HttpSink`
 **Guards:** `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`
 **Exceptions:** `LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`
 **Instrumentation:** `trace_agent`, `trace_tool`, `patch_openai`, `patch_anthropic`, `unpatch_openai`, `unpatch_anthropic`
 **Async:** `AsyncTracer`, `AsyncTraceContext`, `async_trace_agent`, `async_trace_tool`, `patch_openai_async`, `patch_anthropic_async`, `unpatch_openai_async`, `unpatch_anthropic_async`
 **Cost:** `estimate_cost`
 **Evaluation:** `EvalSuite`, `EvalResult`, `AssertionResult`
-**Integrations:** `AgentGuardCallbackHandler` (LangChain), `guarded_node`/`guard_node` (LangGraph), `AgentGuardCrewHandler` (CrewAI), `OtelTraceSink` (OpenTelemetry)
+**Integrations:** `AgentGuardCallbackHandler` (LangChain), `guarded_node`/`guard_node` (LangGraph), `AgentGuardCrewHandler` (CrewAI)
+**Sinks (optional import):** `OtelTraceSink` (`from agentguard.sinks.otel import OtelTraceSink`)
 
 ### Constraints
 
