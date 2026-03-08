@@ -3,22 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AgentGuard — Runtime Guardrails for AI Agents</title>
-    <meta name="description" content="Stop runaway agents, track costs per call, and replay failures deterministically. Zero dependencies." />
+    <title>AgentGuard — AI Agent Cost Control | Budget Limits &amp; Spend Visibility</title>
+    <meta name="description" content="Stop runaway AI bills before they happen. Set hard spend limits, catch looping agents, and see cost per run. Open-source SDK + hosted dashboard." />
     <link rel="canonical" href="https://agentguard47.com/" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://agentguard47.com/" />
-    <meta property="og:title" content="AgentGuard — Runtime Guardrails for AI Agents" />
-    <meta property="og:description" content="Stop runaway AI agents before they drain your budget. Loop detection, budget enforcement, cost tracking. Zero dependencies." />
+    <meta property="og:title" content="AgentGuard — AI Agent Cost Control" />
+    <meta property="og:description" content="Stop runaway AI bills before they happen. Set hard spend limits, catch looping agents, and see cost per run." />
     <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AgentGuard — Runtime Guardrails for AI Agents" />
-    <meta name="twitter:description" content="Stop runaway AI agents before they drain your budget. Loop detection, budget enforcement, cost tracking. Zero dependencies." />
+    <meta name="twitter:title" content="AgentGuard — AI Agent Cost Control" />
+    <meta name="twitter:description" content="Stop runaway AI bills before they happen. Set hard spend limits, catch looping agents, and see cost per run." />
     <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
 
     <script defer src="/_vercel/insights/script.js"></script>
@@ -195,9 +195,9 @@
   </head>
   <body>
     <div class="wrap">
-      <span class="badge">Zero Dependencies &middot; OSS SDK + Hosted Dashboard</span>
-      <h1>Your agents are running. Do you know what they're spending?</h1>
-      <p>AgentGuard stops runaway AI agents before they drain your budget. Runtime loop detection, hard dollar caps, and cost tracking per LLM call. Three lines of code. Zero dependencies.</p>
+      <span class="badge">Open Source &middot; Cost Control for AI Agents</span>
+      <h1>Stop runaway AI bills before they happen.</h1>
+      <p>Set hard spend limits, catch looping agents, and see cost per run. Open-source SDK + hosted dashboard.</p>
 
       <div class="cta">
         <a class="btn" href="https://app.agentguard47.com/sign-up">Get Started — it's free</a>
@@ -233,32 +233,20 @@
 
       <div class="grid">
         <div class="card">
-          <strong>Budget enforcement</strong>
-          <p class="muted">Set a dollar limit. Agent stops when it's hit. No more surprise invoices.</p>
+          <strong>Hard budget caps</strong>
+          <p class="muted">Set a dollar limit per project or agent. Runs stop when the cap is hit. No surprise invoices.</p>
         </div>
         <div class="card">
-          <strong>Loop detection</strong>
-          <p class="muted">Catch repeated tool calls before they compound. Automatic circuit breaker.</p>
+          <strong>Loop &amp; runaway detection</strong>
+          <p class="muted">Catch repeated tool calls and stuck agents automatically. Circuit breaker built in.</p>
         </div>
         <div class="card">
-          <strong>Cost tracking</strong>
-          <p class="muted">See exactly what each agent run costs, per call. Dollar amounts, not guesses.</p>
+          <strong>Spend visibility</strong>
+          <p class="muted">See cost per agent run, per model, per day. Know where every dollar goes.</p>
         </div>
         <div class="card">
-          <strong>Zero dependencies</strong>
-          <p class="muted">Pure Python stdlib. One package, nothing to audit. No supply chain risk.</p>
-        </div>
-        <div class="card">
-          <strong>Auto-instrument</strong>
-          <p class="muted">Patch OpenAI/Anthropic in one line. Costs and traces flow automatically.</p>
-        </div>
-        <div class="card">
-          <strong>Replay tests</strong>
-          <p class="muted">Record real runs and replay deterministically for regression tests.</p>
-        </div>
-        <div class="card">
-          <strong>Timeline viewer</strong>
-          <p class="muted">Gantt visualization with color-coded spans and click-to-expand details.</p>
+          <strong>Policy management</strong>
+          <p class="muted">Configure budget caps, loop limits, and timeouts from the dashboard. Push enforcement to your SDK.</p>
         </div>
       </div>
 
@@ -266,18 +254,18 @@
       <div class="steps">
         <div class="step">
           <div class="num">1</div>
-          <p><strong>Install the SDK</strong></p>
-          <p class="muted">pip install agentguard47</p>
+          <p><strong>Create a project</strong></p>
+          <p class="muted">Sign up free. Name your project. Get an ingestion key.</p>
         </div>
         <div class="step">
           <div class="num">2</div>
-          <p><strong>Add 3 lines</strong></p>
-          <p class="muted">Wrap your agent with Tracer and HttpSink</p>
+          <p><strong>Connect the SDK</strong></p>
+          <p class="muted">pip install agentguard47. Add 4 lines. Costs flow automatically.</p>
         </div>
         <div class="step">
           <div class="num">3</div>
-          <p><strong>See traces</strong></p>
-          <p class="muted">Gantt timelines, alerts, and usage in the dashboard</p>
+          <p><strong>Set limits, see spend</strong></p>
+          <p class="muted">Configure budget caps in the dashboard. See every dollar in real time.</p>
         </div>
       </div>
 
@@ -316,34 +304,37 @@ guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00<
       <div class="pricing-grid">
         <div class="pricing-card">
           <h3>Free</h3>
+          <p class="muted" style="margin:0 0 4px;font-size:14px">For solo builders</p>
           <div class="price">$0</div>
           <ul>
             <li>10,000 events/month</li>
-            <li>7-day retention</li>
-            <li>2 API keys</li>
-            <li>1 user</li>
+            <li>7-day history</li>
+            <li>See your spend, set basic caps</li>
+            <li>2 API keys &middot; 1 user</li>
           </ul>
           <a class="btn btn-sm secondary" href="https://app.agentguard47.com/sign-up">Start Free</a>
         </div>
         <div class="pricing-card highlight">
           <h3>Pro</h3>
+          <p class="muted" style="margin:0 0 4px;font-size:14px">For production agents</p>
           <div class="price">$39<span style="font-size:16px;font-weight:400">/mo</span></div>
           <ul>
             <li>500,000 events/month</li>
-            <li>30-day retention</li>
-            <li>5 API keys</li>
-            <li>1 user</li>
+            <li>30-day history</li>
+            <li>Full policy management, email alerts</li>
+            <li>5 API keys &middot; 1 user</li>
           </ul>
           <a class="btn btn-sm" href="https://app.agentguard47.com/sign-up">Get Pro</a>
         </div>
         <div class="pricing-card">
           <h3>Team</h3>
+          <p class="muted" style="margin:0 0 4px;font-size:14px">For teams</p>
           <div class="price">$79<span style="font-size:16px;font-weight:400">/mo</span></div>
           <ul>
             <li>5,000,000 events/month</li>
-            <li>90-day retention</li>
-            <li>20 API keys</li>
-            <li>10 users</li>
+            <li>90-day history</li>
+            <li>Multiple projects, shared policies</li>
+            <li>20 API keys &middot; 10 users</li>
           </ul>
           <a class="btn btn-sm secondary" href="https://app.agentguard47.com/sign-up">Get Team</a>
         </div>
