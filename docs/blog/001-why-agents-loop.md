@@ -69,12 +69,6 @@ AgentGuard report
 
 The guard caught the loop on the third identical call. No tokens wasted. No silent failure.
 
-Open the trace viewer to see the full event timeline in your browser:
-
-```bash
-agentguard view traces.jsonl
-```
-
 ## Why this matters
 
 Without tracing, loop failures are invisible. Your agent returns after 30 seconds and you don't know if it did useful work or burned $2 in API calls repeating itself.

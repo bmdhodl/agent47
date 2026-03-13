@@ -13,15 +13,15 @@ Usage::
 """
 from __future__ import annotations
 
+import random
+import time
+import uuid
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, AsyncIterator, Dict, List, Optional
 
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
-
-import time
-import uuid
 
 from agentguard.tracing import StdoutSink, TraceSink
 
@@ -46,6 +46,7 @@ class AsyncTraceContext:
     data: Optional[Dict[str, Any]]
     _start_time: Optional[float] = None
     _cost_tracker: Optional[Any] = None
+    _sampled: bool = True
 
     @property
     def cost(self) -> "CostTracker":
@@ -58,15 +59,16 @@ class AsyncTraceContext:
 
     async def __aenter__(self) -> "AsyncTraceContext":
         self._start_time = time.perf_counter()
-        self.tracer._emit(
-            kind="span",
-            phase="start",
-            trace_id=self.trace_id,
-            span_id=self.span_id,
-            parent_id=self.parent_id,
-            name=self.name,
-            data=self.data,
-        )
+        if self._sampled:
+            self.tracer._emit(
+                kind="span",
+                phase="start",
+                trace_id=self.trace_id,
+                span_id=self.span_id,
+                parent_id=self.parent_id,
+                name=self.name,
+                data=self.data,
+            )
         return self
 
     async def __aexit__(self, exc_type, exc, tb) -> None:
@@ -84,18 +86,19 @@ class AsyncTraceContext:
         cost_usd = None
         if self._cost_tracker is not None and self._cost_tracker.total > 0:
             cost_usd = self._cost_tracker.total
-        self.tracer._emit(
-            kind="span",
-            phase="end",
-            trace_id=self.trace_id,
-            span_id=self.span_id,
-            parent_id=self.parent_id,
-            name=self.name,
-            data=self.data,
-            duration_ms=duration_ms,
-            error=error,
-            cost_usd=cost_usd,
-        )
+        if self._sampled:
+            self.tracer._emit(
+                kind="span",
+                phase="end",
+                trace_id=self.trace_id,
+                span_id=self.span_id,
+                parent_id=self.parent_id,
+                name=self.name,
+                data=self.data,
+                duration_ms=duration_ms,
+                error=error,
+                cost_usd=cost_usd,
+            )
 
     @asynccontextmanager
     async def span(self, name: str, data: Optional[Dict[str, Any]] = None) -> AsyncIterator["AsyncTraceContext"]:
@@ -115,6 +118,7 @@ class AsyncTraceContext:
             parent_id=self.span_id,
             name=name,
             data=data,
+            _sampled=self._sampled,
         )
         async with ctx:
             yield ctx
@@ -134,16 +138,20 @@ class AsyncTraceContext:
             data: Optional data to attach to the event.
             cost_usd: Optional cost in USD for this event.
         """
-        self.tracer._emit(
-            kind="event",
-            phase="emit",
-            trace_id=self.trace_id,
-            span_id=self.span_id,
-            parent_id=self.parent_id,
-            name=name,
-            data=data,
-            cost_usd=cost_usd,
-        )
+        if self._sampled:
+            self.tracer._emit(
+                kind="event",
+                phase="emit",
+                trace_id=self.trace_id,
+                span_id=self.span_id,
+                parent_id=self.parent_id,
+                name=name,
+                data=data,
+                cost_usd=cost_usd,
+            )
+        else:
+            # Guards must still fire even when trace is sampled out
+            self.tracer._check_guards(name, data)
 
 
 class AsyncTracer:
@@ -162,6 +170,9 @@ class AsyncTracer:
         sink: Where to send trace events. Defaults to StdoutSink.
         service: Name of the service being traced.
         guards: Optional list of guards to auto-check on each event.
+        metadata: Dict of metadata attached to every event (e.g. env, git SHA).
+        sampling_rate: Float 0.0-1.0. Fraction of traces to emit. 1.0 = all, 0.0 = none.
+        watermark: Whether to emit a one-time AgentGuard watermark event.
     """
 
     def __init__(
@@ -169,14 +180,27 @@ class AsyncTracer:
         sink: Optional[TraceSink] = None,
         service: str = "app",
         guards: Optional[List[Any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        sampling_rate: float = 1.0,
+        watermark: bool = True,
     ) -> None:
+        if not (0.0 <= sampling_rate <= 1.0):
+            raise ValueError(
+                f"sampling_rate must be between 0.0 and 1.0, got {sampling_rate}"
+            )
         self._sink = sink or StdoutSink()
         self._service = service
         self._guards = guards or []
+        self._metadata = metadata or {}
+        self._sampling_rate = sampling_rate
+        self._watermark = watermark
+        self._watermark_emitted = False
 
     @asynccontextmanager
     async def trace(self, name: str, data: Optional[Dict[str, Any]] = None) -> AsyncIterator[AsyncTraceContext]:
         """Start a new top-level async trace span.
+
+        If sampling_rate < 1.0, this trace may be silently skipped.
 
         Args:
             name: Name of the trace span.
@@ -185,6 +209,7 @@ class AsyncTracer:
         Yields:
             An AsyncTraceContext for creating child spans and events.
         """
+        sampled = random.random() < self._sampling_rate
         ctx = AsyncTraceContext(
             tracer=self,
             trace_id=_new_id(),
@@ -192,6 +217,7 @@ class AsyncTracer:
             parent_id=None,
             name=name,
             data=data,
+            _sampled=sampled,
         )
         async with ctx:
             yield ctx
@@ -226,11 +252,32 @@ class AsyncTracer:
         }
         if cost_usd is not None:
             event["cost_usd"] = cost_usd
+        if self._metadata:
+            event["metadata"] = self._metadata
+        if self._watermark and not self._watermark_emitted:
+            self._watermark_emitted = True
+            wm: Dict[str, Any] = {
+                "service": self._service,
+                "kind": "meta",
+                "name": "watermark",
+                "message": "Traced by AgentGuard | agentguard47.com",
+                "ts": time.time(),
+            }
+            if self._metadata:
+                wm["metadata"] = self._metadata
+            self._sink.emit(wm)
         self._sink.emit(event)
 
         # Auto-check guards
+        if kind == "event":
+            self._check_guards(name, data)
+
+    def _check_guards(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+        """Run all attached guards. Called on every event, even sampled-out ones."""
         for guard in self._guards:
-            if hasattr(guard, "check") and kind == "event":
+            if hasattr(guard, "auto_check"):
+                guard.auto_check(name, data)
+            elif hasattr(guard, "check"):
                 try:
                     guard.check(name, data)
                 except TypeError:
@@ -240,7 +287,7 @@ class AsyncTracer:
                         pass
 
     def __repr__(self) -> str:
-        return f"AsyncTracer(service={self._service!r}, sink={self._sink!r})"
+        return f"AsyncTracer(service={self._service!r}, sink={self._sink!r}, watermark={self._watermark!r})"
 
 
 def _new_id() -> str:

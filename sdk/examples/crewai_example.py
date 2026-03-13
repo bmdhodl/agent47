@@ -99,4 +99,4 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print(result)
     print("=" * 60)
-    print(f"\n[agentguard] Trace saved. Run: agentguard view {here}/crewai_traces.jsonl")
+    print(f"\n[agentguard] Trace saved. Run: agentguard report {here}/crewai_traces.jsonl")
