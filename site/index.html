@@ -3,22 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AgentGuard — AI Agent Cost Control | Budget Limits &amp; Spend Visibility</title>
-    <meta name="description" content="Stop runaway AI bills before they happen. Set hard spend limits, catch looping agents, and see cost per run. Open-source SDK + hosted dashboard." />
+    <title>AgentGuard — Runtime Firewall for AI Agents</title>
+    <meta name="description" content="Your AI agent just burned $2,000 in tokens overnight. AgentGuard stops it at $5. Runtime firewall with loop detection, budget enforcement, and kill signals." />
     <link rel="canonical" href="https://agentguard47.com/" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://agentguard47.com/" />
-    <meta property="og:title" content="AgentGuard — AI Agent Cost Control" />
-    <meta property="og:description" content="Stop runaway AI bills before they happen. Set hard spend limits, catch looping agents, and see cost per run." />
+    <meta property="og:title" content="AgentGuard — Runtime Firewall for AI Agents" />
+    <meta property="og:description" content="Your AI agent just burned $2,000 in tokens overnight. AgentGuard stops it at $5. Loop detection, budget caps, kill signals." />
     <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AgentGuard — AI Agent Cost Control" />
-    <meta name="twitter:description" content="Stop runaway AI bills before they happen. Set hard spend limits, catch looping agents, and see cost per run." />
+    <meta name="twitter:title" content="AgentGuard — Runtime Firewall for AI Agents" />
+    <meta name="twitter:description" content="Your AI agent just burned $2,000 in tokens overnight. AgentGuard stops it at $5. Loop detection, budget caps, kill signals." />
     <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
 
     <script defer src="/_vercel/insights/script.js"></script>
@@ -195,20 +195,28 @@
   </head>
   <body>
     <div class="wrap">
-      <span class="badge">Open Source &middot; Cost Control for AI Agents</span>
-      <h1>Stop runaway AI bills before they happen.</h1>
-      <p>Set hard spend limits, catch looping agents, and see cost per run. Open-source SDK + hosted dashboard.</p>
+      <span class="badge">Runtime Firewall for AI Agents</span>
+      <h1>Your AI agent just burned $2,000 in tokens overnight.<br>AgentGuard stops it at $5.</h1>
+      <p style="font-size:18px;max-width:640px">Stop runaway AI agents before they burn your API budget or leak data.</p>
+      <ul style="list-style:none;padding:0;margin:12px 0 0;font-size:16px;line-height:2">
+        <li><strong style="color:var(--accent)">&bull;</strong> Kill infinite loops</li>
+        <li><strong style="color:var(--accent)">&bull;</strong> Enforce hard dollar caps</li>
+        <li><strong style="color:var(--accent)">&bull;</strong> Track cost per agent</li>
+        <li><strong style="color:var(--accent)">&bull;</strong> Block unsafe actions in real time</li>
+      </ul>
 
       <div class="cta">
-        <a class="btn" href="https://app.agentguard47.com/sign-up">Get Started — it's free</a>
+        <a class="btn" href="https://app.agentguard47.com/sign-up">Start Your 14-Day Free Trial</a>
         <a class="btn secondary" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
       </div>
 
       <div class="integrations">
-        <span class="muted">Works with</span>
+        <span class="muted">Built for teams running AI agents in production:</span>
         <span class="integration-badge">LangChain</span>
-        <span class="integration-badge">OpenAI</span>
-        <span class="integration-badge">Anthropic</span>
+        <span class="integration-badge">LangGraph</span>
+        <span class="integration-badge">CrewAI</span>
+        <span class="integration-badge">AutoGen</span>
+        <span class="integration-badge">MCP Agents</span>
         <span class="integration-badge">Any Python agent</span>
       </div>
 
@@ -233,21 +241,27 @@
 
       <div class="grid">
         <div class="card">
-          <strong>Hard budget caps</strong>
-          <p class="muted">Set a dollar limit per project or agent. Runs stop when the cap is hit. No surprise invoices.</p>
+          <strong>Kill infinite loops</strong>
+          <p class="muted">Detect repeated tool calls across any depth. Automatic circuit breaker fires before costs compound.</p>
         </div>
         <div class="card">
-          <strong>Loop &amp; runaway detection</strong>
-          <p class="muted">Catch repeated tool calls and stuck agents automatically. Circuit breaker built in.</p>
+          <strong>Enforce hard dollar caps</strong>
+          <p class="muted">Set a budget. Agent stops mid-run when it's hit. No more $2,000 surprise invoices.</p>
         </div>
         <div class="card">
-          <strong>Spend visibility</strong>
-          <p class="muted">See cost per agent run, per model, per day. Know where every dollar goes.</p>
+          <strong>Track cost per agent</strong>
+          <p class="muted">See exactly what each run costs, per LLM call. Dollar amounts, not token estimates.</p>
         </div>
         <div class="card">
-          <strong>Policy management</strong>
-          <p class="muted">Configure budget caps, loop limits, and timeouts from the dashboard. Push enforcement to your SDK.</p>
+          <strong>Remote kill switch</strong>
+          <p class="muted">Stop any agent instantly from the dashboard. No redeployment needed.</p>
         </div>
+      </div>
+
+      <!-- CI/CD analogy -->
+      <div class="card" style="margin:24px 0;padding:24px;background:linear-gradient(135deg,#f8f6f1,#f0efe9);text-align:center">
+        <p style="margin:0;font-size:18px;line-height:1.6"><strong>Docker gave you container scanning.<br>AgentGuard gives you agent scanning.</strong></p>
+        <p class="muted" style="margin:8px 0 0;font-size:15px">CI/CD gate &rarr; Runtime enforcement &rarr; Compliance trail</p>
       </div>
 
       <h2>How it works</h2>
@@ -288,6 +302,82 @@ guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00<
     span.<span class="fn">event</span>(<span class="str">"reasoning.step"</span>, data={<span class="str">"thought"</span>: <span class="str">"search docs"</span>})
     <span class="kw">with</span> span.<span class="fn">span</span>(<span class="str">"tool.search"</span>):
         <span class="kw">pass</span>  <span class="comment"># your tool here</span></pre>
+      </div>
+
+      <!-- Interactive demo -->
+      <h2>See it in action</h2>
+      <div id="demo-container" class="card" style="padding:24px;font-family:monospace;font-size:13px;position:relative;min-height:180px;overflow:hidden">
+        <div id="demo-output" style="white-space:pre-wrap;line-height:1.8"></div>
+        <button id="demo-replay" class="btn btn-sm" style="position:absolute;top:12px;right:12px;font-size:12px;padding:6px 12px;display:none" onclick="runDemo()">Replay</button>
+      </div>
+      <script>
+        function runDemo() {
+          var out = document.getElementById('demo-output');
+          var btn = document.getElementById('demo-replay');
+          out.innerHTML = '';
+          btn.style.display = 'none';
+          var lines = [
+            { text: '> Agent started: research_task', delay: 300 },
+            { text: '  [tool.search] "latest AI papers"', delay: 600 },
+            { text: '  [tool.search] "latest AI papers"  <span style="color:#6c645a">cost: $0.12</span>', delay: 800 },
+            { text: '  [tool.search] "latest AI papers"  <span style="color:#c9a227">cost: $0.38</span>', delay: 400 },
+            { text: '  [tool.search] "latest AI papers"  <span style="color:#d97706">cost: $1.24</span>', delay: 400 },
+            { text: '  [tool.search] "latest AI papers"  <span style="color:#dc2626">cost: $2.87</span>', delay: 300 },
+            { text: '  [tool.search] "latest AI papers"  <span style="color:#dc2626">cost: $5.01</span>', delay: 300 },
+            { text: '\n  <span style="color:#dc2626;font-weight:bold">!! LOOP DETECTED: tool.search repeated 6x</span>', delay: 500 },
+            { text: '  <span style="color:#dc2626;font-weight:bold">!! KILL SIGNAL SENT &#x2014; Agent stopped</span>', delay: 400 },
+            { text: '\n  <span style="color:#1b6c4a;font-weight:bold">&#10003; $5.01 saved by AgentGuard intervention</span>', delay: 600 },
+          ];
+          var i = 0;
+          function next() {
+            if (i >= lines.length) { btn.style.display = 'block'; return; }
+            var line = lines[i++];
+            setTimeout(function() {
+              out.innerHTML += line.text + '\n';
+              next();
+            }, line.delay);
+          }
+          next();
+        }
+        var observer = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting) {
+            runDemo();
+            observer.disconnect();
+          }
+        }, { threshold: 0.5 });
+        observer.observe(document.getElementById('demo-container'));
+      </script>
+
+      <!-- Competitor comparison -->
+      <h2>Other tools watch your agents fail. AgentGuard stops them.</h2>
+      <div style="overflow-x:auto;margin:20px 0">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;text-align:left">
+          <thead>
+            <tr style="border-bottom:2px solid #d7d0c5">
+              <th style="padding:8px 12px">Feature</th>
+              <th style="padding:8px 12px;color:var(--accent);font-weight:700">AgentGuard</th>
+              <th style="padding:8px 12px">Langfuse</th>
+              <th style="padding:8px 12px">LangSmith</th>
+              <th style="padding:8px 12px">Helicone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Tracing</td><td style="padding:8px 12px;color:var(--accent)">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td></tr>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Cost tracking</td><td style="padding:8px 12px;color:var(--accent)">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td></tr>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Budget enforcement</td><td style="padding:8px 12px;color:var(--accent)"><strong>Hard stop mid-run</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">Soft alert</td></tr>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Loop detection</td><td style="padding:8px 12px;color:var(--accent)"><strong>Auto circuit-breaker</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td></tr>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Remote kill switch</td><td style="padding:8px 12px;color:var(--accent)"><strong>Instant, no redeploy</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td></tr>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Auto-intervention</td><td style="padding:8px 12px;color:var(--accent)"><strong>Rule engine on ingest</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td></tr>
+            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Open source</td><td style="padding:8px 12px">SDK (MIT)</td><td style="padding:8px 12px">Full (MIT)</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px">Gateway</td></tr>
+            <tr><td style="padding:8px 12px">Setup</td><td style="padding:8px 12px;color:var(--accent)"><strong>3 lines</strong></td><td style="padding:8px 12px">Hours</td><td style="padding:8px 12px">30 min</td><td style="padding:8px 12px">2 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Why not DIY -->
+      <div class="card" style="margin:24px 0;padding:24px;background:linear-gradient(135deg,#f8f6f1,#f0efe9)">
+        <h3 style="margin:0 0 8px">"Can't I just add max_iterations myself?"</h3>
+        <p class="muted" style="margin:0">You could add a budget check. But can you also detect retry loops across 12 tool calls, auto-kill the agent remotely without redeploying, send an alert with the trace link, log the intervention for compliance, and show your team a dashboard of how much you saved &mdash; all in a weekend? That's what AgentGuard does out of the box.</p>
       </div>
 
       <h2>What builders say</h2>
@@ -356,7 +446,7 @@ guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00<
         </div>
         <div class="card">
           <strong>Retention you control</strong>
-          <p class="muted">7-90 day auto-cleanup by plan. No indefinite data hoarding.</p>
+          <p class="muted">30-90 day auto-cleanup by plan. No indefinite data hoarding.</p>
         </div>
       </div>
 
