@@ -294,15 +294,15 @@ tracer = Tracer(
 )
 ```
 
-| | Free | Pro ($39/mo) | Team ($79/mo) |
+| | Trial (14d free) | Pro ($39/mo) | Team ($79/mo) |
 |---|---|---|---|
 | SDK + local guards | Unlimited | Unlimited | Unlimited |
-| Dashboard traces | - | 100K/mo | 500K/mo |
-| Budget alerts (email/webhook) | - | Yes | Yes |
-| Remote kill switch | - | Yes | Yes |
-| Team members | - | 1 | 10 |
+| Dashboard events | 500K/mo | 500K/mo | 5M/mo |
+| Budget alerts (email/webhook) | Yes | Yes | Yes |
+| Remote kill switch | Yes | Yes | Yes |
+| Team members | 1 | 1 | 10 |
 
-[Start free](https://app.agentguard47.com) | [View pricing](https://agentguard47.com/#pricing)
+[Start free trial](https://app.agentguard47.com) | [View pricing](https://agentguard47.com/#pricing)
 
 ## Architecture
 
