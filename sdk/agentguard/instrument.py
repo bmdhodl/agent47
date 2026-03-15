@@ -235,7 +235,7 @@ def _traced_openai_create(
     original: Any, tracer: Any, budget_guard: Any, *args: Any, **kwargs: Any
 ) -> Any:
     """Shared traced wrapper for sync OpenAI create calls."""
-    model = kwargs.get("model", "unknown")
+    model = str(kwargs.get("model", "unknown"))
     with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
         result = original(*args, **kwargs)
         _emit_llm_result(ctx, budget_guard, model, "openai", getattr(result, "usage", None))
@@ -294,7 +294,7 @@ def _patch_anthropic_instance(client: Any, tracer: Any, budget_guard: Any = None
 
     @functools.wraps(original_create)
     def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = kwargs.get("model", "unknown")
+        model = str(kwargs.get("model", "unknown"))
         with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
             result = original_create(*args, **kwargs)
             _emit_llm_result(ctx, budget_guard, model, "anthropic", getattr(result, "usage", None))
@@ -435,7 +435,7 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
 
     @functools.wraps(original_create)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = kwargs.get("model", "unknown")
+        model = str(kwargs.get("model", "unknown"))
         async with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
             result = await original_create(*args, **kwargs)
             _emit_llm_result(ctx, budget_guard, model, "openai", getattr(result, "usage", None))
@@ -493,7 +493,7 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any 
 
     @functools.wraps(original_create)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = kwargs.get("model", "unknown")
+        model = str(kwargs.get("model", "unknown"))
         async with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
             result = await original_create(*args, **kwargs)
             _emit_llm_result(ctx, budget_guard, model, "anthropic", getattr(result, "usage", None))
