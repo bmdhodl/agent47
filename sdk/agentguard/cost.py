@@ -30,8 +30,10 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("anthropic", "claude-3-5-sonnet-20241022"): (0.003, 0.015),
     ("anthropic", "claude-3-5-haiku-20241022"): (0.0008, 0.004),
     ("anthropic", "claude-3-opus-20240229"): (0.015, 0.075),
+    ("anthropic", "claude-sonnet-4-20250514"): (0.003, 0.015),
     ("anthropic", "claude-sonnet-4-5-20250929"): (0.003, 0.015),
     ("anthropic", "claude-haiku-4-5-20251001"): (0.0008, 0.004),
+    ("anthropic", "claude-opus-4-20250515"): (0.015, 0.075),
     ("anthropic", "claude-opus-4-6"): (0.015, 0.075),
     # Google
     ("google", "gemini-1.5-pro"): (0.00125, 0.005),
