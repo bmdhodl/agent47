@@ -6,6 +6,7 @@ from collections import Counter
 from typing import Optional
 
 from agentguard.evaluation import _extract_cost, _load_events
+from agentguard.reporting import render_incident_report
 
 
 def _summarize(path: str) -> None:
@@ -24,7 +25,7 @@ def _summarize(path: str) -> None:
     print("\nTraced by AgentGuard | agentguard47.com")
 
 
-def _report(path: str, as_json: bool = False) -> None:
+def _report(path: str, as_json: bool = False, output_format: str = "text") -> None:
     events = _load_events(path)
 
     if not events:
@@ -54,7 +55,7 @@ def _report(path: str, as_json: bool = False) -> None:
     if span_durations:
         total_ms = max(span_durations)
 
-    if as_json:
+    if as_json or output_format == "json":
         result = {
             "total_events": total,
             "spans": kinds.get("span", 0),
@@ -67,6 +68,9 @@ def _report(path: str, as_json: bool = False) -> None:
             "loop_guard_triggered": loop_hits,
         }
         print(json.dumps(result))
+        return
+    if output_format in {"markdown", "html"}:
+        print(render_incident_report(events, output_format=output_format))
         return
 
     print("AgentGuard report")
@@ -85,7 +89,16 @@ def _report(path: str, as_json: bool = False) -> None:
         print(f"  Loop guard triggered: {loop_hits} time(s)")
     else:
         print("  Loop guard triggered: 0")
+    incident_hits = sum(
+        1 for e in events if isinstance(e.get("name"), str) and e["name"].startswith("guard.")
+    )
+    if incident_hits:
+        print("  Incident hint: rerun with --format markdown for a shareable incident report")
     print("\nTraced by AgentGuard | agentguard47.com")
+
+
+def _incident(path: str, output_format: str = "markdown") -> None:
+    print(render_incident_report(path, output_format=output_format))
 
 
 def _eval(path: str, ci: bool = False) -> None:
@@ -116,18 +129,36 @@ def main() -> None:  # pragma: no cover
     report.add_argument("path")
     report.add_argument("--json", "-j", action="store_true", dest="json_output",
                         help="Output machine-readable JSON (for CI pipelines)")
+    report.add_argument(
+        "--format",
+        choices=["text", "json", "markdown", "html"],
+        default="text",
+        help="Output format. markdown/html render an incident-style report.",
+    )
 
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
     eval_cmd.add_argument("path")
     eval_cmd.add_argument("--ci", action="store_true", help="CI mode: also assert no budget warnings")
 
+    incident = sub.add_parser("incident", help="Render an incident report for a JSONL trace file")
+    incident.add_argument("path")
+    incident.add_argument(
+        "--format",
+        choices=["markdown", "html", "json"],
+        default="markdown",
+        help="Incident report format.",
+    )
+
     args = parser.parse_args()
     if args.cmd == "summarize":
         _summarize(args.path)
     elif args.cmd == "report":
-        _report(args.path, as_json=args.json_output)
+        output_format = "json" if args.json_output else args.format
+        _report(args.path, as_json=args.json_output, output_format=output_format)
     elif args.cmd == "eval":
         _eval(args.path, ci=args.ci)
+    elif args.cmd == "incident":
+        _incident(args.path, output_format=args.format)
     else:
         parser.print_help()
 

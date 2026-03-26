@@ -155,4 +155,4 @@ if __name__ == "__main__":
     # If using local file, show how to view the trace
     if not api_key:
         print(f"\nView trace: agentguard report cost_guardrail_traces.jsonl")
-        print(f"Open viewer: agentguard view cost_guardrail_traces.jsonl")
+        print(f"Incident report: agentguard incident cost_guardrail_traces.jsonl")

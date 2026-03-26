@@ -45,7 +45,7 @@ AgentGuard report
 Open a timeline in your browser:
 
 ```bash
-agentguard view traces.jsonl
+agentguard incident traces.jsonl
 ```
 
 ## 3. Add a loop guard
@@ -132,7 +132,19 @@ result = agent.invoke(
 )
 ```
 
-## 7. Send traces to the dashboard
+## 7. Create an incident report
+
+When a run blows through budget or hits a loop, render a shareable report:
+
+```bash
+agentguard incident traces.jsonl
+agentguard report traces.jsonl --format html > incident.html
+```
+
+The incident report highlights guard events, conservative estimated savings,
+and the upgrade path to retained alerts plus remote kill switch.
+
+## 8. Send traces to the dashboard
 
 Swap the file sink for an HTTP sink to see traces in the hosted dashboard:
 
@@ -153,4 +165,5 @@ Sign up at [app.agentguard47.com](https://app.agentguard47.com) to get an API ke
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/examples) — LangChain, CrewAI, OpenAI integration examples
 - [Guards reference](https://github.com/bmdhodl/agent47#guards) — LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard
 - [Evaluation](https://github.com/bmdhodl/agent47#evaluation) — assertion-based trace analysis for CI
+- [Incident Reports](https://github.com/bmdhodl/agent47#incident-reports) — local postmortem-style summaries for guard trips
 - [Async support](https://github.com/bmdhodl/agent47#async) — AsyncTracer, async decorators
