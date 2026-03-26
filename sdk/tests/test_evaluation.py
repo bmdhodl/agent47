@@ -55,6 +55,25 @@ class TestEvalSuiteToolCalled(unittest.TestCase):
         os.unlink(path)
         self.assertFalse(result.passed)
 
+    def test_passes_when_tool_called_at_most_limit(self):
+        path = _write_trace([
+            {"name": "tool.search", "kind": "span", "phase": "start"},
+            {"name": "tool.search", "kind": "span", "phase": "end"},
+        ])
+        result = EvalSuite(path).assert_tool_called_at_most("search", max_times=2).run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
+    def test_fails_when_tool_called_over_limit(self):
+        path = _write_trace([
+            {"name": "tool.search", "kind": "span", "phase": "start"},
+            {"name": "tool.search", "kind": "span", "phase": "start"},
+            {"name": "tool.search", "kind": "span", "phase": "start"},
+        ])
+        result = EvalSuite(path).assert_tool_called_at_most("search", max_times=2).run()
+        os.unlink(path)
+        self.assertFalse(result.passed)
+
 
 class TestEvalSuiteBudget(unittest.TestCase):
     def test_passes_under_budget(self):
@@ -109,6 +128,22 @@ class TestEvalSuiteEventExists(unittest.TestCase):
         os.unlink(path)
         self.assertFalse(result.passed)
 
+    def test_passes_when_span_found(self):
+        path = _write_trace([
+            {"name": "agent.run", "kind": "span", "phase": "start"},
+        ])
+        result = EvalSuite(path).assert_span_exists("agent.run").run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
+    def test_fails_when_span_missing(self):
+        path = _write_trace([
+            {"name": "reasoning.step", "kind": "event"},
+        ])
+        result = EvalSuite(path).assert_span_exists("agent.run").run()
+        os.unlink(path)
+        self.assertFalse(result.passed)
+
 
 class TestEvalSuiteNoErrors(unittest.TestCase):
     def test_passes_no_errors(self):
@@ -124,6 +159,61 @@ class TestEvalSuiteNoErrors(unittest.TestCase):
             {"name": "agent.run", "kind": "span", "error": {"type": "RuntimeError", "message": "boom"}},
         ])
         result = EvalSuite(path).assert_no_errors().run()
+        os.unlink(path)
+        self.assertFalse(result.passed)
+
+    def test_passes_when_error_type_absent(self):
+        path = _write_trace([
+            {"name": "agent.run", "kind": "span", "error": {"type": "ValueError", "message": "boom"}},
+        ])
+        result = EvalSuite(path).assert_error_type_absent("RuntimeError").run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
+    def test_fails_when_error_type_present(self):
+        path = _write_trace([
+            {"name": "agent.run", "kind": "span", "error": {"type": "RuntimeError", "message": "boom"}},
+        ])
+        result = EvalSuite(path).assert_error_type_absent("RuntimeError").run()
+        os.unlink(path)
+        self.assertFalse(result.passed)
+
+
+class TestEvalSuiteBudgetEvents(unittest.TestCase):
+    def test_passes_when_budget_not_exceeded(self):
+        path = _write_trace([
+            {"name": "guard.budget_warning", "kind": "event", "phase": "emit"},
+        ])
+        result = EvalSuite(path).assert_no_budget_exceeded().run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
+    def test_fails_when_budget_exceeded(self):
+        path = _write_trace([
+            {"name": "guard.budget_exceeded", "kind": "event", "phase": "emit"},
+        ])
+        result = EvalSuite(path).assert_no_budget_exceeded().run()
+        os.unlink(path)
+        self.assertFalse(result.passed)
+
+
+class TestEvalSuiteTotalEvents(unittest.TestCase):
+    def test_passes_when_total_events_under_limit(self):
+        path = _write_trace([
+            {"name": "a", "kind": "event"},
+            {"name": "b", "kind": "event"},
+        ])
+        result = EvalSuite(path).assert_total_events_under(3).run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
+    def test_fails_when_total_events_hits_limit(self):
+        path = _write_trace([
+            {"name": "a", "kind": "event"},
+            {"name": "b", "kind": "event"},
+            {"name": "c", "kind": "event"},
+        ])
+        result = EvalSuite(path).assert_total_events_under(3).run()
         os.unlink(path)
         self.assertFalse(result.passed)
 
