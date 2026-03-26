@@ -1,6 +1,6 @@
 import unittest
 
-from agentguard.cost import CostTracker, estimate_cost
+from agentguard.cost import LAST_UPDATED, CostTracker, estimate_cost
 
 
 class TestEstimateCost(unittest.TestCase):
@@ -21,6 +21,16 @@ class TestEstimateCost(unittest.TestCase):
         cost = estimate_cost("claude-3-5-sonnet-20241022", input_tokens=1000, output_tokens=500, provider="anthropic")
         # (1000 * 0.003 + 500 * 0.015) / 1000 = 0.003 + 0.0075 = 0.0105
         self.assertAlmostEqual(cost, 0.0105, places=6)
+
+    def test_anthropic_haiku_45_uses_refreshed_rate(self) -> None:
+        cost = estimate_cost("claude-haiku-4-5-20251001", input_tokens=1000, output_tokens=500, provider="anthropic")
+        # (1000 * 0.001 + 500 * 0.005) / 1000 = 0.001 + 0.0025 = 0.0035
+        self.assertAlmostEqual(cost, 0.0035, places=6)
+
+    def test_anthropic_opus_46_uses_refreshed_rate(self) -> None:
+        cost = estimate_cost("claude-opus-4-6", input_tokens=1000, output_tokens=500, provider="anthropic")
+        # (1000 * 0.005 + 500 * 0.025) / 1000 = 0.005 + 0.0125 = 0.0175
+        self.assertAlmostEqual(cost, 0.0175, places=6)
 
     def test_zero_tokens(self) -> None:
         cost = estimate_cost("gpt-4o", input_tokens=0, output_tokens=0, provider="openai")
@@ -71,6 +81,9 @@ class TestCostTracker(unittest.TestCase):
 
 
 class TestEstimateCostEdgeCases(unittest.TestCase):
+    def test_last_updated_marker(self) -> None:
+        self.assertEqual(LAST_UPDATED, "2026-03-26")
+
     def test_very_large_tokens(self) -> None:
         cost = estimate_cost("gpt-4o", input_tokens=1_000_000, output_tokens=1_000_000, provider="openai")
         # Should be a valid positive float, not overflow
