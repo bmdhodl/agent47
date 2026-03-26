@@ -220,15 +220,7 @@ def _check_no_loops(events: List[Dict[str, Any]]) -> AssertionResult:
 
 def _check_tool_called(events: List[Dict[str, Any]], tool_name: str, min_times: int) -> AssertionResult:
     name = f"tool_called:{tool_name}>={min_times}"
-    # Count tool.result events or span events with matching tool name
-    count = 0
-    for e in events:
-        ename = e.get("name", "")
-        if ename == "tool.result":
-            count += 1
-        elif ename.startswith(f"tool.{tool_name}"):
-            if e.get("phase") == "start" or e.get("kind") == "event":
-                count += 1
+    count = _count_tool_calls(events, tool_name)
     if count >= min_times:
         return AssertionResult(name=name, passed=True, message=f"Tool called {count} time(s)")
     return AssertionResult(name=name, passed=False, message=f"Tool called {count} time(s), expected >= {min_times}")
@@ -487,13 +479,15 @@ def _extract_cost(event: Dict[str, Any]) -> Optional[float]:
 
 def _count_tool_calls(events: List[Dict[str, Any]], tool_name: str) -> int:
     count = 0
+    target_name = f"tool.{tool_name}"
     for e in events:
         ename = e.get("name", "")
-        if ename == "tool.result":
+        if ename != target_name:
+            continue
+        kind = e.get("kind")
+        phase = e.get("phase")
+        if (kind == "span" and phase == "start") or kind == "event":
             count += 1
-        elif ename.startswith(f"tool.{tool_name}"):
-            if e.get("phase") == "start" or e.get("kind") == "event":
-                count += 1
     return count
 
 

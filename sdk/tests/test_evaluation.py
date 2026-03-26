@@ -74,6 +74,27 @@ class TestEvalSuiteToolCalled(unittest.TestCase):
         os.unlink(path)
         self.assertFalse(result.passed)
 
+    def test_counts_trace_tool_span_once_with_result_event(self):
+        path = _write_trace([
+            {"name": "tool.search", "kind": "span", "phase": "start"},
+            {"name": "tool.result", "kind": "event", "phase": "emit"},
+            {"name": "tool.search", "kind": "span", "phase": "end"},
+        ])
+        result = EvalSuite(path).assert_tool_called_at_most("search", max_times=1).run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
+    def test_ignores_unrelated_tool_result_events(self):
+        path = _write_trace([
+            {"name": "tool.search", "kind": "span", "phase": "start"},
+            {"name": "tool.result", "kind": "event", "phase": "emit"},
+            {"name": "tool.lookup", "kind": "span", "phase": "start"},
+            {"name": "tool.result", "kind": "event", "phase": "emit"},
+        ])
+        result = EvalSuite(path).assert_tool_called_at_most("search", max_times=1).run()
+        os.unlink(path)
+        self.assertTrue(result.passed)
+
 
 class TestEvalSuiteBudget(unittest.TestCase):
     def test_passes_under_budget(self):
