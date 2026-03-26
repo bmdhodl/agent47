@@ -27,9 +27,10 @@ def _summarize(path: str) -> None:
 
 def _report(path: str, as_json: bool = False, output_format: str = "text") -> None:
     events = _load_events(path)
+    wants_json = as_json or output_format == "json"
 
     if not events:
-        if as_json:
+        if wants_json:
             print(json.dumps({"error": "No events found"}))
         else:
             print("No events found.")
@@ -55,7 +56,7 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
     if span_durations:
         total_ms = max(span_durations)
 
-    if as_json or output_format == "json":
+    if wants_json:
         result = {
             "total_events": total,
             "spans": kinds.get("span", 0),

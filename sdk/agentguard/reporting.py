@@ -61,6 +61,14 @@ def _incident_fields(events: List[Dict[str, Any]], summary: Dict[str, Any]) -> D
                     "message": str(error.get("message", "")),
                 }
             )
+        elif error is not None:
+            errors.append(
+                {
+                    "name": str(name or "(unknown)"),
+                    "type": type(error).__name__,
+                    "message": str(error),
+                }
+            )
         if not isinstance(name, str) or not name.startswith("guard."):
             continue
 

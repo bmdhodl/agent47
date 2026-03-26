@@ -47,6 +47,22 @@ class TestIncidentSummary(unittest.TestCase):
         self.assertEqual(incident["primary_cause"], "budget_warning")
         self.assertEqual(incident["estimated_savings_usd"], 0.0)
 
+    def test_non_dict_error_marks_incident(self):
+        incident = summarize_incident(
+            [
+                {
+                    "name": "agent.run",
+                    "kind": "span",
+                    "phase": "end",
+                    "duration_ms": 10,
+                    "error": "boom",
+                },
+            ]
+        )
+        self.assertEqual(incident["severity"], "critical")
+        self.assertEqual(incident["status"], "incident")
+        self.assertEqual(incident["primary_cause"], "error")
+
 
 class TestIncidentRendering(unittest.TestCase):
     def test_markdown_report_contains_upgrade_path(self):

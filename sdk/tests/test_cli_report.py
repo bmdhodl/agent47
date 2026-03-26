@@ -153,6 +153,18 @@ class TestCliReport(unittest.TestCase):
             output = json.loads(buf.getvalue())
             self.assertEqual(output["status"], "ok")
 
+    def test_report_empty_json_format(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, "empty.jsonl")
+            open(path, "w", encoding="utf-8").close()
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._report(path, output_format="json")
+
+            output = json.loads(buf.getvalue())
+            self.assertEqual(output["error"], "No events found")
+
 
 if __name__ == "__main__":
     unittest.main()
