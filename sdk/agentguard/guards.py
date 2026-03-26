@@ -57,6 +57,11 @@ class TimeoutExceeded(AgentGuardError, RuntimeError):
     pass
 
 
+class RetryLimitExceeded(AgentGuardError, RuntimeError):
+    """Raised when a tool exceeds its retry limit."""
+    pass
+
+
 class BaseGuard:
     """Base class for all guards.
 
@@ -545,6 +550,95 @@ class RateLimitGuard(BaseGuard):
 
     def __repr__(self) -> str:
         return f"RateLimitGuard(max_calls_per_minute={self._max_calls})"
+
+
+class RetryGuard(BaseGuard):
+    """Enforce a maximum number of retry attempts per tool.
+
+    Thread-safe. Uses a lock to protect per-tool retry counters.
+
+    The guard can be used directly::
+
+        guard = RetryGuard(max_retries=3)
+        guard.check("search")
+        guard.check("search")
+        guard.check("search")
+        guard.check("search")  # raises RetryLimitExceeded
+
+    Or automatically with trace events:
+
+    - ``tool.retry`` with ``{"tool_name": "search"}``
+    - ``tool.error`` with ``{"tool_name": "search"}`` (implicit retry fallback)
+    - ``tool.result`` with ``{"tool_name": "search"}`` resets the counter
+
+    Args:
+        max_retries: Maximum allowed consecutive retries per tool.
+    """
+
+    def __init__(self, max_retries: int = 3) -> None:
+        if max_retries < 1:
+            raise ValueError("max_retries must be >= 1")
+        self._max_retries = max_retries
+        self._attempts: Counter[str] = Counter()
+        self._lock = threading.Lock()
+
+    @property
+    def max_retries(self) -> int:
+        """Maximum allowed consecutive retries per tool."""
+        return self._max_retries
+
+    def check(self, tool_name: str, tool_args: Optional[Dict[str, Any]] = None) -> None:
+        """Record a retry attempt for a tool and enforce the limit."""
+        del tool_args  # unused, kept for guard dispatch compatibility
+        with self._lock:
+            self._attempts[tool_name] += 1
+            attempts = self._attempts[tool_name]
+            if attempts > self._max_retries:
+                raise RetryLimitExceeded(
+                    f"Retry limit exceeded: {tool_name} attempted {attempts} times "
+                    f"(limit: {self._max_retries})"
+                )
+
+    def record_success(self, tool_name: str) -> None:
+        """Reset the retry counter for a tool after success."""
+        with self._lock:
+            self._attempts.pop(tool_name, None)
+
+    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
+        """Auto-check retry events and reset on success."""
+        tool_name = _extract_tool_name(event_name, event_data)
+        if not tool_name:
+            return
+        if _is_retry_event(event_name):
+            self.check(tool_name)
+            return
+        if event_name == "tool.result":
+            self.record_success(tool_name)
+
+    def reset(self) -> None:
+        """Clear all retry counters."""
+        with self._lock:
+            self._attempts.clear()
+
+    def __repr__(self) -> str:
+        return f"RetryGuard(max_retries={self._max_retries})"
+
+
+def _is_retry_event(event_name: str) -> bool:
+    return event_name == "tool.retry" or event_name == "tool.error" or event_name.endswith(".retry")
+
+
+def _extract_tool_name(
+    event_name: str,
+    event_data: Optional[Dict[str, Any]] = None,
+) -> Optional[str]:
+    if event_data:
+        tool_name = event_data.get("tool_name")
+        if isinstance(tool_name, str) and tool_name:
+            return tool_name
+    if event_name.startswith("tool.") and event_name.endswith(".retry"):
+        return event_name[len("tool.") : -len(".retry")]
+    return None
 
 
 def _stable_json(data: Dict[str, Any]) -> str:

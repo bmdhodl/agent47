@@ -20,16 +20,18 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertIsNotNone(TraceSink)
 
     def test_guards(self):
-        from agentguard import LoopGuard, BudgetGuard, TimeoutGuard
+        from agentguard import LoopGuard, BudgetGuard, TimeoutGuard, RetryGuard
         self.assertIsNotNone(LoopGuard)
         self.assertIsNotNone(BudgetGuard)
         self.assertIsNotNone(TimeoutGuard)
+        self.assertIsNotNone(RetryGuard)
 
     def test_exceptions(self):
-        from agentguard import LoopDetected, BudgetExceeded, TimeoutExceeded
+        from agentguard import LoopDetected, BudgetExceeded, TimeoutExceeded, RetryLimitExceeded
         self.assertTrue(issubclass(LoopDetected, RuntimeError))
         self.assertTrue(issubclass(BudgetExceeded, RuntimeError))
         self.assertTrue(issubclass(TimeoutExceeded, RuntimeError))
+        self.assertTrue(issubclass(RetryLimitExceeded, RuntimeError))
 
     def test_cost(self):
         from agentguard import estimate_cost
@@ -68,8 +70,9 @@ class TestTopLevelExports(unittest.TestCase):
             "Tracer", "JsonlFileSink", "StdoutSink", "TraceSink",
             "AgentGuardError",
             "BaseGuard", "LoopGuard", "BudgetGuard", "TimeoutGuard",
-            "FuzzyLoopGuard", "RateLimitGuard",
+            "FuzzyLoopGuard", "RateLimitGuard", "RetryGuard",
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
+            "RetryLimitExceeded",
             "estimate_cost",
             "HttpSink",
             "EvalSuite", "EvalResult", "AssertionResult", "summarize_trace",

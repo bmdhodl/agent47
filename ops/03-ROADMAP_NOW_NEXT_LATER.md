@@ -13,22 +13,21 @@ SDK code changes only. No README, docs, blog, or marketing items.
 
 | Item | Success Signal |
 |------|---------------|
-| - | No SDK code changes planned - current focus is README/launch prep in other tracks |
+| `RetryGuard` - cap retry attempts per tool | New guard class, raises `RetryLimitExceeded` after a configurable per-tool retry ceiling |
 
 ## Next (next month)
 
 | Item | Success Signal |
 |------|---------------|
-| - | No queued SDK code changes yet |
+| Streaming support in patches | `patch_openai` traces streaming responses with incremental token counts |
+| OpenTelemetry Collector sink improvements | `OtelTraceSink` supports custom resource attributes and span links |
 
 ## Later (ideas bucket)
 
 | Item | Success Signal |
 |------|---------------|
 | `ContentGuard` - detect PII/sensitive data in agent outputs | New guard class, raises `ContentViolation`, regex-based (no deps) |
-| OpenTelemetry Collector sink improvements | `OtelTraceSink` supports custom resource attributes and span links |
 | TypeScript SDK | npm package with parity: LoopGuard, BudgetGuard, TimeoutGuard, Tracer |
-| `RetryGuard` - cap retry attempts per tool | New guard, configurable per-tool retry limits |
-| Streaming support in patches | `patch_openai` traces streaming responses with incremental token counts |
+| Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
 
 Each "Later" item stays here until it earns a "Now" or "Next" slot. Items can be deleted without ceremony.

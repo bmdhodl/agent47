@@ -91,6 +91,22 @@ class TestTraceToolDecorator(unittest.TestCase):
             events = [json.loads(line) for line in f if line.strip()]
         result_events = [e for e in events if e.get("name") == "tool.result"]
         self.assertTrue(len(result_events) > 0)
+        self.assertEqual(result_events[0]["data"]["tool_name"], "lookup")
+
+    def test_emits_tool_error_event_and_reraises(self):
+        @trace_tool(self.tracer)
+        def flaky():
+            raise RuntimeError("boom")
+
+        with self.assertRaises(RuntimeError):
+            flaky()
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        error_events = [e for e in events if e.get("name") == "tool.error"]
+        self.assertTrue(len(error_events) > 0)
+        self.assertEqual(error_events[0]["data"]["tool_name"], "flaky")
+        self.assertEqual(error_events[0]["data"]["error_type"], "RuntimeError")
 
     def test_custom_tool_name(self):
         @trace_tool(self.tracer, name="tool.custom_search")

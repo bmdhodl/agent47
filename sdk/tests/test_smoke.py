@@ -25,8 +25,8 @@ def smoke_test() -> bool:
     try:
         from agentguard import (
             Tracer, JsonlFileSink, StdoutSink, TraceSink,
-            LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard,
-            LoopDetected, BudgetExceeded, BudgetWarning, TimeoutExceeded,
+            LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard,
+            LoopDetected, BudgetExceeded, BudgetWarning, TimeoutExceeded, RetryLimitExceeded,
             estimate_cost,
             HttpSink,
             EvalSuite, EvalResult, AssertionResult,
@@ -108,7 +108,7 @@ def smoke_test() -> bool:
             errors.append(f"EvalSuite: {e}")
             print(f"[FAIL] 5/9   EvalSuite: {e}")
 
-        # --- 6. All 5 guard types ---
+        # --- 6. All 6 guard types ---
         try:
             # LoopGuard
             g = LoopGuard(max_repeats=2, window=4)
@@ -150,7 +150,17 @@ def smoke_test() -> bool:
                 caught = True
             assert caught, "FuzzyLoopGuard didn't fire"
 
-            print("[PASS] 6/9   All 5 guard types fire correctly")
+            # RetryGuard
+            retry = RetryGuard(max_retries=1)
+            retry.check("tool_a")
+            caught = False
+            try:
+                retry.check("tool_a")
+            except RetryLimitExceeded:
+                caught = True
+            assert caught, "RetryGuard didn't fire"
+
+            print("[PASS] 6/9   All 6 guard types fire correctly")
         except Exception as e:
             errors.append(f"Guards: {e}")
             print(f"[FAIL] 6/9   Guards: {e}")

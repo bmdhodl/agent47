@@ -147,12 +147,27 @@ def trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
 
     def decorator(fn: F) -> F:
         span_name = name or f"tool.{fn.__name__}"
+        tool_name = span_name[len("tool."):] if span_name.startswith("tool.") else span_name
 
         @functools.wraps(fn)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             with tracer.trace(span_name) as ctx:
-                result = fn(*args, **kwargs)
-                ctx.event("tool.result", data={"result": str(result)[:500]})
+                try:
+                    result = fn(*args, **kwargs)
+                except Exception as exc:
+                    ctx.event(
+                        "tool.error",
+                        data={
+                            "tool_name": tool_name,
+                            "error_type": type(exc).__name__,
+                            "message": str(exc)[:500],
+                        },
+                    )
+                    raise
+                ctx.event(
+                    "tool.result",
+                    data={"tool_name": tool_name, "result": str(result)[:500]},
+                )
                 return result
 
         return wrapper  # type: ignore[return-value]
@@ -372,12 +387,27 @@ def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F
 
     def decorator(fn: F) -> F:
         span_name = name or f"tool.{fn.__name__}"
+        tool_name = span_name[len("tool."):] if span_name.startswith("tool.") else span_name
 
         @functools.wraps(fn)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             async with tracer.trace(span_name) as ctx:
-                result = await fn(*args, **kwargs)
-                ctx.event("tool.result", data={"result": str(result)[:500]})
+                try:
+                    result = await fn(*args, **kwargs)
+                except Exception as exc:
+                    ctx.event(
+                        "tool.error",
+                        data={
+                            "tool_name": tool_name,
+                            "error_type": type(exc).__name__,
+                            "message": str(exc)[:500],
+                        },
+                    )
+                    raise
+                ctx.event(
+                    "tool.result",
+                    data={"tool_name": tool_name, "result": str(result)[:500]},
+                )
                 return result
 
         return wrapper  # type: ignore[return-value]

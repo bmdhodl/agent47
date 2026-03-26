@@ -230,7 +230,11 @@ class AsyncTracer:
 
         # Auto-check guards
         for guard in self._guards:
-            if hasattr(guard, "check") and kind == "event":
+            if kind != "event":
+                continue
+            if hasattr(guard, "auto_check"):
+                guard.auto_check(name, data)
+            elif hasattr(guard, "check"):
                 try:
                     guard.check(name, data)
                 except TypeError:
