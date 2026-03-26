@@ -213,6 +213,16 @@ AgentGuard report
   Estimated cost: $0.01
 ```
 
+When a run trips a guard or needs escalation, render a shareable incident report:
+
+```bash
+agentguard incident traces.jsonl
+agentguard report traces.jsonl --format markdown
+```
+
+The incident report summarizes guard triggers, estimated savings, and the
+dashboard upgrade path for retained alerts and remote kill switch.
+
 ## Evaluation
 
 Assert properties of your traces in tests or CI.
@@ -259,6 +269,19 @@ Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offer
 ```
 
 Full workflow: [`docs/ci/cost-gate-workflow.yml`](docs/ci/cost-gate-workflow.yml)
+
+## Incident Reports
+
+Turn a trace into a postmortem-style incident summary:
+
+```bash
+agentguard incident traces.jsonl --format markdown
+agentguard incident traces.jsonl --format html > incident.html
+```
+
+Use this when a run hits `guard.budget_warning`, `guard.budget_exceeded`,
+`guard.loop_detected`, or a fatal error. AgentGuard will summarize the run,
+estimate conservative savings, and suggest the next control-plane step.
 
 ## Async Support
 

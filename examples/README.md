@@ -38,3 +38,9 @@ sink = HttpSink(
     api_key="ag_your_key_here",
 )
 ```
+
+If a run trips a guard locally, generate an incident summary:
+
+```bash
+agentguard incident cost_guardrail_traces.jsonl
+```
