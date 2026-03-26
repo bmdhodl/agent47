@@ -97,6 +97,14 @@ class EvalSuite:
         ))
         return self
 
+    def assert_tool_called_at_most(self, name: str, max_times: int) -> "EvalSuite":
+        """Assert a tool was called no more than max_times."""
+        self._assertions.append(_Assertion(
+            name=f"tool_called:{name}<={max_times}",
+            check=lambda events, n=name, m=max_times: _check_tool_called_at_most(events, n, m),
+        ))
+        return self
+
     def assert_budget_under(self, tokens: Optional[int] = None, calls: Optional[int] = None) -> "EvalSuite":
         """Assert total token/call usage is under a limit."""
         label_parts = []
@@ -126,11 +134,27 @@ class EvalSuite:
         ))
         return self
 
+    def assert_span_exists(self, name: str) -> "EvalSuite":
+        """Assert that at least one span with the given name exists."""
+        self._assertions.append(_Assertion(
+            name=f"span_exists:{name}",
+            check=lambda events, n=name: _check_span_exists(events, n),
+        ))
+        return self
+
     def assert_no_errors(self) -> "EvalSuite":
         """Assert no events have error data."""
         self._assertions.append(_Assertion(
             name="no_errors",
             check=_check_no_errors,
+        ))
+        return self
+
+    def assert_error_type_absent(self, error_type: str) -> "EvalSuite":
+        """Assert no events contain a specific error type."""
+        self._assertions.append(_Assertion(
+            name=f"error_type_absent:{error_type}",
+            check=lambda events, t=error_type: _check_error_type_absent(events, t),
         ))
         return self
 
@@ -147,6 +171,22 @@ class EvalSuite:
         self._assertions.append(_Assertion(
             name="no_budget_warnings",
             check=_check_no_budget_warnings,
+        ))
+        return self
+
+    def assert_no_budget_exceeded(self) -> "EvalSuite":
+        """Assert no budget exceeded events were recorded."""
+        self._assertions.append(_Assertion(
+            name="no_budget_exceeded",
+            check=_check_no_budget_exceeded,
+        ))
+        return self
+
+    def assert_total_events_under(self, max_events: int) -> "EvalSuite":
+        """Assert total event count stays below a threshold."""
+        self._assertions.append(_Assertion(
+            name=f"total_events<{max_events}",
+            check=lambda events, m=max_events: _check_total_events_under(events, m),
         ))
         return self
 
@@ -180,18 +220,20 @@ def _check_no_loops(events: List[Dict[str, Any]]) -> AssertionResult:
 
 def _check_tool_called(events: List[Dict[str, Any]], tool_name: str, min_times: int) -> AssertionResult:
     name = f"tool_called:{tool_name}>={min_times}"
-    # Count tool.result events or span events with matching tool name
-    count = 0
-    for e in events:
-        ename = e.get("name", "")
-        if ename == "tool.result":
-            count += 1
-        elif ename.startswith(f"tool.{tool_name}"):
-            if e.get("phase") == "start" or e.get("kind") == "event":
-                count += 1
+    count = _count_tool_calls(events, tool_name)
     if count >= min_times:
         return AssertionResult(name=name, passed=True, message=f"Tool called {count} time(s)")
     return AssertionResult(name=name, passed=False, message=f"Tool called {count} time(s), expected >= {min_times}")
+
+
+def _check_tool_called_at_most(
+    events: List[Dict[str, Any]], tool_name: str, max_times: int
+) -> AssertionResult:
+    name = f"tool_called:{tool_name}<={max_times}"
+    count = _count_tool_calls(events, tool_name)
+    if count <= max_times:
+        return AssertionResult(name=name, passed=True, message=f"Tool called {count} time(s)")
+    return AssertionResult(name=name, passed=False, message=f"Tool called {count} time(s), expected <= {max_times}")
 
 
 def _check_budget_under(events: List[Dict[str, Any]], max_tokens: Optional[int], max_calls: Optional[int]) -> AssertionResult:
@@ -245,6 +287,17 @@ def _check_event_exists(events: List[Dict[str, Any]], event_name: str) -> Assert
     return AssertionResult(name=name, passed=False, message="Event not found")
 
 
+def _check_span_exists(events: List[Dict[str, Any]], span_name: str) -> AssertionResult:
+    name = f"span_exists:{span_name}"
+    found = any(
+        e.get("kind") == "span" and e.get("name") == span_name
+        for e in events
+    )
+    if found:
+        return AssertionResult(name=name, passed=True, message="Span found")
+    return AssertionResult(name=name, passed=False, message="Span not found")
+
+
 def _check_no_errors(events: List[Dict[str, Any]]) -> AssertionResult:
     errors = [e for e in events if e.get("error") is not None]
     if errors:
@@ -254,6 +307,22 @@ def _check_no_errors(events: List[Dict[str, Any]]) -> AssertionResult:
             message=f"Found {len(errors)} event(s) with errors",
         )
     return AssertionResult(name="no_errors", passed=True, message="No errors found")
+
+
+def _check_error_type_absent(events: List[Dict[str, Any]], error_type: str) -> AssertionResult:
+    name = f"error_type_absent:{error_type}"
+    matching = []
+    for event in events:
+        error = event.get("error")
+        if isinstance(error, dict) and error.get("type") == error_type:
+            matching.append(event)
+    if matching:
+        return AssertionResult(
+            name=name,
+            passed=False,
+            message=f"Found {len(matching)} event(s) with error type {error_type}",
+        )
+    return AssertionResult(name=name, passed=True, message=f"No {error_type} errors found")
 
 
 def _check_cost_under(events: List[Dict[str, Any]], max_cost_usd: float) -> AssertionResult:
@@ -277,6 +346,25 @@ def _check_no_budget_warnings(events: List[Dict[str, Any]]) -> AssertionResult:
             message=f"Found {len(warnings)} budget warning(s)",
         )
     return AssertionResult(name="no_budget_warnings", passed=True, message="No budget warnings")
+
+
+def _check_no_budget_exceeded(events: List[Dict[str, Any]]) -> AssertionResult:
+    exceeded = [e for e in events if e.get("name") == "guard.budget_exceeded"]
+    if exceeded:
+        return AssertionResult(
+            name="no_budget_exceeded",
+            passed=False,
+            message=f"Found {len(exceeded)} budget exceeded event(s)",
+        )
+    return AssertionResult(name="no_budget_exceeded", passed=True, message="No budget exceeded events")
+
+
+def _check_total_events_under(events: List[Dict[str, Any]], max_events: int) -> AssertionResult:
+    name = f"total_events<{max_events}"
+    total = len(events)
+    if total < max_events:
+        return AssertionResult(name=name, passed=True, message=f"events={total}")
+    return AssertionResult(name=name, passed=False, message=f"events={total} >= {max_events}")
 
 
 # --- summarize ---
@@ -387,6 +475,20 @@ def _extract_cost(event: Dict[str, Any]) -> Optional[float]:
         if isinstance(data_cost, (int, float)):
             return float(data_cost)
     return None
+
+
+def _count_tool_calls(events: List[Dict[str, Any]], tool_name: str) -> int:
+    count = 0
+    target_name = f"tool.{tool_name}"
+    for e in events:
+        ename = e.get("name", "")
+        if ename != target_name:
+            continue
+        kind = e.get("kind")
+        phase = e.get("phase")
+        if (kind == "span" and phase == "start") or kind == "event":
+            count += 1
+    return count
 
 
 # --- loader ---
