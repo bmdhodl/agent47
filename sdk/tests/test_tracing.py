@@ -1,17 +1,22 @@
 import json
+import os
 import tempfile
 import unittest
 
-from agentguard.tracing import JsonlFileSink, Tracer, TraceContext
+from agentguard.tracing import JsonlFileSink, TraceContext, Tracer
 
 
 def test_trace_emits_events():
-    with tempfile.NamedTemporaryFile() as tmp:
-        tracer = Tracer(sink=JsonlFileSink(tmp.name))
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        path = tmp.name
+    try:
+        tracer = Tracer(sink=JsonlFileSink(path))
         with tracer.trace("agent.run", data={"user": "u1"}) as span:
             span.event("reasoning.step", data={"step": 1})
-        tmp.seek(0)
-        lines = [line for line in tmp.read().decode("utf-8").splitlines() if line]
+        with open(path, encoding="utf-8") as f:
+            lines = [line for line in f.read().splitlines() if line]
+    finally:
+        os.unlink(path)
 
     events = [json.loads(line) for line in lines]
     assert len(events) >= 2

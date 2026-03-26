@@ -11,16 +11,7 @@ from unittest.mock import patch
 import pytest
 
 import agentguard
-from agentguard.setup import (
-    _auto_patch,
-    _budget_guard,
-    _initialized,
-    _tracer,
-    get_budget_guard,
-    get_tracer,
-    init,
-    shutdown,
-)
+from agentguard.setup import shutdown
 
 
 class CollectorSink:
@@ -56,7 +47,7 @@ class TestInit:
             path = f.name
         try:
             tracer = agentguard.init(trace_file=path, auto_patch=False)
-            assert path in repr(tracer._sink)
+            assert tracer._sink._path == path
         finally:
             os.unlink(path)
 
@@ -180,7 +171,7 @@ class TestInitAutoPatch:
 
         sys.modules["openai"] = mod
         try:
-            tracer = agentguard.init(budget_usd=10.0)
+            agentguard.init(budget_usd=10.0)
             client = MockOpenAI()
             client.chat.completions.create(model="gpt-4o-mini")
 
@@ -193,7 +184,7 @@ class TestInitAutoPatch:
 
     def test_auto_patch_disabled(self):
         """auto_patch=False skips patching."""
-        tracer = agentguard.init(auto_patch=False)
+        agentguard.init(auto_patch=False)
         from agentguard.instrument import _originals
         # No openai/anthropic entries in _originals
         assert "openai_init" not in _originals
