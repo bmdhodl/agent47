@@ -15,7 +15,10 @@ class UnknownModelWarning(UserWarning):
 
 
 # Prices per 1K tokens: (input_price, output_price)
-# Last updated: 2026-02-01
+# Last updated: 2026-03-26
+# Verified directly against current Anthropic and Google pricing pages.
+# OpenAI entries were retained from the prior table because the official
+# pricing page was not fetchable from this environment due to Cloudflare.
 _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     # OpenAI
     ("openai", "gpt-4o"): (0.0025, 0.010),
@@ -32,9 +35,9 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("anthropic", "claude-3-opus-20240229"): (0.015, 0.075),
     ("anthropic", "claude-sonnet-4-20250514"): (0.003, 0.015),
     ("anthropic", "claude-sonnet-4-5-20250929"): (0.003, 0.015),
-    ("anthropic", "claude-haiku-4-5-20251001"): (0.0008, 0.004),
+    ("anthropic", "claude-haiku-4-5-20251001"): (0.001, 0.005),
     ("anthropic", "claude-opus-4-20250515"): (0.015, 0.075),
-    ("anthropic", "claude-opus-4-6"): (0.015, 0.075),
+    ("anthropic", "claude-opus-4-6"): (0.005, 0.025),
     # Google
     ("google", "gemini-1.5-pro"): (0.00125, 0.005),
     ("google", "gemini-1.5-flash"): (0.000075, 0.0003),
@@ -46,7 +49,7 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("meta", "llama-3.1-70b"): (0.00035, 0.0004),
 }
 
-LAST_UPDATED = "2026-02-01"
+LAST_UPDATED = "2026-03-26"
 
 
 def estimate_cost(
