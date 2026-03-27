@@ -67,8 +67,9 @@ def init(
         loop_max: Max identical calls before LoopGuard fires. Default: 5.
         auto_patch: Auto-patch OpenAI/Anthropic clients. Default: True.
         watermark: Emit "Traced by AgentGuard" in trace output. Default: True.
-        local_only: Force local file output and ignore any dashboard API key from
-            kwargs or environment. Default: False.
+        local_only: Force local file output. Ignores any dashboard API key from
+            the environment and raises if an explicit api_key is provided.
+            Default: False.
 
     Returns:
         The configured Tracer instance.

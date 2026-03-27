@@ -6,6 +6,7 @@ import unittest
 from contextlib import redirect_stdout
 from unittest.mock import patch
 
+import agentguard
 from agentguard.cli import _doctor
 from agentguard.doctor import run_doctor
 
@@ -79,6 +80,23 @@ class TestDoctor(unittest.TestCase):
             self.assertEqual(ctx.exception.code, 0)
             self.assertTrue(os.path.exists(trace_path))
             self.assertIn("AgentGuard doctor", buf.getvalue())
+
+    def test_run_doctor_fails_without_tearing_down_existing_tracer(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            live_trace = os.path.join(tmpdir, "live.jsonl")
+            doctor_trace = os.path.join(tmpdir, "doctor.jsonl")
+            buf = io.StringIO()
+
+            tracer = agentguard.init(trace_file=live_trace, auto_patch=False)
+            try:
+                result = run_doctor(trace_path=doctor_trace, stream=buf)
+
+                self.assertEqual(result, 1)
+                self.assertIn("must run before agentguard.init()", buf.getvalue())
+                self.assertIs(agentguard.get_tracer(), tracer)
+                self.assertFalse(os.path.exists(doctor_trace))
+            finally:
+                agentguard.shutdown()
 
 
 if __name__ == "__main__":

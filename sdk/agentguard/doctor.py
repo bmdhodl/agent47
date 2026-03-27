@@ -8,7 +8,7 @@ import sys
 from typing import Any, Dict, List, Optional, TextIO, Tuple
 
 from agentguard.evaluation import _load_events
-from agentguard.setup import init, shutdown
+from agentguard.setup import get_tracer, init, shutdown
 
 _OPTIONAL_MODULES: Tuple[Tuple[str, str, str], ...] = (
     ("openai", "openai", "init() can auto-patch installed OpenAI clients."),
@@ -36,7 +36,10 @@ def run_doctor(
     stream: Optional[TextIO] = None,
     json_output: bool = False,
 ) -> int:
-    """Verify the local SDK install without touching the hosted dashboard."""
+    """Verify the local SDK install without touching the hosted dashboard.
+
+    Intended for a fresh process before AgentGuard has already been initialized.
+    """
     out = stream or sys.stdout
 
     try:
@@ -66,6 +69,11 @@ def run_doctor(
 
 
 def _run_checks(trace_path: str) -> Dict[str, Any]:
+    if get_tracer() is not None:
+        raise RuntimeError(
+            "agentguard doctor must run before agentguard.init() or in a separate process."
+        )
+
     detected, hints = _detect_optional_integrations()
     normalized_path = _prepare_trace_path(trace_path)
     events_written = _verify_local_init(normalized_path)
