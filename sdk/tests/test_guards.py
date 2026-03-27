@@ -13,6 +13,8 @@ from agentguard.guards import (
     LoopDetected,
     LoopGuard,
     RateLimitGuard,
+    RetryGuard,
+    RetryLimitExceeded,
     TimeoutExceeded,
     TimeoutGuard,
 )
@@ -432,6 +434,72 @@ class TestRateLimitGuard(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# RetryGuard
+# ---------------------------------------------------------------------------
+
+
+class TestRetryGuard(unittest.TestCase):
+    def test_direct_check_raises_after_limit(self):
+        guard = RetryGuard(max_retries=2)
+        guard.check("search")
+        guard.check("search")
+        with self.assertRaises(RetryLimitExceeded) as ctx:
+            guard.check("search")
+        self.assertIn("search", str(ctx.exception))
+
+    def test_result_event_resets_counter(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.retry", {"tool_name": "search"})
+        guard.auto_check("tool.result", {"tool_name": "search", "result": "ok"})
+        guard.auto_check("tool.retry", {"tool_name": "search"})
+
+    def test_tool_error_is_implicit_retry(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom"})
+        with self.assertRaises(RetryLimitExceeded):
+            guard.auto_check("tool.error", {"tool_name": "search", "message": "boom again"})
+
+    def test_tool_specific_retry_name_supported(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.search.retry")
+        with self.assertRaises(RetryLimitExceeded):
+            guard.auto_check("tool.search.retry")
+
+    def test_explicit_retry_does_not_double_count_following_tool_error(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.retry", {"tool_name": "search"})
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom"})
+        with self.assertRaises(RetryLimitExceeded):
+            guard.auto_check("tool.retry", {"tool_name": "search"})
+
+    def test_tool_error_counts_when_no_explicit_retry_event_exists(self):
+        guard = RetryGuard(max_retries=2)
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom"})
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom again"})
+        with self.assertRaises(RetryLimitExceeded):
+            guard.auto_check("tool.error", {"tool_name": "search", "message": "still failing"})
+
+    def test_result_clears_pending_explicit_retry_marker(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.retry", {"tool_name": "search"})
+        guard.auto_check("tool.result", {"tool_name": "search", "result": "ok"})
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "new failure"})
+
+    def test_reset_clears_all_counters(self):
+        guard = RetryGuard(max_retries=1)
+        guard.check("search")
+        guard.reset()
+        guard.check("search")
+
+    def test_invalid_limit(self):
+        with self.assertRaises(ValueError):
+            RetryGuard(max_retries=0)
+
+    def test_repr(self):
+        self.assertEqual(repr(RetryGuard(max_retries=4)), "RetryGuard(max_retries=4)")
+
+
+# ---------------------------------------------------------------------------
 # BaseGuard
 # ---------------------------------------------------------------------------
 
@@ -469,6 +537,7 @@ class TestBaseGuard(unittest.TestCase):
         self.assertIsInstance(TimeoutGuard(max_seconds=10), BaseGuard)
         self.assertIsInstance(FuzzyLoopGuard(), BaseGuard)
         self.assertIsInstance(RateLimitGuard(max_calls_per_minute=10), BaseGuard)
+        self.assertIsInstance(RetryGuard(max_retries=3), BaseGuard)
 
 
 # ---------------------------------------------------------------------------

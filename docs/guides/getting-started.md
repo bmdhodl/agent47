@@ -163,7 +163,7 @@ Sign up at [app.agentguard47.com](https://app.agentguard47.com) to get an API ke
 ## Next steps
 
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/examples) — LangChain, CrewAI, OpenAI integration examples
-- [Guards reference](https://github.com/bmdhodl/agent47#guards) — LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard
+- [Guards reference](https://github.com/bmdhodl/agent47#guards) — LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard
 - [Evaluation](https://github.com/bmdhodl/agent47#evaluation) — assertion-based trace analysis for CI
 - [Incident Reports](https://github.com/bmdhodl/agent47#incident-reports) — local postmortem-style summaries for guard trips
 - [Async support](https://github.com/bmdhodl/agent47#async) — AsyncTracer, async decorators

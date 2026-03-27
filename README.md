@@ -88,6 +88,7 @@ Guards are runtime checks that raise exceptions when limits are hit. The agent s
 | `FuzzyLoopGuard` | Similar tool calls, A-B-A-B patterns | `FuzzyLoopGuard(max_tool_repeats=5)` |
 | `TimeoutGuard` | Wall-clock time limits | `TimeoutGuard(max_seconds=300)` |
 | `RateLimitGuard` | Calls-per-minute throttling | `RateLimitGuard(max_calls_per_minute=60)` |
+| `RetryGuard` | Retry storms on the same flaky tool | `RetryGuard(max_retries=3)` |
 
 ```python
 from agentguard import BudgetGuard, BudgetExceeded
@@ -102,6 +103,23 @@ budget = BudgetGuard(
 budget.consume(tokens=1500, calls=1, cost_usd=0.03)
 # At 80% → warning callback fires
 # At 100% → BudgetExceeded raised, agent stops
+```
+
+```python
+from agentguard import RetryGuard, RetryLimitExceeded, Tracer
+
+retry_guard = RetryGuard(max_retries=3)
+tracer = Tracer(guards=[retry_guard])
+
+with tracer.trace("agent.run") as span:
+    try:
+        span.event("tool.retry", data={"tool_name": "search", "attempt": 1})
+        span.event("tool.retry", data={"tool_name": "search", "attempt": 2})
+        span.event("tool.retry", data={"tool_name": "search", "attempt": 3})
+        span.event("tool.retry", data={"tool_name": "search", "attempt": 4})
+    except RetryLimitExceeded:
+        # Retry storm stopped
+        pass
 ```
 
 ## Integrations

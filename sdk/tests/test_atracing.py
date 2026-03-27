@@ -216,6 +216,23 @@ class TestAsyncTraceTool(unittest.TestCase):
             events = [json.loads(line) for line in f if line.strip()]
         result_events = [e for e in events if e.get("name") == "tool.result"]
         self.assertTrue(len(result_events) > 0)
+        self.assertEqual(result_events[0]["data"]["tool_name"], "lookup")
+
+    def test_emits_tool_error_and_reraises(self):
+        tracer = AsyncTracer(sink=JsonlFileSink(self.path), service="test")
+
+        @async_trace_tool(tracer)
+        async def flaky():
+            raise RuntimeError("boom")
+
+        with self.assertRaises(RuntimeError):
+            asyncio.run(flaky())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        error_events = [e for e in events if e.get("name") == "tool.error"]
+        self.assertTrue(len(error_events) > 0)
+        self.assertEqual(error_events[0]["data"]["tool_name"], "flaky")
 
 
 class TestPatchOpenAIAsync(unittest.TestCase):

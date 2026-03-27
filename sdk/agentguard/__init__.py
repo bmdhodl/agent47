@@ -17,6 +17,8 @@ from .guards import (
     LoopDetected,
     LoopGuard,
     RateLimitGuard,
+    RetryGuard,
+    RetryLimitExceeded,
     TimeoutExceeded,
     TimeoutGuard,
 )
@@ -96,6 +98,8 @@ __all__ = [
     "LoopDetected",
     "LoopGuard",
     "RateLimitGuard",
+    "RetryGuard",
+    "RetryLimitExceeded",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",
