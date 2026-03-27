@@ -10,6 +10,23 @@ pip install agentguard47
 
 Zero dependencies. Python 3.9+.
 
+## Offline demo
+
+Before wiring a real agent, prove the SDK locally:
+
+```bash
+agentguard demo
+```
+
+This is fully offline:
+- no API keys
+- no dashboard
+- no network calls
+
+It writes a local trace file, demonstrates budget enforcement, loop detection,
+and retry protection, then shows how to inspect the trace with `agentguard report`
+and `agentguard incident`.
+
 ## 1. Trace an agent run
 
 ```python
