@@ -253,6 +253,8 @@ result = (
     .assert_no_loops()
     .assert_budget_under(tokens=50_000)
     .assert_completes_within(seconds=30)
+    .assert_total_events_under(500)
+    .assert_no_budget_exceeded()
     .assert_no_errors()
     .run()
 )
