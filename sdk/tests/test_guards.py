@@ -465,6 +465,26 @@ class TestRetryGuard(unittest.TestCase):
         with self.assertRaises(RetryLimitExceeded):
             guard.auto_check("tool.search.retry")
 
+    def test_explicit_retry_does_not_double_count_following_tool_error(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.retry", {"tool_name": "search"})
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom"})
+        with self.assertRaises(RetryLimitExceeded):
+            guard.auto_check("tool.retry", {"tool_name": "search"})
+
+    def test_tool_error_counts_when_no_explicit_retry_event_exists(self):
+        guard = RetryGuard(max_retries=2)
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom"})
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "boom again"})
+        with self.assertRaises(RetryLimitExceeded):
+            guard.auto_check("tool.error", {"tool_name": "search", "message": "still failing"})
+
+    def test_result_clears_pending_explicit_retry_marker(self):
+        guard = RetryGuard(max_retries=1)
+        guard.auto_check("tool.retry", {"tool_name": "search"})
+        guard.auto_check("tool.result", {"tool_name": "search", "result": "ok"})
+        guard.auto_check("tool.error", {"tool_name": "search", "message": "new failure"})
+
     def test_reset_clears_all_counters(self):
         guard = RetryGuard(max_retries=1)
         guard.check("search")

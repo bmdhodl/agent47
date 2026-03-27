@@ -580,6 +580,7 @@ class RetryGuard(BaseGuard):
             raise ValueError("max_retries must be >= 1")
         self._max_retries = max_retries
         self._attempts: Counter[str] = Counter()
+        self._pending_explicit_retry: Dict[str, bool] = {}
         self._lock = threading.Lock()
 
     @property
@@ -603,14 +604,29 @@ class RetryGuard(BaseGuard):
         """Reset the retry counter for a tool after success."""
         with self._lock:
             self._attempts.pop(tool_name, None)
+            self._pending_explicit_retry.pop(tool_name, None)
+
+    def _record_explicit_retry(self, tool_name: str) -> None:
+        with self._lock:
+            self._pending_explicit_retry[tool_name] = True
+        self.check(tool_name)
+
+    def _record_error_retry(self, tool_name: str) -> None:
+        with self._lock:
+            if self._pending_explicit_retry.pop(tool_name, False):
+                return
+        self.check(tool_name)
 
     def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
         """Auto-check retry events and reset on success."""
         tool_name = _extract_tool_name(event_name, event_data)
         if not tool_name:
             return
-        if _is_retry_event(event_name):
-            self.check(tool_name)
+        if event_name == "tool.error":
+            self._record_error_retry(tool_name)
+            return
+        if event_name == "tool.retry" or event_name.endswith(".retry"):
+            self._record_explicit_retry(tool_name)
             return
         if event_name == "tool.result":
             self.record_success(tool_name)
@@ -619,13 +635,10 @@ class RetryGuard(BaseGuard):
         """Clear all retry counters."""
         with self._lock:
             self._attempts.clear()
+            self._pending_explicit_retry.clear()
 
     def __repr__(self) -> str:
         return f"RetryGuard(max_retries={self._max_retries})"
-
-
-def _is_retry_event(event_name: str) -> bool:
-    return event_name == "tool.retry" or event_name == "tool.error" or event_name.endswith(".retry")
 
 
 def _extract_tool_name(
