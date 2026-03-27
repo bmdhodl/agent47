@@ -31,6 +31,8 @@ agentguard quickstart --framework langchain --json
 Use this when you already know the stack you want to wire. It prints the
 install command, a minimal starter file, and the next verification commands.
 
+If you want the same content as an actual file, see `examples/starters/`.
+
 ## Quickstart
 
 ```python

@@ -2,6 +2,19 @@
 
 Working examples showing AgentGuard integrated with popular AI agent frameworks.
 
+## Start Here
+
+If you want the smallest runnable file for a given stack, start in
+[`examples/starters/`](./starters):
+
+```bash
+python examples/starters/agentguard_raw_quickstart.py
+python examples/starters/agentguard_langgraph_quickstart.py
+```
+
+These starter files match the output from `agentguard quickstart` and are meant
+for first-run onboarding by both humans and coding agents.
+
 ## Examples
 
 | File | Framework | What it shows |
@@ -17,6 +30,7 @@ Working examples showing AgentGuard integrated with popular AI agent frameworks.
 pip install agentguard47
 agentguard doctor
 agentguard quickstart --framework raw
+python examples/starters/agentguard_raw_quickstart.py
 
 # Then print the starter for your real stack
 agentguard quickstart --framework openai

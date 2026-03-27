@@ -43,6 +43,12 @@ agentguard quickstart --framework langgraph --json
 install command, the smallest credible starter file, and the next commands to
 run after you validate the SDK locally.
 
+Prefer a real file over printed output? Matching starter files live in
+`examples/starters/`, including:
+- `examples/starters/agentguard_raw_quickstart.py`
+- `examples/starters/agentguard_openai_quickstart.py`
+- `examples/starters/agentguard_langgraph_quickstart.py`
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:

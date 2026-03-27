@@ -12,6 +12,7 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | Offline demo | Done - `agentguard demo` proves budget, loop, and retry enforcement without API keys or network access |
 | Incident reporting | Done - `agentguard incident` renders local Markdown/HTML summaries from trace files |
 | Install doctor / local validation | Done - `agentguard doctor` verifies the local SDK setup path without network or dashboard access |
+| Executable framework starters | Done - matching starter files now live under `examples/starters/` for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
 
 ## Now (next 2 weeks)
 
@@ -19,7 +20,6 @@ SDK code changes only. No README, docs, blog, or marketing items.
 |------|---------------|
 | Framework quickstart generator | `agentguard quickstart --framework <stack>` prints the smallest credible starter snippet for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
 | Repo-local `.agentguard.json` manifest | Agents and humans can declare local SDK defaults in a tiny static config file without dashboard coupling |
-| Executable framework starters | Each supported stack has a minimal runnable example that proves the integration path with AgentGuard |
 
 ## Next (next month)
 

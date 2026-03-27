@@ -46,6 +46,9 @@ This is intentionally high-signal:
 It gives you the install command, the starter file contents, and the next
 commands to run.
 
+If you want a ready-made file instead of printed output, use the matching files
+under `examples/starters/`.
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:
