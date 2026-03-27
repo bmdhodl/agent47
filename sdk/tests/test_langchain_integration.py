@@ -4,9 +4,10 @@ import tempfile
 import unittest
 import uuid
 
+from agentguard.cost import UnknownModelWarning
 from agentguard.guards import BudgetGuard, LoopDetected, LoopGuard
-from agentguard.tracing import JsonlFileSink, Tracer
 from agentguard.integrations.langchain import AgentGuardCallbackHandler
+from agentguard.tracing import JsonlFileSink, Tracer
 
 
 class TestLangChainIntegration(unittest.TestCase):
@@ -70,7 +71,10 @@ class TestLangChainIntegration(unittest.TestCase):
 
         llm_id = uuid.uuid4()
         handler.on_llm_start({}, ["prompt"], run_id=llm_id)
-        handler.on_llm_end(_MockResponse(tokens=80), run_id=llm_id)
+        handler.on_llm_end(
+            _MockResponseWithModel(model="gpt-4o", input_t=40, output_t=40),
+            run_id=llm_id,
+        )
 
         self.assertEqual(guard.state.tokens_used, 80)
 
@@ -137,10 +141,11 @@ class TestLangChainIntegration(unittest.TestCase):
 
         llm_id = uuid.uuid4()
         handler.on_llm_start({}, ["prompt"], run_id=llm_id)
-        handler.on_llm_end(
-            _MockResponseWithModel(model="totally-fake-model-xyz", input_t=100, output_t=50),
-            run_id=llm_id,
-        )
+        with self.assertWarns(UnknownModelWarning):
+            handler.on_llm_end(
+                _MockResponseWithModel(model="totally-fake-model-xyz", input_t=100, output_t=50),
+                run_id=llm_id,
+            )
         handler.on_chain_end({}, run_id=chain_id)
 
         events = self._read_events()
