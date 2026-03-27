@@ -5,6 +5,7 @@ import json
 from collections import Counter
 from typing import Optional
 
+from agentguard.demo import run_offline_demo
 from agentguard.evaluation import _extract_cost, _load_events
 from agentguard.reporting import render_incident_report
 
@@ -102,6 +103,10 @@ def _incident(path: str, output_format: str = "markdown") -> None:
     print(render_incident_report(path, output_format=output_format))
 
 
+def _demo(trace_path: str = "agentguard_demo_traces.jsonl") -> None:
+    raise SystemExit(run_offline_demo(trace_path=trace_path))
+
+
 def _eval(path: str, ci: bool = False) -> None:
     from agentguard.evaluation import EvalSuite
 
@@ -150,6 +155,13 @@ def main() -> None:  # pragma: no cover
         help="Incident report format.",
     )
 
+    demo = sub.add_parser("demo", help="Run the offline AgentGuard demo")
+    demo.add_argument(
+        "--trace-file",
+        default="agentguard_demo_traces.jsonl",
+        help="Where to write the local JSONL trace.",
+    )
+
     args = parser.parse_args()
     if args.cmd == "summarize":
         _summarize(args.path)
@@ -160,6 +172,8 @@ def main() -> None:  # pragma: no cover
         _eval(args.path, ci=args.ci)
     elif args.cmd == "incident":
         _incident(args.path, output_format=args.format)
+    elif args.cmd == "demo":
+        _demo(trace_path=args.trace_file)
     else:
         parser.print_help()
 

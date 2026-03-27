@@ -19,26 +19,34 @@ pip install agentguard47
 
 ## Try it in 60 seconds
 
-No API keys. No config. Just run it:
+No API keys. No dashboard. No network calls. Just run it:
 
 ```bash
-pip install agentguard47 && python examples/try_it_now.py
+pip install agentguard47
+agentguard demo
 ```
 
 ```
-Simulating agent making LLM calls with a $1.00 budget...
+AgentGuard offline demo
+No API keys. No dashboard. No network calls.
 
-  Call 1: $0.12 spent
-  Call 2: $0.24 spent
-  ...
-  WARNING: Budget warning: cost 84% of limit reached (threshold: 80%)
-  Call 7: $0.84 spent
-  Call 8: $0.96 spent
+1. BudgetGuard: stopping runaway spend
+  warning fired at $0.84
+  stopped on call 9: cost $1.08 exceeded $1.00
 
-  STOPPED at call 9: Cost budget exceeded: $1.08 > $1.00
-  Total: $1.08 | 9 calls
+2. LoopGuard: stopping repeated tool calls
+  stopped on repeated tool call: Loop detected ...
 
-  Without AgentGuard, this agent would have kept spending.
+3. RetryGuard: stopping retry storms
+  stopped retry storm: Retry limit exceeded ...
+
+Local proof complete.
+```
+
+Prefer the example script instead of the CLI? This does the same local demo:
+
+```bash
+python examples/try_it_now.py
 ```
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
@@ -57,6 +65,14 @@ patch_openai(tracer)  # auto-tracks every OpenAI call
 That's it. Every `ChatCompletion` call is tracked. When accumulated cost hits $4 (80%), your warning fires. At $5, `BudgetExceeded` is raised and the agent stops.
 
 No config files. No dashboard required. No dependencies.
+
+For a deterministic local proof before wiring a real agent, run:
+
+```bash
+agentguard demo
+```
+
+That writes a local JSONL trace and demonstrates SDK-only enforcement. The dashboard remains the control plane for alerts, retained history, and remote controls.
 
 ## The Problem
 
