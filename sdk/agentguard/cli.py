@@ -6,6 +6,7 @@ from collections import Counter
 from typing import Optional
 
 from agentguard.demo import run_offline_demo
+from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
 from agentguard.reporting import render_incident_report
 
@@ -107,6 +108,10 @@ def _demo(trace_path: str = "agentguard_demo_traces.jsonl") -> None:
     raise SystemExit(run_offline_demo(trace_path=trace_path))
 
 
+def _doctor(trace_path: str = "agentguard_doctor_trace.jsonl", json_output: bool = False) -> None:
+    raise SystemExit(run_doctor(trace_path=trace_path, json_output=json_output))
+
+
 def _eval(path: str, ci: bool = False) -> None:
     from agentguard.evaluation import EvalSuite
 
@@ -162,6 +167,19 @@ def main() -> None:  # pragma: no cover
         help="Where to write the local JSONL trace.",
     )
 
+    doctor = sub.add_parser("doctor", help="Verify the local AgentGuard SDK setup")
+    doctor.add_argument(
+        "--trace-file",
+        default="agentguard_doctor_trace.jsonl",
+        help="Where to write the doctor verification trace.",
+    )
+    doctor.add_argument(
+        "--json",
+        action="store_true",
+        dest="json_output",
+        help="Emit machine-readable JSON for agents and CI.",
+    )
+
     args = parser.parse_args()
     if args.cmd == "summarize":
         _summarize(args.path)
@@ -174,6 +192,8 @@ def main() -> None:  # pragma: no cover
         _incident(args.path, output_format=args.format)
     elif args.cmd == "demo":
         _demo(trace_path=args.trace_file)
+    elif args.cmd == "doctor":
+        _doctor(trace_path=args.trace_file, json_output=args.json_output)
     else:
         parser.print_help()
 

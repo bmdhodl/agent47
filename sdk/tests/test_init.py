@@ -102,6 +102,35 @@ class TestInitEnvVars:
             tracer = agentguard.init(service="kwarg-svc", auto_patch=False)
             assert tracer._service == "kwarg-svc"
 
+    def test_local_only_ignores_api_key_env(self):
+        with tempfile.NamedTemporaryFile(suffix=".jsonl", delete=False) as f:
+            path = f.name
+        try:
+            with patch.dict(os.environ, {"AGENTGUARD_API_KEY": "ag_env_key"}):
+                tracer = agentguard.init(
+                    trace_file=path,
+                    local_only=True,
+                    auto_patch=False,
+                )
+            assert "JsonlFileSink" in repr(tracer._sink)
+        finally:
+            os.unlink(path)
+
+    def test_local_only_conflicts_with_api_key(self):
+        with pytest.raises(ValueError, match="local_only=True cannot be combined with api_key"):
+            agentguard.init(
+                api_key="ag_conflict",
+                local_only=True,
+                auto_patch=False,
+            )
+
+    def test_api_key_not_logged(self):
+        with patch("agentguard.setup.logger.info") as mock_info:
+            agentguard.init(api_key="ag_secret_value", auto_patch=False)
+
+        logged_args = " ".join(str(arg) for arg in mock_info.call_args.args)
+        assert "ag_secret_value" not in logged_args
+
 
 class TestInitBudgetGuard:
     """Test budget guard setup via init()."""

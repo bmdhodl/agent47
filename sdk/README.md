@@ -11,6 +11,15 @@
 pip install agentguard47
 ```
 
+## Verify the local path
+
+```bash
+agentguard doctor
+```
+
+This validates the SDK in local-only mode, writes a small JSONL trace, and
+prints the smallest correct next-step snippet for the current environment.
+
 ## Quickstart
 
 ```python
@@ -30,8 +39,8 @@ with tracer.trace("agent.run") as span:
 ```
 
 ```bash
-agentguard report traces.jsonl   # summary table
-agentguard view traces.jsonl     # Gantt timeline in browser
+agentguard report traces.jsonl      # summary table
+agentguard incident traces.jsonl    # incident-style local report
 ```
 
 ## Guards
@@ -160,8 +169,10 @@ sink = HttpSink(
 ## CLI
 
 ```bash
+agentguard doctor --trace-file traces.jsonl   # local install verification
+agentguard demo                     # offline proof of guardrails
 agentguard report traces.jsonl      # human-readable summary
-agentguard view traces.jsonl        # Gantt trace viewer in browser
+agentguard incident traces.jsonl    # postmortem-style local report
 agentguard summarize traces.jsonl   # event-level breakdown
 agentguard eval traces.jsonl        # run evaluation assertions
 agentguard eval traces.jsonl --ci   # CI mode (stricter checks, exit code)

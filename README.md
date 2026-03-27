@@ -17,6 +17,18 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 pip install agentguard47
 ```
 
+## Verify your install
+
+Before wiring a real agent, validate the local SDK path:
+
+```bash
+agentguard doctor
+```
+
+`doctor` makes no network calls. It verifies local trace writing, confirms the
+SDK can initialize in local-only mode, detects optional integrations already
+installed in your environment, and prints the smallest correct next-step snippet.
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:
@@ -69,10 +81,11 @@ No config files. No dashboard required. No dependencies.
 For a deterministic local proof before wiring a real agent, run:
 
 ```bash
+agentguard doctor
 agentguard demo
 ```
 
-That writes a local JSONL trace and demonstrates SDK-only enforcement. The dashboard remains the control plane for alerts, retained history, and remote controls.
+`agentguard doctor` verifies the install path. `agentguard demo` then proves SDK-only enforcement with a realistic local run. The dashboard remains the control plane for alerts, retained history, and remote controls.
 
 ## The Problem
 
