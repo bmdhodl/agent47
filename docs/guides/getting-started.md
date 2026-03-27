@@ -10,6 +10,23 @@ pip install agentguard47
 
 Zero dependencies. Python 3.9+.
 
+## Verify the install
+
+Start with a local verification pass:
+
+```bash
+agentguard doctor
+```
+
+This stays fully local:
+- no dashboard
+- no network calls
+- no hosted control-plane dependency
+
+It verifies that AgentGuard can initialize in local-only mode, write a local
+trace, and recommend the smallest correct next step for the current
+environment.
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:

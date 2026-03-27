@@ -50,6 +50,7 @@ def init(
     loop_max: int = 5,
     auto_patch: bool = True,
     watermark: bool = True,
+    local_only: bool = False,
 ) -> Any:
     """Initialize AgentGuard with one call.
 
@@ -66,6 +67,8 @@ def init(
         loop_max: Max identical calls before LoopGuard fires. Default: 5.
         auto_patch: Auto-patch OpenAI/Anthropic clients. Default: True.
         watermark: Emit "Traced by AgentGuard" in trace output. Default: True.
+        local_only: Force local file output and ignore any dashboard API key from
+            kwargs or environment. Default: False.
 
     Returns:
         The configured Tracer instance.
@@ -86,6 +89,8 @@ def init(
         raise ValueError(
             f"warn_pct must be between 0.0 and 1.0, got {warn_pct}"
         )
+    if local_only and api_key:
+        raise ValueError("local_only=True cannot be combined with api_key")
     if api_key and ("\n" in api_key or "\r" in api_key):
         raise ValueError(
             "api_key must not contain newline or carriage return characters "
@@ -93,7 +98,7 @@ def init(
         )
 
     # --- Resolve config: kwargs > env vars > defaults ---
-    resolved_key = api_key or os.environ.get("AGENTGUARD_API_KEY")
+    resolved_key = None if local_only else (api_key or os.environ.get("AGENTGUARD_API_KEY"))
     resolved_service = service or os.environ.get("AGENTGUARD_SERVICE", "default")
     resolved_file = trace_file or os.environ.get("AGENTGUARD_TRACE_FILE", "traces.jsonl")
 
