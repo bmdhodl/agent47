@@ -29,6 +29,20 @@ agentguard doctor
 SDK can initialize in local-only mode, detects optional integrations already
 installed in your environment, and prints the smallest correct next-step snippet.
 
+## Generate a starter
+
+When you know the stack you want to wire, print the exact starter snippet:
+
+```bash
+agentguard quickstart --framework raw
+agentguard quickstart --framework openai
+agentguard quickstart --framework langgraph --json
+```
+
+`quickstart` is designed for both humans and coding agents. It prints the
+install command, the smallest credible starter file, and the next commands to
+run after you validate the SDK locally.
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:
@@ -82,10 +96,14 @@ For a deterministic local proof before wiring a real agent, run:
 
 ```bash
 agentguard doctor
+agentguard quickstart --framework raw
 agentguard demo
 ```
 
-`agentguard doctor` verifies the install path. `agentguard demo` then proves SDK-only enforcement with a realistic local run. The dashboard remains the control plane for alerts, retained history, and remote controls.
+`agentguard doctor` verifies the install path. `agentguard quickstart` prints
+the copy-paste starter for your stack. `agentguard demo` then proves SDK-only
+enforcement with a realistic local run. The dashboard remains the control plane
+for alerts, retained history, and remote controls.
 
 ## The Problem
 

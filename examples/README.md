@@ -15,9 +15,15 @@ Working examples showing AgentGuard integrated with popular AI agent frameworks.
 
 ```bash
 pip install agentguard47
-export OPENAI_API_KEY=sk-...
+agentguard doctor
+agentguard quickstart --framework raw
 
-# Cost guardrail demo (recommended first example)
+# Then print the starter for your real stack
+agentguard quickstart --framework openai
+agentguard quickstart --framework langchain
+
+# Cost guardrail demo (recommended first networked example)
+export OPENAI_API_KEY=sk-...
 python examples/cost_guardrail.py
 
 # Or with dashboard integration

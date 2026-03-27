@@ -8,6 +8,7 @@ from typing import Optional
 from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
+from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
 from agentguard.reporting import render_incident_report
 
 
@@ -112,6 +113,24 @@ def _doctor(trace_path: str = "agentguard_doctor_trace.jsonl", json_output: bool
     raise SystemExit(run_doctor(trace_path=trace_path, json_output=json_output))
 
 
+def _quickstart(
+    framework: str = "raw",
+    service: str = "my-agent",
+    budget_usd: float = 5.0,
+    trace_path: str = "traces.jsonl",
+    json_output: bool = False,
+) -> None:
+    raise SystemExit(
+        run_quickstart(
+            framework=framework,
+            service=service,
+            budget_usd=budget_usd,
+            trace_file=trace_path,
+            json_output=json_output,
+        )
+    )
+
+
 def _eval(path: str, ci: bool = False) -> None:
     from agentguard.evaluation import EvalSuite
 
@@ -180,6 +199,36 @@ def main() -> None:  # pragma: no cover
         help="Emit machine-readable JSON for agents and CI.",
     )
 
+    quickstart = sub.add_parser("quickstart", help="Print a starter snippet for a supported stack")
+    quickstart.add_argument(
+        "--framework",
+        choices=FRAMEWORK_CHOICES,
+        default="raw",
+        help="Framework to target. Defaults to raw.",
+    )
+    quickstart.add_argument(
+        "--service",
+        default="my-agent",
+        help="Service name to embed in the snippet.",
+    )
+    quickstart.add_argument(
+        "--budget-usd",
+        type=float,
+        default=5.0,
+        help="Budget to embed in the snippet.",
+    )
+    quickstart.add_argument(
+        "--trace-file",
+        default="traces.jsonl",
+        help="Trace file path to embed in the snippet.",
+    )
+    quickstart.add_argument(
+        "--json",
+        action="store_true",
+        dest="json_output",
+        help="Emit machine-readable JSON for agents and CI.",
+    )
+
     args = parser.parse_args()
     if args.cmd == "summarize":
         _summarize(args.path)
@@ -194,6 +243,14 @@ def main() -> None:  # pragma: no cover
         _demo(trace_path=args.trace_file)
     elif args.cmd == "doctor":
         _doctor(trace_path=args.trace_file, json_output=args.json_output)
+    elif args.cmd == "quickstart":
+        _quickstart(
+            framework=args.framework,
+            service=args.service,
+            budget_usd=args.budget_usd,
+            trace_path=args.trace_file,
+            json_output=args.json_output,
+        )
     else:
         parser.print_help()
 

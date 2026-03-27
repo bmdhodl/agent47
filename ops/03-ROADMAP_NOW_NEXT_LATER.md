@@ -11,18 +11,21 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | `RetryGuard` - cap retry attempts per tool | Done - configurable per-tool retry ceilings now raise `RetryLimitExceeded` |
 | Offline demo | Done - `agentguard demo` proves budget, loop, and retry enforcement without API keys or network access |
 | Incident reporting | Done - `agentguard incident` renders local Markdown/HTML summaries from trace files |
+| Install doctor / local validation | Done - `agentguard doctor` verifies the local SDK setup path without network or dashboard access |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
-| Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
-| Install doctor / quickstart validation | One local command validates the SDK setup path and prints the minimal next step without any dashboard dependency |
+| Framework quickstart generator | `agentguard quickstart --framework <stack>` prints the smallest credible starter snippet for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
+| Repo-local `.agentguard.json` manifest | Agents and humans can declare local SDK defaults in a tiny static config file without dashboard coupling |
+| Executable framework starters | Each supported stack has a minimal runnable example that proves the integration path with AgentGuard |
 
 ## Next (next month)
 
 | Item | Success Signal |
 |------|---------------|
+| Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | OpenTelemetry Collector sink improvements | `OtelTraceSink` supports custom resource attributes and span links |
 | `ContentGuard` - detect PII/sensitive data in agent outputs | New guard class, raises `ContentViolation`, regex-based (no deps) |
 

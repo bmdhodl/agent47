@@ -41,7 +41,8 @@ __init__.py (public API surface)
   -> reporting.py -> evaluation.py
   -> demo.py -> guards.py, tracing.py
   -> doctor.py -> evaluation.py, setup.py
-  -> cli.py -> evaluation.py, reporting.py, demo.py, doctor.py
+  -> quickstart.py
+  -> cli.py -> evaluation.py, reporting.py, demo.py, doctor.py, quickstart.py
   -> sinks/http.py -> tracing.py
 
 Integrations (import core, never the reverse):
@@ -85,6 +86,7 @@ These modules improve the local SDK experience without blurring the hosted contr
 | `reporting.py` | Renders local incident summaries from trace files via `agentguard incident` |
 | `demo.py` | Runs a deterministic offline proof of budget, loop, and retry enforcement via `agentguard demo` |
 | `doctor.py` | Verifies the local SDK install path and prints the minimal local-only onboarding snippet via `agentguard doctor` |
+| `quickstart.py` | Prints framework-specific starter snippets for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI via `agentguard quickstart` |
 
 ## Test layout
 
