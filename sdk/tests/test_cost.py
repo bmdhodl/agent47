@@ -1,6 +1,6 @@
 import unittest
 
-from agentguard.cost import LAST_UPDATED, CostTracker, estimate_cost
+from agentguard.cost import LAST_UPDATED, CostTracker, UnknownModelWarning, estimate_cost
 
 
 class TestEstimateCost(unittest.TestCase):
@@ -14,7 +14,8 @@ class TestEstimateCost(unittest.TestCase):
         self.assertAlmostEqual(cost, 0.0075, places=6)
 
     def test_unknown_model_returns_zero(self) -> None:
-        cost = estimate_cost("nonexistent-model", input_tokens=1000, output_tokens=500)
+        with self.assertWarns(UnknownModelWarning):
+            cost = estimate_cost("nonexistent-model", input_tokens=1000, output_tokens=500)
         self.assertEqual(cost, 0.0)
 
     def test_anthropic_model(self) -> None:
@@ -37,7 +38,8 @@ class TestEstimateCost(unittest.TestCase):
         self.assertEqual(cost, 0.0)
 
     def test_wrong_provider(self) -> None:
-        cost = estimate_cost("gpt-4o", input_tokens=1000, output_tokens=500, provider="anthropic")
+        with self.assertWarns(UnknownModelWarning):
+            cost = estimate_cost("gpt-4o", input_tokens=1000, output_tokens=500, provider="anthropic")
         self.assertEqual(cost, 0.0)
 
 
@@ -68,7 +70,8 @@ class TestCostTracker(unittest.TestCase):
 
     def test_unknown_model_adds_zero(self) -> None:
         tracker = CostTracker()
-        cost = tracker.add("fake-model", input_tokens=1000, output_tokens=1000)
+        with self.assertWarns(UnknownModelWarning):
+            cost = tracker.add("fake-model", input_tokens=1000, output_tokens=1000)
         self.assertEqual(cost, 0.0)
         self.assertEqual(tracker.total, 0.0)
 

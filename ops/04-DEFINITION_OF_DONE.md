@@ -2,11 +2,12 @@
 
 ## Every PR
 
-- [ ] `make check` passes (pytest + ruff lint). Coverage >= 80%.
+- [ ] `make check` passes (pytest + ruff lint). Coverage >= 80%. If `make` is unavailable, run the equivalent direct commands.
 - [ ] New functionality has tests.
 - [ ] No new hard dependencies in core SDK. Integration deps guarded by `try/except ImportError`.
 - [ ] `make structural` passes (10 Golden Principles).
 - [ ] `make security` passes (bandit scan).
+- [ ] Test runs are clean - no persistent pytest config warnings.
 - [ ] No hardcoded absolute paths.
 - [ ] If `__init__.py` exports changed, it was intentional.
 

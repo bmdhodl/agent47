@@ -102,5 +102,4 @@ markers = [
     "integration: Tests with servers or external deps",
     "structural: Architectural invariant tests",
 ]
-strict_markers = true
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --strict-markers --strict-config"
