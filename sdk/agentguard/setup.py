@@ -151,7 +151,7 @@ def init(
     _initialized = True
 
     # Log what we did
-    sink_desc = f"dashboard ({resolved_key[:8]}...)" if resolved_key else resolved_file
+    sink_desc = "dashboard" if resolved_key else resolved_file
     budget_desc = f"${resolved_budget:.2f}" if resolved_budget else "unlimited"
     logger.info(
         "AgentGuard initialized: service=%s sink=%s budget=%s",

@@ -124,6 +124,13 @@ class TestInitEnvVars:
                 auto_patch=False,
             )
 
+    def test_api_key_not_logged(self):
+        with patch("agentguard.setup.logger.info") as mock_info:
+            agentguard.init(api_key="ag_secret_value", auto_patch=False)
+
+        logged_args = " ".join(str(arg) for arg in mock_info.call_args.args)
+        assert "ag_secret_value" not in logged_args
+
 
 class TestInitBudgetGuard:
     """Test budget guard setup via init()."""
