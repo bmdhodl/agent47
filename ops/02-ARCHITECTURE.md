@@ -30,7 +30,7 @@ Core modules form a DAG with no reverse dependencies:
 
 ```text
 __init__.py (public API surface)
-  -> setup.py -> tracing.py, guards.py, instrument.py, sinks/http.py
+  -> setup.py -> repo_config.py, tracing.py, guards.py, instrument.py, sinks/http.py
   -> tracing.py
   -> guards.py
   -> instrument.py -> guards.py, cost.py
@@ -40,8 +40,9 @@ __init__.py (public API surface)
   -> export.py -> evaluation.py
   -> reporting.py -> evaluation.py
   -> demo.py -> guards.py, tracing.py
-  -> doctor.py -> evaluation.py, setup.py
+  -> doctor.py -> evaluation.py, repo_config.py, setup.py
   -> quickstart.py
+  -> repo_config.py
   -> cli.py -> evaluation.py, reporting.py, demo.py, doctor.py, quickstart.py
   -> sinks/http.py -> tracing.py
 
@@ -87,6 +88,7 @@ These modules improve the local SDK experience without blurring the hosted contr
 | `demo.py` | Runs a deterministic offline proof of budget, loop, and retry enforcement via `agentguard demo` |
 | `doctor.py` | Verifies the local SDK install path and prints the minimal local-only onboarding snippet via `agentguard doctor` |
 | `quickstart.py` | Prints framework-specific starter snippets for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI via `agentguard quickstart` |
+| `repo_config.py` | Loads the nearest repo-local `.agentguard.json` file so local defaults stay static, auditable, and dashboard-free |
 
 ## Test layout
 

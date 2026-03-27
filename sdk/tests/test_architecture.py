@@ -35,6 +35,7 @@ CORE_MODULES = [
     "guards.py",
     "instrument.py",
     "quickstart.py",
+    "repo_config.py",
     "setup.py",
     "tracing.py",
     "sinks/http.py",

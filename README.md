@@ -43,6 +43,22 @@ agentguard quickstart --framework langgraph --json
 install command, the smallest credible starter file, and the next commands to
 run after you validate the SDK locally.
 
+## Optional repo-local defaults
+
+If you want humans and coding agents to share the same local defaults, add a
+tiny `.agentguard.json` file to the repo:
+
+```json
+{
+  "service": "support-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+`agentguard.init()` and `agentguard doctor` will pick this up automatically.
+Keep it local and static: no secrets, no API keys, no dashboard settings.
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:

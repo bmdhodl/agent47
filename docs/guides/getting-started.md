@@ -46,6 +46,32 @@ This is intentionally high-signal:
 It gives you the install command, the starter file contents, and the next
 commands to run.
 
+## Optional repo-local defaults
+
+If you want a repo to carry safe local defaults, create `.agentguard.json`:
+
+```json
+{
+  "service": "support-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+This stays intentionally narrow:
+- safe local defaults only
+- no secrets
+- no API keys
+- no hosted control-plane behavior
+
+After that, `agentguard.init()` can stay minimal:
+
+```python
+import agentguard
+
+agentguard.init()
+```
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:

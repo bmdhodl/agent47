@@ -81,6 +81,33 @@ class TestDoctor(unittest.TestCase):
             self.assertTrue(os.path.exists(trace_path))
             self.assertIn("AgentGuard doctor", buf.getvalue())
 
+    def test_run_doctor_reports_repo_config(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            trace_path = os.path.join(tmpdir, "doctor.jsonl")
+            config_path = os.path.join(tmpdir, ".agentguard.json")
+            with open(config_path, "w", encoding="utf-8") as handle:
+                json.dump(
+                    {
+                        "service": "repo-agent",
+                        "trace_file": ".agentguard/traces.jsonl",
+                        "budget_usd": 7.5,
+                    },
+                    handle,
+                )
+
+            old_cwd = os.getcwd()
+            os.chdir(tmpdir)
+            try:
+                buf = io.StringIO()
+                result = run_doctor(trace_path=trace_path, stream=buf, json_output=True)
+            finally:
+                os.chdir(old_cwd)
+
+            self.assertEqual(result, 0)
+            payload = json.loads(buf.getvalue())
+            self.assertEqual(payload["repo_config"]["service"], "repo-agent")
+            self.assertEqual(payload["recommended_snippet"], "import agentguard\n\nagentguard.init()")
+
     def test_run_doctor_fails_without_tearing_down_existing_tracer(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             live_trace = os.path.join(tmpdir, "live.jsonl")

@@ -31,6 +31,22 @@ agentguard quickstart --framework langchain --json
 Use this when you already know the stack you want to wire. It prints the
 install command, a minimal starter file, and the next verification commands.
 
+## Optional repo-local defaults
+
+Use `.agentguard.json` when you want a repo-local, auditable config that both
+humans and coding agents can share:
+
+```json
+{
+  "service": "support-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+`agentguard.init()` and `agentguard doctor` read this automatically. Keep it
+strictly local: no secrets, no API keys, no hosted dashboard settings.
+
 ## Quickstart
 
 ```python

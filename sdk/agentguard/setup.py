@@ -98,10 +98,14 @@ def init(
             "(possible HTTP header injection)"
         )
 
-    # --- Resolve config: kwargs > env vars > defaults ---
+    from agentguard.repo_config import load_repo_config
+
+    _, repo_config = load_repo_config()
+
+    # --- Resolve config: kwargs > env vars > repo config > defaults ---
     resolved_key = None if local_only else (api_key or os.environ.get("AGENTGUARD_API_KEY"))
-    resolved_service = service or os.environ.get("AGENTGUARD_SERVICE", "default")
-    resolved_file = trace_file or os.environ.get("AGENTGUARD_TRACE_FILE", "traces.jsonl")
+    resolved_service = service or os.environ.get("AGENTGUARD_SERVICE") or repo_config.get("service") or "default"
+    resolved_file = trace_file or os.environ.get("AGENTGUARD_TRACE_FILE") or repo_config.get("trace_file") or "traces.jsonl"
 
     resolved_budget: Optional[float] = budget_usd
     if resolved_budget is None:
@@ -113,6 +117,8 @@ def init(
                 logger.warning(
                     "Invalid AGENTGUARD_BUDGET_USD=%r, ignoring", env_budget
                 )
+        elif "budget_usd" in repo_config:
+            resolved_budget = float(repo_config["budget_usd"])
 
     # --- Build sink ---
     if resolved_key:

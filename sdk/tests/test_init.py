@@ -1,6 +1,7 @@
 """Tests for agentguard.init() one-liner setup."""
 from __future__ import annotations
 
+import json
 import os
 import sys
 import tempfile
@@ -101,6 +102,59 @@ class TestInitEnvVars:
         with patch.dict(os.environ, {"AGENTGUARD_SERVICE": "env-svc"}):
             tracer = agentguard.init(service="kwarg-svc", auto_patch=False)
             assert tracer._service == "kwarg-svc"
+
+    def test_repo_config_applies_when_kwargs_and_env_missing(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_path = os.path.join(tmpdir, ".agentguard.json")
+            trace_path = os.path.join(tmpdir, ".agentguard", "traces.jsonl")
+            with open(config_path, "w", encoding="utf-8") as handle:
+                json.dump(
+                    {
+                        "service": "repo-svc",
+                        "trace_file": ".agentguard/traces.jsonl",
+                        "budget_usd": 7.5,
+                    },
+                    handle,
+                )
+
+            old_cwd = os.getcwd()
+            os.chdir(tmpdir)
+            try:
+                tracer = agentguard.init(auto_patch=False)
+                assert tracer._service == "repo-svc"
+                assert tracer._sink._path == trace_path
+                assert agentguard.get_budget_guard()._max_cost_usd == 7.5
+            finally:
+                os.chdir(old_cwd)
+
+    def test_env_overrides_repo_config(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_path = os.path.join(tmpdir, ".agentguard.json")
+            with open(config_path, "w", encoding="utf-8") as handle:
+                json.dump({"service": "repo-svc"}, handle)
+
+            old_cwd = os.getcwd()
+            os.chdir(tmpdir)
+            try:
+                with patch.dict(os.environ, {"AGENTGUARD_SERVICE": "env-svc"}):
+                    tracer = agentguard.init(auto_patch=False)
+                assert tracer._service == "env-svc"
+            finally:
+                os.chdir(old_cwd)
+
+    def test_kwargs_override_repo_config(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_path = os.path.join(tmpdir, ".agentguard.json")
+            with open(config_path, "w", encoding="utf-8") as handle:
+                json.dump({"service": "repo-svc"}, handle)
+
+            old_cwd = os.getcwd()
+            os.chdir(tmpdir)
+            try:
+                tracer = agentguard.init(service="kwarg-svc", auto_patch=False)
+                assert tracer._service == "kwarg-svc"
+            finally:
+                os.chdir(old_cwd)
 
     def test_local_only_ignores_api_key_env(self):
         with tempfile.NamedTemporaryFile(suffix=".jsonl", delete=False) as f:
