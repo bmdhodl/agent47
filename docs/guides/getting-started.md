@@ -27,6 +27,25 @@ It verifies that AgentGuard can initialize in local-only mode, write a local
 trace, and recommend the smallest correct next step for the current
 environment.
 
+## Generate the right starter
+
+Once the SDK is verified locally, print the starter for the stack you actually
+use:
+
+```bash
+agentguard quickstart --framework raw
+agentguard quickstart --framework openai
+agentguard quickstart --framework langchain --json
+```
+
+This is intentionally high-signal:
+- no framework auto-detection
+- no dashboard dependency
+- no hidden file writes
+
+It gives you the install command, the starter file contents, and the next
+commands to run.
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:

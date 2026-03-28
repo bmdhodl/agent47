@@ -2,8 +2,6 @@
 
 SDK code changes only. No README, docs, blog, or marketing items.
 
-Release note: feature freeze is in effect until the next PyPI cleanup release ships.
-
 ## Recently Completed
 
 | Item | Status |
@@ -14,19 +12,20 @@ Release note: feature freeze is in effect until the next PyPI cleanup release sh
 | Offline demo | Done - `agentguard demo` proves budget, loop, and retry enforcement without API keys or network access |
 | Incident reporting | Done - `agentguard incident` renders local Markdown/HTML summaries from trace files |
 | Install doctor / local validation | Done - `agentguard doctor` verifies local setup, trace writing, and the next minimal integration step |
+| Framework quickstart generator | Done in PR - `agentguard quickstart --framework <stack>` prints the smallest credible starter snippet for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
-| Release hardening and code-scanning cleanup | No open SDK/example/workflow findings remain that block a clean PyPI release, and release metadata matches the shipped tag |
+| Repo-local `.agentguard.json` manifest | Agents and humans can declare local SDK defaults in a tiny static config file without dashboard coupling |
+| Executable framework starters | Each supported stack has a minimal runnable example that proves the integration path with AgentGuard |
 
 ## Next (next month)
 
 | Item | Success Signal |
 |------|---------------|
 | Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
-| Framework quickstart generator | One local command prints the exact minimal snippet for the user's framework without any dashboard dependency |
 | OpenTelemetry Collector sink improvements | `OtelTraceSink` supports custom resource attributes and span links |
 | `ContentGuard` - detect PII/sensitive data in agent outputs | New guard class, raises `ContentViolation`, regex-based (no deps) |
 
@@ -35,6 +34,7 @@ Release note: feature freeze is in effect until the next PyPI cleanup release sh
 | Item | Success Signal |
 |------|---------------|
 | TypeScript SDK | npm package with parity: LoopGuard, BudgetGuard, TimeoutGuard, Tracer |
+| Release hardening and code-scanning cleanup | No open SDK/example/workflow findings remain that block the next PyPI release, and release metadata stays aligned with the shipped tag |
 | Repo-local `.agentguard.json` manifest | AI coding agents and humans can declare service name, trace path, and guard defaults without a hosted control plane |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
 | Policy bundle import/export | Guard and sink settings can be serialized and applied across environments without a hosted control plane |

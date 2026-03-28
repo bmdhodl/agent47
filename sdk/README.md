@@ -20,6 +20,17 @@ agentguard doctor
 This validates the SDK in local-only mode, writes a small JSONL trace, and
 prints the smallest correct next-step snippet for the current environment.
 
+## Generate a framework starter
+
+```bash
+agentguard quickstart --framework raw
+agentguard quickstart --framework openai
+agentguard quickstart --framework langchain --json
+```
+
+Use this when you already know the stack you want to wire. It prints the
+install command, a minimal starter file, and the next verification commands.
+
 ## Quickstart
 
 ```python
@@ -170,6 +181,7 @@ sink = HttpSink(
 
 ```bash
 agentguard doctor --trace-file traces.jsonl   # local install verification
+agentguard quickstart --framework openai      # framework-specific starter
 agentguard demo                     # offline proof of guardrails
 agentguard report traces.jsonl      # human-readable summary
 agentguard incident traces.jsonl    # postmortem-style local report
