@@ -6,7 +6,7 @@ Run:
 
 Then inspect the traces:
     agentguard report sdk/examples/loop_traces.jsonl
-    agentguard view sdk/examples/loop_traces.jsonl
+    agentguard incident sdk/examples/loop_traces.jsonl
 """
 
 from agentguard.tracing import Tracer, JsonlFileSink
