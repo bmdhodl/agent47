@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-import tomllib
 from pathlib import Path
 
 REPO_OWNER = "bmdhodl"
@@ -26,8 +25,23 @@ def _repo_root() -> Path:
 
 
 def _load_version(repo_root: Path) -> str:
-    pyproject = tomllib.loads((repo_root / PYPROJECT_PATH).read_text(encoding="utf-8"))
-    return pyproject["project"]["version"]
+    pyproject_text = (repo_root / PYPROJECT_PATH).read_text(encoding="utf-8")
+    project_section = re.search(
+        r"^\[project\]\s*(?P<body>.*?)(?=^\[|\Z)",
+        pyproject_text,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    if project_section is None:
+        raise ValueError("Could not find [project] section in sdk/pyproject.toml")
+
+    version_match = re.search(
+        r'^version\s*=\s*"(?P<version>[^"]+)"\s*$',
+        project_section.group("body"),
+        flags=re.MULTILINE,
+    )
+    if version_match is None:
+        raise ValueError("Could not find project.version in sdk/pyproject.toml")
+    return version_match.group("version")
 
 
 def _github_url(version: str, relative_target: str, repo_root: Path) -> str:
