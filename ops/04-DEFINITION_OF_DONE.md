@@ -10,6 +10,15 @@
 - [ ] Test runs are clean - no persistent pytest config warnings.
 - [ ] No hardcoded absolute paths.
 - [ ] If `__init__.py` exports changed, it was intentional.
+- [ ] If the change ships user-visible behavior or release prep, docs and roadmap were reviewed for drift.
+
+## Cutting a release
+
+- [ ] `sdk/pyproject.toml` version matches the intended tag.
+- [ ] `CHANGELOG.md` has an entry for the version being shipped.
+- [ ] GitHub Releases has an entry for the tag, not just a git tag.
+- [ ] PyPI version matches the Git tag after publish.
+- [ ] Release notes link to the correct docs, repo, and package name.
 
 ## Adding a new guard
 

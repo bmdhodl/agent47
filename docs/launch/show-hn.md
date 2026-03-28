@@ -60,7 +60,7 @@ Docs: https://agentguard47.com
 
 ## Pre-Launch Checklist
 
-- [ ] `pip install agentguard47==1.2.1` works
+- [ ] `pip install agentguard47==<release-version>` works for the tag being shipped
 - [ ] README hero is cost guardrail (done)
 - [x] Try-it-now terminal output in README
 - [ ] All README links resolve (no 404s)

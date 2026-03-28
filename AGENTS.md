@@ -8,7 +8,7 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (v1.2.1)
+- **Package:** `agentguard47` on PyPI (latest shipped release: v1.2.2)
 - **Landing page:** site/index.html (Vercel)
 
 ## Agent Contract (MANDATORY)
@@ -160,7 +160,7 @@ Read .Codex/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** v1.2.1 shipped. Phase 1 complete. Active: **Phase 2 — Traction.**
+**Current:** latest shipped SDK release is v1.2.2. Phase 1 complete. Active: **Phase 2 — Traction.**
 
 ## Phase 1 — Foundation (COMPLETE, 2026-02-16)
 
@@ -240,7 +240,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** 1.2.1
+- **Version:** latest shipped release is 1.2.2. Check `sdk/pyproject.toml` for the branch version under preparation.
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)

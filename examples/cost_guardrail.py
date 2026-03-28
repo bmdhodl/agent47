@@ -53,7 +53,7 @@ if api_key:
         url="https://app.agentguard47.com/api/ingest",
         api_key=api_key,
     )
-    print(f"Sending traces to dashboard (key: {api_key[:8]}...)")
+    print("Sending traces to dashboard via HttpSink")
 else:
     sink = JsonlFileSink("cost_guardrail_traces.jsonl")
     print("Sending traces to cost_guardrail_traces.jsonl")

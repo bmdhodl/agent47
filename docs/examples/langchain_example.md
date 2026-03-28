@@ -40,7 +40,7 @@ print(response)
 
 ```bash
 agentguard report traces.jsonl
-agentguard view traces.jsonl
+agentguard incident traces.jsonl
 ```
 
 ## Notes

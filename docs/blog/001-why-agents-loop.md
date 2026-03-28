@@ -69,10 +69,10 @@ AgentGuard report
 
 The guard caught the loop on the third identical call. No tokens wasted. No silent failure.
 
-Open the trace viewer to see the full event timeline in your browser:
+Render an incident summary when a run loops or fails:
 
 ```bash
-agentguard view traces.jsonl
+agentguard incident traces.jsonl
 ```
 
 ## Why this matters

@@ -16,34 +16,22 @@ https://github.com/users/bmdhodl/projects/4
 gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 50
 ```
 
-## Current Focus: Strategic Execution Plan — Phase 1
+## Current Focus
 
-v1.2.1 is shipped. The active work is the 3-phase strategic plan to get to $5K MRR.
+Latest shipped SDK release: `v1.2.2`.
 
-### Phase 1 SDK Tickets (current)
+Source of truth for priorities:
+- `ops/00-NORTHSTAR.md`
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md`
+- `ops/04-DEFINITION_OF_DONE.md`
+- the GitHub project board
 
-| Ticket | Title | Priority |
-|--------|-------|----------|
-| T02 | README rewrite: cost guardrail as hero (#139) | Critical |
-| T07 | 30-second demo GIF: BudgetGuard kills agent | Critical |
-| T08 | Show HN post draft + launch prep | Critical |
+Current emphasis is release hardening and cleanup before the next PyPI release:
+- docs and roadmap drift
+- code scanning and workflow hygiene
+- test cleanliness and release readiness
 
-### Phase 2 SDK Tickets (next)
-
-| Ticket | Title | Priority |
-|--------|-------|----------|
-| T15 | SEO blog posts (3 targeting cost keywords) | High |
-| T18 | LangChain community engagement plan | High |
-| T19 | GitHub Discussions + issue templates | Medium |
-| T20 | SDK examples expansion (3 real-world) | Medium |
-
-### Phase 3 SDK Tickets
-
-| Ticket | Title | Priority |
-|--------|-------|----------|
-| T26 | SDK virality watermark | Medium |
-
-**Critical path:** T02 (README) → T07 (GIF) → T08 (Show HN) → **LAUNCH**
+Do not rely on old phase-ticket tables when they conflict with the ops docs.
 
 ## Workflow
 
