@@ -8,7 +8,7 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (v1.2.1)
+- **Package:** `agentguard47` on PyPI (latest shipped release: v1.2.2)
 - **Landing page:** site/index.html (Vercel)
 
 ## Agent Contract (MANDATORY)
@@ -24,6 +24,9 @@ AgentGuard — a lightweight observability and runtime-guards SDK for multi-agen
    - **(d) Done criteria** — how do we know it's done? (reference `ops/04-DEFINITION_OF_DONE.md`)
 4. **Structured output.** Every task must include: **plan → diff summary → tests → docs updates needed**.
 5. **Check staleness.** Run `git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md` and `git log -1 --format='%cr' -- ops/02-ARCHITECTURE.md`. If ROADMAP is >5 days old or ARCHITECTURE is >14 days old, warn the user before starting any task.
+6. **PR proof is required.** Every PR must include concrete proof that the change works: command output, targeted runtime evidence, screenshots when applicable, or saved artifacts under a local proof folder.
+7. **Always do the post-PR review loop.** After opening a PR: wait for CI, verify the relevant preview/deployment health, wait a few minutes for automated review, inspect the full PR timeline plus review comments/threads, address feedback, rerun checks, and only then call the PR ready.
+8. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits.
 
 ## Commands
 
@@ -40,6 +43,8 @@ make lines       # module line counts (entropy check)
 make install     # pip install SDK + dev tools
 make clean       # remove build artifacts
 ```
+
+If `make` is unavailable in the local shell, run the equivalent underlying commands directly and capture their output as proof.
 
 ### Running specific tests
 
@@ -107,7 +112,7 @@ Integration modules (allowed to import core, never the reverse):
 | Module | Purpose |
 |--------|---------|
 | `tracing.py` | Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink |
-| `guards.py` | LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard + exceptions |
+| `guards.py` | LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard + exceptions |
 | `instrument.py` | @trace_agent, @trace_tool, patch_openai, patch_anthropic |
 | `sinks/http.py` | HttpSink (batched, gzip, retry, SSRF protection) |
 | `sinks/otel.py` | OtelTraceSink (OpenTelemetry bridge) |
@@ -124,7 +129,7 @@ Integration modules (allowed to import core, never the reverse):
 
 - **Zero dependencies.** Stdlib only. Optional extras: `langchain-core`, `langgraph`, `crewai`, `opentelemetry-api`.
 - **Trace format:** JSONL — `{service, kind, phase, trace_id, span_id, parent_id, name, ts, duration_ms, data, error, cost_usd}`
-- **Guards raise exceptions:** `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`, `RateLimitExceeded`
+- **Guards raise exceptions:** `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`, `RetryLimitExceeded`
 - **TraceSink interface:** All sinks implement `emit(event: Dict)`
 
 ## CI/CD
@@ -155,7 +160,7 @@ Read .claude/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** v1.2.1 shipped. Phase 1 complete. Active: **Phase 2 — Traction.**
+**Current:** latest shipped SDK release is v1.2.2. Phase 1 complete. Active: **Phase 2 — Traction.**
 
 ## Phase 1 — Foundation (COMPLETE, 2026-02-16)
 
@@ -235,7 +240,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** 1.2.1
+- **Version:** latest shipped release is 1.2.2. Check `sdk/pyproject.toml` for the branch version under preparation.
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)

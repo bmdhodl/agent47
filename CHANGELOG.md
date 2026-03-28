@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.2.3
+
+### Release Hardening
+- Removed the dashboard API key prefix from `examples/cost_guardrail.py` log output.
+- Replaced insecure `tempfile.mktemp()` usage in `sdk/tests/e2e_v110.py` with secure named temp files.
+- Pinned GitHub Actions by commit SHA across CI, publish, CodeQL, Scorecard, and maintenance workflows.
+
+### Docs and Release Hygiene
+- Refreshed stale docs and agent instructions to point at the latest shipped release (`v1.2.2`) instead of `v1.2.1`.
+- Replaced dead `agentguard view` references with supported `agentguard report` / `agentguard incident` commands.
+- Added explicit release criteria to `ops/04-DEFINITION_OF_DONE.md`.
+- Updated the SDK roadmap to reflect the feature freeze and release-hardening focus.
+
+## 1.2.2
+
+### SDK Reliability
+- Added `RetryGuard` to stop retry storms with a dedicated `RetryLimitExceeded` exception.
+- Refreshed built-in Anthropic and Google pricing entries used by `estimate_cost()`.
+- Expanded evaluation assertions and incident reporting for local trace analysis.
+
+### Local Proof and Onboarding
+- Added `agentguard demo` for a deterministic offline proof of budget, loop, and retry enforcement.
+- Added `agentguard doctor` for local-only install verification and minimal next-step guidance.
+
 ## 1.1.0
 
 ### Cost Guardrail Pipeline

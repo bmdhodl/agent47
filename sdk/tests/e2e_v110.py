@@ -50,9 +50,15 @@ def check(name, condition, detail=""):
         print(f"  [FAIL] {name} — {detail}")
 
 
+def _temp_trace_path():
+    """Create a closed named temp file path that can be reopened on Windows."""
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".jsonl") as handle:
+        return handle.name
+
+
 def main():
     global PASS, FAIL
-    trace_path = tempfile.mktemp(suffix=".jsonl")
+    trace_path = _temp_trace_path()
 
     print("=" * 60)
     print("SDK v1.1.0 End-to-End Verification")
@@ -123,7 +129,7 @@ def main():
                 raise RuntimeError(f"Tool {event_name} is blocked!")
 
     blocker = ToolBlocker("tool.dangerous")
-    trace_path2 = tempfile.mktemp(suffix=".jsonl")
+    trace_path2 = _temp_trace_path()
 
     blocked = False
     with Tracer(sink=JsonlFileSink(trace_path2), guards=[blocker]) as tracer:
@@ -141,7 +147,7 @@ def main():
 
     # ── 5. LoopGuard auto_check via Tracer ────────────────────
     print("\n5. LoopGuard auto_check via Tracer")
-    trace_path3 = tempfile.mktemp(suffix=".jsonl")
+    trace_path3 = _temp_trace_path()
     loop_guard = LoopGuard(max_repeats=3)
 
     loop_caught = False
@@ -206,7 +212,7 @@ def main():
 
     # ── 8. Name truncation ────────────────────────────────────
     print("\n8. Name truncation (1000 char limit)")
-    trace_path4 = tempfile.mktemp(suffix=".jsonl")
+    trace_path4 = _temp_trace_path()
     long_name = "x" * 2000
 
     with Tracer(sink=JsonlFileSink(trace_path4), service="truncation-test") as tracer:

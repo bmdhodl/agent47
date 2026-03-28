@@ -41,7 +41,7 @@ Step-by-step instructions for cross-posting AgentGuard blog posts to Dev.to, Has
 
 Before publishing each post:
 
-- [ ] All code examples run against `agentguard47==1.2.1`
+- [ ] All code examples run against the current release version from `sdk/pyproject.toml`
 - [ ] `canonical_url` points to the GitHub source file
 - [ ] Links to repo (`github.com/bmdhodl/agent47`) are correct
 - [ ] `pip install agentguard47` command is correct
