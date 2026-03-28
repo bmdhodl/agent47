@@ -122,15 +122,22 @@ def _base_payload(
     }
 
 
+def _py_string_literal(value: str) -> str:
+    """Render a Python-safe string literal for generated snippets."""
+    return json.dumps(value)
+
+
 def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, Any]:
+    service_literal = _py_string_literal(service)
+    trace_file_literal = _py_string_literal(trace_file)
     snippet = dedent(
         f"""
         import agentguard
 
         tracer = agentguard.init(
-            service="{service}",
+            service={service_literal},
             budget_usd={budget_usd:.2f},
-            trace_file="{trace_file}",
+            trace_file={trace_file_literal},
             local_only=True,
         )
 
@@ -142,7 +149,7 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
             result = search_docs("agentguard quickstart")
             span.event("agent.answer", data={{"result": result}})
 
-        print("Traces saved to {trace_file}")
+        print("Traces saved to " + {trace_file_literal})
         """
     )
     return _base_payload(
@@ -163,15 +170,17 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
 
 
 def _openai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, Any]:
+    service_literal = _py_string_literal(service)
+    trace_file_literal = _py_string_literal(trace_file)
     snippet = dedent(
         f"""
         import agentguard
         from openai import OpenAI
 
         agentguard.init(
-            service="{service}",
+            service={service_literal},
             budget_usd={budget_usd:.2f},
-            trace_file="{trace_file}",
+            trace_file={trace_file_literal},
             local_only=True,
         )
 
@@ -182,7 +191,7 @@ def _openai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[st
         )
 
         print(response.choices[0].message.content)
-        print("Traces saved to {trace_file}")
+        print("Traces saved to " + {trace_file_literal})
         """
     )
     return _base_payload(
@@ -204,15 +213,17 @@ def _openai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[st
 
 
 def _anthropic_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, Any]:
+    service_literal = _py_string_literal(service)
+    trace_file_literal = _py_string_literal(trace_file)
     snippet = dedent(
         f"""
         import agentguard
         from anthropic import Anthropic
 
         agentguard.init(
-            service="{service}",
+            service={service_literal},
             budget_usd={budget_usd:.2f},
-            trace_file="{trace_file}",
+            trace_file={trace_file_literal},
             local_only=True,
         )
 
@@ -224,7 +235,7 @@ def _anthropic_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         )
 
         print(response.content[0].text)
-        print("Traces saved to {trace_file}")
+        print("Traces saved to " + {trace_file_literal})
         """
     )
     return _base_payload(
@@ -246,6 +257,8 @@ def _anthropic_payload(service: str, budget_usd: float, trace_file: str) -> Dict
 
 
 def _langchain_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, Any]:
+    service_literal = _py_string_literal(service)
+    trace_file_literal = _py_string_literal(trace_file)
     snippet = dedent(
         f"""
         from agentguard import BudgetGuard, JsonlFileSink, LoopGuard, Tracer
@@ -253,8 +266,8 @@ def _langchain_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         from langchain_openai import ChatOpenAI
 
         tracer = Tracer(
-            sink=JsonlFileSink("{trace_file}"),
-            service="{service}",
+            sink=JsonlFileSink({trace_file_literal}),
+            service={service_literal},
         )
         loop_guard = LoopGuard(max_repeats=3, window=6)
         budget_guard = BudgetGuard(max_cost_usd={budget_usd:.2f}, max_calls=20)
@@ -271,7 +284,7 @@ def _langchain_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         )
 
         print(response.content)
-        print("Traces saved to {trace_file}")
+        print("Traces saved to " + {trace_file_literal})
         """
     )
     return _base_payload(
@@ -293,6 +306,8 @@ def _langchain_payload(service: str, budget_usd: float, trace_file: str) -> Dict
 
 
 def _langgraph_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, Any]:
+    service_literal = _py_string_literal(service)
+    trace_file_literal = _py_string_literal(trace_file)
     snippet = dedent(
         f"""
         from langgraph.graph import END, START, StateGraph
@@ -301,8 +316,8 @@ def _langgraph_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         from agentguard.integrations.langgraph import guard_node
 
         tracer = Tracer(
-            sink=JsonlFileSink("{trace_file}"),
-            service="{service}",
+            sink=JsonlFileSink({trace_file_literal}),
+            service={service_literal},
         )
         loop_guard = LoopGuard(max_repeats=3, window=6)
         budget_guard = BudgetGuard(max_cost_usd={budget_usd:.2f}, max_calls=20)
@@ -327,7 +342,7 @@ def _langgraph_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         graph = builder.compile()
         result = graph.invoke({{"question": "What is AgentGuard?"}})
         print(result["answer"])
-        print("Traces saved to {trace_file}")
+        print("Traces saved to " + {trace_file_literal})
         """
     )
     return _base_payload(
@@ -348,6 +363,8 @@ def _langgraph_payload(service: str, budget_usd: float, trace_file: str) -> Dict
 
 
 def _crewai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, Any]:
+    service_literal = _py_string_literal(service)
+    trace_file_literal = _py_string_literal(trace_file)
     snippet = dedent(
         f"""
         from crewai import Agent, Crew, Task
@@ -356,8 +373,8 @@ def _crewai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[st
         from agentguard.integrations.crewai import AgentGuardCrewHandler
 
         tracer = Tracer(
-            sink=JsonlFileSink("{trace_file}"),
-            service="{service}",
+            sink=JsonlFileSink({trace_file_literal}),
+            service={service_literal},
         )
         loop_guard = LoopGuard(max_repeats=3, window=6)
         budget_guard = BudgetGuard(max_cost_usd={budget_usd:.2f}, max_calls=20)
@@ -384,7 +401,7 @@ def _crewai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[st
         crew = Crew(agents=[agent], tasks=[task], verbose=True)
         result = crew.kickoff()
         print(result)
-        print("Traces saved to {trace_file}")
+        print("Traces saved to " + {trace_file_literal})
         """
     )
     return _base_payload(

@@ -1,10 +1,11 @@
+import ast
 import io
 import json
 import unittest
 from contextlib import redirect_stdout
 
 from agentguard.cli import _quickstart
-from agentguard.quickstart import run_quickstart
+from agentguard.quickstart import FRAMEWORK_CHOICES, _build_quickstart_payload, run_quickstart
 
 
 class TestQuickstart(unittest.TestCase):
@@ -62,6 +63,23 @@ class TestQuickstart(unittest.TestCase):
         output = buf.getvalue()
         self.assertIn("Framework: anthropic", output)
         self.assertIn("ANTHROPIC_API_KEY", output)
+
+    def test_snippets_escape_service_and_trace_file_literals(self) -> None:
+        service = 'agent "alpha"\nsecond line'
+        trace_file = r'traces\agent "alpha"\session.jsonl'
+
+        for framework in FRAMEWORK_CHOICES:
+            with self.subTest(framework=framework):
+                payload = _build_quickstart_payload(
+                    framework=framework,
+                    service=service,
+                    budget_usd=5.0,
+                    trace_file=trace_file,
+                )
+
+                ast.parse(payload["snippet"])
+                self.assertIn(json.dumps(service), payload["snippet"])
+                self.assertIn(json.dumps(trace_file), payload["snippet"])
 
 
 if __name__ == "__main__":
