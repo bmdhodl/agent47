@@ -93,6 +93,7 @@ AgentGuard report
   Total events: 6
   Spans: 2  Events: 4
   Approx run time: 0.3 ms
+  Savings ledger: exact 0 tokens / $0.0000, estimated 0 tokens / $0.0000
 ```
 
 Open a timeline in your browser:
@@ -194,8 +195,8 @@ agentguard incident traces.jsonl
 agentguard report traces.jsonl --format html > incident.html
 ```
 
-The incident report highlights guard events, conservative estimated savings,
-and the upgrade path to retained alerts plus remote kill switch.
+The incident report highlights guard events, the exact-vs-estimated savings
+ledger, and the upgrade path to retained alerts plus remote kill switch.
 
 ## 8. Send traces to the dashboard
 
