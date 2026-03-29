@@ -21,9 +21,11 @@ def test_generated_pypi_readme_includes_current_release_notes() -> None:
 
     version = module._load_version(REPO_ROOT)
     content = module.build_pypi_readme(REPO_ROOT)
+    changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    release_notes = module.extract_release_notes(changelog, version)
 
     assert f"## Latest Release Notes ({version})" in content
-    assert "### Release Hardening" in content
+    assert release_notes in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/LICENSE" in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/CHANGELOG.md" in content
     assert (
