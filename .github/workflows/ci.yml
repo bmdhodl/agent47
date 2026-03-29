@@ -47,7 +47,9 @@ jobs:
           cache: 'pip'
       - name: Install tools
         run: pip install ruff bandit
+      - name: Check PyPI README sync
+        run: python scripts/generate_pypi_readme.py --check
       - name: Lint (ruff)
-        run: ruff check sdk/agentguard/
+        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py
       - name: Security lint (bandit)
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
