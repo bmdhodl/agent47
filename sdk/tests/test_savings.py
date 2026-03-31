@@ -339,6 +339,59 @@ class TestSummarizeSavings(unittest.TestCase):
         ]
         self.assertEqual(unknown_model_warnings, [])
 
+    def test_estimated_usd_rounds_after_aggregating_multiple_traces(self):
+        savings = summarize_savings(
+            [
+                {
+                    "name": "llm.result",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "data": {
+                        "model": "gpt-4o-mini",
+                        "provider": "openai",
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 100,
+                            "total_tokens": 200,
+                        },
+                    },
+                },
+                {
+                    "name": "guard.retry_limit_exceeded",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "data": {"message": "retry limit"},
+                },
+                {
+                    "name": "llm.result",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t2",
+                    "data": {
+                        "model": "gpt-4o-mini",
+                        "provider": "openai",
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 100,
+                            "total_tokens": 200,
+                        },
+                    },
+                },
+                {
+                    "name": "guard.retry_limit_exceeded",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t2",
+                    "data": {"message": "retry limit"},
+                },
+            ]
+        )
+
+        self.assertEqual(savings["estimated_tokens_saved"], 400)
+        self.assertAlmostEqual(savings["estimated_usd_saved"], 0.0001, places=4)
+
 
 if __name__ == "__main__":
     unittest.main()

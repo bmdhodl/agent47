@@ -229,7 +229,7 @@ def _estimate_guard_trace_savings(events: List[Dict[str, Any]]) -> Tuple[Optiona
             usd_saved = _estimate_event_cost(baseline_event, usage)
         if tokens_saved <= 0 and (usd_saved is None or usd_saved <= 0):
             continue
-        return guard_reason, tokens_saved, round(float(usd_saved or 0.0), 4)
+        return guard_reason, tokens_saved, float(usd_saved or 0.0)
 
     return None, 0, 0.0
 
