@@ -18,7 +18,7 @@ class TestLangChainIntegration(unittest.TestCase):
         self.tracer = Tracer(sink=self.sink, service="test")
 
     def _read_events(self):
-        with open(self._trace_path, "r") as f:
+        with open(self._trace_path) as f:
             return [json.loads(line) for line in f if line.strip()]
 
     def test_chain_lifecycle(self):
@@ -132,6 +132,11 @@ class TestLangChainIntegration(unittest.TestCase):
         data = llm_end_events[0].get("data", {})
         self.assertIn("cost_usd", data)
         self.assertGreater(data["cost_usd"], 0)
+        self.assertEqual(data["provider"], "openai")
+        self.assertEqual(data["model"], "gpt-4o")
+        self.assertEqual(data["token_usage"]["input_tokens"], 1000)
+        self.assertEqual(data["token_usage"]["output_tokens"], 500)
+        self.assertEqual(data["token_usage"]["total_tokens"], 1500)
 
     def test_llm_end_no_cost_for_unknown_model(self):
         """on_llm_end with an unknown model should not have cost_usd."""
@@ -154,27 +159,62 @@ class TestLangChainIntegration(unittest.TestCase):
         data = llm_end_events[0].get("data", {})
         self.assertNotIn("cost_usd", data)
 
+    def test_llm_end_normalizes_anthropic_usage(self):
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_llm_end(
+            _MockAnthropicResponse(
+                model="claude-sonnet-4-20250514",
+                input_t=300,
+                output_t=40,
+                cache_read_t=200,
+            ),
+            run_id=llm_id,
+        )
+        handler.on_chain_end({}, run_id=chain_id)
+
+        events = self._read_events()
+        llm_end_events = [e for e in events if e["name"] == "llm.end"]
+        self.assertTrue(len(llm_end_events) >= 1)
+        data = llm_end_events[0].get("data", {})
+        self.assertEqual(data["provider"], "anthropic")
+        self.assertEqual(data["model"], "claude-sonnet-4-20250514")
+        self.assertEqual(data["token_usage"]["input_tokens"], 300)
+        self.assertEqual(data["token_usage"]["output_tokens"], 40)
+        self.assertEqual(data["token_usage"]["cached_input_tokens"], 200)
+        self.assertEqual(data["token_usage"]["total_tokens"], 540)
+
 
 class TestExtractModelName(unittest.TestCase):
     def test_from_llm_output(self):
         from agentguard.integrations.langchain import _extract_model_name
 
         class R:
-            llm_output = {"model_name": "gpt-4o"}
+            def __init__(self):
+                self.llm_output = {"model_name": "gpt-4o"}
+
         self.assertEqual(_extract_model_name(R()), "gpt-4o")
 
     def test_from_response_metadata(self):
         from agentguard.integrations.langchain import _extract_model_name
 
         class R:
-            response_metadata = {"model": "claude-3-5-sonnet-20241022"}
+            def __init__(self):
+                self.response_metadata = {"model": "claude-3-5-sonnet-20241022"}
+
         self.assertEqual(_extract_model_name(R()), "claude-3-5-sonnet-20241022")
 
     def test_from_metadata_model_id(self):
         from agentguard.integrations.langchain import _extract_model_name
 
         class R:
-            metadata = {"model_id": "gemini-1.5-pro"}
+            def __init__(self):
+                self.metadata = {"model_id": "gemini-1.5-pro"}
+
         self.assertEqual(_extract_model_name(R()), "gemini-1.5-pro")
 
     def test_returns_unknown_when_no_model(self):
@@ -188,9 +228,11 @@ class TestExtractModelName(unittest.TestCase):
         from agentguard.integrations.langchain import _extract_model_name
 
         class R:
-            llm_output = {}
-            response_metadata = {}
-            metadata = {}
+            def __init__(self):
+                self.llm_output = {}
+                self.response_metadata = {}
+                self.metadata = {}
+
         self.assertEqual(_extract_model_name(R()), "unknown")
 
 
@@ -217,6 +259,23 @@ class _MockResponseWithModel:
                 "total_tokens": total,
                 "prompt_tokens": input_t,
                 "completion_tokens": output_t,
+            },
+        }
+
+    def dict(self):
+        return {"generations": [], "llm_output": self.llm_output}
+
+
+class _MockAnthropicResponse:
+    """Mock LangChain LLMResult with Anthropic-style usage fields."""
+
+    def __init__(self, model: str, input_t: int, output_t: int, cache_read_t: int = 0):
+        self.llm_output = {
+            "model_name": model,
+            "token_usage": {
+                "input_tokens": input_t,
+                "output_tokens": output_t,
+                "cache_read_input_tokens": cache_read_t,
             },
         }
 

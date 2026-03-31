@@ -4,7 +4,13 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock
 
-from agentguard.instrument import trace_agent, trace_tool, patch_openai, patch_anthropic
+from agentguard.instrument import (
+    _emit_llm_result,
+    patch_anthropic,
+    patch_openai,
+    trace_agent,
+    trace_tool,
+)
 from agentguard.tracing import JsonlFileSink, Tracer
 
 
@@ -135,6 +141,69 @@ class TestPatchAnthropic(unittest.TestCase):
         tracer = MagicMock()
         # This should not raise
         patch_anthropic(tracer)
+
+
+class TestEmitLlmResult(unittest.TestCase):
+    def setUp(self):
+        self.fd, self.path = tempfile.mkstemp(suffix=".jsonl")
+        os.close(self.fd)
+        self.tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+
+    def tearDown(self):
+        os.unlink(self.path)
+
+    def _read_events(self):
+        with open(self.path, encoding="utf-8") as f:
+            return [json.loads(line) for line in f if line.strip()]
+
+    def test_normalizes_openai_usage(self):
+        with self.tracer.trace("llm.openai.gpt-4o") as ctx:
+            _emit_llm_result(
+                ctx,
+                budget_guard=None,
+                model="gpt-4o",
+                provider="openai",
+                usage={
+                    "prompt_tokens": 1000,
+                    "completion_tokens": 500,
+                    "total_tokens": 1500,
+                    "prompt_tokens_details": {"cached_tokens": 800},
+                },
+            )
+
+        llm_events = [e for e in self._read_events() if e["name"] == "llm.result"]
+        self.assertEqual(len(llm_events), 1)
+        event = llm_events[0]
+        self.assertEqual(event["data"]["provider"], "openai")
+        self.assertEqual(event["data"]["usage"]["input_tokens"], 1000)
+        self.assertEqual(event["data"]["usage"]["output_tokens"], 500)
+        self.assertEqual(event["data"]["usage"]["total_tokens"], 1500)
+        self.assertEqual(event["data"]["usage"]["cached_input_tokens"], 800)
+        self.assertGreater(event["cost_usd"], 0)
+
+    def test_normalizes_anthropic_usage(self):
+        with self.tracer.trace("llm.anthropic.claude-sonnet-4-20250514") as ctx:
+            _emit_llm_result(
+                ctx,
+                budget_guard=None,
+                model="claude-sonnet-4-20250514",
+                provider="anthropic",
+                usage={
+                    "input_tokens": 300,
+                    "output_tokens": 40,
+                    "cache_read_input_tokens": 200,
+                },
+            )
+
+        llm_events = [e for e in self._read_events() if e["name"] == "llm.result"]
+        self.assertEqual(len(llm_events), 1)
+        event = llm_events[0]
+        self.assertEqual(event["data"]["provider"], "anthropic")
+        self.assertEqual(event["data"]["usage"]["input_tokens"], 300)
+        self.assertEqual(event["data"]["usage"]["output_tokens"], 40)
+        self.assertEqual(event["data"]["usage"]["cached_input_tokens"], 200)
+        self.assertEqual(event["data"]["usage"]["total_tokens"], 540)
+        self.assertGreater(event["cost_usd"], 0)
 
 
 if __name__ == "__main__":

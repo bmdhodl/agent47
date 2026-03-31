@@ -54,6 +54,9 @@ agentguard report traces.jsonl      # summary table
 agentguard incident traces.jsonl    # incident-style local report
 ```
 
+`agentguard report` now includes a local savings ledger with exact and
+estimated token and dollar savings when the trace contains enough evidence.
+
 ## Guards
 
 ```python

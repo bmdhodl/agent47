@@ -53,6 +53,7 @@ class TestCliReport(unittest.TestCase):
             self.assertIn("Reasoning steps: 1", output)
             self.assertIn("Approx run time", output)
             self.assertIn("Estimated cost: $0.00", output)
+            self.assertIn("Savings ledger: exact 0 tokens / $0.0000, estimated 0 tokens / $0.0000", output)
 
     def test_report_with_cost(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -101,26 +102,26 @@ class TestCliReport(unittest.TestCase):
             path = os.path.join(tmpdir, "traces.jsonl")
             events = [
                 {
-                    "service": "demo",
-                    "kind": "span",
-                    "phase": "end",
+                    "kind": "event",
                     "trace_id": "t1",
-                    "span_id": "s1",
-                    "parent_id": None,
-                    "name": "agent.run",
+                    "name": "llm.result",
                     "ts": 0,
-                    "duration_ms": 10.0,
-                    "cost_usd": 1.0,
-                    "data": {},
+                    "phase": "emit",
+                    "data": {
+                        "model": "gpt-4o",
+                        "provider": "openai",
+                        "usage": {
+                            "prompt_tokens": 1000,
+                            "completion_tokens": 500,
+                            "total_tokens": 1500,
+                        },
+                    },
                     "error": None,
                 },
                 {
-                    "service": "demo",
                     "kind": "event",
                     "phase": "emit",
                     "trace_id": "t1",
-                    "span_id": "s1",
-                    "parent_id": None,
                     "name": "guard.loop_detected",
                     "ts": 0,
                     "duration_ms": None,
@@ -139,6 +140,8 @@ class TestCliReport(unittest.TestCase):
             output = buf.getvalue()
             self.assertIn("# AgentGuard Incident Report", output)
             self.assertIn("guard.loop_detected", output)
+            self.assertIn("## Savings Ledger", output)
+            self.assertIn("Estimated tokens saved: 1500", output)
 
     def test_incident_command_json(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -152,6 +155,7 @@ class TestCliReport(unittest.TestCase):
 
             output = json.loads(buf.getvalue())
             self.assertEqual(output["status"], "ok")
+            self.assertIn("savings", output)
 
     def test_report_empty_json_format(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -164,6 +168,51 @@ class TestCliReport(unittest.TestCase):
 
             output = json.loads(buf.getvalue())
             self.assertEqual(output["error"], "No events found")
+
+    def test_report_json_includes_savings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, "traces.jsonl")
+            events = [
+                {
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "name": "llm.result",
+                    "ts": 0,
+                    "duration_ms": None,
+                    "data": {
+                        "model": "gpt-4o",
+                        "provider": "openai",
+                        "usage": {
+                            "prompt_tokens": 1000,
+                            "completion_tokens": 500,
+                            "total_tokens": 1500,
+                        },
+                    },
+                    "error": None,
+                },
+                {
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "name": "guard.retry_limit_exceeded",
+                    "ts": 0,
+                    "duration_ms": None,
+                    "data": {"message": "retry limit"},
+                    "error": None,
+                },
+            ]
+            with open(path, "w", encoding="utf-8") as f:
+                for event in events:
+                    f.write(json.dumps(event) + "\n")
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._report(path, output_format="json")
+
+            output = json.loads(buf.getvalue())
+            self.assertEqual(output["savings"]["estimated_tokens_saved"], 1500)
+            self.assertAlmostEqual(output["savings"]["estimated_usd_saved"], 0.0075, places=4)
 
 
 if __name__ == "__main__":

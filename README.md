@@ -276,6 +276,7 @@ AgentGuard report
   Total events: 9
   Spans: 6  Events: 3
   Estimated cost: $0.01
+  Savings ledger: exact 800 tokens / $0.0010, estimated 1500 tokens / $0.0075
 ```
 
 When a run trips a guard or needs escalation, render a shareable incident report:
@@ -285,8 +286,8 @@ agentguard incident traces.jsonl
 agentguard report traces.jsonl --format markdown
 ```
 
-The incident report summarizes guard triggers, estimated savings, and the
-dashboard upgrade path for retained alerts and remote kill switch.
+The incident report summarizes guard triggers, exact-vs-estimated savings, and
+the dashboard upgrade path for retained alerts and remote kill switch.
 
 ## Evaluation
 
@@ -348,7 +349,7 @@ agentguard incident traces.jsonl --format html > incident.html
 
 Use this when a run hits `guard.budget_warning`, `guard.budget_exceeded`,
 `guard.loop_detected`, or a fatal error. AgentGuard will summarize the run,
-estimate conservative savings, and suggest the next control-plane step.
+separate exact and estimated savings, and suggest the next control-plane step.
 
 ## Async Support
 

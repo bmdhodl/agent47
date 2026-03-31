@@ -38,11 +38,12 @@ __init__.py (public API surface)
   -> cost.py
   -> evaluation.py
   -> export.py -> evaluation.py
+  -> savings.py -> cost.py, evaluation.py
   -> reporting.py -> evaluation.py
   -> demo.py -> guards.py, tracing.py
   -> doctor.py -> evaluation.py, setup.py
   -> quickstart.py
-  -> cli.py -> evaluation.py, reporting.py, demo.py, doctor.py, quickstart.py
+  -> cli.py -> evaluation.py, reporting.py, demo.py, doctor.py, quickstart.py, savings.py
   -> sinks/http.py -> tracing.py
 
 Integrations (import core, never the reverse):
@@ -84,6 +85,7 @@ These modules improve the local SDK experience without blurring the hosted contr
 | Module | Purpose |
 |--------|---------|
 | `reporting.py` | Renders local incident summaries from trace files via `agentguard incident` |
+| `savings.py` | Normalizes provider usage payloads and computes a local exact-vs-estimated savings ledger from traces |
 | `demo.py` | Runs a deterministic offline proof of budget, loop, and retry enforcement via `agentguard demo` |
 | `doctor.py` | Verifies the local SDK install path and prints the minimal local-only onboarding snippet via `agentguard doctor` |
 | `quickstart.py` | Prints framework-specific starter snippets for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI via `agentguard quickstart` |

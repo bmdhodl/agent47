@@ -34,6 +34,10 @@ class TestIncidentSummary(unittest.TestCase):
             self.assertEqual(incident["primary_cause"], "budget_exceeded")
             self.assertEqual(incident["guard_event_count"], 1)
             self.assertAlmostEqual(incident["estimated_savings_usd"], 2.5)
+            self.assertAlmostEqual(incident["exact_savings_usd"], 0.0)
+            self.assertEqual(incident["savings"]["estimated_tokens_saved"], 0)
+            self.assertAlmostEqual(incident["savings"]["estimated_usd_saved"], 2.5)
+            self.assertEqual(incident["savings"]["reasons"][0]["kind"], "budget_overrun_stopped")
         finally:
             os.unlink(path)
 
@@ -63,18 +67,92 @@ class TestIncidentSummary(unittest.TestCase):
         self.assertEqual(incident["status"], "incident")
         self.assertEqual(incident["primary_cause"], "error")
 
+    def test_error_incident_keeps_legacy_estimate_without_ledger_overwrite(self):
+        incident = summarize_incident(
+            [
+                {
+                    "name": "agent.run",
+                    "kind": "span",
+                    "phase": "end",
+                    "duration_ms": 10,
+                    "cost_usd": 1.0,
+                    "error": {"type": "RuntimeError", "message": "boom"},
+                },
+            ]
+        )
+        self.assertEqual(incident["primary_cause"], "error")
+        self.assertAlmostEqual(incident["estimated_savings_usd"], 0.5)
+        self.assertAlmostEqual(incident["savings"]["estimated_usd_saved"], 0.0)
+
+    def test_retry_limit_exceeded_sets_primary_cause(self):
+        incident = summarize_incident(
+            [
+                {
+                    "name": "llm.result",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "data": {
+                        "model": "gpt-4o",
+                        "provider": "openai",
+                        "usage": {
+                            "prompt_tokens": 1000,
+                            "completion_tokens": 500,
+                            "total_tokens": 1500,
+                        },
+                    },
+                    "error": None,
+                },
+                {
+                    "name": "guard.retry_limit_exceeded",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "data": {"message": "retry limit exceeded"},
+                    "error": None,
+                },
+            ]
+        )
+        self.assertEqual(incident["severity"], "critical")
+        self.assertEqual(incident["primary_cause"], "retry_limit_exceeded")
+        self.assertIn("exponential backoff", incident["recommendations"][0])
+
 
 class TestIncidentRendering(unittest.TestCase):
     def test_markdown_report_contains_upgrade_path(self):
         report = render_incident_report(
             [
-                {"name": "agent.run", "kind": "span", "phase": "end", "duration_ms": 500, "cost_usd": 1.2, "error": None},
-                {"name": "guard.loop_detected", "kind": "event", "phase": "emit", "data": {"message": "loop"}, "error": None},
+                {
+                    "name": "llm.result",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "data": {
+                        "model": "gpt-4o",
+                        "provider": "openai",
+                        "usage": {
+                            "prompt_tokens": 1000,
+                            "completion_tokens": 500,
+                            "total_tokens": 1500,
+                        },
+                    },
+                    "error": None,
+                },
+                {
+                    "name": "guard.loop_detected",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "data": {"message": "loop"},
+                    "error": None,
+                },
             ],
             output_format="markdown",
         )
         self.assertIn("# AgentGuard Incident Report", report)
-        self.assertIn("Estimated savings: $1.2000", report)
+        self.assertIn("## Savings Ledger", report)
+        self.assertIn("Estimated savings: $0.0075", report)
+        self.assertIn("`loop_prevented` (estimated): 1500 tokens / $0.0075", report)
         self.assertIn("HttpSink", report)
 
     def test_html_report_contains_title(self):
@@ -91,6 +169,8 @@ class TestIncidentRendering(unittest.TestCase):
         )
         data = json.loads(report)
         self.assertEqual(data["status"], "ok")
+        self.assertIn("savings", data)
+        self.assertEqual(data["savings"]["exact_tokens_saved"], 0)
 
 
 if __name__ == "__main__":

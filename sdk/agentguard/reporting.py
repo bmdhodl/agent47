@@ -6,6 +6,7 @@ import json
 from typing import Any, Dict, List
 
 from agentguard.evaluation import _extract_cost, _load_events, summarize_trace
+from agentguard.savings import summarize_savings
 
 _SEVERITY_ORDER = {"healthy": 0, "warning": 1, "critical": 2}
 
@@ -22,7 +23,10 @@ def summarize_incident(path_or_events: Any) -> Dict[str, Any]:
         )
 
     summary = summarize_trace(events)
+    savings = summarize_savings(events)
     summary.update(_incident_fields(events, summary))
+    summary["savings"] = savings
+    summary["exact_savings_usd"] = savings["exact_usd_saved"]
     return summary
 
 
@@ -131,6 +135,8 @@ def _event_message(event: Dict[str, Any]) -> str:
 def _primary_cause(guard_events: List[Dict[str, Any]], errors: List[Dict[str, str]]) -> str:
     if any(e["name"] == "guard.loop_detected" for e in guard_events):
         return "loop_detected"
+    if any(e["name"] == "guard.retry_limit_exceeded" for e in guard_events):
+        return "retry_limit_exceeded"
     if any(e["name"] == "guard.budget_exceeded" for e in guard_events):
         return "budget_exceeded"
     if any(e["name"] == "guard.budget_warning" for e in guard_events):
@@ -170,6 +176,12 @@ def _recommendations(primary_cause: str, severity: str) -> List[str]:
             "Add CI cost gates so regressions fail before production traffic hits them.",
             *base,
         ]
+    if primary_cause == "retry_limit_exceeded":
+        return [
+            "Add exponential backoff or a deterministic fallback before retrying the same tool.",
+            "Treat repeated upstream failures as a stop condition instead of widening the retry ceiling.",
+            *base,
+        ]
     if primary_cause == "budget_warning":
         return [
             "Treat this trace as an early warning and inspect the highest-cost span first.",
@@ -204,9 +216,30 @@ def _render_incident_markdown(incident: Dict[str, Any]) -> str:
         f"- Estimated cost: ${incident['cost_usd']:.4f}",
         f"- Guard events: {incident['guard_event_count']}",
         f"- Errors: {incident['errors']}",
-        f"- Estimated savings: ${incident['estimated_savings_usd']:.4f}",
+        f"- Exact savings: ${incident['savings']['exact_usd_saved']:.4f}",
+        f"- Estimated savings: ${incident['savings']['estimated_usd_saved']:.4f}",
         "",
     ]
+    lines.extend(
+        [
+            "## Savings Ledger",
+            "",
+            f"- Exact tokens saved: {incident['savings']['exact_tokens_saved']}",
+            f"- Estimated tokens saved: {incident['savings']['estimated_tokens_saved']}",
+            f"- Exact dollars saved: ${incident['savings']['exact_usd_saved']:.4f}",
+            f"- Estimated dollars saved: ${incident['savings']['estimated_usd_saved']:.4f}",
+        ]
+    )
+    if incident["savings"]["reasons"]:
+        lines.append("- Savings reasons:")
+        for reason in incident["savings"]["reasons"]:
+            lines.append(
+                "  - "
+                f"`{reason['kind']}` ({reason['confidence']}): "
+                f"{reason['tokens_saved']} tokens / ${reason['usd_saved']:.4f} "
+                f"across {reason['occurrences']} occurrence(s)"
+            )
+    lines.append("")
     if incident["guard_events"]:
         lines.extend(["## Guard Events", ""])
         for event in incident["guard_events"]:
@@ -277,7 +310,14 @@ def _render_incident_html(incident: Dict[str, Any]) -> str:
       <p><strong>Severity:</strong> {severity}</p>
       <p><strong>Primary cause:</strong> {primary_cause}</p>
       <p><strong>Estimated cost:</strong> ${cost:.4f}</p>
-      <p><strong>Estimated savings:</strong> ${savings:.4f}</p>
+      <p><strong>Exact savings:</strong> ${exact_savings:.4f}</p>
+      <p><strong>Estimated savings:</strong> ${estimated_savings:.4f}</p>
+    </div>
+    <div class="card">
+      <h2>Savings Ledger</h2>
+      <p><strong>Exact tokens saved:</strong> {exact_tokens}</p>
+      <p><strong>Estimated tokens saved:</strong> {estimated_tokens}</p>
+      <ul>{savings_items}</ul>
     </div>
     <div class="card">
       <h2>Guard Events</h2>
@@ -301,7 +341,20 @@ tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api
         severity=html.escape(incident["severity"]),
         primary_cause=html.escape(incident["primary_cause"]),
         cost=incident["cost_usd"],
-        savings=incident["estimated_savings_usd"],
+        exact_savings=incident["savings"]["exact_usd_saved"],
+        estimated_savings=incident["savings"]["estimated_usd_saved"],
+        exact_tokens=incident["savings"]["exact_tokens_saved"],
+        estimated_tokens=incident["savings"]["estimated_tokens_saved"],
+        savings_items=(
+            "".join(
+                f"<li><code>{html.escape(reason['kind'])}</code> "
+                f"({html.escape(reason['confidence'])}): "
+                f"{reason['tokens_saved']} tokens / ${reason['usd_saved']:.4f} "
+                f"across {reason['occurrences']} occurrence(s)</li>"
+                for reason in incident["savings"]["reasons"]
+            )
+            or "<li>No savings signals detected.</li>"
+        ),
         guard_items=guard_items,
         rec_items=rec_items,
     )

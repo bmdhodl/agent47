@@ -13,6 +13,7 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | Incident reporting | Done - `agentguard incident` renders local Markdown/HTML summaries from trace files |
 | Install doctor / local validation | Done - `agentguard doctor` verifies local setup, trace writing, and the next minimal integration step |
 | Framework quickstart generator | Done in PR - `agentguard quickstart --framework <stack>` prints the smallest credible starter snippet for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
+| Savings Ledger foundation | Done in PR - normalized usage capture and local exact-vs-estimated savings summaries now flow through SDK reports |
 
 ## Now (next 2 weeks)
 

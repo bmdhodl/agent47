@@ -10,6 +10,7 @@ from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
 from agentguard.reporting import render_incident_report
+from agentguard.savings import summarize_savings
 
 
 def _summarize(path: str) -> None:
@@ -59,6 +60,12 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
     if span_durations:
         total_ms = max(span_durations)
 
+    if output_format in {"markdown", "html"}:
+        print(render_incident_report(events, output_format=output_format))
+        return
+
+    savings = summarize_savings(events)
+
     if wants_json:
         result = {
             "total_events": total,
@@ -70,11 +77,9 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
             "llm_results": names.get("llm.result", 0),
             "estimated_cost_usd": round(total_cost, 4),
             "loop_guard_triggered": loop_hits,
+            "savings": savings,
         }
         print(json.dumps(result))
-        return
-    if output_format in {"markdown", "html"}:
-        print(render_incident_report(events, output_format=output_format))
         return
 
     print("AgentGuard report")
@@ -89,6 +94,11 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
         print(f"  Estimated cost: ${total_cost:.4f}")
     else:
         print("  Estimated cost: $0.00")
+    print(
+        "  Savings ledger: "
+        f"exact {savings['exact_tokens_saved']} tokens / ${savings['exact_usd_saved']:.4f}, "
+        f"estimated {savings['estimated_tokens_saved']} tokens / ${savings['estimated_usd_saved']:.4f}"
+    )
     if loop_hits:
         print(f"  Loop guard triggered: {loop_hits} time(s)")
     else:

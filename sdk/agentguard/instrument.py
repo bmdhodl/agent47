@@ -4,6 +4,8 @@ from __future__ import annotations
 import functools
 from typing import Any, Callable, Dict, Optional, TypeVar
 
+from agentguard.savings import normalize_usage
+
 F = TypeVar("F", bound=Callable[..., Any])
 
 # Store originals for unpatch support
@@ -53,32 +55,20 @@ def _emit_llm_result(
 
     Shared by all 4 patch variants (OpenAI sync/async, Anthropic sync/async).
     """
-    if usage is None:
-        return
     from agentguard.cost import estimate_cost
 
-    if provider == "openai":
-        input_tokens = getattr(usage, "prompt_tokens", 0)
-        output_tokens = getattr(usage, "completion_tokens", 0)
-        total_tokens = getattr(usage, "total_tokens", 0)
-        usage_data = {
-            "prompt_tokens": input_tokens,
-            "completion_tokens": output_tokens,
-            "total_tokens": total_tokens,
-        }
-    else:
-        input_tokens = getattr(usage, "input_tokens", 0)
-        output_tokens = getattr(usage, "output_tokens", 0)
-        total_tokens = input_tokens + output_tokens
-        usage_data = {
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
-        }
+    usage_data = normalize_usage(usage, provider=provider)
+    if usage_data is None:
+        return
+
+    input_tokens = usage_data.get("input_tokens", 0)
+    output_tokens = usage_data.get("output_tokens", 0)
+    total_tokens = usage_data.get("total_tokens", 0)
 
     cost = estimate_cost(model, input_tokens, output_tokens, provider=provider)
     ctx.event(
         "llm.result",
-        data={"model": model, "usage": usage_data},
+        data={"model": model, "provider": provider, "usage": usage_data},
         cost_usd=cost if cost > 0 else None,
     )
     if budget_guard is not None:
