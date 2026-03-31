@@ -2,7 +2,9 @@ import json
 import os
 import tempfile
 import unittest
+import warnings
 
+from agentguard.cost import UnknownModelWarning
 from agentguard.savings import normalize_usage, summarize_savings
 
 
@@ -66,6 +68,27 @@ class TestNormalizeUsage(unittest.TestCase):
 
     def test_returns_none_for_missing_usage_shape(self):
         self.assertIsNone(normalize_usage({"foo": "bar"}))
+
+    def test_bool_values_are_treated_as_malformed(self):
+        normalized = normalize_usage(
+            {
+                "prompt_tokens": True,
+                "completion_tokens": False,
+                "prompt_tokens_details": {"cached_tokens": True},
+            },
+            provider="openai",
+        )
+
+        self.assertEqual(
+            normalized,
+            {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0,
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+            },
+        )
 
 
 class TestSummarizeSavings(unittest.TestCase):
@@ -277,6 +300,44 @@ class TestSummarizeSavings(unittest.TestCase):
             self.assertAlmostEqual(savings["estimated_usd_saved"], 0.0075, places=4)
         finally:
             os.unlink(path)
+
+    def test_unknown_model_does_not_warn_during_reporting_summary(self):
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            savings = summarize_savings(
+                [
+                    {
+                        "name": "llm.result",
+                        "kind": "event",
+                        "phase": "emit",
+                        "trace_id": "t1",
+                        "data": {
+                            "model": "custom-model",
+                            "provider": "openai",
+                            "usage": {
+                                "prompt_tokens": 1000,
+                                "completion_tokens": 500,
+                                "total_tokens": 1500,
+                                "prompt_tokens_details": {"cached_tokens": 800},
+                            },
+                        },
+                    },
+                    {
+                        "name": "guard.retry_limit_exceeded",
+                        "kind": "event",
+                        "phase": "emit",
+                        "trace_id": "t1",
+                        "data": {"message": "retry limit"},
+                    },
+                ]
+            )
+
+        self.assertEqual(savings["exact_usd_saved"], 0.0)
+        self.assertEqual(savings["estimated_usd_saved"], 0.0)
+        unknown_model_warnings = [
+            warning for warning in caught if issubclass(warning.category, UnknownModelWarning)
+        ]
+        self.assertEqual(unknown_model_warnings, [])
 
 
 if __name__ == "__main__":

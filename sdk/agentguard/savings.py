@@ -1,10 +1,11 @@
 """Local token-efficiency and savings helpers for trace files."""
 from __future__ import annotations
 
+import warnings
 from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List, Optional, Tuple
 
-from agentguard.cost import estimate_cost
+from agentguard.cost import UnknownModelWarning, estimate_cost
 from agentguard.evaluation import _extract_cost, _load_events
 
 _OPENAI_CACHED_INPUT_PRICES_PER_1K: Dict[str, float] = {
@@ -73,60 +74,38 @@ def normalize_usage(usage: Any, provider: Optional[str] = None) -> Optional[Dict
             resolved_provider = "anthropic"
 
     if resolved_provider == "openai":
-        normalized: Dict[str, int] = {
-            "input_tokens": prompt_tokens,
-            "output_tokens": completion_tokens,
-            "total_tokens": total_tokens or (prompt_tokens + completion_tokens),
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
-        }
-        if cached_tokens:
-            normalized["cached_input_tokens"] = cached_tokens
-        if reasoning_tokens:
-            normalized["reasoning_tokens"] = reasoning_tokens
-        return normalized
+        return _normalize_openai_usage(
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=total_tokens,
+            cached_tokens=cached_tokens,
+            reasoning_tokens=reasoning_tokens,
+        )
 
     if resolved_provider == "anthropic":
-        normalized = {
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
-            "total_tokens": input_tokens + output_tokens + cache_read_input_tokens + cache_creation_input_tokens,
-        }
-        if cache_read_input_tokens:
-            normalized["cached_input_tokens"] = cache_read_input_tokens
-            normalized["cache_read_input_tokens"] = cache_read_input_tokens
-        if cache_creation_input_tokens:
-            normalized["cache_write_input_tokens"] = cache_creation_input_tokens
-            normalized["cache_creation_input_tokens"] = cache_creation_input_tokens
-        return normalized
+        return _normalize_anthropic_usage(
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            cache_read_input_tokens=cache_read_input_tokens,
+            cache_creation_input_tokens=cache_creation_input_tokens,
+        )
 
     if looks_openai:
-        normalized = {
-            "input_tokens": prompt_tokens,
-            "output_tokens": completion_tokens,
-            "total_tokens": total_tokens or (prompt_tokens + completion_tokens),
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
-        }
-        if cached_tokens:
-            normalized["cached_input_tokens"] = cached_tokens
-        if reasoning_tokens:
-            normalized["reasoning_tokens"] = reasoning_tokens
-        return normalized
+        return _normalize_openai_usage(
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=total_tokens,
+            cached_tokens=cached_tokens,
+            reasoning_tokens=reasoning_tokens,
+        )
 
     if looks_anthropic:
-        normalized = {
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
-            "total_tokens": input_tokens + output_tokens + cache_read_input_tokens + cache_creation_input_tokens,
-        }
-        if cache_read_input_tokens:
-            normalized["cached_input_tokens"] = cache_read_input_tokens
-            normalized["cache_read_input_tokens"] = cache_read_input_tokens
-        if cache_creation_input_tokens:
-            normalized["cache_write_input_tokens"] = cache_creation_input_tokens
-            normalized["cache_creation_input_tokens"] = cache_creation_input_tokens
-        return normalized
+        return _normalize_anthropic_usage(
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            cache_read_input_tokens=cache_read_input_tokens,
+            cache_creation_input_tokens=cache_creation_input_tokens,
+        )
 
     if isinstance(usage, dict):
         generic_total = _as_int(usage.get("total_tokens"))
@@ -267,7 +246,7 @@ def _estimate_event_cost(
     if not model:
         return 0.0
     provider = _extract_provider(event)
-    return estimate_cost(
+    return _safe_estimate_cost(
         model,
         input_tokens=usage.get("input_tokens", 0),
         output_tokens=usage.get("output_tokens", 0),
@@ -287,7 +266,7 @@ def _estimate_cached_input_savings_usd(
     if resolved_provider is None:
         return 0.0
 
-    base_input_cost = estimate_cost(
+    base_input_cost = _safe_estimate_cost(
         model,
         input_tokens=cached_tokens,
         output_tokens=0,
@@ -356,7 +335,69 @@ def _nested_get(value: Any, *keys: str) -> Any:
 
 def _as_int(value: Any) -> int:
     if isinstance(value, bool):
-        return int(value)
+        return 0
     if isinstance(value, (int, float)):
         return int(value)
     return 0
+
+
+def _normalize_openai_usage(
+    *,
+    prompt_tokens: int,
+    completion_tokens: int,
+    total_tokens: int,
+    cached_tokens: int,
+    reasoning_tokens: int,
+) -> Dict[str, int]:
+    normalized: Dict[str, int] = {
+        "input_tokens": prompt_tokens,
+        "output_tokens": completion_tokens,
+        "total_tokens": total_tokens or (prompt_tokens + completion_tokens),
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+    }
+    if cached_tokens:
+        normalized["cached_input_tokens"] = cached_tokens
+    if reasoning_tokens:
+        normalized["reasoning_tokens"] = reasoning_tokens
+    return normalized
+
+
+def _normalize_anthropic_usage(
+    *,
+    input_tokens: int,
+    output_tokens: int,
+    cache_read_input_tokens: int,
+    cache_creation_input_tokens: int,
+) -> Dict[str, int]:
+    normalized = {
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "total_tokens": (
+            input_tokens + output_tokens + cache_read_input_tokens + cache_creation_input_tokens
+        ),
+    }
+    if cache_read_input_tokens:
+        normalized["cached_input_tokens"] = cache_read_input_tokens
+        normalized["cache_read_input_tokens"] = cache_read_input_tokens
+    if cache_creation_input_tokens:
+        normalized["cache_write_input_tokens"] = cache_creation_input_tokens
+        normalized["cache_creation_input_tokens"] = cache_creation_input_tokens
+    return normalized
+
+
+def _safe_estimate_cost(
+    model: str,
+    *,
+    input_tokens: int,
+    output_tokens: int,
+    provider: Optional[str],
+) -> float:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnknownModelWarning)
+        return estimate_cost(
+            model,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            provider=provider,
+        )

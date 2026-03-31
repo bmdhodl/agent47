@@ -34,7 +34,9 @@ class TestIncidentSummary(unittest.TestCase):
             self.assertEqual(incident["primary_cause"], "budget_exceeded")
             self.assertEqual(incident["guard_event_count"], 1)
             self.assertAlmostEqual(incident["estimated_savings_usd"], 2.5)
+            self.assertAlmostEqual(incident["exact_savings_usd"], 0.0)
             self.assertEqual(incident["savings"]["estimated_tokens_saved"], 0)
+            self.assertAlmostEqual(incident["savings"]["estimated_usd_saved"], 2.5)
             self.assertEqual(incident["savings"]["reasons"][0]["kind"], "budget_overrun_stopped")
         finally:
             os.unlink(path)
@@ -64,6 +66,23 @@ class TestIncidentSummary(unittest.TestCase):
         self.assertEqual(incident["severity"], "critical")
         self.assertEqual(incident["status"], "incident")
         self.assertEqual(incident["primary_cause"], "error")
+
+    def test_error_incident_keeps_legacy_estimate_without_ledger_overwrite(self):
+        incident = summarize_incident(
+            [
+                {
+                    "name": "agent.run",
+                    "kind": "span",
+                    "phase": "end",
+                    "duration_ms": 10,
+                    "cost_usd": 1.0,
+                    "error": {"type": "RuntimeError", "message": "boom"},
+                },
+            ]
+        )
+        self.assertEqual(incident["primary_cause"], "error")
+        self.assertAlmostEqual(incident["estimated_savings_usd"], 0.5)
+        self.assertAlmostEqual(incident["savings"]["estimated_usd_saved"], 0.0)
 
     def test_retry_limit_exceeded_sets_primary_cause(self):
         incident = summarize_incident(

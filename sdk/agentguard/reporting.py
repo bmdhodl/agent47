@@ -27,7 +27,6 @@ def summarize_incident(path_or_events: Any) -> Dict[str, Any]:
     summary.update(_incident_fields(events, summary))
     summary["savings"] = savings
     summary["exact_savings_usd"] = savings["exact_usd_saved"]
-    summary["estimated_savings_usd"] = savings["estimated_usd_saved"]
     return summary
 
 

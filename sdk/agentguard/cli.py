@@ -56,11 +56,15 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
         if cost is not None:
             total_cost += cost
 
-    savings = summarize_savings(events)
-
     total_ms: Optional[float] = None
     if span_durations:
         total_ms = max(span_durations)
+
+    if output_format in {"markdown", "html"}:
+        print(render_incident_report(events, output_format=output_format))
+        return
+
+    savings = summarize_savings(events)
 
     if wants_json:
         result = {
@@ -76,9 +80,6 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
             "savings": savings,
         }
         print(json.dumps(result))
-        return
-    if output_format in {"markdown", "html"}:
-        print(render_incident_report(events, output_format=output_format))
         return
 
     print("AgentGuard report")
