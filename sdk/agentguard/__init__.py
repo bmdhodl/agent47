@@ -1,8 +1,5 @@
 import logging
-import os
-import sys
 from importlib.metadata import PackageNotFoundError, version
-from pathlib import Path
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
@@ -45,41 +42,11 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0-dev"
 
-# Libraries should not configure logging — only add NullHandler
-# so consumers don't see "No handler found" warnings.
-logging.getLogger("agentguard").addHandler(logging.NullHandler())
-
-# --- First-run star prompt ---
-_CI_ENV_VARS = (
-    "CI", "GITHUB_ACTIONS", "JENKINS_URL", "GITLAB_CI",
-    "CIRCLECI", "TRAVIS", "TF_BUILD", "BUILDKITE",
-)
-
-
-def _show_first_run_prompt() -> None:
-    """Show a one-time welcome message on first import. Never in CI."""
-    if os.environ.get("AGENTGUARD_QUIET", "") == "1":
-        return
-    if any(os.environ.get(v) for v in _CI_ENV_VARS):
-        return
-    try:
-        marker_dir = Path.home() / ".agentguard"
-        marker = marker_dir / ".first_run_shown"
-        if marker.exists():
-            return
-        marker_dir.mkdir(parents=True, exist_ok=True)
-        print(  # noqa: T201
-            f"agentguard47 v{__version__} \u2014 runtime guards for AI agents\n"
-            f"Docs: https://github.com/bmdhodl/agent47\n"
-            f"\u2b50 Star us if this helps: https://github.com/bmdhodl/agent47",
-            file=sys.stderr,
-        )
-        marker.write_text("shown\n")
-    except Exception:
-        pass  # Never crash on first-run prompt failure
-
-
-_show_first_run_prompt()
+# Libraries should not configure logging; only add a NullHandler so
+# consumers do not see "No handler found" warnings.
+_logger = logging.getLogger("agentguard")
+if not any(isinstance(handler, logging.NullHandler) for handler in _logger.handlers):
+    _logger.addHandler(logging.NullHandler())
 
 __all__ = [
     "AgentGuardError",
