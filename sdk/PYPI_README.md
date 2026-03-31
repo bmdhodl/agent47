@@ -285,7 +285,7 @@ When a run trips a guard or needs escalation, render a shareable incident report
 
 ```bash
 agentguard incident traces.jsonl
-agentguard incident traces.jsonl --format markdown
+agentguard incident traces.jsonl --format html > incident.html
 ```
 
 The incident report summarizes guard triggers, exact-vs-estimated savings, and
