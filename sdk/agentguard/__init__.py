@@ -44,7 +44,9 @@ except PackageNotFoundError:  # pragma: no cover
 
 # Libraries should not configure logging; only add a NullHandler so
 # consumers do not see "No handler found" warnings.
-logging.getLogger("agentguard").addHandler(logging.NullHandler())
+_logger = logging.getLogger("agentguard")
+if not any(isinstance(handler, logging.NullHandler) for handler in _logger.handlers):
+    _logger.addHandler(logging.NullHandler())
 
 __all__ = [
     "AgentGuardError",

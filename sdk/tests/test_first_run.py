@@ -1,6 +1,7 @@
 """Tests that importing agentguard has no user-visible side effects."""
 
 import importlib
+import os
 import sys
 from unittest import mock
 
@@ -36,7 +37,11 @@ class TestImportSideEffects:
         fake_home = tmp_path / "home"
         fake_home.mkdir()
 
-        with mock.patch("pathlib.Path.home", return_value=fake_home):
+        with mock.patch("pathlib.Path.home", return_value=fake_home), mock.patch.dict(
+            os.environ,
+            {"HOME": str(fake_home), "USERPROFILE": str(fake_home)},
+            clear=False,
+        ):
             _reimport_agentguard()
 
         assert list(fake_home.iterdir()) == []
