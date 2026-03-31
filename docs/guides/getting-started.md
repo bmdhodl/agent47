@@ -96,7 +96,7 @@ AgentGuard report
   Savings ledger: exact 0 tokens / $0.0000, estimated 0 tokens / $0.0000
 ```
 
-Open a timeline in your browser:
+Render an incident report:
 
 ```bash
 agentguard incident traces.jsonl
@@ -192,7 +192,7 @@ When a run blows through budget or hits a loop, render a shareable report:
 
 ```bash
 agentguard incident traces.jsonl
-agentguard report traces.jsonl --format html > incident.html
+agentguard incident traces.jsonl --format html > incident.html
 ```
 
 The incident report highlights guard events, the exact-vs-estimated savings
