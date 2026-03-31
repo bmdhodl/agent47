@@ -29,12 +29,11 @@ def _summarize(path: str) -> None:
     print("\nTraced by AgentGuard | agentguard47.com")
 
 
-def _report(path: str, as_json: bool = False, output_format: str = "text") -> None:
+def _report(path: str, as_json: bool = False) -> None:
     events = _load_events(path)
-    wants_json = as_json or output_format == "json"
 
     if not events:
-        if wants_json:
+        if as_json:
             print(json.dumps({"error": "No events found"}))
         else:
             print("No events found.")
@@ -60,13 +59,9 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
     if span_durations:
         total_ms = max(span_durations)
 
-    if output_format in {"markdown", "html"}:
-        print(render_incident_report(events, output_format=output_format))
-        return
-
     savings = summarize_savings(events)
 
-    if wants_json:
+    if as_json:
         result = {
             "total_events": total,
             "spans": kinds.get("span", 0),
@@ -107,7 +102,7 @@ def _report(path: str, as_json: bool = False, output_format: str = "text") -> No
         1 for e in events if isinstance(e.get("name"), str) and e["name"].startswith("guard.")
     )
     if incident_hits:
-        print("  Incident hint: rerun with --format markdown for a shareable incident report")
+        print("  Incident hint: rerun with `agentguard incident` for a shareable incident report")
     print("\nTraced by AgentGuard | agentguard47.com")
 
 
@@ -165,15 +160,14 @@ def main() -> None:  # pragma: no cover
     summarize = sub.add_parser("summarize", help="Summarize a JSONL trace file")
     summarize.add_argument("path")
 
-    report = sub.add_parser("report", help="Human-readable report for a JSONL trace file")
+    report = sub.add_parser("report", help="Human-readable summary for a JSONL trace file")
     report.add_argument("path")
-    report.add_argument("--json", "-j", action="store_true", dest="json_output",
-                        help="Output machine-readable JSON (for CI pipelines)")
     report.add_argument(
-        "--format",
-        choices=["text", "json", "markdown", "html"],
-        default="text",
-        help="Output format. markdown/html render an incident-style report.",
+        "--json",
+        "-j",
+        action="store_true",
+        dest="json_output",
+        help="Output machine-readable summary JSON (for CI pipelines)",
     )
 
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
@@ -243,8 +237,7 @@ def main() -> None:  # pragma: no cover
     if args.cmd == "summarize":
         _summarize(args.path)
     elif args.cmd == "report":
-        output_format = "json" if args.json_output else args.format
-        _report(args.path, as_json=args.json_output, output_format=output_format)
+        _report(args.path, as_json=args.json_output)
     elif args.cmd == "eval":
         _eval(args.path, ci=args.ci)
     elif args.cmd == "incident":

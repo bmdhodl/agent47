@@ -97,7 +97,7 @@ class TestCliReport(unittest.TestCase):
             output = buf.getvalue()
             self.assertIn("Estimated cost: $0.0225", output)
 
-    def test_report_markdown_format(self) -> None:
+    def test_incident_command_markdown_format(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = os.path.join(tmpdir, "traces.jsonl")
             events = [
@@ -135,7 +135,7 @@ class TestCliReport(unittest.TestCase):
 
             buf = io.StringIO()
             with redirect_stdout(buf):
-                cli._report(path, output_format="markdown")
+                cli._incident(path, output_format="markdown")
 
             output = buf.getvalue()
             self.assertIn("# AgentGuard Incident Report", output)
@@ -164,7 +164,7 @@ class TestCliReport(unittest.TestCase):
 
             buf = io.StringIO()
             with redirect_stdout(buf):
-                cli._report(path, output_format="json")
+                cli._report(path, as_json=True)
 
             output = json.loads(buf.getvalue())
             self.assertEqual(output["error"], "No events found")
@@ -208,7 +208,7 @@ class TestCliReport(unittest.TestCase):
 
             buf = io.StringIO()
             with redirect_stdout(buf):
-                cli._report(path, output_format="json")
+                cli._report(path, as_json=True)
 
             output = json.loads(buf.getvalue())
             self.assertEqual(output["savings"]["estimated_tokens_saved"], 1500)
