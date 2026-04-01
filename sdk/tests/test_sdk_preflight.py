@@ -48,6 +48,17 @@ class TestBuildPlan(unittest.TestCase):
             [sys.executable, "-m", "pytest", "sdk/tests/test_quickstart.py", "-v"],
         )
 
+    def test_preflight_script_change_runs_its_own_tests(self):
+        steps = sdk_preflight.build_plan(["scripts/sdk_preflight.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "targeted-pytest"])
+        targeted = next(step for step in steps if step.label == "targeted-pytest")
+        self.assertEqual(
+            targeted.command,
+            [sys.executable, "-m", "pytest", "sdk/tests/test_sdk_preflight.py", "-v"],
+        )
+
 
 class TestPlanCli(unittest.TestCase):
     def test_plan_output_is_json(self):

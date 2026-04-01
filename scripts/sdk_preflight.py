@@ -95,6 +95,9 @@ TEST_MAP = {
         "sdk/tests/test_langchain_integration.py",
         "sdk/tests/test_savings.py",
     ],
+    "scripts/sdk_preflight.py": [
+        "sdk/tests/test_sdk_preflight.py",
+    ],
 }
 BANDIT_ARGS = ["-m", "bandit", "-r", "sdk/agentguard/", "-s", "B101,B110,B112,B311", "-q"]
 
