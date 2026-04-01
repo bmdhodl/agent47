@@ -51,7 +51,7 @@ body:
     id: sdk-version
     attributes:
       label: AgentGuard version
-      placeholder: "1.2.0"
+      placeholder: "1.2.4"
     validations:
       required: true
 

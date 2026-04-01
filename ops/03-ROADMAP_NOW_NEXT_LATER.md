@@ -17,12 +17,11 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | Coding-agent local profile | Done - `profile=\"coding-agent\"` ships tighter loop and retry defaults for repo automation and coding agents |
 | Repo-local `.agentguard.json` manifest | Done - humans and coding agents can share static local SDK defaults without dashboard coupling |
 | Executable framework starters | Done - each supported stack now has a minimal runnable starter file in `examples/starters/` |
+| Release stabilization for coding-agent onboarding | Done - docs, release metadata, package artifacts, and publish checks were aligned for `v1.2.4` |
 
 ## Now (next 2 weeks)
 
-| Item | Success Signal |
-|------|---------------|
-| Release stabilization for coding-agent onboarding | Full docs, proof artifacts, release metadata, and publish path stay aligned for the next SDK release |
+No active SDK code changes. Hold here until post-release issue triage promotes the next item.
 
 ## Next (next month)
 

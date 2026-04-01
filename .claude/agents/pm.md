@@ -33,7 +33,7 @@ Project ID: `PVT_kwHOALAnAM4BOnP3`
 
 ## Current Focus
 
-Latest shipped SDK release: `v1.2.2`.
+Latest shipped SDK release: `v1.2.4`.
 
 Source of truth for planning:
 - `ops/00-NORTHSTAR.md`
