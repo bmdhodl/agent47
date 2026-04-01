@@ -28,6 +28,9 @@ jobs:
       - name: Generate PyPI README
         run: python scripts/generate_pypi_readme.py --write
 
+      - name: Validate release metadata sync
+        run: python scripts/sdk_release_guard.py
+
       - name: Build package
         run: python -m build ./sdk
         env:

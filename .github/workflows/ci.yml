@@ -49,7 +49,9 @@ jobs:
         run: pip install ruff bandit
       - name: Check PyPI README sync
         run: python scripts/generate_pypi_readme.py --check
+      - name: Check release metadata sync
+        run: python scripts/sdk_release_guard.py
       - name: Lint (ruff)
-        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py
+        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py
       - name: Security lint (bandit)
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q

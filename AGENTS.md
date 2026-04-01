@@ -35,6 +35,7 @@ All common commands are available via `make`:
 ```bash
 make check       # lint + full test suite (mirrors CI)
 make preflight   # fast local preflight based on changed files
+make release-guard # release metadata and doc-version sync checks
 make test        # full test suite with coverage
 make structural  # architectural invariant tests only
 make lint        # ruff check
@@ -67,6 +68,7 @@ npm start             # Run (requires AGENTGUARD_API_KEY env var)
 
 ```bash
 # Bump version in sdk/pyproject.toml, then:
+make release-guard
 git tag v1.X.0 && git push origin v1.X.0
 # publish.yml auto-publishes to PyPI via PYPI_TOKEN
 ```

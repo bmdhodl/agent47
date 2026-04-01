@@ -14,6 +14,7 @@
 
 ## Cutting a release
 
+- [ ] `make release-guard` passes (version markers, changelog section, and generated PyPI README are aligned).
 - [ ] `sdk/pyproject.toml` version matches the intended tag.
 - [ ] `CHANGELOG.md` has an entry for the version being shipped.
 - [ ] `sdk/PYPI_README.md` is regenerated from `README.md` + `CHANGELOG.md` and matches the release tag.
