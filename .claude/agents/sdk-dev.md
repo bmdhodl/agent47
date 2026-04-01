@@ -18,7 +18,7 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
 
 ## Current Focus
 
-Latest shipped SDK release: `v1.2.2`.
+Latest shipped SDK release: `v1.2.3`.
 
 Source of truth for priorities:
 - `ops/00-NORTHSTAR.md`
@@ -38,12 +38,14 @@ Do not rely on old phase-ticket tables when they conflict with the ops docs.
 1. **Start of session:**
    - Run the issue list command above.
    - Run `git status` and `git branch` to check for stale state from other agents.
+   - Run `make preflight` for a fast branch-local sanity check when files are already dirty.
    - Run `make check` to verify the codebase is clean.
 2. **Pick work:** Take the highest-priority Todo item. Cost guardrail gates take precedence.
 3. **Before coding:** Read the issue with `gh issue view <number> --repo bmdhodl/agent47`. Understand acceptance criteria.
 4. **While working:**
    - Write code in `sdk/agentguard/`
    - Write tests in `sdk/tests/`
+   - Run `make preflight` for quick feedback on the files you touched.
    - Run `make check` (lint + full test suite with coverage)
    - Run `make structural` to verify architectural invariants
 5. **When done:** Commit, push, close the issue.

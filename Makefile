@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines
+.PHONY: test lint check structural security clean install fix lines preflight
 
 # Install SDK in editable mode with dev tools
 install:
@@ -26,6 +26,10 @@ fix:
 
 # Lint + full test suite (mirrors CI)
 check: lint test
+
+# Fast local feedback based on changed files
+preflight:
+	python scripts/sdk_preflight.py
 
 # Security lint (bandit)
 security:
