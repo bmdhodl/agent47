@@ -30,6 +30,7 @@ Current emphasis is release hardening and cleanup before the next PyPI release:
 - docs and roadmap drift
 - code scanning and workflow hygiene
 - test cleanliness and release readiness
+- automated release-metadata alignment (`make release-guard`)
 
 Do not rely on old phase-ticket tables when they conflict with the ops docs.
 
@@ -49,6 +50,7 @@ Do not rely on old phase-ticket tables when they conflict with the ops docs.
    - Run `make check` (lint + full test suite with coverage)
    - Run `make structural` to verify architectural invariants
 5. **When done:** Commit, push, close the issue.
+   - If the branch is release prep, run `make release-guard` before tagging.
 6. **If blocked:** Comment on the issue explaining the blocker.
 7. **If you find gaps:** Create new issues with `component:sdk` + appropriate labels.
 

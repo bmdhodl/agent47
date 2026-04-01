@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines preflight
+.PHONY: test lint check structural security clean install fix lines preflight release-guard
 
 # Install SDK in editable mode with dev tools
 install:
@@ -18,7 +18,7 @@ structural:
 
 # Lint SDK source
 lint:
-	ruff check sdk/agentguard/
+	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py
 
 # Lint + auto-fix
 fix:
@@ -30,6 +30,10 @@ check: lint test
 # Fast local feedback based on changed files
 preflight:
 	python scripts/sdk_preflight.py
+
+# Validate release metadata and doc markers stay aligned
+release-guard:
+	python scripts/sdk_release_guard.py
 
 # Security lint (bandit)
 security:
