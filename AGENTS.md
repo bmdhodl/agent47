@@ -1,5 +1,24 @@
 # AGENTS.md
 
+## READ THIS FIRST: Company World Model
+Before touching any code, read these four context files. They are the ground truth for this project AND the parent company.
+
+- `context/state.md` — SDK version, downloads, phase, revenue ($0), relationship to consulting business
+- `context/blockers.md` — what's broken, what's deferred, what NOT to build
+- `context/decisions.md` — locked product + company decisions. Do NOT contradict.
+- `context/icp.md` — who uses AgentGuard, distribution channels, hooks
+
+**Updated regularly. If context/ conflicts with older info in this file, context/ wins.**
+
+Key constraints:
+- SDK stays free, MIT, zero-dependency. This is non-negotiable.
+- AgentGuard Pro pricing is DEFERRED to Q3 2026. Do not build paid features yet.
+- Distribution > features. Get listed on registries before building new guards.
+- Consulting business (bmdpat) drives the roadmap. See bmdhodl/bmdpat context/ for company state.
+- Upwork is DEPRECATED. Never suggest it.
+
+---
+
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## What This Is
