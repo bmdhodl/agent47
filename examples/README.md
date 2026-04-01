@@ -17,10 +17,31 @@ The starter files under `examples/starters/` are the executable counterparts to
 `agentguard quickstart`. They live in this repo for copy-paste onboarding and
 coding-agent setup; they are not included in the installed PyPI wheel.
 
+## Scratch Coding-Agent Smoke Test
+
+When you want a fuller end-to-end proof, run the scratch smoke example:
+
+```bash
+python examples/coding_agent_smoke.py
+agentguard report .agentguard/smoke_coding_agent_traces.jsonl
+agentguard incident .agentguard/smoke_coding_agent_traces.jsonl
+```
+
+If you want the exact same run mirrored to the hosted dashboard, enable it
+explicitly:
+
+```bash
+export AGENTGUARD_API_KEY=ag_...
+python examples/coding_agent_smoke.py --dashboard
+```
+
+The full walkthrough lives in `docs/guides/coding-agent-smoke-test.md`.
+
 ## Framework Examples
 
 | File | Framework | What it shows |
 |------|-----------|---------------|
+| **`coding_agent_smoke.py`** | **Raw SDK** | **Scratch coding-agent flow: healthy answer + loop guard + retry guard, local by default and dashboard mirror on demand** |
 | **`cost_guardrail.py`** | **OpenAI** | **Full cost guardrail pipeline: auto-budget enforcement, warning/exceeded events, dashboard sync** |
 | `langchain_rag_with_guards.py` | LangChain | RAG pipeline with loop detection + budget enforcement via callback handler |
 | `crewai_with_guards.py` | CrewAI | Multi-agent crew with auto-traced OpenAI calls and budget limits |

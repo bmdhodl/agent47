@@ -52,6 +52,11 @@ For coding-agent onboarding, prefer `agentguard.init(local_only=True)` while
 you validate the local path. The checked-in starter files live in the repo
 under `examples/starters/`; they are not part of the installed wheel.
 
+For a fuller scratch-to-agent proof after `doctor`, run
+`python examples/coding_agent_smoke.py` from the repo checkout. It answers a
+real coding-agent-style user request, then deliberately trips `LoopGuard` and
+`RetryGuard` in the same local trace set.
+
 ## Quickstart
 
 ```python

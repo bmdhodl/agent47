@@ -71,6 +71,11 @@ are not shipped inside the PyPI wheel.
 For the repo-first onboarding flow, see
 [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.4/docs/guides/coding-agents.md).
 
+Want a fuller scratch-to-agent proof after `doctor`? Run
+`python examples/coding_agent_smoke.py` to watch a coding-agent-style run
+answer a real user request, then trip `LoopGuard` and `RetryGuard` in the same
+trace set.
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:

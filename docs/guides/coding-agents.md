@@ -104,3 +104,8 @@ Use the dashboard later for:
 
 The SDK should prove local enforcement first. The dashboard remains the control
 plane.
+
+Once the repo-local path works, run the fuller walkthrough in
+[`coding-agent-smoke-test.md`](coding-agent-smoke-test.md) to watch a coding
+agent answer a real request, then trip loop and retry guards in the same trace
+set.

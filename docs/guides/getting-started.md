@@ -76,6 +76,10 @@ agentguard.init(local_only=True)
 For coding-agent and repo-automation setups, follow
 [`coding-agents.md`](coding-agents.md) after `doctor`.
 
+If you want a fuller end-to-end coding-agent proof after `doctor`, run the
+scratch smoke example documented in
+[`coding-agent-smoke-test.md`](coding-agent-smoke-test.md).
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:
