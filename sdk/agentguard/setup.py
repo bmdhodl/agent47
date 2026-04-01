@@ -108,7 +108,18 @@ def init(
     from agentguard.profiles import get_profile_defaults, normalize_profile
     from agentguard.repo_config import CONFIG_FILE_NAME, load_repo_config_safely
 
-    needs_repo_defaults = any(value is None for value in (budget_usd, service, trace_file))
+    needs_repo_defaults = any(
+        value is None
+        for value in (
+            budget_usd,
+            service,
+            trace_file,
+            warn_pct,
+            loop_max,
+            retry_max,
+            profile,
+        )
+    )
     repo_config = {}
     if needs_repo_defaults:
         _, repo_config, repo_error = load_repo_config_safely()
@@ -156,6 +167,8 @@ def init(
                 logger.warning(
                     "Invalid AGENTGUARD_BUDGET_USD=%r, ignoring", env_budget
                 )
+                if "budget_usd" in repo_config:
+                    resolved_budget = float(repo_config["budget_usd"])
         elif "budget_usd" in repo_config:
             resolved_budget = float(repo_config["budget_usd"])
 

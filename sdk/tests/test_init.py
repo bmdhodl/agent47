@@ -98,6 +98,25 @@ class TestInitEnvVars:
             guard = agentguard.get_budget_guard()
             assert guard is None
 
+    def test_invalid_budget_env_falls_back_to_repo_config_budget(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_path = os.path.join(tmpdir, ".agentguard.json")
+            with open(config_path, "w", encoding="utf-8") as handle:
+                json.dump({"budget_usd": 4.5}, handle)
+
+            old_cwd = os.getcwd()
+            os.chdir(tmpdir)
+            try:
+                with patch.dict(os.environ, {"AGENTGUARD_BUDGET_USD": "not-a-number"}), patch(
+                    "agentguard.setup.logger.warning"
+                ) as mock_warning:
+                    tracer = agentguard.init(auto_patch=False)
+                assert tracer is not None
+                assert agentguard.get_budget_guard()._max_cost_usd == 4.5
+                mock_warning.assert_called_once()
+            finally:
+                os.chdir(old_cwd)
+
     def test_kwargs_override_env(self):
         with patch.dict(os.environ, {"AGENTGUARD_SERVICE": "env-svc"}):
             tracer = agentguard.init(service="kwarg-svc", auto_patch=False)
@@ -175,7 +194,7 @@ class TestInitEnvVars:
             finally:
                 os.chdir(old_cwd)
 
-    def test_malformed_repo_config_is_ignored_when_values_are_explicit(self):
+    def test_malformed_repo_config_is_ignored_when_all_values_are_explicit(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             config_path = os.path.join(tmpdir, ".agentguard.json")
             trace_path = os.path.join(tmpdir, "explicit.jsonl")
@@ -190,6 +209,10 @@ class TestInitEnvVars:
                         service="explicit-svc",
                         trace_file=trace_path,
                         budget_usd=2.0,
+                        warn_pct=0.6,
+                        loop_max=7,
+                        retry_max=4,
+                        profile="default",
                         auto_patch=False,
                     )
                 assert tracer._service == "explicit-svc"
@@ -306,6 +329,29 @@ class TestInitLoopGuard:
             os.chdir(tmpdir)
             try:
                 tracer = agentguard.init(auto_patch=False)
+                from agentguard.guards import RetryGuard
+
+                retry_guards = [g for g in tracer._guards if isinstance(g, RetryGuard)]
+                assert retry_guards[0].max_retries == 2
+            finally:
+                os.chdir(old_cwd)
+
+    def test_repo_config_profile_applies_when_core_args_are_explicit(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_path = os.path.join(tmpdir, ".agentguard.json")
+            trace_path = os.path.join(tmpdir, "explicit.jsonl")
+            with open(config_path, "w", encoding="utf-8") as handle:
+                json.dump({"profile": "coding-agent"}, handle)
+
+            old_cwd = os.getcwd()
+            os.chdir(tmpdir)
+            try:
+                tracer = agentguard.init(
+                    service="explicit-svc",
+                    trace_file=trace_path,
+                    budget_usd=2.0,
+                    auto_patch=False,
+                )
                 from agentguard.guards import RetryGuard
 
                 retry_guards = [g for g in tracer._guards if isinstance(g, RetryGuard)]
