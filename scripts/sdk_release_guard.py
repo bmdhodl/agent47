@@ -49,7 +49,16 @@ def check_changelog(repo_root: Path, version: str) -> List[Finding]:
 
 
 def check_pypi_readme(repo_root: Path) -> List[Finding]:
-    exit_code = generate_pypi_readme.check_output(repo_root, generate_pypi_readme.OUTPUT_PATH)
+    try:
+        exit_code = generate_pypi_readme.check_output(repo_root, generate_pypi_readme.OUTPUT_PATH)
+    except ValueError as exc:
+        return [
+            Finding(
+                check="pypi-readme",
+                path=str(generate_pypi_readme.OUTPUT_PATH),
+                message=str(exc),
+            )
+        ]
     if exit_code == 0:
         return []
     return [

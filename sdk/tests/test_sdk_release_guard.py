@@ -66,6 +66,21 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             self.assertEqual(len(findings), len(sdk_release_guard.RELEASE_MARKERS))
             self.assertTrue(all("Expected release marker 9.9.9" in finding.message for finding in findings))
 
+    def test_check_pypi_readme_reports_generation_errors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            (repo_root / "sdk").mkdir()
+            (repo_root / "sdk" / "pyproject.toml").write_text(
+                '[project]\nversion = "9.9.9"\n',
+                encoding="utf-8",
+            )
+            (repo_root / "README.md").write_text("# Test\n", encoding="utf-8")
+            (repo_root / "CHANGELOG.md").write_text("## 9.9.8\n\nold\n", encoding="utf-8")
+
+            findings = sdk_release_guard.check_pypi_readme(repo_root)
+            self.assertEqual(len(findings), 1)
+            self.assertIn("Could not find changelog section", findings[0].message)
+
 
 class TestReleaseGuardCli(unittest.TestCase):
     def test_json_output_is_parseable(self):
