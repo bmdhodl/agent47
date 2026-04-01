@@ -4,8 +4,8 @@ import uuid
 from typing import Any, Dict, List, Optional
 
 from agentguard.guards import BudgetExceeded, BudgetGuard, LoopDetected, LoopGuard
-from agentguard.savings import infer_provider, normalize_usage
 from agentguard.tracing import TraceContext, Tracer
+from agentguard.usage import infer_provider, normalize_usage
 
 try:
     from langchain_core.callbacks.base import BaseCallbackHandler as _Base
@@ -122,15 +122,14 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         if ctx is None:
             return
         usage = _extract_token_usage(response)
+        model_name = _extract_model_name(response)
+        provider = infer_provider(model_name)
         payload: Dict[str, Any] = {"response": _safe_response(response)}
         if usage:
-            usage = normalize_usage(usage, provider=infer_provider(_extract_model_name(response))) or usage
             payload["token_usage"] = usage
             # Estimate cost from token usage
             input_t = usage.get("prompt_tokens", 0) or usage.get("input_tokens", 0)
             output_t = usage.get("completion_tokens", 0) or usage.get("output_tokens", 0)
-            model_name = _extract_model_name(response)
-            provider = infer_provider(model_name)
             if provider:
                 payload["provider"] = provider
             payload["model"] = model_name
@@ -302,10 +301,11 @@ def _extract_token_usage(response: Any) -> Optional[Dict[str, Any]]:
                 if isinstance(data, dict):
                     usage = data.get("token_usage") or data.get("usage")
                     if isinstance(usage, dict):
-                        return normalize_usage(
-                            usage,
-                            provider=infer_provider(_extract_model_name(response)),
-                        ) or usage
+                        try:
+                            provider = infer_provider(_extract_model_name(response))
+                        except Exception:
+                            provider = None
+                        return normalize_usage(usage, provider=provider) or usage
             except Exception:
                 continue
     return None

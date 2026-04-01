@@ -5,7 +5,8 @@ import unittest
 import warnings
 
 from agentguard.cost import UnknownModelWarning
-from agentguard.savings import normalize_usage, summarize_savings
+from agentguard.savings import summarize_savings
+from agentguard.usage import normalize_usage
 
 
 def _write_trace(events):

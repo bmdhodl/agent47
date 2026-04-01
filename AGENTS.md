@@ -92,9 +92,10 @@ __init__.py (public API surface)
     ├── setup.py ──→ tracing.py, guards.py, instrument.py, sinks/http.py
     ├── tracing.py (standalone)
     ├── guards.py (standalone)
-    ├── instrument.py ──→ guards.py, cost.py
+    ├── instrument.py ──→ usage.py, guards.py, cost.py
     ├── atracing.py ──→ tracing.py
     ├── cost.py (standalone)
+    ├── usage.py (standalone)
     ├── evaluation.py (standalone)
     ├── export.py ──→ evaluation.py
     ├── cli.py ──→ evaluation.py
@@ -114,6 +115,7 @@ Integration modules (allowed to import core, never the reverse):
 | `tracing.py` | Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink |
 | `guards.py` | LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard + exceptions |
 | `instrument.py` | @trace_agent, @trace_tool, patch_openai, patch_anthropic |
+| `usage.py` | Provider inference and normalized token-usage helpers shared across runtime/reporting paths |
 | `sinks/http.py` | HttpSink (batched, gzip, retry, SSRF protection) |
 | `sinks/otel.py` | OtelTraceSink (OpenTelemetry bridge) |
 | `integrations/langchain.py` | LangChain BaseCallbackHandler |
