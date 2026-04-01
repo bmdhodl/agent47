@@ -1,8 +1,8 @@
 # AgentGuard
 
-**Your AI agent just burned $200 in one run. AgentGuard would have stopped it at $5.**
+**Your coding agent just started looping through retries and shell calls. AgentGuard stops it before it burns budget.**
 
-Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the limit. Zero dependencies, works with any framework.
+Zero-dependency runtime guardrails for coding agents and AI agents. Set a dollar budget, cap retries, catch loops, and keep the first run fully local.
 
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
@@ -103,7 +103,7 @@ python examples/try_it_now.py
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
 
-## Quickstart: Stop Runaway Costs in 4 Lines
+## Quickstart: Stop a Runaway Agent in 4 Lines
 
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai
@@ -111,7 +111,7 @@ from agentguard import Tracer, BudgetGuard, patch_openai
 tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
 patch_openai(tracer)  # auto-tracks every OpenAI call
 
-# Use OpenAI normally — AgentGuard tracks cost and kills the agent at $5
+# Use OpenAI normally - AgentGuard tracks cost and kills the agent at $5
 ```
 
 That's it. Every `ChatCompletion` call is tracked. When accumulated cost hits $4 (80%), your warning fires. At $5, `BudgetExceeded` is raised and the agent stops.
@@ -133,12 +133,12 @@ for alerts, retained history, and remote controls.
 
 ## The Problem
 
-AI agents are expensive and unpredictable:
+Coding agents and other autonomous AI agents are expensive and unpredictable:
 - **Cost overruns average 340%** on autonomous agent tasks ([source](https://arxiv.org/abs/2401.15811))
-- A single stuck loop can burn through your entire OpenAI budget in minutes
+- A single stuck retry or tool loop can burn through your budget in minutes
 - Existing tools (LangSmith, Langfuse, Portkey) show you the damage *after* it happens
 
-**AgentGuard is the only tool that kills agents mid-run when they exceed spend limits.**
+**AgentGuard is built to stop runaway agents mid-run, not just explain the damage later.**
 
 | | AgentGuard | LangSmith | Langfuse | Portkey |
 |---|---|---|---|---|
