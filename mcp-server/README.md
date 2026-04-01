@@ -1,14 +1,27 @@
 # AgentGuard MCP Server
 
-MCP (Model Context Protocol) server that connects AI coding agents to the AgentGuard Read API. Lets agents query their own traces, alerts, costs, and budget status.
+MCP (Model Context Protocol) server that connects coding agents to the
+AgentGuard Read API. It lets agents inspect their own traces, alerts, usage,
+costs, and saved spend after the local SDK is already in place.
+
+The boundary is deliberate:
+- The SDK proves runtime enforcement locally
+- The MCP server gives coding agents a narrow read surface over retained data
+- The hosted dashboard stays the operational control plane
+
+## Published Package
+
+```bash
+npx -y @agentguard47/mcp-server
+```
 
 ## Tools
 
 | Tool | Description |
 |------|-------------|
 | `query_traces` | Search recent traces, filter by service/time range |
-| `get_trace` | Get full event tree for a specific trace ID |
-| `get_alerts` | Get guard alerts (loops, budget exceeded, errors) |
+| `get_trace` | Get the full event tree for a specific trace ID |
+| `get_alerts` | Get guard alerts such as loops, budget exceeded, and errors |
 | `get_usage` | Check event quota usage and plan limits |
 | `get_costs` | Get cost breakdown by model for the current month |
 | `check_budget` | Quick pass/fail budget health check |
@@ -28,8 +41,8 @@ Add to your Claude Code MCP config:
 {
   "mcpServers": {
     "agentguard": {
-      "command": "node",
-      "args": ["/path/to/agent47/mcp-server/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@agentguard47/mcp-server"],
       "env": {
         "AGENTGUARD_API_KEY": "ag_your_key_here"
       }
@@ -38,17 +51,33 @@ Add to your Claude Code MCP config:
 }
 ```
 
-## Build & Run
+Any other MCP-compatible client that can launch an npm package over stdio can
+use the same command.
+
+## Local Build & Run
 
 ```bash
-npm ci          # Install dependencies
-npm run build   # Compile TypeScript
-npm start       # Run server (stdio transport)
-npm run dev     # Watch mode for development
+npm ci
+npm run build
+npm start
 ```
+
+## Registry Readiness
+
+This repo now includes official MCP registry metadata in
+[`server.json`](server.json). The npm package is already public, so the
+remaining registry work is metadata publication:
+
+```bash
+mcp-publisher login github
+mcp-publisher publish
+```
+
+After that, verify the server is searchable from the MCP Registry API and then
+submit it to downstream directories like Glama and `awesome-mcp-servers`.
 
 ## Architecture
 
-- `src/index.ts` — Server entry point, tool registration (stdio transport)
-- `src/client.ts` — HTTP client wrapping `/api/v1/` endpoints
-- `src/tools.ts` — 6 MCP tool definitions and handlers
+- `src/index.ts` - Server entry point, tool registration (stdio transport)
+- `src/client.ts` - HTTP client wrapping `/api/v1/` endpoints
+- `src/tools.ts` - 6 MCP tool definitions and handlers

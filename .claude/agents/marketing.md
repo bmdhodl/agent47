@@ -47,8 +47,8 @@ Content deliverables in the 3-phase plan:
 
 - **Tagline:** "Runtime guardrails for AI agents"
 - **Wedge:** Cost enforcement — the one thing nobody else does. AgentGuard kills agents mid-run when they exceed budgets.
-- **Model:** Open-core. SDK free forever (MIT), dashboard paid.
-- **Pricing:** Free (SDK + local), Pro $39/mo (dashboard + alerts + kill switch), Team $79/mo
+- **Model:** SDK free forever (MIT), hosted dashboard positioned separately.
+- **Pricing:** SDK is free forever. Hosted dashboard pricing is not currently public.
 - **Channel:** LangChain Discord/GitHub → HN → direct outreach
 - **Do NOT compare to LangSmith.** Different category (guardrails vs observability).
 - **Lead with cost guardrails** (specific, differentiated), expand to full observability (general) after users land.
@@ -74,7 +74,7 @@ Before publishing or distributing anything:
 - [ ] All links in content resolve (no 404s)
 - [ ] Code examples in content actually run
 - [ ] No hardcoded absolute paths
-- [ ] Pricing matches: Free / $39/mo Pro / $79/mo Team
+- [ ] Pricing and hosted-dashboard availability match the current public product state
 
 ## Key Assets
 

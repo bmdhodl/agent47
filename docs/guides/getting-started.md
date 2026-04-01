@@ -74,7 +74,9 @@ agentguard.init(local_only=True)
 ```
 
 For coding-agent and repo-automation setups, follow
-[`coding-agents.md`](coding-agents.md) after `doctor`.
+[`coding-agents.md`](coding-agents.md) after `doctor`, then use
+[`coding-agent-safety-pack.md`](coding-agent-safety-pack.md) for copy-paste
+repo instructions.
 
 ## Offline demo
 
