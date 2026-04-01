@@ -8,6 +8,7 @@ import sys
 from typing import Any, Dict, List, Optional, TextIO, Tuple
 
 from agentguard.evaluation import _load_events
+from agentguard.repo_config import load_repo_config_safely
 from agentguard.setup import get_tracer, init, shutdown
 
 _OPTIONAL_MODULES: Tuple[Tuple[str, str, str], ...] = (
@@ -74,6 +75,7 @@ def _run_checks(trace_path: str) -> Dict[str, Any]:
             "agentguard doctor must run before agentguard.init() or in a separate process."
         )
 
+    repo_config_path, repo_config, repo_config_error = load_repo_config_safely()
     detected, hints = _detect_optional_integrations()
     normalized_path = _prepare_trace_path(trace_path)
     events_written = _verify_local_init(normalized_path)
@@ -84,13 +86,17 @@ def _run_checks(trace_path: str) -> Dict[str, Any]:
         "package_version": _package_version(),
         "trace_file": normalized_path,
         "events_written": events_written,
+        "repo_config_path": repo_config_path,
+        "repo_config": repo_config,
+        "repo_config_error": repo_config_error,
         "detected_integrations": detected,
         "integration_hints": hints,
         "next_commands": [
             "agentguard demo",
             f"agentguard report {normalized_path}",
         ],
-        "recommended_snippet": _recommended_snippet(),
+        "recommended_repo_config": _recommended_repo_config(),
+        "recommended_snippet": _recommended_snippet(repo_config_path is not None),
     }
 
 
@@ -164,7 +170,16 @@ def _package_version() -> str:
         return "0.0.0-dev"
 
 
-def _recommended_snippet() -> str:
+def _recommended_snippet(repo_config_present: bool = False) -> str:
+    if repo_config_present:
+        return "\n".join(
+            [
+                "import agentguard",
+                "",
+                "agentguard.init(local_only=True)",
+            ]
+        )
+
     return "\n".join(
         [
             "import agentguard",
@@ -178,9 +193,21 @@ def _recommended_snippet() -> str:
     )
 
 
+def _recommended_repo_config() -> Dict[str, Any]:
+    return {
+        "profile": "coding-agent",
+        "service": "my-agent",
+        "trace_file": ".agentguard/traces.jsonl",
+        "budget_usd": 5.0,
+    }
+
+
 def _render_text(result: Dict[str, Any], out: TextIO) -> None:
     detected = result["detected_integrations"]
     hints = result["integration_hints"]
+    repo_config_path = result["repo_config_path"]
+    repo_config = result["repo_config"]
+    repo_config_error = result["repo_config_error"]
 
     _print(out, "AgentGuard doctor")
     _print(out, "No dashboard. No network calls. Local verification only.")
@@ -191,11 +218,23 @@ def _render_text(result: Dict[str, Any], out: TextIO) -> None:
         out,
         f"[ok] init(local_only=True): wrote {result['events_written']} events to {result['trace_file']}",
     )
+    if repo_config_path:
+        if repo_config_error:
+            _print(out, f"[warn] Repo config: {repo_config_path}")
+            _print(out, f"      {repo_config_error}")
+        else:
+            _print(out, f"[ok] Repo config: {repo_config_path}")
+        if repo_config and not repo_config_error:
+            config_bits = [f"{key}={value}" for key, value in repo_config.items()]
+            _print(out, f"     {' '.join(config_bits)}")
     if detected:
         _print(out, f"[ok] Optional integrations detected: {', '.join(detected)}")
     else:
         _print(out, "[ok] Optional integrations detected: none")
 
+    _print(out, "")
+    _print(out, "Suggested repo config (.agentguard.json):")
+    _print(out, json.dumps(result["recommended_repo_config"], indent=2))
     _print(out, "")
     _print(out, "Suggested next step:")
     _print(out, result["recommended_snippet"])

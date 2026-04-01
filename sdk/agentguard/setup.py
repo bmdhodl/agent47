@@ -46,8 +46,10 @@ def init(
     budget_usd: Optional[float] = None,
     service: Optional[str] = None,
     trace_file: Optional[str] = None,
-    warn_pct: float = 0.8,
-    loop_max: int = 5,
+    warn_pct: Optional[float] = None,
+    loop_max: Optional[int] = None,
+    retry_max: Optional[int] = None,
+    profile: Optional[str] = None,
     auto_patch: bool = True,
     watermark: bool = True,
     local_only: bool = False,
@@ -63,8 +65,15 @@ def init(
         service: Service name. Env: ``AGENTGUARD_SERVICE``. Default: "default".
         trace_file: Local JSONL path (used when no api_key).
             Env: ``AGENTGUARD_TRACE_FILE``. Default: "traces.jsonl".
-        warn_pct: Budget warning threshold (0.0-1.0). Default: 0.8.
-        loop_max: Max identical calls before LoopGuard fires. Default: 5.
+        warn_pct: Budget warning threshold (0.0-1.0). Defaults to the selected
+            profile's value (0.8 for built-in profiles).
+        loop_max: Max identical calls before LoopGuard fires. Defaults to the
+            selected profile's value.
+        retry_max: Max consecutive retries per tool before RetryGuard fires.
+            Defaults to the selected profile's value.
+        profile: Built-in guard profile. Supported: ``default``, ``coding-agent``.
+            May be passed explicitly or loaded from repo config. No environment
+            variable. Default: ``default``.
         auto_patch: Auto-patch OpenAI/Anthropic clients. Default: True.
         watermark: Emit "Traced by AgentGuard" in trace output. Default: True.
         local_only: Force local file output. Ignores any dashboard API key from
@@ -86,10 +95,8 @@ def init(
         )
 
     # --- Validate inputs ---
-    if not (0.0 <= warn_pct <= 1.0):
-        raise ValueError(
-            f"warn_pct must be between 0.0 and 1.0, got {warn_pct}"
-        )
+    if warn_pct is not None and not (0.0 <= warn_pct <= 1.0):
+        raise ValueError(f"warn_pct must be between 0.0 and 1.0, got {warn_pct}")
     if local_only and api_key:
         raise ValueError("local_only=True cannot be combined with api_key")
     if api_key and ("\n" in api_key or "\r" in api_key):
@@ -98,10 +105,46 @@ def init(
             "(possible HTTP header injection)"
         )
 
-    # --- Resolve config: kwargs > env vars > defaults ---
+    from agentguard.profiles import get_profile_defaults, normalize_profile
+    from agentguard.repo_config import CONFIG_FILE_NAME, load_repo_config_safely
+
+    needs_repo_defaults = any(value is None for value in (budget_usd, service, trace_file))
+    repo_config = {}
+    if needs_repo_defaults:
+        _, repo_config, repo_error = load_repo_config_safely()
+        if repo_error:
+            logger.warning("Ignoring %s: %s", CONFIG_FILE_NAME, repo_error)
+
+    resolved_profile = normalize_profile(profile or repo_config.get("profile"))
+    profile_defaults = get_profile_defaults(resolved_profile)
+
+    # --- Resolve config: kwargs > env vars > repo config > profile defaults > hard defaults ---
     resolved_key = None if local_only else (api_key or os.environ.get("AGENTGUARD_API_KEY"))
-    resolved_service = service or os.environ.get("AGENTGUARD_SERVICE", "default")
-    resolved_file = trace_file or os.environ.get("AGENTGUARD_TRACE_FILE", "traces.jsonl")
+    resolved_service = (
+        service
+        or os.environ.get("AGENTGUARD_SERVICE")
+        or repo_config.get("service")
+        or "default"
+    )
+    resolved_file = (
+        trace_file
+        or os.environ.get("AGENTGUARD_TRACE_FILE")
+        or repo_config.get("trace_file")
+        or "traces.jsonl"
+    )
+    resolved_warn_pct = (
+        warn_pct
+        if warn_pct is not None
+        else repo_config.get("warn_pct", profile_defaults["warn_pct"])
+    )
+    resolved_loop_max = (
+        loop_max if loop_max is not None else repo_config.get("loop_max", profile_defaults["loop_max"])
+    )
+    resolved_retry_max = (
+        retry_max
+        if retry_max is not None
+        else repo_config.get("retry_max", profile_defaults["retry_max"])
+    )
 
     resolved_budget: Optional[float] = budget_usd
     if resolved_budget is None:
@@ -113,6 +156,8 @@ def init(
                 logger.warning(
                     "Invalid AGENTGUARD_BUDGET_USD=%r, ignoring", env_budget
                 )
+        elif "budget_usd" in repo_config:
+            resolved_budget = float(repo_config["budget_usd"])
 
     # --- Build sink ---
     if resolved_key:
@@ -128,14 +173,18 @@ def init(
         sink = JsonlFileSink(resolved_file)
 
     # --- Build guards ---
-    from agentguard.guards import BudgetGuard, LoopGuard
+    from agentguard.guards import BudgetGuard, LoopGuard, RetryGuard
 
-    guards = [LoopGuard(max_repeats=loop_max, window=max(loop_max, 6))]
+    guards = [LoopGuard(max_repeats=resolved_loop_max, window=max(resolved_loop_max, 6))]
 
+    if resolved_retry_max is not None:
+        guards.append(RetryGuard(max_retries=resolved_retry_max))
+
+    _budget_guard = None
     if resolved_budget is not None:
         _budget_guard = BudgetGuard(
             max_cost_usd=resolved_budget,
-            warn_at_pct=warn_pct,
+            warn_at_pct=resolved_warn_pct,
             on_warning=lambda msg: logger.warning(msg),
         )
         guards.append(_budget_guard)
@@ -155,8 +204,8 @@ def init(
     sink_desc = "dashboard" if resolved_key else resolved_file
     budget_desc = f"${resolved_budget:.2f}" if resolved_budget else "unlimited"
     logger.info(
-        "AgentGuard initialized: service=%s sink=%s budget=%s",
-        resolved_service, sink_desc, budget_desc,
+        "AgentGuard initialized: service=%s sink=%s budget=%s profile=%s",
+        resolved_service, sink_desc, budget_desc, resolved_profile,
     )
 
     return _tracer

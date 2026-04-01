@@ -43,6 +43,32 @@ agentguard quickstart --framework langgraph --json
 install command, the smallest credible starter file, and the next commands to
 run after you validate the SDK locally.
 
+## Coding-Agent Defaults
+
+If you want humans and coding agents to share the same safe local defaults, add
+a tiny `.agentguard.json` file to the repo:
+
+```json
+{
+  "profile": "coding-agent",
+  "service": "support-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+`agentguard.init(local_only=True)` and `agentguard doctor` will pick this up
+automatically. Keep it local and static: no secrets, no API keys, no dashboard
+settings.
+
+Every `agentguard quickstart --framework ...` payload also has a matching
+runnable file under [`examples/starters/`](examples/starters/). Those starter
+files live in the repo for copy-paste onboarding and coding-agent setup; they
+are not shipped inside the PyPI wheel.
+
+For the repo-first onboarding flow, see
+[`docs/guides/coding-agents.md`](docs/guides/coding-agents.md).
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:

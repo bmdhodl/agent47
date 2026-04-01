@@ -223,7 +223,7 @@ def main() -> None:  # pragma: no cover
     )
     quickstart.add_argument(
         "--trace-file",
-        default="traces.jsonl",
+        default=".agentguard/traces.jsonl",
         help="Trace file path to embed in the snippet.",
     )
     quickstart.add_argument(

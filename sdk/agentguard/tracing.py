@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
 import json
+import os
 import random
 import threading
 import time
@@ -73,6 +74,9 @@ class JsonlFileSink(TraceSink):
     """
 
     def __init__(self, path: str) -> None:
+        directory = os.path.dirname(path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         self._path = path
         self._lock = threading.Lock()
 
