@@ -1,7 +1,7 @@
 {
   "name": "@agentguard47/mcp-server",
   "version": "0.2.0",
-  "description": "AgentGuard MCP server for coding-agent safety - query traces, alerts, usage, costs, and saved spend",
+  "description": "MCP server for coding-agent traces, alerts, costs, usage, and budget health",
   "mcpName": "io.github.bmdhodl/agentguard47",
   "license": "MIT",
   "type": "module",

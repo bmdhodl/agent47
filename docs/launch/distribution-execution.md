@@ -37,7 +37,7 @@ curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.bmd
 
 Listing details to reuse:
 - Name: `AgentGuard`
-- One-liner: `Runtime guardrails for coding agents - inspect traces, alerts, costs, and saved spend`
+- One-liner: `MCP server for coding-agent traces, alerts, costs, usage, and budget health`
 - npm package: `@agentguard47/mcp-server`
 - Repo: `https://github.com/bmdhodl/agent47`
 - MCP metadata name: `io.github.bmdhodl/agentguard47`
