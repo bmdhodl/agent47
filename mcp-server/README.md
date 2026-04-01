@@ -5,9 +5,9 @@ AgentGuard Read API. It lets agents inspect their own traces, alerts, usage,
 costs, and saved spend after the local SDK is already in place.
 
 The boundary is deliberate:
-- A.SDK proves runtime enforcement locally
-- the MCP server gives coding agents a narrow read surface over retained data
-- the hosted dashboard stays the operational control plane
+- The SDK proves runtime enforcement locally
+- The MCP server gives coding agents a narrow read surface over retained data
+- The hosted dashboard stays the operational control plane
 
 ## Published Package
 

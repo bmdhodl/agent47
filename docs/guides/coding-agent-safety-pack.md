@@ -134,13 +134,13 @@ agentguard incident demo_traces.jsonl --format json
 
 ## 8. Boundary reminder
 
-Use A.SDK for:
+Use the AgentGuard SDK for:
 - local enforcement
 - local traces
 - local reports
 - local savings summaries
 
-Use A.D later for:
+Use the hosted dashboard later for:
 - retained history
 - alerts
 - remote controls
