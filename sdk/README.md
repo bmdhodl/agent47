@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/main/LICENSE)
 
-**Zero-dependency** observability and runtime guards for AI agents. Pure Python stdlib — nothing to audit, nothing that can break. Trace reasoning steps, catch loops, enforce budgets, and replay runs deterministically.
+**Zero-dependency** runtime guardrails for coding agents and AI agents. Pure Python stdlib - nothing to audit, nothing that can break. Catch loops, cap retries, enforce budgets, and keep the first run local and deterministic.
 
 ## Install
 
@@ -77,6 +77,13 @@ agentguard incident .agentguard/traces.jsonl    # incident-style local report
 
 `agentguard report` now includes a local savings ledger with exact and
 estimated token and dollar savings when the trace contains enough evidence.
+
+The intended user journey is:
+- `pip install agentguard47`
+- `agentguard doctor`
+- `agentguard demo`
+- `agentguard quickstart --framework <stack>`
+- wire the real coding agent only after the local path is proven
 
 ## Guards
 

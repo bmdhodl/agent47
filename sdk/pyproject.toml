@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "agentguard47"
 version = "1.2.4"
-description = "Zero-dependency observability and runtime guards for AI agents — loop detection, budget enforcement, cost tracking, and structured tracing"
+description = "Zero-dependency runtime guardrails for coding agents and AI agents - stop loops, retries, and budget overruns with local traces"
 readme = "PYPI_README.md"
 requires-python = ">=3.9"
 license = "MIT"
@@ -14,18 +14,20 @@ authors = [
 ]
 keywords = [
   "agents",
+  "coding-agents",
   "ai-agents",
-  "observability",
-  "tracing",
   "multi-agent",
   "llm",
   "guardrails",
+  "runtime-guardrails",
   "loop-detection",
   "budget-guard",
-  "cost-tracking",
+  "retry-guard",
+  "runtime-enforcement",
+  "coding-agent-safety",
   "langchain",
   "openai",
-  "runtime-safety",
+  "anthropic",
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",

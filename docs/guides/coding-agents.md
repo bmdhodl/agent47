@@ -3,6 +3,11 @@
 Use this flow when Codex, Claude Code, Cursor, or another coding agent needs to
 wire AgentGuard into a repo without hidden network behavior or dashboard setup.
 
+AgentGuard's job in this flow is narrow and deliberate: stop coding agents from
+looping, retrying forever, and burning budget. Keep the first integration local
+and auditable, then add the hosted dashboard later only if you need operational
+visibility.
+
 ## Goal
 
 Keep the first integration:

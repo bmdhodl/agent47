@@ -21,15 +21,19 @@ SDK code changes only. No README, docs, blog, or marketing items.
 
 ## Now (next 2 weeks)
 
-No active SDK code changes. Hold here until post-release issue triage promotes the next item.
+| Item | Success Signal |
+|------|---------------|
+| Coding-agent positioning and package metadata hardening | PyPI metadata, SDK README, and generated PyPI README all consistently position AgentGuard as zero-dependency runtime guardrails for coding-agent safety |
+| Install-to-first-guard proof hardening | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, `agentguard quickstart`, and a starter run works without undocumented steps or hosted assumptions |
+| Coding-agent starter polish | Checked-in starter files and repo-local `.agentguard.json` guidance stay deterministic, local-first, and safe to copy into real repos without hidden network behavior |
 
 ## Next (next month)
 
 | Item | Success Signal |
 |------|---------------|
 | Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
-| OpenTelemetry Collector sink improvements | `OtelTraceSink` supports custom resource attributes and span links |
-| `ContentGuard` - detect PII/sensitive data in agent outputs | New guard class, raises `ContentViolation`, regex-based (no deps) |
+| Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
+| Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
 
 ## Later (ideas bucket)
 
@@ -37,7 +41,8 @@ No active SDK code changes. Hold here until post-release issue triage promotes t
 |------|---------------|
 | TypeScript SDK | npm package with parity: LoopGuard, BudgetGuard, TimeoutGuard, Tracer |
 | Savings Ledger heuristics / token efficiency audit | The SDK can attribute conservative exact-vs-estimated token savings beyond cache hits, loops, and retry prevention without drifting into generic prompt optimization |
-| Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
+| OpenTelemetry Collector sink improvements | `OtelTraceSink` supports custom resource attributes and span links without pulling the SDK toward generic observability positioning |
+| `ContentGuard` - detect PII/sensitive data in agent outputs | New guard class, raises `ContentViolation`, regex-based (no deps) |
 | Policy bundle import/export | Guard and sink settings can be serialized and applied across environments without a hosted control plane |
 
 Each "Later" item stays here until it earns a "Now" or "Next" slot. Items can be deleted without ceremony.
