@@ -19,7 +19,7 @@ def run_quickstart(
     framework: str = "raw",
     service: str = "my-agent",
     budget_usd: float = 5.0,
-    trace_file: str = "traces.jsonl",
+    trace_file: str = ".agentguard/traces.jsonl",
     stream: Optional[TextIO] = None,
     json_output: bool = False,
 ) -> int:
@@ -135,6 +135,7 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
         import agentguard
 
         tracer = agentguard.init(
+            profile="coding-agent",
             service={service_literal},
             budget_usd={budget_usd:.2f},
             trace_file={trace_file_literal},
@@ -165,6 +166,7 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
         notes=[
             "This path is fully local. No dashboard and no provider API keys are required.",
             "Start here if you want a safe first run before wiring a real LLM client.",
+            "Commit a .agentguard.json file if you want coding agents to reuse the same local defaults.",
         ],
     )
 
@@ -178,6 +180,7 @@ def _openai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[st
         from openai import OpenAI
 
         agentguard.init(
+            profile="coding-agent",
             service={service_literal},
             budget_usd={budget_usd:.2f},
             trace_file={trace_file_literal},
@@ -208,6 +211,7 @@ def _openai_payload(service: str, budget_usd: float, trace_file: str) -> Dict[st
         notes=[
             "local_only=True keeps trace output local. Your OpenAI call still uses OPENAI_API_KEY.",
             "Auto-patching is on by default in agentguard.init().",
+            "For coding agents, prefer committing .agentguard.json so the same local defaults travel with the repo.",
         ],
     )
 
@@ -221,6 +225,7 @@ def _anthropic_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         from anthropic import Anthropic
 
         agentguard.init(
+            profile="coding-agent",
             service={service_literal},
             budget_usd={budget_usd:.2f},
             trace_file={trace_file_literal},
@@ -252,6 +257,7 @@ def _anthropic_payload(service: str, budget_usd: float, trace_file: str) -> Dict
         notes=[
             "local_only=True affects the trace sink only. Anthropic requests still use ANTHROPIC_API_KEY.",
             "Anthropic auto-patching is enabled by default through agentguard.init().",
+            "For coding agents, prefer committing .agentguard.json so the same local defaults travel with the repo.",
         ],
     )
 

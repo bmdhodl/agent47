@@ -2,7 +2,22 @@
 
 Working examples showing AgentGuard integrated with popular AI agent frameworks.
 
-## Examples
+## Coding-Agent Starter Flow
+
+Start here if you want the smallest repo-local onboarding loop:
+
+```bash
+pip install agentguard47
+agentguard doctor
+python examples/starters/agentguard_raw_quickstart.py
+agentguard report .agentguard/traces.jsonl
+```
+
+The starter files under `examples/starters/` are the executable counterparts to
+`agentguard quickstart`. They live in this repo for copy-paste onboarding and
+coding-agent setup; they are not included in the installed PyPI wheel.
+
+## Framework Examples
 
 | File | Framework | What it shows |
 |------|-----------|---------------|
@@ -16,11 +31,13 @@ Working examples showing AgentGuard integrated with popular AI agent frameworks.
 ```bash
 pip install agentguard47
 agentguard doctor
-agentguard quickstart --framework raw
+python examples/starters/agentguard_raw_quickstart.py
+agentguard report .agentguard/traces.jsonl
 
-# Then print the starter for your real stack
+# Then print or run the starter for your real stack
 agentguard quickstart --framework openai
 agentguard quickstart --framework langchain
+python examples/starters/agentguard_openai_quickstart.py
 
 # Cost guardrail demo (recommended first networked example)
 export OPENAI_API_KEY=sk-...

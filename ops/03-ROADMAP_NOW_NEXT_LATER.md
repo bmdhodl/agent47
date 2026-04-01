@@ -12,15 +12,17 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | Offline demo | Done - `agentguard demo` proves budget, loop, and retry enforcement without API keys or network access |
 | Incident reporting | Done - `agentguard incident` renders local Markdown/HTML summaries from trace files |
 | Install doctor / local validation | Done - `agentguard doctor` verifies local setup, trace writing, and the next minimal integration step |
-| Framework quickstart generator | Done in PR - `agentguard quickstart --framework <stack>` prints the smallest credible starter snippet for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
-| Savings Ledger foundation | Done in PR - normalized usage capture and local exact-vs-estimated savings summaries now flow through SDK reports |
+| Framework quickstart generator | Done - `agentguard quickstart --framework <stack>` prints the smallest credible starter snippet for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI |
+| Savings Ledger foundation | Done - normalized usage capture and local exact-vs-estimated savings summaries now flow through SDK reports |
+| Coding-agent local profile | Done - `profile=\"coding-agent\"` ships tighter loop and retry defaults for repo automation and coding agents |
+| Repo-local `.agentguard.json` manifest | Done - humans and coding agents can share static local SDK defaults without dashboard coupling |
+| Executable framework starters | Done - each supported stack now has a minimal runnable starter file in `examples/starters/` |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
-| Repo-local `.agentguard.json` manifest | Agents and humans can declare local SDK defaults in a tiny static config file without dashboard coupling |
-| Executable framework starters | Each supported stack has a minimal runnable example that proves the integration path with AgentGuard |
+| Release stabilization for coding-agent onboarding | Full docs, proof artifacts, release metadata, and publish path stay aligned for the next SDK release |
 
 ## Next (next month)
 
@@ -35,8 +37,7 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | Item | Success Signal |
 |------|---------------|
 | TypeScript SDK | npm package with parity: LoopGuard, BudgetGuard, TimeoutGuard, Tracer |
-| Release hardening and code-scanning cleanup | No open SDK/example/workflow findings remain that block the next PyPI release, and release metadata stays aligned with the shipped tag |
-| Repo-local `.agentguard.json` manifest | AI coding agents and humans can declare service name, trace path, and guard defaults without a hosted control plane |
+| Savings Ledger heuristics / token efficiency audit | The SDK can attribute conservative exact-vs-estimated token savings beyond cache hits, loops, and retry prevention without drifting into generic prompt optimization |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
 | Policy bundle import/export | Guard and sink settings can be serialized and applied across environments without a hosted control plane |
 

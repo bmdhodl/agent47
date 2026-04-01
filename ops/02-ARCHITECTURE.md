@@ -30,20 +30,22 @@ Core modules form a DAG with no reverse dependencies:
 
 ```text
 __init__.py (public API surface)
-  -> setup.py -> tracing.py, guards.py, instrument.py, sinks/http.py
+  -> setup.py -> repo_config.py, profiles.py, tracing.py, guards.py, instrument.py, sinks/http.py
   -> tracing.py
   -> guards.py
   -> instrument.py -> usage.py, guards.py, cost.py
   -> atracing.py -> tracing.py
   -> cost.py
+  -> profiles.py
   -> usage.py
   -> evaluation.py
   -> export.py -> evaluation.py
   -> savings.py -> usage.py, cost.py, evaluation.py
   -> reporting.py -> evaluation.py
   -> demo.py -> guards.py, tracing.py
-  -> doctor.py -> evaluation.py, setup.py
+  -> doctor.py -> evaluation.py, repo_config.py, setup.py
   -> quickstart.py
+  -> repo_config.py
   -> cli.py -> evaluation.py, reporting.py, demo.py, doctor.py, quickstart.py, savings.py
   -> sinks/http.py -> tracing.py
 
@@ -90,7 +92,9 @@ These modules improve the local SDK experience without blurring the hosted contr
 | `savings.py` | Computes a local exact-vs-estimated savings ledger from traces using normalized usage data |
 | `demo.py` | Runs a deterministic offline proof of budget, loop, and retry enforcement via `agentguard demo` |
 | `doctor.py` | Verifies the local SDK install path and prints the minimal local-only onboarding snippet via `agentguard doctor` |
+| `profiles.py` | Defines built-in local guard profiles such as `coding-agent` without coupling the SDK to hosted policy management |
 | `quickstart.py` | Prints framework-specific starter snippets for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI via `agentguard quickstart` |
+| `repo_config.py` | Loads the nearest repo-local `.agentguard.json` file so local defaults stay static, auditable, dashboard-free, and friendly to coding agents |
 
 ## Test layout
 

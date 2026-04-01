@@ -31,6 +31,7 @@ class TestQuickstart(unittest.TestCase):
         self.assertEqual(payload["framework"], "openai")
         self.assertEqual(payload["requires_env"], ["OPENAI_API_KEY"])
         self.assertIn("from openai import OpenAI", payload["snippet"])
+        self.assertIn('profile="coding-agent"', payload["snippet"])
 
     def test_langgraph_quickstart_is_local(self) -> None:
         buf = io.StringIO()
@@ -80,6 +81,14 @@ class TestQuickstart(unittest.TestCase):
                 ast.parse(payload["snippet"])
                 self.assertIn(json.dumps(service), payload["snippet"])
                 self.assertIn(json.dumps(trace_file), payload["snippet"])
+
+    def test_default_trace_file_uses_agentguard_directory(self) -> None:
+        buf = io.StringIO()
+
+        result = run_quickstart(stream=buf)
+
+        self.assertEqual(result, 0)
+        self.assertIn(".agentguard/traces.jsonl", buf.getvalue())
 
 
 if __name__ == "__main__":

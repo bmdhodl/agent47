@@ -46,6 +46,36 @@ This is intentionally high-signal:
 It gives you the install command, the starter file contents, and the next
 commands to run.
 
+## Optional repo-local defaults
+
+If you want a repo to carry safe local defaults, create `.agentguard.json`:
+
+```json
+{
+  "profile": "coding-agent",
+  "service": "support-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+This stays intentionally narrow:
+- safe local defaults only
+- no secrets
+- no API keys
+- no hosted control-plane behavior
+
+After that, `agentguard.init()` can stay minimal:
+
+```python
+import agentguard
+
+agentguard.init(local_only=True)
+```
+
+For coding-agent and repo-automation setups, follow
+[`coding-agents.md`](coding-agents.md) after `doctor`.
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:
@@ -68,7 +98,7 @@ and `agentguard incident`.
 ```python
 from agentguard import Tracer, JsonlFileSink
 
-tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
+tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"), service="my-agent")
 
 with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "search for docs"})
@@ -80,12 +110,13 @@ with tracer.trace("agent.run") as span:
     span.event("reasoning.step", data={"thought": "summarize results"})
 ```
 
-This writes every step to `traces.jsonl` — reasoning, tool calls, timing, everything.
+This writes every step to `.agentguard/traces.jsonl` — reasoning, tool calls,
+timing, everything. The parent directory is created automatically.
 
 ## 2. View the trace
 
 ```bash
-agentguard report traces.jsonl
+agentguard report .agentguard/traces.jsonl
 ```
 
 ```
@@ -99,7 +130,7 @@ AgentGuard report
 Render an incident report:
 
 ```bash
-agentguard incident traces.jsonl
+agentguard incident .agentguard/traces.jsonl
 ```
 
 ## 3. Add a loop guard
@@ -110,7 +141,7 @@ Stop agents that repeat themselves. Guards auto-check on every `span.event()` ca
 from agentguard import Tracer, LoopGuard, LoopDetected, JsonlFileSink
 
 tracer = Tracer(
-    sink=JsonlFileSink("traces.jsonl"),
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
     service="my-agent",
     guards=[LoopGuard(max_repeats=3)],
 )
@@ -133,7 +164,7 @@ Cap spend per agent run:
 from agentguard import Tracer, BudgetGuard, JsonlFileSink
 
 tracer = Tracer(
-    sink=JsonlFileSink("traces.jsonl"),
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
     service="my-agent",
     guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)],
 )
@@ -150,7 +181,7 @@ Skip manual tracing — let AgentGuard patch the OpenAI client:
 ```python
 from agentguard import Tracer, JsonlFileSink, patch_openai
 
-tracer = Tracer(sink=JsonlFileSink("traces.jsonl"), service="my-agent")
+tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"), service="my-agent")
 patch_openai(tracer)
 
 # Every OpenAI call is now traced with token counts and cost estimates.
@@ -191,8 +222,8 @@ result = agent.invoke(
 When a run blows through budget or hits a loop, render a shareable report:
 
 ```bash
-agentguard incident traces.jsonl
-agentguard incident traces.jsonl --format html > incident.html
+agentguard incident .agentguard/traces.jsonl
+agentguard incident .agentguard/traces.jsonl --format html > incident.html
 ```
 
 The incident report highlights guard events, the exact-vs-estimated savings
@@ -217,6 +248,7 @@ Sign up at [app.agentguard47.com](https://app.agentguard47.com) to get an API ke
 ## Next steps
 
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/examples) — LangChain, CrewAI, OpenAI integration examples
+- [Coding agents](https://github.com/bmdhodl/agent47/blob/main/docs/guides/coding-agents.md) — repo-local onboarding for Codex, Claude Code, Cursor, and similar tools
 - [Guards reference](https://github.com/bmdhodl/agent47#guards) — LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard
 - [Evaluation](https://github.com/bmdhodl/agent47#evaluation) — assertion-based trace analysis for CI
 - [Incident Reports](https://github.com/bmdhodl/agent47#incident-reports) — local postmortem-style summaries for guard trips

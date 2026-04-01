@@ -31,12 +31,33 @@ agentguard quickstart --framework langchain --json
 Use this when you already know the stack you want to wire. It prints the
 install command, a minimal starter file, and the next verification commands.
 
+## Optional repo-local defaults
+
+Use `.agentguard.json` when you want a repo-local, auditable config that both
+humans and coding agents can share:
+
+```json
+{
+  "profile": "coding-agent",
+  "service": "support-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+`agentguard.init()` and `agentguard doctor` read this automatically. Keep it
+strictly local: no secrets, no API keys, no hosted dashboard settings.
+
+For coding-agent onboarding, prefer `agentguard.init(local_only=True)` while
+you validate the local path. The checked-in starter files live in the repo
+under `examples/starters/`; they are not part of the installed wheel.
+
 ## Quickstart
 
 ```python
 from agentguard import Tracer, LoopGuard, BudgetGuard, JsonlFileSink
 
-sink = JsonlFileSink("traces.jsonl")
+sink = JsonlFileSink(".agentguard/traces.jsonl")
 tracer = Tracer(
     sink=sink,
     service="my-agent",
@@ -50,8 +71,8 @@ with tracer.trace("agent.run") as span:
 ```
 
 ```bash
-agentguard report traces.jsonl      # summary table
-agentguard incident traces.jsonl    # incident-style local report
+agentguard report .agentguard/traces.jsonl      # summary table
+agentguard incident .agentguard/traces.jsonl    # incident-style local report
 ```
 
 `agentguard report` now includes a local savings ledger with exact and
@@ -183,14 +204,15 @@ sink = HttpSink(
 ## CLI
 
 ```bash
-agentguard doctor --trace-file traces.jsonl   # local install verification
-agentguard quickstart --framework openai      # framework-specific starter
-agentguard demo                     # offline proof of guardrails
-agentguard report traces.jsonl      # human-readable summary
-agentguard incident traces.jsonl    # postmortem-style local report
-agentguard summarize traces.jsonl   # event-level breakdown
-agentguard eval traces.jsonl        # run evaluation assertions
-agentguard eval traces.jsonl --ci   # CI mode (stricter checks, exit code)
+agentguard doctor                                 # local install verification
+agentguard quickstart --framework openai          # framework-specific starter
+python examples/starters/agentguard_raw_quickstart.py
+agentguard demo                                   # offline proof of guardrails
+agentguard report .agentguard/traces.jsonl        # human-readable summary
+agentguard incident .agentguard/traces.jsonl      # postmortem-style local report
+agentguard summarize .agentguard/traces.jsonl     # event-level breakdown
+agentguard eval .agentguard/traces.jsonl          # run evaluation assertions
+agentguard eval .agentguard/traces.jsonl --ci     # CI mode (stricter checks, exit code)
 ```
 
 ## Export
@@ -227,4 +249,4 @@ python -m agentguard.bench
 
 - [GitHub](https://github.com/bmdhodl/agent47)
 - [Dashboard](https://app.agentguard47.com)
-- [Examples](https://github.com/bmdhodl/agent47/tree/main/sdk/examples)
+- [Examples](https://github.com/bmdhodl/agent47/tree/main/examples)
