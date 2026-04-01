@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.4
+
+### Coding-Agent Onboarding
+- Added repo-local `.agentguard.json` support so humans and coding agents can share static SDK defaults without dashboard coupling.
+- Added the built-in `coding-agent` profile with tighter loop and retry defaults for repo automation and coding workflows.
+- Added executable starter files under `examples/starters/` and aligned `agentguard doctor` / `agentguard quickstart` around `.agentguard/traces.jsonl`.
+- Added the `docs/guides/coding-agents.md` onboarding guide plus doc updates across the README, SDK README, examples, architecture doc, roadmap, and generated PyPI README.
+
+### SDK Hardening
+- `JsonlFileSink` now creates parent directories automatically so repo-local trace paths like `.agentguard/traces.jsonl` work out of the box.
+- Repo-config parsing now rejects boolean values in numeric fields to keep local defaults deterministic and auditable.
+- `init()` now still honors repo-level profile defaults when service, budget, or trace path are passed explicitly but guard-profile values are left implicit.
+- Invalid `AGENTGUARD_BUDGET_USD` values now fall back to a valid repo-local `budget_usd` instead of silently dropping budget enforcement.
+
 ## 1.2.3
 
 ### Release Hardening

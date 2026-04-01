@@ -11,7 +11,7 @@ Set a dollar budget. Get warnings at 80%. Kill the agent when it exceeds the lim
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.3/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.4/LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -64,12 +64,12 @@ automatically. Keep it local and static: no secrets, no API keys, no dashboard
 settings.
 
 Every `agentguard quickstart --framework ...` payload also has a matching
-runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.3/examples/starters). Those starter
+runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.4/examples/starters). Those starter
 files live in the repo for copy-paste onboarding and coding-agent setup; they
 are not shipped inside the PyPI wheel.
 
 For the repo-first onboarding flow, see
-[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.3/docs/guides/coding-agents.md).
+[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.4/docs/guides/coding-agents.md).
 
 ## Try it in 60 seconds
 
@@ -103,7 +103,7 @@ Prefer the example script instead of the CLI? This does the same local demo:
 python examples/try_it_now.py
 ```
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.3/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.4/examples/quickstart.ipynb)
 
 ## Quickstart: Stop Runaway Costs in 4 Lines
 
@@ -364,7 +364,7 @@ Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offer
     assertions: "no_errors,max_cost:5.00"
 ```
 
-Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.3/docs/ci/cost-gate-workflow.yml)
+Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.4/docs/ci/cost-gate-workflow.yml)
 
 ## Incident Reports
 
@@ -462,23 +462,24 @@ Your Agent Code
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.3/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
+See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.4/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
 
 ## License
 
 MIT (BMD PAT LLC)
 
-## Latest Release Notes (1.2.3)
+## Latest Release Notes (1.2.4)
 
-### Release Hardening
-- Removed the dashboard API key prefix from `examples/cost_guardrail.py` log output.
-- Replaced insecure `tempfile.mktemp()` usage in `sdk/tests/e2e_v110.py` with secure named temp files.
-- Pinned GitHub Actions by commit SHA across CI, publish, CodeQL, Scorecard, and maintenance workflows.
+### Coding-Agent Onboarding
+- Added repo-local `.agentguard.json` support so humans and coding agents can share static SDK defaults without dashboard coupling.
+- Added the built-in `coding-agent` profile with tighter loop and retry defaults for repo automation and coding workflows.
+- Added executable starter files under `examples/starters/` and aligned `agentguard doctor` / `agentguard quickstart` around `.agentguard/traces.jsonl`.
+- Added the `docs/guides/coding-agents.md` onboarding guide plus doc updates across the README, SDK README, examples, architecture doc, roadmap, and generated PyPI README.
 
-### Docs and Release Hygiene
-- Refreshed stale docs and agent instructions to point at the latest shipped release (`v1.2.2`) instead of `v1.2.1`.
-- Replaced dead `agentguard view` references with supported `agentguard report` / `agentguard incident` commands.
-- Added explicit release criteria to `ops/04-DEFINITION_OF_DONE.md`.
-- Updated the SDK roadmap to reflect the feature freeze and release-hardening focus.
+### SDK Hardening
+- `JsonlFileSink` now creates parent directories automatically so repo-local trace paths like `.agentguard/traces.jsonl` work out of the box.
+- Repo-config parsing now rejects boolean values in numeric fields to keep local defaults deterministic and auditable.
+- `init()` now still honors repo-level profile defaults when service, budget, or trace path are passed explicitly but guard-profile values are left implicit.
+- Invalid `AGENTGUARD_BUDGET_USD` values now fall back to a valid repo-local `budget_usd` instead of silently dropping budget enforcement.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.3/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.4/CHANGELOG.md)
