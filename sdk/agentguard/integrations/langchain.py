@@ -294,8 +294,6 @@ def _extract_model_name(response: Any) -> str:
 
 
 def _extract_token_usage(response: Any) -> Optional[Dict[str, Any]]:
-    model_name = _extract_model_name(response)
-    provider = infer_provider(model_name)
     for attr in ("llm_output", "response_metadata", "metadata"):
         if hasattr(response, attr):
             try:
@@ -303,6 +301,10 @@ def _extract_token_usage(response: Any) -> Optional[Dict[str, Any]]:
                 if isinstance(data, dict):
                     usage = data.get("token_usage") or data.get("usage")
                     if isinstance(usage, dict):
+                        try:
+                            provider = infer_provider(_extract_model_name(response))
+                        except Exception:
+                            provider = None
                         return normalize_usage(usage, provider=provider) or usage
             except Exception:
                 continue

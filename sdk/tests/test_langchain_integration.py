@@ -236,6 +236,37 @@ class TestExtractModelName(unittest.TestCase):
         self.assertEqual(_extract_model_name(R()), "unknown")
 
 
+class TestExtractTokenUsage(unittest.TestCase):
+    def test_ignores_model_extraction_errors(self):
+        from agentguard.integrations.langchain import _extract_token_usage
+
+        class R:
+            def __init__(self):
+                self.llm_output = {
+                    "token_usage": {
+                        "prompt_tokens": 10,
+                        "completion_tokens": 5,
+                        "total_tokens": 15,
+                    }
+                }
+
+            @property
+            def response_metadata(self):
+                raise RuntimeError("boom")
+
+        usage = _extract_token_usage(R())
+        self.assertEqual(
+            usage,
+            {
+                "input_tokens": 10,
+                "output_tokens": 5,
+                "total_tokens": 15,
+                "prompt_tokens": 10,
+                "completion_tokens": 5,
+            },
+        )
+
+
 class _MockResponse:
     """Minimal mock for LangChain LLMResult."""
 
