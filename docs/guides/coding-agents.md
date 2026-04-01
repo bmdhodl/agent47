@@ -8,6 +8,9 @@ looping, retrying forever, and burning budget. Keep the first integration local
 and auditable, then add the hosted dashboard later only if you need operational
 visibility.
 
+If you want ready-to-copy repo instructions for specific coding agents, start
+with [`coding-agent-safety-pack.md`](coding-agent-safety-pack.md).
+
 ## Goal
 
 Keep the first integration:
@@ -104,3 +107,11 @@ Use the dashboard later for:
 
 The SDK should prove local enforcement first. The dashboard remains the control
 plane.
+
+If the coding agent already supports MCP, add `@agentguard47/mcp-server` only
+after the local SDK path is proven. That MCP bridge is for retained traces and
+alerts, not the first-run safety proof.
+
+Once the repo-local path works, run the fuller walkthrough in
+[`coding-agent-smoke-test.md`](coding-agent-smoke-test.md) to step through the
+starter path, the offline demo, and the local budget-kill example.

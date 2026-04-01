@@ -1,9 +1,27 @@
 {
   "name": "@agentguard47/mcp-server",
   "version": "0.2.0",
-  "description": "MCP server for AgentGuard — query traces, alerts, usage, and costs from AI coding agents",
+  "description": "AgentGuard MCP server for coding-agent safety - query traces, alerts, usage, costs, and saved spend",
+  "mcpName": "io.github.bmdhodl/agentguard47",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bmdhodl/agent47.git",
+    "directory": "mcp-server"
+  },
+  "homepage": "https://github.com/bmdhodl/agent47/tree/main/mcp-server",
+  "bugs": {
+    "url": "https://github.com/bmdhodl/agent47/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "agentguard",
+    "coding-agents",
+    "agent-safety",
+    "runtime-guardrails"
+  ],
   "bin": {
     "agentguard-mcp": "./dist/index.js"
   },

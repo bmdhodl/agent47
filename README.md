@@ -69,6 +69,24 @@ are not shipped inside the PyPI wheel.
 For the repo-first onboarding flow, see
 [`docs/guides/coding-agents.md`](docs/guides/coding-agents.md).
 
+For copy-paste setup snippets tailored to Codex, Claude Code, GitHub Copilot,
+Cursor, and MCP-capable agents, see
+[`docs/guides/coding-agent-safety-pack.md`](docs/guides/coding-agent-safety-pack.md).
+
+## MCP Server for Coding Agents
+
+If your coding agent already uses MCP, AgentGuard also ships a published MCP
+server that exposes traces, alerts, usage, costs, and saved spend from the
+hosted read API:
+
+```bash
+npx -y @agentguard47/mcp-server
+```
+
+The MCP server is intentionally narrow. The SDK stays local-first and free.
+The MCP server and hosted dashboard only come into play after you want retained
+history and team-visible operational follow-through.
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:
@@ -390,9 +408,10 @@ patch_openai_async(tracer)
 # All async OpenAI calls are now tracked and budget-enforced
 ```
 
-## Production: Dashboard + Kill Switch
+## Optional Hosted Dashboard
 
-For teams that need centralized monitoring, alerts, and remote kill switch:
+For teams that need retained history, alerts, and remote controls, the SDK can
+mirror traces to the hosted dashboard:
 
 ```python
 from agentguard import Tracer, HttpSink, BudgetGuard
@@ -411,15 +430,8 @@ tracer = Tracer(
 )
 ```
 
-| | Trial (14d free) | Pro ($39/mo) | Team ($79/mo) |
-|---|---|---|---|
-| SDK + local guards | Unlimited | Unlimited | Unlimited |
-| Dashboard events | 500K/mo | 500K/mo | 5M/mo |
-| Budget alerts (email/webhook) | Yes | Yes | Yes |
-| Remote kill switch | Yes | Yes | Yes |
-| Team members | 1 | 1 | 10 |
-
-[Start free trial](https://app.agentguard47.com) | [View pricing](https://agentguard47.com/#pricing)
+Keep the first integration local. Add `HttpSink` only when you need retained
+history, team-visible incidents, alerts, or hosted controls.
 
 ## Architecture
 

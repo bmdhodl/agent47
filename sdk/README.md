@@ -52,6 +52,21 @@ For coding-agent onboarding, prefer `agentguard.init(local_only=True)` while
 you validate the local path. The checked-in starter files live in the repo
 under `examples/starters/`; they are not part of the installed wheel.
 
+For agent-specific setup snippets, see
+`docs/guides/coding-agent-safety-pack.md` in the main repo.
+
+## MCP Server
+
+If your coding agent already uses MCP, the repo also ships a published MCP
+server:
+
+```bash
+npx -y @agentguard47/mcp-server
+```
+
+That server is for querying retained traces and alerts later. The SDK remains
+the local-first runtime enforcement layer.
+
 ## Quickstart
 
 ```python
@@ -255,5 +270,5 @@ python -m agentguard.bench
 ## Links
 
 - [GitHub](https://github.com/bmdhodl/agent47)
-- [Dashboard](https://app.agentguard47.com)
+- [MCP Server](https://github.com/bmdhodl/agent47/tree/main/mcp-server)
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/examples)

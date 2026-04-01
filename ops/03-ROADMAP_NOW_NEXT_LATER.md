@@ -1,6 +1,7 @@
 # SDK Roadmap - Now / Next / Later
 
-SDK code changes only. No README, docs, blog, or marketing items.
+SDK repo work only. Distribution-facing docs and package metadata count when
+they directly strengthen coding-agent adoption.
 
 ## Recently Completed
 
@@ -24,6 +25,7 @@ SDK code changes only. No README, docs, blog, or marketing items.
 | Item | Success Signal |
 |------|---------------|
 | Coding-agent positioning and package metadata hardening | PyPI metadata, SDK README, and generated PyPI README all consistently position AgentGuard as zero-dependency runtime guardrails for coding-agent safety |
+| MCP registry readiness | `mcp-server` package metadata and `server.json` are ready for official MCP registry publication without extra repo cleanup |
 | Install-to-first-guard proof hardening | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, `agentguard quickstart`, and a starter run works without undocumented steps or hosted assumptions |
 | Coding-agent starter polish | Checked-in starter files and repo-local `.agentguard.json` guidance stay deterministic, local-first, and safe to copy into real repos without hidden network behavior |
 

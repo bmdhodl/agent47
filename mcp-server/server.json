@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.bmdhodl/agentguard47",
+  "description": "AgentGuard MCP server for coding-agent safety. Query traces, alerts, usage, cost, and saved spend from AgentGuard-instrumented agents.",
+  "repository": {
+    "url": "https://github.com/bmdhodl/agent47",
+    "source": "github"
+  },
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@agentguard47/mcp-server",
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "AGENTGUARD_API_KEY",
+          "description": "AgentGuard read API key for querying traces, alerts, costs, usage, and savings.",
+          "format": "string",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "AGENTGUARD_URL",
+          "description": "Optional AgentGuard API base URL. Defaults to production.",
+          "format": "string",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}
