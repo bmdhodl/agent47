@@ -4,7 +4,7 @@ from __future__ import annotations
 import functools
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from agentguard.savings import normalize_usage
+from agentguard.usage import normalize_usage
 
 F = TypeVar("F", bound=Callable[..., Any])
 

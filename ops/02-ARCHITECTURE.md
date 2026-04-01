@@ -33,12 +33,13 @@ __init__.py (public API surface)
   -> setup.py -> tracing.py, guards.py, instrument.py, sinks/http.py
   -> tracing.py
   -> guards.py
-  -> instrument.py -> guards.py, cost.py
+  -> instrument.py -> usage.py, guards.py, cost.py
   -> atracing.py -> tracing.py
   -> cost.py
+  -> usage.py
   -> evaluation.py
   -> export.py -> evaluation.py
-  -> savings.py -> cost.py, evaluation.py
+  -> savings.py -> usage.py, cost.py, evaluation.py
   -> reporting.py -> evaluation.py
   -> demo.py -> guards.py, tracing.py
   -> doctor.py -> evaluation.py, setup.py
@@ -85,7 +86,8 @@ These modules improve the local SDK experience without blurring the hosted contr
 | Module | Purpose |
 |--------|---------|
 | `reporting.py` | Renders local incident summaries from trace files via `agentguard incident` |
-| `savings.py` | Normalizes provider usage payloads and computes a local exact-vs-estimated savings ledger from traces |
+| `usage.py` | Standalone provider inference and usage normalization shared by instrumentation, integrations, and reporting |
+| `savings.py` | Computes a local exact-vs-estimated savings ledger from traces using normalized usage data |
 | `demo.py` | Runs a deterministic offline proof of budget, loop, and retry enforcement via `agentguard demo` |
 | `doctor.py` | Verifies the local SDK install path and prints the minimal local-only onboarding snippet via `agentguard doctor` |
 | `quickstart.py` | Prints framework-specific starter snippets for raw, OpenAI, Anthropic, LangChain, LangGraph, and CrewAI via `agentguard quickstart` |

@@ -38,6 +38,7 @@ CORE_MODULES = [
     "savings.py",
     "setup.py",
     "tracing.py",
+    "usage.py",
     "sinks/http.py",
 ]
 
