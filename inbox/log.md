@@ -1,0 +1,20 @@
+# Inbox Log
+**Format:** Newest first. One short entry after each merged PR.
+
+---
+
+## 2026-04-02 | Codex
+
+### What shipped
+- Standardized `inbox/log.md` as the durable cofounder handoff for the SDK repo.
+- SDK instructions now point agents to the inbox log instead of a rolling `latest.md`.
+- Official MCP Registry listing is live for `io.github.bmdhodl/agentguard47`.
+
+### Decisions made
+- Keep this inbox SDK-only so public repo memory does not leak company strategy.
+- Use one terse merged-PR log entry instead of a chat-style running diary.
+- Keep the SDK focused on runtime enforcement and coding-agent safety.
+
+### Blockers
+- Glama listing is still blocked despite root and package Smithery/Docker metadata.
+- `awesome-mcp-servers` PR is waiting on the Glama badge.
