@@ -49,6 +49,12 @@ Listing details to reuse:
 - MCP metadata name: `io.github.bmdhodl/agentguard47`
 
 Use the same description and install command as `mcp-server/server.json`.
+This repo now also ships:
+- [`mcp-server/Dockerfile`](../../mcp-server/Dockerfile)
+- [`mcp-server/smithery.yaml`](../../mcp-server/smithery.yaml)
+
+Those files make the Glama / Smithery build path explicit and document the
+required `AGENTGUARD_API_KEY` configuration for directory checks.
 
 ## 3. awesome-mcp-servers
 

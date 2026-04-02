@@ -1,0 +1,29 @@
+# Smithery / Glama configuration for publishing the AgentGuard MCP server.
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - agentguardApiKey
+    properties:
+      agentguardApiKey:
+        type: string
+        description: AgentGuard read API key used to query traces, alerts, costs, and usage.
+      agentguardUrl:
+        type: string
+        default: https://app.agentguard47.com
+        description: Optional AgentGuard API base URL. Defaults to production.
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['/app/dist/index.js'],
+      env: {
+        AGENTGUARD_API_KEY: config.agentguardApiKey,
+        ...(config.agentguardUrl
+          ? { AGENTGUARD_URL: config.agentguardUrl }
+          : {})
+      }
+    })
+  exampleConfig:
+    agentguardApiKey: ag_your_key_here
+    agentguardUrl: https://app.agentguard47.com
