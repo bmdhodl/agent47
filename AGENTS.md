@@ -10,6 +10,14 @@ Before touching any code, read these four context files. They are the ground tru
 
 **Updated regularly. If context/ conflicts with older info in this file, context/ wins.**
 
+## Cofounder Inbox
+Use `inbox/log.md` to communicate concise SDK status to the cofounder agent.
+
+- Write one entry after each merged PR.
+- Format each entry as: date, agent, what shipped, decisions made, blockers.
+- Keep it SDK-only and short.
+- Do not dump business-sensitive plans there.
+
 Key constraints:
 - SDK stays free, MIT, zero-dependency. This is non-negotiable.
 - AgentGuard Pro pricing is DEFERRED to Q3 2026. Do not build paid features yet.
