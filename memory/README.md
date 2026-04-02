@@ -16,3 +16,7 @@ Read first:
 - [`blockers.md`](blockers.md)
 - [`decisions.md`](decisions.md)
 - [`distribution.md`](distribution.md)
+
+Cross-agent handoff:
+- [`../inbox/latest.md`](../inbox/latest.md) - rolling SDK status for the
+  cofounder agent

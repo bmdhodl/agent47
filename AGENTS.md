@@ -11,6 +11,15 @@ the ground truth for this public repository.
 
 **Updated regularly. If `memory/` conflicts with older info in this file, `memory/` wins.**
 
+## Cofounder Inbox
+Use `inbox/` to communicate concise SDK status to the cofounder agent.
+
+- `inbox/latest.md` is the rolling handoff file.
+- Keep it SDK-only and short.
+- Do not dump business-sensitive plans there.
+- Update it when there is a real blocker, shipped change, or distribution status
+  the cofounder agent should carry forward.
+
 Key constraints:
 - SDK stays free, MIT, zero-dependency. This is non-negotiable.
 - AgentGuard Pro pricing is DEFERRED to Q3 2026. Do not build paid features yet.
@@ -47,6 +56,7 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 6. **PR proof is required.** Every PR must include concrete proof that the change works: command output, targeted runtime evidence, screenshots when applicable, or saved artifacts under a local proof folder.
 7. **Always do the post-PR review loop.** After opening a PR: wait for CI, verify the relevant preview/deployment health, wait a few minutes for automated review, inspect the full PR timeline plus review comments/threads, address feedback, rerun checks, and only then call the PR ready.
 8. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits.
+9. **Write only high-signal inbox updates.** If the cofounder agent should know about a material SDK blocker or milestone, update `inbox/latest.md` concisely instead of creating a long running log.
 
 ## Commands
 
