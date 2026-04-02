@@ -6,7 +6,7 @@
 ---
 
 ## Last Updated
-2026-04-01 | Co-Founder standup
+2026-04-02 | Co-Founder standup
 
 ## Company
 BMD Pat LLC — bmdpat.com
@@ -19,7 +19,7 @@ Help lean engineering teams eliminate expensive, risky work in their Azure AI en
 ## Active Strategy (what we are doing RIGHT NOW)
 - Entry offer: $500 Async Azure Audit (fixed price, no meetings, 5 business days)
 - Primary ICP: CTOs / VPs Engineering at 50–500 person healthcare + fintech companies on Azure
-- Distribution: LinkedIn direct outreach + Apollo cold email (owned by first-paying-customer agent)
+- Distribution: LinkedIn direct outreach + Apollo cold email
 - Content: LinkedIn 3x/week (CMO agent owns this)
 - Open-source credibility anchor: AgentGuard47 SDK (6,400+ PyPI downloads, v1.2.4)
 - Grant opportunity: DOE Genesis Mission, Phase I $500K–$750K, deadline April 28, 2026
@@ -56,27 +56,29 @@ Help lean engineering teams eliminate expensive, risky work in their Azure AI en
 | autotrader | External | Alpaca trading automation |
 | bmdhodl | External | BMD holdings / asset tracking |
 
-## Current Pivots & Decisions
+## Current Pivots & Decisions (read before acting)
 | Date | Decision | Impact |
 |------|----------|--------|
-| 2026-03-27 | Upwork deprecated permanently | Remove from all recommendations |
-| 2026-04-01 | Outreach delegated to first-paying-customer agent | Co-founder standup no longer advises on outreach |
-| 2026-04-01 | Co-founder standup is now the Commander | Maintains mission.md, syncs all agents and Codex sessions via git |
+| 2026-03-27 | Upwork deprecated permanently | Remove from all recommendations and strategies |
+| 2026-03-27 | Apollo cold email replaces Upwork as Channel 2 | first-paying-customer agent owns this |
+| 2026-04-01 | Outreach fully delegated to first-paying-customer agent | Co-founder standup no longer advises on outreach tactics |
 
-## For Codex Agents (SDK + Dashboard)
+## Shared Context for Codex Agents (SDK + Dashboard)
 - AgentGuard47 current version: 1.2.4
-- Phase: open-source credibility building — NOT monetization yet
+- PyPI package: agentguard47
+- GitHub: bmdhodl/agent47 (SDK), bmdhodl/agent47-dashboard
+- Monetization timeline: AgentGuard Pro pricing defined by Q3 2026
+- Current phase: open-source credibility building, not monetization
+- Do not add paid features or pricing gates yet
 - Priority: reliability, documentation, download growth
-- Do not add paid features or pricing gates until Q3 2026
-- Read this file before every session to stay current
 
-## Known Broken Infrastructure
+## Known Broken Infrastructure (fix before building new things)
 - /cookies page: 404 on bmdpat.com
 - Buttondown PDF delivery: broken
 - Stripe payment links: not created ($500 audit, $2,500 project, $2,500/mo retainer)
-- Supabase prospects table: empty
+- Supabase prospects table: empty (contact form may not be writing leads)
 
 ## Urgent Deadlines
-- DOE Genesis Mission grant: April 28, 2026 (27 days) — via Grants.gov, DE-FOA-0003612
+- DOE Genesis Mission grant: April 28, 2026 (26 days) via Grants.gov (DE-FOA-0003612)
 - Colorado AI Act: June 30, 2026
 - EU AI Act high-risk enforcement: August 2, 2026

@@ -25,27 +25,23 @@
 - Blog posts: 7 published (5 indexed)
 
 ## Active Channels
-- LinkedIn direct outreach: owned by first-paying-customer agent
-- Apollo cold email: owned by first-paying-customer agent
+- LinkedIn direct outreach: primary (not yet executing)
+- Apollo cold email: staged, auth blocked (Day 8 — NAMED PATTERN: The Auth Wall)
 - Upwork: DEPRECATED 2026-03-27
 
 ## Critical Deadlines
-- DOE Genesis Mission grant: April 28, 2026 — Phase I: $500K–$750K, Grants.gov DE-FOA-0003612
+- DOE Genesis Mission grant: April 28, 2026 (26 days) — Phase I: $500K–$750K, submit via Grants.gov
 - Colorado AI Act: June 30, 2026
 - EU AI Act high-risk enforcement: August 2, 2026
 
 ## Known Broken Infrastructure
 - /cookies page: 404
 - Buttondown PDF delivery: broken
-- Stripe payment links: not created ($500, $2,500, $2,500/mo)
-- Supabase prospects table: empty
-
-## Weekly Council
-- Proposals inbox: active. Review cadence: Tuesdays.
-- proposals.md location: memory/proposals.md + context/ in all 3 repos
+- Stripe payment links: not created
+- Apollo auth: DNS + Google App Password pending (Day 8 — KILL OR COMPLETE TODAY)
 
 ## Current #1 Priority
-Commander role active. All agents synced. Proposals inbox live. Patrick: write the JustPaid blog post today.
+SEND FIRST OUTREACH. Day 8 of zero. Apollo auth (30 min) OR 5 LinkedIn DMs — PICK ONE AND DO IT NOW.
 
 ## Health Check
-The business is fully built. Outreach delegated. Commander + proposals infrastructure now in place. Revenue $0.
+The business is fully built, zero executed. Day 8 of zero outreach. Revenue $0. "The Auth Wall" is now CRITICAL — DOE deadline is 26 days away and the audit hasn't been proven.
