@@ -74,6 +74,15 @@ or inspect the MCP server from GitHub:
 That keeps the public repo aligned with the published npm package and makes the
 Glama / Smithery import path explicit instead of implicit.
 
+The repo root also carries matching shim files for directories that only scan
+the default branch root:
+
+- [`../Dockerfile`](../Dockerfile)
+- [`../smithery.yaml`](../smithery.yaml)
+
+Those root files delegate straight to `mcp-server/` and should stay aligned
+with the package-local versions here.
+
 ## Registry Readiness
 
 This repo now includes official MCP registry metadata in

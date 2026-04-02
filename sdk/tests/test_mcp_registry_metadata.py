@@ -2,6 +2,9 @@ import json
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+ROOT_DOCKERFILE = REPO_ROOT / "Dockerfile"
+ROOT_DOCKERIGNORE = REPO_ROOT / ".dockerignore"
+ROOT_SMITHERY = REPO_ROOT / "smithery.yaml"
 MCP_PACKAGE = REPO_ROOT / "mcp-server" / "package.json"
 MCP_SERVER = REPO_ROOT / "mcp-server" / "server.json"
 MCP_DOCKERFILE = REPO_ROOT / "mcp-server" / "Dockerfile"
@@ -43,14 +46,29 @@ def test_mcp_registry_metadata_declares_required_env_vars():
 
 
 def test_mcp_glama_packaging_files_are_present():
+    assert ROOT_DOCKERFILE.exists()
+    assert ROOT_DOCKERIGNORE.exists()
+    assert ROOT_SMITHERY.exists()
     assert MCP_DOCKERFILE.exists()
     assert MCP_DOCKERIGNORE.exists()
     assert MCP_SMITHERY.exists()
 
 
 def test_mcp_smithery_config_matches_runtime_contract():
+    root_smithery = ROOT_SMITHERY.read_text(encoding="utf-8")
+    root_dockerfile = ROOT_DOCKERFILE.read_text(encoding="utf-8")
     smithery = MCP_SMITHERY.read_text(encoding="utf-8")
     dockerfile = MCP_DOCKERFILE.read_text(encoding="utf-8")
+
+    assert "agentguardApiKey" in root_smithery
+    assert "agentguardUrl" in root_smithery
+    assert "AGENTGUARD_API_KEY" in root_smithery
+    assert "AGENTGUARD_URL" in root_smithery
+    assert "/app/mcp-server/dist/index.js" in root_smithery
+
+    assert "COPY mcp-server/package*.json ./" in root_dockerfile
+    assert "COPY mcp-server/src ./src" in root_dockerfile
+    assert 'CMD ["node", "/app/mcp-server/dist/index.js"]' in root_dockerfile
 
     assert "agentguardApiKey" in smithery
     assert "agentguardUrl" in smithery
@@ -65,3 +83,7 @@ def test_mcp_smithery_config_matches_runtime_contract():
     dockerignore = MCP_DOCKERIGNORE.read_text(encoding="utf-8")
     assert "node_modules" in dockerignore
     assert ".mcpregistry_github_token" in dockerignore
+
+    root_dockerignore = ROOT_DOCKERIGNORE.read_text(encoding="utf-8")
+    assert "mcp-server/node_modules" in root_dockerignore
+    assert ".codex-proof" in root_dockerignore
