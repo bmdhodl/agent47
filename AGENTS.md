@@ -1,21 +1,22 @@
 # AGENTS.md
 
-## READ THIS FIRST: Company World Model
-Before touching any code, read these four context files. They are the ground truth for this project AND the parent company.
+## READ THIS FIRST: SDK Memory
+Before touching any code, read these tracked SDK-only memory files. They are
+the ground truth for this public repository.
 
-- `context/state.md` — SDK version, downloads, phase, revenue ($0), relationship to consulting business
-- `context/blockers.md` — what's broken, what's deferred, what NOT to build
-- `context/decisions.md` — locked product + company decisions. Do NOT contradict.
-- `context/icp.md` — who uses AgentGuard, distribution channels, hooks
+- `memory/state.md` — SDK version, packaging state, current focus
+- `memory/blockers.md` — what is blocked, deferred, or not worth more cycles
+- `memory/decisions.md` — locked SDK product decisions. Do NOT contradict.
+- `memory/distribution.md` — positioning, channels, and audience for SDK growth
 
-**Updated regularly. If context/ conflicts with older info in this file, context/ wins.**
+**Updated regularly. If `memory/` conflicts with older info in this file, `memory/` wins.**
 
 Key constraints:
 - SDK stays free, MIT, zero-dependency. This is non-negotiable.
 - AgentGuard Pro pricing is DEFERRED to Q3 2026. Do not build paid features yet.
 - Distribution > features. Get listed on registries before building new guards.
-- Consulting business (bmdpat) drives the roadmap. See bmdhodl/bmdpat context/ for company state.
-- Upwork is DEPRECATED. Never suggest it.
+- Focus is runtime enforcement + coding-agent safety.
+- Do not store business-sensitive plans or outreach data in this repo.
 
 ---
 
@@ -23,7 +24,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## What This Is
 
-AgentGuard — a lightweight observability and runtime-guards SDK for multi-agent AI systems. The SDK is open source (MIT, zero dependencies).
+AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI agents. The SDK is open source (MIT, zero dependencies).
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
@@ -184,43 +185,8 @@ Read .Codex/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** latest shipped SDK release is v1.2.4. Phase 1 complete. Active: **Phase 2 — Traction.**
-
-## Phase 1 — Foundation (COMPLETE, 2026-02-16)
-
-All 11 tickets done (T01–T11). Commit `c175288` on main.
-
-| Ticket | Title | Status |
-|--------|-------|--------|
-| T01 | Publish v1.2.1 to PyPI + GitHub Release | Done |
-| T02 | README rewrite: cost guardrail as hero | Done |
-| T03 | Zod validation on 7 POST routes (Dashboard) | Done |
-| T04 | Split queries.ts into domain modules (Dashboard) | Done |
-| T05 | Move SQL from 8 routes to queries (Dashboard) | Done |
-| T06 | CSP header + Sentry monitoring (Dashboard) | Done |
-| T07 | 30-second demo GIF: BudgetGuard kills agent | Done |
-| T08 | Show HN post draft + launch prep | Done |
-| T09 | Welcome email drip (3 emails, Dashboard) | Done |
-| T10 | Audit logging foundation (Dashboard) | Done |
-| T11 | AGENTS.md updates | Done |
-
-## Current Phase: Phase 2 — Traction
-
-Goal: 10 free users, 1+ paying user.
-
-| Ticket | Title | Track | Status |
-|--------|-------|-------|--------|
-| T12 | Weekly digest email | Revenue | Todo |
-| T13 | Upgrade nudge banner | Revenue | Todo |
-| T14 | Annual pricing toggle | Revenue | Todo |
-| T15 | SEO blog posts (3 targeting cost keywords) | Growth | Done |
-| T16 | Community — LangChain Discord, GitHub Discussions | Growth | Todo |
-| T17 | RBAC: admin/member roles | Security | Todo |
-| T18 | API rate limiting | Production | Todo |
-| T19 | Error tracking improvements | Production | Todo |
-| T20 | Onboarding flow polish | Growth | Todo |
-
-Full plan: See `.Codex/plans/` or project board.
+**Current:** latest shipped SDK release is v1.2.4. Read `memory/` for the
+current SDK state, blockers, decisions, and distribution priorities.
 
 ## Agent Navigation Guide
 
