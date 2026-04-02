@@ -62,11 +62,24 @@ npm run build
 npm start
 ```
 
+## Glama / Smithery Build Config
+
+This repo now includes the files downstream registries expect when they build
+or inspect the MCP server from GitHub:
+
+- [`Dockerfile`](Dockerfile) - container build for the stdio server
+- [`smithery.yaml`](smithery.yaml) - config schema for `AGENTGUARD_API_KEY`
+  and the optional base URL
+
+That keeps the public repo aligned with the published npm package and makes the
+Glama / Smithery import path explicit instead of implicit.
+
 ## Registry Readiness
 
 This repo now includes official MCP registry metadata in
-[`server.json`](server.json). The npm package is already public, so the
-remaining registry work is metadata publication:
+[`server.json`](server.json). The npm package is already public, and the Glama /
+Smithery config now lives next to the source, so the remaining registry work is
+metadata publication:
 
 ```bash
 mcp-publisher login github
