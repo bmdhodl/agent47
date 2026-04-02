@@ -56,6 +56,13 @@ This repo now also ships:
 Those files make the Glama / Smithery build path explicit and document the
 required `AGENTGUARD_API_KEY` configuration for directory checks.
 
+Important:
+- Glama currently scans the repository root when detecting Smithery metadata
+- this repo therefore ships a root-level [`Dockerfile`](../../Dockerfile) and
+  [`smithery.yaml`](../../smithery.yaml) that delegate to `mcp-server/`
+- keep the root shim aligned with the real package-local files in
+  [`mcp-server/`](../../mcp-server/)
+
 ## 3. awesome-mcp-servers
 
 Open a PR against the upstream list with:
