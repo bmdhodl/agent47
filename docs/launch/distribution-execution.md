@@ -23,9 +23,15 @@ Manual steps:
 
 ```bash
 cd mcp-server
+npm publish
 mcp-publisher login github
 mcp-publisher publish
 ```
+
+Important:
+- publish the npm package first whenever `package.json` metadata changes
+- the MCP registry validates the live npm tarball, not just your local working tree
+- `package.json:mcpName` must match `server.json:name`
 
 Verify:
 

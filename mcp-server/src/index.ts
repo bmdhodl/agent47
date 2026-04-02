@@ -8,7 +8,7 @@ import { tools } from "./tools.js";
 
 const server = new McpServer({
   name: "agentguard",
-  version: "0.2.0",
+  version: "0.2.1",
 });
 
 let client: AgentGuardClient;
