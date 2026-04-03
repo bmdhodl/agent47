@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard47"
-version = "1.2.4"
+version = "1.2.5"
 description = "Zero-dependency runtime guardrails for coding agents and AI agents - stop loops, retries, and budget overruns with local traces"
 readme = "PYPI_README.md"
 requires-python = ">=3.9"

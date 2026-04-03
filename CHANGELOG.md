@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.5
+
+### Distribution and Registry Hygiene
+- Added official MCP Registry metadata plus package-local Docker and Smithery config for `@agentguard47/mcp-server`.
+- Added `sdk/tests/test_mcp_registry_metadata.py` to keep MCP registry metadata, packaging files, and environment-variable contracts aligned.
+- Refreshed README, SDK README, PyPI README, and package metadata around coding-agent safety and local-first onboarding.
+
+### Public Repo Hygiene
+- Removed stale tracked `context/` files that carried business-sensitive planning data not meant for the public SDK repo.
+- Retired the obsolete `inbox/INBOX_PROTOCOL.md` workflow in favor of the current `memory/` plus `inbox/log.md` contract.
+
 ## 1.2.4
 
 ### Coding-Agent Onboarding
