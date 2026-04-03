@@ -476,6 +476,15 @@ Your Agent Code
 
 See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.4/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
 
+## Enterprise Support
+
+Need help governing AI agents in production? BMD Pat LLC offers:
+
+- **$500 Async Azure Audit** -- cost, reliability, and governance review. No meetings. Results in 5 business days.
+- **Custom agent guardrails** -- production-grade cost controls, compliance tooling, kill switches.
+
+[Start a project](https://bmdpat.com/start) | [See the research](https://bmdpat.com/research)
+
 ## License
 
 MIT (BMD PAT LLC)
