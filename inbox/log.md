@@ -6,6 +6,20 @@
 ## 2026-04-02 | Codex
 
 ### What shipped
+- Added a small enterprise support section to the public README and generated
+  PyPI README.
+
+### Decisions made
+- Keep support copy near the bottom of the README, above License, and avoid a
+  sales-heavy tone.
+- Keep README-facing copy changes synced through the generated PyPI README.
+
+### Blockers
+- None.
+
+## 2026-04-02 | Codex
+
+### What shipped
 - Standardized `inbox/log.md` as the durable cofounder handoff for the SDK repo.
 - SDK instructions now point agents to the inbox log instead of a rolling `latest.md`.
 - Official MCP Registry listing is live for `io.github.bmdhodl/agentguard47`.
