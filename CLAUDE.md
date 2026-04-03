@@ -22,7 +22,7 @@ Use `inbox/` to communicate concise SDK status to the cofounder agent.
 
 Key constraints:
 - SDK stays free, MIT, zero-dependency. This is non-negotiable.
-- AgentGuard Pro pricing is DEFERRED to Q3 2026. Do not build paid features yet.
+- Do not build paid features in this repo.
 - Distribution > features. Get listed on registries before building new guards.
 - Focus is runtime enforcement + coding-agent safety.
 - Do not store business-sensitive plans or outreach data in this repo.

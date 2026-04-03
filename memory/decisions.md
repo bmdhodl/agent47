@@ -6,8 +6,10 @@
 - SDK stays free, MIT, and zero-dependency.
 - Distribution > features until directory/community traction improves.
 - Product focus is runtime enforcement + coding-agent safety.
-- A.SDK owns local enforcement, local proof, local reports, and local setup.
-- A.D owns retained history, alerts, remote controls, and team operations.
+- AgentGuard SDK owns local enforcement, local proof, local reports, and local
+  setup.
+- AgentGuard Dashboard owns retained history, alerts, remote controls, and team
+  operations.
 - Do not drift into generic observability, prompt optimization, or broad AI
   analytics.
 - Keep MCP scope narrow: read access to traces, alerts, usage, costs, and

@@ -10,8 +10,6 @@
 - **`awesome-mcp-servers` PR is blocked on Glama.** PR
   `punkpeye/awesome-mcp-servers#4012` only needs the Glama badge once the
   listing exists.
-- **Community distribution has not started.** Show HN and LangChain / GitHub
-  discussion outreach still need execution.
 
 ## Do Not Route Around
 - Do not build new guards just because Glama is blocked.

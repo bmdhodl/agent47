@@ -12,11 +12,11 @@ budget.
 - teams worried about runaway spend and unsafe automation
 
 ## Channels
-- Official MCP Registry: done
-- Glama: pending
-- `awesome-mcp-servers`: pending after Glama
-- Show HN: pending
-- LangChain / GitHub community posts: pending
+- Official MCP Registry
+- Glama
+- `awesome-mcp-servers`
+- Show HN
+- LangChain / GitHub community posts
 
 ## Keep Repeating
 - zero dependency
