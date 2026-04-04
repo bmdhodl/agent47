@@ -3,12 +3,13 @@ import threading
 import time
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import ClassVar
 
-from agentguard.sinks.http import HttpSink
+from agentguard.sinks.http import HttpSink, _normalize_event_for_ingest
 
 
 class _CollectorHandler(BaseHTTPRequestHandler):
-    received: list = []
+    received: ClassVar[list] = []
 
     def do_POST(self):
         import gzip as _gzip
@@ -47,7 +48,8 @@ class TestHttpSink(unittest.TestCase):
 
     def test_batch_flush(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
+            url=f"http://127.0.0.1:{self.port}/ingest",
+            _allow_private=True,
             api_key="test-key",
             batch_size=3,
             flush_interval=60,
@@ -64,7 +66,8 @@ class TestHttpSink(unittest.TestCase):
 
     def test_interval_flush(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
+            url=f"http://127.0.0.1:{self.port}/ingest",
+            _allow_private=True,
             batch_size=100,
             flush_interval=0.2,
         )
@@ -78,7 +81,8 @@ class TestHttpSink(unittest.TestCase):
 
     def test_shutdown_flushes_remaining(self):
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
+            url=f"http://127.0.0.1:{self.port}/ingest",
+            _allow_private=True,
             batch_size=100,
             flush_interval=60,
         )
@@ -86,15 +90,33 @@ class TestHttpSink(unittest.TestCase):
         sink.shutdown()
         self.assertGreaterEqual(len(_CollectorHandler.received), 1)
 
+    def test_normalize_event_for_ingest_drops_meta_and_adds_type_alias(self):
+        self.assertIsNone(
+            _normalize_event_for_ingest({"kind": "meta", "name": "watermark"})
+        )
+
+        normalized = _normalize_event_for_ingest({"kind": "span", "name": "agent.run"})
+        self.assertEqual(normalized["kind"], "span")
+        self.assertEqual(normalized["type"], "span")
+        self.assertEqual(normalized["name"], "agent.run")
+
+    def test_normalize_event_for_ingest_accepts_type_only_payloads(self):
+        normalized = _normalize_event_for_ingest({"type": "event", "name": "llm.result"})
+        self.assertEqual(normalized["kind"], "event")
+        self.assertEqual(normalized["type"], "event")
+
+    def test_normalize_event_for_ingest_preserves_ad_hoc_payloads(self):
+        normalized = _normalize_event_for_ingest({"event": "timer"})
+        self.assertEqual(normalized, {"event": "timer"})
+
 
 class TestHttpSinkHTTPWarning(unittest.TestCase):
     def test_warns_on_http_with_api_key(self):
         """HttpSink should log a warning when using http:// with an API key."""
-        import logging
-
         with self.assertLogs("agentguard.sinks.http", level="WARNING") as cm:
             sink = HttpSink(
-                url=f"http://127.0.0.1:{TestHttpSink.port}/ingest", _allow_private=True,
+                url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+                _allow_private=True,
                 api_key="secret-key",
                 batch_size=100,
                 flush_interval=60,
@@ -104,11 +126,6 @@ class TestHttpSinkHTTPWarning(unittest.TestCase):
 
     def test_no_warning_on_https(self):
         """HttpSink should not warn when using https:// URL."""
-        import logging
-
-        logger = logging.getLogger("agentguard.sinks.http")
-        # Should not log any warnings — we test by checking it doesn't raise
-        # (assertLogs would raise if no logs are emitted)
         sink = HttpSink(
             url="https://example.com/ingest",
             api_key="secret-key",
@@ -116,12 +133,12 @@ class TestHttpSinkHTTPWarning(unittest.TestCase):
             flush_interval=60,
         )
         sink.shutdown()
-        # If we got here without the assertLogs context, it means no warning
 
     def test_no_warning_on_http_without_api_key(self):
         """HttpSink should not warn when using http:// without an API key."""
         sink = HttpSink(
-            url=f"http://127.0.0.1:{TestHttpSink.port}/ingest", _allow_private=True,
+            url=f"http://127.0.0.1:{TestHttpSink.port}/ingest",
+            _allow_private=True,
             batch_size=100,
             flush_interval=60,
         )
@@ -130,17 +147,15 @@ class TestHttpSinkHTTPWarning(unittest.TestCase):
 
 class _429DateHandler(BaseHTTPRequestHandler):
     """Returns 429 with HTTP-date Retry-After, then 200."""
+
     call_count = 0
 
     def do_POST(self):
-        import gzip as _gzip
-
         length = int(self.headers.get("Content-Length", 0))
         self.rfile.read(length)
         self.__class__.call_count += 1
         if self.__class__.call_count == 1:
             self.send_response(429)
-            # HTTP-date format — not numeric seconds
             self.send_header("Retry-After", "Sat, 01 Jan 2000 00:00:00 GMT")
             self.end_headers()
             self.wfile.write(b"rate limited")
@@ -172,16 +187,16 @@ class TestHttpSinkRetryAfterHttpDate(unittest.TestCase):
         """Retry-After with HTTP-date should fall back to default backoff."""
         _429DateHandler.call_count = 0
         sink = HttpSink(
-            url=f"http://127.0.0.1:{self.port}/ingest", _allow_private=True,
+            url=f"http://127.0.0.1:{self.port}/ingest",
+            _allow_private=True,
             batch_size=1,
             flush_interval=60,
             compress=False,
             max_retries=3,
         )
         sink.emit({"event": "test"})
-        time.sleep(2)  # allow retry cycle
+        time.sleep(2)
         sink.shutdown()
-        # Should have retried: first call = 429, second = 200
         self.assertGreaterEqual(_429DateHandler.call_count, 2)
 
 
@@ -240,7 +255,6 @@ class TestHttpSinkSSRF(unittest.TestCase):
 
     def test_allows_public_ip(self):
         """Public IP addresses should be allowed."""
-        # This won't actually connect, but shouldn't raise ValueError
         sink = HttpSink(
             url="https://203.0.113.1/ingest",
             batch_size=100,

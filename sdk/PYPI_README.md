@@ -11,7 +11,7 @@ Zero-dependency runtime guardrails for coding agents and AI agents. Set a dollar
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.5/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.6/LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -64,16 +64,16 @@ automatically. Keep it local and static: no secrets, no API keys, no dashboard
 settings.
 
 Every `agentguard quickstart --framework ...` payload also has a matching
-runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.5/examples/starters). Those starter
+runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.6/examples/starters). Those starter
 files live in the repo for copy-paste onboarding and coding-agent setup; they
 are not shipped inside the PyPI wheel.
 
 For the repo-first onboarding flow, see
-[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.5/docs/guides/coding-agents.md).
+[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.6/docs/guides/coding-agents.md).
 
 For copy-paste setup snippets tailored to Codex, Claude Code, GitHub Copilot,
 Cursor, and MCP-capable agents, see
-[`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.5/docs/guides/coding-agent-safety-pack.md).
+[`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.6/docs/guides/coding-agent-safety-pack.md).
 
 ## MCP Server for Coding Agents
 
@@ -121,7 +121,7 @@ Prefer the example script instead of the CLI? This does the same local demo:
 python examples/try_it_now.py
 ```
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.5/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.6/examples/quickstart.ipynb)
 
 ## Quickstart: Stop a Runaway Agent in 4 Lines
 
@@ -382,7 +382,7 @@ Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offer
     assertions: "no_errors,max_cost:5.00"
 ```
 
-Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.5/docs/ci/cost-gate-workflow.yml)
+Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.6/docs/ci/cost-gate-workflow.yml)
 
 ## Incident Reports
 
@@ -474,7 +474,7 @@ Your Agent Code
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.5/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
+See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.6/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
 
 ## Enterprise Support
 
@@ -489,15 +489,10 @@ Need help governing AI agents in production? BMD Pat LLC offers:
 
 MIT (BMD PAT LLC)
 
-## Latest Release Notes (1.2.5)
+## Latest Release Notes (1.2.6)
 
-### Distribution and Registry Hygiene
-- Added official MCP Registry metadata plus package-local Docker and Smithery config for `@agentguard47/mcp-server`.
-- Added `sdk/tests/test_mcp_registry_metadata.py` to keep MCP registry metadata, packaging files, and environment-variable contracts aligned.
-- Refreshed README, SDK README, PyPI README, and package metadata around coding-agent safety and local-first onboarding.
+### Hosted Ingest Compatibility
+- `HttpSink` now drops local-only `kind="meta"` watermark records before posting to the hosted ingest API, preventing first-batch 400s from validators that only accept trace spans and point events.
+- `HttpSink` now mirrors supported trace kinds into both `kind` and `type` on outbound payloads so the SDK remains compatible across hosted validators while preserving local SDK semantics.
 
-### Public Repo Hygiene
-- Removed stale tracked `context/` files that carried business-sensitive planning data not meant for the public SDK repo.
-- Retired the obsolete `inbox/INBOX_PROTOCOL.md` workflow in favor of the current `memory/` plus `inbox/log.md` contract.
-
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.5/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.6/CHANGELOG.md)
