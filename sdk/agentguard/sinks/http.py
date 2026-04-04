@@ -26,6 +26,7 @@ from urllib.parse import urlparse
 from agentguard.tracing import TraceSink
 
 logger = logging.getLogger("agentguard.sinks.http")
+_INGEST_EVENT_KINDS = frozenset({"span", "event"})
 
 
 # Private/reserved IP ranges that should never be used as sink endpoints
@@ -150,6 +151,30 @@ class _SsrfSafeRedirectHandler(urllib.request.HTTPRedirectHandler):
 _opener = urllib.request.build_opener(_SsrfSafeRedirectHandler)
 
 
+def _normalize_event_for_ingest(event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Return a dashboard-ingestible copy of an event, or None to drop it.
+
+    The hosted ingest API only accepts span/event records. Local-only metadata
+    like the SDK watermark should not be POSTed there. For compatibility with
+    hosted validators that may key on either ``kind`` or ``type``, we mirror the
+    normalized event kind into both fields.
+    """
+    event_kind = event.get("kind") or event.get("type")
+    if event_kind is None:
+        return dict(event)
+    if event_kind not in _INGEST_EVENT_KINDS:
+        logger.debug(
+            "Dropping non-ingest event kind=%r name=%r",
+            event.get("kind"), event.get("name"),
+        )
+        return None
+
+    normalized = dict(event)
+    normalized.setdefault("kind", event_kind)
+    normalized.setdefault("type", event_kind)
+    return normalized
+
+
 class HttpSink(TraceSink):
     """Batched HTTP sink that POSTs JSONL trace events to a remote endpoint.
 
@@ -265,7 +290,15 @@ class HttpSink(TraceSink):
     def _send(self, batch: List[Dict[str, Any]]) -> None:
         if not batch:
             return
-        body_str = "\n".join(json.dumps(e, sort_keys=True) for e in batch)
+        normalized_batch = []
+        for event in batch:
+            normalized = _normalize_event_for_ingest(event)
+            if normalized is not None:
+                normalized_batch.append(normalized)
+        if not normalized_batch:
+            return
+
+        body_str = "\n".join(json.dumps(e, sort_keys=True) for e in normalized_batch)
         body = body_str.encode("utf-8")
 
         headers: Dict[str, str] = {"Content-Type": "application/x-ndjson"}
