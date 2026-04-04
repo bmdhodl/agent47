@@ -78,10 +78,20 @@ def make_mock_openai():
     return mod, MockOpenAI
 
 
-def _build_traces_url(base_url: str, trace_id: Optional[str] = None) -> str:
+def _build_traces_url(
+    base_url: str,
+    *,
+    trace_id: Optional[str] = None,
+    service: Optional[str] = None,
+) -> str:
     url = f"{base_url}/api/v1/traces"
+    params = []
     if trace_id:
-        return f"{url}?trace_id={trace_id}"
+        params.append(f"trace_id={trace_id}")
+    if service:
+        params.append(f"service={service}")
+    if params:
+        return f"{url}?{'&'.join(params)}"
     return url
 
 
@@ -93,6 +103,13 @@ def _extract_traces(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     if isinstance(data, list):
         return data
     return []
+
+
+def _find_trace(traces: List[Dict[str, Any]], trace_id: str) -> Optional[Dict[str, Any]]:
+    for trace in traces:
+        if trace.get("trace_id") == trace_id:
+            return trace
+    return None
 
 
 def main():
@@ -166,7 +183,7 @@ def main():
     print("\nPhase 3: Querying dashboard /api/v1/traces...")
     ctx = ssl.create_default_context()
     req = urllib.request.Request(
-        _build_traces_url(base_url, probe_trace_id),
+        _build_traces_url(base_url, service=service_name),
         headers={"Authorization": f"Bearer {api_key}"},
     )
     try:
@@ -174,16 +191,16 @@ def main():
             body = json.loads(resp.read().decode())
         traces = _extract_traces(body)
         check("Traces endpoint reachable", True)
-        check("Probe trace returned", len(traces) == 1, f"got {len(traces)}")
+        probe_trace = _find_trace(traces, probe_trace_id)
+        check("Probe trace returned", probe_trace is not None, f"got {len(traces)} traces")
 
-        if traces:
-            latest = traces[0]
+        if probe_trace:
             check(
                 "Probe trace_id matches",
-                latest.get("trace_id") == probe_trace_id,
-                f"got {latest.get('trace_id')}",
+                probe_trace.get("trace_id") == probe_trace_id,
+                f"got {probe_trace.get('trace_id')}",
             )
-            event_count = latest.get("event_count", latest.get("events", 0))
+            event_count = probe_trace.get("event_count", probe_trace.get("events", 0))
             check("probe event_count > 0", event_count > 0, f"got {event_count}")
     except urllib.error.HTTPError as e:
         check("Traces endpoint reachable", False, f"HTTP {e.code}: {e.reason}")

@@ -79,7 +79,7 @@ accidentally exercise the wrong code.
   - fails if any ingest request is rejected
 - `sdk/tests/integration_dashboard.py`
   - now writes a deterministic probe trace and verifies that exact trace id against the
-    hosted API
+    hosted API response
 - `.github/workflows/publish.yml`
   - now reruns SDK lint, bandit, and the full test suite before publishing to PyPI
 - `ops/04-DEFINITION_OF_DONE.md`
@@ -92,8 +92,8 @@ For any future `HttpSink`, tracing, or ingest-contract change:
 
 1. The mock contract in `sdk/tests/conftest.py` must be updated first.
 2. A regression test must fail against the old behavior before the fix is accepted.
-3. Release proof must include a trace-id-scoped hosted lookup, not a broad endpoint
-   health check.
+3. Release proof must include the exact probe trace id in the hosted response, not a
+   broad endpoint health check.
 4. Tag-based publish must remain blocked on SDK test success.
 
 ## Remaining Risk

@@ -168,6 +168,13 @@ class IngestHandler(BaseHTTPRequestHandler):
         if "trace_id" in qs:
             tid = qs["trace_id"][0]
             traces = {tid: traces[tid]} if tid in traces else {}
+        if "service" in qs:
+            service = qs["service"][0]
+            traces = {
+                tid: events
+                for tid, events in traces.items()
+                if any(event.get("service") == service for event in events)
+            }
 
         result = []
         for tid, events in traces.items():

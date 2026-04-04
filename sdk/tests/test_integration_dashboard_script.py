@@ -22,9 +22,28 @@ class TestIntegrationDashboardHelpers(unittest.TestCase):
         self.assertEqual(
             integration_dashboard._build_traces_url(
                 "https://app.agentguard47.com",
-                "trace_123",
+                trace_id="trace_123",
             ),
             "https://app.agentguard47.com/api/v1/traces?trace_id=trace_123",
+        )
+
+    def test_build_traces_url_with_service(self):
+        self.assertEqual(
+            integration_dashboard._build_traces_url(
+                "https://app.agentguard47.com",
+                service="svc_123",
+            ),
+            "https://app.agentguard47.com/api/v1/traces?service=svc_123",
+        )
+
+    def test_build_traces_url_with_trace_id_and_service(self):
+        self.assertEqual(
+            integration_dashboard._build_traces_url(
+                "https://app.agentguard47.com",
+                trace_id="trace_123",
+                service="svc_123",
+            ),
+            "https://app.agentguard47.com/api/v1/traces?trace_id=trace_123&service=svc_123",
         )
 
     def test_extract_traces_prefers_traces_key(self):
@@ -37,3 +56,13 @@ class TestIntegrationDashboardHelpers(unittest.TestCase):
 
     def test_extract_traces_returns_empty_list_for_unexpected_payload(self):
         self.assertEqual(integration_dashboard._extract_traces({"ok": True}), [])
+
+    def test_find_trace_returns_matching_trace(self):
+        traces = [{"trace_id": "a"}, {"trace_id": "b"}]
+        self.assertEqual(
+            integration_dashboard._find_trace(traces, "b"),
+            {"trace_id": "b"},
+        )
+
+    def test_find_trace_returns_none_when_missing(self):
+        self.assertIsNone(integration_dashboard._find_trace([{"trace_id": "a"}], "missing"))
