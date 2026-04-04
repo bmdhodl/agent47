@@ -83,6 +83,9 @@ TEST_MAP = {
     ],
     "sdk/agentguard/sinks/http.py": [
         "sdk/tests/test_http_sink.py",
+        "sdk/tests/test_hosted_ingest_contract.py",
+        "sdk/tests/test_integration_cost_guardrail.py",
+        "sdk/tests/test_e2e_pipeline.py",
     ],
     "sdk/agentguard/sinks/otel.py": [
         "sdk/tests/test_otel_sink.py",
@@ -97,6 +100,14 @@ TEST_MAP = {
     ],
     "scripts/sdk_preflight.py": [
         "sdk/tests/test_sdk_preflight.py",
+    ],
+    "sdk/tests/conftest.py": [
+        "sdk/tests/test_hosted_ingest_contract.py",
+        "sdk/tests/test_integration_cost_guardrail.py",
+        "sdk/tests/test_e2e_pipeline.py",
+    ],
+    "sdk/tests/integration_dashboard.py": [
+        "sdk/tests/test_integration_dashboard_script.py",
     ],
 }
 BANDIT_ARGS = ["-m", "bandit", "-r", "sdk/agentguard/", "-s", "B101,B110,B112,B311", "-q"]
@@ -163,7 +174,12 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
 
     pytest_targets: Set[str] = set()
     for path in normalized:
-        if path.startswith("sdk/tests/") and path.endswith(".py") and (REPO_ROOT / path).exists():
+        if (
+            path.startswith("sdk/tests/")
+            and path.endswith(".py")
+            and Path(path).name.startswith("test_")
+            and (REPO_ROOT / path).exists()
+        ):
             pytest_targets.add(path)
         pytest_targets.update(TEST_MAP.get(path, ()))
 

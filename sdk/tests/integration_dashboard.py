@@ -22,21 +22,25 @@ import sys
 import time
 import types
 import urllib.request
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 # Ensure SDK is importable
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+SDK_ROOT = Path(__file__).resolve().parents[1]
+if str(SDK_ROOT) not in sys.path:
+    sys.path.insert(0, str(SDK_ROOT))
 
-from agentguard import (
+from agentguard import (  # noqa: E402
     BudgetExceeded,
     BudgetGuard,
     Tracer,
 )
-from agentguard.instrument import (
+from agentguard.instrument import (  # noqa: E402
     _originals,
     patch_openai,
     unpatch_openai,
 )
-from agentguard.sinks.http import HttpSink
+from agentguard.sinks.http import HttpSink  # noqa: E402
 
 passed = 0
 failed = 0
@@ -74,6 +78,23 @@ def make_mock_openai():
     return mod, MockOpenAI
 
 
+def _build_traces_url(base_url: str, trace_id: Optional[str] = None) -> str:
+    url = f"{base_url}/api/v1/traces"
+    if trace_id:
+        return f"{url}?trace_id={trace_id}"
+    return url
+
+
+def _extract_traces(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
+    traces = payload.get("traces")
+    if isinstance(traces, list):
+        return traces
+    data = payload.get("data")
+    if isinstance(data, list):
+        return data
+    return []
+
+
 def main():
     global passed, failed
 
@@ -85,17 +106,24 @@ def main():
     base_url = os.environ.get("AGENTGUARD_DASHBOARD_URL", "https://app.agentguard47.com")
     ingest_url = f"{base_url}/api/ingest"
     use_real_openai = bool(os.environ.get("OPENAI_API_KEY"))
+    service_name = f"integration-dashboard-test-{int(time.time())}"
 
-    print(f"\n=== Dashboard Integration Test ===")
+    print("\n=== Dashboard Integration Test ===")
     print(f"  Dashboard: {base_url}")
     print(f"  OpenAI:    {'real' if use_real_openai else 'mock'}")
+    print(f"  Service:   {service_name}")
     print()
 
     # --- Setup ---
     warnings = []
     guard = BudgetGuard(max_cost_usd=0.05, warn_at_pct=0.3, on_warning=warnings.append)
     http_sink = HttpSink(url=ingest_url, api_key=api_key, batch_size=5, flush_interval=0.5)
-    tracer = Tracer(sink=http_sink, service="integration-dashboard-test", guards=[guard])
+    tracer = Tracer(sink=http_sink, service=service_name, guards=[guard])
+
+    print("Phase 0: Writing direct probe trace...")
+    with tracer.trace("dashboard.probe", data={"source": "integration_dashboard.py"}) as probe:
+        probe_trace_id = probe.trace_id
+        probe.event("probe.ready", data={"service": service_name})
 
     # --- OpenAI setup ---
     if use_real_openai:
@@ -138,22 +166,25 @@ def main():
     print("\nPhase 3: Querying dashboard /api/v1/traces...")
     ctx = ssl.create_default_context()
     req = urllib.request.Request(
-        f"{base_url}/api/v1/traces",
+        _build_traces_url(base_url, probe_trace_id),
         headers={"Authorization": f"Bearer {api_key}"},
     )
     try:
         with urllib.request.urlopen(req, context=ctx) as resp:
             body = json.loads(resp.read().decode())
-        traces = body.get("traces", body.get("data", []))
+        traces = _extract_traces(body)
         check("Traces endpoint reachable", True)
-        check("At least 1 trace returned", len(traces) > 0, f"got {len(traces)}")
+        check("Probe trace returned", len(traces) == 1, f"got {len(traces)}")
 
         if traces:
             latest = traces[0]
-            cost = latest.get("total_cost", latest.get("cost_usd", 0))
+            check(
+                "Probe trace_id matches",
+                latest.get("trace_id") == probe_trace_id,
+                f"got {latest.get('trace_id')}",
+            )
             event_count = latest.get("event_count", latest.get("events", 0))
-            check("total_cost > 0", cost > 0, f"got {cost}")
-            check("event_count > 0", event_count > 0, f"got {event_count}")
+            check("probe event_count > 0", event_count > 0, f"got {event_count}")
     except urllib.error.HTTPError as e:
         check("Traces endpoint reachable", False, f"HTTP {e.code}: {e.reason}")
     except Exception as e:

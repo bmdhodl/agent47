@@ -15,6 +15,7 @@
 ## Cutting a release
 
 - [ ] `make release-guard` passes (version markers, changelog section, and generated PyPI README are aligned).
+- [ ] If `HttpSink`, tracing, or the hosted-ingest contract changed, run `sdk/tests/integration_dashboard.py` with a real API key and keep proof of a trace-id-scoped `/api/v1/traces?trace_id=...` lookup from this release candidate.
 - [ ] `sdk/pyproject.toml` version matches the intended tag.
 - [ ] `CHANGELOG.md` has an entry for the version being shipped.
 - [ ] `sdk/PYPI_README.md` is regenerated from `README.md` + `CHANGELOG.md` and matches the release tag.

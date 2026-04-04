@@ -59,6 +59,42 @@ class TestBuildPlan(unittest.TestCase):
             [sys.executable, "-m", "pytest", "sdk/tests/test_sdk_preflight.py", "-v"],
         )
 
+    def test_conftest_change_runs_hosted_ingest_regressions(self):
+        steps = sdk_preflight.build_plan(["sdk/tests/conftest.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "targeted-pytest"])
+        targeted = next(step for step in steps if step.label == "targeted-pytest")
+        self.assertEqual(
+            targeted.command,
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "sdk/tests/test_e2e_pipeline.py",
+                "sdk/tests/test_hosted_ingest_contract.py",
+                "sdk/tests/test_integration_cost_guardrail.py",
+                "-v",
+            ],
+        )
+
+    def test_integration_dashboard_script_change_runs_helper_tests(self):
+        steps = sdk_preflight.build_plan(["sdk/tests/integration_dashboard.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "targeted-pytest"])
+        targeted = next(step for step in steps if step.label == "targeted-pytest")
+        self.assertEqual(
+            targeted.command,
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "sdk/tests/test_integration_dashboard_script.py",
+                "-v",
+            ],
+        )
+
 
 class TestPlanCli(unittest.TestCase):
     def test_plan_output_is_json(self):
