@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.6
 
 ### Hosted Ingest Compatibility
 - `HttpSink` now drops local-only `kind="meta"` watermark records before posting to the hosted ingest API, preventing first-batch 400s from validators that only accept trace spans and point events.
