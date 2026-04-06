@@ -24,6 +24,7 @@ import types
 import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlencode, urlsplit, urlunsplit
 
 # Ensure SDK is importable
 SDK_ROOT = Path(__file__).resolve().parents[1]
@@ -84,15 +85,19 @@ def _build_traces_url(
     trace_id: Optional[str] = None,
     service: Optional[str] = None,
 ) -> str:
-    url = f"{base_url}/api/v1/traces"
-    params = []
+    split = urlsplit(base_url.rstrip("/"))
+    path = split.path.rstrip("/")
+    if path:
+        path = f"{path}/api/v1/traces"
+    else:
+        path = "/api/v1/traces"
+
+    params: Dict[str, str] = {}
     if trace_id:
-        params.append(f"trace_id={trace_id}")
+        params["trace_id"] = trace_id
     if service:
-        params.append(f"service={service}")
-    if params:
-        return f"{url}?{'&'.join(params)}"
-    return url
+        params["service"] = service
+    return urlunsplit((split.scheme, split.netloc, path, urlencode(params), ""))
 
 
 def _extract_traces(payload: Dict[str, Any]) -> List[Dict[str, Any]]:

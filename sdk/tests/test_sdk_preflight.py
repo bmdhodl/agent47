@@ -63,7 +63,7 @@ class TestBuildPlan(unittest.TestCase):
         steps = sdk_preflight.build_plan(["sdk/tests/conftest.py"])
 
         labels = [step.label for step in steps]
-        self.assertEqual(labels, ["ruff", "targeted-pytest"])
+        self.assertEqual(labels, ["ruff", "import-check", "targeted-pytest"])
         targeted = next(step for step in steps if step.label == "targeted-pytest")
         self.assertEqual(
             targeted.command,
@@ -82,7 +82,7 @@ class TestBuildPlan(unittest.TestCase):
         steps = sdk_preflight.build_plan(["sdk/tests/integration_dashboard.py"])
 
         labels = [step.label for step in steps]
-        self.assertEqual(labels, ["ruff", "targeted-pytest"])
+        self.assertEqual(labels, ["ruff", "import-check", "targeted-pytest"])
         targeted = next(step for step in steps if step.label == "targeted-pytest")
         self.assertEqual(
             targeted.command,
@@ -92,6 +92,22 @@ class TestBuildPlan(unittest.TestCase):
                 "pytest",
                 "sdk/tests/test_integration_dashboard_script.py",
                 "-v",
+            ],
+        )
+
+    def test_non_test_sdk_script_change_gets_import_check(self):
+        steps = sdk_preflight.build_plan(["sdk/tests/e2e_v110.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "import-check"])
+        import_check = next(step for step in steps if step.label == "import-check")
+        self.assertEqual(
+            import_check.command,
+            [
+                sys.executable,
+                "-c",
+                sdk_preflight.IMPORT_CHECK_SNIPPET,
+                "sdk/tests/e2e_v110.py",
             ],
         )
 

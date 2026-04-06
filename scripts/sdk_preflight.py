@@ -111,6 +111,22 @@ TEST_MAP = {
     ],
 }
 BANDIT_ARGS = ["-m", "bandit", "-r", "sdk/agentguard/", "-s", "B101,B110,B112,B311", "-q"]
+IMPORT_CHECK_SNIPPET = """\
+import importlib.util
+import pathlib
+import sys
+
+root = pathlib.Path.cwd()
+files = sys.argv[1:]
+assert files, "expected at least one module path"
+
+for rel in files:
+    path = root / rel
+    spec = importlib.util.spec_from_file_location(path.stem, path)
+    assert spec is not None and spec.loader is not None, rel
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+"""
 
 
 @dataclass(frozen=True)
@@ -169,6 +185,22 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
                 label="ruff",
                 reason="lint only the Python files touched in this branch",
                 command=[sys.executable, "-m", "ruff", "check", *lint_targets],
+            )
+        )
+
+    import_check_targets = _existing(
+        path
+        for path in normalized
+        if path.startswith("sdk/tests/")
+        and path.endswith(".py")
+        and not Path(path).name.startswith("test_")
+    )
+    if import_check_targets:
+        steps.append(
+            Step(
+                label="import-check",
+                reason="import changed sdk/tests helper scripts to catch syntax and top-level import errors",
+                command=[sys.executable, "-c", IMPORT_CHECK_SNIPPET, *import_check_targets],
             )
         )
 

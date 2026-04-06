@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import time
 import urllib.error
 import urllib.request
 
@@ -54,7 +53,6 @@ class TestHostedIngestContract:
             ctx.event("tool.result", data={"ok": True})
 
         sink.shutdown()
-        time.sleep(0.2)
 
         requests = IngestHandler.request_log()
         assert requests, "Expected at least one ingest request"

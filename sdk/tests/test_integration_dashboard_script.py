@@ -46,6 +46,25 @@ class TestIntegrationDashboardHelpers(unittest.TestCase):
             "https://app.agentguard47.com/api/v1/traces?trace_id=trace_123&service=svc_123",
         )
 
+    def test_build_traces_url_strips_trailing_slash(self):
+        self.assertEqual(
+            integration_dashboard._build_traces_url(
+                "https://app.agentguard47.com/",
+                service="svc_123",
+            ),
+            "https://app.agentguard47.com/api/v1/traces?service=svc_123",
+        )
+
+    def test_build_traces_url_encodes_query_values(self):
+        self.assertEqual(
+            integration_dashboard._build_traces_url(
+                "https://app.agentguard47.com",
+                trace_id="trace/123",
+                service="svc name",
+            ),
+            "https://app.agentguard47.com/api/v1/traces?trace_id=trace%2F123&service=svc+name",
+        )
+
     def test_extract_traces_prefers_traces_key(self):
         payload = {"traces": [{"trace_id": "abc"}], "data": [{"trace_id": "wrong"}]}
         self.assertEqual(integration_dashboard._extract_traces(payload), payload["traces"])
