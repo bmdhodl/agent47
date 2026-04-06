@@ -1,8 +1,9 @@
 # AgentGuard MCP Server
 
-MCP (Model Context Protocol) server that connects coding agents to the
-AgentGuard Read API. It lets agents inspect their own traces, alerts, usage,
-costs, and saved spend after the local SDK is already in place.
+Read-only MCP (Model Context Protocol) server that connects coding agents to
+the AgentGuard Read API. Use it after the local SDK is already in place and
+you want Codex, Claude Code, Cursor, or another MCP client to inspect traces,
+alerts, usage, costs, and budget health.
 
 The boundary is deliberate:
 - The SDK proves runtime enforcement locally
