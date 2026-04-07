@@ -29,11 +29,27 @@ _DECISION_EVENT_TYPES = {
     DECISION_APPROVED,
     DECISION_BOUND,
 }
+_DECISION_RESERVED_SPAN_KEYS = {
+    "decision_id",
+    "workflow_id",
+    "object_type",
+    "object_id",
+    "actor_type",
+    "actor_id",
+}
+_MAX_DECISION_DATA_BYTES = 65_536
+_TEXT_TRUNCATION_SUFFIX = "...[truncated]"
 
 
 def _require_non_empty(name: str, value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{name} must be a non-empty string")
+    return value
+
+
+def _require_value(name: str, value: Any) -> Any:
+    if value is None:
+        raise ValueError(f"{name} must not be None")
     return value
 
 
@@ -81,6 +97,67 @@ def _compute_diff(proposal: Any, final: Any) -> Optional[str]:
     return rendered or ""
 
 
+def _coerce_json_value(value: Any) -> Any:
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    if isinstance(value, dict):
+        return {str(key): _coerce_json_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_coerce_json_value(item) for item in value]
+    if isinstance(value, set):
+        items = [_coerce_json_value(item) for item in value]
+        return sorted(items, key=repr)
+    return repr(value)
+
+
+def _json_size(value: Any) -> int:
+    return len(json.dumps(value, sort_keys=True, ensure_ascii=True).encode("utf-8"))
+
+
+def _truncate_text(text: str, max_bytes: int) -> str:
+    encoded = text.encode("utf-8")
+    if len(encoded) <= max_bytes:
+        return text
+    suffix_bytes = _TEXT_TRUNCATION_SUFFIX.encode("utf-8")
+    budget = max(0, max_bytes - len(suffix_bytes))
+    trimmed = encoded[:budget].decode("utf-8", errors="ignore")
+    return trimmed + _TEXT_TRUNCATION_SUFFIX
+
+
+def _truncation_marker(value: Any) -> Dict[str, Any]:
+    return {
+        "_truncated": True,
+        "_original_size_bytes": _json_size(_coerce_json_value(value)),
+    }
+
+
+def _fit_decision_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
+    sanitized = {key: _coerce_json_value(value) for key, value in payload.items()}
+    if _json_size(sanitized) <= _MAX_DECISION_DATA_BYTES:
+        return sanitized
+
+    for field, budget in (("diff", 4096), ("comment", 2048), ("reason", 2048)):
+        value = sanitized.get(field)
+        if isinstance(value, str):
+            sanitized[field] = _truncate_text(value, budget)
+            if _json_size(sanitized) <= _MAX_DECISION_DATA_BYTES:
+                return sanitized
+
+    for field in ("proposal", "final"):
+        sanitized[field] = _truncation_marker(sanitized[field])
+        if _json_size(sanitized) <= _MAX_DECISION_DATA_BYTES:
+            return sanitized
+
+    for field, budget in (("diff", 512), ("comment", 512), ("reason", 512)):
+        value = sanitized.get(field)
+        if isinstance(value, str):
+            sanitized[field] = _truncate_text(value, budget)
+
+    return sanitized
+
+
 def _build_decision_payload(
     context: TraceContext,
     *,
@@ -103,7 +180,7 @@ def _build_decision_payload(
     if event_type not in _DECISION_EVENT_TYPES:
         raise ValueError(f"Unsupported decision event type: {event_type}")
 
-    return {
+    payload = {
         "decision_id": _require_non_empty("decision_id", decision_id),
         "workflow_id": _require_non_empty("workflow_id", workflow_id),
         "trace_id": context.trace_id,
@@ -112,8 +189,8 @@ def _build_decision_payload(
         "actor_type": _require_non_empty("actor_type", actor_type),
         "actor_id": _require_non_empty("actor_id", actor_id),
         "event_type": event_type,
-        "proposal": _snapshot(proposal),
-        "final": _snapshot(final),
+        "proposal": _require_value("proposal", proposal),
+        "final": final,
         "diff": diff,
         "reason": reason,
         "comment": comment,
@@ -121,6 +198,7 @@ def _build_decision_payload(
         "binding_state": binding_state,
         "outcome": outcome,
     }
+    return _fit_decision_payload(payload)
 
 
 def _emit_decision_event(
@@ -190,7 +268,7 @@ def log_decision_proposed(
         actor_type=actor_type,
         actor_id=actor_id,
         event_type=DECISION_PROPOSED,
-        proposal=proposal,
+        proposal=_require_value("proposal", proposal),
         final=proposal,
         diff="",
         reason=reason,
@@ -220,6 +298,8 @@ def log_decision_edited(
     outcome: Optional[str] = "edited",
 ) -> Dict[str, Any]:
     """Emit a `decision.edited` event with original proposal, final form, and diff."""
+    resolved_proposal = _require_value("proposal", proposal)
+    resolved_final = _require_value("final", final)
     return _emit_decision_event(
         context,
         decision_id=decision_id,
@@ -229,9 +309,9 @@ def log_decision_edited(
         actor_type=actor_type,
         actor_id=actor_id,
         event_type=DECISION_EDITED,
-        proposal=proposal,
-        final=final,
-        diff=_compute_diff(proposal, final) if diff is None else diff,
+        proposal=resolved_proposal,
+        final=resolved_final,
+        diff=_compute_diff(resolved_proposal, resolved_final) if diff is None else diff,
         reason=reason,
         comment=comment,
         timestamp=timestamp,
@@ -259,6 +339,8 @@ def log_decision_overridden(
     outcome: Optional[str] = "overridden",
 ) -> Dict[str, Any]:
     """Emit a `decision.overridden` event with preserved proposal and reviewer rationale."""
+    resolved_proposal = _require_value("proposal", proposal)
+    resolved_final = _require_value("final", final)
     return _emit_decision_event(
         context,
         decision_id=decision_id,
@@ -268,9 +350,9 @@ def log_decision_overridden(
         actor_type=actor_type,
         actor_id=actor_id,
         event_type=DECISION_OVERRIDDEN,
-        proposal=proposal,
-        final=final,
-        diff=_compute_diff(proposal, final) if diff is None else diff,
+        proposal=resolved_proposal,
+        final=resolved_final,
+        diff=_compute_diff(resolved_proposal, resolved_final) if diff is None else diff,
         reason=reason,
         comment=comment,
         timestamp=timestamp,
@@ -298,7 +380,8 @@ def log_decision_approved(
     outcome: Optional[str] = "approved",
 ) -> Dict[str, Any]:
     """Emit a `decision.approved` event for a reviewed proposal or final form."""
-    resolved_final = proposal if final is None else final
+    resolved_proposal = _require_value("proposal", proposal)
+    resolved_final = resolved_proposal if final is None else _require_value("final", final)
     return _emit_decision_event(
         context,
         decision_id=decision_id,
@@ -308,9 +391,9 @@ def log_decision_approved(
         actor_type=actor_type,
         actor_id=actor_id,
         event_type=DECISION_APPROVED,
-        proposal=proposal,
+        proposal=resolved_proposal,
         final=resolved_final,
-        diff=_compute_diff(proposal, resolved_final) if diff is None else diff,
+        diff=_compute_diff(resolved_proposal, resolved_final) if diff is None else diff,
         reason=reason,
         comment=comment,
         timestamp=timestamp,
@@ -338,7 +421,8 @@ def log_decision_bound(
     diff: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Emit a `decision.bound` event for the binding result of an approved decision."""
-    resolved_final = proposal if final is None else final
+    resolved_proposal = _require_value("proposal", proposal)
+    resolved_final = resolved_proposal if final is None else _require_value("final", final)
     return _emit_decision_event(
         context,
         decision_id=decision_id,
@@ -348,9 +432,9 @@ def log_decision_bound(
         actor_type=actor_type,
         actor_id=actor_id,
         event_type=DECISION_BOUND,
-        proposal=proposal,
+        proposal=resolved_proposal,
         final=resolved_final,
-        diff=_compute_diff(proposal, resolved_final) if diff is None else diff,
+        diff=_compute_diff(resolved_proposal, resolved_final) if diff is None else diff,
         reason=reason,
         comment=comment,
         timestamp=timestamp,
@@ -627,6 +711,12 @@ def decision_flow(
         "actor_id": actor_id,
     }
     if span_data:
+        conflicting_keys = sorted(_DECISION_RESERVED_SPAN_KEYS.intersection(span_data))
+        if conflicting_keys:
+            raise ValueError(
+                "span_data cannot override reserved decision-flow keys: "
+                + ", ".join(conflicting_keys)
+            )
         span_payload.update(span_data)
 
     if isinstance(target, Tracer):

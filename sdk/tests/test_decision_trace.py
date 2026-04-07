@@ -213,3 +213,93 @@ def test_log_decision_bound_requires_explicit_binding_outcome_fields():
             )
 
     _capture_events(tracer, run)
+
+
+def test_log_decision_proposed_rejects_none_proposal():
+    tracer = Tracer(watermark=False)
+
+    def run():
+        with tracer.trace("agent.run") as span, pytest.raises(
+            ValueError,
+            match="proposal must not be None",
+        ):
+            log_decision_proposed(
+                span,
+                workflow_id="wf_none",
+                object_type="deployment",
+                object_id="deploy_none",
+                actor_type="agent",
+                actor_id="planner",
+                proposal=None,
+            )
+
+    _capture_events(tracer, run)
+
+
+def test_decision_flow_rejects_reserved_span_data_keys():
+    tracer = Tracer(watermark=False)
+
+    def run():
+        with pytest.raises(
+            ValueError,
+            match="span_data cannot override reserved decision-flow keys: workflow_id",
+        ), decision_flow(
+            tracer,
+            workflow_id="wf_reserved",
+            object_type="ticket",
+            object_id="ticket_11",
+            actor_type="agent",
+            actor_id="planner",
+            span_data={"workflow_id": "bad_override"},
+        ):
+            pass
+
+    _capture_events(tracer, run)
+
+
+def test_decision_payload_preserves_schema_for_large_non_serializable_values():
+    tracer = Tracer(watermark=False)
+    large_object = {"items": ["x" * 30000, object(), "y" * 30000]}
+
+    def run():
+        with tracer.trace("agent.run") as span:
+            log_decision_edited(
+                span,
+                decision_id="dec_big",
+                workflow_id="wf_big",
+                object_type="deployment",
+                object_id="deploy_big",
+                actor_type="human",
+                actor_id="reviewer",
+                proposal=large_object,
+                final={"items": ["done"]},
+                diff="z" * 20000,
+                reason="r" * 4000,
+                comment="c" * 4000,
+            )
+
+    events = _capture_events(tracer, run)
+    payload = next(event["data"] for event in events if event["name"] == "decision.edited")
+    required = {
+        "decision_id",
+        "workflow_id",
+        "trace_id",
+        "object_type",
+        "object_id",
+        "actor_type",
+        "actor_id",
+        "event_type",
+        "proposal",
+        "final",
+        "diff",
+        "reason",
+        "comment",
+        "timestamp",
+        "binding_state",
+        "outcome",
+    }
+    assert required.issubset(payload)
+    assert payload["proposal"]["_truncated"] is True
+    assert payload["final"] == {"items": ["done"]}
+    assert isinstance(payload["diff"], str)
+    assert payload["diff"].endswith("...[truncated]")

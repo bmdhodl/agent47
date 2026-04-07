@@ -391,7 +391,7 @@ Every decision event includes a stable schema in `event.data`:
 - `binding_state`
 - `outcome`
 
-Guide: [`docs/guides/decision-tracing.md`](docs/guides/decision-tracing.md)
+Guide: [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md)
 
 ## Evaluation
 
