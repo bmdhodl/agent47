@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -18,6 +19,12 @@ GENERATED_HEADER = (
 )
 
 LINK_TARGET_RE = re.compile(r"(?<=\])\(([^)]+)\)")
+GITHUB_ABSOLUTE_LINK_RE = re.compile(
+    rf"https://github\.com/{REPO_OWNER}/{REPO_NAME}/(?P<mode>blob|tree)/main/(?P<path>[^)#]+)"
+)
+COLAB_ABSOLUTE_LINK_RE = re.compile(
+    rf"https://colab\.research\.google\.com/github/{REPO_OWNER}/{REPO_NAME}/blob/main/(?P<path>[^)#]+)"
+)
 
 
 def _repo_root() -> Path:
@@ -44,6 +51,19 @@ def _load_version(repo_root: Path) -> str:
     return version_match.group("version")
 
 
+def _ref_for_repo_path(repo_root: Path, version: str, normalized_path: str) -> str:
+    result = subprocess.run(
+        ["git", "cat-file", "-e", f"v{version}:{normalized_path}"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode == 0:
+        return f"v{version}"
+    return "main"
+
+
 def _github_url(version: str, relative_target: str, repo_root: Path) -> str:
     if "#" in relative_target:
         path_part, anchor_fragment = relative_target.split("#", 1)
@@ -59,7 +79,8 @@ def _github_url(version: str, relative_target: str, repo_root: Path) -> str:
 
     path_mode = "tree" if candidate.exists() and candidate.is_dir() else "blob"
     normalized = "/".join(relative.parts)
-    return f"https://github.com/{REPO_OWNER}/{REPO_NAME}/{path_mode}/v{version}/{normalized}{anchor_fragment}"
+    ref = _ref_for_repo_path(repo_root, version, normalized)
+    return f"https://github.com/{REPO_OWNER}/{REPO_NAME}/{path_mode}/{ref}/{normalized}{anchor_fragment}"
 
 
 def rewrite_relative_links(markdown: str, version: str, repo_root: Path) -> str:
@@ -76,18 +97,23 @@ def rewrite_relative_links(markdown: str, version: str, repo_root: Path) -> str:
     return LINK_TARGET_RE.sub(replace, markdown)
 
 
-def rewrite_repo_absolute_links(markdown: str, version: str) -> str:
-    replacements = {
-        f"https://github.com/{REPO_OWNER}/{REPO_NAME}/blob/main/":
-            f"https://github.com/{REPO_OWNER}/{REPO_NAME}/blob/v{version}/",
-        f"https://github.com/{REPO_OWNER}/{REPO_NAME}/tree/main/":
-            f"https://github.com/{REPO_OWNER}/{REPO_NAME}/tree/v{version}/",
-        f"https://colab.research.google.com/github/{REPO_OWNER}/{REPO_NAME}/blob/main/":
-            f"https://colab.research.google.com/github/{REPO_OWNER}/{REPO_NAME}/blob/v{version}/",
-    }
-    for old, new in replacements.items():
-        markdown = markdown.replace(old, new)
-    return markdown
+def rewrite_repo_absolute_links(markdown: str, version: str, repo_root: Path) -> str:
+    def replace_repo(match: re.Match[str]) -> str:
+        normalized_path = match.group("path")
+        mode = match.group("mode")
+        ref = _ref_for_repo_path(repo_root, version, normalized_path)
+        return f"https://github.com/{REPO_OWNER}/{REPO_NAME}/{mode}/{ref}/{normalized_path}"
+
+    def replace_colab(match: re.Match[str]) -> str:
+        normalized_path = match.group("path")
+        ref = _ref_for_repo_path(repo_root, version, normalized_path)
+        return (
+            f"https://colab.research.google.com/github/{REPO_OWNER}/{REPO_NAME}/blob/"
+            f"{ref}/{normalized_path}"
+        )
+
+    markdown = GITHUB_ABSOLUTE_LINK_RE.sub(replace_repo, markdown)
+    return COLAB_ABSOLUTE_LINK_RE.sub(replace_colab, markdown)
 
 
 def extract_release_notes(changelog: str, version: str) -> str:
@@ -112,7 +138,7 @@ def build_pypi_readme(repo_root: Path) -> str:
     release_notes = extract_release_notes(changelog, version)
 
     rewritten_readme = rewrite_relative_links(readme, version, repo_root)
-    rewritten_readme = rewrite_repo_absolute_links(rewritten_readme, version)
+    rewritten_readme = rewrite_repo_absolute_links(rewritten_readme, version, repo_root)
     rewritten_changelog_link = _github_url(version, str(CHANGELOG_PATH).replace("\\", "/"), repo_root)
 
     parts = [
