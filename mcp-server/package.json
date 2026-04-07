@@ -1,7 +1,7 @@
 {
   "name": "@agentguard47/mcp-server",
   "version": "0.2.1",
-  "description": "MCP server for coding-agent traces, alerts, costs, usage, and budget health",
+  "description": "Read-only MCP server for coding-agent traces, alerts, costs, usage, and budget health",
   "mcpName": "io.github.bmdhodl/agentguard47",
   "license": "MIT",
   "type": "module",
@@ -20,7 +20,9 @@
     "agentguard",
     "coding-agents",
     "agent-safety",
-    "runtime-guardrails"
+    "runtime-guardrails",
+    "budget-health",
+    "incident-context"
   ],
   "bin": {
     "agentguard-mcp": "./dist/index.js"

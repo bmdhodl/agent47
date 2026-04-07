@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### SDK Distribution Copy
+- Tightened the public SDK and MCP copy around the coding-agent wedge: local-first runtime guardrails, retry-storm prevention, and read-only MCP access to traces, alerts, costs, usage, and budget health.
+- Refreshed the SDK package and MCP package descriptions so PyPI, npm, and MCP registry metadata all repeat the same narrow distribution story.
+
+### Hosted Ingest Gating
+- Hardened the local ingest test harness so it now rejects `kind="meta"` payloads and requires the hosted `type` alias, matching the contract that previously caused `HttpSink` batches to 400 in production.
+- Added hosted-ingest regression tests that fail if watermark events leak into HTTP batches or if release smoke validation stops proving a trace by exact `trace_id`.
+- Added a real SDK test gate to the tag-based publish workflow so PyPI publishes are blocked if the hosted-ingest regression suite, lint, or security checks fail.
+
 ## 1.2.6
 
 ### Hosted Ingest Compatibility

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "agentguard47"
 version = "1.2.6"
-description = "Zero-dependency runtime guardrails for coding agents and AI agents - stop loops, retries, and budget overruns with local traces"
+description = "Local-first runtime guardrails for coding agents - stop loops, retry storms, and budget burn with a zero-dependency SDK"
 readme = "PYPI_README.md"
 requires-python = ">=3.9"
 license = "MIT"
@@ -25,6 +25,9 @@ keywords = [
   "retry-guard",
   "runtime-enforcement",
   "coding-agent-safety",
+  "local-first",
+  "retry-storms",
+  "budget-control",
   "langchain",
   "openai",
   "anthropic",
