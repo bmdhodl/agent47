@@ -334,6 +334,65 @@ agentguard incident traces.jsonl --format html > incident.html
 The incident report summarizes guard triggers, exact-vs-estimated savings, and
 the dashboard upgrade path for retained alerts and remote kill switch.
 
+## Decision Tracing
+
+Capture agent proposals, human edits, overrides, approvals, and binding
+outcomes through the normal AgentGuard event path.
+
+```python
+from agentguard import JsonlFileSink, Tracer, decision_flow
+
+tracer = Tracer(
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
+    service="approval-flow",
+)
+
+with tracer.trace("agent.run") as run:
+    with decision_flow(
+        run,
+        workflow_id="deploy-approval",
+        object_type="deployment",
+        object_id="deploy-042",
+        actor_type="agent",
+        actor_id="release-bot",
+    ) as decision:
+        decision.proposed({"action": "deploy", "environment": "staging"})
+        decision.edited(
+            {"action": "deploy", "environment": "production"},
+            actor_type="human",
+            actor_id="reviewer-123",
+            reason="Customer approved direct rollout",
+        )
+        decision.approved(actor_type="human", actor_id="reviewer-123")
+        decision.bound(
+            actor_type="system",
+            actor_id="deploy-api",
+            binding_state="applied",
+            outcome="success",
+        )
+```
+
+Every decision event includes a stable schema in `event.data`:
+
+- `decision_id`
+- `workflow_id`
+- `trace_id`
+- `object_type`
+- `object_id`
+- `actor_type`
+- `actor_id`
+- `event_type`
+- `proposal`
+- `final`
+- `diff`
+- `reason`
+- `comment`
+- `timestamp`
+- `binding_state`
+- `outcome`
+
+Guide: [`docs/guides/decision-tracing.md`](docs/guides/decision-tracing.md)
+
 ## Evaluation
 
 Assert properties of your traces in tests or CI.
