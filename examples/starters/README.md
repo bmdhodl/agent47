@@ -28,7 +28,7 @@ are not included in the installed PyPI wheel.
 pip install agentguard47
 agentguard doctor
 agentguard quickstart --framework raw --write
-python examples/starters/agentguard_raw_quickstart.py
+python agentguard_raw_quickstart.py
 agentguard report .agentguard/traces.jsonl
 ```
 

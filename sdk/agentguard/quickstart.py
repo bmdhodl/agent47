@@ -60,7 +60,7 @@ def run_quickstart(
                 output_path=output_path,
                 force=force,
             )
-        except ValueError as exc:
+        except (ValueError, OSError) as exc:
             error = {
                 "status": "error",
                 "error": str(exc),
@@ -135,6 +135,9 @@ def _render_written_text(payload: Dict[str, Any], destination: str, out: TextIO)
     _print(out, f"Framework: {payload['framework']}")
     _print(out, f"Wrote starter: {destination}")
     _print(out, "")
+    _print(out, "Install:")
+    _print(out, f"  {payload['install_command']}")
+    _print(out, "")
     _print(out, payload["summary"])
     if payload["requires_env"]:
         _print(out, "")
@@ -195,10 +198,17 @@ def _rendered_next_commands(
     filename: str,
     destination: str,
 ) -> List[str]:
+    rendered_destination = _shell_quote_path(destination)
     rendered: List[str] = []
     for command in commands:
-        rendered.append(command.replace(filename, destination))
+        rendered.append(command.replace(filename, rendered_destination))
     return rendered
+
+
+def _shell_quote_path(path: str) -> str:
+    if not any(char.isspace() or char in {'"', "'"} for char in path):
+        return path
+    return '"' + path.replace('"', '\\"') + '"'
 
 
 def _py_string_literal(value: str) -> str:

@@ -105,6 +105,8 @@ class TestQuickstart(unittest.TestCase):
                     written = handle.read()
                 self.assertIn("agentguard.init(", written)
                 self.assertIn("Wrote starter: agentguard_raw_quickstart.py", buf.getvalue())
+                self.assertIn("Install:", buf.getvalue())
+                self.assertIn("pip install agentguard47", buf.getvalue())
                 self.assertIn("python agentguard_raw_quickstart.py", buf.getvalue())
             finally:
                 os.chdir(cwd)
@@ -128,6 +130,19 @@ class TestQuickstart(unittest.TestCase):
             with open(destination, encoding="utf-8") as handle:
                 self.assertIn("keep me", handle.read())
 
+    def test_write_reports_filesystem_errors_cleanly(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            buf = io.StringIO()
+            result = run_quickstart(
+                framework="raw",
+                write_file=True,
+                output_path=tmp,
+                stream=buf,
+            )
+
+            self.assertEqual(result, 1)
+            self.assertIn("[fail]", buf.getvalue())
+
     def test_write_force_overwrites_custom_output_and_json_reports_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             destination = os.path.join(tmp, "custom_starter.py")
@@ -150,6 +165,22 @@ class TestQuickstart(unittest.TestCase):
             with open(destination, encoding="utf-8") as handle:
                 written = handle.read()
             self.assertIn("StateGraph", written)
+
+    def test_written_next_commands_quote_paths_with_spaces(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = os.path.join(tmp, "folder with spaces", "starter.py")
+            buf = io.StringIO()
+            result = run_quickstart(
+                framework="raw",
+                write_file=True,
+                output_path=destination,
+                force=True,
+                stream=buf,
+            )
+
+            self.assertEqual(result, 0)
+            expected = destination.replace("\\", "/")
+            self.assertIn(f'python "{expected}"', buf.getvalue())
 
     def test_cli_quickstart_can_write_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
