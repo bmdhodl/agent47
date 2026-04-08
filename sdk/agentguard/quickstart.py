@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 from textwrap import dedent
 from typing import Any, Callable, Dict, List, Optional, TextIO, Tuple
 
@@ -22,6 +23,9 @@ def run_quickstart(
     trace_file: str = ".agentguard/traces.jsonl",
     stream: Optional[TextIO] = None,
     json_output: bool = False,
+    write_file: bool = False,
+    output_path: Optional[str] = None,
+    force: bool = False,
 ) -> int:
     """Render a framework-specific starter snippet for AgentGuard."""
     out = stream or sys.stdout
@@ -48,11 +52,36 @@ def run_quickstart(
             _print(out, f"Available frameworks: {', '.join(FRAMEWORK_CHOICES)}")
         return 1
 
+    destination: Optional[str] = None
+    if write_file:
+        try:
+            destination = _write_quickstart_file(
+                payload,
+                output_path=output_path,
+                force=force,
+            )
+        except ValueError as exc:
+            error = {
+                "status": "error",
+                "error": str(exc),
+                "framework": normalized,
+            }
+            if json_output:
+                out.write(json.dumps(error) + "\n")
+            else:
+                _print(out, "AgentGuard quickstart")
+                _print(out, f"[fail] {exc}")
+            return 1
+        payload["written_file"] = destination
+
     if json_output:
         out.write(json.dumps(payload) + "\n")
         return 0
 
-    _render_text(payload, out)
+    if destination is not None:
+        _render_written_text(payload, destination, out)
+    else:
+        _render_text(payload, out)
     return 0
 
 
@@ -101,6 +130,28 @@ def _render_text(payload: Dict[str, Any], out: TextIO) -> None:
         _print(out, f"  {command}")
 
 
+def _render_written_text(payload: Dict[str, Any], destination: str, out: TextIO) -> None:
+    _print(out, "AgentGuard quickstart")
+    _print(out, f"Framework: {payload['framework']}")
+    _print(out, f"Wrote starter: {destination}")
+    _print(out, "")
+    _print(out, payload["summary"])
+    if payload["requires_env"]:
+        _print(out, "")
+        _print(out, "Environment:")
+        for env_name in payload["requires_env"]:
+            _print(out, f"  export {env_name}=...")
+    if payload["notes"]:
+        _print(out, "")
+        _print(out, "Notes:")
+        for note in payload["notes"]:
+            _print(out, f"  - {note}")
+    _print(out, "")
+    _print(out, "Next commands:")
+    for command in _rendered_next_commands(payload["next_commands"], payload["filename"], destination):
+        _print(out, f"  {command}")
+
+
 def _base_payload(
     *,
     install_command: str,
@@ -120,6 +171,34 @@ def _base_payload(
         "requires_env": requires_env or [],
         "notes": notes or [],
     }
+
+
+def _write_quickstart_file(
+    payload: Dict[str, Any],
+    *,
+    output_path: Optional[str],
+    force: bool,
+) -> str:
+    destination = Path(output_path or payload["filename"])
+    if destination.exists() and not force:
+        raise ValueError(
+            f"Refusing to overwrite existing file: {destination}. Re-run with --force."
+        )
+    if destination.parent != Path("."):
+        destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(payload["snippet"] + "\n", encoding="utf-8")
+    return destination.as_posix()
+
+
+def _rendered_next_commands(
+    commands: List[str],
+    filename: str,
+    destination: str,
+) -> List[str]:
+    rendered: List[str] = []
+    for command in commands:
+        rendered.append(command.replace(filename, destination))
+    return rendered
 
 
 def _py_string_literal(value: str) -> str:

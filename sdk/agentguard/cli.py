@@ -124,6 +124,9 @@ def _quickstart(
     budget_usd: float = 5.0,
     trace_path: str = "traces.jsonl",
     json_output: bool = False,
+    write_file: bool = False,
+    output_path: Optional[str] = None,
+    force: bool = False,
 ) -> None:
     raise SystemExit(
         run_quickstart(
@@ -132,6 +135,9 @@ def _quickstart(
             budget_usd=budget_usd,
             trace_file=trace_path,
             json_output=json_output,
+            write_file=write_file,
+            output_path=output_path,
+            force=force,
         )
     )
 
@@ -232,6 +238,21 @@ def main() -> None:  # pragma: no cover
         dest="json_output",
         help="Emit machine-readable JSON for agents and CI.",
     )
+    quickstart.add_argument(
+        "--write",
+        action="store_true",
+        dest="write_file",
+        help="Write the starter snippet to a local file instead of only printing it.",
+    )
+    quickstart.add_argument(
+        "--output",
+        help="Optional path to write when using --write. Defaults to the starter filename for the chosen framework.",
+    )
+    quickstart.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite an existing output file when using --write.",
+    )
 
     args = parser.parse_args()
     if args.cmd == "summarize":
@@ -253,6 +274,9 @@ def main() -> None:  # pragma: no cover
             budget_usd=args.budget_usd,
             trace_path=args.trace_file,
             json_output=args.json_output,
+            write_file=args.write_file,
+            output_path=args.output,
+            force=args.force,
         )
     else:
         parser.print_help()

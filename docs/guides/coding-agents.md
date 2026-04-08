@@ -82,6 +82,18 @@ agentguard quickstart --framework langgraph
 
 or run the matching checked-in starter under `examples/starters/`.
 
+If you want the SDK to create a starter file in-place for the repo or coding
+agent:
+
+```bash
+agentguard quickstart --framework raw --write
+agentguard quickstart --framework openai --write --output agentguard_openai_quickstart.py
+```
+
+`--write` keeps the first-run flow local and auditable. It writes the exact
+starter shown by `quickstart`, then prints the next commands to run. It will
+not overwrite an existing file unless you add `--force`.
+
 Those starter files live in the repo for onboarding and copy-paste setup. They
 are not part of the installed PyPI wheel.
 

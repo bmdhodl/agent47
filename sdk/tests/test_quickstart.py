@@ -1,6 +1,8 @@
 import ast
 import io
 import json
+import os
+import tempfile
 import unittest
 from contextlib import redirect_stdout
 
@@ -89,6 +91,81 @@ class TestQuickstart(unittest.TestCase):
 
         self.assertEqual(result, 0)
         self.assertIn(".agentguard/traces.jsonl", buf.getvalue())
+
+    def test_write_creates_default_framework_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            cwd = os.getcwd()
+            os.chdir(tmp)
+            try:
+                buf = io.StringIO()
+                result = run_quickstart(framework="raw", write_file=True, stream=buf)
+                self.assertEqual(result, 0)
+                self.assertTrue(os.path.exists("agentguard_raw_quickstart.py"))
+                with open("agentguard_raw_quickstart.py", encoding="utf-8") as handle:
+                    written = handle.read()
+                self.assertIn("agentguard.init(", written)
+                self.assertIn("Wrote starter: agentguard_raw_quickstart.py", buf.getvalue())
+                self.assertIn("python agentguard_raw_quickstart.py", buf.getvalue())
+            finally:
+                os.chdir(cwd)
+
+    def test_write_refuses_to_overwrite_without_force(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = os.path.join(tmp, "starter.py")
+            with open(destination, "w", encoding="utf-8") as handle:
+                handle.write("print('keep me')\n")
+
+            buf = io.StringIO()
+            result = run_quickstart(
+                framework="raw",
+                write_file=True,
+                output_path=destination,
+                stream=buf,
+            )
+
+            self.assertEqual(result, 1)
+            self.assertIn("Refusing to overwrite existing file", buf.getvalue())
+            with open(destination, encoding="utf-8") as handle:
+                self.assertIn("keep me", handle.read())
+
+    def test_write_force_overwrites_custom_output_and_json_reports_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = os.path.join(tmp, "custom_starter.py")
+            with open(destination, "w", encoding="utf-8") as handle:
+                handle.write("old\n")
+
+            buf = io.StringIO()
+            result = run_quickstart(
+                framework="langgraph",
+                write_file=True,
+                output_path=destination,
+                force=True,
+                json_output=True,
+                stream=buf,
+            )
+
+            self.assertEqual(result, 0)
+            payload = json.loads(buf.getvalue())
+            self.assertEqual(payload["written_file"], destination.replace("\\", "/"))
+            with open(destination, encoding="utf-8") as handle:
+                written = handle.read()
+            self.assertIn("StateGraph", written)
+
+    def test_cli_quickstart_can_write_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = os.path.join(tmp, "agentguard_openai_quickstart.py")
+            buf = io.StringIO()
+
+            with redirect_stdout(buf), self.assertRaises(SystemExit) as ctx:
+                _quickstart(
+                    framework="openai",
+                    write_file=True,
+                    output_path=destination,
+                )
+
+            self.assertEqual(ctx.exception.code, 0)
+            self.assertTrue(os.path.exists(destination))
+            self.assertIn("Wrote starter:", buf.getvalue())
 
 
 if __name__ == "__main__":
