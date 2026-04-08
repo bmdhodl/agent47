@@ -29,6 +29,7 @@ CORE_MODULES = [
     "atracing.py",
     "cli.py",
     "cost.py",
+    "decision.py",
     "doctor.py",
     "evaluation.py",
     "export.py",

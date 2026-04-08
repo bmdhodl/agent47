@@ -5,6 +5,7 @@ import json
 from collections import Counter
 from typing import Optional
 
+from agentguard.decision import extract_decision_events
 from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
@@ -110,6 +111,51 @@ def _incident(path: str, output_format: str = "markdown") -> None:
     print(render_incident_report(path, output_format=output_format))
 
 
+def _decisions(
+    path: str,
+    *,
+    trace_id: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+    decision_id: Optional[str] = None,
+    as_json: bool = False,
+) -> None:
+    events = _load_events(path)
+    decisions = extract_decision_events(
+        events,
+        trace_id=trace_id,
+        workflow_id=workflow_id,
+        decision_id=decision_id,
+    )
+
+    if as_json:
+        print(json.dumps({"count": len(decisions), "decisions": decisions}))
+        return
+
+    print(f"decision events: {len(decisions)}")
+    if not decisions:
+        return
+
+    workflow_counts = Counter(item.get("workflow_id", "(unknown)") for item in decisions)
+    event_counts = Counter(item.get("event_type", "(unknown)") for item in decisions)
+    print("workflows:")
+    for workflow, count in workflow_counts.most_common():
+        print(f"  {workflow}: {count}")
+    print("event types:")
+    for event_type, count in event_counts.most_common():
+        print(f"  {event_type}: {count}")
+    print("recent:")
+    for item in decisions[-10:]:
+        print(
+            "  "
+            f"{item.get('event_type')} "
+            f"decision={item.get('decision_id')} "
+            f"workflow={item.get('workflow_id')} "
+            f"object={item.get('object_type')}:{item.get('object_id')} "
+            f"actor={item.get('actor_type')}:{item.get('actor_id')} "
+            f"outcome={item.get('outcome')}"
+        )
+
+
 def _demo(trace_path: str = "agentguard_demo_traces.jsonl") -> None:
     raise SystemExit(run_offline_demo(trace_path=trace_path))
 
@@ -189,6 +235,19 @@ def main() -> None:  # pragma: no cover
         help="Incident report format.",
     )
 
+    decisions = sub.add_parser("decisions", help="Extract decision.* events from a JSONL trace file")
+    decisions.add_argument("path")
+    decisions.add_argument("--trace-id", help="Only include decision events for this trace ID")
+    decisions.add_argument("--workflow-id", help="Only include decision events for this workflow ID")
+    decisions.add_argument("--decision-id", help="Only include decision events for this decision ID")
+    decisions.add_argument(
+        "--json",
+        "-j",
+        action="store_true",
+        dest="json_output",
+        help="Output machine-readable decision payloads as JSON",
+    )
+
     demo = sub.add_parser("demo", help="Run the offline AgentGuard demo")
     demo.add_argument(
         "--trace-file",
@@ -263,6 +322,14 @@ def main() -> None:  # pragma: no cover
         _eval(args.path, ci=args.ci)
     elif args.cmd == "incident":
         _incident(args.path, output_format=args.format)
+    elif args.cmd == "decisions":
+        _decisions(
+            args.path,
+            trace_id=args.trace_id,
+            workflow_id=args.workflow_id,
+            decision_id=args.decision_id,
+            as_json=args.json_output,
+        )
     elif args.cmd == "demo":
         _demo(trace_path=args.trace_file)
     elif args.cmd == "doctor":

@@ -32,6 +32,7 @@ Core modules form a DAG with no reverse dependencies:
 __init__.py (public API surface)
   -> setup.py -> repo_config.py, profiles.py, tracing.py, guards.py, instrument.py, sinks/http.py
   -> tracing.py
+  -> decision.py -> tracing.py
   -> guards.py
   -> instrument.py -> usage.py, guards.py, cost.py
   -> atracing.py -> tracing.py
@@ -58,11 +59,12 @@ Integrations (import core, never the reverse):
 
 ## Public API surface
 
-42 exports from `sdk/agentguard/__init__.py`:
+52 exports from `sdk/agentguard/__init__.py`:
 
 | Group | Exports |
 |-------|---------|
 | Tracing | `Tracer`, `TraceSink`, `JsonlFileSink`, `StdoutSink`, `HttpSink`, `summarize_trace` |
+| Decision tracing | `DecisionTrace`, `decision_flow`, `log_decision_proposed`, `log_decision_edited`, `log_decision_overridden`, `log_decision_approved`, `log_decision_bound`, `is_decision_event`, `extract_decision_payload`, `extract_decision_events` |
 | Guards | `BaseGuard`, `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard` |
 | Exceptions | `AgentGuardError`, `LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded` |
 | Instrumentation | `trace_agent`, `trace_tool`, `patch_openai`, `patch_anthropic`, `unpatch_openai`, `unpatch_anthropic` |
@@ -88,6 +90,7 @@ These modules improve the local SDK experience without blurring the hosted contr
 | Module | Purpose |
 |--------|---------|
 | `reporting.py` | Renders local incident summaries from trace files via `agentguard incident` |
+| `decision.py` | Emits stable `decision.*` lifecycle events and extracts normalized decision payloads back out of raw traces for local CLI and MCP consumers |
 | `usage.py` | Standalone provider inference and usage normalization shared by instrumentation, integrations, and reporting |
 | `savings.py` | Computes a local exact-vs-estimated savings ledger from traces using normalized usage data |
 | `demo.py` | Runs a deterministic offline proof of budget, loop, and retry enforcement via `agentguard demo` |

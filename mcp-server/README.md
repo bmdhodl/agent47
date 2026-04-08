@@ -1,8 +1,9 @@
 # AgentGuard MCP Server
 
-MCP (Model Context Protocol) server that connects coding agents to the
-AgentGuard Read API. It lets agents inspect their own traces, alerts, usage,
-costs, and saved spend after the local SDK is already in place.
+Read-only MCP (Model Context Protocol) server that connects coding agents to
+the AgentGuard Read API. Use it after the local SDK is already in place and
+you want Codex, Claude Code, Cursor, or another MCP client to inspect traces,
+decision events, alerts, usage, costs, and budget health.
 
 The boundary is deliberate:
 - The SDK proves runtime enforcement locally
@@ -21,6 +22,7 @@ npx -y @agentguard47/mcp-server
 |------|-------------|
 | `query_traces` | Search recent traces, filter by service/time range |
 | `get_trace` | Get the full event tree for a specific trace ID |
+| `get_trace_decisions` | Extract normalized `decision.*` events from a specific trace ID |
 | `get_alerts` | Get guard alerts such as loops, budget exceeded, and errors |
 | `get_usage` | Check event quota usage and plan limits |
 | `get_costs` | Get cost breakdown by model for the current month |
@@ -59,6 +61,7 @@ use the same command.
 ```bash
 npm ci
 npm run build
+npm test
 npm start
 ```
 
@@ -102,4 +105,6 @@ submit it to downstream directories like Glama and `awesome-mcp-servers`.
 
 - `src/index.ts` - Server entry point, tool registration (stdio transport)
 - `src/client.ts` - HTTP client wrapping `/api/v1/` endpoints
-- `src/tools.ts` - 6 MCP tool definitions and handlers
+- `src/decisions.ts` - Decision-event extraction helpers for hosted traces
+- `src/schema.ts` - JSON Schema to Zod shape builder used during tool registration
+- `src/tools.ts` - 7 MCP tool definitions and handlers

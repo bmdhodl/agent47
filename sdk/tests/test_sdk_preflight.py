@@ -59,6 +59,68 @@ class TestBuildPlan(unittest.TestCase):
             [sys.executable, "-m", "pytest", "sdk/tests/test_sdk_preflight.py", "-v"],
         )
 
+    def test_conftest_change_runs_hosted_ingest_regressions(self):
+        steps = sdk_preflight.build_plan(["sdk/tests/conftest.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "import-check", "targeted-pytest"])
+        targeted = next(step for step in steps if step.label == "targeted-pytest")
+        self.assertEqual(
+            targeted.command,
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "sdk/tests/test_e2e_pipeline.py",
+                "sdk/tests/test_hosted_ingest_contract.py",
+                "sdk/tests/test_integration_cost_guardrail.py",
+                "-v",
+            ],
+        )
+
+    def test_integration_dashboard_script_change_runs_helper_tests(self):
+        steps = sdk_preflight.build_plan(["sdk/tests/integration_dashboard.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "import-check", "targeted-pytest"])
+        targeted = next(step for step in steps if step.label == "targeted-pytest")
+        self.assertEqual(
+            targeted.command,
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "sdk/tests/test_integration_dashboard_script.py",
+                "-v",
+            ],
+        )
+
+    def test_non_test_sdk_script_change_gets_import_check(self):
+        steps = sdk_preflight.build_plan(["sdk/tests/e2e_v110.py"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["ruff", "import-check"])
+        import_check = next(step for step in steps if step.label == "import-check")
+        self.assertEqual(
+            import_check.command,
+            [
+                sys.executable,
+                "-c",
+                sdk_preflight.IMPORT_CHECK_SNIPPET,
+                "sdk/tests/e2e_v110.py",
+            ],
+        )
+
+    def test_mcp_server_change_runs_mcp_test_step(self):
+        steps = sdk_preflight.build_plan(["mcp-server/src/tools.ts"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["mcp-test"])
+        self.assertEqual(
+            steps[0].command,
+            ["npm", "--prefix", "mcp-server", "test"],
+        )
+
 
 class TestPlanCli(unittest.TestCase):
     def test_plan_output_is_json(self):

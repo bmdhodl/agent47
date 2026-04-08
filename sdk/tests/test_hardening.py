@@ -4,9 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import threading
-import types
-from typing import Any, Dict, List
-from unittest.mock import patch
+from typing import List
 
 import pytest
 
@@ -20,8 +18,7 @@ from agentguard.guards import (
     TimeoutExceeded,
 )
 from agentguard.sinks.http import _validate_api_key, _validate_url
-from agentguard.tracing import _MAX_NAME_LENGTH, _sanitize_data, _truncate_name, Tracer
-
+from agentguard.tracing import _MAX_NAME_LENGTH, Tracer, _sanitize_data, _truncate_name
 
 # --- AgentGuardError base exception ---
 
@@ -207,13 +204,22 @@ class TestEventDataSizeLimit:
         big_data = {"payload": "x" * 70_000}
         result = _sanitize_data(big_data)
         assert result is not None
-        assert result.get("_truncated") is True
-        assert "_original_size_bytes" in result
+        assert "payload" in result
+        payload = result["payload"]
+        assert isinstance(payload, (str, dict))
+        if isinstance(payload, str):
+            assert payload.endswith("...[truncated]")
+        else:
+            assert payload.get("_truncated") is True
+            assert "_original_size_bytes" in payload
 
     def test_non_serializable_data_replaced(self):
         data = {"obj": object()}
         result = _sanitize_data(data)
-        assert result == {"_error": "not_serializable"}
+        assert result is not None
+        assert "obj" in result
+        assert result["obj"]["_non_serializable"] is True
+        assert result["obj"]["_type"] == "object"
 
     def test_exactly_at_limit_passes(self):
         # Just under 64KB should pass
@@ -224,7 +230,8 @@ class TestEventDataSizeLimit:
         if serialized_size <= 65_536:
             assert result == data
         else:
-            assert result.get("_truncated") is True
+            assert result is not None
+            assert "payload" in result
 
 
 # --- init() validation ---

@@ -8,33 +8,27 @@ from __future__ import annotations
 
 import io
 import json
-import os
-import tempfile
 import threading
 import time
 
-import pytest
-
-from agentguard import (
-    Tracer,
-    JsonlFileSink,
-    TraceSink,
-    LoopGuard,
-    FuzzyLoopGuard,
-    BudgetGuard,
-    TimeoutGuard,
-    RateLimitGuard,
-    LoopDetected,
-    BudgetExceeded,
-    EvalSuite,
-    estimate_cost,
-)
-from agentguard.sinks.http import HttpSink
-from agentguard.evaluation import _load_events
-from agentguard.export import export_json, export_csv, export_jsonl
-
 from conftest import IngestHandler
 
+from agentguard import (
+    BudgetGuard,
+    EvalSuite,
+    FuzzyLoopGuard,
+    JsonlFileSink,
+    LoopDetected,
+    LoopGuard,
+    RateLimitGuard,
+    TimeoutGuard,
+    Tracer,
+    TraceSink,
+    estimate_cost,
+)
+from agentguard.evaluation import _load_events
+from agentguard.export import export_csv, export_json, export_jsonl
+from agentguard.sinks.http import HttpSink
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -217,12 +211,14 @@ class TestE2EPipeline:
         # Phase E: Assertions on ingest server
         # =====================================================================
         server_events = IngestHandler.events
-        server_trace_events = [e for e in server_events if e.get("kind") != "meta"]
-        assert len(server_trace_events) >= 15, f"Server got {len(server_trace_events)} trace events"
+        assert len(server_events) >= 15, f"Server got {len(server_events)} trace events"
 
         # E1: All valid (server accepted them)
-        for e in server_trace_events:
+        for e in server_events:
             assert e["kind"] in ("span", "event")
+            assert e["type"] == e["kind"]
+        assert not any(e["name"] == "watermark" for e in server_events)
+        assert IngestHandler.failed_requests() == []
 
         # E2: Idempotency keys unique
         keys = IngestHandler.idempotency_keys
@@ -230,7 +226,7 @@ class TestE2EPipeline:
         assert len(keys) == len(set(keys))
 
         # E3: Metadata in server events
-        for e in server_trace_events:
+        for e in server_events:
             assert e.get("metadata", {}).get("env") == "test"
 
         # =====================================================================

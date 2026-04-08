@@ -3,6 +3,18 @@ from importlib.metadata import PackageNotFoundError, version
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
+from .decision import (
+    DecisionTrace,
+    decision_flow,
+    extract_decision_events,
+    extract_decision_payload,
+    is_decision_event,
+    log_decision_approved,
+    log_decision_bound,
+    log_decision_edited,
+    log_decision_overridden,
+    log_decision_proposed,
+)
 from .evaluation import AssertionResult, EvalResult, EvalSuite, summarize_trace
 from .guards import (
     AgentGuardError,
@@ -57,6 +69,7 @@ __all__ = [
     "BudgetExceeded",
     "BudgetGuard",
     "BudgetWarning",
+    "DecisionTrace",
     "EvalResult",
     "EvalSuite",
     "FuzzyLoopGuard",
@@ -75,10 +88,19 @@ __all__ = [
     "__version__",
     "async_trace_agent",
     "async_trace_tool",
+    "decision_flow",
     "estimate_cost",
+    "extract_decision_events",
+    "extract_decision_payload",
     "get_budget_guard",
     "get_tracer",
     "init",
+    "is_decision_event",
+    "log_decision_approved",
+    "log_decision_bound",
+    "log_decision_edited",
+    "log_decision_overridden",
+    "log_decision_proposed",
     "patch_anthropic",
     "patch_anthropic_async",
     "patch_openai",

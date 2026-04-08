@@ -22,6 +22,7 @@ coding-agent setup; they are not included in the installed PyPI wheel.
 | File | Framework | What it shows |
 |------|-----------|---------------|
 | **`cost_guardrail.py`** | **OpenAI** | **Full cost guardrail pipeline: auto-budget enforcement, warning/exceeded events, dashboard sync** |
+| `decision_trace_workflow.py` | Raw AgentGuard | Agent proposal, human edit, approval, and binding outcome captured through the normal event pipeline |
 | `langchain_rag_with_guards.py` | LangChain | RAG pipeline with loop detection + budget enforcement via callback handler |
 | `crewai_with_guards.py` | CrewAI | Multi-agent crew with auto-traced OpenAI calls and budget limits |
 | `openai_agents_with_guards.py` | OpenAI | Function-calling agent with LoopGuard, BudgetGuard, and structured tracing |
@@ -42,6 +43,9 @@ python examples/starters/agentguard_openai_quickstart.py
 # Cost guardrail demo (recommended first networked example)
 export OPENAI_API_KEY=sk-...
 python examples/cost_guardrail.py
+
+# Decision-trace demo (local-only)
+python examples/decision_trace_workflow.py
 
 # Or with dashboard integration
 export AGENTGUARD_API_KEY=ag_...

@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.bmdhodl/agentguard47",
-  "description": "MCP server for coding-agent traces, alerts, costs, usage, and budget health.",
+  "description": "Read-only MCP server for coding-agent traces, decision events, alerts, costs, usage, and budget health.",
   "repository": {
     "url": "https://github.com/bmdhodl/agent47",
     "source": "github"
   },
-  "version": "0.2.1",
+  "version": "0.2.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@agentguard47/mcp-server",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "transport": {
         "type": "stdio"
       },

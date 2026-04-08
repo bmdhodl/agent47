@@ -4,14 +4,14 @@
 
 **Your coding agent just started looping through retries and shell calls. AgentGuard stops it before it burns budget.**
 
-Zero-dependency runtime guardrails for coding agents and AI agents. Set a dollar budget, cap retries, catch loops, and keep the first run fully local.
+Local-first runtime guardrails for coding agents. Stop loops, retry storms, and budget burn with a zero-dependency Python SDK, then expose traces and incident context through MCP when your tooling needs read access.
 
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.6/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.7/LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -74,30 +74,30 @@ automatically. Keep it local and static: no secrets, no API keys, no dashboard
 settings.
 
 Every `agentguard quickstart --framework ...` payload also has a matching
-runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.6/examples/starters). Those starter
+runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.7/examples/starters). Those starter
 files live in the repo for copy-paste onboarding and coding-agent setup; they
 are not shipped inside the PyPI wheel.
 
 For the repo-first onboarding flow, see
-[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.6/docs/guides/coding-agents.md).
+[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.7/docs/guides/coding-agents.md).
 
 For copy-paste setup snippets tailored to Codex, Claude Code, GitHub Copilot,
 Cursor, and MCP-capable agents, see
-[`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.6/docs/guides/coding-agent-safety-pack.md).
+[`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.7/docs/guides/coding-agent-safety-pack.md).
 
-## MCP Server for Coding Agents
+## MCP Server for Coding-Agent Workflows
 
-If your coding agent already uses MCP, AgentGuard also ships a published MCP
-server that exposes traces, alerts, usage, costs, and saved spend from the
-hosted read API:
+If your coding agent already uses MCP, AgentGuard also ships a published
+read-only MCP server that exposes traces, decision events, alerts, usage,
+costs, and budget health from the AgentGuard read API:
 
 ```bash
 npx -y @agentguard47/mcp-server
 ```
 
-The MCP server is intentionally narrow. The SDK stays local-first and free.
-The MCP server and hosted dashboard only come into play after you want retained
-history and team-visible operational follow-through.
+The MCP server is intentionally narrow. Use the SDK to enforce safety where the
+agent runs. Add MCP when you want Codex, Claude Code, Cursor, or another
+MCP-compatible client to inspect traces and incidents without bespoke glue.
 
 ## Try it in 60 seconds
 
@@ -131,9 +131,9 @@ Prefer the example script instead of the CLI? This does the same local demo:
 python examples/try_it_now.py
 ```
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.6/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.7/examples/quickstart.ipynb)
 
-## Quickstart: Stop a Runaway Agent in 4 Lines
+## Quickstart: Stop a Runaway Coding Agent in 4 Lines
 
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai
@@ -158,17 +158,18 @@ agentguard demo
 
 `agentguard doctor` verifies the install path. `agentguard quickstart` prints
 the copy-paste starter for your stack. `agentguard demo` then proves SDK-only
-enforcement with a realistic local run. The dashboard remains the control plane
-for alerts, retained history, and remote controls.
+enforcement with a realistic local run. Keep the first integration local and
+only add hosted pieces after you need retained incidents or team-visible
+follow-through.
 
 ## The Problem
 
-Coding agents and other autonomous AI agents are expensive and unpredictable:
+Coding agents are cheap to start and expensive to leave unattended:
 - **Cost overruns average 340%** on autonomous agent tasks ([source](https://arxiv.org/abs/2401.15811))
 - A single stuck retry or tool loop can burn through your budget in minutes
-- Existing tools (LangSmith, Langfuse, Portkey) show you the damage *after* it happens
+- Existing tracing tools show you what happened after the burn, not stop the run while it is still happening
 
-**AgentGuard is built to stop runaway agents mid-run, not just explain the damage later.**
+**AgentGuard is built to stop a runaway coding agent mid-run, not just explain the damage later.**
 
 | | AgentGuard | LangSmith | Langfuse | Portkey |
 |---|---|---|---|---|
@@ -345,6 +346,76 @@ agentguard incident traces.jsonl --format html > incident.html
 The incident report summarizes guard triggers, exact-vs-estimated savings, and
 the dashboard upgrade path for retained alerts and remote kill switch.
 
+## Decision Tracing
+
+Capture agent proposals, human edits, overrides, approvals, and binding
+outcomes through the normal AgentGuard event path.
+
+```python
+from agentguard import JsonlFileSink, Tracer, decision_flow
+
+tracer = Tracer(
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
+    service="approval-flow",
+)
+
+with tracer.trace("agent.run") as run:
+    with decision_flow(
+        run,
+        workflow_id="deploy-approval",
+        object_type="deployment",
+        object_id="deploy-042",
+        actor_type="agent",
+        actor_id="release-bot",
+    ) as decision:
+        decision.proposed({"action": "deploy", "environment": "staging"})
+        decision.edited(
+            {"action": "deploy", "environment": "production"},
+            actor_type="human",
+            actor_id="reviewer-123",
+            reason="Customer approved direct rollout",
+        )
+        decision.approved(actor_type="human", actor_id="reviewer-123")
+        decision.bound(
+            actor_type="system",
+            actor_id="deploy-api",
+            binding_state="applied",
+            outcome="success",
+        )
+```
+
+Every decision event includes a stable schema in `event.data`:
+
+- `decision_id`
+- `workflow_id`
+- `trace_id`
+- `object_type`
+- `object_id`
+- `actor_type`
+- `actor_id`
+- `event_type`
+- `proposal`
+- `final`
+- `diff`
+- `reason`
+- `comment`
+- `timestamp`
+- `binding_state`
+- `outcome`
+
+Guide: [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md)
+
+For local JSONL traces, you can extract the normalized decision events without
+writing your own parser:
+
+```bash
+agentguard decisions .agentguard/traces.jsonl
+agentguard decisions .agentguard/traces.jsonl --workflow-id deploy-approval --json
+```
+
+For retained traces exposed through MCP, use the `get_trace_decisions` tool to
+pull the same normalized decision payloads from a hosted trace by `trace_id`.
+
 ## Evaluation
 
 Assert properties of your traces in tests or CI.
@@ -392,7 +463,7 @@ Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offer
     assertions: "no_errors,max_cost:5.00"
 ```
 
-Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.6/docs/ci/cost-gate-workflow.yml)
+Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.7/docs/ci/cost-gate-workflow.yml)
 
 ## Incident Reports
 
@@ -443,7 +514,7 @@ tracer = Tracer(
 ```
 
 Keep the first integration local. Add `HttpSink` only when you need retained
-history, team-visible incidents, alerts, or hosted controls.
+incidents, alerts, or hosted follow-through.
 
 ## Architecture
 
@@ -470,7 +541,7 @@ Your Agent Code
 | Directory | Description | License |
 |-----------|-------------|---------|
 | `sdk/` | Python SDK — guards, tracing, evaluation, integrations | MIT |
-| `mcp-server/` | MCP server — agents query their own traces | MIT |
+| `mcp-server/` | Read-only MCP surface for traces, alerts, usage, costs, and budget health | MIT |
 | `site/` | Landing page | MIT |
 
 > Dashboard is in a separate private repo ([agent47-dashboard](https://github.com/bmdhodl/agent47-dashboard)).
@@ -484,11 +555,11 @@ Your Agent Code
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.6/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
+See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.7/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
 
-## Enterprise Support
+## Commercial Support
 
-Need help governing AI agents in production? BMD Pat LLC offers:
+Need help rolling out coding-agent safety in production? BMD Pat LLC offers:
 
 - **$500 Async Azure Audit** -- cost, reliability, and governance review. No meetings. Results in 5 business days.
 - **Custom agent guardrails** -- production-grade cost controls, compliance tooling, kill switches.
@@ -499,10 +570,26 @@ Need help governing AI agents in production? BMD Pat LLC offers:
 
 MIT (BMD PAT LLC)
 
-## Latest Release Notes (1.2.6)
+## Latest Release Notes (1.2.7)
 
-### Hosted Ingest Compatibility
-- `HttpSink` now drops local-only `kind="meta"` watermark records before posting to the hosted ingest API, preventing first-batch 400s from validators that only accept trace spans and point events.
-- `HttpSink` now mirrors supported trace kinds into both `kind` and `type` on outbound payloads so the SDK remains compatible across hosted validators while preserving local SDK semantics.
+### Decision Tracing
+- Added a new stdlib-only `decision.py` core module with stable `decision.proposed`, `decision.edited`, `decision.overridden`, `decision.approved`, and `decision.bound` event helpers.
+- Added the `DecisionTrace` stateful helper plus `decision_flow(...)` so one approval workflow can emit proposal, human edit, approval, and binding events without custom event plumbing.
+- Added a local decision-trace example workflow plus guide-level docs and migration notes; the feature reuses the normal AgentGuard event pipeline and requires no sink changes.
+- Added `extract_decision_payload(...)`, `extract_decision_events(...)`, and the local `agentguard decisions` CLI so decision traces are queryable without ad hoc JSON parsing.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.6/CHANGELOG.md)
+### SDK Distribution Copy
+- Tightened the public SDK and MCP copy around the coding-agent wedge: local-first runtime guardrails, retry-storm prevention, and read-only MCP access to traces, alerts, costs, usage, and budget health.
+- Refreshed the SDK package and MCP package descriptions so PyPI, npm, and MCP registry metadata all repeat the same narrow distribution story.
+
+### Hosted Ingest Gating
+- Hardened the local ingest test harness so it now rejects `kind="meta"` payloads and requires the hosted `type` alias, matching the contract that previously caused `HttpSink` batches to 400 in production.
+- Added hosted-ingest regression tests that fail if watermark events leak into HTTP batches or if release smoke validation stops proving a trace by exact `trace_id`.
+- Added a real SDK test gate to the tag-based publish workflow so PyPI publishes are blocked if the hosted-ingest regression suite, lint, or security checks fail.
+
+### Trace and MCP Hardening
+- Reused the core tracer's JSON-sanitization primitives for decision traces so large or messy payloads preserve queryable top-level keys instead of collapsing to opaque markers.
+- Added a dedicated `get_trace_decisions` MCP tool plus first-party MCP server tests, and wired the MCP build/test path into CI, `make check`, and SDK preflight.
+- Added release-guard coverage for MCP package metadata so `mcp-server/package.json` and `mcp-server/server.json` cannot drift during release prep.
+
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.7/CHANGELOG.md)

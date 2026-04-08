@@ -14,6 +14,7 @@ import types
 import urllib.request
 
 import pytest
+from conftest import IngestHandler
 
 from agentguard import (
     BudgetExceeded,
@@ -26,8 +27,6 @@ from agentguard.instrument import (
     unpatch_openai,
 )
 from agentguard.sinks.http import HttpSink
-
-from conftest import IngestHandler
 
 
 def _make_mock_openai(prompt_tokens=1000, completion_tokens=500, total_tokens=1500):
@@ -119,12 +118,18 @@ class TestIntegrationCostGuardrail:
         # --- Assertions on IngestHandler events ---
         events = IngestHandler.events
         names = [e.get("name", "") for e in events]
+        failed_requests = IngestHandler.failed_requests()
 
         assert "guard.budget_warning" in names, (
             f"Expected guard.budget_warning in events, got: {names}"
         )
         assert "guard.budget_exceeded" in names, (
             f"Expected guard.budget_exceeded in events, got: {names}"
+        )
+        assert "watermark" not in names, f"Hosted ingest should not store watermark events: {names}"
+        assert failed_requests == [], f"Hosted ingest contract failures: {failed_requests}"
+        assert all(e.get("type") == e.get("kind") for e in events), (
+            f"Expected hosted ingest payloads to mirror kind into type: {events}"
         )
 
         # LLM events have cost
@@ -145,24 +150,30 @@ class TestIntegrationCostGuardrail:
             if top is not None and nested is not None:
                 pytest.fail(f"cost_usd found at both top-level and data: {le}")
 
-        # --- Verify via /api/v1/traces endpoint ---
-        req = urllib.request.Request(f"{base_url}/api/v1/traces")
+        budget_exceeded_trace_ids = {
+            e["trace_id"] for e in events if e.get("name") == "guard.budget_exceeded"
+        }
+        assert len(budget_exceeded_trace_ids) == 1, (
+            f"Expected one guard.budget_exceeded trace, got: {budget_exceeded_trace_ids}"
+        )
+        trace_id = next(iter(budget_exceeded_trace_ids))
+
+        # --- Verify via /api/v1/traces endpoint using the trace we just wrote ---
+        req = urllib.request.Request(f"{base_url}/api/v1/traces?trace_id={trace_id}")
         with urllib.request.urlopen(req) as resp:
             body = json.loads(resp.read().decode())
 
         traces = body.get("traces", [])
-        assert len(traces) > 0, "Expected at least one trace"
+        assert len(traces) == 1, f"Expected one trace for {trace_id}, got: {traces}"
 
-        total_cost_all = sum(t["total_cost"] for t in traces)
-        total_events_all = sum(t["event_count"] for t in traces)
+        matching_trace_events = [e for e in events if e["trace_id"] == trace_id]
+        trace_summary = traces[0]
 
-        assert total_cost_all > 0, (
-            f"Total cost across traces should be > 0, got: {total_cost_all}"
+        assert trace_summary["trace_id"] == trace_id
+        assert trace_summary["event_count"] == len(matching_trace_events), (
+            f"Trace summary event_count should match stored events for {trace_id}: "
+            f"{trace_summary['event_count']} vs {len(matching_trace_events)}"
         )
-        assert total_events_all > 0, (
-            f"Total event count across traces should be > 0, got: {total_events_all}"
-        )
-        assert total_events_all == len(events), (
-            f"Sum of trace event_counts ({total_events_all}) should match "
-            f"server events ({len(events)})"
+        assert trace_summary["total_cost"] > 0, (
+            f"Trace total_cost should be > 0, got: {trace_summary['total_cost']}"
         )

@@ -16,6 +16,7 @@ README_SYNC_INPUTS = {
     "sdk/PYPI_README.md",
     "scripts/generate_pypi_readme.py",
 }
+MCP_SERVER_PREFIX = "mcp-server/"
 SDK_CODE_PREFIXES = (
     "sdk/agentguard/",
 )
@@ -83,6 +84,9 @@ TEST_MAP = {
     ],
     "sdk/agentguard/sinks/http.py": [
         "sdk/tests/test_http_sink.py",
+        "sdk/tests/test_hosted_ingest_contract.py",
+        "sdk/tests/test_integration_cost_guardrail.py",
+        "sdk/tests/test_e2e_pipeline.py",
     ],
     "sdk/agentguard/sinks/otel.py": [
         "sdk/tests/test_otel_sink.py",
@@ -98,8 +102,32 @@ TEST_MAP = {
     "scripts/sdk_preflight.py": [
         "sdk/tests/test_sdk_preflight.py",
     ],
+    "sdk/tests/conftest.py": [
+        "sdk/tests/test_hosted_ingest_contract.py",
+        "sdk/tests/test_integration_cost_guardrail.py",
+        "sdk/tests/test_e2e_pipeline.py",
+    ],
+    "sdk/tests/integration_dashboard.py": [
+        "sdk/tests/test_integration_dashboard_script.py",
+    ],
 }
 BANDIT_ARGS = ["-m", "bandit", "-r", "sdk/agentguard/", "-s", "B101,B110,B112,B311", "-q"]
+IMPORT_CHECK_SNIPPET = """\
+import importlib.util
+import pathlib
+import sys
+
+root = pathlib.Path.cwd()
+files = sys.argv[1:]
+assert files, "expected at least one module path"
+
+for rel in files:
+    path = root / rel
+    spec = importlib.util.spec_from_file_location(path.stem, path)
+    assert spec is not None and spec.loader is not None, rel
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+"""
 
 
 @dataclass(frozen=True)
@@ -161,9 +189,30 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
             )
         )
 
+    import_check_targets = _existing(
+        path
+        for path in normalized
+        if path.startswith("sdk/tests/")
+        and path.endswith(".py")
+        and not Path(path).name.startswith("test_")
+    )
+    if import_check_targets:
+        steps.append(
+            Step(
+                label="import-check",
+                reason="import changed sdk/tests helper scripts to catch syntax and top-level import errors",
+                command=[sys.executable, "-c", IMPORT_CHECK_SNIPPET, *import_check_targets],
+            )
+        )
+
     pytest_targets: Set[str] = set()
     for path in normalized:
-        if path.startswith("sdk/tests/") and path.endswith(".py") and (REPO_ROOT / path).exists():
+        if (
+            path.startswith("sdk/tests/")
+            and path.endswith(".py")
+            and Path(path).name.startswith("test_")
+            and (REPO_ROOT / path).exists()
+        ):
             pytest_targets.add(path)
         pytest_targets.update(TEST_MAP.get(path, ()))
 
@@ -210,6 +259,15 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
                 label="pypi-readme-test",
                 reason="the committed PyPI README snapshot should still match the generator output",
                 command=[sys.executable, "-m", "pytest", "sdk/tests/test_pypi_readme_sync.py", "-v"],
+            )
+        )
+
+    if any(path.startswith(MCP_SERVER_PREFIX) for path in normalized):
+        steps.append(
+            Step(
+                label="mcp-test",
+                reason="mcp-server edits should still build and pass the lightweight Node test suite",
+                command=["npm", "--prefix", "mcp-server", "test"],
             )
         )
 
