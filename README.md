@@ -76,8 +76,8 @@ Cursor, and MCP-capable agents, see
 ## MCP Server for Coding-Agent Workflows
 
 If your coding agent already uses MCP, AgentGuard also ships a published
-read-only MCP server that exposes traces, alerts, usage, costs, and budget
-health from the AgentGuard read API:
+read-only MCP server that exposes traces, decision events, alerts, usage,
+costs, and budget health from the AgentGuard read API:
 
 ```bash
 npx -y @agentguard47/mcp-server
@@ -392,6 +392,17 @@ Every decision event includes a stable schema in `event.data`:
 - `outcome`
 
 Guide: [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md)
+
+For local JSONL traces, you can extract the normalized decision events without
+writing your own parser:
+
+```bash
+agentguard decisions .agentguard/traces.jsonl
+agentguard decisions .agentguard/traces.jsonl --workflow-id deploy-approval --json
+```
+
+For retained traces exposed through MCP, use the `get_trace_decisions` tool to
+pull the same normalized decision payloads from a hosted trace by `trace_id`.
 
 ## Evaluation
 

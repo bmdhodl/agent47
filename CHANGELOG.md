@@ -2,10 +2,13 @@
 
 ## Unreleased
 
+## 1.2.7
+
 ### Decision Tracing
 - Added a new stdlib-only `decision.py` core module with stable `decision.proposed`, `decision.edited`, `decision.overridden`, `decision.approved`, and `decision.bound` event helpers.
 - Added the `DecisionTrace` stateful helper plus `decision_flow(...)` so one approval workflow can emit proposal, human edit, approval, and binding events without custom event plumbing.
 - Added a local decision-trace example workflow plus guide-level docs and migration notes; the feature reuses the normal AgentGuard event pipeline and requires no sink changes.
+- Added `extract_decision_payload(...)`, `extract_decision_events(...)`, and the local `agentguard decisions` CLI so decision traces are queryable without ad hoc JSON parsing.
 
 ### SDK Distribution Copy
 - Tightened the public SDK and MCP copy around the coding-agent wedge: local-first runtime guardrails, retry-storm prevention, and read-only MCP access to traces, alerts, costs, usage, and budget health.
@@ -15,6 +18,11 @@
 - Hardened the local ingest test harness so it now rejects `kind="meta"` payloads and requires the hosted `type` alias, matching the contract that previously caused `HttpSink` batches to 400 in production.
 - Added hosted-ingest regression tests that fail if watermark events leak into HTTP batches or if release smoke validation stops proving a trace by exact `trace_id`.
 - Added a real SDK test gate to the tag-based publish workflow so PyPI publishes are blocked if the hosted-ingest regression suite, lint, or security checks fail.
+
+### Trace and MCP Hardening
+- Reused the core tracer's JSON-sanitization primitives for decision traces so large or messy payloads preserve queryable top-level keys instead of collapsing to opaque markers.
+- Added a dedicated `get_trace_decisions` MCP tool plus first-party MCP server tests, and wired the MCP build/test path into CI, `make check`, and SDK preflight.
+- Added release-guard coverage for MCP package metadata so `mcp-server/package.json` and `mcp-server/server.json` cannot drift during release prep.
 
 ## 1.2.6
 

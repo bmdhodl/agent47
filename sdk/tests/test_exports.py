@@ -56,6 +56,9 @@ class TestTopLevelExports(unittest.TestCase):
         from agentguard import (
             DecisionTrace,
             decision_flow,
+            extract_decision_events,
+            extract_decision_payload,
+            is_decision_event,
             log_decision_approved,
             log_decision_bound,
             log_decision_edited,
@@ -64,6 +67,9 @@ class TestTopLevelExports(unittest.TestCase):
         )
         self.assertIsNotNone(DecisionTrace)
         self.assertIsNotNone(decision_flow)
+        self.assertIsNotNone(extract_decision_events)
+        self.assertIsNotNone(extract_decision_payload)
+        self.assertIsNotNone(is_decision_event)
         self.assertIsNotNone(log_decision_proposed)
         self.assertIsNotNone(log_decision_edited)
         self.assertIsNotNone(log_decision_overridden)
@@ -97,6 +103,7 @@ class TestTopLevelExports(unittest.TestCase):
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
             "RetryLimitExceeded",
             "DecisionTrace", "decision_flow",
+            "extract_decision_events", "extract_decision_payload", "is_decision_event",
             "log_decision_proposed", "log_decision_edited",
             "log_decision_overridden", "log_decision_approved",
             "log_decision_bound",

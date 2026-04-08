@@ -1,4 +1,5 @@
 import { AgentGuardClient } from "./client.js";
+import { extractDecisionEvents } from "./decisions.js";
 
 export interface ToolDefinition {
   name: string;
@@ -53,6 +54,28 @@ export const tools: ToolDefinition[] = [
     handler: async (client, args) => {
       const result = await client.getTrace(args.trace_id as string);
       return JSON.stringify(result, null, 2);
+    },
+  },
+  {
+    name: "get_trace_decisions",
+    description:
+      "Extract normalized decision.* events from one trace. " +
+      "Use this when a workflow includes proposal, override, approval, or binding steps.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        trace_id: { type: "string", description: "The trace ID to inspect for decision events" },
+      },
+      required: ["trace_id"],
+    },
+    handler: async (client, args) => {
+      const traceId = args.trace_id as string;
+      const result = await client.getTrace(traceId);
+      const events = Array.isArray(result.events) ? result.events : [];
+      const decisions = extractDecisionEvents(events as Array<Record<string, unknown>>, {
+        traceId,
+      });
+      return JSON.stringify({ trace_id: traceId, decisions }, null, 2);
     },
   },
   {

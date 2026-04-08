@@ -14,7 +14,14 @@ from datetime import datetime, timezone
 from difflib import unified_diff
 from typing import Any, Dict, Iterator, Optional, Union
 
-from .tracing import TraceContext, Tracer
+from .tracing import (
+    TraceContext,
+    Tracer,
+    _coerce_json_value,
+    _json_size,
+    _truncate_text,
+    _truncation_marker,
+)
 
 DECISION_PROPOSED = "decision.proposed"
 DECISION_EDITED = "decision.edited"
@@ -38,7 +45,24 @@ _DECISION_RESERVED_SPAN_KEYS = {
     "actor_id",
 }
 _MAX_DECISION_DATA_BYTES = 65_536
-_TEXT_TRUNCATION_SUFFIX = "...[truncated]"
+_DECISION_FIELDS = (
+    "decision_id",
+    "workflow_id",
+    "trace_id",
+    "object_type",
+    "object_id",
+    "actor_type",
+    "actor_id",
+    "event_type",
+    "proposal",
+    "final",
+    "diff",
+    "reason",
+    "comment",
+    "timestamp",
+    "binding_state",
+    "outcome",
+)
 
 
 def _require_non_empty(name: str, value: str) -> str:
@@ -97,42 +121,6 @@ def _compute_diff(proposal: Any, final: Any) -> Optional[str]:
     return rendered or ""
 
 
-def _coerce_json_value(value: Any) -> Any:
-    if value is None or isinstance(value, (bool, int, float, str)):
-        return value
-    if isinstance(value, bytes):
-        return value.decode("utf-8", errors="replace")
-    if isinstance(value, dict):
-        return {str(key): _coerce_json_value(item) for key, item in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_coerce_json_value(item) for item in value]
-    if isinstance(value, set):
-        items = [_coerce_json_value(item) for item in value]
-        return sorted(items, key=repr)
-    return repr(value)
-
-
-def _json_size(value: Any) -> int:
-    return len(json.dumps(value, sort_keys=True, ensure_ascii=True).encode("utf-8"))
-
-
-def _truncate_text(text: str, max_bytes: int) -> str:
-    encoded = text.encode("utf-8")
-    if len(encoded) <= max_bytes:
-        return text
-    suffix_bytes = _TEXT_TRUNCATION_SUFFIX.encode("utf-8")
-    budget = max(0, max_bytes - len(suffix_bytes))
-    trimmed = encoded[:budget].decode("utf-8", errors="ignore")
-    return trimmed + _TEXT_TRUNCATION_SUFFIX
-
-
-def _truncation_marker(value: Any) -> Dict[str, Any]:
-    return {
-        "_truncated": True,
-        "_original_size_bytes": _json_size(_coerce_json_value(value)),
-    }
-
-
 def _fit_decision_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
     sanitized = {key: _coerce_json_value(value) for key, value in payload.items()}
     if _json_size(sanitized) <= _MAX_DECISION_DATA_BYTES:
@@ -156,6 +144,56 @@ def _fit_decision_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
             sanitized[field] = _truncate_text(value, budget)
 
     return sanitized
+
+
+def is_decision_event(event: Dict[str, Any]) -> bool:
+    """Return True when a raw trace event carries a decision.* payload."""
+    if not isinstance(event, dict):
+        return False
+    if event.get("kind") != "event":
+        return False
+    name = event.get("name")
+    payload = event.get("data")
+    if isinstance(name, str) and name in _DECISION_EVENT_TYPES:
+        return isinstance(payload, dict)
+    event_type = payload.get("event_type") if isinstance(payload, dict) else None
+    return isinstance(event_type, str) and event_type in _DECISION_EVENT_TYPES
+
+
+def extract_decision_payload(event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Normalize a raw trace event into the stable decision payload shape."""
+    if not is_decision_event(event):
+        return None
+    payload = event.get("data")
+    if not isinstance(payload, dict):
+        payload = {}
+    normalized = {field: payload.get(field) for field in _DECISION_FIELDS}
+    normalized["trace_id"] = normalized["trace_id"] or event.get("trace_id")
+    normalized["event_type"] = normalized["event_type"] or event.get("name")
+    return normalized
+
+
+def extract_decision_events(
+    events: Iterator[Dict[str, Any]] | list[Dict[str, Any]],
+    *,
+    trace_id: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+    decision_id: Optional[str] = None,
+) -> list[Dict[str, Any]]:
+    """Extract normalized decision payloads from a trace event stream."""
+    extracted: list[Dict[str, Any]] = []
+    for event in events:
+        payload = extract_decision_payload(event)
+        if payload is None:
+            continue
+        if trace_id is not None and payload.get("trace_id") != trace_id:
+            continue
+        if workflow_id is not None and payload.get("workflow_id") != workflow_id:
+            continue
+        if decision_id is not None and payload.get("decision_id") != decision_id:
+            continue
+        extracted.append(payload)
+    return extracted
 
 
 def _build_decision_payload(
