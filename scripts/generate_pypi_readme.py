@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -25,6 +24,9 @@ GITHUB_ABSOLUTE_LINK_RE = re.compile(
 COLAB_ABSOLUTE_LINK_RE = re.compile(
     rf"https://colab\.research\.google\.com/github/{REPO_OWNER}/{REPO_NAME}/blob/main/(?P<path>[^)#]+)"
 )
+UNRELEASED_PATHS = {
+    "docs/guides/decision-tracing.md",
+}
 
 
 def _repo_root() -> Path:
@@ -51,17 +53,10 @@ def _load_version(repo_root: Path) -> str:
     return version_match.group("version")
 
 
-def _ref_for_repo_path(repo_root: Path, version: str, normalized_path: str) -> str:
-    result = subprocess.run(
-        ["git", "cat-file", "-e", f"v{version}:{normalized_path}"],
-        cwd=repo_root,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode == 0:
-        return f"v{version}"
-    return "main"
+def _ref_for_repo_path(version: str, normalized_path: str) -> str:
+    if normalized_path in UNRELEASED_PATHS:
+        return "main"
+    return f"v{version}"
 
 
 def _github_url(version: str, relative_target: str, repo_root: Path) -> str:
@@ -79,7 +74,7 @@ def _github_url(version: str, relative_target: str, repo_root: Path) -> str:
 
     path_mode = "tree" if candidate.exists() and candidate.is_dir() else "blob"
     normalized = "/".join(relative.parts)
-    ref = _ref_for_repo_path(repo_root, version, normalized)
+    ref = _ref_for_repo_path(version, normalized)
     return f"https://github.com/{REPO_OWNER}/{REPO_NAME}/{path_mode}/{ref}/{normalized}{anchor_fragment}"
 
 
@@ -101,12 +96,12 @@ def rewrite_repo_absolute_links(markdown: str, version: str, repo_root: Path) ->
     def replace_repo(match: re.Match[str]) -> str:
         normalized_path = match.group("path")
         mode = match.group("mode")
-        ref = _ref_for_repo_path(repo_root, version, normalized_path)
+        ref = _ref_for_repo_path(version, normalized_path)
         return f"https://github.com/{REPO_OWNER}/{REPO_NAME}/{mode}/{ref}/{normalized_path}"
 
     def replace_colab(match: re.Match[str]) -> str:
         normalized_path = match.group("path")
-        ref = _ref_for_repo_path(repo_root, version, normalized_path)
+        ref = _ref_for_repo_path(version, normalized_path)
         return (
             f"https://colab.research.google.com/github/{REPO_OWNER}/{REPO_NAME}/blob/"
             f"{ref}/{normalized_path}"
