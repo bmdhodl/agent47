@@ -214,6 +214,96 @@ class TestCliReport(unittest.TestCase):
             self.assertEqual(output["savings"]["estimated_tokens_saved"], 1500)
             self.assertAlmostEqual(output["savings"]["estimated_usd_saved"], 0.0075, places=4)
 
+    def test_decisions_command_outputs_human_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, "traces.jsonl")
+            events = [
+                {
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "name": "decision.proposed",
+                    "ts": 0,
+                    "duration_ms": None,
+                    "data": {
+                        "decision_id": "dec_1",
+                        "workflow_id": "wf_1",
+                        "trace_id": "t1",
+                        "object_type": "deployment",
+                        "object_id": "deploy_1",
+                        "actor_type": "agent",
+                        "actor_id": "planner",
+                        "event_type": "decision.proposed",
+                        "proposal": {"action": "deploy"},
+                        "final": {"action": "deploy"},
+                        "diff": "",
+                        "reason": None,
+                        "comment": None,
+                        "timestamp": "2026-04-07T00:00:00Z",
+                        "binding_state": None,
+                        "outcome": "proposed",
+                    },
+                    "error": None,
+                }
+            ]
+            with open(path, "w", encoding="utf-8") as f:
+                for event in events:
+                    f.write(json.dumps(event) + "\n")
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._decisions(path)
+
+            output = buf.getvalue()
+            self.assertIn("decision events: 1", output)
+            self.assertIn("decision.proposed", output)
+            self.assertIn("workflow=wf_1", output)
+
+    def test_decisions_command_outputs_json(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, "traces.jsonl")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(
+                    json.dumps(
+                        {
+                            "kind": "event",
+                            "phase": "emit",
+                            "trace_id": "t1",
+                            "name": "decision.bound",
+                            "ts": 0,
+                            "duration_ms": None,
+                            "data": {
+                                "decision_id": "dec_1",
+                                "workflow_id": "wf_1",
+                                "trace_id": "t1",
+                                "object_type": "deployment",
+                                "object_id": "deploy_1",
+                                "actor_type": "system",
+                                "actor_id": "deploy-api",
+                                "event_type": "decision.bound",
+                                "proposal": {"action": "deploy"},
+                                "final": {"action": "deploy"},
+                                "diff": "",
+                                "reason": None,
+                                "comment": None,
+                                "timestamp": "2026-04-07T00:00:00Z",
+                                "binding_state": "applied",
+                                "outcome": "success",
+                            },
+                            "error": None,
+                        }
+                    )
+                    + "\n"
+                )
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._decisions(path, as_json=True)
+
+            output = json.loads(buf.getvalue())
+            self.assertEqual(output["count"], 1)
+            self.assertEqual(output["decisions"][0]["event_type"], "decision.bound")
+
 
 if __name__ == "__main__":
     unittest.main()

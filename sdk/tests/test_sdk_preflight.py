@@ -111,6 +111,16 @@ class TestBuildPlan(unittest.TestCase):
             ],
         )
 
+    def test_mcp_server_change_runs_mcp_test_step(self):
+        steps = sdk_preflight.build_plan(["mcp-server/src/tools.ts"])
+
+        labels = [step.label for step in steps]
+        self.assertEqual(labels, ["mcp-test"])
+        self.assertEqual(
+            steps[0].command,
+            ["npm", "--prefix", "mcp-server", "test"],
+        )
+
 
 class TestPlanCli(unittest.TestCase):
     def test_plan_output_is_json(self):

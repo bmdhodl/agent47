@@ -3,6 +3,9 @@ import pytest
 from agentguard import (
     Tracer,
     decision_flow,
+    extract_decision_events,
+    extract_decision_payload,
+    is_decision_event,
     log_decision_bound,
     log_decision_edited,
     log_decision_proposed,
@@ -303,3 +306,87 @@ def test_decision_payload_preserves_schema_for_large_non_serializable_values():
     assert payload["final"] == {"items": ["done"]}
     assert isinstance(payload["diff"], str)
     assert payload["diff"].endswith("...[truncated]")
+
+
+def test_extract_decision_payload_normalizes_trace_fields():
+    raw_event = {
+        "kind": "event",
+        "name": "decision.approved",
+        "trace_id": "trace_123",
+        "data": {
+            "decision_id": "dec_1",
+            "workflow_id": "wf_1",
+            "object_type": "deployment",
+            "object_id": "deploy_1",
+            "actor_type": "human",
+            "actor_id": "reviewer",
+            "proposal": {"action": "deploy"},
+            "final": {"action": "deploy"},
+            "diff": "",
+            "reason": "looks good",
+            "comment": None,
+            "timestamp": "2026-04-07T00:00:00Z",
+            "binding_state": None,
+            "outcome": "approved",
+        },
+    }
+
+    assert is_decision_event(raw_event) is True
+    payload = extract_decision_payload(raw_event)
+    assert payload["event_type"] == "decision.approved"
+    assert payload["trace_id"] == "trace_123"
+
+
+def test_extract_decision_events_filters_by_workflow():
+    events = [
+        {
+            "kind": "event",
+            "name": "decision.proposed",
+            "trace_id": "trace_a",
+            "data": {
+                "decision_id": "dec_a",
+                "workflow_id": "wf_a",
+                "trace_id": "trace_a",
+                "object_type": "deployment",
+                "object_id": "deploy_a",
+                "actor_type": "agent",
+                "actor_id": "planner",
+                "event_type": "decision.proposed",
+                "proposal": {"action": "deploy"},
+                "final": {"action": "deploy"},
+                "diff": "",
+                "reason": None,
+                "comment": None,
+                "timestamp": "2026-04-07T00:00:00Z",
+                "binding_state": None,
+                "outcome": "proposed",
+            },
+        },
+        {
+            "kind": "event",
+            "name": "decision.approved",
+            "trace_id": "trace_b",
+            "data": {
+                "decision_id": "dec_b",
+                "workflow_id": "wf_b",
+                "trace_id": "trace_b",
+                "object_type": "ticket",
+                "object_id": "ticket_b",
+                "actor_type": "human",
+                "actor_id": "reviewer",
+                "event_type": "decision.approved",
+                "proposal": {"action": "close"},
+                "final": {"action": "close"},
+                "diff": "",
+                "reason": None,
+                "comment": None,
+                "timestamp": "2026-04-07T00:01:00Z",
+                "binding_state": None,
+                "outcome": "approved",
+            },
+        },
+    ]
+
+    payloads = extract_decision_events(events, workflow_id="wf_b")
+    assert len(payloads) == 1
+    assert payloads[0]["decision_id"] == "dec_b"

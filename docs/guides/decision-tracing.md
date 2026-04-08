@@ -148,3 +148,14 @@ Decision traces are ordinary AgentGuard events:
 
 See [`examples/decision_trace_workflow.py`](../../examples/decision_trace_workflow.py)
 for a full local example.
+
+For local JSONL traces, you can extract normalized decision payloads with:
+
+```bash
+agentguard decisions .agentguard/traces.jsonl
+agentguard decisions .agentguard/traces.jsonl --workflow-id deploy-approval --json
+```
+
+For retained traces accessed through the hosted read API, the AgentGuard MCP
+server now exposes a matching `get_trace_decisions` tool so coding agents can
+inspect the same normalized `decision.*` payloads without custom trace parsing.

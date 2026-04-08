@@ -2,8 +2,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
 import { AgentGuardClient } from "./client.js";
+import { buildToolShape } from "./schema.js";
 import { tools } from "./tools.js";
 
 const server = new McpServer({
@@ -22,20 +22,7 @@ try {
 
 // Register each tool with the MCP server
 for (const tool of tools) {
-  // Build a Zod schema from the JSON Schema properties
-  const shape: Record<string, z.ZodTypeAny> = {};
-  const required = new Set(tool.inputSchema.required ?? []);
-
-  for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
-    const p = prop as { type: string; description?: string };
-    let field: z.ZodTypeAny;
-    if (p.type === "number") {
-      field = z.number().describe(p.description ?? "");
-    } else {
-      field = z.string().describe(p.description ?? "");
-    }
-    shape[key] = required.has(key) ? field : field.optional();
-  }
+  const shape = buildToolShape(tool.inputSchema.properties, tool.inputSchema.required);
 
   const toolName = tool.name;
   const handler = tool.handler;

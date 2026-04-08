@@ -32,6 +32,8 @@ logger = logging.getLogger("agentguard.tracing")
 
 _MAX_NAME_LENGTH = 1000
 _MAX_EVENT_DATA_BYTES = 65_536  # 64 KB
+_TEXT_TRUNCATION_SUFFIX = "...[truncated]"
+_MIN_FIELD_BUDGET = 128
 
 
 class TraceSink:
@@ -101,26 +103,93 @@ def _truncate_name(name: str) -> str:
     return name[:_MAX_NAME_LENGTH]
 
 
+def _coerce_json_value(value: Any) -> Any:
+    """Recursively coerce values into JSON-serializable structures."""
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    if isinstance(value, dict):
+        return {str(key): _coerce_json_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_coerce_json_value(item) for item in value]
+    if isinstance(value, set):
+        items = [_coerce_json_value(item) for item in value]
+        return sorted(items, key=repr)
+    return repr(value)
+
+
+def _json_size(value: Any) -> int:
+    return len(json.dumps(value, sort_keys=True, ensure_ascii=True).encode("utf-8"))
+
+
+def _truncate_text(text: str, max_bytes: int) -> str:
+    encoded = text.encode("utf-8")
+    if len(encoded) <= max_bytes:
+        return text
+    suffix_bytes = _TEXT_TRUNCATION_SUFFIX.encode("utf-8")
+    budget = max(0, max_bytes - len(suffix_bytes))
+    trimmed = encoded[:budget].decode("utf-8", errors="ignore")
+    return trimmed + _TEXT_TRUNCATION_SUFFIX
+
+
+def _truncation_marker(value: Any) -> Dict[str, Any]:
+    coerced = _coerce_json_value(value)
+    return {
+        "_truncated": True,
+        "_original_size_bytes": _json_size(coerced),
+    }
+
+
+def _fit_mapping_data(data: Dict[str, Any], size_limit: int) -> Dict[str, Any]:
+    if _json_size(data) <= size_limit:
+        return data
+
+    field_budget = max(_MIN_FIELD_BUDGET, size_limit // max(len(data), 1))
+    reduced: Dict[str, Any] = {}
+    for key, value in data.items():
+        if isinstance(value, str):
+            reduced[key] = _truncate_text(value, field_budget)
+        elif _json_size(value) > field_budget:
+            reduced[key] = _truncation_marker(value)
+        else:
+            reduced[key] = value
+
+    if _json_size(reduced) <= size_limit:
+        return reduced
+
+    for key, value in reduced.items():
+        if isinstance(value, str):
+            reduced[key] = _truncate_text(value, _MIN_FIELD_BUDGET)
+
+    if _json_size(reduced) <= size_limit:
+        return reduced
+
+    for key, value in reduced.items():
+        if isinstance(value, (dict, list)):
+            reduced[key] = _truncation_marker(value)
+            if _json_size(reduced) <= size_limit:
+                return reduced
+
+    return {"_truncated": True, "_original_size_bytes": _json_size(data)}
+
+
 def _sanitize_data(data: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-    """Validate event data size, replacing oversized payloads with a marker.
+    """Validate event data size while preserving queryable top-level keys when possible.
 
     Prevents OOM from malicious or buggy callers passing enormous data dicts.
     """
     if data is None:
         return None
-    try:
-        serialized = json.dumps(data, sort_keys=True)
-    except (TypeError, ValueError):
-        logger.warning("Event data is not JSON-serializable, replacing with marker")
-        return {"_error": "not_serializable"}
-    size = len(serialized.encode("utf-8"))
+    safe_data = {str(key): _coerce_json_value(value) for key, value in data.items()}
+    size = _json_size(safe_data)
     if size > _MAX_EVENT_DATA_BYTES:
         logger.warning(
             "Event data truncated: %d bytes > %d limit",
             size, _MAX_EVENT_DATA_BYTES,
         )
-        return {"_truncated": True, "_original_size_bytes": size}
-    return data
+        return _fit_mapping_data(safe_data, _MAX_EVENT_DATA_BYTES)
+    return safe_data
 
 
 @dataclass

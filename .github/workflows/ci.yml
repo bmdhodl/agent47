@@ -55,3 +55,17 @@ jobs:
         run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py
       - name: Security lint (bandit)
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+
+  mcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: mcp-server/package-lock.json
+      - name: Install MCP server deps
+        run: npm --prefix mcp-server ci
+      - name: MCP build and tests
+        run: npm --prefix mcp-server test

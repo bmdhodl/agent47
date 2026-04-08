@@ -16,6 +16,7 @@ README_SYNC_INPUTS = {
     "sdk/PYPI_README.md",
     "scripts/generate_pypi_readme.py",
 }
+MCP_SERVER_PREFIX = "mcp-server/"
 SDK_CODE_PREFIXES = (
     "sdk/agentguard/",
 )
@@ -258,6 +259,15 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
                 label="pypi-readme-test",
                 reason="the committed PyPI README snapshot should still match the generator output",
                 command=[sys.executable, "-m", "pytest", "sdk/tests/test_pypi_readme_sync.py", "-v"],
+            )
+        )
+
+    if any(path.startswith(MCP_SERVER_PREFIX) for path in normalized):
+        steps.append(
+            Step(
+                label="mcp-test",
+                reason="mcp-server edits should still build and pass the lightweight Node test suite",
+                command=["npm", "--prefix", "mcp-server", "test"],
             )
         )
 

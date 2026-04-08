@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from agentguard.tracing import JsonlFileSink, TraceContext, Tracer
+from agentguard.tracing import JsonlFileSink, TraceContext, Tracer, _sanitize_data
 
 
 def test_trace_emits_events():
@@ -108,6 +108,32 @@ class TestEmitCostUsd(unittest.TestCase):
         self.assertEqual(len(captured), 1)
         self.assertIn("cost_usd", captured[0])
         self.assertEqual(captured[0]["cost_usd"], 0.0)
+
+
+class TestSanitizeData(unittest.TestCase):
+    def test_sanitize_data_coerces_non_serializable_values(self) -> None:
+        payload = _sanitize_data({"tool": "deploy", "raw": object(), "items": {1, 2}})
+
+        self.assertEqual(payload["tool"], "deploy")
+        self.assertIsInstance(payload["raw"], str)
+        self.assertEqual(payload["items"], [1, 2])
+
+    def test_sanitize_data_preserves_top_level_keys_when_truncating(self) -> None:
+        payload = _sanitize_data(
+            {
+                "proposal": {"items": ["x" * 30000, "y" * 30000]},
+                "comment": "z" * 20000,
+                "object_id": "deploy_123",
+            }
+        )
+
+        self.assertIn("proposal", payload)
+        self.assertIn("comment", payload)
+        self.assertIn("object_id", payload)
+        self.assertEqual(payload["object_id"], "deploy_123")
+        self.assertTrue(
+            payload["proposal"].get("_truncated") or payload["comment"].endswith("...[truncated]")
+        )
 
 
 if __name__ == "__main__":

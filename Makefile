@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines preflight release-guard
+.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp
 
 # Install SDK in editable mode with dev tools
 install:
@@ -25,7 +25,7 @@ fix:
 	ruff check sdk/agentguard/ --fix
 
 # Lint + full test suite (mirrors CI)
-check: lint test
+check: lint test mcp
 
 # Fast local feedback based on changed files
 preflight:
@@ -34,6 +34,10 @@ preflight:
 # Validate release metadata and doc markers stay aligned
 release-guard:
 	python scripts/sdk_release_guard.py
+
+# Build and test the MCP server
+mcp:
+	npm --prefix mcp-server test
 
 # Security lint (bandit)
 security:
