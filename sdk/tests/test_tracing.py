@@ -115,8 +115,32 @@ class TestSanitizeData(unittest.TestCase):
         payload = _sanitize_data({"tool": "deploy", "raw": object(), "items": {1, 2}})
 
         self.assertEqual(payload["tool"], "deploy")
-        self.assertIsInstance(payload["raw"], str)
+        self.assertEqual(payload["raw"]["_non_serializable"], True)
+        self.assertEqual(payload["raw"]["_type"], "object")
         self.assertEqual(payload["items"], [1, 2])
+
+    def test_sanitize_data_wraps_non_mapping_payloads(self) -> None:
+        payload = _sanitize_data(["deploy", object()])
+
+        self.assertIn("_value", payload)
+        self.assertEqual(payload["_value"][0], "deploy")
+        self.assertEqual(payload["_value"][1]["_non_serializable"], True)
+
+    def test_span_data_is_sanitized_on_emit(self) -> None:
+        captured = []
+
+        class CaptureSink:
+            def emit(self, event):
+                captured.append(event)
+
+        tracer = Tracer(sink=CaptureSink(), watermark=False)
+        with tracer.trace("agent.run", data={"raw": object(), "big": "x" * 70000}):
+            pass
+
+        span_events = [event for event in captured if event["kind"] == "span"]
+        assert span_events
+        assert span_events[0]["data"]["raw"]["_type"] == "object"
+        assert "big" in span_events[0]["data"]
 
     def test_sanitize_data_preserves_top_level_keys_when_truncating(self) -> None:
         payload = _sanitize_data(

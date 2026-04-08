@@ -84,7 +84,7 @@ class TestReleaseGuardHelpers(unittest.TestCase):
     def test_check_mcp_metadata_reports_version_drift(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = pathlib.Path(tmp)
-            (repo_root / "mcp-server").mkdir()
+            (repo_root / "mcp-server" / "src").mkdir(parents=True)
             (repo_root / "mcp-server" / "package.json").write_text(
                 json.dumps({"version": "0.2.2"}),
                 encoding="utf-8",
@@ -98,9 +98,13 @@ class TestReleaseGuardHelpers(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
+            (repo_root / "mcp-server" / "src" / "index.ts").write_text(
+                'const server = { version: "0.2.1" };\n',
+                encoding="utf-8",
+            )
 
             findings = sdk_release_guard.check_mcp_metadata(repo_root)
-            self.assertEqual(len(findings), 2)
+            self.assertEqual(len(findings), 3)
             self.assertTrue(all(finding.check == "mcp-metadata" for finding in findings))
 
 

@@ -116,7 +116,10 @@ def _coerce_json_value(value: Any) -> Any:
     if isinstance(value, set):
         items = [_coerce_json_value(item) for item in value]
         return sorted(items, key=repr)
-    return repr(value)
+    return {
+        "_non_serializable": True,
+        "_type": type(value).__name__,
+    }
 
 
 def _json_size(value: Any) -> int:
@@ -174,14 +177,17 @@ def _fit_mapping_data(data: Dict[str, Any], size_limit: int) -> Dict[str, Any]:
     return {"_truncated": True, "_original_size_bytes": _json_size(data)}
 
 
-def _sanitize_data(data: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+def _sanitize_data(data: Optional[Any]) -> Optional[Dict[str, Any]]:
     """Validate event data size while preserving queryable top-level keys when possible.
 
     Prevents OOM from malicious or buggy callers passing enormous data dicts.
     """
     if data is None:
         return None
-    safe_data = {str(key): _coerce_json_value(value) for key, value in data.items()}
+    if isinstance(data, dict):
+        safe_data = {str(key): _coerce_json_value(value) for key, value in data.items()}
+    else:
+        safe_data = {"_value": _coerce_json_value(data)}
     size = _json_size(safe_data)
     if size > _MAX_EVENT_DATA_BYTES:
         logger.warning(
@@ -420,6 +426,7 @@ class Tracer:
         Note: sampling is handled by TraceContext — if this method is
         called, the event should be emitted.
         """
+        safe_data = _sanitize_data(data)
         event: Dict[str, Any] = {
             "service": self._service,
             "kind": kind,
@@ -430,7 +437,7 @@ class Tracer:
             "name": name,
             "ts": time.time(),
             "duration_ms": duration_ms,
-            "data": data or {},
+            "data": safe_data or {},
             "error": error,
         }
         if cost_usd is not None:
@@ -453,7 +460,7 @@ class Tracer:
 
         # Auto-check guards
         if kind == "event":
-            self._check_guards(name, data)
+            self._check_guards(name, safe_data)
 
     def _check_guards(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
         """Run all attached guards. Called on every event, even sampled-out ones."""

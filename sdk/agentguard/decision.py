@@ -154,9 +154,10 @@ def is_decision_event(event: Dict[str, Any]) -> bool:
         return False
     name = event.get("name")
     payload = event.get("data")
-    if name in _DECISION_EVENT_TYPES:
+    if isinstance(name, str) and name in _DECISION_EVENT_TYPES:
         return isinstance(payload, dict)
-    return isinstance(payload, dict) and payload.get("event_type") in _DECISION_EVENT_TYPES
+    event_type = payload.get("event_type") if isinstance(payload, dict) else None
+    return isinstance(event_type, str) and event_type in _DECISION_EVENT_TYPES
 
 
 def extract_decision_payload(event: Dict[str, Any]) -> Optional[Dict[str, Any]]:

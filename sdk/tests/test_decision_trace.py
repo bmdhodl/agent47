@@ -390,3 +390,20 @@ def test_extract_decision_events_filters_by_workflow():
     payloads = extract_decision_events(events, workflow_id="wf_b")
     assert len(payloads) == 1
     assert payloads[0]["decision_id"] == "dec_b"
+
+
+def test_is_decision_event_ignores_non_string_names_and_event_types():
+    assert is_decision_event(
+        {
+            "kind": "event",
+            "name": ["decision.proposed"],
+            "data": {},
+        }
+    ) is False
+    assert is_decision_event(
+        {
+            "kind": "event",
+            "name": "custom.event",
+            "data": {"event_type": ["decision.proposed"]},
+        }
+    ) is False

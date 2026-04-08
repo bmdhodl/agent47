@@ -8,7 +8,7 @@ import { tools } from "./tools.js";
 
 const server = new McpServer({
   name: "agentguard",
-  version: "0.2.1",
+  version: "0.2.2",
 });
 
 let client: AgentGuardClient;
@@ -22,7 +22,7 @@ try {
 
 // Register each tool with the MCP server
 for (const tool of tools) {
-  const shape = buildToolShape(tool.inputSchema.properties, tool.inputSchema.required);
+  const shape = buildToolShape(tool.inputSchema.properties, tool.inputSchema.required ?? []);
 
   const toolName = tool.name;
   const handler = tool.handler;

@@ -15,6 +15,7 @@ PYPROJECT_PATH = Path("sdk/pyproject.toml")
 CHANGELOG_PATH = Path("CHANGELOG.md")
 MCP_PACKAGE_PATH = Path("mcp-server/package.json")
 MCP_SERVER_JSON_PATH = Path("mcp-server/server.json")
+MCP_RUNTIME_INDEX_PATH = Path("mcp-server/src/index.ts")
 RELEASE_MARKERS = (
     ("AGENTS.md", r"latest shipped release: v(?P<version>\d+\.\d+\.\d+)"),
     ("AGENTS.md", r"latest shipped release is (?P<version>\d+\.\d+\.\d+)"),
@@ -102,6 +103,7 @@ def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
 def check_mcp_metadata(repo_root: Path) -> List[Finding]:
     package_path = repo_root / MCP_PACKAGE_PATH
     server_json_path = repo_root / MCP_SERVER_JSON_PATH
+    runtime_index_path = repo_root / MCP_RUNTIME_INDEX_PATH
     if not package_path.exists() or not server_json_path.exists():
         return []
 
@@ -135,6 +137,20 @@ def check_mcp_metadata(repo_root: Path) -> List[Finding]:
                 ),
             )
         )
+    if runtime_index_path.exists():
+        runtime_text = runtime_index_path.read_text(encoding="utf-8")
+        match = re.search(r'version:\s*"(?P<version>\d+\.\d+\.\d+)"', runtime_text)
+        runtime_version = match.group("version") if match else None
+        if runtime_version != package_version:
+            findings.append(
+                Finding(
+                    check="mcp-metadata",
+                    path=str(MCP_RUNTIME_INDEX_PATH),
+                    message=(
+                        f"Expected MCP runtime version {package_version}, found {runtime_version}."
+                    ),
+                )
+            )
     return findings
 
 

@@ -218,8 +218,8 @@ class TestEventDataSizeLimit:
         result = _sanitize_data(data)
         assert result is not None
         assert "obj" in result
-        assert isinstance(result["obj"], str)
-        assert result["obj"].startswith("<object object at 0x")
+        assert result["obj"]["_non_serializable"] is True
+        assert result["obj"]["_type"] == "object"
 
     def test_exactly_at_limit_passes(self):
         # Just under 64KB should pass
