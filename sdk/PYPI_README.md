@@ -45,6 +45,16 @@ agentguard quickstart --framework langgraph --json
 install command, the smallest credible starter file, and the next commands to
 run after you validate the SDK locally.
 
+If you want a real file instead of a printed snippet:
+
+```bash
+agentguard quickstart --framework raw --write
+agentguard quickstart --framework openai --write --output agentguard_openai_quickstart.py
+```
+
+`--write` creates a local starter file you can run immediately. It refuses to
+overwrite an existing file unless you pass `--force`.
+
 ## Coding-Agent Defaults
 
 If you want humans and coding agents to share the same safe local defaults, add
