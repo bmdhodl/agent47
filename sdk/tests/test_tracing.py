@@ -160,5 +160,27 @@ class TestSanitizeData(unittest.TestCase):
         )
 
 
+class TestSessionId(unittest.TestCase):
+    def test_tracer_emits_session_id_on_all_events(self) -> None:
+        captured = []
+
+        class CaptureSink:
+            def emit(self, event):
+                captured.append(event)
+
+        tracer = Tracer(
+            sink=CaptureSink(),
+            service="test",
+            session_id="session-123",
+            watermark=False,
+        )
+        with tracer.trace("agent.run") as span:
+            span.event("reasoning.step", data={"step": 1})
+
+        trace_events = [event for event in captured if event.get("kind") in {"span", "event"}]
+        assert trace_events
+        assert all(event["session_id"] == "session-123" for event in trace_events)
+
+
 if __name__ == "__main__":
     unittest.main()

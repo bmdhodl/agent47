@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 import time
 import uuid
 
+from agentguard._trace_naming import normalize_session_id, truncate_name
 from agentguard.tracing import StdoutSink, TraceSink
 
 
@@ -161,6 +162,9 @@ class AsyncTracer:
     Args:
         sink: Where to send trace events. Defaults to StdoutSink.
         service: Name of the service being traced.
+        session_id: Optional runtime-generated identifier that correlates
+            multiple tracer instances under one higher-level session. This is
+            meant to be passed dynamically, not stored in repo config.
         guards: Optional list of guards to auto-check on each event.
     """
 
@@ -168,10 +172,12 @@ class AsyncTracer:
         self,
         sink: Optional[TraceSink] = None,
         service: str = "app",
+        session_id: Optional[str] = None,
         guards: Optional[List[Any]] = None,
     ) -> None:
         self._sink = sink or StdoutSink()
-        self._service = service
+        self._service = truncate_name(service)
+        self._session_id = normalize_session_id(session_id)
         self._guards = guards or []
 
     @asynccontextmanager
@@ -224,6 +230,8 @@ class AsyncTracer:
             "data": data or {},
             "error": error,
         }
+        if self._session_id is not None:
+            event["session_id"] = self._session_id
         if cost_usd is not None:
             event["cost_usd"] = cost_usd
         self._sink.emit(event)
@@ -244,7 +252,16 @@ class AsyncTracer:
                         pass
 
     def __repr__(self) -> str:
-        return f"AsyncTracer(service={self._service!r}, sink={self._sink!r})"
+        session_part = ""
+        if self._session_id is not None:
+            session_part = f"session_id={self._session_id!r}, "
+        return (
+            "AsyncTracer("
+            f"service={self._service!r}, "
+            f"{session_part}"
+            f"sink={self._sink!r}"
+            ")"
+        )
 
 
 def _new_id() -> str:

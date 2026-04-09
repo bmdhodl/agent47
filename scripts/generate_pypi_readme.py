@@ -26,6 +26,7 @@ COLAB_ABSOLUTE_LINK_RE = re.compile(
 )
 UNRELEASED_PATHS = {
     "docs/guides/decision-tracing.md",
+    "docs/guides/managed-agent-sessions.md",
 }
 
 

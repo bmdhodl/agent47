@@ -28,12 +28,15 @@ import threading
 import time
 import uuid
 
+from agentguard._trace_naming import normalize_session_id, truncate_name
+
 logger = logging.getLogger("agentguard.tracing")
 
 _MAX_NAME_LENGTH = 1000
 _MAX_EVENT_DATA_BYTES = 65_536  # 64 KB
 _TEXT_TRUNCATION_SUFFIX = "...[truncated]"
 _MIN_FIELD_BUDGET = 128
+_truncate_name = truncate_name
 
 
 class TraceSink:
@@ -90,17 +93,6 @@ class JsonlFileSink(TraceSink):
 
     def __repr__(self) -> str:
         return f"JsonlFileSink({self._path!r})"
-
-
-def _truncate_name(name: str) -> str:
-    """Truncate a name to _MAX_NAME_LENGTH chars, logging a warning if needed."""
-    if len(name) <= _MAX_NAME_LENGTH:
-        return name
-    logger.warning(
-        "Name truncated from %d to %d chars: %s...",
-        len(name), _MAX_NAME_LENGTH, name[:50],
-    )
-    return name[:_MAX_NAME_LENGTH]
 
 
 def _coerce_json_value(value: Any) -> Any:
@@ -295,7 +287,7 @@ class TraceContext:
             trace_id=self.trace_id,
             span_id=_new_id(),
             parent_id=self.span_id,
-            name=_truncate_name(name),
+            name=truncate_name(name),
             data=data,
             _sampled=self._sampled,
         )
@@ -313,7 +305,7 @@ class TraceContext:
             data: Optional data to attach to the event (max 64 KB serialized).
             cost_usd: Optional cost in USD for this event.
         """
-        truncated_name = _truncate_name(name)
+        truncated_name = truncate_name(name)
         safe_data = _sanitize_data(data)
         if self._sampled:
             self.tracer._emit(
@@ -344,6 +336,9 @@ class Tracer:
     Args:
         sink: Where to send trace events. Defaults to StdoutSink.
         service: Name of the service being traced.
+        session_id: Optional runtime-generated identifier that correlates
+            multiple tracer instances under one higher-level session. This is
+            meant to be passed dynamically, not stored in repo config.
         guards: Optional list of guards to auto-check on each event.
         metadata: Dict of metadata attached to every event (e.g. env, git SHA).
         sampling_rate: Float 0.0-1.0. Fraction of traces to emit. 1.0 = all, 0.0 = none.
@@ -353,6 +348,7 @@ class Tracer:
         self,
         sink: Optional[TraceSink] = None,
         service: str = "app",
+        session_id: Optional[str] = None,
         guards: Optional[List[Any]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         sampling_rate: float = 1.0,
@@ -363,7 +359,8 @@ class Tracer:
                 f"sampling_rate must be between 0.0 and 1.0, got {sampling_rate}"
             )
         self._sink = sink or StdoutSink()
-        self._service = _truncate_name(service)
+        self._service = truncate_name(service)
+        self._session_id = normalize_session_id(session_id)
         self._guards = guards or []
         self._metadata = metadata or {}
         self._sampling_rate = sampling_rate
@@ -399,7 +396,7 @@ class Tracer:
             trace_id=_new_id(),
             span_id=_new_id(),
             parent_id=None,
-            name=_truncate_name(name),
+            name=truncate_name(name),
             data=data,
             _sampled=sampled,
         )
@@ -440,6 +437,8 @@ class Tracer:
             "data": safe_data or {},
             "error": error,
         }
+        if self._session_id is not None:
+            event["session_id"] = self._session_id
         if cost_usd is not None:
             event["cost_usd"] = cost_usd
         if self._metadata:
@@ -478,7 +477,17 @@ class Tracer:
                         pass
 
     def __repr__(self) -> str:
-        return f"Tracer(service={self._service!r}, sink={self._sink!r}, watermark={self._watermark!r})"
+        session_part = ""
+        if self._session_id is not None:
+            session_part = f"session_id={self._session_id!r}, "
+        return (
+            "Tracer("
+            f"service={self._service!r}, "
+            f"{session_part}"
+            f"sink={self._sink!r}, "
+            f"watermark={self._watermark!r}"
+            ")"
+        )
 
 
 def _new_id() -> str:

@@ -45,6 +45,7 @@ def init(
     api_key: Optional[str] = None,
     budget_usd: Optional[float] = None,
     service: Optional[str] = None,
+    session_id: Optional[str] = None,
     trace_file: Optional[str] = None,
     warn_pct: Optional[float] = None,
     loop_max: Optional[int] = None,
@@ -63,6 +64,8 @@ def init(
         api_key: Dashboard API key. Env: ``AGENTGUARD_API_KEY``.
         budget_usd: Dollar budget limit. Env: ``AGENTGUARD_BUDGET_USD``.
         service: Service name. Env: ``AGENTGUARD_SERVICE``. Default: "default".
+        session_id: Optional identifier that correlates multiple tracer instances
+            across the same higher-level agent session. No environment variable.
         trace_file: Local JSONL path (used when no api_key).
             Env: ``AGENTGUARD_TRACE_FILE``. Default: "traces.jsonl".
         warn_pct: Budget warning threshold (0.0-1.0). Defaults to the selected
@@ -205,7 +208,13 @@ def init(
     # --- Build tracer ---
     from agentguard.tracing import Tracer
 
-    _tracer = Tracer(sink=sink, service=resolved_service, guards=guards, watermark=watermark)
+    _tracer = Tracer(
+        sink=sink,
+        service=resolved_service,
+        session_id=session_id,
+        guards=guards,
+        watermark=watermark,
+    )
 
     # --- Auto-patch LLM clients ---
     if auto_patch:
@@ -216,9 +225,10 @@ def init(
     # Log what we did
     sink_desc = "dashboard" if resolved_key else resolved_file
     budget_desc = f"${resolved_budget:.2f}" if resolved_budget else "unlimited"
+    session_desc = "present" if session_id else "absent"
     logger.info(
-        "AgentGuard initialized: service=%s sink=%s budget=%s profile=%s",
-        resolved_service, sink_desc, budget_desc, resolved_profile,
+        "AgentGuard initialized: service=%s session=%s sink=%s budget=%s profile=%s",
+        resolved_service, session_desc, sink_desc, budget_desc, resolved_profile,
     )
 
     return _tracer

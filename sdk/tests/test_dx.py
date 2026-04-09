@@ -5,19 +5,16 @@ import tempfile
 import unittest
 
 from agentguard import (
-    Tracer,
-    LoopGuard,
     BudgetGuard,
-    TimeoutGuard,
-    JsonlFileSink,
-    StdoutSink,
-    HttpSink,
     EvalSuite,
+    JsonlFileSink,
     LoopDetected,
+    LoopGuard,
+    StdoutSink,
+    TimeoutGuard,
+    Tracer,
 )
-from agentguard.tracing import TraceContext
 from agentguard.evaluation import summarize_trace
-
 
 # ---------------------------------------------------------------------------
 # Repr tests
@@ -66,6 +63,13 @@ class TestTracerRepr(unittest.TestCase):
         self.assertEqual(
             repr(tracer),
             "Tracer(service='my-agent', sink=JsonlFileSink('test.jsonl'), watermark=True)",
+        )
+
+    def test_tracer_repr_includes_session_id_when_set(self):
+        tracer = Tracer(service="my-agent", session_id="session-123")
+        self.assertEqual(
+            repr(tracer),
+            "Tracer(service='my-agent', session_id='session-123', sink=StdoutSink(), watermark=True)",
         )
 
 
@@ -207,9 +211,8 @@ class TestTracerContextManager(unittest.TestCase):
                 shutdown_called = True
 
         sink = MockSink()
-        with Tracer(sink=sink) as tracer:
-            with tracer.trace("test"):
-                pass
+        with Tracer(sink=sink) as tracer, tracer.trace("test"):
+            pass
 
         self.assertTrue(shutdown_called)
 
@@ -219,9 +222,8 @@ class TestTracerContextManager(unittest.TestCase):
                 pass
 
         sink = MinimalSink()
-        with Tracer(sink=sink) as tracer:
-            with tracer.trace("test"):
-                pass
+        with Tracer(sink=sink) as tracer, tracer.trace("test"):
+            pass
 
     def test_context_manager_shutdown_on_exception(self):
         shutdown_called = False
@@ -234,16 +236,14 @@ class TestTracerContextManager(unittest.TestCase):
                 nonlocal shutdown_called
                 shutdown_called = True
 
-        with self.assertRaises(ValueError):
-            with Tracer(sink=MockSink()) as tracer:
-                raise ValueError("test error")
+        with self.assertRaises(ValueError), Tracer(sink=MockSink()):
+            raise ValueError("test error")
 
         self.assertTrue(shutdown_called)
 
     def test_context_manager_does_not_suppress_exceptions(self):
-        with self.assertRaises(RuntimeError):
-            with Tracer() as tracer:
-                raise RuntimeError("should propagate")
+        with self.assertRaises(RuntimeError), Tracer():
+            raise RuntimeError("should propagate")
 
 
 # ---------------------------------------------------------------------------
@@ -253,13 +253,10 @@ class TestTracerContextManager(unittest.TestCase):
 
 class TestSummarizeTrace(unittest.TestCase):
     def _make_trace_file(self, events):
-        f = tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        )
-        for event in events:
-            f.write(json.dumps(event) + "\n")
-        f.close()
-        return f.name
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
+            for event in events:
+                f.write(json.dumps(event) + "\n")
+            return f.name
 
     def test_summarize_from_file(self):
         events = [
