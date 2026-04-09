@@ -23,11 +23,11 @@ pip install agentguard47
 
 AgentGuard stays focused on coding-agent safety on purpose.
 
-As of April 8, 2026, a16z reported that `29%` of the Fortune 500 and about
-`19%` of the Global 2000 are live paying customers of leading AI startups, with
-coding described as the dominant enterprise AI use case and support/search next
-behind it. They also cited repeated reports of `10-20x` productivity gains from
-AI coding tools. Source:
+In an April 2026 report, a16z said that `29%` of the Fortune 500 and about
+`19%` of the Global 2000 were live paying customers of leading AI startups,
+with coding described as the dominant enterprise AI use case and support/search
+next behind it. The report also cited repeated claims of `10-20x`
+productivity gains from AI coding tools. Source:
 [AI Adoption by the Numbers](https://www.a16z.news/p/ai-adoption-by-the-numbers).
 
 That supports the public SDK strategy in this repo:

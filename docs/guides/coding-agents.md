@@ -13,11 +13,12 @@ visibility.
 This repo stays anchored to coding agents because that is where enterprise AI
 pull is strongest right now.
 
-On April 8, 2026, a16z published data indicating that `29%` of the Fortune 500
-and about `19%` of the Global 2000 are already live paying customers of leading
-AI startups, with coding called out as the dominant use case by nearly an order
-of magnitude. They also reported repeated `10-20x` productivity claims for AI
-coding tools. Source:
+Industry reporting continues to point to coding as one of the clearest early
+production use cases for AI. In an April 2026 report, a16z estimated that
+`29%` of the Fortune 500 and about `19%` of the Global 2000 were live paying
+customers of leading AI startups, with coding called out as the dominant use
+case by nearly an order of magnitude. They also cited repeated `10-20x`
+productivity claims for AI coding tools. Source:
 [AI Adoption by the Numbers](https://www.a16z.news/p/ai-adoption-by-the-numbers).
 
 That does not mean AgentGuard should widen into a generic AI SDK here. It means
