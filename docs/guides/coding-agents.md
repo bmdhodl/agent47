@@ -8,6 +8,24 @@ looping, retrying forever, and burning budget. Keep the first integration local
 and auditable, then add the hosted dashboard later only if you need operational
 visibility.
 
+## Why this matters now
+
+This repo stays anchored to coding agents because that is where enterprise AI
+pull is strongest right now.
+
+On April 8, 2026, a16z published data indicating that `29%` of the Fortune 500
+and about `19%` of the Global 2000 are already live paying customers of leading
+AI startups, with coding called out as the dominant use case by nearly an order
+of magnitude. They also reported repeated `10-20x` productivity claims for AI
+coding tools. Source:
+[AI Adoption by the Numbers](https://www.a16z.news/p/ai-adoption-by-the-numbers).
+
+That does not mean AgentGuard should widen into a generic AI SDK here. It means
+the coding-agent wedge is real:
+- more coding agents running in real repos
+- more retry loops, runaway tool calls, and unattended spend risk
+- more pressure to prove local safety before asking a team to adopt hosted ops
+
 If you want ready-to-copy repo instructions for specific coding agents, start
 with [`coding-agent-safety-pack.md`](coding-agent-safety-pack.md).
 
