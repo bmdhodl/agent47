@@ -23,7 +23,8 @@ if TYPE_CHECKING:
 import time
 import uuid
 
-from agentguard.tracing import StdoutSink, TraceSink, _normalize_session_id
+from agentguard._trace_naming import normalize_session_id, truncate_name
+from agentguard.tracing import StdoutSink, TraceSink
 
 
 @dataclass
@@ -161,6 +162,9 @@ class AsyncTracer:
     Args:
         sink: Where to send trace events. Defaults to StdoutSink.
         service: Name of the service being traced.
+        session_id: Optional runtime-generated identifier that correlates
+            multiple tracer instances under one higher-level session. This is
+            meant to be passed dynamically, not stored in repo config.
         guards: Optional list of guards to auto-check on each event.
     """
 
@@ -172,8 +176,8 @@ class AsyncTracer:
         guards: Optional[List[Any]] = None,
     ) -> None:
         self._sink = sink or StdoutSink()
-        self._service = service
-        self._session_id = _normalize_session_id(session_id)
+        self._service = truncate_name(service)
+        self._session_id = normalize_session_id(session_id)
         self._guards = guards or []
 
     @asynccontextmanager

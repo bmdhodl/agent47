@@ -154,6 +154,10 @@ class TestAsyncTracerRepr(unittest.TestCase):
             "AsyncTracer(service='my-agent', session_id='session-123', sink=StdoutSink())",
         )
 
+    def test_service_is_truncated_like_sync_tracer(self):
+        tracer = AsyncTracer(service="x" * 1205)
+        self.assertEqual(len(tracer._service), 1000)
+
 
 class TestAsyncTraceAgent(unittest.TestCase):
     def setUp(self):

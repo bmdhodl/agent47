@@ -225,9 +225,10 @@ def init(
     # Log what we did
     sink_desc = "dashboard" if resolved_key else resolved_file
     budget_desc = f"${resolved_budget:.2f}" if resolved_budget else "unlimited"
+    session_desc = "present" if session_id else "absent"
     logger.info(
-        "AgentGuard initialized: service=%s session_id=%s sink=%s budget=%s profile=%s",
-        resolved_service, session_id, sink_desc, budget_desc, resolved_profile,
+        "AgentGuard initialized: service=%s session=%s sink=%s budget=%s profile=%s",
+        resolved_service, session_desc, sink_desc, budget_desc, resolved_profile,
     )
 
     return _tracer

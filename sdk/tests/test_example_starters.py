@@ -79,15 +79,24 @@ def test_disposable_harness_example_links_session_id() -> None:
     )
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        result = subprocess.run(
-            [sys.executable, str(example_path)],
-            cwd=tmpdir,
-            capture_output=True,
-            text=True,
-            env=env,
-            check=False,
-            timeout=60,
-        )
+        try:
+            result = subprocess.run(
+                [sys.executable, str(example_path)],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                env=env,
+                check=False,
+                timeout=60,
+            )
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout or ""
+            stderr = exc.stderr or ""
+            raise AssertionError(
+                "Disposable harness example timed out after 60 seconds.\n"
+                f"STDOUT:\n{stdout}\n"
+                f"STDERR:\n{stderr}"
+            ) from exc
 
         assert result.returncode == 0, result.stderr
         assert "Shared session_id: support-session-001" in result.stdout
