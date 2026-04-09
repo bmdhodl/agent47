@@ -1,48 +1,39 @@
-# Draft PR
+# PR Draft
 
 ## Title
-`Add quickstart file-write flow for faster local onboarding`
+Add coding-agent skillpack generation for local-first AgentGuard onboarding
 
 ## Summary
-- add `agentguard quickstart --write` so the SDK can create a runnable starter file directly
-- add `--output` and `--force` for safe local file creation and explicit overwrite behavior
-- update onboarding docs so the install-to-first-run path can move from printed snippet to actual file in one command
-- add proof artifacts under `proof/quickstart-write-flow/`
-
-## Why This Matters
-- reduces copy-paste friction in the highest-priority onboarding path
-- gives coding agents and humans a deterministic way to materialize a starter file locally
-- keeps the first-run flow local-first, auditable, and zero-dependency
+- add `agentguard skillpack` so developers and coding agents can generate repo-local `.agentguard.json` defaults plus instruction files for Codex, Claude Code, GitHub Copilot, and Cursor
+- keep the generated flow aligned with the existing local-first proof path: `agentguard doctor`, `agentguard quickstart --framework raw --write`, local starter run, local report
+- update onboarding docs so the skillpack flow becomes the primary way to materialize coding-agent instructions instead of copying long snippets by hand
 
 ## Scope
-- `sdk/agentguard/quickstart.py`
-- `sdk/agentguard/cli.py`
-- `sdk/tests/test_quickstart.py`
-- `README.md`
-- `docs/guides/coding-agents.md`
-- `examples/starters/README.md`
-- `sdk/PYPI_README.md`
-- `proof/quickstart-write-flow/*`
+- new core SDK module: `sdk/agentguard/skillpack.py`
+- CLI wiring in `sdk/agentguard/cli.py`
+- tests in `sdk/tests/test_skillpack.py` and `sdk/tests/test_architecture.py`
+- onboarding docs in `README.md`, `docs/guides/getting-started.md`, `docs/guides/coding-agents.md`, and `docs/guides/coding-agent-safety-pack.md`
+- generated `sdk/PYPI_README.md`
+- proof artifacts under `proof/skillpack/`
 
 ## Non-goals
-- no dashboard changes
-- no new dependencies
-- no new frameworks or hosted features
-- no release cut
+- no dashboard work
+- no hosted settings in generated files
+- no new runtime dependencies
+- no speculative agent integrations beyond Codex, Claude Code, Copilot, and Cursor
 
 ## Proof
-- `python -m ruff check sdk/agentguard/cli.py sdk/agentguard/quickstart.py sdk/tests/test_quickstart.py`
-- `PYTHONPATH=<repo>/sdk python -m pytest sdk/tests/test_quickstart.py -v`
-- `PYTHONPATH=<repo>/sdk python scripts/sdk_preflight.py`
-- `PYTHONPATH=<repo>/sdk python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+- `python -m ruff check sdk/agentguard/skillpack.py sdk/agentguard/cli.py sdk/tests/test_skillpack.py sdk/tests/test_architecture.py`
+- `python -m pytest sdk/tests/test_skillpack.py sdk/tests/test_quickstart.py sdk/tests/test_architecture.py -v`
+- `python scripts/sdk_preflight.py`
+- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+- `python scripts/sdk_release_guard.py`
 - `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q`
+- proof files:
+  - `proof/skillpack/write-output.txt`
+  - `proof/skillpack/claude-output.txt`
+  - `proof/skillpack/codex-write-output.txt`
+  - generated pack under `proof/skillpack/all/`
 
-Saved artifacts:
-- `proof/quickstart-write-flow/raw-output.txt`
-- `proof/quickstart-write-flow/openai-output.txt`
-- `proof/quickstart-write-flow/overwrite-refusal.txt`
-- `proof/quickstart-write-flow/agentguard_raw_quickstart.py`
-- `proof/quickstart-write-flow/openai/agentguard_openai_quickstart.py`
-
-## Notes
-- This machine has an editable `agentguard47` install outside this worktree, so local Python validation was run with `PYTHONPATH` pinned to `sdk/` in this branch to ensure the tests and CLI exercised the PR code.
+## Operator note
+- local validation pinned `PYTHONPATH=<repo>/sdk` because this machine has another editable `agentguard47` install that can shadow branch code

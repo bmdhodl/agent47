@@ -11,6 +11,16 @@ visibility.
 If you want ready-to-copy repo instructions for specific coding agents, start
 with [`coding-agent-safety-pack.md`](coding-agent-safety-pack.md).
 
+If you want AgentGuard to materialize those files for you:
+
+```bash
+agentguard skillpack --write
+```
+
+That writes `.agentguard.json` plus the instruction files into
+`agentguard_skillpack/` so you can review the pack before applying it to a real
+repo.
+
 ## Goal
 
 Keep the first integration:
@@ -41,6 +51,14 @@ What this does not do:
 - no API keys
 - no hosted control-plane settings
 - no secrets
+
+If you want AgentGuard to generate this file together with coding-agent
+instructions:
+
+```bash
+agentguard skillpack --target codex --write
+agentguard skillpack --target claude-code --write
+```
 
 ## 2. Verify the local path
 

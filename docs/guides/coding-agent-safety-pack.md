@@ -3,6 +3,18 @@
 Use this when you want a coding agent to onboard AgentGuard into a repo with
 the fewest moving parts possible.
 
+If you want AgentGuard to generate the pack instead of copying snippets by
+hand, run:
+
+```bash
+agentguard skillpack --write
+```
+
+That writes `.agentguard.json` plus the supported coding-agent instruction
+files into `agentguard_skillpack/` for review. Use `--target` if you only need
+one agent's instructions, or `--output-dir .` if you intentionally want to
+materialize them directly into a repo.
+
 The goal is always the same:
 - keep the first run local
 - keep the config auditable
@@ -25,6 +37,8 @@ Check in a tiny `.agentguard.json` file:
 This gives both humans and coding agents the same local defaults without
 secrets or hosted coupling.
 
+`agentguard skillpack` generates this file for you.
+
 ## 2. Codex / AGENTS.md snippet
 
 Add this to the target repo's `AGENTS.md`:
@@ -38,9 +52,9 @@ Use AgentGuard in local-only mode first.
 - Do not add API keys or hosted settings during first integration
 - Verify with:
   1. `agentguard doctor`
-  2. `agentguard quickstart --framework raw`
-  3. `python examples/starters/agentguard_raw_quickstart.py`
-  4. `agentguard report .agentguard/traces.jsonl`
+          2. `agentguard quickstart --framework raw --write`
+          3. `python agentguard_raw_quickstart.py`
+          4. `agentguard report .agentguard/traces.jsonl`
 ```
 
 ## 3. Claude Code / CLAUDE.md snippet
@@ -54,7 +68,7 @@ When using AgentGuard:
 - use the repo's `.agentguard.json`
 - keep traces in `.agentguard/traces.jsonl`
 - do not add dashboard or network settings in the first PR
-- prove the integration by running `agentguard doctor` and a local starter
+- prove the integration by running `agentguard doctor`, `agentguard quickstart --framework raw --write`, and `python agentguard_raw_quickstart.py`
 ```
 
 ## 4. GitHub Copilot / .github/copilot-instructions.md snippet
@@ -67,7 +81,7 @@ If you touch AI-agent code, keep AgentGuard local-first:
 - prefer `agentguard.init(local_only=True)`
 - use `.agentguard.json` if present
 - avoid adding secrets or hosted settings
-- verify changes with `agentguard doctor` and a local trace report
+- verify changes with `agentguard doctor`, `agentguard quickstart --framework raw --write`, and a local trace report
 ```
 
 ## 5. Cursor project rule snippet
@@ -87,7 +101,7 @@ When integrating AgentGuard:
 - use `.agentguard/traces.jsonl`
 - honor `.agentguard.json`
 - avoid API keys and hosted settings in initial setup
-- verify with `agentguard doctor` before wiring real providers
+- verify with `agentguard doctor` and `agentguard quickstart --framework raw --write` before wiring real providers
 ```
 
 ## 6. MCP-capable agent snippet
@@ -119,8 +133,8 @@ The shortest credible flow is:
 ```bash
 pip install agentguard47
 agentguard doctor
-agentguard quickstart --framework raw
-python examples/starters/agentguard_raw_quickstart.py
+agentguard quickstart --framework raw --write
+python agentguard_raw_quickstart.py
 agentguard report .agentguard/traces.jsonl
 ```
 

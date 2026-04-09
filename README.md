@@ -83,6 +83,18 @@ For copy-paste setup snippets tailored to Codex, Claude Code, GitHub Copilot,
 Cursor, and MCP-capable agents, see
 [`docs/guides/coding-agent-safety-pack.md`](docs/guides/coding-agent-safety-pack.md).
 
+If you want AgentGuard to generate those repo-local instruction files for you:
+
+```bash
+agentguard skillpack --write
+agentguard skillpack --target claude-code --write --output-dir .
+```
+
+`skillpack` writes a local `.agentguard.json` plus agent-specific instruction
+files for Codex, Claude Code, Copilot, or Cursor. By default it writes into
+`agentguard_skillpack/` so you can review the files before copying them into a
+real repo.
+
 ## MCP Server for Coding-Agent Workflows
 
 If your coding agent already uses MCP, AgentGuard also ships a published

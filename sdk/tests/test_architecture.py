@@ -39,6 +39,7 @@ CORE_MODULES = [
     "quickstart.py",
     "savings.py",
     "repo_config.py",
+    "skillpack.py",
     "setup.py",
     "tracing.py",
     "usage.py",
