@@ -32,9 +32,11 @@ from agentguard._trace_naming import normalize_session_id, truncate_name
 
 logger = logging.getLogger("agentguard.tracing")
 
+_MAX_NAME_LENGTH = 1000
 _MAX_EVENT_DATA_BYTES = 65_536  # 64 KB
 _TEXT_TRUNCATION_SUFFIX = "...[truncated]"
 _MIN_FIELD_BUDGET = 128
+_truncate_name = truncate_name
 
 
 class TraceSink:
