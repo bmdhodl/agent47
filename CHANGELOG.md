@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Coding-Agent Skill Packs
+- Added `agentguard skillpack` so developers and coding agents can generate repo-local `.agentguard.json` defaults plus instruction files for Codex, Claude Code, GitHub Copilot, and Cursor without bespoke copy-paste setup.
+- Updated the coding-agent onboarding docs to prefer the generated local-first skill-pack flow and the `quickstart --write` verification loop over checked-in example paths.
+
 ## 1.2.7
 
 ### Decision Tracing

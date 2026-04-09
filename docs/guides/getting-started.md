@@ -78,6 +78,17 @@ For coding-agent and repo-automation setups, follow
 [`coding-agent-safety-pack.md`](coding-agent-safety-pack.md) for copy-paste
 repo instructions.
 
+If you want AgentGuard to generate those repo-local instruction files instead
+of copying snippets by hand:
+
+```bash
+agentguard skillpack --write
+```
+
+That writes `.agentguard.json` plus agent-specific instruction files into
+`agentguard_skillpack/` for review before you copy or merge them into a real
+repo.
+
 ## Offline demo
 
 Before wiring a real agent, prove the SDK locally:

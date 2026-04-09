@@ -1,28 +1,35 @@
 # Morning Report
 
 ## Mission
-Shipped one onboarding improvement: `agentguard quickstart` can now write a real starter file directly instead of only printing a snippet.
+Turn the approved "agent skills are the new SDK" idea into one real SDK-side distribution improvement without leaving the public repo boundary.
 
-## What Changed
-- added `--write` to create a local starter file
-- added `--output` for an explicit destination
-- added `--force` to opt into overwrite
-- updated quickstart text output so next commands point at the actual written file
-- refreshed README, coding-agent docs, starter docs, and generated PyPI README
-- added quickstart tests for write success, overwrite refusal, forced overwrite, and CLI behavior
+## What shipped
+- added `agentguard skillpack`, a zero-dependency CLI flow that generates:
+  - repo-local `.agentguard.json`
+  - `AGENTS.md` instructions for Codex
+  - `CLAUDE.md` instructions for Claude Code
+  - `.github/copilot-instructions.md` for GitHub Copilot
+  - `.cursor/rules/agentguard.mdc` for Cursor
+- kept every generated file local-first and aligned with the existing proof path:
+  - `agentguard doctor`
+  - `agentguard quickstart --framework raw --write`
+  - `python agentguard_raw_quickstart.py`
+  - `agentguard report .agentguard/traces.jsonl`
+- updated the core onboarding docs and regenerated `sdk/PYPI_README.md`
 
-## Why It Matters
-- lowers friction from install to first runnable file
-- helps coding agents and humans materialize a starter deterministically
-- strengthens the SDK’s local-first proof surface without adding any hosted assumptions
+## Why it matters
+- this repo already had the right onboarding pieces, but they were still manual copy-paste
+- `skillpack` turns those instructions into a product surface that coding agents and humans can materialize in one command
+- it strengthens distribution without adding hosted behavior, dependencies, or random new guards
 
 ## Validation
-- focused quickstart tests passed
-- preflight passed with `PYTHONPATH` pinned to this worktree
-- full SDK suite passed with coverage above threshold
+- focused lint/tests passed
+- `sdk_preflight` passed
+- `sdk_release_guard.py` passed
 - bandit passed
-- proof outputs are saved under `proof/quickstart-write-flow/`
+- full SDK suite passed: `660 passed`, coverage `92.88%`
+- proof artifacts saved under `proof/skillpack/`
 
-## Operator Notes
-- roadmap was stale by 6 days, so memory files were treated as the higher-confidence source
-- local validation needed `PYTHONPATH=<repo>/sdk` because this machine has another editable install that can shadow the worktree
+## Notes
+- roadmap is slightly stale (`ops/03-ROADMAP_NOW_NEXT_LATER.md` was 23 hours old when checked; architecture was also 23 hours old), but still within the repo warning threshold concerns already surfaced earlier
+- local validation used `PYTHONPATH=<repo>/sdk` because another editable install exists on this machine

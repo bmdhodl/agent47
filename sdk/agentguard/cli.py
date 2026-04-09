@@ -12,6 +12,7 @@ from agentguard.evaluation import _extract_cost, _load_events
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
 from agentguard.reporting import render_incident_report
 from agentguard.savings import summarize_savings
+from agentguard.skillpack import TARGET_CHOICES, run_skillpack
 
 
 def _summarize(path: str) -> None:
@@ -188,6 +189,30 @@ def _quickstart(
     )
 
 
+def _skillpack(
+    target: str = "all",
+    service: str = "my-agent",
+    budget_usd: float = 5.0,
+    trace_path: str = ".agentguard/traces.jsonl",
+    json_output: bool = False,
+    write_files: bool = False,
+    output_dir: Optional[str] = None,
+    force: bool = False,
+) -> None:
+    raise SystemExit(
+        run_skillpack(
+            target=target,
+            service=service,
+            budget_usd=budget_usd,
+            trace_file=trace_path,
+            json_output=json_output,
+            write_files=write_files,
+            output_dir=output_dir,
+            force=force,
+        )
+    )
+
+
 def _eval(path: str, ci: bool = False) -> None:
     from agentguard.evaluation import EvalSuite
 
@@ -313,6 +338,51 @@ def main() -> None:  # pragma: no cover
         help="Overwrite an existing output file when using --write.",
     )
 
+    skillpack = sub.add_parser("skillpack", help="Generate repo-local instruction files for coding agents")
+    skillpack.add_argument(
+        "--target",
+        choices=TARGET_CHOICES,
+        default="all",
+        help="Which coding-agent instructions to generate. Defaults to all supported targets.",
+    )
+    skillpack.add_argument(
+        "--service",
+        default="my-agent",
+        help="Service name to embed in the generated .agentguard.json file.",
+    )
+    skillpack.add_argument(
+        "--budget-usd",
+        type=float,
+        default=5.0,
+        help="Budget to embed in the generated .agentguard.json file.",
+    )
+    skillpack.add_argument(
+        "--trace-file",
+        default=".agentguard/traces.jsonl",
+        help="Trace file path to embed in the generated files.",
+    )
+    skillpack.add_argument(
+        "--json",
+        action="store_true",
+        dest="json_output",
+        help="Emit machine-readable JSON for agents and CI.",
+    )
+    skillpack.add_argument(
+        "--write",
+        action="store_true",
+        dest="write_files",
+        help="Write the generated files to disk instead of only printing them.",
+    )
+    skillpack.add_argument(
+        "--output-dir",
+        help="Directory to write when using --write. Defaults to agentguard_skillpack.",
+    )
+    skillpack.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing files when using --write.",
+    )
+
     args = parser.parse_args()
     if args.cmd == "summarize":
         _summarize(args.path)
@@ -343,6 +413,17 @@ def main() -> None:  # pragma: no cover
             json_output=args.json_output,
             write_file=args.write_file,
             output_path=args.output,
+            force=args.force,
+        )
+    elif args.cmd == "skillpack":
+        _skillpack(
+            target=args.target,
+            service=args.service,
+            budget_usd=args.budget_usd,
+            trace_path=args.trace_file,
+            json_output=args.json_output,
+            write_files=args.write_files,
+            output_dir=args.output_dir,
             force=args.force,
         )
     else:
