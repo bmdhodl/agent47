@@ -10,19 +10,18 @@ from unittest.mock import MagicMock
 
 from agentguard import (
     AsyncTracer,
-    AsyncTraceContext,
     JsonlFileSink,
-    LoopGuard,
     LoopDetected,
+    LoopGuard,
 )
 from agentguard.instrument import (
     _originals,
     async_trace_agent,
     async_trace_tool,
-    patch_openai_async,
     patch_anthropic_async,
-    unpatch_openai_async,
+    patch_openai_async,
     unpatch_anthropic_async,
+    unpatch_openai_async,
 )
 
 
@@ -54,9 +53,8 @@ class TestAsyncTracer(unittest.TestCase):
     def test_nested_spans(self):
         async def run():
             tracer = AsyncTracer(sink=JsonlFileSink(self.path), service="test")
-            async with tracer.trace("agent.run") as span:
-                async with span.span("tool.search") as child:
-                    child.event("tool.result", data={"result": "found"})
+            async with tracer.trace("agent.run") as span, span.span("tool.search") as child:
+                child.event("tool.result", data={"result": "found"})
 
         asyncio.run(run())
 
@@ -70,7 +68,7 @@ class TestAsyncTracer(unittest.TestCase):
         async def run():
             tracer = AsyncTracer(sink=JsonlFileSink(self.path), service="test")
             try:
-                async with tracer.trace("agent.run") as span:
+                async with tracer.trace("agent.run"):
                     raise ValueError("boom")
             except ValueError:
                 pass
@@ -124,12 +122,37 @@ class TestAsyncTracer(unittest.TestCase):
 
         asyncio.run(run())
 
+    def test_session_id_emitted(self):
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                session_id="session-123",
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("reasoning.step", data={"step": 1})
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        trace_events = [event for event in events if event.get("kind") in {"span", "event"}]
+        self.assertTrue(trace_events)
+        self.assertTrue(all(event["session_id"] == "session-123" for event in trace_events))
+
 
 class TestAsyncTracerRepr(unittest.TestCase):
     def test_repr(self):
         tracer = AsyncTracer(service="my-agent")
         self.assertIn("AsyncTracer", repr(tracer))
         self.assertIn("my-agent", repr(tracer))
+
+    def test_repr_includes_session_id_when_set(self):
+        tracer = AsyncTracer(service="my-agent", session_id="session-123")
+        self.assertEqual(
+            repr(tracer),
+            "AsyncTracer(service='my-agent', session_id='session-123', sink=StdoutSink())",
+        )
 
 
 class TestAsyncTraceAgent(unittest.TestCase):

@@ -353,6 +353,7 @@ class Tracer:
         self,
         sink: Optional[TraceSink] = None,
         service: str = "app",
+        session_id: Optional[str] = None,
         guards: Optional[List[Any]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         sampling_rate: float = 1.0,
@@ -364,6 +365,7 @@ class Tracer:
             )
         self._sink = sink or StdoutSink()
         self._service = _truncate_name(service)
+        self._session_id = _normalize_session_id(session_id)
         self._guards = guards or []
         self._metadata = metadata or {}
         self._sampling_rate = sampling_rate
@@ -440,6 +442,8 @@ class Tracer:
             "data": safe_data or {},
             "error": error,
         }
+        if self._session_id is not None:
+            event["session_id"] = self._session_id
         if cost_usd is not None:
             event["cost_usd"] = cost_usd
         if self._metadata:
@@ -478,8 +482,26 @@ class Tracer:
                         pass
 
     def __repr__(self) -> str:
-        return f"Tracer(service={self._service!r}, sink={self._sink!r}, watermark={self._watermark!r})"
+        session_part = ""
+        if self._session_id is not None:
+            session_part = f"session_id={self._session_id!r}, "
+        return (
+            "Tracer("
+            f"service={self._service!r}, "
+            f"{session_part}"
+            f"sink={self._sink!r}, "
+            f"watermark={self._watermark!r}"
+            ")"
+        )
 
 
 def _new_id() -> str:
     return uuid.uuid4().hex
+
+
+def _normalize_session_id(session_id: Optional[str]) -> Optional[str]:
+    if session_id is None:
+        return None
+    if not isinstance(session_id, str) or not session_id.strip():
+        raise ValueError("session_id must be a non-empty string")
+    return _truncate_name(session_id.strip())

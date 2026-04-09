@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Managed-Agent Session Correlation
+- Added optional `session_id` support to `Tracer`, `AsyncTracer`, and `agentguard.init(...)` so disposable harnesses can correlate multiple trace streams under one higher-level managed-agent session without changing sink behavior.
+- Added a local managed-session guide plus a runnable example that proves two separate tracer instances can emit distinct `trace_id` values while sharing one `session_id`.
+
 ### Coding-Agent Skill Packs
 - Added `agentguard skillpack` so developers and coding agents can generate repo-local `.agentguard.json` defaults plus instruction files for Codex, Claude Code, GitHub Copilot, and Cursor without bespoke copy-paste setup.
 - Updated the coding-agent onboarding docs to prefer the generated local-first skill-pack flow and the `quickstart --write` verification loop over checked-in example paths.

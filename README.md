@@ -109,6 +109,26 @@ The MCP server is intentionally narrow. Use the SDK to enforce safety where the
 agent runs. Add MCP when you want Codex, Claude Code, Cursor, or another
 MCP-compatible client to inspect traces and incidents without bespoke glue.
 
+## Stateless Harnesses
+
+If one managed-agent session can span multiple disposable harnesses or worker
+processes, pass a shared `session_id` to correlate those traces above the
+single-`trace_id` level:
+
+```python
+from agentguard import JsonlFileSink, Tracer
+
+tracer = Tracer(
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
+    service="managed-harness-a",
+    session_id="support-session-001",
+)
+```
+
+Each tracer instance still creates its own `trace_id`, but every emitted span
+and point event also carries the shared `session_id`. Guide:
+[`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md)
+
 ## Try it in 60 seconds
 
 No API keys. No dashboard. No network calls. Just run it:

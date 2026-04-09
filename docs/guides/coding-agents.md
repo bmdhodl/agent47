@@ -142,6 +142,12 @@ If the coding agent already supports MCP, add `@agentguard47/mcp-server` only
 after the local SDK path is proven. That MCP bridge is for retained traces and
 alerts, not the first-run safety proof.
 
+If your coding-agent runtime uses disposable workers or managed harnesses,
+generate a fresh `session_id` at runtime and pass it into `agentguard.init()`
+or `Tracer(...)` rather than checking it into `.agentguard.json`. That keeps
+shared session correlation dynamic while the repo-level defaults stay static.
+Guide: [`managed-agent-sessions.md`](managed-agent-sessions.md)
+
 Once the repo-local path works, run the fuller walkthrough in
 [`coding-agent-smoke-test.md`](coding-agent-smoke-test.md) to step through the
 starter path, the offline demo, and the local budget-kill example.

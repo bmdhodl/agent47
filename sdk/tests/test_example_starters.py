@@ -65,3 +65,30 @@ def test_raw_starter_runs_and_writes_trace() -> None:
         assert result.returncode == 0, result.stderr
         assert "Completed local raw starter run." in result.stdout
         assert Path(tmpdir, ".agentguard", "traces.jsonl").exists()
+
+
+def test_disposable_harness_example_links_session_id() -> None:
+    example_path = REPO_ROOT / "examples" / "disposable_harness_session.py"
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    sdk_path = str(REPO_ROOT / "sdk")
+    env["PYTHONPATH"] = (
+        sdk_path
+        if not existing_pythonpath
+        else os.pathsep.join([sdk_path, existing_pythonpath])
+    )
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        result = subprocess.run(
+            [sys.executable, str(example_path)],
+            cwd=tmpdir,
+            capture_output=True,
+            text=True,
+            env=env,
+            check=False,
+            timeout=60,
+        )
+
+        assert result.returncode == 0, result.stderr
+        assert "Shared session_id: support-session-001" in result.stdout
+        assert Path(tmpdir, "managed_session_traces.jsonl").exists()

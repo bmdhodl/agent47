@@ -106,6 +106,21 @@ It writes a local trace file, demonstrates budget enforcement, loop detection,
 and retry protection, then shows how to inspect the trace with `agentguard report`
 and `agentguard incident`.
 
+If your agent runtime uses disposable workers or managed-agent harnesses, add a
+runtime `session_id` to correlate those short-lived traces:
+
+```python
+import agentguard
+
+agentguard.init(
+    service="managed-harness-a",
+    session_id="support-session-001",
+    local_only=True,
+)
+```
+
+Guide: [`managed-agent-sessions.md`](managed-agent-sessions.md)
+
 ## 1. Trace an agent run
 
 ```python

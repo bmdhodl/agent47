@@ -56,6 +56,10 @@ class TestInit:
         tracer = agentguard.init(service="test-svc", auto_patch=False)
         assert tracer._service == "test-svc"
 
+    def test_init_custom_session_id(self):
+        tracer = agentguard.init(session_id="session-abc", auto_patch=False)
+        assert tracer._session_id == "session-abc"
+
     def test_init_default_service(self):
         tracer = agentguard.init(auto_patch=False)
         assert tracer._service == "default"
@@ -266,6 +270,10 @@ class TestInitEnvVars:
 
         logged_args = " ".join(str(arg) for arg in mock_info.call_args.args)
         assert "ag_secret_value" not in logged_args
+
+    def test_blank_session_id_rejected(self):
+        with pytest.raises(ValueError, match="session_id"):
+            agentguard.init(session_id="   ", auto_patch=False)
 
 
 class TestInitBudgetGuard:
