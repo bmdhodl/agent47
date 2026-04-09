@@ -174,7 +174,7 @@ def _quickstart(
     write_file: bool = False,
     output_path: Optional[str] = None,
     force: bool = False,
-    ) -> None:
+) -> None:
     raise SystemExit(
         run_quickstart(
             framework=framework,

@@ -105,6 +105,9 @@ def _build_skillpack_payload(
     budget_usd: float,
     trace_file: str,
 ) -> Dict[str, Any]:
+    service = _validate_service(service)
+    budget_usd = _validate_budget_usd(budget_usd)
+    trace_file = _validate_trace_file(trace_file)
     selected_targets = _selected_targets(target)
     files = [_repo_config_entry(service, budget_usd, trace_file)]
     files.extend(_target_entry(name, trace_file) for name in selected_targets)
@@ -140,6 +143,24 @@ def _selected_targets(target: str) -> List[str]:
     if target == "all":
         return [name for name in TARGET_CHOICES if name != "all"]
     return [target]
+
+
+def _validate_service(service: str) -> str:
+    if not isinstance(service, str) or not service.strip():
+        raise ValueError("service must be a non-empty string")
+    return service.strip()
+
+
+def _validate_budget_usd(budget_usd: float) -> float:
+    if isinstance(budget_usd, bool) or not isinstance(budget_usd, (int, float)) or budget_usd < 0:
+        raise ValueError("budget_usd must be a non-negative number")
+    return float(budget_usd)
+
+
+def _validate_trace_file(trace_file: str) -> str:
+    if not isinstance(trace_file, str) or not trace_file.strip():
+        raise ValueError("trace_file must be a non-empty string")
+    return trace_file.strip()
 
 
 def _repo_config_entry(service: str, budget_usd: float, trace_file: str) -> Dict[str, str]:
@@ -250,8 +271,7 @@ def _write_skillpack_files(
             raise ValueError(
                 f"Refusing to overwrite existing file: {destination.as_posix()}. Re-run with --force."
             )
-        if destination.parent != Path("."):
-            destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(file_payload["content"], encoding="utf-8")
         written.append(destination.as_posix())
     return written

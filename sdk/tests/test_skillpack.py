@@ -45,6 +45,36 @@ class TestSkillpack(unittest.TestCase):
         self.assertEqual(payload["status"], "error")
         self.assertIn("Unknown target", payload["error"])
 
+    def test_invalid_service_returns_error(self) -> None:
+        buf = io.StringIO()
+
+        result = run_skillpack(service="   ", json_output=True, stream=buf)
+
+        self.assertEqual(result, 1)
+        payload = json.loads(buf.getvalue())
+        self.assertEqual(payload["status"], "error")
+        self.assertIn("service", payload["error"])
+
+    def test_invalid_trace_file_returns_error(self) -> None:
+        buf = io.StringIO()
+
+        result = run_skillpack(trace_file="", json_output=True, stream=buf)
+
+        self.assertEqual(result, 1)
+        payload = json.loads(buf.getvalue())
+        self.assertEqual(payload["status"], "error")
+        self.assertIn("trace_file", payload["error"])
+
+    def test_invalid_budget_returns_error(self) -> None:
+        buf = io.StringIO()
+
+        result = run_skillpack(budget_usd=-1, json_output=True, stream=buf)
+
+        self.assertEqual(result, 1)
+        payload = json.loads(buf.getvalue())
+        self.assertEqual(payload["status"], "error")
+        self.assertIn("budget_usd", payload["error"])
+
     def test_write_creates_default_pack(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             cwd = os.getcwd()

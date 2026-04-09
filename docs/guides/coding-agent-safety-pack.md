@@ -52,9 +52,9 @@ Use AgentGuard in local-only mode first.
 - Do not add API keys or hosted settings during first integration
 - Verify with:
   1. `agentguard doctor`
-          2. `agentguard quickstart --framework raw --write`
-          3. `python agentguard_raw_quickstart.py`
-          4. `agentguard report .agentguard/traces.jsonl`
+  2. `agentguard quickstart --framework raw --write`
+  3. `python agentguard_raw_quickstart.py`
+  4. `agentguard report .agentguard/traces.jsonl`
 ```
 
 ## 3. Claude Code / CLAUDE.md snippet
