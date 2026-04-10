@@ -1,27 +1,23 @@
 # Morning Report
 
 ## Mission
-Turn the managed-agent note into one real SDK-side onboarding and proof improvement without leaving the public repo boundary.
+Create a root architecture guide that explains the public SDK repo clearly enough for future nightshift work and PR review.
 
 ## What shipped
-- added optional `session_id` support to `Tracer`, `AsyncTracer`, and `agentguard.init(...)`
-- added a local example that simulates two disposable harnesses writing separate traces under one shared managed-agent session
-- updated README and guide-level onboarding docs so session correlation is documented as a runtime concern, not a repo-config value
-- regenerated `sdk/PYPI_README.md`
+- added `ARCHITECTURE.md` at the repo root
+- documented the public repo boundary versus the private dashboard
+- mapped the main data flow from runtime guards to local proof surfaces, hosted ingest, and MCP clients
+- documented key abstractions, feature-placement rules, and known technical debt
 
 ## Why it matters
-- the SDK already handled append-only traces well, but it assumed one tracer instance per local process
-- managed-agent and disposable-harness runtimes break that assumption unless there is a shared correlation key above `trace_id`
-- `session_id` gives app developers a minimal, zero-dependency way to preserve that relationship while staying local-first and sink-compatible
+- the repo is easy to drift in because SDK, MCP, site, and private-dashboard references all exist nearby
+- a single current architecture doc reduces repeated recon work and lowers the chance of scope mistakes
+- future PRs now have a concrete place to update when the repo shape changes
 
 ## Validation
-- focused lint/tests passed
-- `sdk_preflight` passed
-- `sdk_release_guard.py` passed
-- bandit passed
-- full SDK suite passed
-- proof artifacts saved under `proof/session-id/`
+- `python scripts/sdk_preflight.py` passed with docs-only output
+- local proof files saved under `proof/architecture-doc/`
 
 ## Notes
-- local validation used `PYTHONPATH=<repo>/sdk` because another editable install exists on this machine
-- `session_id` is intentionally runtime-only; there is no `.agentguard.json` key or environment variable for it because it should be generated per managed session
+- this is a docs-only PR
+- `ops/02-ARCHITECTURE.md` still exists, so architectural guidance is intentionally duplicated until one source is retired
