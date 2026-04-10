@@ -17,6 +17,23 @@ Local-first runtime guardrails for coding agents. Stop loops, retry storms, and 
 pip install agentguard47
 ```
 
+## Why this wedge
+
+AgentGuard stays focused on coding-agent safety on purpose.
+
+In an April 2026 report, a16z said that `29%` of the Fortune 500 and about
+`19%` of the Global 2000 were live paying customers of leading AI startups,
+with coding described as the dominant enterprise AI use case and support/search
+next behind it. The report also cited repeated claims of `10-20x`
+productivity gains from AI coding tools. Source:
+[AI Adoption by the Numbers](https://www.a16z.news/p/ai-adoption-by-the-numbers).
+
+That supports the public SDK strategy in this repo:
+- stay narrow on coding-agent runtime safety
+- make the first proof local, cheap, and easy to trust
+- reuse the same runtime patterns for adjacent managed-agent workflows later,
+  without turning the SDK into a generic observability platform
+
 ## Verify your install
 
 Before wiring a real agent, validate the local SDK path:
