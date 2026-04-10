@@ -2,11 +2,11 @@
 
 ## 1. System Overview
 
-AgentGuard is the public SDK wedge in the BMD Pat LLC portfolio: a zero-dependency Python runtime-safety SDK plus a small TypeScript MCP server and static public site. This repo exists to make coding-agent safety easy to adopt, easy to trust, and easy to prove locally. The hosted dashboard/control plane is a separate private repo; this repo's job is to ship the free MIT SDK, the MCP bridge, and the public docs/examples that drive distribution.
+AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependency Python runtime-safety SDK plus a small TypeScript MCP server and static public site. This repo exists to make coding-agent safety easy to adopt, easy to trust, and easy to prove locally. The hosted dashboard/control plane is a separate private repo; this repo's job is to ship the free MIT SDK, the MCP bridge, and the public docs/examples that drive distribution.
 
 ## 2. Core Principles
 
-- Zero-dependency core SDK stays zero-dependency. Core Python modules under [`sdk/agentguard/`](sdk/agentguard/) must use stdlib only.
+- Zero-dependency core SDK stays zero-dependency. The default/core Python path under [`sdk/agentguard/`](sdk/agentguard/) must not introduce hard runtime dependencies; optional integrations may use guarded optional imports when they are not required for local-first SDK use.
 - Runtime enforcement beats observability sprawl. The SDK exists to stop loops, retries, timeout overruns, and budget burn while the agent is still running.
 - Local-first proof comes before hosted follow-through. `doctor`, `demo`, `quickstart`, starter files, JSONL traces, and local reports must work without API keys or dashboard access.
 - Public API stability flows through [`sdk/agentguard/__init__.py`](sdk/agentguard/__init__.py). Internal refactors are fine; user-facing import paths should not drift casually.
@@ -39,7 +39,7 @@ flowchart TD
     T --> H["HttpSink to private dashboard ingest"]
     L --> R["CLI proof surfaces: doctor / demo / report / incident / decisions / eval"]
     H --> D["Private dashboard repo and hosted API"]
-    D --> M["MCP server reads hosted traces, incidents, decisions, alerts"]
+    D --> M["MCP server reads hosted traces, decisions, alerts, usage, costs, and budget health"]
     M --> C["Codex / Claude Code / Cursor / other MCP clients"]
 ```
 
