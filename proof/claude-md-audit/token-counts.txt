@@ -1,13 +1,10 @@
+Command
+Get-Content CLAUDE.md | Measure-Object -Word -Character
+
 Before
-lines=199
 words=1568
 characters=11890
 
 After
-
-Lines Words Characters Property
------ ----- ---------- --------
-   97   524       3621         
-
-
-
+words=525
+characters=3613

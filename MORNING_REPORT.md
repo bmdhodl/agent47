@@ -19,7 +19,7 @@ Audit the repo's Claude-specific instruction surface so Claude Code works with t
 - `python scripts/sdk_preflight.py` passed
 - `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80` passed: `672 passed`, `92.97%` coverage
 - `python scripts/sdk_release_guard.py` passed
-- `CLAUDE.md` reduced from `1568` words / `11890` characters to `524` words / `3621` characters
+- `CLAUDE.md` reduced from `1568` words / `11890` characters to `525` words / `3613` characters
 - proof artifacts saved under `proof/claude-md-audit/`
 - local full-repo `ruff` still reports unrelated pre-existing issues in untouched SDK tests; saved in `proof/claude-md-audit/lint.txt`
 

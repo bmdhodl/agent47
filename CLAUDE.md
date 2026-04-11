@@ -45,7 +45,7 @@ Before coding, explicitly restate:
 - done criteria tied to `ops/04-DEFINITION_OF_DONE.md`
 
 If `ops/03-ROADMAP_NOW_NEXT_LATER.md` is older than 5 days or
-`ops/02-ARCHITECTURE.md` is older than 14 days, warn before starting work.
+`ARCHITECTURE.md` is older than 14 days, warn before starting work.
 
 Always:
 
@@ -129,7 +129,7 @@ For this repo, the most relevant Claude-side assets are:
 - dashboard remains private
 
 Current: latest shipped release: v1.2.7.
-Current: latest shipped release is 1.2.7.
+<!-- latest shipped release is 1.2.7 -->
 
 Core message to preserve:
 

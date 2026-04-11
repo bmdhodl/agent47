@@ -84,20 +84,20 @@ Reason:
 
 ## Before / After Size
 
+Count method:
+- PowerShell `Get-Content CLAUDE.md | Measure-Object -Word -Character`
+
 `CLAUDE.md` before:
-- lines: `199`
 - words: `1568`
 - characters: `11890`
 
 `CLAUDE.md` after:
-- lines: `97`
-- words: `524`
-- characters: `3621`
+- words: `525`
+- characters: `3613`
 
 Delta:
-- lines: `-102`
-- words: `-1044`
-- characters: `-8269`
+- words: `-1043`
+- characters: `-8277`
 
 ## Why This Is Better
 
