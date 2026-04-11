@@ -1,14 +1,18 @@
-"""Tests for guards: LoopGuard, BudgetGuard, TimeoutGuard, FuzzyLoopGuard, RateLimitGuard."""
+"""Tests for guards: loop, budget, timeout, retry, and escalation behavior."""
 import json
 import os
 import tempfile
 import time
 import unittest
 
+from agentguard.evaluation import EvalSuite
 from agentguard.guards import (
     BaseGuard,
+    BudgetAwareEscalation,
     BudgetExceeded,
     BudgetGuard,
+    EscalationRequired,
+    EscalationSignal,
     FuzzyLoopGuard,
     LoopDetected,
     LoopGuard,
@@ -18,8 +22,6 @@ from agentguard.guards import (
     TimeoutExceeded,
     TimeoutGuard,
 )
-from agentguard.evaluation import EvalSuite
-
 
 # ---------------------------------------------------------------------------
 # LoopGuard
@@ -293,23 +295,20 @@ class TestTimeoutGuardContextManager(unittest.TestCase):
 
     def test_context_manager_raises_on_timeout(self):
         guard = TimeoutGuard(max_seconds=0.01)
-        with self.assertRaises(TimeoutExceeded):
-            with guard:
-                time.sleep(0.05)
+        with self.assertRaises(TimeoutExceeded), guard:
+            time.sleep(0.05)
 
     def test_context_manager_no_check_if_exception(self):
         guard = TimeoutGuard(max_seconds=0.01)
-        with self.assertRaises(ValueError):
-            with guard:
-                time.sleep(0.05)
-                raise ValueError("user error")
+        with self.assertRaises(ValueError), guard:
+            time.sleep(0.05)
+            raise ValueError("user error")
 
     def test_context_manager_manual_check_inside(self):
         guard = TimeoutGuard(max_seconds=0.01)
-        with self.assertRaises(TimeoutExceeded):
-            with guard:
-                time.sleep(0.05)
-                guard.check()
+        with self.assertRaises(TimeoutExceeded), guard:
+            time.sleep(0.05)
+            guard.check()
 
     def test_context_manager_returns_self(self):
         guard = TimeoutGuard(max_seconds=10)
@@ -500,6 +499,160 @@ class TestRetryGuard(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# BudgetAwareEscalation
+# ---------------------------------------------------------------------------
+
+
+class TestEscalationSignalFactories(unittest.TestCase):
+    def test_token_count_factory(self) -> None:
+        signal = EscalationSignal.TOKEN_COUNT(threshold=2000)
+        self.assertEqual(signal.kind, "token_count")
+        self.assertEqual(signal.threshold, 2000)
+
+    def test_confidence_factory_validation(self) -> None:
+        with self.assertRaises(ValueError):
+            EscalationSignal.CONFIDENCE_BELOW(threshold=1.5)
+
+    def test_tool_call_depth_factory_validation(self) -> None:
+        with self.assertRaises(ValueError):
+            EscalationSignal.TOOL_CALL_DEPTH(threshold=0)
+
+    def test_custom_factory_requires_callable(self) -> None:
+        with self.assertRaises(TypeError):
+            EscalationSignal.CUSTOM("not-callable")  # type: ignore[arg-type]
+
+
+class TestBudgetAwareEscalation(unittest.TestCase):
+    def test_token_count_signal_selects_escalate_model(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+        )
+
+        selected = guard.select_model(token_count=2300)
+
+        self.assertEqual(selected, "claude-opus-4-6")
+        self.assertEqual(guard.last_signal_name, "token_count")
+        self.assertIn("token_count 2300 exceeded 2000", guard.last_reason or "")
+
+    def test_confidence_signal_raises_escalation_required(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.CONFIDENCE_BELOW(threshold=0.45),
+        )
+
+        with self.assertRaises(EscalationRequired) as ctx:
+            guard.check(confidence=0.20)
+
+        self.assertEqual(ctx.exception.target_model, "claude-opus-4-6")
+        self.assertEqual(ctx.exception.signal_name, "confidence_below")
+        self.assertIn("fell below", str(ctx.exception))
+
+    def test_tool_call_depth_signal_uses_auto_check_for_next_call(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOOL_CALL_DEPTH(threshold=3),
+        )
+
+        guard.auto_check(
+            "llm.result",
+            {
+                "model": "ollama/llama3.1:8b",
+                "tool_call_depth": 4,
+            },
+        )
+
+        with self.assertRaises(EscalationRequired) as ctx:
+            guard.check()
+
+        self.assertEqual(ctx.exception.signal_name, "tool_call_depth")
+        self.assertEqual(ctx.exception.metrics["tool_call_depth"], 4)
+        self.assertEqual(guard.select_model(), "ollama/llama3.1:8b")
+
+    def test_custom_rule_signal_can_trigger(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.CUSTOM(
+                lambda ctx: ctx.get("current_model") == "ollama/llama3.1:8b"
+                and (ctx.get("token_count") or 0) > 1000
+                and (ctx.get("confidence") or 1.0) < 0.5,
+                name="hard_turn",
+            ),
+        )
+
+        selected = guard.select_model(
+            current_model="ollama/llama3.1:8b",
+            token_count=1800,
+            confidence=0.3,
+        )
+
+        self.assertEqual(selected, "claude-opus-4-6")
+        self.assertEqual(guard.last_signal_name, "hard_turn")
+
+    def test_usage_total_tokens_is_supported_in_event_data(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+        )
+
+        guard.auto_check(
+            "llm.result",
+            {
+                "model": "ollama/llama3.1:8b",
+                "usage": {"total_tokens": 2400},
+            },
+        )
+
+        self.assertEqual(guard.select_model(), "claude-opus-4-6")
+
+    def test_escalated_model_events_do_not_rearm(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+        )
+
+        guard.auto_check(
+            "llm.result",
+            {
+                "model": "claude-opus-4-6",
+                "usage": {"total_tokens": 2400},
+            },
+        )
+
+        self.assertEqual(guard.select_model(), "ollama/llama3.1:8b")
+
+    def test_reset_clears_pending_and_history(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+        )
+
+        guard.auto_check(
+            "llm.result",
+            {"model": "ollama/llama3.1:8b", "token_count": 2200},
+        )
+        guard.reset()
+
+        self.assertEqual(guard.select_model(), "ollama/llama3.1:8b")
+        self.assertIsNone(guard.last_reason)
+
+    def test_invalid_models_raise_value_error(self) -> None:
+        with self.assertRaises(ValueError):
+            BudgetAwareEscalation(
+                primary_model="same-model",
+                escalate_model="same-model",
+                escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+            )
+
+
+# ---------------------------------------------------------------------------
 # BaseGuard
 # ---------------------------------------------------------------------------
 
@@ -538,6 +691,14 @@ class TestBaseGuard(unittest.TestCase):
         self.assertIsInstance(FuzzyLoopGuard(), BaseGuard)
         self.assertIsInstance(RateLimitGuard(max_calls_per_minute=10), BaseGuard)
         self.assertIsInstance(RetryGuard(max_retries=3), BaseGuard)
+        self.assertIsInstance(
+            BudgetAwareEscalation(
+                primary_model="ollama/llama3.1:8b",
+                escalate_model="claude-opus-4-6",
+                escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+            ),
+            BaseGuard,
+        )
 
 
 # ---------------------------------------------------------------------------

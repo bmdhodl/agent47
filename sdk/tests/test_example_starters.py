@@ -137,3 +137,40 @@ def test_per_token_budget_spike_example_runs() -> None:
         assert result.returncode == 0, result.stderr
         assert "Budget spike caught on turn 3" in result.stdout
         assert Path(tmpdir, "per_token_budget_spike_traces.jsonl").exists()
+
+
+def test_budget_aware_escalation_example_runs() -> None:
+    example_path = REPO_ROOT / "examples" / "budget_aware_escalation.py"
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    sdk_path = str(REPO_ROOT / "sdk")
+    env["PYTHONPATH"] = (
+        sdk_path
+        if not existing_pythonpath
+        else os.pathsep.join([sdk_path, existing_pythonpath])
+    )
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        try:
+            result = subprocess.run(
+                [sys.executable, str(example_path)],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                env=env,
+                check=False,
+                timeout=60,
+            )
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout or ""
+            stderr = exc.stderr or ""
+            raise AssertionError(
+                "Budget-aware escalation example timed out after 60 seconds.\n"
+                f"STDOUT:\n{stdout}\n"
+                f"STDERR:\n{stderr}"
+            ) from exc
+
+        assert result.returncode == 0, result.stderr
+        assert "Turn 1 model: ollama/llama3.1:8b" in result.stdout
+        assert "Turn 2 model: claude-opus-4-6" in result.stdout
+        assert Path(tmpdir, "budget_aware_escalation_traces.jsonl").exists()

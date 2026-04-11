@@ -1,0 +1,13 @@
+AgentGuard report
+  Total events: 10
+  Spans: 4  Events: 5
+  Approx run time: 0.8 ms
+  Reasoning steps: 0
+  Tool results: 0
+  LLM results: 2
+  Estimated cost: $0.00
+  Savings ledger: exact 0 tokens / $0.0000, estimated 0 tokens / $0.0000
+  Loop guard triggered: 0
+  Incident hint: rerun with `agentguard incident` for a shareable incident report
+
+Traced by AgentGuard | agentguard47.com

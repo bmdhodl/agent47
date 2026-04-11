@@ -5,7 +5,9 @@ import tempfile
 import unittest
 
 from agentguard import (
+    BudgetAwareEscalation,
     BudgetGuard,
+    EscalationSignal,
     EvalSuite,
     JsonlFileSink,
     LoopDetected,
@@ -40,6 +42,17 @@ class TestGuardRepr(unittest.TestCase):
     def test_timeout_guard_repr(self):
         guard = TimeoutGuard(max_seconds=30)
         self.assertEqual(repr(guard), "TimeoutGuard(max_seconds=30)")
+
+    def test_budget_aware_escalation_repr(self):
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+        )
+        self.assertEqual(
+            repr(guard),
+            "BudgetAwareEscalation(primary_model='ollama/llama3.1:8b', escalate_model='claude-opus-4-6', signals=1)",
+        )
 
 
 class TestSinkRepr(unittest.TestCase):
@@ -90,6 +103,9 @@ class TestDocstrings(unittest.TestCase):
 
     def test_timeout_guard_has_usage_example(self):
         self.assertIn("TimeoutGuard(", TimeoutGuard.__doc__)
+
+    def test_budget_aware_escalation_has_usage_example(self):
+        self.assertIn("BudgetAwareEscalation(", BudgetAwareEscalation.__doc__)
 
     def test_jsonl_file_sink_has_docstring(self):
         self.assertIn("JSONL", JsonlFileSink.__doc__)

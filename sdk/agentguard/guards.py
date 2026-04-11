@@ -656,3 +656,10 @@ def _extract_tool_name(
 
 def _stable_json(data: Dict[str, Any]) -> str:
     return json.dumps(data, sort_keys=True, separators=(",", ":"))
+
+
+from .escalation import (  # noqa: E402,F401
+    BudgetAwareEscalation,
+    EscalationRequired,
+    EscalationSignal,
+)

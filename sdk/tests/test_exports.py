@@ -20,15 +20,25 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertIsNotNone(TraceSink)
 
     def test_guards(self):
-        from agentguard import BudgetGuard, LoopGuard, RetryGuard, TimeoutGuard
+        from agentguard import (
+            BudgetAwareEscalation,
+            BudgetGuard,
+            EscalationSignal,
+            LoopGuard,
+            RetryGuard,
+            TimeoutGuard,
+        )
         self.assertIsNotNone(LoopGuard)
         self.assertIsNotNone(BudgetGuard)
         self.assertIsNotNone(TimeoutGuard)
         self.assertIsNotNone(RetryGuard)
+        self.assertIsNotNone(BudgetAwareEscalation)
+        self.assertIsNotNone(EscalationSignal)
 
     def test_exceptions(self):
         from agentguard import (
             BudgetExceeded,
+            EscalationRequired,
             LoopDetected,
             RetryLimitExceeded,
             TimeoutExceeded,
@@ -37,6 +47,7 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertTrue(issubclass(BudgetExceeded, RuntimeError))
         self.assertTrue(issubclass(TimeoutExceeded, RuntimeError))
         self.assertTrue(issubclass(RetryLimitExceeded, RuntimeError))
+        self.assertTrue(issubclass(EscalationRequired, RuntimeError))
 
     def test_cost(self):
         from agentguard import estimate_cost
@@ -100,8 +111,9 @@ class TestTopLevelExports(unittest.TestCase):
             "AgentGuardError",
             "BaseGuard", "LoopGuard", "BudgetGuard", "TimeoutGuard",
             "FuzzyLoopGuard", "RateLimitGuard", "RetryGuard",
+            "BudgetAwareEscalation", "EscalationSignal",
             "LoopDetected", "BudgetExceeded", "BudgetWarning", "TimeoutExceeded",
-            "RetryLimitExceeded",
+            "RetryLimitExceeded", "EscalationRequired",
             "DecisionTrace", "decision_flow",
             "extract_decision_events", "extract_decision_payload", "is_decision_event",
             "log_decision_proposed", "log_decision_edited",

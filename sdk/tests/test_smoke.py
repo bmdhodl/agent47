@@ -24,19 +24,55 @@ def smoke_test() -> bool:
     # --- 1. Import all public exports ---
     try:
         from agentguard import (
-            Tracer, JsonlFileSink, StdoutSink, TraceSink,
-            LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard,
-            LoopDetected, BudgetExceeded, BudgetWarning, TimeoutExceeded, RetryLimitExceeded,
-            estimate_cost,
+            AssertionResult,
+            AsyncTraceContext,
+            AsyncTracer,
+            BudgetAwareEscalation,
+            BudgetExceeded,
+            BudgetGuard,
+            BudgetWarning,
+            EscalationRequired,
+            EscalationSignal,
+            EvalResult,
+            EvalSuite,
+            FuzzyLoopGuard,
             HttpSink,
-            EvalSuite, EvalResult, AssertionResult,
-            AsyncTracer, AsyncTraceContext,
-            trace_agent, trace_tool,
-            patch_openai, patch_anthropic,
-            unpatch_openai, unpatch_anthropic,
-            async_trace_agent, async_trace_tool,
-            patch_openai_async, patch_anthropic_async,
-            unpatch_openai_async, unpatch_anthropic_async,
+            JsonlFileSink,
+            LoopDetected,
+            LoopGuard,
+            RateLimitGuard,
+            RetryGuard,
+            RetryLimitExceeded,
+            StdoutSink,
+            TimeoutExceeded,
+            TimeoutGuard,
+            Tracer,
+            TraceSink,
+            async_trace_agent,
+            async_trace_tool,
+            estimate_cost,
+            patch_anthropic,
+            patch_anthropic_async,
+            patch_openai,
+            patch_openai_async,
+            trace_agent,
+            trace_tool,
+            unpatch_anthropic,
+            unpatch_anthropic_async,
+            unpatch_openai,
+            unpatch_openai_async,
+        )
+        _ = (
+            AssertionResult, AsyncTraceContext, AsyncTracer, BudgetAwareEscalation,
+            BudgetExceeded, BudgetGuard, BudgetWarning, EscalationRequired,
+            EscalationSignal, EvalResult, EvalSuite, FuzzyLoopGuard, HttpSink,
+            JsonlFileSink, LoopDetected, LoopGuard, RateLimitGuard, RetryGuard,
+            RetryLimitExceeded, StdoutSink, TimeoutExceeded, TimeoutGuard,
+            TraceSink, Tracer, async_trace_agent, async_trace_tool,
+            estimate_cost, patch_anthropic, patch_anthropic_async,
+            patch_openai, patch_openai_async, trace_agent, trace_tool,
+            unpatch_anthropic, unpatch_anthropic_async,
+            unpatch_openai, unpatch_openai_async,
         )
         print("[PASS] 1/9   All imports successful")
     except ImportError as e:
@@ -176,7 +212,7 @@ def smoke_test() -> bool:
 
         # --- 8. Export ---
         try:
-            from agentguard.export import export_json, export_csv
+            from agentguard.export import export_csv, export_json
             json_out = os.path.join(tmpdir, "smoke.json")
             csv_out = os.path.join(tmpdir, "smoke.csv")
             export_json(trace_path, json_out)
@@ -191,6 +227,7 @@ def smoke_test() -> bool:
         # --- 9. CLI report ---
         try:
             import io
+
             from agentguard.cli import _report
             buf = io.StringIO()
             old = sys.stdout
