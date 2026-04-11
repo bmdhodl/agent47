@@ -1,4 +1,5 @@
 """Test that all public API is importable from top-level agentguard package."""
+import importlib
 import unittest
 
 
@@ -48,6 +49,14 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertTrue(issubclass(TimeoutExceeded, RuntimeError))
         self.assertTrue(issubclass(RetryLimitExceeded, RuntimeError))
         self.assertTrue(issubclass(EscalationRequired, RuntimeError))
+
+    def test_legacy_guard_exports_do_not_create_import_cycle(self):
+        escalation_module = importlib.import_module("agentguard.escalation")
+        guards_module = importlib.import_module("agentguard.guards")
+
+        self.assertIs(guards_module.BudgetAwareEscalation, escalation_module.BudgetAwareEscalation)
+        self.assertIs(guards_module.EscalationSignal, escalation_module.EscalationSignal)
+        self.assertIs(guards_module.EscalationRequired, escalation_module.EscalationRequired)
 
     def test_cost(self):
         from agentguard import estimate_cost

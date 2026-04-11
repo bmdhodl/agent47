@@ -610,6 +610,20 @@ class TestBudgetAwareEscalation(unittest.TestCase):
 
         self.assertEqual(guard.select_model(), "claude-opus-4-6")
 
+    def test_none_overrides_do_not_erase_derived_metrics(self) -> None:
+        guard = BudgetAwareEscalation(
+            primary_model="ollama/llama3.1:8b",
+            escalate_model="claude-opus-4-6",
+            escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000),
+        )
+
+        selected = guard.select_model(
+            event_data={"usage": {"total_tokens": 2400}},
+            token_count=None,
+        )
+
+        self.assertEqual(selected, "claude-opus-4-6")
+
     def test_escalated_model_events_do_not_rearm(self) -> None:
         guard = BudgetAwareEscalation(
             primary_model="ollama/llama3.1:8b",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -173,4 +174,13 @@ def test_budget_aware_escalation_example_runs() -> None:
         assert result.returncode == 0, result.stderr
         assert "Turn 1 model: ollama/llama3.1:8b" in result.stdout
         assert "Turn 2 model: claude-opus-4-6" in result.stdout
-        assert Path(tmpdir, "budget_aware_escalation_traces.jsonl").exists()
+        trace_path = Path(tmpdir, "budget_aware_escalation_traces.jsonl")
+        assert trace_path.exists()
+
+        routes = []
+        with trace_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                event = json.loads(line)
+                if event.get("kind") == "event" and event.get("name") == "model.route":
+                    routes.append(event.get("data", {}).get("route"))
+        assert routes == ["primary", "escalated"]

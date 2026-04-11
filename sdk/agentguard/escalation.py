@@ -321,7 +321,10 @@ class BudgetAwareEscalation(BaseGuard):
             "confidence": confidence,
             "tool_call_depth": tool_call_depth,
         }
-        context.update(overrides)
+        for key, value in overrides.items():
+            if key in {"token_count", "confidence", "tool_call_depth", "current_model"} and value is None:
+                continue
+            context[key] = value
         return context
 
     def _match_context(self, context: Dict[str, Any]) -> Optional[_EscalationMatch]:

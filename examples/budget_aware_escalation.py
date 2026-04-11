@@ -61,6 +61,7 @@ def main() -> int:
         guard.auto_check("llm.result", first_result)
 
     with tracer.trace("agent.turn.2") as ctx:
+        route = "primary"
         try:
             guard.check()
             second_model = guard.primary_model
@@ -68,6 +69,7 @@ def main() -> int:
         except EscalationRequired as exc:
             second_model = exc.target_model
             reason = exc.reason
+            route = "escalated"
             ctx.event(
                 "guard.escalation",
                 data={
@@ -78,7 +80,7 @@ def main() -> int:
             )
         print(f"Turn 2 model: {second_model}")
         print(f"Escalation reason: {reason}")
-        ctx.event("model.route", data={"selected_model": second_model, "route": "escalated"})
+        ctx.event("model.route", data={"selected_model": second_model, "route": route})
         second_result = _simulated_model_call(second_model, prompt)
         ctx.event("llm.result", data=second_result)
 
