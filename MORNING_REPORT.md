@@ -1,23 +1,28 @@
 # Morning Report
 
 ## Mission
-Create a root architecture guide that explains the public SDK repo clearly enough for future nightshift work and PR review.
+Audit the repo's Claude-specific instruction surface so Claude Code works with the harness it already has instead of carrying a stale, oversized repo prompt.
 
 ## What shipped
-- added `ARCHITECTURE.md` at the repo root
-- documented the public repo boundary versus the private dashboard
-- mapped the main data flow from runtime guards to local proof surfaces, hosted ingest, and MCP clients
-- documented key abstractions, feature-placement rules, and known technical debt
+- added `CLAUDE_MD_AUDIT.md` with source-backed findings and follow-up guidance
+- trimmed `CLAUDE.md` down to the AgentGuard-specific repo contract
+- removed stale embedded architecture/API detail from `CLAUDE.md` and pointed it at `ARCHITECTURE.md`
+- kept `AGENTS.md` unchanged because the actual issue was Claude-specific duplication, not a repo-wide policy error
 
 ## Why it matters
-- the repo is easy to drift in because SDK, MCP, site, and private-dashboard references all exist nearby
-- a single current architecture doc reduces repeated recon work and lowers the chance of scope mistakes
-- future PRs now have a concrete place to update when the repo shape changes
+- Claude Code already injects tool, style, memory, skill, and environment guidance
+- the old `CLAUDE.md` was wasting context and had started drifting from the real repo
+- the new file is shorter, more durable, and sharper about SDK boundaries, proof expectations, and distribution priorities
 
 ## Validation
-- `python scripts/sdk_preflight.py` passed with docs-only output
-- local proof files saved under `proof/architecture-doc/`
+- source article reviewed directly
+- `python scripts/sdk_preflight.py` passed
+- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80` passed: `672 passed`, `92.97%` coverage
+- `python scripts/sdk_release_guard.py` passed
+- `CLAUDE.md` reduced from `1568` words / `11890` characters to `524` words / `3621` characters
+- proof artifacts saved under `proof/claude-md-audit/`
+- local full-repo `ruff` still reports unrelated pre-existing issues in untouched SDK tests; saved in `proof/claude-md-audit/lint.txt`
 
 ## Notes
-- this is a docs-only PR
-- `ops/02-ARCHITECTURE.md` still exists, so architectural guidance is intentionally duplicated until one source is retired
+- I did not edit `AGENTS.md` in this PR because the queue item was specifically about Claude Code system-prompt overlap
+- if we later want one shared source for agent instructions across Codex and Claude, that should be a separate deduplication pass rather than hidden in this audit PR

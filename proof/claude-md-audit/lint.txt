@@ -1,0 +1,871 @@
+SIM115 Use a context manager for opening files
+  --> sdk\tests\e2e_cost_guardrail.py:85:15
+   |
+84 |     # ---- Setup ----
+85 |     tmpfile = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+86 |     trace_path = tmpfile.name
+87 |     tmpfile.close()
+   |
+
+B007 Loop control variable `i` not used within loop body
+   --> sdk\tests\e2e_cost_guardrail.py:111:13
+    |
+109 |         # Make a few calls — should cross 30% warning threshold
+110 |         client = cls()
+111 |         for i in range(3):
+    |             ^
+112 |             client.chat.completions.create(model="gpt-4o")
+    |
+help: Rename unused `i` to `_i`
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\e2e_cost_guardrail.py:150:31
+    |
+149 |         events = []
+150 |         with open(trace_path, "r") as f:
+    |                               ^^^
+151 |             for line in f:
+152 |                 line = line.strip()
+    |
+help: Remove mode argument
+
+SIM117 [*] Use a single `with` statement with multiple contexts instead of nested `with` statements
+  --> sdk\tests\e2e_v110.py:70:5
+   |
+68 |       print("\n1. Tracer context manager + basic tracing")
+69 |       sink = JsonlFileSink(trace_path)
+70 | /     with Tracer(sink=sink, service="e2e-test") as tracer:
+71 | |         with tracer.trace("agent.research") as ctx:
+   | |___________________________________________________^
+72 |               ctx.event("reasoning.step", data={"thought": "search for docs"})
+73 |               with ctx.span("tool.search") as child:
+   |
+help: Combine `with` statements
+
+UP015 [*] Unnecessary mode argument
+  --> sdk\tests\e2e_v110.py:81:27
+   |
+80 |     # Verify trace file exists and has events
+81 |     with open(trace_path, "r") as f:
+   |                           ^^^
+82 |         events = [json.loads(l) for l in f if l.strip()]
+83 |     check("Trace file written", len(events) > 0, f"got {len(events)} events")
+   |
+help: Remove mode argument
+
+E741 Ambiguous variable name: `l`
+  --> sdk\tests\e2e_v110.py:82:37
+   |
+80 |     # Verify trace file exists and has events
+81 |     with open(trace_path, "r") as f:
+82 |         events = [json.loads(l) for l in f if l.strip()]
+   |                                     ^
+83 |     check("Trace file written", len(events) > 0, f"got {len(events)} events")
+84 |     check("Has span events", any(e["kind"] == "span" for e in events))
+   |
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> sdk\tests\e2e_v110.py:135:5
+    |
+134 |       blocked = False
+135 | /     with Tracer(sink=JsonlFileSink(trace_path2), guards=[blocker]) as tracer:
+136 | |         with tracer.trace("agent.test") as ctx:
+    | |_______________________________________________^
+137 |               ctx.event("tool.safe")  # should pass
+138 |               try:
+    |
+help: Combine `with` statements
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> sdk\tests\e2e_v110.py:154:5
+    |
+153 |       loop_caught = False
+154 | /     with Tracer(sink=JsonlFileSink(trace_path3), guards=[loop_guard]) as tracer:
+155 | |         with tracer.trace("agent.loop-test") as ctx:
+    | |____________________________________________________^
+156 |               try:
+157 |                   for _ in range(5):
+    |
+help: Combine `with` statements
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> sdk\tests\e2e_v110.py:218:5
+    |
+216 |       long_name = "x" * 2000
+217 |
+218 | /     with Tracer(sink=JsonlFileSink(trace_path4), service="truncation-test") as tracer:
+219 | |         with tracer.trace(long_name) as ctx:
+    | |____________________________________________^
+220 |               ctx.event(long_name, data={"test": True})
+    |
+help: Combine `with` statements
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\e2e_v110.py:222:28
+    |
+220 |             ctx.event(long_name, data={"test": True})
+221 |
+222 |     with open(trace_path4, "r") as f:
+    |                            ^^^
+223 |         trunc_events = [json.loads(l) for l in f if l.strip()]
+    |
+help: Remove mode argument
+
+E741 Ambiguous variable name: `l`
+   --> sdk\tests\e2e_v110.py:223:43
+    |
+222 |     with open(trace_path4, "r") as f:
+223 |         trunc_events = [json.loads(l) for l in f if l.strip()]
+    |                                           ^
+224 |
+225 |     all_names_ok = all(len(e["name"]) <= 1000 for e in trunc_events)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> sdk\tests\e2e_v110.py:231:5
+    |
+229 |       # ── 9. CLI report ─────────────────────────────────────────
+230 |       print("\n9. CLI report on trace file")
+231 | /     from agentguard.cli import _report, _summarize
+232 | |     import io
+233 | |     from contextlib import redirect_stdout
+    | |__________________________________________^
+234 |
+235 |       buf = io.StringIO()
+    |
+help: Organize imports
+
+F401 [*] `time` imported but unused
+ --> sdk\tests\test_concurrency.py:5:8
+  |
+3 | import tempfile
+4 | import threading
+5 | import time
+  |        ^^^^
+6 | import unittest
+  |
+help: Remove unused import: `time`
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_concurrency.py:177:29
+    |
+175 |             import json
+176 |
+177 |             with open(path, "r") as f:
+    |                             ^^^
+178 |                 lines = [l.strip() for l in f if l.strip()]
+    |
+help: Remove mode argument
+
+E741 Ambiguous variable name: `l`
+   --> sdk\tests\test_concurrency.py:178:40
+    |
+177 |             with open(path, "r") as f:
+178 |                 lines = [l.strip() for l in f if l.strip()]
+    |                                        ^
+179 |
+180 |             # 10 threads * 100 events = 1000 lines
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_cost_guardrail.py:13:1
+   |
+11 |   - AsyncTraceContext.event() cost_usd parameter
+12 |   """
+13 | / from __future__ import annotations
+14 | |
+15 | | import asyncio
+16 | | import json
+17 | | import os
+18 | | import tempfile
+19 | | import types
+20 | | from typing import Any, Dict, List, Optional
+21 | | from unittest.mock import MagicMock
+22 | |
+23 | | import pytest
+24 | |
+25 | | from agentguard.evaluation import _extract_cost, summarize_trace
+26 | | from agentguard.guards import BudgetExceeded, BudgetGuard
+27 | | from agentguard.instrument import (
+28 | |     _consume_budget,
+29 | |     _originals,
+30 | |     patch_anthropic,
+31 | |     patch_anthropic_async,
+32 | |     patch_openai,
+33 | |     patch_openai_async,
+34 | |     unpatch_anthropic,
+35 | |     unpatch_anthropic_async,
+36 | |     unpatch_openai,
+37 | |     unpatch_openai_async,
+38 | | )
+39 | | from agentguard.sinks.http import HttpSink
+40 | | from agentguard.tracing import JsonlFileSink, Tracer, TraceContext
+   | |__________________________________________________________________^
+   |
+help: Organize imports
+
+F401 [*] `typing.Optional` imported but unused
+  --> sdk\tests\test_cost_guardrail.py:20:37
+   |
+18 | import tempfile
+19 | import types
+20 | from typing import Any, Dict, List, Optional
+   |                                     ^^^^^^^^
+21 | from unittest.mock import MagicMock
+   |
+help: Remove unused import: `typing.Optional`
+
+F401 [*] `agentguard.instrument.patch_anthropic_async` imported but unused
+  --> sdk\tests\test_cost_guardrail.py:31:5
+   |
+29 |     _originals,
+30 |     patch_anthropic,
+31 |     patch_anthropic_async,
+   |     ^^^^^^^^^^^^^^^^^^^^^
+32 |     patch_openai,
+33 |     patch_openai_async,
+   |
+help: Remove unused import
+
+F401 [*] `agentguard.instrument.patch_openai_async` imported but unused
+  --> sdk\tests\test_cost_guardrail.py:33:5
+   |
+31 |     patch_anthropic_async,
+32 |     patch_openai,
+33 |     patch_openai_async,
+   |     ^^^^^^^^^^^^^^^^^^
+34 |     unpatch_anthropic,
+35 |     unpatch_anthropic_async,
+   |
+help: Remove unused import
+
+F401 [*] `agentguard.instrument.unpatch_anthropic_async` imported but unused
+  --> sdk\tests\test_cost_guardrail.py:35:5
+   |
+33 |     patch_openai_async,
+34 |     unpatch_anthropic,
+35 |     unpatch_anthropic_async,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+36 |     unpatch_openai,
+37 |     unpatch_openai_async,
+   |
+help: Remove unused import
+
+F401 [*] `agentguard.instrument.unpatch_openai_async` imported but unused
+  --> sdk\tests\test_cost_guardrail.py:37:5
+   |
+35 |     unpatch_anthropic_async,
+36 |     unpatch_openai,
+37 |     unpatch_openai_async,
+   |     ^^^^^^^^^^^^^^^^^^^^
+38 | )
+39 | from agentguard.sinks.http import HttpSink
+   |
+help: Remove unused import
+
+F401 [*] `agentguard.tracing.TraceContext` imported but unused
+  --> sdk\tests\test_cost_guardrail.py:40:55
+   |
+38 | )
+39 | from agentguard.sinks.http import HttpSink
+40 | from agentguard.tracing import JsonlFileSink, Tracer, TraceContext
+   |                                                       ^^^^^^^^^^^^
+   |
+help: Remove unused import: `agentguard.tracing.TraceContext`
+
+SIM117 [*] Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> sdk\tests\test_cost_guardrail.py:230:9
+    |
+228 |           tracer = Tracer(sink=sink, sampling_rate=0.0, guards=[guard])
+229 |
+230 | /         with pytest.raises(Exception):
+231 | |             with tracer.trace("agent.run") as ctx:
+    | |__________________________________________________^
+232 |                   ctx.event("tool.search", data={"query": "same"})
+233 |                   ctx.event("tool.search", data={"query": "same"})  # should trigger
+    |
+help: Combine `with` statements
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_cost_guardrail.py:673:29
+    |
+671 |             # Read back the JSONL and verify
+672 |             events = []
+673 |             with open(path, "r") as f:
+    |                             ^^^
+674 |                 for line in f:
+675 |                     line = line.strip()
+    |
+help: Remove mode argument
+
+F841 Local variable `result` is assigned to but never used
+   --> sdk\tests\test_cost_guardrail.py:710:13
+    |
+708 |             patch_openai(tracer, budget_guard=guard)
+709 |             client = cls()
+710 |             result = client.chat.completions.create(model="gpt-4o")
+    |             ^^^^^^
+711 |
+712 |             # No exceeded event
+    |
+help: Remove assignment to unused variable `result`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_coverage_gaps.py:5:1
+   |
+ 3 |   Each test targets lines identified as uncovered in the coverage report.
+ 4 |   """
+ 5 | / import json
+ 6 | | import os
+ 7 | | import tempfile
+ 8 | | import time
+ 9 | | import unittest
+10 | |
+11 | | from agentguard.guards import (
+12 | |     BudgetExceeded,
+13 | |     BudgetGuard,
+14 | |     LoopGuard,
+15 | |     RateLimitGuard,
+16 | |     TimeoutGuard,
+17 | | )
+18 | | from agentguard.tracing import Tracer, StdoutSink
+   | |_________________________________________________^
+   |
+help: Organize imports
+
+F401 [*] `agentguard.guards.BudgetExceeded` imported but unused
+  --> sdk\tests\test_coverage_gaps.py:12:5
+   |
+11 | from agentguard.guards import (
+12 |     BudgetExceeded,
+   |     ^^^^^^^^^^^^^^
+13 |     BudgetGuard,
+14 |     LoopGuard,
+   |
+help: Remove unused import: `agentguard.guards.BudgetExceeded`
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_coverage_gaps.py:151:13
+    |
+149 |     def _make_trace_file(self, events):
+150 |         """Helper: write events to a temp JSONL file."""
+151 |         f = tempfile.NamedTemporaryFile(
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+152 |             mode="w", suffix=".jsonl", delete=False
+153 |         )
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> sdk\tests\test_coverage_gaps.py:571:9
+    |
+569 |       def test_async_guard_with_no_check_args(self):
+570 |           """Guard.check() with no args exercises the async fallback path."""
+571 | /         import asyncio
+572 | |         from agentguard.atracing import AsyncTracer
+    | |___________________________________________________^
+573 |
+574 |           class NoArgGuard:
+    |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> sdk\tests\test_coverage_gaps.py:589:9
+    |
+587 |       def test_async_guard_with_incompatible_check(self):
+588 |           """Guard.check() that raises TypeError is silently ignored (async)."""
+589 | /         import asyncio
+590 | |         from agentguard.atracing import AsyncTracer
+    | |___________________________________________________^
+591 |
+592 |           class BadGuard:
+    |
+help: Organize imports
+
+F841 Local variable `ctx` is assigned to but never used
+   --> sdk\tests\test_coverage_gaps.py:623:13
+    |
+621 |         @trace_agent(tracer)
+622 |         def my_agent(x, **kwargs):
+623 |             ctx = kwargs.get("_trace_ctx")
+    |             ^^^
+624 |             return x + 1
+    |
+help: Remove assignment to unused variable `ctx`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_crewai_integration.py:2:1
+   |
+ 1 |   """Tests for CrewAI integration (AgentGuardCrewHandler)."""
+ 2 | / from __future__ import annotations
+ 3 | |
+ 4 | | import json
+ 5 | | import os
+ 6 | | import tempfile
+ 7 | | import unittest
+ 8 | | from types import SimpleNamespace
+ 9 | |
+10 | | from agentguard import Tracer, JsonlFileSink, LoopGuard, BudgetGuard
+11 | | from agentguard.guards import LoopDetected, BudgetExceeded
+12 | | from agentguard.integrations.crewai import AgentGuardCrewHandler
+   | |________________________________________________________________^
+   |
+help: Organize imports
+
+UP015 [*] Unnecessary mode argument
+  --> sdk\tests\test_crewai_integration.py:23:37
+   |
+22 |     def _read_events(self):
+23 |         with open(self._trace_path, "r") as f:
+   |                                     ^^^
+24 |             return [json.loads(line) for line in f if line.strip()]
+   |
+help: Remove mode argument
+
+SIM115 Use a context manager for opening files
+  --> sdk\tests\test_export.py:14:13
+   |
+12 | class TestLoadEvents(unittest.TestCase):
+13 |     def _write_jsonl(self, lines):
+14 |         f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+15 |         for line in lines:
+16 |             f.write(line + "\n")
+   |
+
+SIM115 Use a context manager for opening files
+  --> sdk\tests\test_export.py:68:19
+   |
+66 | class TestExportJson(unittest.TestCase):
+67 |     def test_export_json(self):
+68 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+69 |         input_f.write('{"kind": "span", "name": "test"}\n')
+70 |         input_f.write('{"kind": "event", "name": "step"}\n')
+   |
+
+SIM115 Use a context manager for opening files
+  --> sdk\tests\test_export.py:73:20
+   |
+71 |         input_f.close()
+72 |
+73 |         output_f = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+74 |         output_f.close()
+   |
+
+UP015 [*] Unnecessary mode argument
+  --> sdk\tests\test_export.py:80:38
+   |
+78 |             self.assertEqual(count, 2)
+79 |
+80 |             with open(output_f.name, "r") as f:
+   |                                      ^^^
+81 |                 data = json.load(f)
+82 |             self.assertIsInstance(data, list)
+   |
+help: Remove mode argument
+
+SIM115 Use a context manager for opening files
+  --> sdk\tests\test_export.py:89:19
+   |
+88 |     def test_export_json_empty(self):
+89 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+90 |         input_f.close()
+   |
+
+SIM115 Use a context manager for opening files
+  --> sdk\tests\test_export.py:92:20
+   |
+90 |         input_f.close()
+91 |
+92 |         output_f = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+93 |         output_f.close()
+   |
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_export.py:99:38
+    |
+ 97 |             self.assertEqual(count, 0)
+ 98 |
+ 99 |             with open(output_f.name, "r") as f:
+    |                                      ^^^
+100 |                 data = json.load(f)
+101 |             self.assertEqual(data, [])
+    |
+help: Remove mode argument
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:109:19
+    |
+107 | class TestExportCsv(unittest.TestCase):
+108 |     def test_export_csv(self):
+109 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+110 |         input_f.write(json.dumps({"service": "test", "kind": "span", "phase": "start", "name": "run"}) + "\n")
+111 |         input_f.write(json.dumps({"service": "test", "kind": "event", "phase": "emit", "name": "step"}) + "\n")
+    |
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:114:20
+    |
+112 |         input_f.close()
+113 |
+114 |         output_f = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+115 |         output_f.close()
+    |
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_export.py:121:38
+    |
+119 |             self.assertEqual(count, 2)
+120 |
+121 |             with open(output_f.name, "r") as f:
+    |                                      ^^^
+122 |                 reader = csv.DictReader(f)
+123 |                 rows = list(reader)
+    |
+help: Remove mode argument
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:132:19
+    |
+131 |     def test_export_csv_custom_columns(self):
+132 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+133 |         input_f.write(json.dumps({"service": "test", "kind": "span", "name": "run"}) + "\n")
+134 |         input_f.close()
+    |
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:136:20
+    |
+134 |         input_f.close()
+135 |
+136 |         output_f = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+137 |         output_f.close()
+    |
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_export.py:143:38
+    |
+141 |             self.assertEqual(count, 1)
+142 |
+143 |             with open(output_f.name, "r") as f:
+    |                                      ^^^
+144 |                 reader = csv.DictReader(f)
+145 |                 rows = list(reader)
+    |
+help: Remove mode argument
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:152:19
+    |
+151 |     def test_export_csv_empty(self):
+152 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+153 |         input_f.close()
+    |
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:155:20
+    |
+153 |         input_f.close()
+154 |
+155 |         output_f = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+156 |         output_f.close()
+    |
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:166:19
+    |
+165 |     def test_export_csv_error_flattened(self):
+166 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+167 |         input_f.write(json.dumps({
+168 |             "service": "test", "kind": "span", "phase": "end",
+    |
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:173:20
+    |
+171 |         input_f.close()
+172 |
+173 |         output_f = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+174 |         output_f.close()
+    |
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_export.py:178:38
+    |
+176 |         try:
+177 |             export_csv(input_f.name, output_f.name)
+178 |             with open(output_f.name, "r") as f:
+    |                                      ^^^
+179 |                 reader = csv.DictReader(f)
+180 |                 rows = list(reader)
+    |
+help: Remove mode argument
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:192:19
+    |
+190 | class TestExportJsonl(unittest.TestCase):
+191 |     def test_export_jsonl_normalizes(self):
+192 |         input_f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+193 |         input_f.write('{"kind":"span","name":"test"}\n')
+194 |         input_f.write('this is not json\n')
+    |
+
+SIM115 Use a context manager for opening files
+   --> sdk\tests\test_export.py:198:20
+    |
+196 |         input_f.close()
+197 |
+198 |         output_f = tempfile.NamedTemporaryFile(suffix=".jsonl", delete=False)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+199 |         output_f.close()
+    |
+
+UP015 [*] Unnecessary mode argument
+   --> sdk\tests\test_export.py:205:38
+    |
+203 |             self.assertEqual(count, 2)  # Malformed line skipped
+204 |
+205 |             with open(output_f.name, "r") as f:
+    |                                      ^^^
+206 |                 lines = [l.strip() for l in f if l.strip()]
+207 |             self.assertEqual(len(lines), 2)
+    |
+help: Remove mode argument
+
+E741 Ambiguous variable name: `l`
+   --> sdk\tests\test_export.py:206:40
+    |
+205 |             with open(output_f.name, "r") as f:
+206 |                 lines = [l.strip() for l in f if l.strip()]
+    |                                        ^
+207 |             self.assertEqual(len(lines), 2)
+208 |             for line in lines:
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_instrument_patch.py:2:1
+   |
+ 1 |   """Tests for patch_openai / patch_anthropic with mocked modern SDK clients."""
+ 2 | / import sys
+ 3 | | import types
+ 4 | | import unittest
+ 5 | | from unittest.mock import MagicMock
+ 6 | |
+ 7 | | from agentguard.instrument import (
+ 8 | |     _originals,
+ 9 | |     patch_openai,
+10 | |     patch_anthropic,
+11 | |     unpatch_openai,
+12 | |     unpatch_anthropic,
+13 | | )
+   | |_^
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_langgraph_integration.py:2:1
+   |
+ 1 |   """Tests for LangGraph integration (guarded_node / guard_node)."""
+ 2 | / from __future__ import annotations
+ 3 | |
+ 4 | | import json
+ 5 | | import os
+ 6 | | import tempfile
+ 7 | | import unittest
+ 8 | |
+ 9 | | from agentguard import Tracer, JsonlFileSink, LoopGuard, BudgetGuard
+10 | | from agentguard.guards import LoopDetected, BudgetExceeded
+11 | | from agentguard.integrations.langgraph import guarded_node, guard_node
+   | |______________________________________________________________________^
+   |
+help: Organize imports
+
+UP015 [*] Unnecessary mode argument
+  --> sdk\tests\test_langgraph_integration.py:22:37
+   |
+21 |     def _read_events(self):
+22 |         with open(self._trace_path, "r") as f:
+   |                                     ^^^
+23 |             return [json.loads(line) for line in f if line.strip()]
+   |
+help: Remove mode argument
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_otel_sink.py:6:1
+   |
+ 4 |   interfaces to verify our mapping logic without requiring the actual SDK.
+ 5 |   """
+ 6 | / from __future__ import annotations
+ 7 | |
+ 8 | | import unittest
+ 9 | | from typing import Any, Dict, List, Optional
+10 | | from unittest.mock import MagicMock, patch, call
+11 | | import sys
+12 | | import types
+   | |____________^
+   |
+help: Organize imports
+
+F401 [*] `unittest.mock.MagicMock` imported but unused
+  --> sdk\tests\test_otel_sink.py:10:27
+   |
+ 8 | import unittest
+ 9 | from typing import Any, Dict, List, Optional
+10 | from unittest.mock import MagicMock, patch, call
+   |                           ^^^^^^^^^
+11 | import sys
+12 | import types
+   |
+help: Remove unused import
+
+F401 [*] `unittest.mock.patch` imported but unused
+  --> sdk\tests\test_otel_sink.py:10:38
+   |
+ 8 | import unittest
+ 9 | from typing import Any, Dict, List, Optional
+10 | from unittest.mock import MagicMock, patch, call
+   |                                      ^^^^^
+11 | import sys
+12 | import types
+   |
+help: Remove unused import
+
+F401 [*] `unittest.mock.call` imported but unused
+  --> sdk\tests\test_otel_sink.py:10:45
+   |
+ 8 | import unittest
+ 9 | from typing import Any, Dict, List, Optional
+10 | from unittest.mock import MagicMock, patch, call
+   |                                             ^^^^
+11 | import sys
+12 | import types
+   |
+help: Remove unused import
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_production.py:2:1
+   |
+ 1 |   """Tests for SDK-5 production hardening features."""
+ 2 | / import gzip
+ 3 | | import json
+ 4 | | import os
+ 5 | | import tempfile
+ 6 | | import threading
+ 7 | | import time
+ 8 | | import unittest
+ 9 | | from http.server import BaseHTTPRequestHandler, HTTPServer
+10 | | from urllib.error import HTTPError
+11 | |
+12 | | from agentguard import Tracer, JsonlFileSink
+13 | | from agentguard.sinks.http import HttpSink
+14 | | from agentguard.evaluation import _load_events
+15 | | from agentguard.export import export_json, export_csv, export_jsonl
+   | |___________________________________________________________________^
+   |
+help: Organize imports
+
+F401 [*] `urllib.error.HTTPError` imported but unused
+  --> sdk\tests\test_production.py:10:26
+   |
+ 8 | import unittest
+ 9 | from http.server import BaseHTTPRequestHandler, HTTPServer
+10 | from urllib.error import HTTPError
+   |                          ^^^^^^^^^
+11 |
+12 | from agentguard import Tracer, JsonlFileSink
+   |
+help: Remove unused import: `urllib.error.HTTPError`
+
+F401 [*] `agentguard.evaluation._load_events` imported but unused
+  --> sdk\tests\test_production.py:14:35
+   |
+12 | from agentguard import Tracer, JsonlFileSink
+13 | from agentguard.sinks.http import HttpSink
+14 | from agentguard.evaluation import _load_events
+   |                                   ^^^^^^^^^^^^
+15 | from agentguard.export import export_json, export_csv, export_jsonl
+   |
+help: Remove unused import: `agentguard.evaluation._load_events`
+
+RUF012 Mutable default value for class attribute
+   --> sdk\tests\test_production.py:153:22
+    |
+152 | class _GzipCollectorHandler(BaseHTTPRequestHandler):
+153 |     received: list = []
+    |                      ^^
+154 |
+155 |     def do_POST(self):
+    |
+help: Consider initializing in `__init__` or annotating with `typing.ClassVar`
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> sdk\tests\test_production.py:315:9
+    |
+313 |       def test_eval_ci_flag_exists(self):
+314 |           """Verify the --ci flag is accepted by the eval subcommand."""
+315 | /         from agentguard.cli import _eval
+316 | |         import inspect
+    | |______________________^
+317 |           sig = inspect.signature(_eval)
+318 |           self.assertIn("ci", sig.parameters)
+    |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_v1_coverage.py:2:1
+   |
+ 1 |   """Additional tests for v1.0 coverage: sinks, CLI, security."""
+ 2 | / import io
+ 3 | | import json
+ 4 | | import os
+ 5 | | import tempfile
+ 6 | | import unittest
+ 7 | | from unittest.mock import patch
+ 8 | |
+ 9 | | from agentguard.tracing import StdoutSink, JsonlFileSink, Tracer
+10 | | from agentguard.sinks.http import HttpSink
+11 | | from agentguard.cli import _summarize, _report, _eval
+   | |_____________________________________________________^
+   |
+help: Organize imports
+
+F401 [*] `agentguard.BudgetGuard` imported but unused
+   --> sdk\tests\test_v1_coverage.py:134:32
+    |
+132 | class TestTracerGuardsWithBudgetGuard(unittest.TestCase):
+133 |     def test_tracer_with_budget_guard(self):
+134 |         from agentguard import BudgetGuard
+    |                                ^^^^^^^^^^^
+135 |         captured = []
+    |
+help: Remove unused import: `agentguard.BudgetGuard`
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> sdk\tests\test_v1_coverage.py:151:9
+    |
+149 |       def test_async_tracer_does_not_crash(self):
+150 |           """AsyncTracer should not crash when used without metadata/sampling."""
+151 | /         import asyncio
+152 | |         from agentguard import AsyncTracer
+    | |__________________________________________^
+153 |
+154 |           async def run():
+    |
+help: Organize imports
+
+Found 70 errors.
+[*] 42 fixable with the `--fix` option (3 hidden fixes can be enabled with the `--unsafe-fixes` option).

@@ -1,0 +1,13 @@
+Before
+lines=199
+words=1568
+characters=11890
+
+After
+
+Lines Words Characters Property
+----- ----- ---------- --------
+   97   524       3621         
+
+
+
