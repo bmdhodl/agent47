@@ -245,6 +245,38 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)
 
+### Project Structure
+
+```
+sdk/                          Python SDK source (PyPI: agentguard47)
+  agentguard/
+    __init__.py               Public API surface -- all exports here
+    guards.py                 BudgetGuard, LoopGuard, FuzzyLoopGuard, TimeoutGuard, RateLimitGuard, RetryGuard
+    tracing.py                Tracer, TraceContext, TraceSink, JsonlFileSink, StdoutSink
+    atracing.py               AsyncTracer, AsyncTraceContext
+    instrument.py             @trace_agent, @trace_tool, patch_openai, patch_anthropic
+    cost.py                   estimate_cost() -- per-model pricing lookup
+    evaluation.py             EvalSuite -- chainable assertion-based trace analysis
+    export.py                 JSON, CSV, JSONL conversion
+    cli.py                    CLI entrypoint (doctor, demo, report, eval, incident, quickstart)
+    usage.py                  Provider inference and normalized token-usage helpers
+    sinks/
+      http.py                 HttpSink (batched, gzip, retry, SSRF protection)
+      otel.py                 OtelTraceSink (OpenTelemetry bridge)
+    integrations/
+      langchain.py            AgentGuardCallbackHandler
+      langgraph.py            guarded_node, guard_node
+      crewai.py               AgentGuardCrewHandler
+  tests/                      pytest suite, 93% coverage, 80% enforced in CI
+  pyproject.toml              Package metadata and version
+mcp-server/                   Read-only MCP server (TypeScript, @agentguard47/mcp-server)
+docs/                         Guides, cookbooks, competitive analysis
+examples/                     Runnable examples and starter files
+site/                         Landing page (Vercel)
+ops/                          North star, architecture, roadmap, definition of done
+memory/                       SDK state, blockers, decisions, distribution priorities
+```
+
 ### Public API Surface
 
 **Tracing:** `Tracer`, `TraceContext`, `TraceSink`, `JsonlFileSink`, `StdoutSink`, `HttpSink`
@@ -256,13 +288,101 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 **Evaluation:** `EvalSuite`, `EvalResult`, `AssertionResult`
 **Integrations:** `AgentGuardCallbackHandler` (LangChain), `guarded_node`/`guard_node` (LangGraph), `AgentGuardCrewHandler` (CrewAI), `OtelTraceSink` (OpenTelemetry)
 
-### Constraints
+### Guard Parameters
 
-- Zero dependencies (Python stdlib only, Python 3.9+)
-- CI uses `pytest` with coverage enforcement (80% min)
-- Guards raise exceptions (not return codes)
-- All public API exports from `sdk/agentguard/__init__.py`
+| Guard | Parameter | Type | Default | Effect |
+|-------|-----------|------|---------|--------|
+| BudgetGuard | `max_cost_usd` | float | required | Hard stop at this dollar amount |
+| BudgetGuard | `max_tokens` | int | None | Hard stop at this token count |
+| BudgetGuard | `max_calls` | int | None | Hard stop at this call count |
+| BudgetGuard | `warn_at_pct` | float | None | Fire warning callback at this percentage (0.0-1.0) |
+| BudgetGuard | `on_warning` | callable | None | Called when warn threshold crossed |
+| LoopGuard | `max_repeats` | int | 3 | Kill after N identical consecutive tool calls |
+| FuzzyLoopGuard | `max_tool_repeats` | int | 5 | Kill after N similar tool calls (includes A-B-A-B) |
+| TimeoutGuard | `max_seconds` | float | required | Wall-clock timeout in seconds |
+| RateLimitGuard | `max_calls_per_minute` | int | required | Calls-per-minute throttle |
+| RetryGuard | `max_retries` | int | 3 | Kill after N retries on the same tool |
+
+### Test Sandbox
+
+Run the full test suite locally:
+
+```bash
+pip install -e sdk/[dev]
+python -m pytest sdk/tests/ -x --tb=short -q      # fast check
+make check                                          # lint + full suite (mirrors CI)
+```
+
+Run a local demo (no API keys, no network):
+
+```bash
+pip install agentguard47
+agentguard doctor       # verify install
+agentguard demo         # local proof run
+```
+
+### Rate Limits and Constraints
+
+- **Zero dependencies.** Stdlib only. No network calls unless you opt into HttpSink.
+- **No API keys required** for local-only mode.
+- **CI coverage floor:** 80%. Current: 93%.
+- **Guards raise exceptions** (not return codes). Catch `BudgetExceeded`, `LoopDetected`, `TimeoutExceeded`, `RetryLimitExceeded`.
+- **TraceSink interface:** All sinks implement `emit(event: Dict)`.
+- **Trace format:** JSONL -- `{service, kind, phase, trace_id, span_id, parent_id, name, ts, duration_ms, data, error, cost_usd}`
+
+### Coding Patterns
+
+**Pattern 1: Add a guard to an existing agent**
+
+```python
+from agentguard import Tracer, BudgetGuard, patch_openai
+
+tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
+patch_openai(tracer)
+# All OpenAI calls are now tracked and budget-enforced
+```
+
+**Pattern 2: Stack multiple guards**
+
+```python
+from agentguard import Tracer, BudgetGuard, LoopGuard, TimeoutGuard
+
+tracer = Tracer(guards=[
+    BudgetGuard(max_cost_usd=10.00),
+    LoopGuard(max_repeats=3),
+    TimeoutGuard(max_seconds=300),
+])
+```
+
+**Pattern 3: Trace with structured spans**
+
+```python
+with tracer.trace("agent.run") as span:
+    span.event("reasoning", data={"thought": "search docs"})
+    with span.span("tool.search", data={"query": "quantum"}):
+        pass  # tool logic
+    span.cost.add("gpt-4o", input_tokens=1200, output_tokens=450)
+```
+
+**Pattern 4: CI cost gate**
+
+```python
+from agentguard import EvalSuite
+
+result = (
+    EvalSuite("traces.jsonl")
+    .assert_no_loops()
+    .assert_budget_under(tokens=50_000)
+    .assert_no_errors()
+    .run()
+)
+assert result.passed
+```
 
 ### Key Links
 
+- **PyPI:** https://pypi.org/project/agentguard47/
+- **GitHub:** https://github.com/bmdhodl/agent47
+- **Docs:** https://github.com/bmdhodl/agent47/tree/main/docs
+- **MCP server:** `npx -y @agentguard47/mcp-server`
 - **Project board:** https://github.com/users/bmdhodl/projects/4

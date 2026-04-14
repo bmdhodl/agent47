@@ -1,0 +1,123 @@
+# AgentGuard
+
+> Runtime guardrails for AI coding agents. Stop loops, budget overruns, retry storms, and timeouts before they burn money. Zero dependencies, local-first, MIT licensed.
+
+## Package
+
+- Name: agentguard47
+- Install: `pip install agentguard47`
+- Version: 1.2.7
+- Python: 3.9+
+- License: MIT
+- Dependencies: None (stdlib only)
+
+## What It Does
+
+AgentGuard stops runaway coding agents mid-run. It raises Python exceptions when budget, loop, timeout, or retry limits are hit. No dashboards required. No API keys required. Works offline.
+
+## Key Files
+
+| File | Description | Tokens (approx) |
+|------|-------------|------------------|
+| [README.md](https://github.com/bmdhodl/agent47/blob/main/README.md) | Full usage guide with examples | ~3500 |
+| [SKILL.md](https://github.com/bmdhodl/agent47/blob/main/SKILL.md) | Declarative capability map for AI agents | ~800 |
+| [AGENTS.md](https://github.com/bmdhodl/agent47/blob/main/AGENTS.md) | Project structure, API surface, coding patterns | ~1800 |
+| [CLAUDE.md](https://github.com/bmdhodl/agent47/blob/main/CLAUDE.md) | Claude Code agent instructions | ~1800 |
+| [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/main/CONTRIBUTING.md) | Dev setup, test commands, PR guidelines | ~600 |
+| [GOLDEN_PRINCIPLES.md](https://github.com/bmdhodl/agent47/blob/main/GOLDEN_PRINCIPLES.md) | 10 mechanical rules enforced by CI | ~400 |
+| [docs/guides/coding-agents.md](https://github.com/bmdhodl/agent47/blob/main/docs/guides/coding-agents.md) | Repo-first onboarding for coding agents | ~600 |
+| [docs/guides/coding-agent-safety-pack.md](https://github.com/bmdhodl/agent47/blob/main/docs/guides/coding-agent-safety-pack.md) | Copy-paste setup for Codex, Claude Code, Cursor, Copilot | ~800 |
+
+## Quick Start
+
+```python
+from agentguard import Tracer, BudgetGuard, patch_openai
+
+tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
+patch_openai(tracer)
+# Every OpenAI call is now tracked. At $4 warning fires. At $5 agent stops.
+```
+
+## Guards
+
+| Guard | Stops | Constructor |
+|-------|-------|-------------|
+| BudgetGuard | Dollar/token/call overruns | `BudgetGuard(max_cost_usd=5.0, warn_at_pct=0.8)` |
+| LoopGuard | Exact repeated tool calls | `LoopGuard(max_repeats=3)` |
+| FuzzyLoopGuard | Similar calls, A-B-A-B patterns | `FuzzyLoopGuard(max_tool_repeats=5)` |
+| TimeoutGuard | Wall-clock time limits | `TimeoutGuard(max_seconds=300)` |
+| RateLimitGuard | Calls-per-minute throttling | `RateLimitGuard(max_calls_per_minute=60)` |
+| RetryGuard | Retry storms on flaky tools | `RetryGuard(max_retries=3)` |
+
+## Exceptions Raised
+
+- `BudgetExceeded` -- budget limit hit
+- `BudgetWarning` -- warning threshold crossed
+- `LoopDetected` -- loop or fuzzy loop detected
+- `TimeoutExceeded` -- wall-clock timeout
+- `RetryLimitExceeded` -- retry storm detected
+
+## Tracing
+
+```python
+from agentguard import Tracer, JsonlFileSink
+
+tracer = Tracer(sink=JsonlFileSink("traces.jsonl"))
+with tracer.trace("agent.run") as span:
+    span.event("reasoning", data={"thought": "search docs"})
+    span.cost.add("gpt-4o", input_tokens=1200, output_tokens=450)
+```
+
+## Auto-Instrumentation
+
+```python
+from agentguard import patch_openai, patch_anthropic
+patch_openai(tracer)      # tracks all ChatCompletion calls
+patch_anthropic(tracer)   # tracks all Messages calls
+```
+
+## Framework Integrations
+
+```bash
+pip install agentguard47[langchain]   # LangChain callback handler
+pip install agentguard47[langgraph]   # LangGraph guarded_node
+pip install agentguard47[crewai]      # CrewAI step callback
+```
+
+## CLI
+
+```bash
+agentguard doctor              # verify install (no network)
+agentguard demo                # local proof run (no API keys)
+agentguard report traces.jsonl # summarize traces
+agentguard eval traces.jsonl   # assert properties in CI
+agentguard incident traces.jsonl --format html  # postmortem
+agentguard quickstart --framework openai         # starter snippet
+```
+
+## Repo Structure
+
+```
+sdk/                  Python SDK source
+  agentguard/         Package root
+    guards.py         All guard classes
+    tracing.py        Tracer, sinks, spans
+    instrument.py     Auto-instrumentation (OpenAI, Anthropic)
+    cost.py           Per-model cost estimation
+    evaluation.py     EvalSuite for CI assertions
+    cli.py            CLI entrypoint
+    integrations/     LangChain, LangGraph, CrewAI
+    sinks/            HttpSink, OtelTraceSink
+  tests/              pytest suite (93% coverage)
+mcp-server/           Read-only MCP server (TypeScript)
+docs/                 Guides, cookbooks, competitive analysis
+examples/             Runnable examples and starters
+site/                 Landing page
+```
+
+## Links
+
+- PyPI: https://pypi.org/project/agentguard47/
+- GitHub: https://github.com/bmdhodl/agent47
+- Docs: https://github.com/bmdhodl/agent47/tree/main/docs
+- MCP server: `npx -y @agentguard47/mcp-server`
