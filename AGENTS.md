@@ -290,15 +290,20 @@ memory/                       SDK state, blockers, decisions, distribution prior
 
 ### Guard Parameters
 
+Signatures match `sdk/agentguard/guards.py`. BudgetGuard requires at least one of `max_tokens`, `max_calls`, or `max_cost_usd`; passing none raises `ValueError`.
+
 | Guard | Parameter | Type | Default | Effect |
 |-------|-----------|------|---------|--------|
-| BudgetGuard | `max_cost_usd` | float | required | Hard stop at this dollar amount |
-| BudgetGuard | `max_tokens` | int | None | Hard stop at this token count |
-| BudgetGuard | `max_calls` | int | None | Hard stop at this call count |
-| BudgetGuard | `warn_at_pct` | float | None | Fire warning callback at this percentage (0.0-1.0) |
-| BudgetGuard | `on_warning` | callable | None | Called when warn threshold crossed |
+| BudgetGuard | `max_tokens` | Optional[int] | None | Hard stop at this token count |
+| BudgetGuard | `max_calls` | Optional[int] | None | Hard stop at this call count |
+| BudgetGuard | `max_cost_usd` | Optional[float] | None | Hard stop at this dollar amount |
+| BudgetGuard | `warn_at_pct` | Optional[float] | None | Fire warning callback at this percentage (0.0-1.0) |
+| BudgetGuard | `on_warning` | Optional[Callable[[str], None]] | None | Called when warn threshold crossed |
 | LoopGuard | `max_repeats` | int | 3 | Kill after N identical consecutive tool calls |
-| FuzzyLoopGuard | `max_tool_repeats` | int | 5 | Kill after N similar tool calls (includes A-B-A-B) |
+| LoopGuard | `window` | int | 6 | History window size for repeat detection |
+| FuzzyLoopGuard | `max_tool_repeats` | int | 5 | Kill after N similar tool calls |
+| FuzzyLoopGuard | `max_alternations` | int | 3 | Kill after N A-B-A-B pattern alternations |
+| FuzzyLoopGuard | `window` | int | 10 | History window size |
 | TimeoutGuard | `max_seconds` | float | required | Wall-clock timeout in seconds |
 | RateLimitGuard | `max_calls_per_minute` | int | required | Calls-per-minute throttle |
 | RetryGuard | `max_retries` | int | 3 | Kill after N retries on the same tool |
@@ -308,7 +313,7 @@ memory/                       SDK state, blockers, decisions, distribution prior
 Run the full test suite locally:
 
 ```bash
-pip install -e sdk/[dev]
+pip install -e ./sdk
 python -m pytest sdk/tests/ -x --tb=short -q      # fast check
 make check                                          # lint + full suite (mirrors CI)
 ```
