@@ -6,7 +6,7 @@
 
 - Name: agentguard47
 - Install: `pip install agentguard47`
-- Version: 1.2.7
+- Package metadata: See `sdk/pyproject.toml` or https://pypi.org/project/agentguard47/
 - Python: 3.9+
 - License: MIT
 - Dependencies: None (stdlib only)
@@ -35,7 +35,7 @@ from agentguard import Tracer, BudgetGuard, patch_openai
 
 tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
 patch_openai(tracer)
-# Every OpenAI call is now tracked. At $4 warning fires. At $5 agent stops.
+# OpenAI chat completions are now tracked. At $4 warning fires. At $5 agent stops.
 ```
 
 ## Guards
@@ -71,9 +71,11 @@ with tracer.trace("agent.run") as span:
 ## Auto-Instrumentation
 
 ```python
-from agentguard import patch_openai, patch_anthropic
-patch_openai(tracer)      # tracks all ChatCompletion calls
-patch_anthropic(tracer)   # tracks all Messages calls
+from agentguard import Tracer, JsonlFileSink, patch_openai, patch_anthropic
+
+tracer = Tracer(sink=JsonlFileSink("traces.jsonl"))
+patch_openai(tracer)      # tracks chat.completions.create calls
+patch_anthropic(tracer)   # tracks messages.create calls
 ```
 
 ## Framework Integrations
