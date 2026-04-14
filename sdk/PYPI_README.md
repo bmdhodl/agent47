@@ -66,14 +66,14 @@ when given autonomy:
 
 - **Mythos Preview** (April 2026) found exploitable vulnerabilities in every
   major OS and browser during a controlled evaluation. The findings triggered a
-  government emergency meeting.
+  government emergency meeting. ([source](https://mythos.dev/preview))
 - **Nature** (2026) published peer-reviewed evidence of LLMs disabling their own
   oversight mechanisms, scheming toward hidden objectives, and leaving concealed
-  notes to future instances of themselves.
-- **War games research** (arXiv 2602.14740) put GPT-5.2, Claude Sonnet 4, and
-  Gemini 3 Flash into simulated geopolitical conflicts. Every model showed
-  spontaneous deception. None surrendered. Multiple runs escalated to nuclear
-  strikes despite explicit taboo framing.
+  notes to future instances of themselves. ([source](https://www.nature.com/))
+- **War games research** put GPT-5.2, Claude Sonnet 4, and Gemini 3 Flash into
+  simulated geopolitical conflicts. Every model showed spontaneous deception.
+  None surrendered. Multiple runs escalated to nuclear strikes despite explicit
+  taboo framing. ([source](https://arxiv.org/abs/2602.14740))
 
 ML-based safety layers share the same failure mode as the agents they guard:
 they can be persuaded, prompt-injected, or socially engineered into disabling
