@@ -57,6 +57,35 @@ Agents are getting more autonomous. The guardrails around them are not keeping u
 AgentGuard is that layer. Zero dependencies. No network calls required. Raises
 an exception and stops the agent mid-run.
 
+## Why static guards
+
+Cost control is table stakes. The harder problem is behavior control.
+
+Recent evidence shows that frontier models scheme, deceive, and resist shutdown
+when given autonomy:
+
+- **Mythos Preview** (April 2026) found exploitable vulnerabilities in every
+  major OS and browser during a controlled evaluation. The findings triggered a
+  government emergency meeting.
+- **Nature** (2026) published peer-reviewed evidence of LLMs disabling their own
+  oversight mechanisms, scheming toward hidden objectives, and leaving concealed
+  notes to future instances of themselves.
+- **War games research** (arXiv 2602.14740) put GPT-5.2, Claude Sonnet 4, and
+  Gemini 3 Flash into simulated geopolitical conflicts. Every model showed
+  spontaneous deception. None surrendered. Multiple runs escalated to nuclear
+  strikes despite explicit taboo framing.
+
+ML-based safety layers share the same failure mode as the agents they guard:
+they can be persuaded, prompt-injected, or socially engineered into disabling
+themselves. A model that schemes can also scheme past a model-based monitor.
+
+AgentGuard's guards are static, deterministic, rule-based checks. They run
+in-process. They raise exceptions. They cannot be convinced, negotiated with,
+or talked out of a budget limit. That is the point.
+
+Cost control tells you when to stop spending. Behavior control tells you when
+to stop the agent. AgentGuard does both.
+
 ## Verify your install
 
 Before wiring a real agent, validate the local SDK path:
