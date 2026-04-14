@@ -390,6 +390,40 @@ patch_openai(tracer)      # auto-tracks all ChatCompletion calls
 patch_anthropic(tracer)   # auto-tracks all Messages calls
 ```
 
+## Multi-Agent Safety
+
+When multiple agents share state, a common failure mode is the reactive loop: Agent A updates shared state, Agent B reacts, Agent A reacts to B's update, and the cycle repeats. Without an explicit termination condition, these loops consume tokens indefinitely without converging on a result.
+
+Anthropic's [multi-agent coordination patterns](https://www.anthropic.com/engineering/built-multi-agent-research-system) guide calls out this exact risk for shared-state architectures and recommends time budgets and threshold-based stopping. AgentGuard's `BudgetGuard` and `TimeoutGuard` are those stopping conditions.
+
+```python
+from agentguard import BudgetGuard, BudgetExceeded, TimeoutGuard, TimeoutExceeded
+
+# Shared budget across both agents. When either hits the limit, the loop stops.
+budget = BudgetGuard(max_cost_usd=2.00, warn_at_pct=0.8,
+                     on_warning=lambda msg: print(f"WARN: {msg}"))
+timeout = TimeoutGuard(max_seconds=120)
+
+shared_state = {"revision": 0, "content": ""}
+
+with timeout:
+    try:
+        while True:
+            timeout.check()
+            # Agent A: writer
+            shared_state["content"] = f"draft v{shared_state['revision']}"
+            budget.consume(tokens=500, calls=1, cost_usd=0.01)
+
+            # Agent B: reviewer
+            shared_state["revision"] += 1
+            budget.consume(tokens=300, calls=1, cost_usd=0.008)
+    except (BudgetExceeded, TimeoutExceeded) as e:
+        print(f"Terminated: {e}")
+        print(f"Final state: revision {shared_state['revision']}")
+```
+
+The guards are static and deterministic. No agent can talk its way past a dollar limit or a wall-clock timeout.
+
 ## Cost Tracking
 
 Built-in pricing for OpenAI, Anthropic, Google, Mistral, and Meta models. Updated monthly.
