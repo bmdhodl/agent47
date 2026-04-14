@@ -230,6 +230,8 @@ Coding agents are cheap to start and expensive to leave unattended:
 | Self-hosted option | **Yes** | No | Yes | No |
 | Price | **Free (MIT)** | $2.50/1k traces | $59/mo | $49/mo |
 
+See also: [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.7/docs/competitive/vercel-ai-gateway.md) -- in-process SDK vs gateway proxy, compared across 7 axes.
+
 ## Guards
 
 Guards are runtime checks that raise exceptions when limits are hit. The agent stops immediately.
