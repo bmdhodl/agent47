@@ -34,6 +34,27 @@ That supports the public SDK strategy in this repo:
 - reuse the same runtime patterns for adjacent managed-agent workflows later,
   without turning the SDK into a generic observability platform
 
+## Why runtime safety matters now
+
+Agents are getting more autonomous. The guardrails around them are not keeping up.
+
+- **Unchecked token burn is real.** Meta's internal "Claudeonomics" leaderboard
+  tracked 60 trillion tokens consumed by 85,000 employees in 30 days. Some
+  employees left agents running for hours just to climb the rankings. Meta shut
+  the dashboard down days after it leaked. ([source](https://fortune.com/2026/04/09/meta-killed-employee-ai-token-dashboard/))
+- **Self-improving agents need guardrails that don't self-improve.** Cursor's
+  Bugbot has auto-generated 44,000+ learned rules across 110,000+ repos. When
+  agents write their own rules, the safety layer has to be external and
+  deterministic. Not another model. Not another prompt.
+  ([source](https://cursor.com/blog/bugbot-learning))
+- **Layered agent architectures are the default now.** Orchestrators spawn
+  sub-agents that spawn tool calls. Every layer multiplies the blast radius of a
+  stuck loop or a retry storm. You need a guard that runs in-process, at every
+  layer, and kills the run before it compounds.
+
+AgentGuard is that layer. Zero dependencies. No network calls required. Raises
+an exception and stops the agent mid-run.
+
 ## Verify your install
 
 Before wiring a real agent, validate the local SDK path:
