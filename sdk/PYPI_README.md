@@ -57,6 +57,29 @@ Agents are getting more autonomous. The guardrails around them are not keeping u
 AgentGuard is that layer. Zero dependencies. No network calls required. Raises
 an exception and stops the agent mid-run.
 
+## Token-metered pricing changes the failure mode
+
+Most model APIs already bill on token-linked usage. That means a runaway agent
+is not the only budget risk anymore. One oversized turn with a huge context
+window or a verbose completion can erase the run budget on its own. Runtime
+budget guards are no longer optional.
+
+AgentGuard's `BudgetGuard` is built for that reality:
+- cap spend for the whole run, not just call count
+- warn before the limit is gone
+- raise `BudgetExceeded` on the spike turn itself
+
+Local proof:
+
+```bash
+python examples/per_token_budget_spike.py
+agentguard report per_token_budget_spike_traces.jsonl
+```
+
+That example prices each turn from token counts, then shows a single
+token-heavy turn blowing through the run budget without any network calls or
+provider credentials.
+
 ## Why static guards
 
 Cost control is table stakes. The harder problem is behavior control.
