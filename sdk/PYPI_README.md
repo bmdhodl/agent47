@@ -317,6 +317,7 @@ Guards are runtime checks that raise exceptions when limits are hit. The agent s
 | `TimeoutGuard` | Wall-clock time limits | `TimeoutGuard(max_seconds=300)` |
 | `RateLimitGuard` | Calls-per-minute throttling | `RateLimitGuard(max_calls_per_minute=60)` |
 | `RetryGuard` | Retry storms on the same flaky tool | `RetryGuard(max_retries=3)` |
+| `BudgetAwareEscalation` | Hard turns that should switch to a stronger model | `BudgetAwareEscalation(..., escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000))` |
 
 ```python
 from agentguard import BudgetGuard, BudgetExceeded
@@ -349,6 +350,29 @@ with tracer.trace("agent.run") as span:
         # Retry storm stopped
         pass
 ```
+
+```python
+from agentguard import BudgetAwareEscalation, EscalationSignal
+
+guard = BudgetAwareEscalation(
+    primary_model="ollama/llama3.1:8b",
+    escalate_model="claude-opus-4-6",
+    escalate_on=(
+        EscalationSignal.TOKEN_COUNT(threshold=2000),
+        EscalationSignal.CONFIDENCE_BELOW(threshold=0.45),
+    ),
+)
+
+model = guard.select_model(token_count=2430, confidence=0.39)
+```
+
+`BudgetAwareEscalation` gives you an advisor-style pattern without hiding the
+provider call inside the SDK. AgentGuard decides when the current turn is too
+hard for the cheap model; your app still chooses how to invoke the stronger
+model.
+
+Guide:
+[`docs/guards/budget-aware-escalation.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guards/budget-aware-escalation.md)
 
 ## Integrations
 

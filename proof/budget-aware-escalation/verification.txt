@@ -1,0 +1,14 @@
+﻿Rebased-head validation for budget-aware escalation:
+
+- `python -m ruff check sdk/agentguard/guards.py sdk/agentguard/escalation.py sdk/agentguard/__init__.py sdk/tests/test_guards.py sdk/tests/test_exports.py sdk/tests/test_dx.py sdk/tests/test_smoke.py sdk/tests/test_example_starters.py sdk/tests/test_architecture.py examples/budget_aware_escalation.py scripts/generate_pypi_readme.py`
+  - result: passed
+- `python -m pytest sdk/tests/test_guards.py sdk/tests/test_exports.py sdk/tests/test_dx.py sdk/tests/test_smoke.py sdk/tests/test_example_starters.py sdk/tests/test_architecture.py -v`
+  - result: `164 passed`
+- `python scripts/sdk_release_guard.py`
+  - result: passed
+- `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q`
+  - result: passed
+- `PYTHONPATH=sdk python examples/budget_aware_escalation.py`
+  - result: passed, refreshed `example-output.txt`
+- `PYTHONPATH=sdk python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+  - result: `690 passed`, coverage `92.95%`

@@ -656,3 +656,17 @@ def _extract_tool_name(
 
 def _stable_json(data: Dict[str, Any]) -> str:
     return json.dumps(data, sort_keys=True, separators=(",", ":"))
+
+_ESCALATION_COMPAT_EXPORTS = {
+    "BudgetAwareEscalation",
+    "EscalationRequired",
+    "EscalationSignal",
+}
+
+
+def __getattr__(name: str) -> Any:
+    if name in _ESCALATION_COMPAT_EXPORTS:
+        from . import escalation as _escalation
+
+        return getattr(_escalation, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

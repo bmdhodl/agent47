@@ -125,6 +125,7 @@ __init__.py (public API surface)
     ├── setup.py ──→ tracing.py, guards.py, instrument.py, sinks/http.py
     ├── tracing.py (standalone)
     ├── guards.py (standalone)
+    ├── escalation.py ──→ guards.py
     ├── instrument.py ──→ usage.py, guards.py, cost.py
     ├── atracing.py ──→ tracing.py
     ├── cost.py (standalone)
@@ -147,6 +148,7 @@ Integration modules (allowed to import core, never the reverse):
 |--------|---------|
 | `tracing.py` | Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink |
 | `guards.py` | LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard + exceptions |
+| `escalation.py` | BudgetAwareEscalation, EscalationSignal, EscalationRequired |
 | `instrument.py` | @trace_agent, @trace_tool, patch_openai, patch_anthropic |
 | `usage.py` | Provider inference and normalized token-usage helpers shared across runtime/reporting paths |
 | `sinks/http.py` | HttpSink (batched, gzip, retry, SSRF protection) |
@@ -280,8 +282,9 @@ memory/                       SDK state, blockers, decisions, distribution prior
 ### Public API Surface
 
 **Tracing:** `Tracer`, `TraceContext`, `TraceSink`, `JsonlFileSink`, `StdoutSink`, `HttpSink`
-**Guards:** `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard`
-**Exceptions:** `LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded`
+**Guards:** `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard`, `BudgetAwareEscalation`
+**Guard helpers:** `EscalationSignal`
+**Exceptions:** `LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded`, `EscalationRequired`
 **Instrumentation:** `trace_agent`, `trace_tool`, `patch_openai`, `patch_anthropic`, `unpatch_openai`, `unpatch_anthropic`
 **Async:** `AsyncTracer`, `AsyncTraceContext`, `async_trace_agent`, `async_trace_tool`, `patch_openai_async`, `patch_anthropic_async`, `unpatch_openai_async`, `unpatch_anthropic_async`
 **Cost:** `estimate_cost`

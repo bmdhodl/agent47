@@ -1,24 +1,26 @@
 # Morning Report
 
 ## Mission
-Clarify where AgentGuard sits in the emerging agent security stack so the SDK is easier to position against identity, MCP-governance, and sandbox products without over-claiming.
+Ship a portable advisor-style escalation guard in the public SDK without breaking the zero-dependency, local-first boundary.
 
 ## What shipped
-- added `docs/competitive/agent-security-stack.md`, a living positioning doc that places AgentGuard in the runtime behavior and budget layer
-- updated `README.md` so the competitive-doc area links to both the Vercel gateway comparison and the broader security-stack framing
-- regenerated `sdk/PYPI_README.md`
-- added an unreleased changelog entry and proof bundle under `proof/agent-security-stack-positioning/`
+- added `BudgetAwareEscalation`, `EscalationSignal`, and `EscalationRequired`
+- supported four v1 escalation triggers: token count, confidence, tool-call depth, and a custom rule
+- split the feature into a new stdlib-only `sdk/agentguard/escalation.py` core module so `guards.py` stayed under the repo's line-limit rule
+- added a local Llama-to-Claude worked example plus a guide page
+- updated README, examples docs, roadmap, changelog, and generated PyPI README
 
 ## Why it matters
-- this gives the SDK a cleaner answer to "how do you relate to identity, MCP governance, or sandboxing vendors?"
-- it keeps the repo inside its actual architecture boundary: in-process runtime enforcement, not credential brokering or control-plane governance
-- the README now points to that positioning directly, which is better for distribution than leaving the layer story implicit
+- the SDK had hard stop guards, but no portable way to keep a cheap model on by default and escalate only the hard turns
+- this gives users an advisor-style pattern without locking the repo to Anthropic's server-side tool or any hosted control plane
+- the feature stays local-first: the guard decides, the app routes
 
 ## Validation
-- `python scripts/sdk_preflight.py` passed
-- `python -m pytest sdk/tests/test_pypi_readme_sync.py -v` passed
-- `python scripts/sdk_release_guard.py` passed
+- full SDK suite passed: `687 passed`
+- coverage passed at `92.75%`
+- lint, structural checks, release guard, preflight, and bandit passed
+- local example run produced both console proof and a trace artifact under `proof/budget-aware-escalation/`
 
 ## Notes
-- I intentionally kept this docs-only because the queue item is a positioning correction, not a runtime feature request
-- I used the repo's actual architecture as the constraint: MCP is a read path, the SDK is the runtime layer, and the private dashboard remains out of scope
+- I did not repeat the queue note's exact "more than doubled benchmark score" line in repo docs because I could not verify that exact wording from the primary Anthropic doc available in this environment
+- the feature is intentionally explicit rather than "magic routing" inside provider patchers
