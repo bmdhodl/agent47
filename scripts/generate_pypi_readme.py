@@ -25,6 +25,7 @@ COLAB_ABSOLUTE_LINK_RE = re.compile(
     rf"https://colab\.research\.google\.com/github/{REPO_OWNER}/{REPO_NAME}/blob/main/(?P<path>[^)#]+)"
 )
 UNRELEASED_PATHS = {
+    "docs/competitive/agent-security-stack.md",
     "docs/guides/decision-tracing.md",
     "docs/guides/managed-agent-sessions.md",
 }

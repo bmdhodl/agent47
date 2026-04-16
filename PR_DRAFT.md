@@ -1,46 +1,35 @@
 # PR Draft
 
 ## Title
-Add a local per-token budget spike proof and tighten pricing framing
+Position AgentGuard inside the emerging agent security stack
 
 ## Summary
-- add a local `per_token_budget_spike.py` example that prices turns from token counts and shows `BudgetGuard` catching one oversized turn
-- update README, getting-started docs, and examples docs so the pricing story is about token-metered cost spikes, not just endless loops
-- regenerate the PyPI README and add test coverage for the new example
+- add a new competitive doc that places AgentGuard in the runtime behavior and budget layer, distinct from identity, MCP governance, and sandboxing
+- update the README's competitive-doc links so the public repo points to both the gateway comparison and the broader stack framing
+- regenerate the PyPI README so package docs stay aligned with the repo README
 
 ## Scope
-- `examples/per_token_budget_spike.py`
-- `sdk/tests/test_example_starters.py`
+- `docs/competitive/agent-security-stack.md`
 - `README.md`
-- `docs/guides/getting-started.md`
-- `examples/README.md`
 - `CHANGELOG.md`
 - `sdk/PYPI_README.md`
 - `PR_DRAFT.md`
 - `MORNING_REPORT.md`
-- proof artifacts under `proof/per-token-budget-spike/`
+- proof artifacts under `proof/agent-security-stack-positioning/`
 
 ## Non-goals
 - no dashboard work
-- no landing-page or `bmdpat.com` copy changes
-- no new runtime guard implementation
-- no speculative provider-pricing claims that require external verification
+- no SDK runtime or MCP code changes
+- no attempt to turn AgentGuard into the identity, governance, or sandbox layer
+- no speculative vendor feature claims beyond clearly labeled layer framing
 
 ## Proof
-- `python examples/per_token_budget_spike.py`
-- `python -m agentguard.cli report proof/per-token-budget-spike/per_token_budget_spike_traces.jsonl`
 - `python scripts/sdk_preflight.py`
-- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+- `python -m pytest sdk/tests/test_pypi_readme_sync.py -v`
 - `python scripts/sdk_release_guard.py`
-- `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q`
 
 ## Saved artifacts
-- `proof/per-token-budget-spike/example-output.txt`
-- `proof/per-token-budget-spike/per_token_budget_spike_traces.jsonl`
-- `proof/per-token-budget-spike/report.txt`
-- `proof/per-token-budget-spike/preflight.txt`
-- `proof/per-token-budget-spike/tests.txt`
-- `proof/per-token-budget-spike/check.txt`
-- `proof/per-token-budget-spike/lint.txt`
-- `proof/per-token-budget-spike/release-guard.txt`
-- `proof/per-token-budget-spike/security.txt`
+- `proof/agent-security-stack-positioning/preflight.txt`
+- `proof/agent-security-stack-positioning/pypi-sync.txt`
+- `proof/agent-security-stack-positioning/release-guard.txt`
+- `proof/agent-security-stack-positioning/git-diff.txt`
