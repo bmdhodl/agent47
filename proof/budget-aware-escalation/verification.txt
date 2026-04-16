@@ -1,12 +1,14 @@
-Validation summary for the budget-aware escalation PR
+﻿Rebased-head validation for budget-aware escalation:
 
-- `python -m ruff check ...` passed for the touched SDK, test, and generator files
-- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80` passed
-  - Result: `687 passed`
-  - Coverage: `92.75%`
-- `python scripts/sdk_release_guard.py` passed
-- `python scripts/sdk_preflight.py` passed
-- `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q` passed
-- `python scripts/generate_pypi_readme.py --write` regenerated `sdk/PYPI_README.md`
-- `PYTHONPATH=sdk python examples/budget_aware_escalation.py` passed
-- `python -m agentguard.cli report proof/budget-aware-escalation/budget_aware_escalation_traces.jsonl` produced `proof/budget-aware-escalation/report.txt`
+- `python -m ruff check sdk/agentguard/guards.py sdk/agentguard/escalation.py sdk/agentguard/__init__.py sdk/tests/test_guards.py sdk/tests/test_exports.py sdk/tests/test_dx.py sdk/tests/test_smoke.py sdk/tests/test_example_starters.py sdk/tests/test_architecture.py examples/budget_aware_escalation.py scripts/generate_pypi_readme.py`
+  - result: passed
+- `python -m pytest sdk/tests/test_guards.py sdk/tests/test_exports.py sdk/tests/test_dx.py sdk/tests/test_smoke.py sdk/tests/test_example_starters.py sdk/tests/test_architecture.py -v`
+  - result: `164 passed`
+- `python scripts/sdk_release_guard.py`
+  - result: passed
+- `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q`
+  - result: passed
+- `PYTHONPATH=sdk python examples/budget_aware_escalation.py`
+  - result: passed, refreshed `example-output.txt`
+- `PYTHONPATH=sdk python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+  - result: `690 passed`, coverage `92.95%`
