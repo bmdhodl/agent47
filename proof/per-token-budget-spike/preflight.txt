@@ -1,0 +1,28 @@
+All checks passed!
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.3.3, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\patri\.codex\worktrees\3c4e\agent47\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collecting ... collected 4 items
+
+sdk\tests\test_example_starters.py::test_quickstart_payloads_have_matching_starter_files PASSED [ 25%]
+sdk\tests\test_example_starters.py::test_raw_starter_runs_and_writes_trace PASSED [ 50%]
+sdk\tests\test_example_starters.py::test_disposable_harness_example_links_session_id PASSED [ 75%]
+sdk\tests\test_example_starters.py::test_per_token_budget_spike_example_runs FAILED [100%]
+
+================================== FAILURES ===================================
+__________________ test_per_token_budget_spike_example_runs ___________________
+sdk\tests\test_example_starters.py:138: in test_per_token_budget_spike_example_runs
+    assert "Budget spike caught on turn 3" in result.stdout
+E   AssertionError: assert 'Budget spike caught on turn 3' in 'Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)\nTurn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)\nTurn 3 (mega-context): 21500 tokens -> $0.0800 (running total $0.1020)\nWrote per_token_budget_spike_traces.jsonl\n'
+E    +  where 'Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)\nTurn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)\nTurn 3 (mega-context): 21500 tokens -> $0.0800 (running total $0.1020)\nWrote per_token_budget_spike_traces.jsonl\n' = CompletedProcess(args=['C:\\Python313\\python.exe', 'C:\\Users\\patri\\.codex\\worktrees\\3c4e\\agent47\\examples\\per_token_budget_spike.py'], returncode=0, stdout='Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)\nTurn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)\nTurn 3 (mega-context): 21500 tokens -> $0.0800 (running total $0.1020)\nWrote per_token_budget_spike_traces.jsonl\n', stderr='').stdout
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_example_starters.py::test_per_token_budget_spike_example_runs - AssertionError: assert 'Budget spike caught on turn 3' in 'Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)\nTurn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)\nTurn 3 (mega-context): 21500 tokens -> $0.0800 (running total $0.1020)\nWrote per_token_budget_spike_traces.jsonl\n'
+ +  where 'Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)\nTurn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)\nTurn 3 (mega-context): 21500 tokens -> $0.0800 (running total $0.1020)\nWrote per_token_budget_spike_traces.jsonl\n' = CompletedProcess(args=['C:\\Python313\\python.exe', 'C:\\Users\\patri\\.codex\\worktrees\\3c4e\\agent47\\examples\\per_token_budget_spike.py'], returncode=0, stdout='Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)\nTurn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)\nTurn 3 (mega-context): 21500 tokens -> $0.0800 (running total $0.1020)\nWrote per_token_budget_spike_traces.jsonl\n', stderr='').stdout
+========================= 1 failed, 3 passed in 0.82s =========================
+==> ruff: lint only the Python files touched in this branch
+C:\Python313\python.exe -m ruff check sdk/tests/test_example_starters.py
+==> targeted-pytest: run only the test files most directly tied to the touched SDK paths
+C:\Python313\python.exe -m pytest sdk/tests/test_example_starters.py -v

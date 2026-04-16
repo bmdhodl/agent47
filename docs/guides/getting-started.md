@@ -202,6 +202,17 @@ tracer = Tracer(
 # Fires BudgetWarning at 80% of the limit.
 ```
 
+If you want a local proof that token-based pricing can spike on one oversized
+turn, run:
+
+```bash
+python examples/per_token_budget_spike.py
+agentguard report per_token_budget_spike_traces.jsonl
+```
+
+That example prices each turn from token counts, then shows `BudgetGuard`
+catching a single high-context spike before the run drifts further.
+
 ## 5. Auto-instrument OpenAI
 
 Skip manual tracing — let AgentGuard patch the OpenAI client:

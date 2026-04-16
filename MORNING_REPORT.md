@@ -1,28 +1,28 @@
 # Morning Report
 
 ## Mission
-Audit the repo's Claude-specific instruction surface so Claude Code works with the harness it already has instead of carrying a stale, oversized repo prompt.
+Strengthen the SDK’s pricing story for token-metered AI APIs by adding a local proof that one oversized turn can trip `BudgetGuard`, then thread that proof into the main onboarding docs.
 
 ## What shipped
-- added `CLAUDE_MD_AUDIT.md` with source-backed findings and follow-up guidance
-- trimmed `CLAUDE.md` down to the AgentGuard-specific repo contract
-- removed stale embedded architecture/API detail from `CLAUDE.md` and pointed it at `ARCHITECTURE.md`
-- kept `AGENTS.md` unchanged because the actual issue was Claude-specific duplication, not a repo-wide policy error
+- added `examples/per_token_budget_spike.py`, a local-only example that prices each turn from token counts and catches a single oversized turn with `BudgetGuard`
+- added execution coverage for that example in `sdk/tests/test_example_starters.py`
+- updated `README.md`, `docs/guides/getting-started.md`, and `examples/README.md` to frame pricing risk around token-heavy spikes rather than only endless loops
+- regenerated `sdk/PYPI_README.md`
+- added an unreleased changelog entry and proof bundle under `proof/per-token-budget-spike/`
 
 ## Why it matters
-- Claude Code already injects tool, style, memory, skill, and environment guidance
-- the old `CLAUDE.md` was wasting context and had started drifting from the real repo
-- the new file is shorter, more durable, and sharper about SDK boundaries, proof expectations, and distribution priorities
+- token-metered pricing makes budget spikes a first-order failure mode, not just slow budget drift
+- the new example proves the behavior locally with no API key and no provider dependency
+- the docs now point to that proof directly, which is stronger for onboarding than abstract pricing copy
 
 ## Validation
-- source article reviewed directly
+- `python examples/per_token_budget_spike.py` passed
+- `python -m agentguard.cli report proof/per-token-budget-spike/per_token_budget_spike_traces.jsonl` passed
 - `python scripts/sdk_preflight.py` passed
-- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80` passed: `672 passed`, `92.97%` coverage
+- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80` passed: `673 passed`, `93.13%` coverage
 - `python scripts/sdk_release_guard.py` passed
-- `CLAUDE.md` reduced from `1568` words / `11890` characters to `525` words / `3613` characters
-- proof artifacts saved under `proof/claude-md-audit/`
-- local full-repo `ruff` still reports unrelated pre-existing issues in untouched SDK tests; saved in `proof/claude-md-audit/lint.txt`
+- `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q` passed
 
 ## Notes
-- I did not edit `AGENTS.md` in this PR because the queue item was specifically about Claude Code system-prompt overlap
-- if we later want one shared source for agent instructions across Codex and Claude, that should be a separate deduplication pass rather than hidden in this audit PR
+- I intentionally did not touch the landing-page copy in this repo because the queue item’s `bmdpat.com` work belongs outside the SDK boundary
+- I avoided the stronger “every provider will follow within 6 months” claim because that would need external verification the repo does not need to ship this improvement

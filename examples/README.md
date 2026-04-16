@@ -22,6 +22,7 @@ coding-agent setup; they are not included in the installed PyPI wheel.
 | File | Framework | What it shows |
 |------|-----------|---------------|
 | `disposable_harness_session.py` | Raw AgentGuard | Two tracer instances sharing one `session_id` to simulate a managed-agent session across disposable harnesses |
+| `per_token_budget_spike.py` | Raw AgentGuard | Local token-metered pricing proof: one oversized turn triggers `BudgetGuard` without any API key |
 | **`cost_guardrail.py`** | **OpenAI** | **Full cost guardrail pipeline: auto-budget enforcement, warning/exceeded events, dashboard sync** |
 | `decision_trace_workflow.py` | Raw AgentGuard | Agent proposal, human edit, approval, and binding outcome captured through the normal event pipeline |
 | `langchain_rag_with_guards.py` | LangChain | RAG pipeline with loop detection + budget enforcement via callback handler |
@@ -50,6 +51,9 @@ python examples/decision_trace_workflow.py
 
 # Disposable harness / managed-session demo (local-only)
 python examples/disposable_harness_session.py
+
+# Per-token budget spike demo (local-only)
+python examples/per_token_budget_spike.py
 
 # Or with dashboard integration
 export AGENTGUARD_API_KEY=ag_...

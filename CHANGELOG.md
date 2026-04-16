@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Per-Token Budget Proof
+- Added a new local `examples/per_token_budget_spike.py` proof that prices turns from token counts and shows `BudgetGuard` catching a single oversized turn without any API key or network access.
+- Updated README, getting-started docs, and examples docs to frame budget enforcement around token-metered pricing and point users to the new local proof path.
+
 ### Managed-Agent Session Correlation
 - Added optional `session_id` support to `Tracer`, `AsyncTracer`, and `agentguard.init(...)` so disposable harnesses can correlate multiple trace streams under one higher-level managed-agent session without changing sink behavior.
 - Added a local managed-session guide plus a runnable example that proves two separate tracer instances can emit distinct `trace_id` values while sharing one `session_id`.
