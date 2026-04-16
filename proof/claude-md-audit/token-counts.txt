@@ -1,0 +1,10 @@
+Command
+Get-Content CLAUDE.md | Measure-Object -Word -Character
+
+Before
+words=1568
+characters=11890
+
+After
+words=525
+characters=3613
