@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Agent Security Stack Positioning
+- Added a new competitive-positioning doc that places AgentGuard in the runtime behavior and budget layer of the emerging agent security stack, beside identity, MCP governance, and sandboxing layers.
+- Updated the README competitive-doc links so the public repo points to both the gateway comparison and the broader stack-layer framing.
+
 ### Per-Token Budget Proof
 - Added a new local `examples/per_token_budget_spike.py` proof that prices turns from token counts and shows `BudgetGuard` catching a single oversized turn without any API key or network access.
 - Updated README, getting-started docs, and examples docs to frame budget enforcement around token-metered pricing and point users to the new local proof path.

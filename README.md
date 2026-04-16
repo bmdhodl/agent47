@@ -301,7 +301,7 @@ Coding agents are cheap to start and expensive to leave unattended:
 | Self-hosted option | **Yes** | No | Yes | No |
 | Price | **Free (MIT)** | $2.50/1k traces | $59/mo | $49/mo |
 
-See also: [AgentGuard vs Vercel AI Gateway](docs/competitive/vercel-ai-gateway.md) -- in-process SDK vs gateway proxy, compared across 7 axes.
+See also: [AgentGuard vs Vercel AI Gateway](docs/competitive/vercel-ai-gateway.md) -- in-process SDK vs gateway proxy, compared across 7 axes; and [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md) -- identity, MCP governance, sandboxing, and runtime behavior as separate layers.
 
 ## Guards
 
