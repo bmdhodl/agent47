@@ -32,3 +32,16 @@
 ### Blockers
 - Glama listing is still blocked despite root and package Smithery/Docker metadata.
 - `awesome-mcp-servers` PR is waiting on the Glama badge.
+
+## 2026-04-17 | Codex
+
+### What shipped
+- Closed stale/noise issues `#343`, `#357`, `#295`, and out-of-scope business issue `#142`.
+- Refreshed `mcp-server/package-lock.json` to clear transitive MCP vulnerability findings and merged PR `#358`.
+
+### Decisions made
+- Keep scout-run issue noise out of the public SDK backlog when the owning automation does not live in this repo.
+- Keep business/outreach work out of the public SDK repository.
+
+### Blockers
+- Remaining open issue set is intentional: `#324` (Glama), `#282` (Trusted Publishing), `#279` (Scorecard governance).
