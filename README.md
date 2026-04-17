@@ -1,8 +1,10 @@
 # AgentGuard
 
-**Your coding agent just started looping through retries and shell calls. AgentGuard stops it before it burns budget.**
+**Your coding agent just started looping through retries and shell calls. AgentGuard stops it before it goes off the rails.**
 
-Local-first runtime guardrails for coding agents. Stop loops, retry storms, and budget burn with a zero-dependency Python SDK, then expose traces and incident context through MCP when your tooling needs read access.
+Local-first runtime governance for AI agents. Budget, loops, timeouts, rates — four static guards that stop an agent before it runs away, with a zero-dependency Python SDK. Traces and incident context exposed through MCP when your tooling needs read access.
+
+> When tokens cost 12 cents per million, the bottleneck isn't cost. It's control. AgentGuard is the governance layer that keeps agents inside the rails you set — no matter how cheap the tokens get.
 
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
