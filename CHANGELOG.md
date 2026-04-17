@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.2.8
+
 ### Agent Security Stack Positioning
 - Added a new competitive-positioning doc that places AgentGuard in the runtime behavior and budget layer of the emerging agent security stack, beside identity, MCP governance, and sandboxing layers.
 - Updated the README competitive-doc links so the public repo points to both the gateway comparison and the broader stack-layer framing.
@@ -21,6 +23,11 @@
 ### Coding-Agent Skill Packs
 - Added `agentguard skillpack` so developers and coding agents can generate repo-local `.agentguard.json` defaults plus instruction files for Codex, Claude Code, GitHub Copilot, and Cursor without bespoke copy-paste setup.
 - Updated the coding-agent onboarding docs to prefer the generated local-first skill-pack flow and the `quickstart --write` verification loop over checked-in example paths.
+
+### Supply Chain And Release Prep
+- Replaced unhashed workflow `pip install` steps with a checked-in, hash-locked CI toolchain requirements file and switched CI, entropy, and publish validation to use that shared lock.
+- Pinned the root and MCP server Dockerfiles to the current `node:22-alpine` image digest to remove mutable base-image references from the repo's build surfaces.
+- Prepared the GitHub side of PyPI Trusted Publishing by adding the `pypi` environment and wiring the publish workflow to it, while deliberately keeping token auth in place until the PyPI project owner adds the matching trusted publisher.
 
 ## 1.2.7
 

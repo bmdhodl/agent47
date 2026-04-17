@@ -10,6 +10,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: sdk
     strategy:
       matrix:
         python-version: ${{ github.event_name == 'pull_request' && fromJSON('["3.9","3.12"]') || fromJSON('["3.9","3.10","3.11","3.12"]') }}
@@ -20,9 +22,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - name: Install
-        run: |
-          python -m pip install -e ./sdk
-          python -m pip install pytest pytest-cov
+        run: python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
       - name: Tests with coverage
         run: |
           python -m pytest sdk/tests/ -v \
@@ -39,6 +39,8 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: sdk
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
@@ -46,7 +48,7 @@ jobs:
           python-version: "3.12"
           cache: 'pip'
       - name: Install tools
-        run: pip install ruff bandit
+        run: python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
       - name: Check PyPI README sync
         run: python scripts/generate_pypi_readme.py --check
       - name: Check release metadata sync
