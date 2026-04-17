@@ -45,3 +45,15 @@
 
 ### Blockers
 - Remaining open issue set is intentional: `#324` (Glama), `#282` (Trusted Publishing), `#279` (Scorecard governance).
+
+## 2026-04-17 | Codex
+
+### What shipped
+- Merged PR `#359` to prep GitHub-side Trusted Publishing for PyPI releases.
+- Added the `pypi` GitHub environment and wired `.github/workflows/publish.yml` to use it.
+
+### Decisions made
+- Do not remove `PYPI_TOKEN` until the PyPI project owner adds the Trusted Publisher for `bmdhodl/agent47` and `.github/workflows/publish.yml` with environment `pypi`.
+
+### Blockers
+- `#282` is still blocked on PyPI project-admin access; repo-side prep is done.
