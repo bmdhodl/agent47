@@ -11,6 +11,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: pypi
     permissions:
       contents: read
       id-token: write
@@ -57,7 +58,15 @@ jobs:
         with:
           packages-dir: sdk/dist/
           password: ${{ secrets.PYPI_TOKEN }}
-          # To enable PyPI attestations, switch to Trusted Publishing:
-          # 1. Configure at pypi.org -> agentguard47 -> Settings -> Publishing
-          # 2. Remove the 'password' line above
-          # 3. Add: attestations: true
+          # Current release path still uses PYPI_TOKEN because PyPI Trusted Publishing
+          # is not configured yet for this workflow. GitHub-side publisher tuple:
+          # - owner: bmdhodl
+          # - repo: agent47
+          # - workflow: .github/workflows/publish.yml
+          # - environment: pypi
+          #
+          # Once the Trusted Publisher is added on PyPI for `agentguard47`:
+          # 1. Remove the `password` line above.
+          # 2. Add `attestations: true`.
+          # 3. Publish the next tag and confirm PyPI file metadata says
+          #    "Uploaded using Trusted Publishing? Yes".
