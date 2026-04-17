@@ -1,4 +1,4 @@
-﻿diff --git a/mcp-server/package-lock.json b/mcp-server/package-lock.json
+diff --git a/mcp-server/package-lock.json b/mcp-server/package-lock.json
 index 7bdc826..4cb2b81 100644
 --- a/mcp-server/package-lock.json
 +++ b/mcp-server/package-lock.json

@@ -1,4 +1,4 @@
-﻿
+
 > @agentguard47/mcp-server@0.2.2 test
 > npm run build && node --test dist/__tests__/*.test.js
 
