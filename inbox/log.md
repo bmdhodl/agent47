@@ -3,6 +3,20 @@
 
 ---
 
+## 2026-04-18 | Codex
+
+### What shipped
+- Merged PR `#360` and released SDK `v1.2.8` to PyPI.
+- Hardened Scorecard surfaces with hash-locked workflow tool installs, pinned Docker base-image digests, and a 1-review branch-protection rule.
+
+### Decisions made
+- Used an explicit admin merge override after owner approval because the new review rule blocked the release PR authored by the same account.
+- Kept token-based PyPI publish until the external Trusted Publisher setup is finished.
+
+### Blockers
+- Release announcement workflow failed on shell quoting and is tracked in issue `#364`; package publish and GitHub release are complete.
+- Remaining open governance/distribution issues are intentional: `#324`, `#282`, `#279`, and `#364`.
+
 ## 2026-04-02 | Codex
 
 ### What shipped
