@@ -128,8 +128,9 @@ For this repo, the most relevant Claude-side assets are:
 - official MCP Registry listing: live
 - dashboard remains private
 
-Current: latest shipped release: v1.2.7.
-<!-- latest shipped release is 1.2.7 -->
+Current: shipped SDK release is `v1.2.7`; branch version under prep is `v1.2.8`.
+<!-- latest shipped release: v1.2.8 -->
+<!-- latest shipped release is 1.2.8 -->
 
 Core message to preserve:
 
