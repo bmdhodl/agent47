@@ -56,9 +56,9 @@ Changelog = "https://github.com/bmdhodl/agent47/releases"
 
 [project.optional-dependencies]
 langchain = ["langchain-core>=0.3.84"]
-langgraph = ["langgraph>=0.1"]
+langgraph = ["langgraph>=0.6.11"]
 crewai = ["crewai>=0.28"]
-otel = ["opentelemetry-api>=1.41.0", "opentelemetry-sdk>=1.20"]
+otel = ["opentelemetry-api>=1.41.0", "opentelemetry-sdk>=1.41.0"]
 
 [project.scripts]
 agentguard = "agentguard.cli:main"
