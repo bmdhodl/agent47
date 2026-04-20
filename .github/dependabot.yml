@@ -8,3 +8,13 @@ updates:
     directory: "/sdk"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/.github/requirements"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # pytest 9.x requires Python >=3.10. The SDK still promises and tests
+      # Python 3.9 support, so keep pytest on the latest compatible 8.x line
+      # until Python 3.9 support is intentionally retired.
+      - dependency-name: "pytest"
+        update-types: ["version-update:semver-major"]
