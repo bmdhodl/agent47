@@ -1,4 +1,4 @@
-﻿# North Star Review Proof
+# North Star Review Proof
 
 Issue: #369
 
