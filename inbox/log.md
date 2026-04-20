@@ -15,7 +15,7 @@
 
 ### Blockers
 - Release announcement workflow failed on shell quoting and is tracked in issue `#364`; package publish and GitHub release are complete.
-- Remaining open governance/distribution issues are intentional: `#324`, `#282`, `#279`, and `#364`.
+- Remaining open governance/distribution issues are intentional: `#324`, `#282`, `#279`, `#364`, and `#365`.
 
 ## 2026-04-02 | Codex
 

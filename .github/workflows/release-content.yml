@@ -39,35 +39,46 @@ jobs:
       - name: Create GitHub Discussion
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.release.outputs.tag }}
+          CHANGELOG: ${{ steps.release.outputs.changelog }}
+          PREV_TAG: ${{ steps.release.outputs.prev_tag }}
         run: |
-          TAG="${{ steps.release.outputs.tag }}"
-          CHANGELOG="${{ steps.release.outputs.changelog }}"
+          BODY_FILE="$(mktemp)"
 
-          BODY="## AgentGuard $TAG Released
+          {
+            printf '## AgentGuard %s Released\n\n' "$TAG"
+            printf 'Install or upgrade:\n'
+            printf '```bash\n'
+            printf 'pip install --upgrade agentguard47\n'
+            printf '```\n\n'
+            printf '### What changed\n'
+            printf '%s\n\n' "$CHANGELOG"
+            printf -- '---\n'
+            printf 'Full changelog: https://github.com/bmdhodl/agent47/compare/%s...%s\n\n' "$PREV_TAG" "$TAG"
+            printf 'PyPI: https://pypi.org/project/agentguard47/\n'
+          } > "$BODY_FILE"
 
-          Install or upgrade:
-          \`\`\`bash
-          pip install --upgrade agentguard47
-          \`\`\`
+          REPOSITORY_ID="$(gh api repos/bmdhodl/agent47 --jq '.node_id')"
+          CATEGORY_ID="$(gh api repos/bmdhodl/agent47/discussions/categories --jq '.[] | select(.name=="Announcements") | .node_id' 2>/dev/null || true)"
 
-          ### What changed
-          $CHANGELOG
+          if [ -z "$CATEGORY_ID" ]; then
+            echo "Discussion creation skipped (no Announcements category)"
+            exit 0
+          fi
 
-          ---
-          Full changelog: https://github.com/bmdhodl/agent47/compare/${{ steps.release.outputs.prev_tag }}...$TAG
-
-          PyPI: https://pypi.org/project/agentguard47/"
-
-          # Create discussion in Announcements category
           gh api graphql -f query='
-            mutation {
+            mutation($repositoryId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
               createDiscussion(input: {
-                repositoryId: "'$(gh api repos/bmdhodl/agent47 --jq '.node_id')'"
-                categoryId: "'$(gh api repos/bmdhodl/agent47/discussions/categories --jq '.[] | select(.name=="Announcements") | .node_id' 2>/dev/null || echo "")'"
-                title: "AgentGuard '"$TAG"' released"
-                body: "'"$(echo "$BODY" | sed 's/"/\\"/g')"'"
+                repositoryId: $repositoryId
+                categoryId: $categoryId
+                title: $title
+                body: $body
               }) { discussion { url } }
-            }' 2>/dev/null || echo "Discussion creation skipped (no Announcements category)"
+            }' \
+            -f repositoryId="$REPOSITORY_ID" \
+            -f categoryId="$CATEGORY_ID" \
+            -f title="AgentGuard $TAG released" \
+            -f body="$(cat "$BODY_FILE")"
 
       - name: Add to social queue (dashboard repo)
         env:
