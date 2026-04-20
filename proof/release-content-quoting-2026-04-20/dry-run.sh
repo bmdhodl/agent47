@@ -14,6 +14,7 @@ CHANGELOG_EOF
 )"
 
 BODY_FILE="$(mktemp)"
+trap 'rm -f "$BODY_FILE"' EXIT
 
 {
   printf '## AgentGuard %s Released\n\n' "$TAG"
