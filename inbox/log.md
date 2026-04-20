@@ -3,6 +3,30 @@
 
 ---
 
+## 2026-04-20 | Codex
+
+### What shipped
+- Merged PR `#375` to refresh `ops/00-NORTHSTAR.md` and close ops-cadence issue `#369`.
+- Added an explicit public-repo boundary: this repo owns SDK/MCP/local proof/release infrastructure, while dashboard work stays private.
+
+### Decisions made
+- Treat the North Star as still accurate, but make the repo boundary visible so future agents do not drift into dashboard work.
+
+### Blockers
+- None from this PR.
+
+## 2026-04-20 | Codex
+
+### What shipped
+- Merged PR `#372` to fix the release announcement workflow shell quoting bug and close issue `#364`.
+- Updated release-status memory/docs now that SDK `v1.2.8` is shipped.
+
+### Decisions made
+- Release announcement text must be passed as data via environment variables, temp files, and GraphQL variables instead of interpolated into shell/query strings.
+
+### Blockers
+- Remaining open issues are intentional: `#324`, `#282`, and `#279`.
+
 ## 2026-04-18 | Codex
 
 ### What shipped
