@@ -1,0 +1,5 @@
+# False positive: historical docs/example placeholder, not a real credential.
+# Issue: https://github.com/bmdhodl/agent47/issues/376
+c1b319d0b4bcc31f04640a618e5c53a4060d3156:sdk/agentguard/guards.py:generic-api-key:354
+c1b319d0b4bcc31f04640a618e5c53a4060d3156:sdk/agentguard/guards.py:generic-api-key:642
+
