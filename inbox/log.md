@@ -95,3 +95,15 @@
 
 ### Blockers
 - `#282` is still blocked on PyPI project-admin access; repo-side prep is done.
+
+## 2026-04-21 | Codex
+
+### What shipped
+- Merged PR `#379` to close P0 issue `#376` by classifying the gitleaks findings as historical placeholder false positives.
+- Added scoped `.gitleaksignore` fingerprints and redacted proof artifacts under `proof/gitleaks-376-2026-04-21/`.
+
+### Decisions made
+- No credential rotation or history rewrite: the finding was the dummy placeholder `ag_live_abc123`, not a provider-issued secret.
+
+### Blockers
+- None for `#376`; issue is closed.
