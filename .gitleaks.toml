@@ -1,0 +1,5 @@
+[allowlist]
+  description = "False positives — placeholder example keys in docstrings"
+  commits = [
+    "c1b319d0b4bcc31f04640a618e5c53a4060d3156",
+  ]
