@@ -1,6 +1,0 @@
-{
-  "profile": "coding-agent",
-  "service": "my-agent",
-  "trace_file": ".agentguard/traces.jsonl",
-  "budget_usd": 5.0
-}

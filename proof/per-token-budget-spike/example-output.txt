@@ -1,6 +1,0 @@
-Turn 1 (outline): 2300 tokens -> $0.0095 (running total $0.0095)
-Turn 2 (revision): 2900 tokens -> $0.0125 (running total $0.0220)
-Budget spike caught on turn 3 (mega-context): 21500 tokens -> $0.0800
-Cost budget exceeded: $0.1020 > $0.0900 (this call added $0.0800)
-Final tracked total: $0.1020 across 26700 tokens
-Wrote per_token_budget_spike_traces.jsonl
