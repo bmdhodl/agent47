@@ -1,5 +1,5 @@
 build==1.4.3
 pytest==8.4.2
 pytest-cov==7.1.0
-ruff==0.15.11
+ruff==0.15.12
 bandit==1.8.6
