@@ -1,1 +1,1 @@
-﻿Bandit passed with no findings and no stdout.
+Bandit passed with no findings and no stdout.

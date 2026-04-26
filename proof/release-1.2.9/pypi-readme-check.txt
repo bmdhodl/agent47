@@ -1,1 +1,1 @@
-﻿PyPI README check passed with no diff.
+PyPI README check passed with no diff.
