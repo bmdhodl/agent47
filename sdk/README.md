@@ -3,7 +3,10 @@
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/main/LICENSE)
 
-**Zero-dependency** runtime guardrails for coding agents and AI agents. Pure Python stdlib - nothing to audit, nothing that can break. Catch loops, cap retries, enforce budgets, and keep the first run local and deterministic.
+**Zero-dependency runtime control for production Python agents.** Catch loops,
+cap retries, enforce budgets, and keep the first run local and deterministic.
+Add the hosted dashboard later when you need retained incidents, alerts, team
+visibility, or dashboard-driven remote kill signals.
 
 ## Install
 
@@ -15,10 +18,13 @@ pip install agentguard47
 
 ```bash
 agentguard doctor
+agentguard demo
 ```
 
-This validates the SDK in local-only mode, writes a small JSONL trace, and
+`doctor` validates the SDK in local-only mode, writes a small JSONL trace, and
 prints the smallest correct next-step snippet for the current environment.
+`demo` proves budget, loop, and retry protection without API keys or network
+calls.
 
 ## Generate a framework starter
 
@@ -222,6 +228,13 @@ sink = HttpSink(
     max_retries=3,
 )
 ```
+
+`HttpSink` sends trace and decision events to the hosted dashboard. It does not
+poll or execute remote kill signals by itself; local guards remain the
+authoritative runtime stop path.
+
+Hosted contract guide:
+`docs/guides/dashboard-contract.md` in the main repo.
 
 ## CLI
 

@@ -78,6 +78,9 @@ sink = HttpSink(
 )
 ```
 
+`HttpSink` mirrors trace and decision events. It does not poll or execute
+dashboard remote kill signals by itself.
+
 If a run trips a guard locally, generate an incident summary:
 
 ```bash

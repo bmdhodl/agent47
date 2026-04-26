@@ -157,6 +157,9 @@ Use the AgentGuard SDK for:
 Use the hosted dashboard later for:
 - retained history
 - alerts
-- remote controls
+- dashboard-driven remote kill signals
 - team visibility
 - governance
+
+`HttpSink` only mirrors trace and decision events. It does not poll or execute
+remote kill signals by itself.

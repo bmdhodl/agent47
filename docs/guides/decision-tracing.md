@@ -47,6 +47,16 @@ Every emitted decision event includes these keys in `data`:
 systems can query decision events without reconstructing context from the outer
 trace envelope.
 
+`binding_state` is always a non-empty string so hosted decision-history
+validators can index the event without custom parsing. The helper defaults are:
+
+- `decision.proposed` -> `proposed`
+- `decision.edited` -> `edited`
+- `decision.overridden` -> `overridden`
+- `decision.approved` -> `approved`
+- `decision.bound` -> the explicit caller-provided state, such as `applied`,
+  `merged`, or `failed`
+
 ## Smallest useful flow
 
 ```python

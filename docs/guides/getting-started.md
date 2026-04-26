@@ -266,11 +266,13 @@ agentguard incident .agentguard/traces.jsonl --format html > incident.html
 ```
 
 The incident report highlights guard events, the exact-vs-estimated savings
-ledger, and the upgrade path to retained alerts plus remote kill switch.
+ledger, and the upgrade path to retained alerts, team visibility, and remote
+kill signal management.
 
 ## 8. Send traces to the dashboard
 
-Swap the file sink for an HTTP sink to see traces in the hosted dashboard:
+Swap the file sink for an HTTP sink when you need retained incidents, alerts,
+team visibility, or hosted decision history:
 
 ```python
 from agentguard import Tracer, HttpSink
@@ -284,6 +286,12 @@ tracer = Tracer(sink=sink, service="my-agent")
 
 Sign up at [app.agentguard47.com](https://app.agentguard47.com) to get an API key.
 
+`HttpSink` mirrors trace and decision events to the dashboard. It does not poll
+or execute dashboard remote kill signals by itself; local guards remain the
+authoritative runtime stop path.
+
+Hosted contract details: [`dashboard-contract.md`](dashboard-contract.md)
+
 ## Next steps
 
 - [Examples](https://github.com/bmdhodl/agent47/tree/main/examples) — LangChain, CrewAI, OpenAI integration examples
@@ -291,4 +299,5 @@ Sign up at [app.agentguard47.com](https://app.agentguard47.com) to get an API ke
 - [Guards reference](https://github.com/bmdhodl/agent47#guards) — LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard
 - [Evaluation](https://github.com/bmdhodl/agent47#evaluation) — assertion-based trace analysis for CI
 - [Incident Reports](https://github.com/bmdhodl/agent47#incident-reports) — local postmortem-style summaries for guard trips
+- [Dashboard Contract](dashboard-contract.md) - hosted ingest, decision history, and remote-kill boundaries
 - [Async support](https://github.com/bmdhodl/agent47#async) — AsyncTracer, async decorators
