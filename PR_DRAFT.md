@@ -1,39 +1,50 @@
 # PR Draft
 
 ## Title
-Add a budget-aware escalation guard for advisor-style model routing
+Align SDK decision traces with dashboard runtime-control contract
 
 ## Summary
-- add `BudgetAwareEscalation`, `EscalationSignal`, and `EscalationRequired` so apps can keep a cheaper default model and escalate only hard turns to a stronger model
-- support four v1 signals: token count, confidence, tool-call depth, and a custom rule
-- keep the SDK boundary intact: AgentGuard decides when to escalate; the app still owns the actual provider call
+- make SDK decision-trace helpers emit non-empty dashboard-parseable
+  `binding_state` values by default
+- extend the local hosted-ingest harness to report decision-trace warnings like
+  the dashboard does
+- tighten README, SDK README, guides, and examples around the local proof path,
+  hosted ingest, decision history, and remote-kill polling boundary
 
 ## Scope
-- core guard implementation in `sdk/agentguard/escalation.py`
-- public exports and guard-module compatibility re-exports
-- tests for signal matching, next-call arming, exports, DX, smoke, and example execution
-- one guide and one local-only example
-- README / examples / changelog / roadmap / generated PyPI README sync
-- proof artifacts under `proof/budget-aware-escalation/`
+- `sdk/agentguard/decision.py`
+- hosted-ingest and decision-trace tests
+- README / SDK README / quickstart and dashboard-contract docs
+- package metadata and generated PyPI README sync
 
 ## Non-goals
-- no dashboard work
-- no provider-specific routing adapter
-- no hidden network behavior
+- no dashboard repo changes
 - no new runtime dependencies
-- no attempt to auto-switch OpenAI or Anthropic patchers under the hood
+- no breaking public API changes
+- no automatic remote-kill polling helper in this PR
 
-## Proof
-- `python -m ruff check sdk/agentguard/guards.py sdk/agentguard/escalation.py sdk/agentguard/__init__.py sdk/tests/test_guards.py sdk/tests/test_exports.py sdk/tests/test_dx.py sdk/tests/test_smoke.py sdk/tests/test_example_starters.py sdk/tests/test_architecture.py examples/budget_aware_escalation.py scripts/generate_pypi_readme.py`
-- `python -m pytest sdk/tests -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+## Risk
+- low runtime risk: decision helpers still emit the same event names and fields,
+  but `binding_state` now defaults to a string instead of `None`
+- docs now avoid overclaiming remote kill unless an application explicitly polls
+  and handles dashboard signals
+
+## Rollback
+- revert the PR to restore prior decision payload defaults and docs
+- no migrations or package dependency changes are involved
+
+## Validation
+- `python -m pytest sdk/tests/test_decision_trace.py sdk/tests/test_hosted_ingest_contract.py -v`
+- `python -m pytest sdk/tests/test_exports.py sdk/tests/test_architecture.py -v`
+- `python -m ruff check sdk/agentguard/decision.py sdk/tests/conftest.py sdk/tests/test_decision_trace.py sdk/tests/test_hosted_ingest_contract.py`
+- `python scripts/generate_pypi_readme.py --write`
+- `python -m ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py`
+- `python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+- `npm --prefix mcp-server test`
+- `python -m pytest sdk/tests/test_architecture.py -v`
+- `python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q`
 - `python scripts/sdk_release_guard.py`
 - `python scripts/sdk_preflight.py`
-- `python -m bandit -r sdk/agentguard -s B101,B110,B112,B311 -q`
-- `python scripts/generate_pypi_readme.py --write`
-- `PYTHONPATH=sdk python examples/budget_aware_escalation.py`
 
-## Saved artifacts
-- `proof/budget-aware-escalation/example-output.txt`
-- `proof/budget-aware-escalation/budget_aware_escalation_traces.jsonl`
-- `proof/budget-aware-escalation/source-notes.md`
-- `proof/budget-aware-escalation/blog-draft.md`
+`make` is unavailable in this Windows shell, so the Makefile-equivalent commands
+were run directly.

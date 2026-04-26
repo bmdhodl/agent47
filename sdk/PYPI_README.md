@@ -2,11 +2,18 @@
 
 # AgentGuard
 
-**Your coding agent just started looping through retries and shell calls. AgentGuard stops it before it goes off the rails.**
+**Stop runaway Python agents before they burn money.**
 
-Local-first runtime governance for AI agents. Budget, loops, timeouts, rates — four static guards that stop an agent before it runs away, with a zero-dependency Python SDK. Traces and incident context exposed through MCP when your tooling needs read access.
+AgentGuard47 is the zero-dependency runtime control layer for production Python
+agents. Start local with static guards that raise exceptions on budget overruns,
+tool loops, retry storms, and timeouts. Add the hosted dashboard when agent work
+becomes shared, expensive, or risky.
 
-> When tokens cost 12 cents per million, the bottleneck isn't cost. It's control. AgentGuard is the governance layer that keeps agents inside the rails you set — no matter how cheap the tokens get.
+The SDK is the free local proof path:
+- no runtime dependencies
+- no dashboard required
+- no network calls unless you opt into `HttpSink`
+- guard trips stop the agent in-process
 
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
@@ -20,6 +27,53 @@ Local-first runtime governance for AI agents. Budget, loops, timeouts, rates —
 ```bash
 pip install agentguard47
 ```
+
+## Local proof in 60 seconds
+
+```bash
+agentguard doctor
+agentguard demo
+agentguard quickstart --framework raw
+```
+
+`doctor` verifies the install without network calls. `demo` proves budget, loop,
+and retry protection offline. `quickstart` prints the smallest starter for the
+stack you actually use.
+
+## Wrap one agent run
+
+```python
+from agentguard import BudgetGuard, JsonlFileSink, LoopGuard, Tracer
+
+tracer = Tracer(
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
+    service="support-agent",
+    guards=[
+        BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8),
+        LoopGuard(max_repeats=3),
+    ],
+)
+
+with tracer.trace("agent.run") as span:
+    span.event("tool.call", data={"tool": "search", "query": "refund policy"})
+    # Call your agent or tool here. Guards fire during runtime events.
+```
+
+Then inspect the local proof:
+
+```bash
+agentguard report .agentguard/traces.jsonl
+agentguard incident .agentguard/traces.jsonl
+```
+
+## What the hosted dashboard adds
+
+Keep the first integration local. Add `HttpSink` when you need retained
+incidents, alerts, team visibility, hosted decision history, or dashboard-driven
+remote kill signals. `HttpSink` mirrors trace and decision events to the
+dashboard; it does not execute remote kill signals by itself.
+
+Dashboard contract details: [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/v1.2.8/docs/guides/dashboard-contract.md)
 
 ## Why this wedge
 
@@ -528,7 +582,8 @@ agentguard incident traces.jsonl --format html > incident.html
 ```
 
 The incident report summarizes guard triggers, exact-vs-estimated savings, and
-the dashboard upgrade path for retained alerts and remote kill switch.
+the dashboard upgrade path for retained alerts, team visibility, and remote kill
+signal management.
 
 ## Decision Tracing
 
@@ -586,6 +641,11 @@ Every decision event includes a stable schema in `event.data`:
 - `timestamp`
 - `binding_state`
 - `outcome`
+
+Default `binding_state` values are dashboard-parseable strings:
+`proposed`, `edited`, `overridden`, and `approved`. `decision.bound` requires
+the caller to provide the binding state, such as `applied`, `merged`, or
+`failed`.
 
 Guide: [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md)
 
@@ -677,8 +737,8 @@ patch_openai_async(tracer)
 
 ## Optional Hosted Dashboard
 
-For teams that need retained history, alerts, and remote controls, the SDK can
-mirror traces to the hosted dashboard:
+For teams that need retained history, alerts, team visibility, and hosted
+decision history, the SDK can mirror traces to the hosted dashboard:
 
 ```python
 from agentguard import Tracer, HttpSink, BudgetGuard
@@ -698,7 +758,11 @@ tracer = Tracer(
 ```
 
 Keep the first integration local. Add `HttpSink` only when you need retained
-incidents, alerts, or hosted follow-through.
+incidents, alerts, or hosted follow-through. `HttpSink` does not poll or execute
+dashboard remote kill signals by itself; local guards remain the authoritative
+runtime stop path.
+
+Hosted contract details: [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/v1.2.8/docs/guides/dashboard-contract.md)
 
 ## Architecture
 

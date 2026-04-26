@@ -23,6 +23,31 @@ REQUIRED_STRING_FIELDS = {"service", "phase", "trace_id", "span_id", "name"}
 VALID_KINDS = {"span", "event"}
 VALID_PHASES = {"start", "end", "emit"}
 INVALID_KIND_ERROR = 'Invalid option: expected one of "span"|"event"'
+DECISION_EVENT_NAMES = {
+    "decision.proposed",
+    "decision.edited",
+    "decision.overridden",
+    "decision.approved",
+    "decision.bound",
+}
+REQUIRED_DECISION_FIELDS = {
+    "decision_id",
+    "workflow_id",
+    "trace_id",
+    "object_type",
+    "object_id",
+    "actor_type",
+    "actor_id",
+    "event_type",
+    "proposal",
+    "final",
+    "diff",
+    "reason",
+    "comment",
+    "timestamp",
+    "binding_state",
+    "outcome",
+}
 
 
 class IngestHandler(BaseHTTPRequestHandler):
@@ -75,6 +100,7 @@ class IngestHandler(BaseHTTPRequestHandler):
         accepted = 0
         rejected = 0
         details: List[Dict[str, Any]] = []
+        decision_trace_warnings: List[Dict[str, Any]] = []
 
         for line_number, line in enumerate(body.decode("utf-8").split("\n")):
             line = line.strip()
@@ -94,6 +120,12 @@ class IngestHandler(BaseHTTPRequestHandler):
                 details.append({"line": line_number, "error": validation_error})
                 continue
 
+            decision_warning = _validate_decision_event(event)
+            if decision_warning:
+                decision_trace_warnings.append(
+                    {"line": line_number, "error": decision_warning}
+                )
+
             with self.__class__._lock:
                 self.__class__.events.append(event)
             accepted += 1
@@ -107,6 +139,8 @@ class IngestHandler(BaseHTTPRequestHandler):
         if accepted == 0 and rejected > 0:
             status = 400
             payload = {"error": "No valid events", "details": details}
+        elif decision_trace_warnings:
+            payload["decision_trace_warnings"] = decision_trace_warnings
 
         if idem_key:
             with self.__class__._lock:
@@ -118,6 +152,7 @@ class IngestHandler(BaseHTTPRequestHandler):
                     "accepted": accepted,
                     "rejected": rejected,
                     "details": list(details),
+                    "decision_trace_warnings": list(decision_trace_warnings),
                     "idempotency_key": idem_key,
                 }
             )
@@ -263,6 +298,32 @@ def _validate_event(event: Dict[str, Any]) -> Optional[str]:
 
     if "ts" not in event or not isinstance(event["ts"], (int, float)):
         return "missing or invalid ts"
+
+    return None
+
+
+def _validate_decision_event(event: Dict[str, Any]) -> Optional[str]:
+    """Mirror dashboard decision-trace extraction warnings for accepted events."""
+    name = event.get("name")
+    if name not in DECISION_EVENT_NAMES:
+        return None
+
+    data = event.get("data")
+    if not isinstance(data, dict):
+        return "Decision trace payload must be an object"
+
+    missing = sorted(field for field in REQUIRED_DECISION_FIELDS if field not in data)
+    if missing:
+        return f"Missing decision trace field: {missing[0]}"
+
+    if data.get("event_type") != name:
+        return "Decision payload event_type must match event name"
+    if data.get("trace_id") != event.get("trace_id"):
+        return "Decision payload trace_id must match event trace_id"
+
+    binding_state = data.get("binding_state")
+    if not isinstance(binding_state, str) or not binding_state.strip():
+        return "Decision payload binding_state must be a non-empty string"
 
     return None
 
