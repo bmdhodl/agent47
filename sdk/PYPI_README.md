@@ -73,7 +73,7 @@ incidents, alerts, team visibility, hosted decision history, or dashboard-driven
 remote kill signals. `HttpSink` mirrors trace and decision events to the
 dashboard; it does not execute remote kill signals by itself.
 
-Dashboard contract details: [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/v1.2.8/docs/guides/dashboard-contract.md)
+Dashboard contract details: [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md)
 
 ## Why this wedge
 
@@ -762,7 +762,7 @@ incidents, alerts, or hosted follow-through. `HttpSink` does not poll or execute
 dashboard remote kill signals by itself; local guards remain the authoritative
 runtime stop path.
 
-Hosted contract details: [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/v1.2.8/docs/guides/dashboard-contract.md)
+Hosted contract details: [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md)
 
 ## Architecture
 
