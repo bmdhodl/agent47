@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard47"
-version = "1.2.8"
+version = "1.2.9"
 description = "Zero-dependency runtime control for production Python agents - stop loops, retry storms, and budget burn"
 readme = "PYPI_README.md"
 requires-python = ">=3.9"

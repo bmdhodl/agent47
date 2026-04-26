@@ -1,6 +1,6 @@
 # SDK State
 
-**Last Updated:** 2026-04-20
+**Last Updated:** 2026-04-25
 
 ## Product
 - AgentGuard = zero-dependency Python SDK for runtime guardrails.
@@ -9,7 +9,7 @@
 
 ## Public Artifacts
 - PyPI package: `agentguard47`
-- Latest shipped SDK release: `1.2.8`
+- Latest shipped SDK release: `1.2.9`
 - npm MCP package: `@agentguard47/mcp-server@0.2.2`
 - Official MCP Registry listing: live as `io.github.bmdhodl/agentguard47`
 
@@ -19,6 +19,6 @@
 - hosted dashboard remains private and separate
 
 ## Current Focus
-- post-release hardening for `1.2.8`
+- post-release hardening for `1.2.9`
 - distribution before new features
 - coding-agent onboarding and proof
