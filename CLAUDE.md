@@ -128,8 +128,8 @@ For this repo, the most relevant Claude-side assets are:
 - official MCP Registry listing: live
 - dashboard remains private
 
-Current: latest shipped release: v1.2.8.
-<!-- latest shipped release is 1.2.8 -->
+Current: latest shipped release: v1.2.9.
+<!-- latest shipped release is 1.2.9 -->
 
 Core message to preserve:
 

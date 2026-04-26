@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.2.9
+
 ### Dashboard Contract Alignment
 - Decision-trace helpers now emit non-empty dashboard-parseable `binding_state` values for proposed, edited, overridden, and approved events by default.
 - Added hosted-ingest contract coverage for decision-trace warnings so SDK events stay queryable by the dashboard after ingest.

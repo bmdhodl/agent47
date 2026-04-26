@@ -107,3 +107,16 @@
 
 ### Blockers
 - None for `#376`; issue is closed.
+
+## 2026-04-25 | Codex
+
+### What shipped
+- Merged PR `#390` to align SDK decision traces and docs with the hosted dashboard ingest contract.
+- Staged SDK release `v1.2.9` with release metadata, generated PyPI README, and validation proof.
+
+### Decisions made
+- Keep the SDK local-first: hosted ingest mirrors events, but local guards remain the authoritative runtime stop path.
+- Keep new dashboard-contract guide links on `main` in generated PyPI README until the release tag contains the new guide.
+
+### Blockers
+- None.
