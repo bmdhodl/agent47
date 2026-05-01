@@ -3,6 +3,18 @@
 
 ---
 
+## 2026-05-01 | Codex
+
+### What shipped
+- Merged PR `#402` to add a sourced Uber AI-budget overrun datapoint to the README and generated PyPI README.
+- Captured docs validation proof under `proof/queue-uber-readme-2026-05-01/`.
+
+### Decisions made
+- Kept this as SDK positioning only: no runtime behavior changes, no dashboard work, and no unsupported claims beyond the cited Briefs report.
+
+### Blockers
+- None for the Uber README queue item.
+
 ## 2026-04-20 | Codex
 
 ### What shipped
