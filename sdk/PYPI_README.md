@@ -100,6 +100,10 @@ Agents are getting more autonomous. The guardrails around them are not keeping u
   tracked 60 trillion tokens consumed by 85,000 employees in 30 days. Some
   employees left agents running for hours just to climb the rankings. Meta shut
   the dashboard down days after it leaked. ([source](https://fortune.com/2026/04/09/meta-killed-employee-ai-token-dashboard/))
+- **Coding-agent adoption can outrun budgets.** Briefs reported that Uber burned
+  its 2026 AI tooling budget for Claude Code and Cursor by April, with monthly
+  per-engineer API costs ranging from $500 to $2,000. AgentGuard is the local
+  cap before those experiments become surprise bills. ([source](https://www.briefs.co/news/uber-torches-entire-2026-ai-budget-on-claude-code-in-four-months/))
 - **Self-improving agents need guardrails that don't self-improve.** Cursor's
   Bugbot has auto-generated 44,000+ learned rules across 110,000+ repos. When
   agents write their own rules, the safety layer has to be external and
