@@ -154,6 +154,27 @@ Examples: `feature/redis-sink`, `fix/loop-guard-window`, `docs/readme-rewrite`
 5. **Reference the GitHub issue** in your PR description (e.g., "Closes #42").
 6. **CI must pass** — tests on Python 3.9–3.12 + lint.
 
+## AI Contributions
+
+AgentGuard is an AI cost-control SDK. AI-assisted contributions are dogfood, not a smell. We encourage them, with one disclosure rule.
+
+**Posture:** Encouraged-with-disclosure.
+
+**Disclosure rules:**
+
+- **Autonomous-agent PRs** (an AI agent opened the PR end-to-end with minimal human steering): prefix the PR title with `agent:` and apply the `agent-generated` label. Example: `agent: add Redis sink retry backoff`.
+- **Human-AI-assisted PRs** (you used Copilot, Claude, Cursor, etc. to help write code you reviewed and own): no special tag required. Treat it like any other PR.
+
+**Quality bar is the same.** Same tests, same lint, same review. Disclosure is about transparency, not gating — we are not lowering or raising the bar based on how the code was written.
+
+**What we don't require:**
+
+- Copyright-style human attestations.
+- Banning LLM-drafted commit messages or PR descriptions.
+- Rejecting PRs for "AI smell" alone — if the code is correct, tested, and clear, it ships.
+
+If you're unsure which bucket a PR falls into, default to disclosing.
+
 ## Commit Messages
 
 Use clear, imperative messages:
