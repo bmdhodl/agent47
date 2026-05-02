@@ -113,7 +113,7 @@ decision.approved: 1
 decision.bound: 1
 
 python examples\budget_aware_escalation.py
-Escalation reason: token_count 2430 exceeded 2000.
+Escalation reason: token_count 2430 exceeded 2000
 ```
 
 ## Notes

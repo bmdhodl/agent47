@@ -57,7 +57,7 @@ Proves:
 Expected stop condition:
 
 ```text
-BudgetExceeded
+Cost budget exceeded:
 ```
 
 ## 4. Decision Trace Workflow
