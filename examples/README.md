@@ -17,6 +17,17 @@ The starter files under `examples/starters/` are the executable counterparts to
 `agentguard quickstart`. They live in this repo for copy-paste onboarding and
 coding-agent setup; they are not included in the installed PyPI wheel.
 
+There is also an optional Pydantic AI starter:
+
+```bash
+pip install agentguard47 pydantic-ai
+python examples/starters/agentguard_pydantic_ai_quickstart.py
+agentguard report .agentguard/traces.jsonl
+```
+
+It uses Pydantic AI's `TestModel`, so it runs without API keys or network calls
+after the optional `pydantic-ai` package is installed.
+
 ## Framework Examples
 
 | File | Framework | What it shows |

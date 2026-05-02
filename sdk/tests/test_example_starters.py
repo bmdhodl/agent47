@@ -69,6 +69,18 @@ def test_raw_starter_runs_and_writes_trace() -> None:
         assert Path(tmpdir, ".agentguard", "traces.jsonl").exists()
 
 
+def test_pydantic_ai_starter_is_optional_and_local_first() -> None:
+    starter_path = STARTERS_ROOT / "agentguard_pydantic_ai_quickstart.py"
+    source = starter_path.read_text(encoding="utf-8")
+
+    compile(source, str(starter_path), "exec", flags=0, dont_inherit=True)
+    assert "pip install agentguard47 pydantic-ai" in source
+    assert "from pydantic_ai import Agent" in source
+    assert "from pydantic_ai.models.test import TestModel" in source
+    assert "local_only=True" in source
+    assert "auto_patch=False" in source
+
+
 def test_disposable_harness_example_links_session_id() -> None:
     example_path = REPO_ROOT / "examples" / "disposable_harness_session.py"
     env = os.environ.copy()

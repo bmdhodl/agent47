@@ -6,6 +6,9 @@
 - Added a post-demo next-step block so `agentguard demo` points directly to
   `agentguard quickstart --framework raw --write`, the generated starter, and
   the follow-up local report command.
+- Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
+  `TestModel`, so users can try the pattern without API keys or network calls
+  after installing the optional framework package.
 
 ### Release Security
 - Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication

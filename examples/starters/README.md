@@ -21,6 +21,7 @@ are not included in the installed PyPI wheel.
 | `agentguard_langchain_quickstart.py` | LangChain | Explicit callback wiring with local traces. |
 | `agentguard_langgraph_quickstart.py` | LangGraph | Fully local graph example with node guards. |
 | `agentguard_crewai_quickstart.py` | CrewAI | Explicit callback wiring with local traces. |
+| `agentguard_pydantic_ai_quickstart.py` | Pydantic AI | Local traces around a Pydantic AI agent run using `TestModel`; no API keys or network calls. |
 
 ## Suggested flow
 
@@ -33,3 +34,11 @@ agentguard report .agentguard/traces.jsonl
 ```
 
 Then move to the file that matches your real stack.
+
+For Pydantic AI:
+
+```bash
+pip install agentguard47 pydantic-ai
+python examples/starters/agentguard_pydantic_ai_quickstart.py
+agentguard report .agentguard/traces.jsonl
+```
