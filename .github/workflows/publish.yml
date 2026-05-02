@@ -46,7 +46,8 @@ jobs:
       - name: Build package
         run: python -m build ./sdk
         env:
-          SOURCE_DATE_EPOCH: "0"
+          # ZIP-based Python build tooling rejects timestamps before 1980.
+          SOURCE_DATE_EPOCH: "315532800"
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0

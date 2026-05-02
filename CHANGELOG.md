@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 1.2.10
+
+### Activation Proof Path
+- Tightened the README and getting-started path around `doctor`, `demo`, and `quickstart` so first-time SDK users can reach local guard proof faster.
+- Added a coding-agent review-loop proof artifact that shows budget and retry guards stopping a simulated review/refinement loop without API keys or network calls.
+- Added sync coverage for the public sample incident and generated PyPI README so release-facing activation assets do not silently drift.
+
+### Release And Distribution Hygiene
+- Added an opt-in activation metrics design doc that defines allowed activation questions and local-first consent boundaries without adding telemetry.
+- Hardened release discussion category handling so missing GitHub Discussion categories do not block the package release path.
+- Updated the package build timestamp seed to the ZIP-safe reproducible epoch so local and CI release builds do not fail on pre-1980 metadata.
+- Clarified hosted ingest language in incident reporting so `HttpSink` is described as event mirroring for retained alerts and follow-up, not a remote kill switch by itself.
+
 ## 1.2.9
 
 ### Dashboard Contract Alignment

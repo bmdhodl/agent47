@@ -20,7 +20,7 @@ The SDK is the free local proof path:
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.9/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.10/LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -256,16 +256,16 @@ automatically. Keep it local and static: no secrets, no API keys, no dashboard
 settings.
 
 Every `agentguard quickstart --framework ...` payload also has a matching
-runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.9/examples/starters). Those starter
+runnable file under [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.10/examples/starters). Those starter
 files live in the repo for copy-paste onboarding and coding-agent setup; they
 are not shipped inside the PyPI wheel.
 
 For the repo-first onboarding flow, see
-[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.9/docs/guides/coding-agents.md).
+[`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/coding-agents.md).
 
 For copy-paste setup snippets tailored to Codex, Claude Code, GitHub Copilot,
 Cursor, and MCP-capable agents, see
-[`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.9/docs/guides/coding-agent-safety-pack.md).
+[`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/coding-agent-safety-pack.md).
 
 If you want AgentGuard to generate those repo-local instruction files for you:
 
@@ -357,7 +357,7 @@ agentguard incident coding_agent_review_loop_traces.jsonl
 Sample output:
 [`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.9/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.10/examples/quickstart.ipynb)
 
 ## Quickstart: Stop a Runaway Coding Agent in 4 Lines
 
@@ -407,7 +407,7 @@ Coding agents are cheap to start and expensive to leave unattended:
 | Self-hosted option | **Yes** | No | Yes | No |
 | Price | **Free (MIT)** | $2.50/1k traces | $59/mo | $49/mo |
 
-See also: [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.9/docs/competitive/vercel-ai-gateway.md) -- in-process SDK vs gateway proxy, compared across 7 axes; and [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md) -- identity, MCP governance, sandboxing, and runtime behavior as separate layers.
+See also: [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/competitive/vercel-ai-gateway.md) -- in-process SDK vs gateway proxy, compared across 7 axes; and [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md) -- identity, MCP governance, sandboxing, and runtime behavior as separate layers.
 
 ## Guards
 
@@ -755,7 +755,7 @@ Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offer
     assertions: "no_errors,max_cost:5.00"
 ```
 
-Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.9/docs/ci/cost-gate-workflow.yml)
+Full workflow: [`docs/ci/cost-gate-workflow.yml`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/ci/cost-gate-workflow.yml)
 
 ## Incident Reports
 
@@ -851,7 +851,7 @@ Your Agent Code
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.9/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
+See [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/v1.2.10/CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
 
 ## Commercial Support
 
@@ -866,11 +866,17 @@ Need help rolling out coding-agent safety in production? BMD Pat LLC offers:
 
 MIT (BMD PAT LLC)
 
-## Latest Release Notes (1.2.9)
+## Latest Release Notes (1.2.10)
 
-### Dashboard Contract Alignment
-- Decision-trace helpers now emit non-empty dashboard-parseable `binding_state` values for proposed, edited, overridden, and approved events by default.
-- Added hosted-ingest contract coverage for decision-trace warnings so SDK events stay queryable by the dashboard after ingest.
-- Tightened README and guide copy around the local runtime-control proof path, hosted dashboard handoff, and remote-kill polling boundary.
+### Activation Proof Path
+- Tightened the README and getting-started path around `doctor`, `demo`, and `quickstart` so first-time SDK users can reach local guard proof faster.
+- Added a coding-agent review-loop proof artifact that shows budget and retry guards stopping a simulated review/refinement loop without API keys or network calls.
+- Added sync coverage for the public sample incident and generated PyPI README so release-facing activation assets do not silently drift.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.9/CHANGELOG.md)
+### Release And Distribution Hygiene
+- Added an opt-in activation metrics design doc that defines allowed activation questions and local-first consent boundaries without adding telemetry.
+- Hardened release discussion category handling so missing GitHub Discussion categories do not block the package release path.
+- Updated the package build timestamp seed to the ZIP-safe reproducible epoch so local and CI release builds do not fail on pre-1980 metadata.
+- Clarified hosted ingest language in incident reporting so `HttpSink` is described as event mirroring for retained alerts and follow-up, not a remote kill switch by itself.
+
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.10/CHANGELOG.md)
