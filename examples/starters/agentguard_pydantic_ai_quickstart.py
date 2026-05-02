@@ -14,7 +14,7 @@ def main() -> None:
 
     tracer = agentguard.init(
         profile="coding-agent",
-        service="my-pydantic-ai-agent",
+        service="my-agent",
         budget_usd=5.00,
         trace_file=".agentguard/traces.jsonl",
         local_only=True,
