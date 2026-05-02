@@ -29,8 +29,9 @@
 ### Decisions made
 - Keep activation work focused on local runtime proof: budget stops, retry
   stops, and incident reports.
-- Track stale roadmap/architecture refresh in `FOLLOWUP.md` and keep
-  activation-metrics design as a separate docs-only step.
+- Track stale roadmap/architecture refresh in `FOLLOWUP.md`; the
+  activation-metrics design is now captured as a docs-only step, not SDK
+  telemetry.
 
 ### Blockers
 - None.
