@@ -22,6 +22,7 @@ coding-agent setup; they are not included in the installed PyPI wheel.
 | File | Framework | What it shows |
 |------|-----------|---------------|
 | `budget_aware_escalation.py` | Raw AgentGuard | Advisor-style escalation from a cheaper local model to a stronger model on hard turns |
+| `coding_agent_review_loop.py` | Raw AgentGuard | Local coding-agent review loop proof: repeated review/edit retries trip `BudgetGuard` and `RetryGuard` without network calls |
 | `disposable_harness_session.py` | Raw AgentGuard | Two tracer instances sharing one `session_id` to simulate a managed-agent session across disposable harnesses |
 | `per_token_budget_spike.py` | Raw AgentGuard | Local token-metered pricing proof: one oversized turn triggers `BudgetGuard` without any API key |
 | **`cost_guardrail.py`** | **OpenAI** | **Full cost guardrail pipeline: auto-budget enforcement, warning/exceeded events, dashboard sync** |
@@ -55,6 +56,10 @@ python examples/disposable_harness_session.py
 
 # Per-token budget spike demo (local-only)
 python examples/per_token_budget_spike.py
+
+# Coding-agent review loop demo (local-only)
+python examples/coding_agent_review_loop.py
+agentguard incident coding_agent_review_loop_traces.jsonl
 
 # Advisor-style escalation demo (local-only)
 python examples/budget_aware_escalation.py

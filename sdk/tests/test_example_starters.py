@@ -140,6 +140,54 @@ def test_per_token_budget_spike_example_runs() -> None:
         assert Path(tmpdir, "per_token_budget_spike_traces.jsonl").exists()
 
 
+def test_coding_agent_review_loop_example_runs_offline() -> None:
+    example_path = REPO_ROOT / "examples" / "coding_agent_review_loop.py"
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    sdk_path = str(REPO_ROOT / "sdk")
+    env["PYTHONPATH"] = (
+        sdk_path
+        if not existing_pythonpath
+        else os.pathsep.join([sdk_path, existing_pythonpath])
+    )
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        try:
+            result = subprocess.run(
+                [sys.executable, str(example_path)],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                env=env,
+                check=False,
+                timeout=60,
+            )
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout or ""
+            stderr = exc.stderr or ""
+            raise AssertionError(
+                "Coding-agent review loop example timed out after 60 seconds.\n"
+                f"STDOUT:\n{stdout}\n"
+                f"STDERR:\n{stderr}"
+            ) from exc
+
+        assert result.returncode == 0, result.stderr
+        assert "No API keys. No dashboard. No network calls." in result.stdout
+        assert "BudgetGuard stopped review loop on attempt 3" in result.stdout
+        assert "RetryGuard stopped retry storm on attempt 4" in result.stdout
+
+        trace_path = Path(tmpdir, "coding_agent_review_loop_traces.jsonl")
+        assert trace_path.exists()
+        names = []
+        with trace_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    names.append(json.loads(line)["name"])
+        assert "review.iteration" in names
+        assert "guard.budget_exceeded" in names
+        assert "guard.retry_limit_exceeded" in names
+
+
 def test_budget_aware_escalation_example_runs() -> None:
     example_path = REPO_ROOT / "examples" / "budget_aware_escalation.py"
     env = os.environ.copy()

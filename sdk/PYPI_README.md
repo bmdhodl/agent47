@@ -313,6 +313,15 @@ Prefer the example script instead of the CLI? This does the same local demo:
 python examples/try_it_now.py
 ```
 
+Want the coding-agent version of the failure? This local proof simulates a
+review loop where repeated edit attempts burn the run budget and a stuck patch
+retry storm gets stopped:
+
+```bash
+python examples/coding_agent_review_loop.py
+agentguard incident coding_agent_review_loop_traces.jsonl
+```
+
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.9/examples/quickstart.ipynb)
 
 ## Quickstart: Stop a Runaway Coding Agent in 4 Lines

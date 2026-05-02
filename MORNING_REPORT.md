@@ -1,41 +1,39 @@
 # Morning Report
 
 ## Mission
-Make the SDK feel like the clean local entry point into the AgentGuard runtime
-control plane, while staying aligned with the hosted dashboard contract.
+Implement the top activation recommendation from the product/codebase audit:
+make the local SDK proof path more realistic for coding-agent adoption without
+changing runtime behavior or adding dependencies.
 
 ## What changed
-- Decision helpers now default `binding_state` to dashboard-parseable states:
-  `proposed`, `edited`, `overridden`, and `approved`.
-- The local ingest test harness now mirrors dashboard decision-trace warnings,
-  including the case where an event is accepted but not queryable as decision
-  history.
-- README, SDK README, quickstart guides, examples, and package metadata now lead
-  with the local runtime-control proof path and explain what hosted dashboard
-  ingest adds.
-- Added `docs/guides/dashboard-contract.md` to document ingest shape, decision
-  event names, required fields, and the remote-kill polling boundary.
+- Added `examples/coding_agent_review_loop.py`, a deterministic offline proof
+  that repeated review/edit attempts can burn a run budget and that a stuck
+  patch retry storm is stopped by `RetryGuard`.
+- Linked the new proof from the README, getting-started guide, and examples
+  index so a new user can run it immediately after `agentguard demo`.
+- Added a focused test that runs the example in a temporary directory and
+  verifies it emits `review.iteration`, `guard.budget_exceeded`, and
+  `guard.retry_limit_exceeded` events.
+- Regenerated `sdk/PYPI_README.md` so package metadata stays in sync.
 
 ## Why it matters
-- The dashboard requires `binding_state` to be a non-empty string for decision
-  history extraction. The SDK previously emitted `None` by default for several
-  decision event types, which could make traces ingest successfully but fail
-  downstream decision indexing.
-- The docs now match the product story: start local with zero dependencies, add
-  hosted dashboard when history, alerts, team visibility, or remote kill signal
-  management matter.
-- The SDK no longer implies that `HttpSink` alone executes remote kill signals.
+- The repo already has basic offline proof. This adds a more realistic
+  coding-agent failure mode: review/refinement loops plus patch retry storms.
+- It strengthens the highest-value feature family from the audit: budget and
+  runtime enforcement as the first local activation path.
+- The change is additive and safe: no public API changes, no dashboard coupling,
+  and no new runtime dependencies.
 
 ## Validation
-- Focused decision and ingest contract tests pass.
-- Full SDK test suite passes: `693 passed`, coverage `92.88%`.
-- Ruff, MCP tests, structural checks, bandit, release guard, and preflight pass.
+- Focused example test passed.
+- Direct preflight and release guard passed.
+- Ruff, full pytest with coverage, MCP tests, structural tests, Bandit, and
+  diff check passed.
 - `make` is unavailable in this Windows shell, so Makefile-equivalent commands
   were run directly.
 
 ## Follow-up
-- If remote kill should become a first-class SDK feature, design an explicit
-  zero-dependency polling helper with short timeouts, bounded polling, and
-  opt-in failure policy.
-- Keep the dashboard decision schema and SDK `decision.py` helper defaults in
-  lockstep on future changes.
+- Refresh stale roadmap/architecture docs in a separate hygiene PR.
+- Consider one opt-in activation metrics design doc, not default SDK telemetry.
+- Keep future demos focused on local proof, budget stops, retry stops, and
+  incident reports rather than broad observability.

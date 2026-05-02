@@ -106,6 +106,17 @@ It writes a local trace file, demonstrates budget enforcement, loop detection,
 and retry protection, then shows how to inspect the trace with `agentguard report`
 and `agentguard incident`.
 
+For a more realistic coding-agent failure mode, run the local review-loop proof:
+
+```bash
+python examples/coding_agent_review_loop.py
+agentguard incident coding_agent_review_loop_traces.jsonl
+```
+
+This simulates repeated review/edit attempts and a stuck patch retry storm. It
+uses `BudgetGuard` and `RetryGuard`, writes a local JSONL trace, and still makes
+no network calls.
+
 If your agent runtime uses disposable workers or managed-agent harnesses, add a
 runtime `session_id` to correlate those short-lived traces:
 
