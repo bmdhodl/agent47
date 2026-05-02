@@ -6,6 +6,20 @@
 ## 2026-05-02 | Codex
 
 ### What shipped
+- Merged PR `#408` to add a docs-only opt-in activation metrics design.
+- Documented allowed questions, explicit consent boundaries, forbidden fields,
+  zero-dependency transport constraints, and no-default-telemetry non-goals.
+
+### Decisions made
+- Keep SDK activation metrics as design-only unless explicitly approved later.
+- Prefer server-side/package metrics before any local SDK telemetry.
+
+### Blockers
+- None.
+
+## 2026-05-02 | Codex
+
+### What shipped
 - Merged PR `#406` to refresh stale SDK roadmap and architecture docs.
 - Updated current focus around `v1.2.9`, official MCP Registry listing,
   dashboard contract boundaries, decision traces, and local proof surfaces.
