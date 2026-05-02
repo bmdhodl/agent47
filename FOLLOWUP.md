@@ -7,9 +7,9 @@
    - Keep future ops-doc updates concise and SDK-only.
 
 2. Design opt-in activation metrics before adding any telemetry.
+   - Done in `docs/guides/activation-metrics-design.md`.
    - No default SDK telemetry.
    - Keep local-only usage private by default.
-   - If implemented later, prefer explicit opt-in CLI/reporting metrics only.
 
 3. Keep future demos focused on the strongest SDK wedge.
    - Local proof first.
@@ -18,7 +18,6 @@
 
 ## Next Recommended PR
 
-Write a short opt-in activation metrics design note. Do not implement telemetry
-yet. The design should define what would be useful to measure, what must never
-be collected, where consent would be explicit, and how this stays compatible
-with the SDK's zero-dependency, local-first promise.
+Reassess the remaining open issues and pick the next smallest SDK-only unblocker.
+Prefer issue `#392` if release announcement reliability still matters, or leave
+deferred security/governance issues alone until their phase-2 blockers clear.
