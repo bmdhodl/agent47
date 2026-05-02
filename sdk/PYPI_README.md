@@ -172,7 +172,7 @@ Sample incident:
 [`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
 
 Proof gallery:
-[`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/examples/proof-gallery.md)
+[`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md)
 
 Starter files:
 [`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.10/examples/starters)
@@ -335,7 +335,7 @@ assert result.passed
 | Decision traces | [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md) |
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/managed-agent-sessions.md) |
 | Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/activation-metrics-design.md) |
-| Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/examples/proof-gallery.md) |
+| Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md) |
 
 ## Architecture
 

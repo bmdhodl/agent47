@@ -72,6 +72,9 @@ npm --prefix mcp-server test
 python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80
 701 passed, coverage 92.97%
 
+python -m ruff check scripts/generate_pypi_readme.py
+All checks passed.
+
 git diff --check
 passed
 ```
@@ -123,3 +126,7 @@ Escalation reason: token_count 2430 exceeded 2000.
 - Repository topics were updated through GitHub: removed generic
   `observability`, `tracing`, `multi-agent`, and `llm`; added
   `runtime-control`, `coding-agents`, and `mcp-server`.
+- Automated review flagged the generated PyPI README proof-gallery link because
+  the new file does not exist in tag `v1.2.10`. `scripts/generate_pypi_readme.py`
+  now treats `docs/examples/proof-gallery.md` as unreleased and links it to
+  `main` until a future release tag includes it.
