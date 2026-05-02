@@ -61,15 +61,21 @@ jobs:
 
           REPOSITORY_ID="$(gh api repos/bmdhodl/agent47 --jq '.node_id')"
           CATEGORY_ID=""
+          CATEGORY_ERR_FILE="$(mktemp)"
           if CATEGORY_ID="$(
             gh api repos/bmdhodl/agent47/discussions/categories \
               --jq 'if type == "array" then .[] | select(.name=="Announcements") | .node_id else empty end' \
-              2>/dev/null
+              2>"$CATEGORY_ERR_FILE"
           )"; then
             CATEGORY_ID="$(printf '%s' "$CATEGORY_ID" | tr -d '\r')"
-          else
+          elif grep -q 'HTTP 404' "$CATEGORY_ERR_FILE"; then
             CATEGORY_ID=""
+          else
+            cat "$CATEGORY_ERR_FILE" >&2
+            rm -f "$CATEGORY_ERR_FILE"
+            exit 1
           fi
+          rm -f "$CATEGORY_ERR_FILE"
 
           if [ -z "$CATEGORY_ID" ] || [ "$CATEGORY_ID" = "null" ]; then
             echo "Discussion creation skipped (Discussions disabled or Announcements category missing)"
