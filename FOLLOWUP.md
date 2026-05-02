@@ -1,23 +1,13 @@
 # Follow-up
 
-## From PR #404
+No active SDK follow-up items.
 
-1. Refresh stale roadmap and architecture docs in a separate hygiene PR.
-   - Done in PR `#406`.
-   - Keep future ops-doc updates concise and SDK-only.
+Completed follow-ups from PR `#404`:
 
-2. Design opt-in activation metrics before adding any telemetry.
-   - Done in `docs/guides/activation-metrics-design.md`.
-   - No default SDK telemetry.
-   - Keep local-only usage private by default.
+- PR `#406` refreshed stale roadmap and architecture docs.
+- PR `#408` added the docs-only opt-in activation metrics design.
+- PR `#412` fixed release announcement reliability for missing GitHub
+  Discussions categories.
 
-3. Keep future demos focused on the strongest SDK wedge.
-   - Local proof first.
-   - Budget stops, loop stops, retry stops, incident reports.
-   - Avoid drifting into broad observability, static scanning, or dashboard-only claims.
-
-## Next Recommended PR
-
-Reassess the remaining open issues and pick the next smallest SDK-only unblocker.
-Prefer issue `#392` if release announcement reliability still matters, or leave
-deferred security/governance issues alone until their phase-2 blockers clear.
+Deferred GitHub issues remain tracked in GitHub, not here, so this file stays a
+short active queue instead of a duplicate backlog.
