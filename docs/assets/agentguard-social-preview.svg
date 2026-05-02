@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">AgentGuard47 social preview</title>
+  <desc id="desc">AgentGuard47 stops runaway Python agents with local runtime guards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#08111f"/>
+      <stop offset="52%" stop-color="#102d3f"/>
+      <stop offset="100%" stop-color="#132018"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#5eead4" stop-opacity="0.35"/>
+      <stop offset="65%" stop-color="#5eead4" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#glow)"/>
+  <g opacity="0.16" stroke="#d1fae5" stroke-width="1">
+    <path d="M96 118H1184"/>
+    <path d="M96 522H1184"/>
+    <path d="M170 70V570"/>
+    <path d="M1110 70V570"/>
+  </g>
+  <g transform="translate(90 92)">
+    <rect x="0" y="0" width="1100" height="456" rx="34" fill="#06131f" opacity="0.82" stroke="#5eead4" stroke-opacity="0.42"/>
+    <text x="62" y="105" fill="#a7f3d0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="30" letter-spacing="3">AGENTGUARD47</text>
+    <text x="62" y="190" fill="#f8fafc" font-family="Inter, Avenir, Helvetica, Arial, sans-serif" font-size="64" font-weight="800">Stop runaway</text>
+    <text x="62" y="266" fill="#f8fafc" font-family="Inter, Avenir, Helvetica, Arial, sans-serif" font-size="64" font-weight="800">Python agents.</text>
+    <text x="66" y="330" fill="#cbd5e1" font-family="Inter, Avenir, Helvetica, Arial, sans-serif" font-size="30">Budget caps. Loop detection. Retry limits.</text>
+    <text x="66" y="382" fill="#86efac" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="28">pip install agentguard47</text>
+    <g transform="translate(762 102)">
+      <rect x="0" y="0" width="250" height="250" rx="38" fill="#0f172a" stroke="#86efac" stroke-opacity="0.55"/>
+      <path d="M73 126l38 38 78-91" fill="none" stroke="#86efac" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="125" y="318" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="24">ZERO DEPS</text>
+    </g>
+  </g>
+</svg>

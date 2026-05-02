@@ -75,6 +75,10 @@ python examples/openai_agents_with_guards.py
 Sample incident output from a clean coding-agent review-loop run:
 [`docs/examples/coding-agent-review-loop-incident.md`](../docs/examples/coding-agent-review-loop-incident.md)
 
+For a shareable command-by-command tour of the strongest local demos, see the
+proof gallery:
+[`docs/examples/proof-gallery.md`](../docs/examples/proof-gallery.md)
+
 Each example writes traces to a local JSONL file. To send traces to the hosted dashboard instead, replace `JsonlFileSink` with `HttpSink`:
 
 ```python
