@@ -221,16 +221,22 @@ Capture proposal, human edit, approval, override, and binding events through the
 same event pipeline:
 
 ```python
-from agentguard import decision_flow
+from agentguard import JsonlFileSink, Tracer, decision_flow
 
-with decision_flow(
-    workflow_id="deploy-review",
-    object_type="pull_request",
-    object_id="123",
-) as decision:
-    decision.propose({"action": "merge"})
-    decision.approve(comment="Looks safe")
-    decision.bind(binding_state="merged", outcome="success")
+tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"))
+
+with tracer.trace("agent.run") as run:
+    with decision_flow(
+        run,
+        workflow_id="deploy-review",
+        object_type="pull_request",
+        object_id="123",
+        actor_type="human",
+        actor_id="pat",
+    ) as decision:
+        decision.proposed({"action": "merge"})
+        decision.approved(comment="Looks safe")
+        decision.bound(binding_state="merged", outcome="success")
 ```
 
 Supported event types:

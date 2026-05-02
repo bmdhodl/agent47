@@ -39,6 +39,17 @@ Release guard passed.
 python -m pytest sdk\tests\test_pypi_readme_sync.py sdk\tests\test_quickstart.py sdk\tests\test_demo.py -v
 19 passed
 
+python scripts\generate_pypi_readme.py --write
+
+python scripts\generate_pypi_readme.py --check
+passed
+
+python scripts\sdk_release_guard.py
+Release guard passed.
+
+python -m pytest sdk\tests\test_pypi_readme_sync.py sdk\tests\test_quickstart.py sdk\tests\test_demo.py sdk\tests\test_decision_trace.py -v
+32 passed
+
 python scripts\sdk_preflight.py
 passed
 
@@ -52,4 +63,6 @@ passed
 - PyPI README stayed generated from `README.md` plus `CHANGELOG.md`.
 - Guarded release-facing links for Colab, decision-tracing docs, and the sample
   incident remain covered by tests.
-
+- Copilot flagged the decision-trace snippet as non-runnable. The snippet now
+  passes a trace context into `decision_flow`, includes actor identity fields,
+  and uses the actual `proposed` / `approved` / `bound` helper methods.
