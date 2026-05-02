@@ -336,6 +336,7 @@ assert result.passed
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/managed-agent-sessions.md) |
 | Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md) |
+| PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/trusted-publishing.md) |
 
 ## Architecture
 

@@ -21,6 +21,8 @@
 - [ ] `sdk/PYPI_README.md` is regenerated from `README.md` + `CHANGELOG.md` and matches the release tag.
 - [ ] GitHub Releases has an entry for the tag, not just a git tag.
 - [ ] PyPI version matches the Git tag after publish.
+- [ ] PyPI file metadata confirms Trusted Publishing and attestations for the
+      release artifacts.
 - [ ] Release notes link to the correct docs, repo, and package name.
 
 ## Adding a new guard
