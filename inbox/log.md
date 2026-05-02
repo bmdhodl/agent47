@@ -6,6 +6,21 @@
 ## 2026-05-02 | Codex
 
 ### What shipped
+- Merged PR `#412` to make release announcement discussion creation skip safely
+  when GitHub Discussions categories are unavailable.
+- Closed issue `#392`; release-adjacent automation no longer fails on missing
+  Discussions configuration.
+
+### Decisions made
+- Keep deferred phase-2 governance/security issues tracked in GitHub instead of
+  duplicating them in `FOLLOWUP.md`.
+
+### Blockers
+- `#282` and `#279` remain intentionally deferred phase-2 work.
+
+## 2026-05-02 | Codex
+
+### What shipped
 - Merged PR `#408` to add a docs-only opt-in activation metrics design.
 - Documented allowed questions, explicit consent boundaries, forbidden fields,
   zero-dependency transport constraints, and no-default-telemetry non-goals.
