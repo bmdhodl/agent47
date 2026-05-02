@@ -4,11 +4,14 @@
 
 ## High-level shape
 
-AgentGuard has three repo-relevant product surfaces:
+This public repo has three shipped surfaces:
 
 1. A zero-dependency Python SDK that enforces runtime guardrails locally.
 2. A read-only MCP server that lets agent clients inspect retained AgentGuard data.
-3. A hosted dashboard, reached through `HttpSink`, that adds team visibility and control-plane features.
+3. A static public site under `site/`.
+
+The hosted dashboard is a separate private product surface. The SDK reaches it
+only through explicit hosted integration points such as `HttpSink`.
 
 The SDK must stand on its own. It should be usable offline, auditable from source, and credible in production even when the hosted dashboard is not configured.
 
