@@ -43,6 +43,7 @@ they directly strengthen coding-agent adoption.
 | Dashboard contract alignment for v1.2.9 | Done - hosted ingest shape and decision-trace defaults are documented and covered by tests; remote-kill boundaries are documented |
 | Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
 | Follow-up handoff | Done - `FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
+| Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed fields, forbidden fields, consent boundaries, and local-first non-goals without adding telemetry |
 
 ## Now (next 2 weeks)
 
@@ -60,8 +61,6 @@ they directly strengthen coding-agent adoption.
 | Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
-| Opt-in activation metrics design | A short design explains what, if anything, could be measured without default telemetry, payload capture, or local-only privacy drift |
-
 ## Later (ideas bucket)
 
 | Item | Success Signal |

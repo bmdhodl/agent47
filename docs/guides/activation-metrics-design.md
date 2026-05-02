@@ -67,8 +67,6 @@ Prefer metrics that do not require SDK telemetry:
 - PyPI downloads by version
 - GitHub clone/view/referrer data
 - docs page views and outbound clicks
-- dashboard funnel: API key created -> first trace received -> first retained
-  incident -> active project after 7 days
 - hosted ingest counters by SDK version and accepted/rejected event kind
 
 These answer adoption questions without instrumenting local-only users.
