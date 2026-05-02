@@ -207,3 +207,16 @@
 
 ### Blockers
 - None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Released SDK `v1.2.10` to PyPI and created the GitHub Release.
+- Included activation proof docs, review-loop incident proof, PyPI README sync, and release-build timestamp hardening.
+
+### Decisions made
+- Keep this as a patch release focused on activation/distribution and release reliability.
+- Continue using `PYPI_TOKEN` until PyPI Trusted Publishing is configured by the package owner.
+
+### Blockers
+- None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.
