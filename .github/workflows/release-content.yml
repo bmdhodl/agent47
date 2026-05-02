@@ -60,10 +60,19 @@ jobs:
           } > "$BODY_FILE"
 
           REPOSITORY_ID="$(gh api repos/bmdhodl/agent47 --jq '.node_id')"
-          CATEGORY_ID="$(gh api repos/bmdhodl/agent47/discussions/categories --jq '.[] | select(.name=="Announcements") | .node_id' 2>/dev/null || true)"
+          CATEGORY_ID=""
+          if CATEGORY_ID="$(
+            gh api repos/bmdhodl/agent47/discussions/categories \
+              --jq 'if type == "array" then .[] | select(.name=="Announcements") | .node_id else empty end' \
+              2>/dev/null
+          )"; then
+            CATEGORY_ID="$(printf '%s' "$CATEGORY_ID" | tr -d '\r')"
+          else
+            CATEGORY_ID=""
+          fi
 
-          if [ -z "$CATEGORY_ID" ]; then
-            echo "Discussion creation skipped (no Announcements category)"
+          if [ -z "$CATEGORY_ID" ] || [ "$CATEGORY_ID" = "null" ]; then
+            echo "Discussion creation skipped (Discussions disabled or Announcements category missing)"
             exit 0
           fi
 
