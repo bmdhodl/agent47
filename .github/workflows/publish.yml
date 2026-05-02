@@ -58,16 +58,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
           packages-dir: sdk/dist/
-          password: ${{ secrets.PYPI_TOKEN }}
-          # Current release path still uses PYPI_TOKEN because PyPI Trusted Publishing
-          # is not configured yet for this workflow. GitHub-side publisher tuple:
-          # - owner: bmdhodl
-          # - repo: agent47
-          # - workflow: .github/workflows/publish.yml
-          # - environment: pypi
-          #
-          # Once the Trusted Publisher is added on PyPI for `agentguard47`:
-          # 1. Remove the `password` line above.
-          # 2. Add `attestations: true`.
-          # 3. Publish the next tag and confirm PyPI file metadata says
-          #    "Uploaded using Trusted Publishing? Yes".
+          attestations: true

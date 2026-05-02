@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Release Security
+- Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
+  to OIDC Trusted Publishing for the `pypi` GitHub environment, with PyPI
+  attestations enabled for release artifacts.
+- Added release documentation for the required PyPI trusted-publisher tuple and
+  post-release verification steps.
+
 ## 1.2.10
 
 ### Activation Proof Path

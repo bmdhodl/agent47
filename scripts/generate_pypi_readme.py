@@ -32,6 +32,7 @@ UNRELEASED_PATHS = {
     "docs/guides/dashboard-contract.md",
     "docs/guides/decision-tracing.md",
     "docs/guides/managed-agent-sessions.md",
+    "docs/release/trusted-publishing.md",
 }
 
 

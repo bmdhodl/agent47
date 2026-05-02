@@ -334,6 +334,7 @@ assert result.passed
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md) |
 | Activation metrics design | [`docs/guides/activation-metrics-design.md`](docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](docs/examples/proof-gallery.md) |
+| PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](docs/release/trusted-publishing.md) |
 
 ## Architecture
 
