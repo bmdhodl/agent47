@@ -60,9 +60,15 @@ jobs:
           } > "$BODY_FILE"
 
           REPOSITORY_ID="$(gh api repos/bmdhodl/agent47 --jq '.node_id')"
-          CATEGORY_ID="$(gh api repos/bmdhodl/agent47/discussions/categories --jq '.[] | select(.name=="Announcements") | .node_id' 2>/dev/null || true)"
+          CATEGORY_FILE="$(mktemp)"
+          trap 'rm -f "$BODY_FILE" "$CATEGORY_FILE"' EXIT
 
-          if [ -z "$CATEGORY_ID" ]; then
+          if ! gh api repos/bmdhodl/agent47/discussions/categories > "$CATEGORY_FILE" 2>/dev/null; then
+            echo "Discussion creation skipped (categories unavailable or Discussions disabled)"
+            exit 0
+          fi
+
+          if ! CATEGORY_ID="$(python scripts/resolve_discussion_category.py < "$CATEGORY_FILE")"; then
             echo "Discussion creation skipped (no Announcements category)"
             exit 0
           fi
