@@ -26,6 +26,7 @@ COLAB_ABSOLUTE_LINK_RE = re.compile(
 )
 UNRELEASED_PATHS = {
     "docs/competitive/agent-security-stack.md",
+    "docs/examples/coding-agent-review-loop-incident.md",
     "docs/guards/budget-aware-escalation.md",
     "docs/guides/dashboard-contract.md",
     "docs/guides/decision-tracing.md",

@@ -10,6 +10,22 @@ pip install agentguard47
 
 Zero dependencies. Python 3.9+.
 
+## Fastest safe activation path
+
+Copy-paste this when you want the shortest local proof before touching a real
+agent or provider key:
+
+```bash
+agentguard doctor
+agentguard demo
+agentguard quickstart --framework raw --write
+python agentguard_raw_quickstart.py
+agentguard report .agentguard/traces.jsonl
+```
+
+This path proves local trace writing, budget stops, loop stops, retry stops,
+and a runnable starter file without any network calls.
+
 ## Verify the install
 
 Start with a local verification pass:
@@ -115,7 +131,8 @@ agentguard incident coding_agent_review_loop_traces.jsonl
 
 This simulates repeated review/edit attempts and a stuck patch retry storm. It
 uses `BudgetGuard` and `RetryGuard`, writes a local JSONL trace, and still makes
-no network calls.
+no network calls. A checked-in sample incident is available at
+[`../examples/coding-agent-review-loop-incident.md`](../examples/coding-agent-review-loop-incident.md).
 
 If your agent runtime uses disposable workers or managed-agent harnesses, add a
 runtime `session_id` to correlate those short-lived traces:

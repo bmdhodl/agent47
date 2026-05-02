@@ -72,6 +72,9 @@ python examples/cost_guardrail.py
 python examples/openai_agents_with_guards.py
 ```
 
+Sample incident output from a clean coding-agent review-loop run:
+[`docs/examples/coding-agent-review-loop-incident.md`](../docs/examples/coding-agent-review-loop-incident.md)
+
 Each example writes traces to a local JSONL file. To send traces to the hosted dashboard instead, replace `JsonlFileSink` with `HttpSink`:
 
 ```python
