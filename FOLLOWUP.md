@@ -3,9 +3,8 @@
 ## From PR #404
 
 1. Refresh stale roadmap and architecture docs in a separate hygiene PR.
-   - `ops/03-ROADMAP_NOW_NEXT_LATER.md` was 2 weeks old during the PR.
-   - `ops/02-ARCHITECTURE.md` was 3 weeks old during the PR.
-   - Keep this as repo hygiene; do not turn it into feature expansion.
+   - Done in PR `#406`.
+   - Keep future ops-doc updates concise and SDK-only.
 
 2. Design opt-in activation metrics before adding any telemetry.
    - No default SDK telemetry.
@@ -19,6 +18,7 @@
 
 ## Next Recommended PR
 
-Refresh the stale roadmap and architecture docs so they match the current
-runtime-control positioning, v1.2.9 package state, MCP listing state, and recent
-local-proof additions.
+Write a short opt-in activation metrics design note. Do not implement telemetry
+yet. The design should define what would be useful to measure, what must never
+be collected, where consent would be explicit, and how this stays compatible
+with the SDK's zero-dependency, local-first promise.

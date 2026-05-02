@@ -3,6 +3,38 @@
 
 ---
 
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#406` to refresh stale SDK roadmap and architecture docs.
+- Updated current focus around `v1.2.9`, official MCP Registry listing,
+  dashboard contract boundaries, decision traces, and local proof surfaces.
+
+### Decisions made
+- Keep ops docs SDK-only and concise.
+- Treat remote kill as a documented dashboard boundary, not an SDK behavior
+  claim.
+- Keep repo-only examples distinct from package-installed CLI proof paths.
+
+### Blockers
+- None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#404` to add a local coding-agent review-loop proof.
+- Added `examples/coding_agent_review_loop.py`, docs links, PyPI README sync,
+  focused regression coverage, proof artifacts, and `FOLLOWUP.md`.
+
+### Decisions made
+- Keep activation work focused on local runtime proof: budget stops, retry
+  stops, and incident reports.
+- Defer stale roadmap/architecture refresh and opt-in activation metrics design
+  to follow-up work.
+
+### Blockers
+- None.
+
 ## 2026-05-01 | Codex
 
 ### What shipped
@@ -129,22 +161,6 @@
 ### Decisions made
 - Keep the SDK local-first: hosted ingest mirrors events, but local guards remain the authoritative runtime stop path.
 - Keep new dashboard-contract guide links on `main` in generated PyPI README until the release tag contains the new guide.
-
-### Blockers
-- None.
-
-## 2026-05-02 | Codex
-
-### What shipped
-- Merged PR `#404` to add a local coding-agent review-loop proof.
-- Added `examples/coding_agent_review_loop.py`, docs links, PyPI README sync,
-  focused regression coverage, proof artifacts, and `FOLLOWUP.md`.
-
-### Decisions made
-- Keep activation work focused on local runtime proof: budget stops, retry
-  stops, and incident reports.
-- Defer stale roadmap/architecture refresh and opt-in activation metrics design
-  to follow-up work.
 
 ### Blockers
 - None.
