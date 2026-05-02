@@ -16,7 +16,7 @@ local guard proof without confusion?
 - Does `agentguard doctor` complete successfully?
 - Do users run `agentguard demo` or `agentguard quickstart` after doctor?
 - Which framework quickstart is most often selected?
-- Do users reach a first hosted ingest only after local proof?
+- Do hosted ingest contracts accept or reject events by SDK version?
 - Which documented steps produce errors often enough to fix?
 
 ## Explicit Consent Model
@@ -89,7 +89,7 @@ activation metrics do not become confused.
 Any future implementation needs a hard off switch:
 
 - `AGENTGUARD_DISABLE_METRICS=1` wins over all opt-ins
-- hosted endpoint can reject or disable metrics without affecting SDK behavior
+- metrics endpoint can reject or disable metrics without affecting SDK behavior
 - package behavior stays identical when metrics fail
 
 ## Recommended First Implementation, If Approved Later

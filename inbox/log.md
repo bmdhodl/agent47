@@ -29,7 +29,7 @@
 ### Decisions made
 - Keep activation work focused on local runtime proof: budget stops, retry
   stops, and incident reports.
-- Defer stale roadmap/architecture refresh to follow-up work and keep
+- Track stale roadmap/architecture refresh in `FOLLOWUP.md` and keep
   activation-metrics design as a separate docs-only step.
 
 ### Blockers
