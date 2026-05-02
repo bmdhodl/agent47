@@ -194,3 +194,16 @@
 
 ### Blockers
 - None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#415` to tighten the SDK activation path: clearer README quickstart, copy-paste local setup, and a shareable coding-agent review-loop incident artifact.
+- Added tests that keep the sample incident and PyPI README links in sync.
+
+### Decisions made
+- Keep activation proof local-first and zero-network by default.
+- Describe hosted ingest as retained alerts and team-visible follow-up, not as a remote kill switch by itself.
+
+### Blockers
+- None.
