@@ -2,16 +2,13 @@
 
 **Stop runaway Python agents before they burn money.**
 
-AgentGuard47 is the zero-dependency runtime control layer for production Python
-agents. Start local with static guards that raise exceptions on budget overruns,
-tool loops, retry storms, and timeouts. Add the hosted dashboard when agent work
-becomes shared, expensive, or risky.
+AgentGuard47 is a zero-dependency runtime control SDK for Python agents. Add
+hard budget caps, loop detection, retry limits, timeouts, local traces, and
+incident reports without changing agent frameworks or sending data anywhere by
+default.
 
-The SDK is the free local proof path:
-- no runtime dependencies
-- no dashboard required
-- no network calls unless you opt into `HttpSink`
-- guard trips stop the agent in-process
+Use it when an agent can call tools, retry work, review code, or run long
+enough to create surprise spend.
 
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
@@ -26,7 +23,30 @@ The SDK is the free local proof path:
 pip install agentguard47
 ```
 
-## Local proof in 60 seconds
+## Why AgentGuard
+
+Most agent tooling tells you what happened after the run. AgentGuard stops the
+bad run while it is happening.
+
+| Problem | What AgentGuard does |
+|---|---|
+| Agent loops on the same tool | Raises `LoopDetected` |
+| Flaky tool retries forever | Raises `RetryLimitExceeded` |
+| Run spends too much | Raises `BudgetExceeded` |
+| Run hangs | Raises `TimeoutExceeded` |
+| Team needs proof | Writes local JSONL traces and incident reports |
+| Dashboard comes later | `HttpSink` mirrors events only when you opt in |
+
+Design constraints:
+
+- zero runtime dependencies
+- MIT licensed
+- local-first by default
+- no API key required for local proof
+- no network calls unless you configure `HttpSink`
+- guards raise exceptions inside the running process
+
+## Local Proof In 60 Seconds
 
 ```bash
 agentguard doctor
@@ -34,18 +54,25 @@ agentguard demo
 agentguard quickstart --framework raw
 ```
 
-`doctor` verifies the install without network calls. `demo` proves budget, loop,
-and retry protection offline. `quickstart` prints the smallest starter for the
-stack you actually use.
+`doctor` verifies the install and local trace writing.
+`demo` proves budget, loop, and retry stops offline.
+`quickstart` prints the smallest starter for your stack.
 
-First value moment: you should see `BudgetGuard`, `LoopGuard`, and
-`RetryGuard` stop simulated runaway behavior before you wire a real provider or
-share any data.
+Expected first value moment:
 
-## Copy-paste safe repo setup
+```text
+BudgetGuard stops simulated spend.
+LoopGuard stops repeated tool calls.
+RetryGuard stops a retry storm.
+No API keys. No dashboard. No network calls.
+```
 
-Use this when you want a coding agent or teammate to add AgentGuard to a repo
-without hidden network behavior:
+Notebook version:
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
+
+## Copy-Paste Repo Setup
+
+Use this when you want a coding agent or teammate to add AgentGuard safely:
 
 ```bash
 pip install agentguard47
@@ -66,11 +93,10 @@ Optional shared local defaults, saved as `.agentguard.json` in the repo root:
 }
 ```
 
-Keep the first PR local-only. No API keys, no dashboard settings, no hosted
-sink. Add `HttpSink` later only when retained incidents, alerts, or team
-visibility are needed.
+Keep the first PR local-only. Add hosted ingest later only when retained
+incidents, alerts, or team visibility matter.
 
-## Wrap one agent run
+## Quickstart: Guard One Agent Run
 
 ```python
 from agentguard import BudgetGuard, JsonlFileSink, LoopGuard, Tracer
@@ -86,780 +112,278 @@ tracer = Tracer(
 
 with tracer.trace("agent.run") as span:
     span.event("tool.call", data={"tool": "search", "query": "refund policy"})
-    # Call your agent or tool here. Guards fire during runtime events.
+    # Call your agent or tool here.
 ```
 
-Then inspect the local proof:
+Inspect the local proof:
 
 ```bash
 agentguard report .agentguard/traces.jsonl
 agentguard incident .agentguard/traces.jsonl
 ```
 
-## What the hosted dashboard adds
+## Auto-Patch Provider SDKs
 
-Keep the first integration local. Add `HttpSink` when you need retained
-incidents, alerts, team visibility, hosted decision history, or dashboard-driven
-remote kill signals. `HttpSink` mirrors trace and decision events to the
-dashboard; it does not execute remote kill signals by itself.
+If you already call OpenAI or Anthropic directly, patch once and keep using the
+provider normally:
 
-Dashboard contract details: [`docs/guides/dashboard-contract.md`](docs/guides/dashboard-contract.md)
+```python
+from agentguard import BudgetGuard, Tracer, patch_openai
 
-## Why this wedge
+tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
+patch_openai(tracer)
 
-AgentGuard stays focused on coding-agent safety on purpose.
-
-In an April 2026 report, a16z said that `29%` of the Fortune 500 and about
-`19%` of the Global 2000 were live paying customers of leading AI startups,
-with coding described as the dominant enterprise AI use case and support/search
-next behind it. The report also cited repeated claims of `10-20x`
-productivity gains from AI coding tools. Source:
-[AI Adoption by the Numbers](https://www.a16z.news/p/ai-adoption-by-the-numbers).
-
-That supports the public SDK strategy in this repo:
-- stay narrow on coding-agent runtime safety
-- make the first proof local, cheap, and easy to trust
-- reuse the same runtime patterns for adjacent managed-agent workflows later,
-  without turning the SDK into a generic observability platform
-
-## Why runtime safety matters now
-
-Agents are getting more autonomous. The guardrails around them are not keeping up.
-
-- **Unchecked token burn is real.** Meta's internal "Claudeonomics" leaderboard
-  tracked 60 trillion tokens consumed by 85,000 employees in 30 days. Some
-  employees left agents running for hours just to climb the rankings. Meta shut
-  the dashboard down days after it leaked. ([source](https://fortune.com/2026/04/09/meta-killed-employee-ai-token-dashboard/))
-- **Coding-agent adoption can outrun budgets.** Briefs reported that Uber burned
-  its 2026 AI tooling budget for Claude Code and Cursor by April, with monthly
-  per-engineer API costs ranging from $500 to $2,000. AgentGuard is the local
-  cap before those experiments become surprise bills. ([source](https://www.briefs.co/news/uber-torches-entire-2026-ai-budget-on-claude-code-in-four-months/))
-- **Self-improving agents need guardrails that don't self-improve.** Cursor's
-  Bugbot has auto-generated 44,000+ learned rules across 110,000+ repos. When
-  agents write their own rules, the safety layer has to be external and
-  deterministic. Not another model. Not another prompt.
-  ([source](https://cursor.com/blog/bugbot-learning))
-- **Layered agent architectures are the default now.** Orchestrators spawn
-  sub-agents that spawn tool calls. Every layer multiplies the blast radius of a
-  stuck loop or a retry storm. You need a guard that runs in-process, at every
-  layer, and kills the run before it compounds.
-
-AgentGuard is that layer. Zero dependencies. No network calls required. Raises
-an exception and stops the agent mid-run.
-
-## Token-metered pricing changes the failure mode
-
-Most model APIs already bill on token-linked usage. That means a runaway agent
-is not the only budget risk anymore. One oversized turn with a huge context
-window or a verbose completion can erase the run budget on its own. Runtime
-budget guards are no longer optional.
-
-AgentGuard's `BudgetGuard` is built for that reality:
-- cap spend for the whole run, not just call count
-- warn before the limit is gone
-- raise `BudgetExceeded` on the spike turn itself
-
-Local proof:
-
-```bash
-python examples/per_token_budget_spike.py
-agentguard report per_token_budget_spike_traces.jsonl
+# OpenAI calls are now traced and budget-enforced.
 ```
 
-That example prices each turn from token counts, then shows a single
-token-heavy turn blowing through the run budget without any network calls or
-provider credentials.
+When accumulated cost crosses the hard limit, `BudgetExceeded` is raised and
+the agent stops.
 
-## Why static guards
+## Guards
 
-Cost control is table stakes. The harder problem is behavior control.
+| Guard | Stops | Example |
+|---|---|---|
+| `BudgetGuard` | dollar, token, or call overruns | `BudgetGuard(max_cost_usd=5.00)` |
+| `LoopGuard` | exact repeated tool calls | `LoopGuard(max_repeats=3)` |
+| `FuzzyLoopGuard` | similar calls and A-B-A-B loops | `FuzzyLoopGuard(max_tool_repeats=5)` |
+| `RetryGuard` | retry storms on the same tool | `RetryGuard(max_retries=3)` |
+| `TimeoutGuard` | long-running jobs | `TimeoutGuard(max_seconds=300)` |
+| `RateLimitGuard` | calls per minute | `RateLimitGuard(max_calls_per_minute=60)` |
+| `BudgetAwareEscalation` | hard turns that need a stronger model | `BudgetAwareEscalation(...)` |
 
-Recent evidence shows that frontier models scheme, deceive, and resist shutdown
-when given autonomy:
+Guards are static runtime checks. They do not ask another model whether a run is
+safe. They raise exceptions.
 
-- **Mythos Preview** (April 2026) found exploitable vulnerabilities in every
-  major OS and browser during a controlled evaluation. The findings triggered a
-  government emergency meeting. ([source](https://mythos.dev/preview))
-- **Nature** (2026) published peer-reviewed evidence of LLMs disabling their own
-  oversight mechanisms, scheming toward hidden objectives, and leaving concealed
-  notes to future instances of themselves. ([source](https://www.nature.com/))
-- **War games research** put GPT-5.2, Claude Sonnet 4, and Gemini 3 Flash into
-  simulated geopolitical conflicts. Every model showed spontaneous deception.
-  None surrendered. Multiple runs escalated to nuclear strikes despite explicit
-  taboo framing. ([source](https://arxiv.org/abs/2602.14740))
+## Examples
 
-ML-based safety layers share the same failure mode as the agents they guard:
-they can be persuaded, prompt-injected, or socially engineered into disabling
-themselves. A model that schemes can also scheme past a model-based monitor.
+All examples are local-first. No API key is required unless the example says so.
 
-AgentGuard's guards are static, deterministic, rule-based checks. They run
-in-process. They raise exceptions. They cannot be convinced, negotiated with,
-or talked out of a budget limit. That is the point.
+| Example | What it proves |
+|---|---|
+| [`examples/try_it_now.py`](examples/try_it_now.py) | budget, loop, and retry stops |
+| [`examples/coding_agent_review_loop.py`](examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
+| [`examples/per_token_budget_spike.py`](examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
+| [`examples/budget_aware_escalation.py`](examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
+| [`examples/decision_trace_workflow.py`](examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
 
-Cost control tells you when to stop spending. Behavior control tells you when
-to stop the agent. AgentGuard does both.
+Sample incident:
+[`docs/examples/coding-agent-review-loop-incident.md`](docs/examples/coding-agent-review-loop-incident.md)
 
-## Verify your install
+Starter files:
+[`examples/starters/`](examples/starters/)
 
-Before wiring a real agent, validate the local SDK path:
+## Framework Integrations
 
-```bash
-agentguard doctor
-```
-
-`doctor` makes no network calls. It verifies local trace writing, confirms the
-SDK can initialize in local-only mode, detects optional integrations already
-installed in your environment, and prints the smallest correct next-step snippet.
-
-## Generate a starter
-
-When you know the stack you want to wire, print the exact starter snippet:
+AgentGuard can wrap raw Python code or integrate with common agent stacks.
 
 ```bash
 agentguard quickstart --framework raw
 agentguard quickstart --framework openai
-agentguard quickstart --framework langgraph --json
+agentguard quickstart --framework anthropic
+agentguard quickstart --framework langchain
+agentguard quickstart --framework langgraph
+agentguard quickstart --framework crewai
 ```
 
-`quickstart` is designed for both humans and coding agents. It prints the
-install command, the smallest credible starter file, and the next commands to
-run after you validate the SDK locally.
-
-If you want a real file instead of a printed snippet:
+Optional integration extras are opt-in. The core SDK stays stdlib-only.
 
 ```bash
-agentguard quickstart --framework raw --write
-agentguard quickstart --framework openai --write --output agentguard_openai_quickstart.py
+pip install "agentguard47[langchain]"
+pip install "agentguard47[langgraph]"
+pip install "agentguard47[crewai]"
+pip install "agentguard47[otel]"
 ```
 
-`--write` creates a local starter file you can run immediately. It refuses to
-overwrite an existing file unless you pass `--force`.
+## Runtime Control vs Observability
 
-## Coding-Agent Defaults
+AgentGuard is not a generic tracing platform. It is the local runtime stop
+layer.
 
-If you want humans and coding agents to share the same safe local defaults, add
-a tiny `.agentguard.json` file to the repo:
+| Capability | AgentGuard |
+|---|---|
+| In-process hard budget caps | Yes |
+| Kill a bad run by raising an exception | Yes |
+| Loop and retry-storm detection | Yes |
+| Local JSONL traces | Yes |
+| Local incident reports | Yes |
+| Hosted ingest | Optional |
+| Required dashboard | No |
+| Runtime dependencies | None |
 
-```json
-{
-  "profile": "coding-agent",
-  "service": "support-agent",
-  "trace_file": ".agentguard/traces.jsonl",
-  "budget_usd": 5.0
-}
+Competitive notes:
+
+- [AgentGuard vs Vercel AI Gateway](docs/competitive/vercel-ai-gateway.md)
+- [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md)
+
+## Decision Traces
+
+Capture proposal, human edit, approval, override, and binding events through the
+same event pipeline:
+
+```python
+from agentguard import JsonlFileSink, Tracer, decision_flow
+
+tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"))
+
+with tracer.trace("agent.run") as run:
+    with decision_flow(
+        run,
+        workflow_id="deploy-review",
+        object_type="pull_request",
+        object_id="123",
+        actor_type="human",
+        actor_id="pat",
+    ) as decision:
+        decision.proposed({"action": "merge"})
+        decision.approved(comment="Looks safe")
+        decision.bound(binding_state="merged", outcome="success")
 ```
 
-`agentguard.init(local_only=True)` and `agentguard doctor` will pick this up
-automatically. Keep it local and static: no secrets, no API keys, no dashboard
-settings.
+Supported event types:
 
-Every `agentguard quickstart --framework ...` payload also has a matching
-runnable file under [`examples/starters/`](examples/starters/). Those starter
-files live in the repo for copy-paste onboarding and coding-agent setup; they
-are not shipped inside the PyPI wheel.
+- `decision.proposed`
+- `decision.edited`
+- `decision.overridden`
+- `decision.approved`
+- `decision.bound`
 
-For the repo-first onboarding flow, see
-[`docs/guides/coding-agents.md`](docs/guides/coding-agents.md).
+Guide: [`docs/guides/decision-tracing.md`](docs/guides/decision-tracing.md)
 
-For copy-paste setup snippets tailored to Codex, Claude Code, GitHub Copilot,
-Cursor, and MCP-capable agents, see
-[`docs/guides/coding-agent-safety-pack.md`](docs/guides/coding-agent-safety-pack.md).
+## MCP Server
 
-If you want AgentGuard to generate those repo-local instruction files for you:
-
-```bash
-agentguard skillpack --write
-agentguard skillpack --target claude-code --write --output-dir .
-```
-
-`skillpack` writes a local `.agentguard.json` plus agent-specific instruction
-files for Codex, Claude Code, Copilot, or Cursor. By default it writes into
-`agentguard_skillpack/` so you can review the files before copying them into a
-real repo.
-
-## MCP Server for Coding-Agent Workflows
-
-If your coding agent already uses MCP, AgentGuard also ships a published
-read-only MCP server that exposes traces, decision events, alerts, usage,
-costs, and budget health from the AgentGuard read API:
+AgentGuard also ships a read-only MCP server for coding-agent workflows:
 
 ```bash
 npx -y @agentguard47/mcp-server
 ```
 
-The MCP server is intentionally narrow. Use the SDK to enforce safety where the
-agent runs. Add MCP when you want Codex, Claude Code, Cursor, or another
-MCP-compatible client to inspect traces and incidents without bespoke glue.
+Use the SDK to enforce local safety where the agent runs. Use MCP when a client
+like Codex, Claude Code, or Cursor needs read access to traces, decisions,
+costs, usage, and budget health.
 
-## Stateless Harnesses
+## Hosted Dashboard Boundary
 
-If one managed-agent session can span multiple disposable harnesses or worker
-processes, pass a shared `session_id` to correlate those traces above the
-single-`trace_id` level:
-
-```python
-from agentguard import JsonlFileSink, Tracer
-
-tracer = Tracer(
-    sink=JsonlFileSink(".agentguard/traces.jsonl"),
-    service="managed-harness-a",
-    session_id="support-session-001",
-)
-```
-
-Each tracer instance still creates its own `trace_id`, but every emitted span
-and point event also carries the shared `session_id`. Guide:
-[`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md)
-
-## Try it in 60 seconds
-
-No API keys. No dashboard. No network calls. Just run it:
-
-```bash
-pip install agentguard47
-agentguard demo
-```
-
-```
-AgentGuard offline demo
-No API keys. No dashboard. No network calls.
-
-1. BudgetGuard: stopping runaway spend
-  warning fired at $0.84
-  stopped on call 9: cost $1.08 exceeded $1.00
-
-2. LoopGuard: stopping repeated tool calls
-  stopped on repeated tool call: Loop detected ...
-
-3. RetryGuard: stopping retry storms
-  stopped retry storm: Retry limit exceeded ...
-
-Local proof complete.
-```
-
-Prefer the example script instead of the CLI? This does the same local demo:
-
-```bash
-python examples/try_it_now.py
-```
-
-Want the coding-agent version of the failure? This local proof simulates a
-review loop where repeated edit attempts burn the run budget and a stuck patch
-retry storm gets stopped:
-
-```bash
-python examples/coding_agent_review_loop.py
-agentguard incident coding_agent_review_loop_traces.jsonl
-```
-
-Sample output:
-[`docs/examples/coding-agent-review-loop-incident.md`](docs/examples/coding-agent-review-loop-incident.md)
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
-
-## Quickstart: Stop a Runaway Coding Agent in 4 Lines
+The SDK is the free local proof path. The hosted dashboard is for retained
+history, alerts, team visibility, hosted decision history, and remote-control
+operations.
 
 ```python
-from agentguard import Tracer, BudgetGuard, patch_openai
-
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)  # auto-tracks every OpenAI call
-
-# Use OpenAI normally - AgentGuard tracks cost and kills the agent at $5
-```
-
-That's it. Every `ChatCompletion` call is tracked. When accumulated cost hits $4 (80%), your warning fires. At $5, `BudgetExceeded` is raised and the agent stops.
-
-No config files. No dashboard required. No dependencies.
-
-For a deterministic local proof before wiring a real agent, run:
-
-```bash
-agentguard doctor
-agentguard quickstart --framework raw
-agentguard demo
-```
-
-`agentguard doctor` verifies the install path. `agentguard quickstart` prints
-the copy-paste starter for your stack. `agentguard demo` then proves SDK-only
-enforcement with a realistic local run. Keep the first integration local and
-only add hosted pieces after you need retained incidents or team-visible
-follow-through.
-
-## The Problem
-
-Coding agents are cheap to start and expensive to leave unattended:
-- **Cost overruns average 340%** on autonomous agent tasks ([source](https://arxiv.org/abs/2401.15811))
-- A single stuck retry or tool loop can burn through your budget in minutes
-- Existing tracing tools show you what happened after the burn, not stop the run while it is still happening
-
-**AgentGuard is built to stop a runaway coding agent mid-run, not just explain the damage later.**
-
-| | AgentGuard | LangSmith | Langfuse | Portkey |
-|---|---|---|---|---|
-| Hard budget enforcement | **Yes** | No | No | No |
-| Kill agent mid-run | **Yes** | No | No | No |
-| Loop detection | **Yes** | No | No | No |
-| Cost tracking | **Yes** | Yes | Yes | Yes |
-| Zero dependencies | **Yes** | No | No | No |
-| Self-hosted option | **Yes** | No | Yes | No |
-| Price | **Free (MIT)** | $2.50/1k traces | $59/mo | $49/mo |
-
-See also: [AgentGuard vs Vercel AI Gateway](docs/competitive/vercel-ai-gateway.md) -- in-process SDK vs gateway proxy, compared across 7 axes; and [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md) -- identity, MCP governance, sandboxing, and runtime behavior as separate layers.
-
-## Guards
-
-Guards are runtime checks that raise exceptions when limits are hit. The agent stops immediately.
-
-| Guard | What it stops | Example |
-|-------|--------------|---------|
-| `BudgetGuard` | Dollar/token/call overruns | `BudgetGuard(max_cost_usd=5.00)` |
-| `LoopGuard` | Exact repeated tool calls | `LoopGuard(max_repeats=3)` |
-| `FuzzyLoopGuard` | Similar tool calls, A-B-A-B patterns | `FuzzyLoopGuard(max_tool_repeats=5)` |
-| `TimeoutGuard` | Wall-clock time limits | `TimeoutGuard(max_seconds=300)` |
-| `RateLimitGuard` | Calls-per-minute throttling | `RateLimitGuard(max_calls_per_minute=60)` |
-| `RetryGuard` | Retry storms on the same flaky tool | `RetryGuard(max_retries=3)` |
-| `BudgetAwareEscalation` | Hard turns that should switch to a stronger model | `BudgetAwareEscalation(..., escalate_on=EscalationSignal.TOKEN_COUNT(threshold=2000))` |
-
-```python
-from agentguard import BudgetGuard, BudgetExceeded
-
-budget = BudgetGuard(
-    max_cost_usd=10.00,
-    warn_at_pct=0.8,
-    on_warning=lambda msg: print(f"WARNING: {msg}"),
-)
-
-# In your agent loop:
-budget.consume(tokens=1500, calls=1, cost_usd=0.03)
-# At 80% → warning callback fires
-# At 100% → BudgetExceeded raised, agent stops
-```
-
-```python
-from agentguard import RetryGuard, RetryLimitExceeded, Tracer
-
-retry_guard = RetryGuard(max_retries=3)
-tracer = Tracer(guards=[retry_guard])
-
-with tracer.trace("agent.run") as span:
-    try:
-        span.event("tool.retry", data={"tool_name": "search", "attempt": 1})
-        span.event("tool.retry", data={"tool_name": "search", "attempt": 2})
-        span.event("tool.retry", data={"tool_name": "search", "attempt": 3})
-        span.event("tool.retry", data={"tool_name": "search", "attempt": 4})
-    except RetryLimitExceeded:
-        # Retry storm stopped
-        pass
-```
-
-```python
-from agentguard import BudgetAwareEscalation, EscalationSignal
-
-guard = BudgetAwareEscalation(
-    primary_model="ollama/llama3.1:8b",
-    escalate_model="claude-opus-4-6",
-    escalate_on=(
-        EscalationSignal.TOKEN_COUNT(threshold=2000),
-        EscalationSignal.CONFIDENCE_BELOW(threshold=0.45),
-    ),
-)
-
-model = guard.select_model(token_count=2430, confidence=0.39)
-```
-
-`BudgetAwareEscalation` gives you an advisor-style pattern without hiding the
-provider call inside the SDK. AgentGuard decides when the current turn is too
-hard for the cheap model; your app still chooses how to invoke the stronger
-model.
-
-Guide:
-[`docs/guards/budget-aware-escalation.md`](docs/guards/budget-aware-escalation.md)
-
-## Integrations
-
-### LangChain
-
-```bash
-pip install agentguard47[langchain]
-```
-
-```python
-from agentguard import Tracer, BudgetGuard
-from agentguard.integrations.langchain import AgentGuardCallbackHandler
-
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00)])
-handler = AgentGuardCallbackHandler(
-    tracer=tracer,
-    budget_guard=BudgetGuard(max_cost_usd=5.00),
-)
-
-# Pass to any LangChain component
-llm = ChatOpenAI(callbacks=[handler])
-```
-
-### LangGraph
-
-```bash
-pip install agentguard47[langgraph]
-```
-
-```python
-from agentguard.integrations.langgraph import guarded_node
-
-@guarded_node(tracer=tracer, budget_guard=BudgetGuard(max_cost_usd=5.00))
-def research_node(state):
-    return {"messages": state["messages"] + [result]}
-```
-
-### CrewAI
-
-```bash
-pip install agentguard47[crewai]
-```
-
-```python
-from agentguard.integrations.crewai import AgentGuardCrewHandler
-
-handler = AgentGuardCrewHandler(
-    tracer=tracer,
-    budget_guard=BudgetGuard(max_cost_usd=5.00),
-)
-
-agent = Agent(role="researcher", step_callback=handler.step_callback)
-```
-
-### OpenAI / Anthropic Auto-Instrumentation
-
-```python
-from agentguard import Tracer, BudgetGuard, patch_openai, patch_anthropic
-
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00)])
-patch_openai(tracer)      # auto-tracks all ChatCompletion calls
-patch_anthropic(tracer)   # auto-tracks all Messages calls
-```
-
-## Multi-Agent Safety
-
-When multiple agents share state, a common failure mode is the reactive loop: Agent A updates shared state, Agent B reacts, Agent A reacts to B's update, and the cycle repeats. Without an explicit termination condition, these loops consume tokens indefinitely without converging on a result.
-
-Anthropic's [multi-agent coordination patterns](https://www.anthropic.com/engineering/built-multi-agent-research-system) guide calls out this exact risk for shared-state architectures and recommends time budgets and threshold-based stopping. AgentGuard's `BudgetGuard` and `TimeoutGuard` are those stopping conditions.
-
-```python
-from agentguard import BudgetGuard, BudgetExceeded, TimeoutGuard, TimeoutExceeded
-
-# Shared budget across both agents. When either hits the limit, the loop stops.
-budget = BudgetGuard(max_cost_usd=2.00, warn_at_pct=0.8,
-                     on_warning=lambda msg: print(f"WARN: {msg}"))
-timeout = TimeoutGuard(max_seconds=120)
-
-shared_state = {"revision": 0, "content": ""}
-
-try:
-    with timeout:
-        while True:
-            timeout.check()
-            # Agent A: writer
-            shared_state["content"] = f"draft v{shared_state['revision']}"
-            budget.consume(tokens=500, calls=1, cost_usd=0.01)
-
-            # Agent B: reviewer
-            shared_state["revision"] += 1
-            budget.consume(tokens=300, calls=1, cost_usd=0.008)
-except (BudgetExceeded, TimeoutExceeded) as e:
-    print(f"Terminated: {e}")
-    print(f"Final state: revision {shared_state['revision']}")
-```
-
-The guards are static and deterministic. No agent can talk its way past a dollar limit or a wall-clock timeout.
-
-## Cost Tracking
-
-Built-in pricing for OpenAI, Anthropic, Google, Mistral, and Meta models. Updated monthly.
-
-```python
-from agentguard import estimate_cost
-
-# Single call estimate
-cost = estimate_cost("gpt-4o", input_tokens=1000, output_tokens=500)
-# → $0.00625
-
-# Track across a trace — cost is auto-accumulated per span
-with tracer.trace("agent.run") as span:
-    span.cost.add("gpt-4o", input_tokens=1200, output_tokens=450)
-    span.cost.add("claude-sonnet-4-5-20250929", input_tokens=800, output_tokens=300)
-    # cost_usd included in trace end event
-```
-
-## Tracing
-
-Full structured tracing with zero dependencies — JSONL output, spans, events, and cost data.
-
-```python
-from agentguard import Tracer, JsonlFileSink, BudgetGuard
-
-tracer = Tracer(
-    sink=JsonlFileSink("traces.jsonl"),
-    guards=[BudgetGuard(max_cost_usd=5.00)],
-)
-
-with tracer.trace("agent.run") as span:
-    span.event("reasoning", data={"thought": "search docs"})
-    with span.span("tool.search", data={"query": "quantum computing"}):
-        pass  # your tool logic
-    span.cost.add("gpt-4o", input_tokens=1200, output_tokens=450)
-```
-
-```bash
-$ agentguard report traces.jsonl
-
-AgentGuard report
-  Total events: 9
-  Spans: 6  Events: 3
-  Estimated cost: $0.01
-  Savings ledger: exact 800 tokens / $0.0010, estimated 1500 tokens / $0.0075
-```
-
-When a run trips a guard or needs escalation, render a shareable incident report:
-
-```bash
-agentguard incident traces.jsonl
-agentguard incident traces.jsonl --format html > incident.html
-```
-
-The incident report summarizes guard triggers, exact-vs-estimated savings, and
-the dashboard upgrade path for retained alerts, team visibility, and remote kill
-signal management.
-
-## Decision Tracing
-
-Capture agent proposals, human edits, overrides, approvals, and binding
-outcomes through the normal AgentGuard event path.
-
-```python
-from agentguard import JsonlFileSink, Tracer, decision_flow
-
-tracer = Tracer(
-    sink=JsonlFileSink(".agentguard/traces.jsonl"),
-    service="approval-flow",
-)
-
-with tracer.trace("agent.run") as run:
-    with decision_flow(
-        run,
-        workflow_id="deploy-approval",
-        object_type="deployment",
-        object_id="deploy-042",
-        actor_type="agent",
-        actor_id="release-bot",
-    ) as decision:
-        decision.proposed({"action": "deploy", "environment": "staging"})
-        decision.edited(
-            {"action": "deploy", "environment": "production"},
-            actor_type="human",
-            actor_id="reviewer-123",
-            reason="Customer approved direct rollout",
-        )
-        decision.approved(actor_type="human", actor_id="reviewer-123")
-        decision.bound(
-            actor_type="system",
-            actor_id="deploy-api",
-            binding_state="applied",
-            outcome="success",
-        )
-```
-
-Every decision event includes a stable schema in `event.data`:
-
-- `decision_id`
-- `workflow_id`
-- `trace_id`
-- `object_type`
-- `object_id`
-- `actor_type`
-- `actor_id`
-- `event_type`
-- `proposal`
-- `final`
-- `diff`
-- `reason`
-- `comment`
-- `timestamp`
-- `binding_state`
-- `outcome`
-
-Default `binding_state` values are dashboard-parseable strings:
-`proposed`, `edited`, `overridden`, and `approved`. `decision.bound` requires
-the caller to provide the binding state, such as `applied`, `merged`, or
-`failed`.
-
-Guide: [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md)
-
-For local JSONL traces, you can extract the normalized decision events without
-writing your own parser:
-
-```bash
-agentguard decisions .agentguard/traces.jsonl
-agentguard decisions .agentguard/traces.jsonl --workflow-id deploy-approval --json
-```
-
-For retained traces exposed through MCP, use the `get_trace_decisions` tool to
-pull the same normalized decision payloads from a hosted trace by `trace_id`.
-
-## Evaluation
-
-Assert properties of your traces in tests or CI.
-
-```python
-from agentguard import EvalSuite
-
-result = (
-    EvalSuite("traces.jsonl")
-    .assert_no_loops()
-    .assert_budget_under(tokens=50_000)
-    .assert_completes_within(seconds=30)
-    .assert_total_events_under(500)
-    .assert_no_budget_exceeded()
-    .assert_no_errors()
-    .run()
-)
-```
-
-```bash
-agentguard eval traces.jsonl --ci   # exits non-zero on failure
-```
-
-## CI Cost Gates
-
-Fail your CI pipeline if an agent run exceeds a cost budget. No competitor offers this.
-
-```yaml
-# .github/workflows/cost-gate.yml (simplified)
-- name: Run agent with budget guard
-  run: |
-    python3 -c "
-    from agentguard import Tracer, BudgetGuard, JsonlFileSink
-    tracer = Tracer(
-        sink=JsonlFileSink('ci_traces.jsonl'),
-        guards=[BudgetGuard(max_cost_usd=5.00)],
-    )
-    # ... your agent run here ...
-    "
-
-- name: Evaluate traces
-  uses: bmdhodl/agent47/.github/actions/agentguard-eval@main
-  with:
-    trace-file: ci_traces.jsonl
-    assertions: "no_errors,max_cost:5.00"
-```
-
-Full workflow: [`docs/ci/cost-gate-workflow.yml`](docs/ci/cost-gate-workflow.yml)
-
-## Incident Reports
-
-Turn a trace into a postmortem-style incident summary:
-
-```bash
-agentguard incident traces.jsonl --format markdown
-agentguard incident traces.jsonl --format html > incident.html
-```
-
-Use this when a run hits `guard.budget_warning`, `guard.budget_exceeded`,
-`guard.loop_detected`, or a fatal error. AgentGuard will summarize the run,
-separate exact and estimated savings, and suggest the next control-plane step.
-
-## Async Support
-
-Full async API mirrors the sync API.
-
-```python
-from agentguard import AsyncTracer, BudgetGuard, patch_openai_async
-
-tracer = AsyncTracer(guards=[BudgetGuard(max_cost_usd=5.00)])
-patch_openai_async(tracer)
-
-# All async OpenAI calls are now tracked and budget-enforced
-```
-
-## Optional Hosted Dashboard
-
-For teams that need retained history, alerts, team visibility, and hosted
-decision history, the SDK can mirror traces to the hosted dashboard:
-
-```python
-from agentguard import Tracer, HttpSink, BudgetGuard
+from agentguard import HttpSink, Tracer
 
 tracer = Tracer(
     sink=HttpSink(
         url="https://app.agentguard47.com/api/ingest",
         api_key="ag_...",
-        batch_size=20,
-        flush_interval=10.0,
-        compress=True,
-    ),
-    guards=[BudgetGuard(max_cost_usd=50.00)],
-    metadata={"env": "prod"},
-    sampling_rate=0.1,  # 10% of traces
+    )
 )
 ```
 
-Keep the first integration local. Add `HttpSink` only when you need retained
-incidents, alerts, or hosted follow-through. `HttpSink` does not poll or execute
-dashboard remote kill signals by itself; local guards remain the authoritative
-runtime stop path.
+`HttpSink` mirrors trace and decision events to the dashboard. It does not
+execute remote kill signals by itself.
 
-Hosted contract details: [`docs/guides/dashboard-contract.md`](docs/guides/dashboard-contract.md)
+Dashboard contract:
+[`docs/guides/dashboard-contract.md`](docs/guides/dashboard-contract.md)
+
+## Reports And CI Gates
+
+Generate a local incident report:
+
+```bash
+agentguard incident .agentguard/traces.jsonl --format markdown
+agentguard incident .agentguard/traces.jsonl --format html
+```
+
+Fail CI when a trace violates safety expectations:
+
+```python
+from agentguard import EvalSuite
+
+result = (
+    EvalSuite(".agentguard/traces.jsonl")
+    .assert_no_loops()
+    .assert_budget_under(tokens=50_000)
+    .assert_no_errors()
+    .run()
+)
+
+assert result.passed
+```
+
+## Package Facts
+
+- Package: [`agentguard47`](https://pypi.org/project/agentguard47/)
+- Python: 3.9+
+- License: MIT
+- Core runtime dependencies: zero
+- Trace format: JSONL
+- Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
+- MCP package: [`@agentguard47/mcp-server`](mcp-server/)
+
+## Docs
+
+| Topic | Link |
+|---|---|
+| Getting started | [`docs/guides/getting-started.md`](docs/guides/getting-started.md) |
+| Coding-agent setup | [`docs/guides/coding-agents.md`](docs/guides/coding-agents.md) |
+| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](docs/guides/coding-agent-safety-pack.md) |
+| Dashboard contract | [`docs/guides/dashboard-contract.md`](docs/guides/dashboard-contract.md) |
+| Decision traces | [`docs/guides/decision-tracing.md`](docs/guides/decision-tracing.md) |
+| Managed sessions | [`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md) |
+| Activation metrics design | [`docs/guides/activation-metrics-design.md`](docs/guides/activation-metrics-design.md) |
 
 ## Architecture
 
-```
-Your Agent Code
-    │
-    ▼
-┌─────────────────────────────────────┐
-│           Tracer / AsyncTracer       │  ← trace(), span(), event()
-│  ┌───────────┐  ┌────────────────┐  │
-│  │  Guards    │  │  CostTracker   │  │  ← runtime intervention
-│  └───────────┘  └────────────────┘  │
-└──────────┬──────────────────────────┘
-           │ emit(event)
-    ┌──────┼──────────┬───────────┐
-    ▼      ▼          ▼           ▼
- JsonlFile  HttpSink  OtelTrace  Stdout
-  Sink      (gzip,    Sink       Sink
-            retry)
+```text
+agent code
+   |
+   v
+Tracer
+   |
+   +-- guards raise exceptions locally
+   |
+   +-- sinks write traces locally or mirror to hosted ingest
 ```
 
-## What's in this repo
+Repository layout:
 
-| Directory | Description | License |
-|-----------|-------------|---------|
-| `sdk/` | Python SDK — guards, tracing, evaluation, integrations | MIT |
-| `mcp-server/` | Read-only MCP surface for traces, alerts, usage, costs, and budget health | MIT |
-| `site/` | Landing page | MIT |
-
-> Dashboard is in a separate private repo ([agent47-dashboard](https://github.com/bmdhodl/agent47-dashboard)).
+```text
+sdk/          Python SDK package
+mcp-server/   read-only MCP server
+docs/         guides and competitive notes
+examples/     runnable local examples
+ops/          repo operating docs
+memory/       SDK-only state and decisions
+```
 
 ## Security
 
-- **Zero runtime dependencies** — one package, nothing to audit, no supply chain risk
-- **[OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)** — automated security analysis on every push
-- **CodeQL scanning** — GitHub's semantic code analysis on every PR
-- **Bandit security linting** — Python-specific security checks in CI
+- No secrets are required for local mode.
+- Do not put API keys in `.agentguard.json`.
+- Hosted ingest API keys should be stored in environment variables.
+- Local guards remain authoritative even when hosted ingest is configured.
+
+Report security issues through GitHub Security Advisories or by email:
+`pat@bmdpat.com`.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, test commands, and PR guidelines.
+Contributions are welcome when they keep the SDK small, local-first, and
+zero-dependency.
 
-## Commercial Support
+Before opening a PR:
 
-Need help rolling out coding-agent safety in production? BMD Pat LLC offers:
+```bash
+python -m pytest sdk/tests/ -v
+python -m ruff check sdk/agentguard/
+python scripts/sdk_release_guard.py
+```
 
-- **$500 Async Azure Audit** -- cost, reliability, and governance review. No meetings. Results in 5 business days.
-- **Custom agent guardrails** -- production-grade cost controls, compliance tooling, kill switches.
+Useful links:
 
-[Start a project](https://bmdpat.com/start) | [See the research](https://bmdpat.com/research)
+- [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- [`GOLDEN_PRINCIPLES.md`](GOLDEN_PRINCIPLES.md)
+- [good first issues](https://github.com/bmdhodl/agent47/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
 
 ## License
 
-MIT (BMD PAT LLC)
+MIT. See [`LICENSE`](LICENSE).
