@@ -1,210 +1,164 @@
 # Contributing to AgentGuard
 
-Thanks for your interest in AgentGuard. This guide covers everything you need to set up, test, and submit a PR.
+AgentGuard is a zero-dependency runtime-control SDK for Python agents. Good
+contributions make the SDK easier to trust, install, test, or use in a real
+agent repo.
 
-## Repo Structure
+## Best First Contributions
 
+Start with issues labeled
+[`good first issue`](https://github.com/bmdhodl/agent47/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+or one of these small scopes:
+
+- improve an example without adding dependencies
+- add a focused test for an existing guard, CLI command, or helper
+- clarify docs around local-first setup, MCP, or framework integration
+- add a minimal recipe for a real Python agent workflow
+- fix package metadata, release notes, or README link drift
+
+Avoid speculative new guards, broad observability features, dashboard-only
+features, or changes that add hard runtime dependencies.
+
+## Repo Map
+
+```text
+sdk/          Python SDK source and tests
+mcp-server/   Read-only MCP server package
+docs/         Guides, examples, launch notes, and competitive notes
+examples/     Runnable local examples and starter files
+ops/          Product direction, architecture, roadmap, and definition of done
+memory/       SDK-specific state and decisions for agent contributors
+.github/      CI, issue templates, PR template, and repo automation
 ```
-agent47/
-├── sdk/           # Python SDK (agentguard47) — MIT licensed
-│   ├── agentguard/    # Source code
-│   └── tests/         # Test suite (unittest)
-├── mcp-server/    # MCP server for AI agent access
-├── site/          # Landing page
-├── scripts/       # Automation and deploy scripts
-├── docs/          # Examples and guides
-└── .github/       # CI/CD workflows
-```
 
-## Dev Setup
+The hosted dashboard is not developed in this public repository.
 
-### Prerequisites
+## Local Setup
 
-- Python 3.9+ (we test 3.9, 3.10, 3.11, 3.12)
+Prerequisites:
+
+- Python 3.9 through 3.12 for supported runtime testing
 - Git
-
-### Clone and install
+- Node.js only if you are working on `mcp-server/`
 
 ```bash
 git clone https://github.com/bmdhodl/agent47.git
 cd agent47
-
-# Create a virtualenv (recommended)
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
-
-# Install the SDK in editable mode
 pip install -e ./sdk
-
-# Install dev tools
 pip install pytest pytest-cov ruff
 ```
 
-Verify the install:
+On Windows PowerShell:
 
-```bash
-python -c "import agentguard; print(agentguard.__version__)"
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e .\sdk
+pip install pytest pytest-cov ruff
 ```
 
-### Optional extras
-
-If you're working on an integration, install its dependencies:
+Verify the local path:
 
 ```bash
-pip install -e "./sdk[langchain]"    # LangChain
-pip install -e "./sdk[langgraph]"    # LangGraph
-pip install -e "./sdk[crewai]"       # CrewAI
-pip install -e "./sdk[otel]"         # OpenTelemetry
+agentguard doctor
+agentguard demo
 ```
 
-## Running Tests
+## Common Checks
+
+Prefer the Makefile when available:
 
 ```bash
-# Full test suite with coverage
-python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing
+make preflight
+make check
+make release-guard
+```
 
-# Single test file
+Direct equivalents:
+
+```bash
+python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80
+python -m ruff check sdk/agentguard/
+python scripts/sdk_release_guard.py
+```
+
+Focused examples:
+
+```bash
 python -m pytest sdk/tests/test_guards.py -v
-
-# Single test case
-python -m pytest sdk/tests/test_guards.py::TestLoopGuard::test_loop_detected -v
-
-# Coverage with fail-under (matches CI)
-python -m pytest sdk/tests/ -v \
-  --cov=agentguard \
-  --cov-report=term-missing \
-  --cov-fail-under=80
+python -m pytest sdk/tests/test_quickstart.py -v
+python examples/coding_agent_review_loop.py
 ```
 
-CI runs tests across Python 3.9–3.12 and enforces 80% minimum coverage.
-
-## Linting
-
-We use [ruff](https://docs.astral.sh/ruff/) for linting.
+If you touch `mcp-server/`:
 
 ```bash
-# Lint the SDK source (not tests or examples)
-ruff check sdk/agentguard/
-
-# Auto-fix what ruff can
-ruff check sdk/agentguard/ --fix
+cd mcp-server
+npm ci
+npm run build
 ```
 
-CI runs `ruff check sdk/agentguard/` — your PR must pass this.
+## Zero-Dependency Rule
 
-## Code Style
+The core SDK under `sdk/agentguard/` must stay stdlib-only. Optional integration
+dependencies are allowed only in integration modules or optional sinks, and they
+must be guarded with `try/except ImportError`.
 
-### Zero dependencies
-
-The core SDK uses **Python stdlib only**. No third-party imports in `sdk/agentguard/` outside of optional integration modules. Optional extras (like `langchain-core`, `opentelemetry-api`) are fine in `integrations/` and `sinks/otel.py`, guarded by try/except ImportError.
-
-### Import patterns
+Allowed pattern:
 
 ```python
-# Optional dependency — guard at module level
 try:
     from opentelemetry.trace import StatusCode
-    _HAS_OTEL = True
 except ImportError:
-    _HAS_OTEL = False
-
-# Lazy import inside methods when needed
-def _start_span(self, ...):
-    from opentelemetry.trace import set_span_in_context
-    ...
+    StatusCode = None
 ```
 
-### Python version
+Do not add a hard dependency to the core SDK unless maintainers explicitly
+approve the tradeoff first.
 
-Target Python 3.9+. Use `from __future__ import annotations` for type hint forward references. Avoid 3.10+ syntax like `X | Y` unions.
+## Public API Rule
 
-### Public API
+Public imports are exported from `sdk/agentguard/__init__.py`. If a PR changes
+that surface, call it out in the PR and update architecture docs when needed.
 
-All public exports go through `sdk/agentguard/__init__.py`. If you add a new class or function that users should import, add it there.
+Guards should raise specific exceptions such as `BudgetExceeded`,
+`LoopDetected`, `TimeoutExceeded`, or `RetryLimitExceeded`. They should not
+return booleans as the main enforcement path.
 
-### Guards
+## Pull Request Checklist
 
-Guards raise specific exceptions: `LoopDetected`, `BudgetExceeded`, `TimeoutExceeded`, `RateLimitExceeded`. Guard checks should happen **inside** trace spans so rejections appear in traces.
+Open focused PRs. A good PR usually does one thing.
 
-### Thread safety
+Include:
 
-Use `threading.Lock` for shared mutable state in sinks and guards. The `HttpSink` and `OtelTraceSink` are examples.
+- what changed
+- why it matters
+- which files are in scope
+- validation commands and results
+- risk and rollback notes
+- linked issue when applicable
 
-## Branch Naming
+Before requesting review, run the smallest relevant checks plus `make preflight`
+or the direct equivalent. New behavior needs tests. Docs-only PRs should still
+run release/readme sync checks when they touch release-facing files.
 
-```
-feature/<short-description>    # New feature
-fix/<short-description>        # Bug fix
-docs/<short-description>       # Documentation
-refactor/<short-description>   # Refactoring
-```
+## AI-Assisted Contributions
 
-Examples: `feature/redis-sink`, `fix/loop-guard-window`, `docs/readme-rewrite`
+AI-assisted contributions are welcome. The quality bar is unchanged.
 
-## PR Guidelines
+If an autonomous agent opened the PR end-to-end with minimal human steering,
+prefix the PR title with `agent:` and apply the `agent-generated` label. If a
+human used Copilot, Claude, Cursor, Codex, or another tool while reviewing and
+owning the result, no special label is required.
 
-1. **One feature or fix per PR.** Keep changes focused.
-2. **Branch from `main`**, push your branch, open a PR.
-3. **Include tests** for any new SDK functionality.
-4. **Run lint and tests locally** before pushing:
-   ```bash
-   ruff check sdk/agentguard/
-   python -m pytest sdk/tests/ -v --cov=agentguard --cov-fail-under=80
-   ```
-5. **Reference the GitHub issue** in your PR description (e.g., "Closes #42").
-6. **CI must pass** — tests on Python 3.9–3.12 + lint.
+## Communication
 
-## AI Contributions
-
-AgentGuard is an AI cost-control SDK. AI-assisted contributions are dogfood, not a smell. We encourage them, with one disclosure rule.
-
-**Posture:** Encouraged-with-disclosure.
-
-**Disclosure rules:**
-
-- **Autonomous-agent PRs** (an AI agent opened the PR end-to-end with minimal human steering): prefix the PR title with `agent:` and apply the `agent-generated` label. Example: `agent: add Redis sink retry backoff`.
-- **Human-AI-assisted PRs** (you used Copilot, Claude, Cursor, etc. to help write code you reviewed and own): no special tag required. Treat it like any other PR.
-
-**Quality bar is the same.** Same tests, same lint, same review. Disclosure is about transparency, not gating — we are not lowering or raising the bar based on how the code was written.
-
-**What we don't require:**
-
-- Copyright-style human attestations.
-- Banning LLM-drafted commit messages or PR descriptions.
-- Rejecting PRs for "AI smell" alone — if the code is correct, tested, and clear, it ships.
-
-If you're unsure which bucket a PR falls into, default to disclosing.
-
-## Commit Messages
-
-Use clear, imperative messages:
-
-```
-Add FuzzyLoopGuard for alternation detection
-Fix BudgetGuard warning callback not firing at threshold
-Update README with LangGraph integration example
-```
-
-## CI
-
-CI runs on every push and PR via GitHub Actions (`.github/workflows/ci.yml`):
-
-- **Tests**: `pytest` across Python 3.9, 3.10, 3.11, 3.12 with `--cov-fail-under=80`
-- **Lint**: `ruff check sdk/agentguard/`
-- **Coverage**: uploaded as artifact on Python 3.12 runs
-
-## Issue Labels
-
-| Prefix | Values |
-|--------|--------|
-| `component:` | sdk, dashboard, api, infra |
-| `type:` | feature, bug, refactor, docs, test, ci, security, perf |
-| `priority:` | critical, high, medium, low |
-
-## Project Board
-
-Track issues and progress: https://github.com/users/bmdhodl/projects/4
+Use GitHub issues for bugs, integration requests, demo requests, and feature
+proposals. Use GitHub Discussions for broader usage questions when available.
 
 ## License
 
-SDK is MIT licensed (BMD PAT LLC). By contributing, you agree your contributions are licensed under MIT.
+AgentGuard is MIT licensed. By contributing, you agree that your contribution
+is licensed under MIT.

@@ -169,6 +169,9 @@ All examples are local-first. No API key is required unless the example says so.
 Sample incident:
 [`docs/examples/coding-agent-review-loop-incident.md`](docs/examples/coding-agent-review-loop-incident.md)
 
+Proof gallery:
+[`docs/examples/proof-gallery.md`](docs/examples/proof-gallery.md)
+
 Starter files:
 [`examples/starters/`](examples/starters/)
 
@@ -330,6 +333,7 @@ assert result.passed
 | Decision traces | [`docs/guides/decision-tracing.md`](docs/guides/decision-tracing.md) |
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md) |
 | Activation metrics design | [`docs/guides/activation-metrics-design.md`](docs/guides/activation-metrics-design.md) |
+| Proof gallery | [`docs/examples/proof-gallery.md`](docs/examples/proof-gallery.md) |
 
 ## Architecture
 
