@@ -1,4 +1,4 @@
-﻿# AgentGuard Incident Report
+# AgentGuard Incident Report
 
 Status: **incident**
 Severity: **critical**
@@ -9,7 +9,7 @@ Primary cause: **retry_limit_exceeded**
 - Total events: 14
 - Spans: 4
 - Events: 9
-- Duration: 1.5 ms
+- Duration: 1.7 ms
 - Estimated cost: $0.1020
 - Guard events: 2
 - Errors: 0
@@ -34,12 +34,12 @@ Primary cause: **retry_limit_exceeded**
 
 - Add exponential backoff or a deterministic fallback before retrying the same tool.
 - Treat repeated upstream failures as a stop condition instead of widening the retry ceiling.
-- Connect HttpSink to the hosted dashboard for retained alerts and remote kill switch.
+- Connect HttpSink to the hosted dashboard for retained alerts and remote control follow-up.
 - Review the trace timeline to confirm the failure path before widening limits.
 
 ## Upgrade Path
 
-Move from one-off local reports to retained alerts, spend history, and remote kill switch:
+Move from one-off local reports to retained alerts, spend history, and team-visible follow-up:
 
 ```python
 from agentguard import Tracer, HttpSink

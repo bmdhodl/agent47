@@ -57,7 +57,7 @@ python agentguard_raw_quickstart.py
 agentguard report .agentguard/traces.jsonl
 ```
 
-Optional shared local defaults:
+Optional shared local defaults, saved as `.agentguard.json` in the repo root:
 
 ```json
 {

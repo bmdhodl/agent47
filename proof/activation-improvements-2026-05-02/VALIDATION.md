@@ -36,9 +36,11 @@ passed
 
 ## Manual activation proof
 
-Executed in a temporary directory with `PYTHONPATH` pointed at this checkout:
+Executed in a temporary directory with `PYTHONPATH` pointed at this checkout.
+On Windows PowerShell:
 
 ```text
+$env:PYTHONPATH="C:\Users\patri\.codex\worktrees\3c4e\agent47\sdk"
 python -m agentguard.cli doctor --trace-file doctor.jsonl
 python -m agentguard.cli demo --trace-file demo.jsonl
 python -m agentguard.cli quickstart --framework raw --write --output agentguard_raw_quickstart.py
@@ -60,6 +62,32 @@ Observed:
 run of:
 
 ```text
+$env:PYTHONPATH="C:\Users\patri\.codex\worktrees\3c4e\agent47\sdk"
 python examples\coding_agent_review_loop.py
 python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl --format markdown
+```
+
+## Review follow-up validation
+
+Copilot review comments were addressed with targeted checks for reproducibility,
+README clarity, PyPI README link handling, and checked-in sample incident drift.
+
+```text
+python -m pytest sdk\tests\test_pypi_readme_sync.py sdk\tests\test_example_starters.py sdk\tests\test_reporting.py -v
+19 passed
+
+python -m ruff check sdk/agentguard/reporting.py sdk/tests/test_pypi_readme_sync.py sdk/tests/test_example_starters.py scripts/generate_pypi_readme.py
+All checks passed
+
+python scripts\generate_pypi_readme.py --check
+passed
+
+python scripts\sdk_preflight.py
+All checks passed
+
+python scripts\sdk_release_guard.py
+Release guard passed
+
+git diff --check
+passed
 ```

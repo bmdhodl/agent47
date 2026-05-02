@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 
 from agentguard.quickstart import FRAMEWORK_CHOICES, _build_quickstart_payload
+from agentguard.reporting import render_incident_report
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STARTERS_ROOT = REPO_ROOT / "examples" / "starters"
@@ -186,6 +187,47 @@ def test_coding_agent_review_loop_example_runs_offline() -> None:
         assert "review.iteration" in names
         assert "guard.budget_exceeded" in names
         assert "guard.retry_limit_exceeded" in names
+
+
+def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:
+    example_path = REPO_ROOT / "examples" / "coding_agent_review_loop.py"
+    sample_path = REPO_ROOT / "docs" / "examples" / "coding-agent-review-loop-incident.md"
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    sdk_path = str(REPO_ROOT / "sdk")
+    env["PYTHONPATH"] = (
+        sdk_path
+        if not existing_pythonpath
+        else os.pathsep.join([sdk_path, existing_pythonpath])
+    )
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        result = subprocess.run(
+            [sys.executable, str(example_path)],
+            cwd=tmpdir,
+            capture_output=True,
+            text=True,
+            env=env,
+            check=False,
+            timeout=60,
+        )
+
+        assert result.returncode == 0, result.stderr
+        trace_path = Path(tmpdir, "coding_agent_review_loop_traces.jsonl")
+        expected = _normalize_incident_snapshot(
+            render_incident_report(str(trace_path), output_format="markdown") + "\n"
+        )
+        actual = sample_path.read_text(encoding="utf-8")
+
+        assert _normalize_incident_snapshot(actual) == expected
+
+
+def _normalize_incident_snapshot(markdown: str) -> str:
+    lines = markdown.lstrip("\ufeff").splitlines()
+    return "\n".join(
+        "- Duration: <runtime> ms" if line.startswith("- Duration: ") else line
+        for line in lines
+    ) + "\n"
 
 
 def test_budget_aware_escalation_example_runs() -> None:
