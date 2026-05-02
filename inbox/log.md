@@ -148,3 +148,19 @@
 
 ### Blockers
 - None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#406` to refresh stale SDK roadmap and architecture docs.
+- Updated current focus around `v1.2.9`, official MCP Registry listing,
+  dashboard contract boundaries, decision traces, and local proof surfaces.
+
+### Decisions made
+- Keep ops docs SDK-only and concise.
+- Treat remote kill as a documented dashboard boundary, not an SDK behavior
+  claim.
+- Keep repo-only examples distinct from package-installed CLI proof paths.
+
+### Blockers
+- None.
