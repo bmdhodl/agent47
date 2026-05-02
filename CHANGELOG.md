@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Activation
+- Added a post-demo next-step block so `agentguard demo` points directly to
+  `agentguard quickstart --framework raw --write`, the generated starter, and
+  the follow-up local report command.
+
 ### Release Security
 - Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
   to OIDC Trusted Publishing for the `pypi` GitHub environment, with PyPI

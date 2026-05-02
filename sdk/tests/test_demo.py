@@ -23,6 +23,10 @@ class TestOfflineDemo(unittest.TestCase):
             self.assertIn("BudgetGuard", output)
             self.assertIn("LoopGuard", output)
             self.assertIn("RetryGuard", output)
+            self.assertIn("Next: add AgentGuard to a repo", output)
+            self.assertIn("agentguard quickstart --framework raw --write", output)
+            self.assertIn("python agentguard_raw_quickstart.py", output)
+            self.assertIn("agentguard report .agentguard/traces.jsonl", output)
             self.assertIn("SDK gives you local enforcement. The dashboard adds alerts", output)
             self.assertTrue(os.path.exists(trace_path))
 

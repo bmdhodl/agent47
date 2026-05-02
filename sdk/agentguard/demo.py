@@ -65,6 +65,11 @@ def run_offline_demo(
     _print(out, f"Trace written to: {trace_path}")
     _print(out, f"View summary: agentguard report {trace_path}")
     _print(out, f"View incident report: agentguard incident {trace_path}")
+    _print(out, "")
+    _print(out, "Next: add AgentGuard to a repo")
+    _print(out, "  agentguard quickstart --framework raw --write")
+    _print(out, "  python agentguard_raw_quickstart.py")
+    _print(out, "  agentguard report .agentguard/traces.jsonl")
     _print(out, "SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.")
     return 0
 
