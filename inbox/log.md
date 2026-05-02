@@ -132,3 +132,19 @@
 
 ### Blockers
 - None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#404` to add a local coding-agent review-loop proof.
+- Added `examples/coding_agent_review_loop.py`, docs links, PyPI README sync,
+  focused regression coverage, proof artifacts, and `FOLLOWUP.md`.
+
+### Decisions made
+- Keep activation work focused on local runtime proof: budget stops, retry
+  stops, and incident reports.
+- Defer stale roadmap/architecture refresh and opt-in activation metrics design
+  to follow-up work.
+
+### Blockers
+- None.
