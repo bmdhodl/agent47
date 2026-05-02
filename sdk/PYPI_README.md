@@ -40,6 +40,38 @@ agentguard quickstart --framework raw
 and retry protection offline. `quickstart` prints the smallest starter for the
 stack you actually use.
 
+First value moment: you should see `BudgetGuard`, `LoopGuard`, and
+`RetryGuard` stop simulated runaway behavior before you wire a real provider or
+share any data.
+
+## Copy-paste safe repo setup
+
+Use this when you want a coding agent or teammate to add AgentGuard to a repo
+without hidden network behavior:
+
+```bash
+pip install agentguard47
+agentguard doctor
+agentguard quickstart --framework raw --write
+python agentguard_raw_quickstart.py
+agentguard report .agentguard/traces.jsonl
+```
+
+Optional shared local defaults, saved as `.agentguard.json` in the repo root:
+
+```json
+{
+  "profile": "coding-agent",
+  "service": "my-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+```
+
+Keep the first PR local-only. No API keys, no dashboard settings, no hosted
+sink. Add `HttpSink` later only when retained incidents, alerts, or team
+visibility are needed.
+
 ## Wrap one agent run
 
 ```python
@@ -321,6 +353,9 @@ retry storm gets stopped:
 python examples/coding_agent_review_loop.py
 agentguard incident coding_agent_review_loop_traces.jsonl
 ```
+
+Sample output:
+[`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.9/examples/quickstart.ipynb)
 

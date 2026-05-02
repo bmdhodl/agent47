@@ -45,6 +45,17 @@ def test_generated_pypi_readme_links_unreleased_guide_to_main() -> None:
     )
 
 
+def test_generated_pypi_readme_links_unreleased_sample_incident_to_main() -> None:
+    module = _load_generator_module()
+
+    content = module.build_pypi_readme(REPO_ROOT)
+
+    assert (
+        "https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md"
+        in content
+    )
+
+
 def test_committed_pypi_readme_is_in_sync() -> None:
     module = _load_generator_module()
 
