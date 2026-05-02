@@ -3,6 +3,22 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
+**Last reviewed:** 2026-05-02
+
+## Current Focus Notes
+
+- Latest shipped SDK release is `v1.2.9`; current work is post-release
+  hardening and activation, not a new feature push.
+- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`;
+  keep MCP narrow and read-only while Glama remains blocked.
+- Dashboard alignment is current for hosted ingest and decision traces. The
+  remote-kill boundary is documented: the SDK emits events and enforces local
+  guards, while the dashboard owns retained history, alerts, and team
+  operations.
+- The strongest package-installed proof path is `doctor` -> `demo` ->
+  `quickstart`; repo checkouts also have starters and the coding-agent
+  review-loop proof.
+
 ## Recently Completed
 
 | Item | Status |
@@ -24,15 +40,18 @@ they directly strengthen coding-agent adoption.
 | Coding-agent skillpack generation | Done - `agentguard skillpack` now generates `.agentguard.json` plus repo-local instructions for Codex, Claude Code, Copilot, and Cursor so coding-agent onboarding no longer depends on manual snippet copying |
 | Managed-agent session correlation | Done - `session_id` now lets disposable harnesses or short-lived workers emit separate traces that still roll up under one higher-level local session for coding-agent and managed-agent runtimes |
 | Budget-aware escalation guard | Done - `BudgetAwareEscalation` now lets apps keep a cheaper default model and escalate hard turns using token, confidence, tool-depth, or custom-rule signals without provider-specific SDK routing |
+| Dashboard contract alignment for v1.2.9 | Done - hosted ingest shape and decision-trace defaults are documented and covered by tests; remote-kill boundaries are documented |
+| Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
+| Follow-up handoff | Done - `FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
-| Coding-agent positioning and package metadata hardening | PyPI metadata, SDK README, and generated PyPI README all consistently position AgentGuard as zero-dependency runtime guardrails for coding-agent safety |
-| MCP registry readiness | `mcp-server` package metadata and `server.json` are ready for official MCP registry publication without extra repo cleanup |
-| Install-to-first-guard proof hardening | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, `agentguard quickstart`, and a starter run works without undocumented steps or hosted assumptions |
-| Coding-agent starter polish | Checked-in starter files and repo-local `.agentguard.json` guidance stay deterministic, local-first, and safe to copy into real repos without hidden network behavior |
+| Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
+| MCP distribution hygiene | Official MCP Registry metadata remains current; Glama and `awesome-mcp-servers` stay tracked without building unrelated features to route around the blocker |
+| Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
+| Ops/doc freshness | `ops/02-ARCHITECTURE.md`, this roadmap, `FOLLOWUP.md`, and memory files stay concise and current enough that agents do not start from stale assumptions |
 
 ## Next (next month)
 
@@ -41,6 +60,7 @@ they directly strengthen coding-agent adoption.
 | Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
+| Opt-in activation metrics design | A short design explains what, if anything, could be measured without default telemetry, payload capture, or local-only privacy drift |
 
 ## Later (ideas bucket)
 
