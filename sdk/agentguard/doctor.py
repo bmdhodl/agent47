@@ -242,6 +242,10 @@ def _render_text(result: Dict[str, Any], out: TextIO) -> None:
     _print(out, "Helpful commands:")
     for command in result["next_commands"]:
         _print(out, f"  {command}")
+    _print(out, "")
+    _print(out, "If 'agentguard' is not on PATH:")
+    _print(out, "  python -m agentguard.cli demo")
+    _print(out, f"  python -m agentguard.cli report {result['trace_file']}")
 
     if hints:
         _print(out, "")

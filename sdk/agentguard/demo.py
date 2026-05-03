@@ -70,6 +70,11 @@ def run_offline_demo(
     _print(out, "  agentguard quickstart --framework raw --write")
     _print(out, "  python agentguard_raw_quickstart.py")
     _print(out, "  agentguard report .agentguard/traces.jsonl")
+    _print(out, "")
+    _print(out, "If 'agentguard' is not on PATH:")
+    _print(out, f"  python -m agentguard.cli report {trace_path}")
+    _print(out, f"  python -m agentguard.cli incident {trace_path}")
+    _print(out, "  python -m agentguard.cli quickstart --framework raw --write")
     _print(out, "SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.")
     return 0
 

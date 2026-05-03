@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Activation
+- Added `python -m agentguard.cli ...` fallback guidance to `doctor`, `demo`,
+  and `quickstart` so first-run users are not blocked when console scripts
+  install outside `PATH`.
 - Added a post-demo next-step block so `agentguard demo` points directly to
   `agentguard quickstart --framework raw --write`, the generated starter, and
   the follow-up local report command.

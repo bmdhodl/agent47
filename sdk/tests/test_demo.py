@@ -27,6 +27,10 @@ class TestOfflineDemo(unittest.TestCase):
             self.assertIn("agentguard quickstart --framework raw --write", output)
             self.assertIn("python agentguard_raw_quickstart.py", output)
             self.assertIn("agentguard report .agentguard/traces.jsonl", output)
+            self.assertIn("If 'agentguard' is not on PATH:", output)
+            self.assertIn(f"python -m agentguard.cli report {trace_path}", output)
+            self.assertIn(f"python -m agentguard.cli incident {trace_path}", output)
+            self.assertIn("python -m agentguard.cli quickstart --framework raw --write", output)
             self.assertIn("SDK gives you local enforcement. The dashboard adds alerts", output)
             self.assertTrue(os.path.exists(trace_path))
 

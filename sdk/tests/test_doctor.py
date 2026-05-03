@@ -26,6 +26,9 @@ class TestDoctor(unittest.TestCase):
             self.assertIn("Suggested next step:", output)
             self.assertIn("local_only=True", output)
             self.assertIn("agentguard demo", output)
+            self.assertIn("If 'agentguard' is not on PATH:", output)
+            self.assertIn("python -m agentguard.cli demo", output)
+            self.assertIn(f"python -m agentguard.cli report {trace_path}", output)
 
     def test_run_doctor_json_output_is_parseable(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
