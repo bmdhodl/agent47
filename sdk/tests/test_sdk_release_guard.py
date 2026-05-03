@@ -6,6 +6,7 @@ import tempfile
 import textwrap
 import unittest
 from subprocess import run
+from unittest.mock import Mock, patch
 
 _SCRIPTS_DIR = pathlib.Path(__file__).resolve().parents[2] / "scripts"
 if str(_SCRIPTS_DIR) not in sys.path:
@@ -106,6 +107,58 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             findings = sdk_release_guard.check_mcp_metadata(repo_root)
             self.assertEqual(len(findings), 3)
             self.assertTrue(all(finding.check == "mcp-metadata" for finding in findings))
+
+    def test_check_mcp_npm_package_reports_unpublished_version(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            (repo_root / "mcp-server").mkdir()
+            (repo_root / "mcp-server" / "package.json").write_text(
+                json.dumps(
+                    {
+                        "name": "@agentguard47/mcp-server",
+                        "version": "0.2.2",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            failed = Mock(returncode=1, stdout="", stderr="E404 not found")
+            with patch.object(sdk_release_guard.subprocess, "run", return_value=failed) as npm_view:
+                findings = sdk_release_guard.check_mcp_npm_package(repo_root, npm_command="npm")
+
+            self.assertEqual(len(findings), 1)
+            self.assertEqual(findings[0].check, "mcp-npm")
+            self.assertIn("Expected @agentguard47/mcp-server@0.2.2", findings[0].message)
+            npm_view.assert_called_once_with(
+                ["npm", "view", "@agentguard47/mcp-server@0.2.2", "version"],
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+    def test_check_mcp_npm_package_reports_latest_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            (repo_root / "mcp-server").mkdir()
+            (repo_root / "mcp-server" / "package.json").write_text(
+                json.dumps(
+                    {
+                        "name": "@agentguard47/mcp-server",
+                        "version": "0.2.2",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            exact = Mock(returncode=0, stdout="0.2.2\n", stderr="")
+            latest = Mock(returncode=0, stdout="0.2.1\n", stderr="")
+            with patch.object(sdk_release_guard.subprocess, "run", side_effect=[exact, latest]):
+                findings = sdk_release_guard.check_mcp_npm_package(repo_root, npm_command="npm")
+
+            self.assertEqual(len(findings), 1)
+            self.assertEqual(findings[0].check, "mcp-npm")
+            self.assertIn("Expected npm latest 0.2.2, found 0.2.1", findings[0].message)
 
 
 class TestReleaseGuardCli(unittest.TestCase):

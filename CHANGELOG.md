@@ -25,6 +25,9 @@
 - Added an MCP package publishing checklist and normalized npm package metadata
   so the `@agentguard47/mcp-server` release path does not rely on npm publish
   autocorrections.
+- Added an optional release-guard npm check so release operators can verify the
+  repo MCP package version is actually published as npm latest without making
+  normal CI depend on the network.
 
 ## 1.2.10
 
