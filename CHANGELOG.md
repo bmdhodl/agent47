@@ -22,6 +22,9 @@
   attestations enabled for release artifacts.
 - Added release documentation for the required PyPI trusted-publisher tuple and
   post-release verification steps.
+- Added an MCP package publishing checklist and normalized npm package metadata
+  so the `@agentguard47/mcp-server` release path does not rely on npm publish
+  autocorrections.
 
 ## 1.2.10
 

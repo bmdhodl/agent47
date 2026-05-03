@@ -118,7 +118,7 @@ class TestBuildPlan(unittest.TestCase):
         self.assertEqual(labels, ["mcp-test"])
         self.assertEqual(
             steps[0].command,
-            ["npm", "--prefix", "mcp-server", "test"],
+            [sdk_preflight.NPM_COMMAND, "--prefix", "mcp-server", "test"],
         )
 
 
