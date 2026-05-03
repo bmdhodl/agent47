@@ -266,7 +266,10 @@ def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:
 def test_proof_gallery_demo_references_stay_valid() -> None:
     source = PROOF_GALLERY_PATH.read_text(encoding="utf-8")
 
-    for match in re.finditer(r"python (examples/[A-Za-z0-9_/-]+\\.py)", source):
+    example_references = list(re.finditer(r"python (examples/[A-Za-z0-9_/-]+\.py)", source))
+    assert example_references, "Proof gallery should reference at least one local example"
+
+    for match in example_references:
         example_path = REPO_ROOT / match.group(1)
         assert example_path.exists(), f"Proof gallery references missing example: {match.group(1)}"
 
