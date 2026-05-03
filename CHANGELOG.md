@@ -9,6 +9,9 @@
 - Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
   `TestModel`, so users can try the pattern without API keys or network calls
   after installing the optional framework package.
+- Clarified incident-report dashboard handoff copy so hosted ingest is framed as
+  useful when incidents need retained history, alerts, spend trends, or
+  team-visible follow-up, not as a requirement for local safety.
 
 ### Release Security
 - Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication

@@ -34,12 +34,12 @@ Primary cause: **retry_limit_exceeded**
 
 - Add exponential backoff or a deterministic fallback before retrying the same tool.
 - Treat repeated upstream failures as a stop condition instead of widening the retry ceiling.
-- Connect HttpSink to the hosted dashboard for retained alerts and remote control follow-up.
 - Review the trace timeline to confirm the failure path before widening limits.
+- Keep one-off investigations local; add HttpSink only when future incidents need retained history, alerts, or team-visible follow-up.
 
 ## Upgrade Path
 
-Move from one-off local reports to retained alerts, spend history, and team-visible follow-up:
+Keep this report local if it is a one-off investigation. Add hosted ingest only when future incidents need retained history, alerts, spend trends, or team-visible follow-up:
 
 ```python
 from agentguard import Tracer, HttpSink
