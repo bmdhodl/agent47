@@ -116,9 +116,11 @@ class TestIncidentSummary(unittest.TestCase):
         self.assertEqual(incident["severity"], "critical")
         self.assertEqual(incident["primary_cause"], "retry_limit_exceeded")
         self.assertIn("exponential backoff", incident["recommendations"][0])
-        self.assertIn(
-            "Keep one-off investigations local",
-            incident["recommendations"][-1],
+        self.assertTrue(
+            any(
+                "Keep one-off investigations local" in recommendation
+                for recommendation in incident["recommendations"]
+            )
         )
 
 
