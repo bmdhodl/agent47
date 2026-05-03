@@ -35,7 +35,7 @@ tracer = Tracer(
 budget_guard = BudgetGuard(max_cost_usd=1.00, max_calls=20)
 loop_guard = LoopGuard(max_repeats=3, window=6)
 
-# Auto-trace all OpenAI API calls and feed usage into BudgetGuard.
+# Auto-trace OpenAI chat completions and feed usage into BudgetGuard.
 patch_openai(tracer, budget_guard=budget_guard)
 
 # --- 2. Define tools ---

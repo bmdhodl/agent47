@@ -135,7 +135,7 @@ budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 tracer = Tracer(service="support-agent")
 patch_openai(tracer, budget_guard=budget)
 
-# OpenAI calls are now traced and budget-enforced.
+# OpenAI chat completions are now traced and budget-enforced.
 ```
 
 When accumulated cost crosses the hard limit, `BudgetExceeded` is raised and

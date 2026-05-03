@@ -42,7 +42,7 @@ tracer = Tracer(sink=sink, service="openai-agent")
 loop_guard = LoopGuard(max_repeats=3)
 budget = BudgetGuard(max_tokens=50_000, max_calls=20)
 
-# Auto-instrument OpenAI; completions.create calls are traced and fed into BudgetGuard.
+# Auto-instrument OpenAI; chat.completions.create calls are traced and fed into BudgetGuard.
 patch_openai(tracer, budget_guard=budget)
 
 # --- Fake tools (replace with real ones) ---

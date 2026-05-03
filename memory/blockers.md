@@ -1,6 +1,6 @@
 # SDK Blockers
 
-**Last Updated:** 2026-04-02
+**Last Updated:** 2026-05-03
 
 ## Active
 - **npm MCP package publish is OTP-blocked.** Repo metadata targets

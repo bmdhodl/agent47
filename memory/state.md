@@ -1,6 +1,6 @@
 # SDK State
 
-**Last Updated:** 2026-05-02
+**Last Updated:** 2026-05-03
 
 ## Product
 - AgentGuard = zero-dependency Python SDK for runtime guardrails.

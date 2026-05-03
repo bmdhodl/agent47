@@ -34,7 +34,7 @@ tracer = Tracer(
 budget_guard = BudgetGuard(max_cost_usd=5.00, max_calls=100)
 loop_guard = LoopGuard(max_repeats=3, window=6)
 
-# Auto-trace OpenAI calls (CrewAI uses OpenAI under the hood) and feed usage into BudgetGuard.
+# Auto-trace OpenAI chat completions (CrewAI uses OpenAI under the hood) and feed usage into BudgetGuard.
 patch_openai(tracer, budget_guard=budget_guard)
 
 # --- 2. Define CrewAI agents ---

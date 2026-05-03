@@ -33,7 +33,7 @@ from agentguard import Tracer, BudgetGuard, patch_openai
 budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 tracer = Tracer(service="support-agent")
 patch_openai(tracer, budget_guard=budget)
-# Every OpenAI call is now tracked. At $4 you get a warning. At $5 the agent stops.
+# OpenAI chat completions are now tracked. At $4 you get a warning. At $5 the agent stops.
 ```
 
 ## Guards

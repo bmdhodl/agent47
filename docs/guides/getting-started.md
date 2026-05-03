@@ -254,7 +254,7 @@ budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"), service="my-agent")
 patch_openai(tracer, budget_guard=budget)
 
-# Every OpenAI call is now traced with token counts, cost estimates, and budget checks.
+# OpenAI chat completions are now traced with token counts, cost estimates, and budget checks.
 # Works with openai>=1.0 client instances.
 ```
 

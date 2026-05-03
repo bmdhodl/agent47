@@ -76,9 +76,9 @@ tracer = Tracer(
 )
 patch_openai(tracer, budget_guard=budget)
 
-# Every OpenAI call is now auto-traced with cost estimates.
+# OpenAI chat completions are now auto-traced with cost estimates.
 # BudgetGuard checks after each call.
-# Supports GPT-4o, GPT-4, GPT-3.5, and embedding models.
+# Supports patched chat-completion models such as GPT-4o, GPT-4, and GPT-3.5.
 ```
 
 `patch_openai` intercepts `ChatCompletion` responses, extracts token counts from the response, and feeds them into BudgetGuard. No manual tracking.
