@@ -58,6 +58,13 @@ agentguard quickstart --framework raw
 `demo` proves budget, loop, and retry stops offline.
 `quickstart` prints the smallest starter for your stack.
 
+Sales-ready proof with local incident output and hosted-compatible NDJSON:
+
+```bash
+PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
+```
+
 Expected first value moment:
 
 ```text
@@ -161,6 +168,7 @@ All examples are local-first. No API key is required unless the example says so.
 | Example | What it proves |
 |---|---|
 | [`examples/try_it_now.py`](examples/try_it_now.py) | budget, loop, and retry stops |
+| [`examples/sticky_agent_proof.py`](examples/sticky_agent_proof.py) | one CrewAI-style retry storm proof with local incident and hosted NDJSON outputs |
 | [`examples/coding_agent_review_loop.py`](examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
 | [`examples/per_token_budget_spike.py`](examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
 | [`examples/budget_aware_escalation.py`](examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
