@@ -7,7 +7,7 @@ they directly strengthen coding-agent adoption.
 
 ## Current Focus Notes
 
-- Latest shipped SDK release is `v1.2.9`; current work is post-release
+- Latest shipped SDK release is `v1.2.10`; current work is post-release
   hardening and activation, not a new feature push.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`;
   keep MCP narrow and read-only while Glama remains blocked.
