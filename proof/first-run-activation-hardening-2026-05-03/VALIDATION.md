@@ -14,7 +14,7 @@ Editable install on this Windows host emitted:
 
 ```text
 WARNING: The script agentguard.exe is installed in
-'C:\Users\patri\AppData\Roaming\Python\Python313\Scripts' which is not on PATH.
+'C:\Users\<USER>\AppData\Roaming\Python\Python313\Scripts' which is not on PATH.
 ```
 
 Without a fallback, a new user can install the SDK successfully but fail at the
@@ -25,7 +25,7 @@ next documented `agentguard doctor` command.
 Clean temp directory:
 
 ```text
-C:\Users\patri\AppData\Local\Temp\agentguard-first-run-proof-073756dc4c83460b9fc8f2a224d2503a
+C:\Users\<USER>\AppData\Local\Temp\agentguard-first-run-proof-<RUN_ID>
 ```
 
 Commands:

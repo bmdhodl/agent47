@@ -54,6 +54,20 @@ class TestOfflineDemo(unittest.TestCase):
             self.assertTrue(os.path.exists(trace_path))
             self.assertIn("Trace written to", buf.getvalue())
 
+    def test_run_offline_demo_quotes_paths_with_spaces_in_guidance(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            trace_path = os.path.join(tmpdir, "space dir", "demo's trace.jsonl")
+            buf = io.StringIO()
+
+            result = run_offline_demo(trace_path=trace_path, stream=buf)
+
+            self.assertEqual(result, 0)
+            output = buf.getvalue()
+            quoted_path = '"' + trace_path + '"'
+            self.assertIn(f"View summary: agentguard report {quoted_path}", output)
+            self.assertIn(f"python -m agentguard.cli incident {quoted_path}", output)
+            self.assertIn("python -m agentguard.cli report .agentguard/traces.jsonl", output)
+
 
 if __name__ == "__main__":
     unittest.main()
