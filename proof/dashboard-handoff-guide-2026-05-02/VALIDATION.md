@@ -1,4 +1,4 @@
-﻿# Dashboard Handoff Guide Validation
+# Dashboard Handoff Guide Validation
 
 ## Scope
 
