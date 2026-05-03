@@ -45,8 +45,9 @@ Do not store the OTP in shell history, docs, `.npmrc`, or repo files.
 ## Post-publish verification
 
 ```bash
+MCP_VERSION="$(node -p "require('./mcp-server/package.json').version")"
 npm view @agentguard47/mcp-server version
-npm view @agentguard47/mcp-server@0.2.2 version
+npm view "@agentguard47/mcp-server@$MCP_VERSION" version
 npx -y @agentguard47/mcp-server --help
 ```
 
