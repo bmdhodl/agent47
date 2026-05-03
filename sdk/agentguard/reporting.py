@@ -161,8 +161,11 @@ def _estimate_savings(
 
 def _recommendations(primary_cause: str, severity: str) -> List[str]:
     base = [
-        "Connect HttpSink to the hosted dashboard for retained alerts and remote control follow-up.",
         "Review the trace timeline to confirm the failure path before widening limits.",
+        (
+            "Keep one-off investigations local; add HttpSink only when future incidents "
+            "need retained history, alerts, or team-visible follow-up."
+        ),
     ]
     if primary_cause == "loop_detected":
         return [
@@ -261,7 +264,11 @@ def _render_incident_markdown(incident: Dict[str, Any]) -> str:
             "",
             "## Upgrade Path",
             "",
-            "Move from one-off local reports to retained alerts, spend history, and team-visible follow-up:",
+            (
+                "Keep this report local if it is a one-off investigation. Add hosted ingest "
+                "only when future incidents need retained history, alerts, spend trends, or "
+                "team-visible follow-up:"
+            ),
             "",
             "```python",
             "from agentguard import Tracer, HttpSink",
@@ -329,7 +336,7 @@ def _render_incident_html(incident: Dict[str, Any]) -> str:
     </div>
     <div class="card">
       <h2>Upgrade Path</h2>
-      <p>Move from one-off local reports to retained alerts, spend history, and team-visible follow-up.</p>
+      <p>Keep this report local if it is a one-off investigation. Add hosted ingest only when future incidents need retained history, alerts, spend trends, or team-visible follow-up.</p>
       <pre>from agentguard import Tracer, HttpSink
 
 tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_..."))</pre>
