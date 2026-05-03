@@ -58,9 +58,17 @@ agentguard quickstart --framework raw
 `demo` proves budget, loop, and retry stops offline.
 `quickstart` prints the smallest starter for your stack.
 
-Sales-ready proof with local incident output and hosted-compatible NDJSON:
+Installed-package proof:
 
 ```bash
+agentguard demo
+```
+
+Source-checkout proof with local incident output and hosted-compatible NDJSON:
+
+```bash
+git clone https://github.com/bmdhodl/agent47.git
+cd agent47
 PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
 agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
 ```

@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, TextIO
@@ -159,7 +158,12 @@ def _run_loop_detection(tracer: Tracer, out: TextIO) -> None:
 
 
 def _run_budget_burn(tracer: Tracer, out: TextIO) -> None:
-    budget = BudgetGuard(max_cost_usd=0.05, warn_at_pct=0.8)
+    warnings: list[str] = []
+    budget = BudgetGuard(
+        max_cost_usd=0.05,
+        warn_at_pct=0.8,
+        on_warning=warnings.append,
+    )
     costs = (0.013, 0.014, 0.014, 0.016)
     _print(out, "")
     _print(out, "3. BudgetGuard: stopping cost before it compounds")
@@ -184,7 +188,7 @@ def _run_budget_burn(tracer: Tracer, out: TextIO) -> None:
                 },
                 cost_usd=cost,
             )
-            warned_before = budget._warned
+            warning_count = len(warnings)
             try:
                 budget.consume(tokens=2220 + attempt * 250, calls=1, cost_usd=cost)
                 _print(out, f"  model call {attempt}: ${budget.state.cost_used:.3f} used")
@@ -201,11 +205,12 @@ def _run_budget_burn(tracer: Tracer, out: TextIO) -> None:
                 )
                 _print(out, f"  stopped budget burn: {exc}")
                 return
-            if not warned_before and budget._warned:
+            if len(warnings) > warning_count:
                 span.event(
                     "guard.budget_warning",
                     data={
                         "framework": "crewai",
+                        "message": warnings[-1],
                         "cost_used": round(budget.state.cost_used, 6),
                         "limit_usd": budget.max_cost_usd,
                     },
@@ -227,10 +232,11 @@ def _hosted_events(lines: Iterable[str]) -> Iterable[Dict[str, Any]]:
         if not line.strip():
             continue
         event = json.loads(line)
-        kind = event.get("kind")
+        kind = event.get("kind") or event.get("type")
         if kind not in {"span", "event"}:
             continue
         hosted_event = dict(event)
+        hosted_event.setdefault("kind", kind)
         hosted_event.setdefault("type", kind)
         yield hosted_event
 
