@@ -8,6 +8,21 @@ The product boundary is deliberate:
 - the dashboard owns retained history, alerts, team workflows, billing, and
   remote kill signal management
 
+## Local or hosted
+
+Start local. Add hosted ingest when the work becomes shared, expensive, or
+risky enough that local files are no longer enough.
+
+| Use local SDK when | Use hosted dashboard when |
+| --- | --- |
+| You are proving AgentGuard in one repo | Multiple people need the same incident history |
+| You need hard stops for loops, retries, timeouts, or budget burn | Runs need retained alerts and follow-up outside the terminal |
+| You want JSONL traces and reports without an API key | You need spend trends across traces, services, or teammates |
+| You are testing an agent before production | Operators need dashboard-managed remote kill signals |
+
+Hosted ingest should make operational follow-up easier. It should not be
+required for local safety, and it should not replace in-process guards.
+
 ## First path
 
 Keep first adoption local:

@@ -12,6 +12,9 @@
 - Clarified incident-report dashboard handoff copy so hosted ingest is framed as
   useful when incidents need retained history, alerts, spend trends, or
   team-visible follow-up, not as a requirement for local safety.
+- Added a concise local-vs-hosted adoption table to the README and dashboard
+  contract docs so the dashboard CTA is explicit without making local SDK use
+  feel limited.
 
 ### Release Security
 - Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
