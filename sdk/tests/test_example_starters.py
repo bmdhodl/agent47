@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 import os
 import subprocess
@@ -67,6 +68,44 @@ def test_raw_starter_runs_and_writes_trace() -> None:
         assert result.returncode == 0, result.stderr
         assert "Completed local raw starter run." in result.stdout
         assert Path(tmpdir, ".agentguard", "traces.jsonl").exists()
+
+
+def test_pydantic_ai_starter_is_optional_and_local_first() -> None:
+    starter_path = STARTERS_ROOT / "agentguard_pydantic_ai_quickstart.py"
+    assert starter_path.exists(), f"Missing Pydantic AI starter: {starter_path}"
+    source = starter_path.read_text(encoding="utf-8")
+    tree = ast.parse(source)
+
+    compile(source, str(starter_path), "exec", flags=0, dont_inherit=True)
+    imports = {
+        (node.module, alias.name)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        for alias in node.names
+    }
+    assert ("pydantic_ai", "Agent") in imports
+    assert ("pydantic_ai.models.test", "TestModel") in imports
+    assert "pydantic-ai" in source
+
+    init_calls = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "agentguard"
+        and node.func.attr == "init"
+    ]
+    assert init_calls, "Pydantic AI starter should initialize AgentGuard"
+    init_keywords = {
+        keyword.arg: keyword.value
+        for keyword in init_calls[0].keywords
+        if keyword.arg is not None
+    }
+    assert isinstance(init_keywords.get("local_only"), ast.Constant)
+    assert init_keywords["local_only"].value is True
+    assert isinstance(init_keywords.get("auto_patch"), ast.Constant)
+    assert init_keywords["auto_patch"].value is False
 
 
 def test_disposable_harness_example_links_session_id() -> None:
