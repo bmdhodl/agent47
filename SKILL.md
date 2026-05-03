@@ -30,8 +30,9 @@ agentguard doctor
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)
 # Every OpenAI call is now tracked. At $4 you get a warning. At $5 the agent stops.
 ```
 
@@ -88,9 +89,10 @@ with tracer.trace("agent.run") as span:
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai, patch_anthropic
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00)])
-patch_openai(tracer)      # tracks all ChatCompletion calls
-patch_anthropic(tracer)   # tracks all Messages calls
+budget = BudgetGuard(max_cost_usd=5.00)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)      # tracks ChatCompletion calls
+patch_anthropic(tracer, budget_guard=budget)   # tracks Messages calls
 ```
 
 ## Framework Integrations

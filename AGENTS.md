@@ -345,8 +345,9 @@ agentguard demo         # local proof run
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)
 # All OpenAI calls are now tracked and budget-enforced
 ```
 

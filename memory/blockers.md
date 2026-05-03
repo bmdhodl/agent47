@@ -3,6 +3,11 @@
 **Last Updated:** 2026-04-02
 
 ## Active
+- **npm MCP package publish is OTP-blocked.** Repo metadata targets
+  `@agentguard47/mcp-server@0.2.2`, but `npm view @agentguard47/mcp-server version`
+  still returns `0.2.1`. Prior publish attempt was blocked by npm one-time
+  password requirements. Complete with `npm publish --access public --otp <code>`
+  from `mcp-server/`.
 - **Glama listing still blocked.** Official MCP Registry is live, but Glama has
   not detected the server from this repo yet even after adding root-level and
   package-level Smithery / Docker metadata. Revisit later via Glama support or

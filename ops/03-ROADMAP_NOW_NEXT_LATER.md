@@ -7,7 +7,7 @@ they directly strengthen coding-agent adoption.
 
 ## Current Focus Notes
 
-- Latest shipped SDK release is `v1.2.9`; current work is post-release
+- Latest shipped SDK release is `v1.2.10`; current work is post-release
   hardening and activation, not a new feature push.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`;
   keep MCP narrow and read-only while Glama remains blocked.
@@ -40,7 +40,7 @@ they directly strengthen coding-agent adoption.
 | Coding-agent skillpack generation | Done - `agentguard skillpack` now generates `.agentguard.json` plus repo-local instructions for Codex, Claude Code, Copilot, and Cursor so coding-agent onboarding no longer depends on manual snippet copying |
 | Managed-agent session correlation | Done - `session_id` now lets disposable harnesses or short-lived workers emit separate traces that still roll up under one higher-level local session for coding-agent and managed-agent runtimes |
 | Budget-aware escalation guard | Done - `BudgetAwareEscalation` now lets apps keep a cheaper default model and escalate hard turns using token, confidence, tool-depth, or custom-rule signals without provider-specific SDK routing |
-| Dashboard contract alignment for v1.2.9 | Done - hosted ingest shape and decision-trace defaults are documented and covered by tests; remote-kill boundaries are documented |
+| Dashboard contract alignment for v1.2.10 | Done - hosted ingest shape and decision-trace defaults are documented and covered by tests; remote-kill boundaries are documented |
 | Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
 | Follow-up handoff | Done - `FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
 | Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed questions, consent boundaries, forbidden fields, and local-first non-goals without adding telemetry |

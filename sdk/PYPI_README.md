@@ -103,16 +103,17 @@ incidents, alerts, or team visibility matter.
 ```python
 from agentguard import BudgetGuard, JsonlFileSink, LoopGuard, Tracer
 
+budget = BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
+loop = LoopGuard(max_repeats=3)
 tracer = Tracer(
     sink=JsonlFileSink(".agentguard/traces.jsonl"),
     service="support-agent",
-    guards=[
-        BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8),
-        LoopGuard(max_repeats=3),
-    ],
+    guards=[loop],
 )
 
 with tracer.trace("agent.run") as span:
+    budget.consume(calls=1, cost_usd=0.02)
+    loop.check("search", {"query": "refund policy"})
     span.event("tool.call", data={"tool": "search", "query": "refund policy"})
     # Call your agent or tool here.
 ```
@@ -132,8 +133,9 @@ provider normally:
 ```python
 from agentguard import BudgetGuard, Tracer, patch_openai
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)
 
 # OpenAI calls are now traced and budget-enforced.
 ```

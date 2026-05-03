@@ -10,7 +10,8 @@
 ## Public Artifacts
 - PyPI package: `agentguard47`
 - Latest shipped SDK release: `1.2.10`
-- npm MCP package: `@agentguard47/mcp-server@0.2.2`
+- npm MCP package: repo targets `@agentguard47/mcp-server@0.2.2`; npm registry
+  still serves `0.2.1` until the OTP-gated publish is completed.
 - Official MCP Registry listing: live as `io.github.bmdhodl/agentguard47`
 
 ## Repo Scope

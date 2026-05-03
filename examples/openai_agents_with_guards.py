@@ -35,8 +35,8 @@ tracer = Tracer(
 budget_guard = BudgetGuard(max_cost_usd=1.00, max_calls=20)
 loop_guard = LoopGuard(max_repeats=3, window=6)
 
-# Auto-trace all OpenAI API calls with cost tracking
-patch_openai(tracer)
+# Auto-trace all OpenAI API calls and feed usage into BudgetGuard.
+patch_openai(tracer, budget_guard=budget_guard)
 
 # --- 2. Define tools ---
 
@@ -93,8 +93,6 @@ def run_agent(user_message: str, max_turns: int = 10):
     with tracer.trace("agent.run", data={"input": user_message}) as span:
         for turn in range(max_turns):
             # Check budget before each API call
-            budget_guard.consume(calls=1)
-
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,

@@ -219,13 +219,15 @@ Cap spend per agent run:
 ```python
 from agentguard import Tracer, BudgetGuard, JsonlFileSink
 
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 tracer = Tracer(
     sink=JsonlFileSink(".agentguard/traces.jsonl"),
     service="my-agent",
-    guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)],
 )
 
-# BudgetGuard tracks token usage and estimated cost.
+# Record usage where model calls happen.
+budget.consume(calls=1, cost_usd=0.02)
+
 # Raises BudgetExceeded when the limit is hit.
 # Fires BudgetWarning at 80% of the limit.
 ```
@@ -246,12 +248,13 @@ catching a single high-context spike before the run drifts further.
 Skip manual tracing — let AgentGuard patch the OpenAI client:
 
 ```python
-from agentguard import Tracer, JsonlFileSink, patch_openai
+from agentguard import BudgetGuard, Tracer, JsonlFileSink, patch_openai
 
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"), service="my-agent")
-patch_openai(tracer)
+patch_openai(tracer, budget_guard=budget)
 
-# Every OpenAI call is now traced with token counts and cost estimates.
+# Every OpenAI call is now traced with token counts, cost estimates, and budget checks.
 # Works with openai>=1.0 client instances.
 ```
 
@@ -259,7 +262,7 @@ Same for Anthropic:
 
 ```python
 from agentguard import patch_anthropic
-patch_anthropic(tracer)
+patch_anthropic(tracer, budget_guard=budget)
 ```
 
 ## 6. Use with LangChain
