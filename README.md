@@ -270,6 +270,16 @@ The SDK is the free local proof path. The hosted dashboard is for retained
 history, alerts, team visibility, hosted decision history, and remote-control
 operations.
 
+| Use local SDK when | Use hosted dashboard when |
+| --- | --- |
+| You are proving AgentGuard in one repo | Multiple people need the same incident history |
+| You need hard stops for loops, retries, timeouts, or budget burn | Runs need retained alerts and follow-up outside the terminal |
+| You want JSONL traces and reports without an API key | You need spend trends across traces, services, or teammates |
+| You are testing an agent before production | Operators need dashboard-managed remote kill signals |
+
+Start local. Add hosted ingest when the work becomes shared, expensive, or
+risky enough that local files are no longer enough.
+
 ```python
 from agentguard import HttpSink, Tracer
 
