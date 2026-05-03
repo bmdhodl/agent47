@@ -137,6 +137,39 @@ class TestReleaseGuardHelpers(unittest.TestCase):
                 check=False,
             )
 
+    def test_check_mcp_npm_package_reports_missing_npm(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            (repo_root / "mcp-server").mkdir()
+            (repo_root / "mcp-server" / "package.json").write_text(
+                json.dumps(
+                    {
+                        "name": "@agentguard47/mcp-server",
+                        "version": "0.2.2",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with patch.object(
+                sdk_release_guard.subprocess,
+                "run",
+                side_effect=FileNotFoundError("npm not found"),
+            ) as npm_view:
+                findings = sdk_release_guard.check_mcp_npm_package(repo_root, npm_command="npm")
+
+            self.assertEqual(len(findings), 1)
+            self.assertEqual(findings[0].check, "mcp-npm")
+            self.assertIn("Could not run npm for npm verification", findings[0].message)
+            self.assertIn("AGENTGUARD_NPM_COMMAND", findings[0].message)
+            npm_view.assert_called_once_with(
+                ["npm", "view", "@agentguard47/mcp-server@0.2.2", "version"],
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
     def test_check_mcp_npm_package_reports_latest_drift(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = pathlib.Path(tmp)

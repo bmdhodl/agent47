@@ -175,13 +175,25 @@ def check_mcp_npm_package(repo_root: Path, npm_command: str = NPM_COMMAND) -> Li
             )
         ]
 
-    exact_result = subprocess.run(
-        [npm_command, "view", f"{package_name}@{package_version}", "version"],
-        cwd=repo_root,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        exact_result = subprocess.run(
+            [npm_command, "view", f"{package_name}@{package_version}", "version"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message=(
+                    f"Could not run {npm_command} for npm verification. "
+                    f"Install npm or set AGENTGUARD_NPM_COMMAND. {exc}"
+                ),
+            )
+        ]
     if exact_result.returncode != 0:
         detail = (exact_result.stderr or exact_result.stdout).strip()
         return [
