@@ -114,6 +114,26 @@ Proves:
 - generated starters write traces to `.agentguard/traces.jsonl`
 - first value does not require a dashboard account
 
+## 7. MCP Read Path
+
+```bash
+npm --prefix mcp-server test
+AGENTGUARD_API_KEY=ag_... npx -y @agentguard47/mcp-server
+```
+
+Proves:
+
+- the MCP server is a narrow read-only surface over retained AgentGuard data
+- coding agents can inspect traces, decisions, alerts, usage, costs, and budget
+  health after hosted ingest is enabled
+- local SDK enforcement remains independent of the hosted dashboard
+
+Expected boundary:
+
+```text
+Requires AGENTGUARD_API_KEY for retained hosted data. Does not add local runtime enforcement.
+```
+
 ## What To Share
 
 The most shareable public demo is the coding-agent review loop:
