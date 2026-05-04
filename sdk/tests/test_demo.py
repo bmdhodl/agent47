@@ -27,6 +27,10 @@ class TestOfflineDemo(unittest.TestCase):
             self.assertIn("agentguard quickstart --framework raw --write", output)
             self.assertIn("python agentguard_raw_quickstart.py", output)
             self.assertIn("agentguard report .agentguard/traces.jsonl", output)
+            self.assertIn("If 'agentguard' is not on PATH:", output)
+            self.assertIn(f"python -m agentguard.cli report {trace_path}", output)
+            self.assertIn(f"python -m agentguard.cli incident {trace_path}", output)
+            self.assertIn("python -m agentguard.cli quickstart --framework raw --write", output)
             self.assertIn("SDK gives you local enforcement. The dashboard adds alerts", output)
             self.assertTrue(os.path.exists(trace_path))
 
@@ -49,6 +53,20 @@ class TestOfflineDemo(unittest.TestCase):
             self.assertEqual(ctx.exception.code, 0)
             self.assertTrue(os.path.exists(trace_path))
             self.assertIn("Trace written to", buf.getvalue())
+
+    def test_run_offline_demo_quotes_paths_with_spaces_in_guidance(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            trace_path = os.path.join(tmpdir, "space dir", "demo's trace.jsonl")
+            buf = io.StringIO()
+
+            result = run_offline_demo(trace_path=trace_path, stream=buf)
+
+            self.assertEqual(result, 0)
+            output = buf.getvalue()
+            quoted_path = '"' + trace_path + '"'
+            self.assertIn(f"View summary: agentguard report {quoted_path}", output)
+            self.assertIn(f"python -m agentguard.cli incident {quoted_path}", output)
+            self.assertIn("python -m agentguard.cli report .agentguard/traces.jsonl", output)
 
 
 if __name__ == "__main__":

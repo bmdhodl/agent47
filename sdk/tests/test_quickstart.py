@@ -22,6 +22,8 @@ class TestQuickstart(unittest.TestCase):
         self.assertIn("pip install agentguard47", output)
         self.assertIn("local_only=True", output)
         self.assertIn("agentguard doctor", output)
+        self.assertIn("If 'agentguard' is not on PATH:", output)
+        self.assertIn("python -m agentguard.cli doctor", output)
 
     def test_openai_quickstart_json_is_parseable(self) -> None:
         buf = io.StringIO()
@@ -108,6 +110,7 @@ class TestQuickstart(unittest.TestCase):
                 self.assertIn("Install:", buf.getvalue())
                 self.assertIn("pip install agentguard47", buf.getvalue())
                 self.assertIn("python agentguard_raw_quickstart.py", buf.getvalue())
+                self.assertIn("python -m agentguard.cli report .agentguard/traces.jsonl", buf.getvalue())
             finally:
                 os.chdir(cwd)
 

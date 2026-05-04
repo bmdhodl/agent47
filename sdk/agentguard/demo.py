@@ -61,15 +61,29 @@ def run_offline_demo(
     _print(out, "")
     _run_retry_demo(tracer, out)
     _print(out, "")
+    rendered_trace_path = _shell_quote_path(trace_path)
     _print(out, "Local proof complete.")
     _print(out, f"Trace written to: {trace_path}")
-    _print(out, f"View summary: agentguard report {trace_path}")
-    _print(out, f"View incident report: agentguard incident {trace_path}")
+    _print(out, f"View summary: agentguard report {rendered_trace_path}")
+    _print(out, f"View incident report: agentguard incident {rendered_trace_path}")
     _print(out, "")
     _print(out, "Next: add AgentGuard to a repo")
-    _print(out, "  agentguard quickstart --framework raw --write")
-    _print(out, "  python agentguard_raw_quickstart.py")
-    _print(out, "  agentguard report .agentguard/traces.jsonl")
+    next_commands = [
+        "agentguard quickstart --framework raw --write",
+        "python agentguard_raw_quickstart.py",
+        "agentguard report .agentguard/traces.jsonl",
+    ]
+    for command in next_commands:
+        _print(out, f"  {command}")
+    _print(out, "")
+    fallback_commands = _module_command_fallbacks(
+        [
+            f"agentguard report {rendered_trace_path}",
+            f"agentguard incident {rendered_trace_path}",
+            *next_commands,
+        ]
+    )
+    _render_module_fallback(fallback_commands, out)
     _print(out, "SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.")
     return 0
 
@@ -159,6 +173,29 @@ def _run_retry_demo(tracer: Tracer, out: TextIO) -> None:
 
 def _print(stream: TextIO, line: str) -> None:
     stream.write(line + "\n")
+
+
+def _render_module_fallback(commands: list[str], out: TextIO) -> None:
+    if not commands:
+        return
+
+    _print(out, "If 'agentguard' is not on PATH:")
+    for command in commands:
+        _print(out, f"  {command}")
+
+
+def _module_command_fallbacks(commands: list[str]) -> list[str]:
+    fallback_commands: list[str] = []
+    for command in commands:
+        if command.startswith("agentguard "):
+            fallback_commands.append(command.replace("agentguard ", "python -m agentguard.cli ", 1))
+    return fallback_commands
+
+
+def _shell_quote_path(path: str) -> str:
+    if not any(char.isspace() or char in {'"', "'"} for char in path):
+        return path
+    return '"' + path.replace('"', '\\"') + '"'
 
 
 def main() -> None:  # pragma: no cover
