@@ -5,8 +5,8 @@ Use this when you move from local SDK proof to the hosted AgentGuard dashboard.
 The product boundary is deliberate:
 - the SDK owns local runtime enforcement, local traces, local reports, and
   structured event emission
-- the dashboard owns retained history, alerts, team workflows, billing, and
-  remote kill signal management
+- the dashboard owns retained history, alerts, team visibility, spend trends,
+  hosted decision history, and dashboard-managed remote kill signals
 
 ## Local or hosted
 
@@ -20,8 +20,8 @@ risky enough that local files are no longer enough.
 | You want JSONL traces and reports without an API key | You need spend trends across traces, services, or teammates |
 | You are testing an agent before production | Operators need dashboard-managed remote kill signals |
 
-Hosted ingest should make operational follow-up easier. It should not be
-required for local safety, and it should not replace in-process guards.
+Hosted ingest should make operational follow-up easier. It is not required for
+local safety, and it does not replace in-process guards.
 
 ## First path
 

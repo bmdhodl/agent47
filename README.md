@@ -285,8 +285,8 @@ costs, usage, and budget health.
 ## Hosted Dashboard Boundary
 
 The SDK is the free local proof path. The hosted dashboard is for retained
-history, alerts, team visibility, hosted decision history, and remote-control
-operations.
+history, alerts, team visibility, spend trends, hosted decision history, and
+dashboard-managed remote kill signals.
 
 | Use local SDK when | Use hosted dashboard when |
 | --- | --- |
