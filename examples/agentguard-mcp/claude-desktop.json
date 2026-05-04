@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agentguard-mcp": {
+      "command": "agentguard-mcp",
+      "args": [],
+      "env": {
+        "AGENTGUARD_DB_PATH": "~/.agentguard/state.db"
+      }
+    }
+  }
+}

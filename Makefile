@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp
+.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp mcp-budget
 
 # Install SDK in editable mode with dev tools
 install:
@@ -25,7 +25,7 @@ fix:
 	ruff check sdk/agentguard/ --fix
 
 # Lint + full test suite (mirrors CI)
-check: lint test mcp
+check: lint test mcp mcp-budget
 
 # Fast local feedback based on changed files
 preflight:
@@ -38,6 +38,12 @@ release-guard:
 # Build and test the MCP server
 mcp:
 	npm --prefix mcp-server test
+
+# Test the Python MCP budget server package
+mcp-budget:
+	python -m pip install -e ./agentguard-mcp
+	cd agentguard-mcp && python -m ruff check agentguard_mcp tests
+	cd agentguard-mcp && python -m pytest
 
 # Security lint (bandit)
 security:

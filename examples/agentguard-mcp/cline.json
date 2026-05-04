@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "agentguard-mcp": {
+      "command": "agentguard-mcp",
+      "args": []
+    }
+  }
+}

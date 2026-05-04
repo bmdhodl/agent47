@@ -1,39 +1,44 @@
 # Morning Report
 
 ## Mission
-Implement the top activation recommendation from the product/codebase audit:
-make the local SDK proof path more realistic for coding-agent adoption without
-changing runtime behavior or adding dependencies.
+Ship a draftable `agentguard-mcp` package: a local-first MCP server that tracks
+per-tool, per-server, per-session, and global budgets in tokens and dollars.
 
 ## What changed
-- Added `examples/coding_agent_review_loop.py`, a deterministic offline proof
-  that repeated review/edit attempts can burn a run budget and that a stuck
-  patch retry storm is stopped by `RetryGuard`.
-- Linked the new proof from the README, getting-started guide, and examples
-  index so a new user can run it immediately after `agentguard demo`.
-- Added a focused test that runs the example in a temporary directory and
-  verifies it emits `review.iteration`, `guard.budget_exceeded`, and
-  `guard.retry_limit_exceeded` events.
-- Regenerated `sdk/PYPI_README.md` so package metadata stays in sync.
+- Added `agentguard-mcp/`, a Python package using the official `mcp` SDK with
+  FastMCP tools: `set_budget`, `check_remaining`, `record_call`, `kill_switch`,
+  and `list_budgets`.
+- Added SQLite persistence at `~/.agentguard/state.db`, overridable with
+  `AGENTGUARD_DB_PATH`.
+- Added read-time period rollover for `session`, `day`, and `month`.
+- Added an opt-in `AGENTGUARD_SYNC_URL` hook that POSTs usage events in a
+  background thread with a 2 second timeout.
+- Added a thin npm shim package at `npm/agentguard-mcp/`.
+- Added install/config docs and Claude Desktop, Cursor, and Cline examples.
+- Added proof at `proof/agentguard-mcp/local-budget-proof.txt`.
 
-## Why it matters
-- The repo already has basic offline proof. This adds a more realistic
-  coding-agent failure mode: review/refinement loops plus patch retry storms.
-- It strengthens the highest-value feature family from the audit: budget and
-  runtime enforcement as the first local activation path.
-- The change is additive and safe: no public API changes, no dashboard coupling,
-  and no new runtime dependencies.
+## What is left
+- Publish `agentguard-mcp` to PyPI.
+- Publish the unscoped npm shim as `agentguard-mcp`.
+- Capture Claude Desktop screenshots from a real configured client.
+- Open registry PRs/listings for mcp.so, Smithery, Glama, PulseMCP, and
+  `awesome-mcp-servers`.
 
 ## Validation
-- Focused example test passed.
-- Direct preflight and release guard passed.
-- Ruff, full pytest with coverage, MCP tests, structural tests, Bandit, and
-  diff check passed.
-- `make` is unavailable in this Windows shell, so Makefile-equivalent commands
-  were run directly.
+- New package tests passed: 6 passed.
+- New package ruff passed.
+- Existing TypeScript MCP tests passed after `npm --prefix mcp-server ci`.
+- SDK ruff passed.
+- Full SDK pytest with coverage passed: 709 passed, 93.02% coverage.
+- Structural tests passed: 9 passed.
+- Bandit passed via `python -m bandit`.
+- Release guard passed.
+- Python package build passed.
+- npm shim dry-run pack passed.
+- `make` is unavailable in this Windows shell, so direct equivalents were run.
 
-## Follow-up
-- Refresh stale roadmap/architecture docs in a separate hygiene PR.
-- Consider one opt-in activation metrics design doc, not default SDK telemetry.
-- Keep future demos focused on local proof, budget stops, retry stops, and
-  incident reports rather than broad observability.
+## Unknowns for Patrick
+- Whether to keep the new package as a subdirectory publish or split it into a
+  dedicated repo after the draft PR.
+- Whether the npm shim should auto-install/upgrade the Python package on every
+  run or only on first run.
