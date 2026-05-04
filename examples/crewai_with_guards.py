@@ -34,8 +34,8 @@ tracer = Tracer(
 budget_guard = BudgetGuard(max_cost_usd=5.00, max_calls=100)
 loop_guard = LoopGuard(max_repeats=3, window=6)
 
-# Auto-trace all OpenAI calls (CrewAI uses OpenAI under the hood)
-patch_openai(tracer)
+# Auto-trace OpenAI chat completions (CrewAI uses OpenAI under the hood) and feed usage into BudgetGuard.
+patch_openai(tracer, budget_guard=budget_guard)
 
 # --- 2. Define CrewAI agents ---
 
@@ -89,8 +89,6 @@ if __name__ == "__main__":
     with tracer.trace("crew.kickoff") as span:
         try:
             # Check budget before each major step
-            budget_guard.consume(calls=1)
-
             result = crew.kickoff()
 
             span.event("crew.complete", data={"output_length": len(str(result))})

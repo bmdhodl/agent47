@@ -50,13 +50,14 @@ jobs:
           python3 -c "
           from agentguard import Tracer, BudgetGuard, JsonlFileSink
 
+          budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
           tracer = Tracer(
               sink=JsonlFileSink('ci_traces.jsonl'),
               service='ci-agent-test',
-              guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)],
           )
 
           with tracer.trace('ci.agent_run') as span:
+              budget.consume(calls=1, cost_usd=0.02)
               # Your agent code here
               pass
           "
@@ -85,12 +86,12 @@ If your agent uses OpenAI, AgentGuard can auto-track cost per API call:
 ```python
 from agentguard import Tracer, BudgetGuard, JsonlFileSink, patch_openai
 
+budget = BudgetGuard(max_cost_usd=5.00)
 tracer = Tracer(
     sink=JsonlFileSink("ci_traces.jsonl"),
     service="ci-agent-test",
-    guards=[BudgetGuard(max_cost_usd=5.00)],
 )
-patch_openai(tracer)  # auto-tracks cost for every ChatCompletion call
+patch_openai(tracer, budget_guard=budget)  # traces and checks every ChatCompletion call
 
 # Now run your agent normally — costs are tracked automatically
 ```

@@ -79,13 +79,17 @@ the local-first runtime enforcement layer.
 from agentguard import Tracer, LoopGuard, BudgetGuard, JsonlFileSink
 
 sink = JsonlFileSink(".agentguard/traces.jsonl")
+budget = BudgetGuard(max_cost_usd=5.00, max_calls=50)
+loop = LoopGuard(max_repeats=3)
 tracer = Tracer(
     sink=sink,
     service="my-agent",
-    guards=[LoopGuard(max_repeats=3), BudgetGuard(max_cost_usd=5.00)],
+    guards=[loop],
 )
 
 with tracer.trace("agent.run") as span:
+    budget.consume(calls=1, cost_usd=0.02)
+    loop.check("search", {"query": "docs"})
     span.event("reasoning.step", data={"thought": "search docs"})
     with span.span("tool.search"):
         pass  # your tool here
