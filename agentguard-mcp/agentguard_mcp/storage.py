@@ -119,19 +119,19 @@ class BudgetStore:
         typed_period = validate_period(period)
         validate_limits(limit_tokens, limit_usd)
         now = utc_now()
-        with self._connection() as conn, self._lock:
+        with self._lock, self._connection() as conn:
             conn.execute(
                 """
-                INSERT INTO budgets (
-                    scope, limit_tokens, limit_usd, period, kill_switch, created_at, updated_at
-                )
-                VALUES (?, ?, ?, ?, 0, ?, ?)
-                ON CONFLICT(scope) DO UPDATE SET
-                    limit_tokens = excluded.limit_tokens,
-                    limit_usd = excluded.limit_usd,
-                    period = excluded.period,
-                    updated_at = excluded.updated_at
-                """,
+                    INSERT INTO budgets (
+                        scope, limit_tokens, limit_usd, period, kill_switch, created_at, updated_at
+                    )
+                    VALUES (?, ?, ?, ?, 0, ?, ?)
+                    ON CONFLICT(scope) DO UPDATE SET
+                        limit_tokens = excluded.limit_tokens,
+                        limit_usd = excluded.limit_usd,
+                        period = excluded.period,
+                        updated_at = excluded.updated_at
+                    """,
                 (
                     scope,
                     limit_tokens,
@@ -146,7 +146,7 @@ class BudgetStore:
     def kill_switch(self, scope: str, enable: bool = True) -> BudgetSnapshot:
         scope = normalize_scope(scope)
         now = format_utc(utc_now())
-        with self._connection() as conn, self._lock:
+        with self._lock, self._connection() as conn:
             existing = conn.execute("SELECT scope FROM budgets WHERE scope = ?", (scope,)).fetchone()
             if existing is None:
                 conn.execute(
@@ -208,36 +208,50 @@ class BudgetStore:
         if kill_reasons:
             return {"allowed": False, "reasons": kill_reasons, "scopes_checked": scopes}
 
+        reasons = self._budget_exceeded_reasons(configured, tokens_in + tokens_out, cost_usd, current)
+        if reasons:
+            return {"allowed": False, "reasons": reasons, "scopes_checked": scopes}
+
         timestamp = format_utc(current)
-        with self._connection() as conn, self._lock:
+        with self._lock, self._connection() as conn:
             conn.executemany(
                 """
-                INSERT INTO usage_events (
-                    ts, scope, server, tool, session_id, tokens_in, tokens_out, cost_usd
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """,
+                    INSERT INTO usage_events (
+                        ts, scope, server, tool, session_id, tokens_in, tokens_out, cost_usd
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
                 [
                     (timestamp, scope, server, tool, session_id, tokens_in, tokens_out, cost_usd)
                     for scope in scopes
                 ],
             )
 
+        return {"allowed": True, "reasons": [], "scopes_checked": scopes}
+
+    def _budget_exceeded_reasons(
+        self,
+        budgets: list[Budget],
+        added_tokens: int,
+        added_cost_usd: float,
+        now: datetime,
+    ) -> list[str]:
         reasons: list[str] = []
-        for budget in configured:
-            snapshot = self.check_remaining(budget.scope, current)
-            if snapshot["tokens_limit"] is not None and snapshot["tokens_used"] > snapshot["tokens_limit"]:
+        for budget in budgets:
+            snapshot = self.check_remaining(budget.scope, now)
+            projected_tokens = snapshot["tokens_used"] + added_tokens
+            projected_usd = snapshot["usd_used"] + added_cost_usd
+            if snapshot["tokens_limit"] is not None and projected_tokens > snapshot["tokens_limit"]:
                 reasons.append(
                     f"{budget.scope} token budget exceeded: "
-                    f"{snapshot['tokens_used']} > {snapshot['tokens_limit']}"
+                    f"{projected_tokens} > {snapshot['tokens_limit']}"
                 )
-            if snapshot["usd_limit"] is not None and snapshot["usd_used"] > snapshot["usd_limit"]:
+            if snapshot["usd_limit"] is not None and projected_usd > snapshot["usd_limit"]:
                 reasons.append(
                     f"{budget.scope} dollar budget exceeded: "
-                    f"{snapshot['usd_used']:.6f} > {snapshot['usd_limit']:.6f}"
+                    f"{projected_usd:.6f} > {snapshot['usd_limit']:.6f}"
                 )
-
-        return {"allowed": not reasons, "reasons": reasons, "scopes_checked": scopes}
+        return reasons
 
     def list_budgets(self, now: datetime | None = None) -> list[BudgetSnapshot]:
         current = now or utc_now()

@@ -8,8 +8,8 @@ const moduleArgs = process.platform === "win32" && python === "py"
 
 if (process.env.AGENTGUARD_MCP_SKIP_PIP_INSTALL !== "1") {
   const pipArgs = process.platform === "win32" && python === "py"
-    ? ["-3", "-m", "pip", "install", "--user", "--upgrade", "agentguard-mcp"]
-    : ["-m", "pip", "install", "--user", "--upgrade", "agentguard-mcp"];
+    ? ["-3", "-m", "pip", "install", "--upgrade", "agentguard-mcp"]
+    : ["-m", "pip", "install", "--upgrade", "agentguard-mcp"];
   const install = spawnSync(python, pipArgs, { stdio: "inherit" });
   if (install.status !== 0) {
     process.exit(install.status || 1);

@@ -79,7 +79,7 @@ Set a $5/day global budget:
 }
 ```
 
-Record one heavy call:
+Try to record one heavy call:
 
 ```json
 {
@@ -106,7 +106,7 @@ The `record_call` tool returns:
 
 - `set_budget(scope, limit_tokens, limit_usd, period)` sets a budget. `period` is `session`, `day`, or `month`.
 - `check_remaining(scope)` returns current usage, limits, and reset time.
-- `record_call(server, tool, tokens_in, tokens_out, cost_usd, session_id)` records usage against `global`, `server:<server>`, `tool:<server>.<tool>`, and `session:<id>`.
+- `record_call(server, tool, tokens_in, tokens_out, cost_usd, session_id)` checks projected usage against `global`, `server:<server>`, `tool:<server>.<tool>`, and `session:<id>`. Allowed calls are persisted. Blocked calls are rejected without inflating usage.
 - `kill_switch(scope, enable)` blocks matching calls before usage is recorded.
 - `list_budgets()` returns configured budgets with current usage.
 

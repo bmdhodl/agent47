@@ -11,8 +11,8 @@ per-tool, per-server, per-session, and global budgets in tokens and dollars.
 - Added SQLite persistence at `~/.agentguard/state.db`, overridable with
   `AGENTGUARD_DB_PATH`.
 - Added read-time period rollover for `session`, `day`, and `month`.
-- Added an opt-in `AGENTGUARD_SYNC_URL` hook that POSTs usage events in a
-  background thread with a 2 second timeout.
+- Added an opt-in `AGENTGUARD_SYNC_URL` hook that POSTs usage events through a
+  bounded background worker with a 2 second timeout.
 - Added a thin npm shim package at `npm/agentguard-mcp/`.
 - Added install/config docs and Claude Desktop, Cursor, and Cline examples.
 - Added proof at `proof/agentguard-mcp/local-budget-proof.txt`.
@@ -25,7 +25,7 @@ per-tool, per-server, per-session, and global budgets in tokens and dollars.
   `awesome-mcp-servers`.
 
 ## Validation
-- New package tests passed: 6 passed.
+- New package tests passed: 10 passed.
 - New package ruff passed.
 - Existing TypeScript MCP tests passed after `npm --prefix mcp-server ci`.
 - SDK ruff passed.

@@ -6,7 +6,7 @@ Add local-first agentguard-mcp budget server
 ## Summary
 - add a new `agentguard-mcp` Python package that exposes MCP tools for local token and dollar budgets
 - persist budget definitions and usage events in SQLite with session/day/month read-time rollover
-- add kill-switch handling, matching scope accounting, and an opt-in non-blocking sync hook
+- add kill-switch handling, projected-usage checks, matching scope accounting, and an opt-in bounded non-blocking sync hook
 - add a thin `agentguard-mcp` npm shim plus Claude Desktop, Claude Code, Cursor, and Cline setup docs
 - save local proof for budget set, call recorded, budget exceeded, and kill-switch blocked behavior
 
@@ -35,6 +35,7 @@ Add local-first agentguard-mcp budget server
 - `python -m pip install -e .\agentguard-mcp`
 - `cd agentguard-mcp && python -m pytest`
 - `cd agentguard-mcp && python -m ruff check agentguard_mcp tests`
+- `python -c "import agentguard_mcp.server"`
 - `python -c "import agentguard_mcp.server as s; print('tools', sorted(['set_budget','check_remaining','record_call','kill_switch','list_budgets']))"`
 - `npm --prefix mcp-server ci`
 - `npm --prefix mcp-server test`

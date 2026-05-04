@@ -57,6 +57,17 @@ def test_record_call_returns_block_when_limit_exceeded(tmp_path):
     assert result["reasons"] == [
         "tool:github.create_issue token budget exceeded: 11 > 10",
     ]
+    assert store.check_remaining("tool:github.create_issue")["tokens_used"] == 0
+
+
+def test_record_call_allows_exact_limit_and_persists(tmp_path):
+    store = BudgetStore(tmp_path / "state.db")
+    store.set_budget("global", 10, None, "day")
+
+    result = store.record_call("github", "create_issue", 6, 4, 0.01, None)
+
+    assert result["allowed"] is True
+    assert store.check_remaining("global")["tokens_used"] == 10
 
 
 def test_set_budget_rejects_empty_limits(tmp_path):
