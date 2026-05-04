@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Release Proof
+- Added a deterministic sticky agent proof example that simulates a
+  CrewAI-style retry storm, repeated tool loop, budget burn, local incident
+  output, and dashboard-compatible hosted NDJSON without adding dependencies.
+- Added contract tests that post the sticky proof NDJSON to the local hosted
+  ingest harness so SDK proof events stay aligned with dashboard expectations.
+
 ### Activation
 - Added a post-demo next-step block so `agentguard demo` points directly to
   `agentguard quickstart --framework raw --write`, the generated starter, and

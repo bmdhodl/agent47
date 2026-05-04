@@ -41,7 +41,28 @@ Proves:
 Sample incident:
 [`docs/examples/coding-agent-review-loop-incident.md`](coding-agent-review-loop-incident.md)
 
-## 3. Token-Budget Spike
+## 3. Sticky Agent Proof
+
+```bash
+PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
+```
+
+Proves:
+
+- one CrewAI-style workflow can show retry storm, loop detection, and budget burn
+- the SDK can write a local incident report and hosted-compatible NDJSON
+- dashboard proof can be validated without adding framework dependencies
+
+Expected artifacts:
+
+```text
+sticky_agent_proof_traces.jsonl
+sticky_agent_proof_hosted.ndjson
+sticky_agent_proof_incident.md
+```
+
+## 4. Token-Budget Spike
 
 ```bash
 python examples/per_token_budget_spike.py
@@ -60,7 +81,7 @@ Expected stop condition:
 Cost budget exceeded:
 ```
 
-## 4. Decision Trace Workflow
+## 5. Decision Trace Workflow
 
 ```bash
 python examples/decision_trace_workflow.py
@@ -82,7 +103,7 @@ decision.approved
 decision.bound
 ```
 
-## 5. Budget-Aware Escalation
+## 6. Budget-Aware Escalation
 
 ```bash
 python examples/budget_aware_escalation.py
@@ -100,7 +121,7 @@ Expected stop condition:
 Escalation reason: token_count 2430 exceeded 2000
 ```
 
-## 6. Starter File Smoke Test
+## 7. Starter File Smoke Test
 
 ```bash
 agentguard quickstart --framework raw --write
@@ -116,12 +137,13 @@ Proves:
 
 ## What To Share
 
-The most shareable public demo is the coding-agent review loop:
+The most shareable public demo for the release train is the sticky agent proof:
 
 ```bash
-python examples/coding_agent_review_loop.py
-agentguard incident coding_agent_review_loop_traces.jsonl
+PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
 ```
 
-It maps directly to the product wedge: a coding agent gets stuck reviewing and
-retrying, then AgentGuard stops the run before it keeps burning tokens.
+It maps directly to the product wedge: a production-style agent workflow retries,
+loops, burns budget, then AgentGuard produces a local incident and a
+dashboard-ready event stream.

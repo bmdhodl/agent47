@@ -57,6 +57,25 @@ with:
 - network failures are logged instead of crashing the calling agent
 - retries are bounded by `max_retries`
 
+## Contract proof fixture
+
+Use the sticky proof example when you need one local artifact that can also be
+validated by the dashboard ingest contract:
+
+```bash
+PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+```
+
+It writes:
+
+- `sticky_agent_proof_traces.jsonl` for local reports and incident output
+- `sticky_agent_proof_incident.md` for local review or PR evidence
+- `sticky_agent_proof_hosted.ndjson` with dashboard-compatible `span` and
+  `event` records
+
+The hosted NDJSON drops local-only records and mirrors each event `kind` into
+`type`, matching the same normalization boundary used by `HttpSink`.
+
 ## Decision history
 
 Decision traces are ordinary AgentGuard events. The hosted dashboard recognizes
