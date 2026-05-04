@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -13,6 +14,7 @@ from agentguard.reporting import render_incident_report
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STARTERS_ROOT = REPO_ROOT / "examples" / "starters"
+PROOF_GALLERY_PATH = REPO_ROOT / "docs" / "examples" / "proof-gallery.md"
 
 
 def test_quickstart_payloads_have_matching_starter_files() -> None:
@@ -259,6 +261,29 @@ def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:
         actual = sample_path.read_text(encoding="utf-8")
 
         assert _normalize_incident_snapshot(actual) == expected
+
+
+def test_proof_gallery_demo_references_stay_valid() -> None:
+    source = PROOF_GALLERY_PATH.read_text(encoding="utf-8")
+
+    example_references = list(re.finditer(r"python (examples/[A-Za-z0-9_/-]+\.py)", source))
+    assert example_references, "Proof gallery should reference at least one local example"
+
+    for match in example_references:
+        example_path = REPO_ROOT / match.group(1)
+        assert example_path.exists(), f"Proof gallery references missing example: {match.group(1)}"
+
+    for link in re.findall(r"\[`([^`]+)`\]\(([^)]+)\)", source):
+        label, href = link
+        if href.startswith("http"):
+            continue
+        target = (PROOF_GALLERY_PATH.parent / href).resolve()
+        assert target.exists(), f"Proof gallery link is stale: {label} -> {href}"
+
+    assert "## 7. MCP Read Path" in source
+    assert "read-only" in source
+    assert "AGENTGUARD_API_KEY" in source
+    assert "local SDK enforcement remains independent" in source
 
 
 def _normalize_incident_snapshot(markdown: str) -> str:
