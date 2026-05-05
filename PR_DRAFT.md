@@ -1,44 +1,56 @@
 # PR Draft
 
 ## Title
-Add coding-agent review loop proof
+Add local-first agentguard-mcp budget server
 
 ## Summary
-- add a deterministic local-only example that simulates a coding-agent review loop burning budget and a patch retry storm
-- document the example from the README, getting-started guide, and examples index
-- add focused regression coverage proving the example runs offline and emits guard events
-- sync the generated PyPI README after root README changes
+- add a new `agentguard-mcp` Python package that exposes MCP tools for local token and dollar budgets
+- persist budget definitions and usage events in SQLite with session/day/month read-time rollover
+- add kill-switch handling, projected-usage checks, matching scope accounting, and an opt-in bounded non-blocking sync hook
+- add a thin `agentguard-mcp` npm shim plus Claude Desktop, Claude Code, Cursor, and Cline setup docs
+- save local proof for budget set, call recorded, budget exceeded, and kill-switch blocked behavior
 
 ## Scope
-- `examples/coding_agent_review_loop.py`
-- README / getting-started / examples docs
-- `sdk/tests/test_example_starters.py`
-- generated `sdk/PYPI_README.md`
-- proof artifacts under `proof/coding-agent-review-loop/`
+- `agentguard-mcp/`
+- `npm/agentguard-mcp/`
+- `examples/agentguard-mcp/`
+- `proof/agentguard-mcp/`
+- `Makefile`
 
 ## Non-goals
-- no dashboard repo changes
-- no auth, billing, database, deployment, secrets, or destructive script changes
-- no new runtime dependencies
-- no public SDK API changes
+- no hosted dashboard
+- no Stripe, billing, accounts, or multi-tenant sync server
+- no web UI
+- no Slack or email alerts
+- no changes to the existing read-only `mcp-server/` behavior
+- no new dependency in the zero-dependency core SDK
 
 ## Risk
-- low: this is an additive local example, docs, and test coverage
-- runtime behavior is unchanged
-- rollback is a straight revert with no migration or package dependency impact
+- medium: this adds a new publishable package surface and one new runtime dependency on the official `mcp` SDK inside that package only
+- core SDK behavior is unchanged
+- existing TypeScript MCP behavior is unchanged
+- rollback is a straight revert of the new package, npm shim, examples, proof, and Makefile target
 
 ## Validation
-- `python examples/coding_agent_review_loop.py`
-- `python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl`
-- `python -m pytest sdk/tests/test_example_starters.py::test_coding_agent_review_loop_example_runs_offline -q`
-- `python scripts/sdk_preflight.py`
-- `python scripts/sdk_release_guard.py`
-- `git diff --check`
-- `python -m ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py`
-- `python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+- `python -m pip install -e .\agentguard-mcp`
+- `cd agentguard-mcp && python -m pytest`
+- `cd agentguard-mcp && python -m ruff check agentguard_mcp tests`
+- `python -c "import agentguard_mcp.server"`
+- `python -c "import agentguard_mcp.server as s; print('tools', sorted(['set_budget','check_remaining','record_call','kill_switch','list_budgets']))"`
+- `npm --prefix mcp-server ci`
 - `npm --prefix mcp-server test`
+- `python -m ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py`
 - `python -m pytest sdk/tests/test_architecture.py -v`
 - `python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q`
+- `python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80`
+- `python scripts/sdk_release_guard.py`
+- `python scripts/sdk_preflight.py`
+- `python -m build .\agentguard-mcp`
+- `cd npm/agentguard-mcp && npm pack --dry-run`
 
 `make` is unavailable in this Windows shell, so Makefile-equivalent commands
-were run directly. Proof is saved in `proof/coding-agent-review-loop/`.
+were run directly. Proof is saved in `proof/agentguard-mcp/local-budget-proof.txt`.
+
+## Screenshots / Proof
+- Local terminal proof: `proof/agentguard-mcp/local-budget-proof.txt`
+- Claude Desktop screenshots are still needed from Patrick's configured desktop client before publishing.
