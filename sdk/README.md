@@ -269,6 +269,35 @@ export_csv("traces.jsonl", "traces.csv")
 python -m agentguard.bench
 ```
 
+## Typed contracts
+
+AgentGuard publishes typed schemas for its public configuration surface so
+agents and tools can introspect the contract instead of scraping prose.
+Schemas are stdlib-only frozen dataclasses (no pydantic dependency, no extra
+install).
+
+```python
+from agentguard import InitConfig, RepoConfig, ProfileDefaults, SUPPORTED_PROFILES
+
+cfg = InitConfig(budget_usd=5.00, profile="coding-agent", warn_pct=0.5)
+cfg.validate()  # raises ValueError on bad input
+
+import agentguard
+agentguard.init(**cfg.to_dict())
+```
+
+| Schema | What it shapes | Source |
+|---|---|---|
+| `InitConfig` | Keyword arguments to `agentguard.init()` | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `RepoConfig` | `.agentguard.json` repo-local defaults | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `ProfileDefaults` | Guard policy shape per built-in profile | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `SUPPORTED_PROFILES` | Tuple of valid profile names | [`agentguard/profiles.py`](agentguard/profiles.py) |
+
+Each schema has a `validate()` method that raises `ValueError` on bad input
+(out-of-range warn_pct, negative budget, unknown profile, header injection
+in api_key, etc.). Validation rules mirror the runtime checks already
+enforced by `init()` and `repo_config`.
+
 ## Migration Guide (v0.5 → v1.0)
 
 | v0.5 | v1.0 |

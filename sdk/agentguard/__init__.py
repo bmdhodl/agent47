@@ -48,6 +48,12 @@ from .instrument import (
     unpatch_openai,
     unpatch_openai_async,
 )
+from .schemas import (
+    SUPPORTED_PROFILES,
+    InitConfig,
+    ProfileDefaults,
+    RepoConfig,
+)
 from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
@@ -80,12 +86,16 @@ __all__ = [
     "EvalSuite",
     "FuzzyLoopGuard",
     "HttpSink",
+    "InitConfig",
     "JsonlFileSink",
     "LoopDetected",
     "LoopGuard",
+    "ProfileDefaults",
     "RateLimitGuard",
+    "RepoConfig",
     "RetryGuard",
     "RetryLimitExceeded",
+    "SUPPORTED_PROFILES",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",
