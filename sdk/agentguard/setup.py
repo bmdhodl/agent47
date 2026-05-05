@@ -74,7 +74,9 @@ def init(
             selected profile's value.
         retry_max: Max consecutive retries per tool before RetryGuard fires.
             Defaults to the selected profile's value.
-        profile: Built-in guard profile. Supported: ``default``, ``coding-agent``.
+        profile: Built-in guard profile. Supported: ``default``, ``coding-agent``,
+            ``deployed-agent`` (tightest, for unattended production agents;
+            motivated by arxiv:2605.00055 ambient-persuasion incident).
             May be passed explicitly or loaded from repo config. No environment
             variable. Default: ``default``.
         auto_patch: Auto-patch OpenAI/Anthropic clients. Default: True.
