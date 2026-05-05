@@ -1,37 +1,29 @@
-# RESEARCH — deployed-agent preset
+# RESEARCH — AgentGuard skill packaging
 
-## Existing pattern verified
+## Existing SKILL.md (verified)
+`K:\agent47\SKILL.md` already exists with Anthropic Claude Skills frontmatter (`name`, `description`, `license`, `compatibility`, `metadata`). PyPI package: `agentguard47`. Import: `from agentguard import ...`. CLI: `agentguard doctor|demo|report|eval|incident`. 4-line quick-start uses `BudgetGuard`, `Tracer`, `patch_openai`.
 
-- `sdk/agentguard/profiles.py` exposes `_PROFILE_DEFAULTS` keyed by canonical
-  profile name. Two entries today: `default` and `coding-agent`. Each entry
-  is a dict of `{loop_max, retry_max, warn_pct}`.
-- `sdk/agentguard/setup.py` line 132 calls `normalize_profile(...)` then
-  `get_profile_defaults(...)`; resolved values feed BudgetGuard, LoopGuard,
-  RetryGuard construction. No other plumbing required to register a new
-  profile.
-- `normalize_profile` raises with a sorted list of supported profiles, so
-  the new profile name appears automatically in error messages.
-- `sdk/tests/test_init.py::TestInitLoopGuard::test_coding_agent_profile_tightens_guard_defaults`
-  is the precedent test shape; the new test mirrors it and additionally
-  asserts the `warn_pct` change via `get_budget_guard()`.
-- `agentguard.get_budget_guard()` exposes `_warn_at_pct`; verified against
-  `test_budget_warning_threshold` (line 300).
+## Skill format research
+- **Claude Code / Anthropic skills** — `SKILL.md` with YAML frontmatter (`name`, `description`; optional `license`, `compatibility`, `metadata`). Body is markdown with install + trigger conditions + examples. Multiple skills per repo go in `skills/<skill-name>/SKILL.md`.
+- **Codex skills** — single markdown file under `skills/codex/<name>.md` (or `.codex/skills/`). Frontmatter optional but `name`/`description` recommended.
 
-## What was rejected
+## awesome-agent-skills (VoltAgent) submission rules
+Verified via raw CONTRIBUTING.md fetch:
+- Format: `- **[author/skill-name](url)** - description (<=10 words)`
+- Add to end of an EXISTING category. No "Safety / Cost Control" section exists. Closest fits: Community Skills > AI and Data, or Other.
+- Quality gate: "real community usage and proven adoption (not brand-new submissions)" — explicit blocker for same-day submissions.
+- PR title format: `Add skill: bmdhodl/agentguard`
+- Public repo + working skill + README/SKILL.md + author prefix all required.
 
-The task body asks for `max_install_count`, `registry_write: deny`,
-`oversight_decision_immutable`, `approval_threshold`. None of these guard
-primitives exist in the SDK today. Adding them would require new guard
-classes (search: `class .*Guard` in `sdk/agentguard/guards.py`), a new public
-API surface, and deliberate API review. That is a separate, larger task.
-This PR ships the preset hook + arxiv paper messaging using only the
-existing guard primitives — a real, useful tightening today, with a clean
-seam for follow-up work to extend the profile.
+## Decision: defer awesome-agent-skills PR
+Submitting a same-day-created skill violates their stated adoption gate. Right path:
+1. Ship skill files in agent47 now (this PR).
+2. Let them be referenced/installed ~2 weeks.
+3. Queue follow-up task for awesome PR with download/issue evidence.
 
-## Cost / safety pass
+Decision logged in PR body + new Queue/agent47 task created for the follow-up.
 
-- No new dependencies.
-- No network calls.
-- No auth, secrets, PII, or denylist paths touched.
-- Test executes locally with `auto_patch=False` (no client patching) — same
-  shape as adjacent tests.
+## Repo state at start
+- PR #442 merged on origin/main as squash `0d39f02`. Local was on pre-squash `feat/deployed-agent-preset`. Step 0 cut new branch `feat/agentguard-claude-code-skill` from `origin/main`.
+- Worktree at `C:/Users/patri/.codex/worktrees/agent47-release-hygiene` holds `main` — could not check out main locally; cut feat branch from `origin/main` directly.
+- Stragglers from PR #442 found at repo root: `WORK_PLAN.md`, `RESEARCH.md`, `QA_REPORT.md`, `PR_DRAFT.md`, `MORNING_REPORT.md`, `FOLLOWUP.md`, `CLAUDE_MD_AUDIT.md`. Treated as throwaway worker scratch and overwritten for this run.
