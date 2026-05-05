@@ -335,6 +335,20 @@ class TestInitLoopGuard:
         assert loop_guards[0]._max_repeats == 3
         assert retry_guards[0].max_retries == 2
 
+    def test_deployed_agent_profile_tightens_guard_defaults(self):
+        tracer = agentguard.init(
+            profile="deployed-agent", budget_usd=10.00, auto_patch=False
+        )
+        from agentguard.guards import LoopGuard, RetryGuard
+
+        loop_guards = [g for g in tracer._guards if isinstance(g, LoopGuard)]
+        retry_guards = [g for g in tracer._guards if isinstance(g, RetryGuard)]
+        budget_guard = agentguard.get_budget_guard()
+
+        assert loop_guards[0]._max_repeats == 2
+        assert retry_guards[0].max_retries == 1
+        assert budget_guard._warn_at_pct == 0.5
+
     def test_repo_config_profile_applies_retry_guard(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             config_path = os.path.join(tmpdir, ".agentguard.json")

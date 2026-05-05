@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Profiles
+- Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
+  for unattended production agents. Tightens defaults to `loop_max=2`,
+  `retry_max=1`, `warn_pct=0.5`. Motivated by the arxiv:2605.00055
+  ambient-persuasion incident where a deployed agent installed 107
+  unauthorized components and overrode its own oversight gate.
+
 ### Release Proof
 - Added a deterministic sticky agent proof example that simulates a
   CrewAI-style retry storm, repeated tool loop, budget burn, local incident

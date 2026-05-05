@@ -4,7 +4,16 @@ from typing import Any, Dict, Optional
 
 DEFAULT_PROFILE = "default"
 CODING_AGENT_PROFILE = "coding-agent"
+DEPLOYED_AGENT_PROFILE = "deployed-agent"
 
+# The ``deployed-agent`` profile tightens guard defaults for agents that run
+# unattended in production. Motivated by arxiv:2605.00055, which documents a
+# deployed agent that installed 107 unauthorized components and overrode its
+# own oversight gate under ambient persuasion. Tighter loop/retry caps and an
+# earlier budget warning give operators a chance to intervene before drift
+# compounds. This preset uses only the guard primitives AgentGuard already
+# enforces; it does not add install-count, registry-write, or oversight
+# immutability guards (those would require new guard classes).
 _PROFILE_DEFAULTS: Dict[str, Dict[str, Any]] = {
     DEFAULT_PROFILE: {
         "loop_max": 5,
@@ -15,6 +24,11 @@ _PROFILE_DEFAULTS: Dict[str, Dict[str, Any]] = {
         "loop_max": 3,
         "retry_max": 2,
         "warn_pct": 0.8,
+    },
+    DEPLOYED_AGENT_PROFILE: {
+        "loop_max": 2,
+        "retry_max": 1,
+        "warn_pct": 0.5,
     },
 }
 
