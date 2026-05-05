@@ -70,6 +70,7 @@ if not any(isinstance(handler, logging.NullHandler) for handler in _logger.handl
     _logger.addHandler(logging.NullHandler())
 
 __all__ = [
+    "SUPPORTED_PROFILES",
     "AgentGuardError",
     "AssertionResult",
     "AsyncTraceContext",
@@ -95,7 +96,6 @@ __all__ = [
     "RepoConfig",
     "RetryGuard",
     "RetryLimitExceeded",
-    "SUPPORTED_PROFILES",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",
