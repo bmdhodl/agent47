@@ -1,50 +1,31 @@
-# QA Report — deployed-agent preset
+# QA_REPORT — feat/agentguard-claude-code-skill
 
-Verdict: PASS
+## Verdict: PASS (single-pass review, doc-only diff)
 
-## Scope match
-
-The diff matches `WORK_PLAN.md` exactly. No scope creep beyond the four files
-listed in the plan (profiles, setup docstring, test, CHANGELOG).
-
-## What was checked
-
-- `sdk/agentguard/profiles.py` — new `DEPLOYED_AGENT_PROFILE` constant and
-  dict entry follow the existing pattern. Comment block explains the
-  motivation and what was deliberately left out (install/registry/oversight
-  guards). Values (loop_max=2, retry_max=1, warn_pct=0.5) are strictly
-  tighter than `coding-agent` as expected for a deployed-agent preset.
-- `sdk/agentguard/setup.py` — docstring updated to list new profile.
-  `normalize_profile` already uses `_PROFILE_DEFAULTS` keys for error
-  messages, so no other update needed.
-- `sdk/tests/test_init.py` — new test mirrors the existing
-  `test_coding_agent_profile_tightens_guard_defaults` and additionally
-  covers `warn_pct` via `get_budget_guard()._warn_at_pct`. Idiomatic.
-- `CHANGELOG.md` — one Unreleased entry citing the arxiv paper.
-
-## Test result
-
-`pytest sdk/tests/ -x` — 708 passed, 0 failed.
+## Scope check
+Diff matches WORK_PLAN.md scope:
+- `skills/agentguard/SKILL.md` — Claude Code skill format frontmatter
+- `skills/codex/agentguard.md` — mirrors content for Codex
+- `skills/README.md` — orients readers
+- `WORK_PLAN.md` / `RESEARCH.md` — overwritten to reflect this task (stragglers from PR #442)
 
 ## Safety checks
+- No secrets, tokens, credentials
+- No denylist paths (`.github/workflows/`, `.env*`, `supabase/migrations/`, `security/`, Stripe/Clerk auth)
+- No new dependencies
+- No code changes — pure additive documentation
+- No tests broken (no test files touched)
+- Total: 222 insertions, well under 400 LOC cap
 
-- No secrets or credentials added.
-- No denylist paths touched (`.github/workflows/`, `.env*`,
-  `supabase/migrations/`, `security/`, Stripe/Clerk).
-- No new dependencies.
-- No network calls.
-- No test coverage regressions — net +1 test.
+## Content checks
+- PyPI package `agentguard47` — verified against root `SKILL.md` line 9
+- Import `from agentguard import ...` — matches root SKILL.md lines 31, 75, 90
+- All URLs reference canonical `bmdhodl/agent47` repo
+- Skill files link back to root SKILL.md as canonical — minimizes drift risk
 
-## Repo pattern adherence
+## Pattern compliance
+- Frontmatter matches root `SKILL.md` (Anthropic Skills format)
+- Codex skill follows YAML-frontmatter + body single-file pattern
 
-- Naming: hyphenated `deployed-agent` matches `coding-agent`.
-- Constant: `DEPLOYED_AGENT_PROFILE` matches `CODING_AGENT_PROFILE`.
-- Test method name pattern matches the precedent.
-- Comment voice matches surrounding code (terse, no fluff).
-
-## Known gap (intentional, called out in WORK_PLAN.md)
-
-The task body asked for `max_install_count`, `registry_write: deny`,
-`oversight_decision_immutable`, `approval_threshold`. These primitives don't
-exist in the SDK today. This PR ships the preset registration + the security
-narrative; a follow-up task can land the new guard classes.
+## Issues
+None.
