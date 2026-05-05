@@ -5,14 +5,14 @@ license: MIT
 compatibility: Requires Python 3.9+
 metadata:
   author: bmdhodl
-  version: "1.2.7"
+  version: "1.2.10"
   pypi: agentguard47
   source: https://github.com/bmdhodl/agent47
 ---
 
 # AgentGuard (Claude Code skill)
 
-Runtime guardrails for AI coding agents. Wraps any agent (OpenAI, Anthropic, LangChain, LangGraph, CrewAI) with budget, loop, timeout, rate-limit, and retry guards that raise exceptions when limits trip. Zero dependencies, local-first, no telemetry.
+Runtime guardrails for AI coding agents. Wraps any agent (OpenAI, Anthropic, LangChain, LangGraph, CrewAI) with budget, loop, timeout, rate-limit, and retry guards that raise exceptions when limits trip. Zero dependencies, local-first, and no network calls unless you configure a remote sink.
 
 ## When to use this skill
 
@@ -66,7 +66,7 @@ import agentguard
 agentguard.init(profile="coding-agent", local_only=True)
 ```
 
-Profiles: `coding-agent`, `deployed-agent`, `research-agent`, custom via `.agentguard.json` in repo root.
+Profiles: `default`, `coding-agent`, `deployed-agent`, custom via `.agentguard.json` in repo root.
 
 ## CLI
 

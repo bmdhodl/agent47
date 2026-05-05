@@ -8,7 +8,7 @@ source: https://github.com/bmdhodl/agent47
 
 # AgentGuard (Codex skill)
 
-Wrap any AI coding agent with runtime guards: budget, loop, timeout, rate-limit, retry. Zero dependencies, local-first.
+Wrap any AI coding agent with runtime guards: budget, loop, timeout, rate-limit, retry. Zero dependencies, local-first, and no network calls unless you configure a remote sink.
 
 ## Trigger
 
@@ -55,7 +55,7 @@ import agentguard
 agentguard.init(profile="coding-agent", local_only=True)
 ```
 
-Profiles: `coding-agent`, `deployed-agent`, `research-agent`. Override via `.agentguard.json`.
+Profiles: `default`, `coding-agent`, `deployed-agent`. Override via `.agentguard.json`.
 
 ## Full reference
 
