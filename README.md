@@ -18,6 +18,7 @@ enough to create surprise spend.
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
+[![SafeSkill 81/100](https://img.shields.io/badge/SafeSkill-81%2F100_Passes%20with%20Notes-yellow)](https://safeskill.dev/scan/bmdhodl-agent47)
 
 ```bash
 pip install agentguard47
