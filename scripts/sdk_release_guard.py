@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
+import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import List, Sequence
@@ -11,6 +13,7 @@ from typing import List, Sequence
 import generate_pypi_readme
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+NPM_COMMAND = "npm.cmd" if sys.platform == "win32" else "npm"
 PYPROJECT_PATH = Path("sdk/pyproject.toml")
 CHANGELOG_PATH = Path("CHANGELOG.md")
 MCP_PACKAGE_PATH = Path("mcp-server/package.json")
@@ -154,22 +157,105 @@ def check_mcp_metadata(repo_root: Path) -> List[Finding]:
     return findings
 
 
-def collect_findings(repo_root: Path) -> List[Finding]:
+def check_mcp_npm_package(repo_root: Path, npm_command: str = NPM_COMMAND) -> List[Finding]:
+    """Optionally verify the repo MCP package version is published on npm."""
+    package_path = repo_root / MCP_PACKAGE_PATH
+    if not package_path.exists():
+        return []
+
+    package = json.loads(package_path.read_text(encoding="utf-8"))
+    package_name = package.get("name")
+    package_version = package.get("version")
+    if not package_name or not package_version:
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message="Expected MCP package name and version before checking npm.",
+            )
+        ]
+
+    try:
+        exact_result = subprocess.run(
+            [npm_command, "view", f"{package_name}@{package_version}", "version"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message=(
+                    f"Could not run {npm_command} for npm verification. "
+                    f"Install npm or set AGENTGUARD_NPM_COMMAND. {exc}"
+                ),
+            )
+        ]
+    if exact_result.returncode != 0:
+        detail = (exact_result.stderr or exact_result.stdout).strip()
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message=f"Expected {package_name}@{package_version} to be published on npm. {detail}",
+            )
+        ]
+
+    latest_result = subprocess.run(
+        [npm_command, "view", package_name, "version"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if latest_result.returncode != 0:
+        detail = (latest_result.stderr or latest_result.stdout).strip()
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message=f"Could not read latest npm version for {package_name}. {detail}",
+            )
+        ]
+
+    latest_version = latest_result.stdout.strip()
+    if latest_version != package_version:
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message=f"Expected npm latest {package_version}, found {latest_version}.",
+            )
+        ]
+    return []
+
+
+def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Finding]:
     version = load_version(repo_root)
     findings: List[Finding] = []
     findings.extend(check_changelog(repo_root, version))
     findings.extend(check_pypi_readme(repo_root))
     findings.extend(check_release_markers(repo_root, version))
     findings.extend(check_mcp_metadata(repo_root))
+    if check_mcp_npm:
+        findings.extend(check_mcp_npm_package(repo_root))
     return findings
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true", help="Emit findings as JSON.")
+    parser.add_argument(
+        "--check-mcp-npm",
+        action="store_true",
+        help="Also verify the MCP package version is published as npm latest. Uses network.",
+    )
     args = parser.parse_args(argv)
 
-    findings = collect_findings(REPO_ROOT)
+    findings = collect_findings(REPO_ROOT, check_mcp_npm=args.check_mcp_npm)
     if args.json:
         print(json.dumps([asdict(finding) for finding in findings], indent=2))
     else:
