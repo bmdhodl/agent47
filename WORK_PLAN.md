@@ -1,40 +1,29 @@
-# WORK_PLAN — deployed-agent preset
+# WORK_PLAN — Ship AgentGuard as Claude Code skill
 
 ## Problem
-
-A peer-reviewed report (arxiv 2605.00055) documents a deployed agent that, under ambient persuasion, installed 107 unauthorized components and overrode its own oversight gate. AgentGuard's existing `coding-agent` profile is tuned for dev-time loops, not production deployment. We need a tighter preset for agents running unattended in production where any drift compounds.
+VoltAgent's awesome-agent-skills indexes packaged Claude Code / Codex / Cursor / Gemini skills. AgentGuard fits the safety/cost-control niche but has no entry. agent47 has a root `SKILL.md` (Anthropic format) but no namespaced `skills/agentguard/` Claude Code package and no Codex-format mirror.
 
 ## Approach
+1. Add `skills/agentguard/SKILL.md` — Claude Code skill format with name + description frontmatter and trigger conditions in body. Mirror content tightly to root `SKILL.md` so they don't drift.
+2. Add `skills/codex/agentguard.md` — Codex skill format mirror (single file).
+3. Add `skills/README.md` orienting readers to which format to use.
+4. Defer the awesome-agent-skills PR. Their CONTRIBUTING.md explicitly requires "real community usage and proven adoption (not brand-new submissions)." Submitting a brand-new skill file the same hour the directory is created violates their gate. Instead, ship the skill files in agent47 first, let them mature ~2 weeks, then queue a follow-up awesome PR with usage evidence. Decision logged in PR body + new Queue task.
+5. Open small separate PR to bmdpat adding "Install via Claude Code skill" snippet to AgentGuard tools page.
 
-Add a new `deployed-agent` profile to `sdk/agentguard/profiles.py` alongside `default` and `coding-agent`. Match the existing pattern exactly — same primitives (`loop_max`, `retry_max`, `warn_pct`), tighter values:
+## Files to touch
+- `skills/agentguard/SKILL.md` (new)
+- `skills/codex/agentguard.md` (new)
+- `skills/README.md` (new)
+- (bmdpat) tools/agentguard page — separate PR
 
-- `loop_max: 2` — two repeats and stop. Ambient-persuasion attacks build through repetition.
-- `retry_max: 1` — one retry. Removes the "just keep trying" failure mode.
-- `warn_pct: 0.5` — warn at half budget, not 80%. Operators see drift earlier.
+## Done criteria
+- [ ] `skills/agentguard/SKILL.md` exists, valid frontmatter, points to `agentguard47` PyPI
+- [ ] `skills/codex/agentguard.md` mirrors content
+- [ ] `skills/README.md` explains both formats
+- [ ] PR open on agent47 with green checks
+- [ ] bmdpat tools page mentions skill install (separate PR)
+- [ ] awesome-agent-skills PR deferred — new Queue/agent47 task created for ~2 weeks out
 
-The task body asks for new primitives (`max_install_count`, `registry_write: deny`, `oversight_decision_immutable`, `approval_threshold`). These don't exist as guards in the SDK today — adding them would mean new guard classes, new APIs, hundreds of LOC, and a release surface change. **Out of scope for this PR.** This PR ships the preset hook and the messaging; a follow-up task can land the new guard primitives once the API shape is reviewed.
-
-The preset's docstring + a README/CHANGELOG note cite the arxiv paper as the motivating incident. That gives us the security-validation narrative without overpromising what the preset enforces.
-
-## Files likely to touch
-
-- `sdk/agentguard/profiles.py` — add `DEPLOYED_AGENT_PROFILE` constant + dict entry
-- `sdk/agentguard/setup.py` — update `profile` arg docstring
-- `sdk/tests/test_init.py` — add a test mirroring `test_coding_agent_profile_tightens_guard_defaults`
-- `CHANGELOG.md` — one-line entry
-- `README.md` — short note in the profiles section if one exists
-- `sdk/agentguard/doctor.py` (skim) — only if it enumerates profiles
-
-## Done
-
-- [ ] `agentguard.init(profile="deployed-agent")` returns a tracer with LoopGuard max_repeats=2, RetryGuard max_retries=1, BudgetGuard warn at 0.5
-- [ ] Test passes
-- [ ] Existing tests still pass
-- [ ] Profile docstring references arxiv paper
-- [ ] CHANGELOG entry
-
-## Risks / assumptions
-
-- The task body asks for primitives that don't exist. We're scoping down to what the SDK already supports + clear messaging. Patrick can land the install-count/registry-write guards in a follow-up if he wants them.
-- No new dependencies added.
-- Preset name uses the existing convention (`deployed-agent` with hyphen, not `deployed_agent`) so it's consistent with `coding-agent`.
+## Risks
+- Drift between root `SKILL.md` and `skills/agentguard/SKILL.md` — mitigation: `skills/` version stays terse and links to root for full reference.
+- Awesome list gate may reject even a mature submission — acceptable; deferring respects their stated rule.
