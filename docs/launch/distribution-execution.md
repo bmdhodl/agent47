@@ -50,8 +50,8 @@ Current listing:
 
 Listing details:
 - Name: `AgentGuard`
-- One-liner: `Runtime safety infrastructure for AI agents`
-- Description: `AgentGuard47 is runtime safety infrastructure for AI agents. It adds budget caps, loop detection, retry limits, timeouts, local traces, and incident reports so agents can stop bad runs while they are happening, not just explain them afterward.`
+- One-liner: `MCP server for coding-agent traces, alerts, costs, usage, and budget health`
+- Description: `Read-only MCP server for coding-agent traces, decision events, alerts, costs, usage, and budget health.`
 - npm package: `@agentguard47/mcp-server`
 - Repo: `https://github.com/bmdhodl/agent47`
 - MCP metadata name: `io.github.bmdhodl/agentguard47`
