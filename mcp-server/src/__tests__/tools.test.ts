@@ -3,6 +3,19 @@ import assert from "node:assert/strict";
 
 import { tools } from "../tools.js";
 
+test("query_traces exposes read-only annotations and agent-use guidance", () => {
+  const tool = tools.find((entry) => entry.name === "query_traces");
+  assert.ok(tool);
+
+  assert.equal(tool.annotations?.readOnlyHint, true);
+  assert.equal(tool.annotations?.destructiveHint, false);
+  assert.equal(tool.annotations?.idempotentHint, true);
+  assert.match(tool.description, /read or full scope/);
+  assert.match(tool.description, /60 requests per minute/);
+  assert.match(tool.description, /ordered newest first/);
+  assert.match(tool.description, /get_trace/);
+});
+
 test("get_trace_decisions returns normalized decision payloads", async () => {
   const tool = tools.find((entry) => entry.name === "get_trace_decisions");
   assert.ok(tool);
