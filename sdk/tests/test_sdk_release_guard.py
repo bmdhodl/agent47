@@ -170,6 +170,36 @@ class TestReleaseGuardHelpers(unittest.TestCase):
                 check=False,
             )
 
+    def test_check_mcp_npm_package_uses_env_command_by_default(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            (repo_root / "mcp-server").mkdir()
+            (repo_root / "mcp-server" / "package.json").write_text(
+                json.dumps(
+                    {
+                        "name": "@agentguard47/mcp-server",
+                        "version": "0.2.2",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            exact = Mock(returncode=0, stdout="0.2.2\n", stderr="")
+            latest = Mock(returncode=0, stdout="0.2.2\n", stderr="")
+            with patch.dict(
+                sdk_release_guard.os.environ,
+                {"AGENTGUARD_NPM_COMMAND": "custom-npm"},
+            ), patch.object(
+                sdk_release_guard.subprocess,
+                "run",
+                side_effect=[exact, latest],
+            ) as npm_view:
+                findings = sdk_release_guard.check_mcp_npm_package(repo_root)
+
+            self.assertEqual(findings, [])
+            self.assertEqual(npm_view.call_args_list[0].args[0][0], "custom-npm")
+            self.assertEqual(npm_view.call_args_list[1].args[0][0], "custom-npm")
+
     def test_check_mcp_npm_package_reports_latest_drift(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = pathlib.Path(tmp)

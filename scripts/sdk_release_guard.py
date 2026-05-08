@@ -3,17 +3,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 import generate_pypi_readme
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-NPM_COMMAND = "npm.cmd" if sys.platform == "win32" else "npm"
+DEFAULT_NPM_COMMAND = "npm.cmd" if sys.platform == "win32" else "npm"
 PYPROJECT_PATH = Path("sdk/pyproject.toml")
 CHANGELOG_PATH = Path("CHANGELOG.md")
 MCP_PACKAGE_PATH = Path("mcp-server/package.json")
@@ -157,8 +158,14 @@ def check_mcp_metadata(repo_root: Path) -> List[Finding]:
     return findings
 
 
-def check_mcp_npm_package(repo_root: Path, npm_command: str = NPM_COMMAND) -> List[Finding]:
+def get_npm_command() -> str:
+    """Return the npm executable used for optional registry verification."""
+    return os.environ.get("AGENTGUARD_NPM_COMMAND") or DEFAULT_NPM_COMMAND
+
+
+def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> List[Finding]:
     """Optionally verify the repo MCP package version is published on npm."""
+    command = npm_command or get_npm_command()
     package_path = repo_root / MCP_PACKAGE_PATH
     if not package_path.exists():
         return []
@@ -177,7 +184,7 @@ def check_mcp_npm_package(repo_root: Path, npm_command: str = NPM_COMMAND) -> Li
 
     try:
         exact_result = subprocess.run(
-            [npm_command, "view", f"{package_name}@{package_version}", "version"],
+            [command, "view", f"{package_name}@{package_version}", "version"],
             cwd=repo_root,
             capture_output=True,
             text=True,
@@ -189,7 +196,7 @@ def check_mcp_npm_package(repo_root: Path, npm_command: str = NPM_COMMAND) -> Li
                 check="mcp-npm",
                 path=str(MCP_PACKAGE_PATH),
                 message=(
-                    f"Could not run {npm_command} for npm verification. "
+                    f"Could not run {command} for npm verification. "
                     f"Install npm or set AGENTGUARD_NPM_COMMAND. {exc}"
                 ),
             )
@@ -204,13 +211,25 @@ def check_mcp_npm_package(repo_root: Path, npm_command: str = NPM_COMMAND) -> Li
             )
         ]
 
-    latest_result = subprocess.run(
-        [npm_command, "view", package_name, "version"],
-        cwd=repo_root,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        latest_result = subprocess.run(
+            [command, "view", package_name, "version"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        return [
+            Finding(
+                check="mcp-npm",
+                path=str(MCP_PACKAGE_PATH),
+                message=(
+                    f"Could not run {command} for npm verification. "
+                    f"Install npm or set AGENTGUARD_NPM_COMMAND. {exc}"
+                ),
+            )
+        ]
     if latest_result.returncode != 0:
         detail = (latest_result.stderr or latest_result.stdout).strip()
         return [

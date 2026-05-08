@@ -26,21 +26,25 @@ The default release guard remains network-free. The optional flag verifies that:
 
 ```text
 python scripts\sdk_release_guard.py --check-mcp-npm
-[mcp-npm] mcp-server\package.json: Expected @agentguard47/mcp-server@0.2.2 to be published on npm. npm error code E404
+Release guard passed.
 ```
 
-This is expected until issue #428 is completed with npm OTP.
+`@agentguard47/mcp-server@0.2.2` is now published on npm and matches npm
+latest.
 
 ## Checks
 
 ```text
 python -m pytest sdk\tests\test_sdk_release_guard.py -v
-8 passed.
+10 passed.
 
 python -m ruff check scripts\sdk_release_guard.py sdk\tests\test_sdk_release_guard.py
 All checks passed.
 
 python scripts\sdk_release_guard.py
+Release guard passed.
+
+python scripts\sdk_release_guard.py --check-mcp-npm
 Release guard passed.
 
 python scripts\sdk_preflight.py
