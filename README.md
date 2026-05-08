@@ -16,7 +16,7 @@ enough to create surprise spend.
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
+[![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
 ```bash
@@ -392,6 +392,8 @@ assert result.passed
 - Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
 - MCP package: [`@agentguard47/mcp-server`](mcp-server/)
 - Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
+
+[![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/card.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 ## Docs
 
