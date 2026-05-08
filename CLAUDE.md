@@ -91,8 +91,9 @@ Use the repo's existing proof discipline:
 
 - save artifacts under `proof/<task-name>/`
 - keep PR summaries in the pull request body
-- do not add one-off reports or work plans to the repo root; archive any
-  retained historical notes under `docs/archive/root-reports/`
+- keep active repo follow-ups in `ops/FOLLOWUP.md`
+- do not add one-off reports, work plans, or handoff notes to the repo root;
+  archive any retained historical notes under `docs/archive/root-reports/`
 
 After a merged PR, add one short SDK-only entry to `inbox/log.md`.
 
