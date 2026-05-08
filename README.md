@@ -391,6 +391,7 @@ assert result.passed
 - Trace format: JSONL
 - Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
 - MCP package: [`@agentguard47/mcp-server`](mcp-server/)
+- Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 ## Docs
 
