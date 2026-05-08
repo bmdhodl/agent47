@@ -90,8 +90,9 @@ proof.
 Use the repo's existing proof discipline:
 
 - save artifacts under `proof/<task-name>/`
-- update `PR_DRAFT.md`
-- update `MORNING_REPORT.md`
+- keep PR summaries in the pull request body
+- do not add one-off reports or work plans to the repo root; archive any
+  retained historical notes under `docs/archive/root-reports/`
 
 After a merged PR, add one short SDK-only entry to `inbox/log.md`.
 

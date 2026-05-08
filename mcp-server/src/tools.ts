@@ -1,9 +1,11 @@
 import { AgentGuardClient } from "./client.js";
 import { extractDecisionEvents } from "./decisions.js";
+import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 
 export interface ToolDefinition {
   name: string;
   description: string;
+  annotations?: ToolAnnotations;
   inputSchema: {
     type: "object";
     properties: Record<string, unknown>;
@@ -16,12 +18,21 @@ export const tools: ToolDefinition[] = [
   {
     name: "query_traces",
     description:
-      "Search retained trace summaries from the AgentGuard Read API. " +
-      "This is read-only: it does not mutate agents, traces, budgets, or alerts; " +
-      "it returns JSON with a traces array, defaults to limit 20, and supports service, " +
-      "ISO since/until, and offset pagination filters. " +
-      "Use this to find candidate trace_id values; use get_trace for one full trace " +
+      "Read-only search for retained AgentGuard trace summaries in the hosted dashboard API. " +
+      "Requires AGENTGUARD_API_KEY with read or full scope and uses the dashboard read rate limit " +
+      "(currently 60 requests per minute). Returns JSON with a traces array ordered newest first; " +
+      "each item includes trace_id, service, root_name, event_count, error_count, duration_ms, " +
+      "started_at, api_key metadata, and total_cost when available. Defaults to limit=20, accepts " +
+      "limit up to 500, offset pagination, exact service filtering, and ISO 8601 since/until bounds. " +
+      "Use this to find candidate trace_id values; use get_trace for the full event tree of one trace " +
       "or get_trace_decisions for decision.* events from a known trace.",
+    annotations: {
+      title: "Query AgentGuard trace summaries",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     inputSchema: {
       type: "object",
       properties: {
