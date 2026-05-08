@@ -3,6 +3,11 @@
 Use this checklist when `mcp-server/package.json` is ahead of the public npm
 package.
 
+For timing and release-train ownership, see
+[`cadence.md`](cadence.md). The short rule is: review MCP distribution weekly,
+but publish only when package metadata, tool behavior, registry state, or Glama
+state needs a new release.
+
 The MCP package is separate from the Python SDK release:
 
 - Python SDK: `agentguard47` on PyPI
