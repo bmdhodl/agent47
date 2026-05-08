@@ -10,9 +10,8 @@ test("query_traces exposes read-only annotations and agent-use guidance", () => 
   assert.equal(tool.annotations?.readOnlyHint, true);
   assert.equal(tool.annotations?.destructiveHint, false);
   assert.equal(tool.annotations?.idempotentHint, true);
-  assert.match(tool.description, /read or full scope/);
-  assert.match(tool.description, /60 requests per minute/);
-  assert.match(tool.description, /ordered newest first/);
+  assert.match(tool.description, /AgentGuard Read API/);
+  assert.match(tool.description, /Read-only search/);
   assert.match(tool.description, /get_trace/);
 });
 

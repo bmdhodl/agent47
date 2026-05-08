@@ -18,12 +18,12 @@ export const tools: ToolDefinition[] = [
   {
     name: "query_traces",
     description:
-      "Read-only search for retained AgentGuard trace summaries in the hosted dashboard API. " +
-      "Requires AGENTGUARD_API_KEY with read or full scope and uses the dashboard read rate limit " +
-      "(currently 60 requests per minute). Returns JSON with a traces array ordered newest first; " +
-      "each item includes trace_id, service, root_name, event_count, error_count, duration_ms, " +
-      "started_at, api_key metadata, and total_cost when available. Defaults to limit=20, accepts " +
-      "limit up to 500, offset pagination, exact service filtering, and ISO 8601 since/until bounds. " +
+      "Read-only search for retained AgentGuard trace summaries from the AgentGuard Read API. " +
+      "Requires AGENTGUARD_API_KEY with read access; create keys in the AgentGuard dashboard. " +
+      "Returns JSON with a traces array, newest traces first when the API supports ordering; " +
+      "items include trace_id, service, root_name, event_count, error_count, duration_ms, " +
+      "started_at, API key metadata, and total_cost when available. Defaults to a small page, " +
+      "accepts offset pagination, exact service filtering, and ISO 8601 since/until bounds. " +
       "Use this to find candidate trace_id values; use get_trace for the full event tree of one trace " +
       "or get_trace_decisions for decision.* events from a known trace.",
     annotations: {
