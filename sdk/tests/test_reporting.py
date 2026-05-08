@@ -116,6 +116,12 @@ class TestIncidentSummary(unittest.TestCase):
         self.assertEqual(incident["severity"], "critical")
         self.assertEqual(incident["primary_cause"], "retry_limit_exceeded")
         self.assertIn("exponential backoff", incident["recommendations"][0])
+        self.assertTrue(
+            any(
+                "Keep one-off investigations local" in recommendation
+                for recommendation in incident["recommendations"]
+            )
+        )
 
 
 class TestIncidentRendering(unittest.TestCase):
@@ -153,6 +159,8 @@ class TestIncidentRendering(unittest.TestCase):
         self.assertIn("## Savings Ledger", report)
         self.assertIn("Estimated savings: $0.0075", report)
         self.assertIn("`loop_prevented` (estimated): 1500 tokens / $0.0075", report)
+        self.assertIn("Keep this report local if it is a one-off investigation.", report)
+        self.assertIn("retained history, alerts, spend trends", report)
         self.assertIn("HttpSink", report)
 
     def test_html_report_contains_title(self):
@@ -161,6 +169,7 @@ class TestIncidentRendering(unittest.TestCase):
             output_format="html",
         )
         self.assertIn("<title>AgentGuard Incident Report</title>", report)
+        self.assertIn("Keep this report local if it is a one-off investigation.", report)
 
     def test_json_report_is_parseable(self):
         report = render_incident_report(

@@ -68,6 +68,7 @@ def test_log_decision_proposed_emits_required_schema_fields():
     }
     assert required.issubset(payload)
     assert payload["final"] == payload["proposal"]
+    assert payload["binding_state"] == "proposed"
     assert payload["outcome"] == "proposed"
 
 
@@ -151,6 +152,12 @@ def test_decision_flow_keeps_decision_state_across_events():
     assert payloads[1]["proposal"] == {"action": "merge", "branch": "main"}
     assert payloads[1]["final"] == {"action": "merge", "branch": "release"}
     assert payloads[2]["final"] == {"action": "merge", "branch": "release"}
+    assert [payload["binding_state"] for payload in payloads] == [
+        "proposed",
+        "overridden",
+        "approved",
+        "merged",
+    ]
     assert payloads[3]["binding_state"] == "merged"
     assert payloads[3]["outcome"] == "success"
 
@@ -213,6 +220,28 @@ def test_log_decision_bound_requires_explicit_binding_outcome_fields():
                 proposal={"action": "deploy"},
                 binding_state="",
                 outcome="success",
+            )
+
+    _capture_events(tracer, run)
+
+
+def test_decision_helpers_reject_empty_binding_state_override():
+    tracer = Tracer(watermark=False)
+
+    def run():
+        with tracer.trace("agent.run") as span, pytest.raises(
+            ValueError,
+            match="binding_state must be a non-empty string",
+        ):
+            log_decision_proposed(
+                span,
+                workflow_id="wf_bad_state",
+                object_type="deployment",
+                object_id="deploy_bad_state",
+                actor_type="agent",
+                actor_id="planner",
+                proposal={"action": "deploy"},
+                binding_state="",
             )
 
     _capture_events(tracer, run)
@@ -326,7 +355,7 @@ def test_extract_decision_payload_normalizes_trace_fields():
             "reason": "looks good",
             "comment": None,
             "timestamp": "2026-04-07T00:00:00Z",
-            "binding_state": None,
+            "binding_state": "approved",
             "outcome": "approved",
         },
     }
@@ -358,7 +387,7 @@ def test_extract_decision_events_filters_by_workflow():
                 "reason": None,
                 "comment": None,
                 "timestamp": "2026-04-07T00:00:00Z",
-                "binding_state": None,
+                "binding_state": "proposed",
                 "outcome": "proposed",
             },
         },
@@ -381,7 +410,7 @@ def test_extract_decision_events_filters_by_workflow():
                 "reason": None,
                 "comment": None,
                 "timestamp": "2026-04-07T00:01:00Z",
-                "binding_state": None,
+                "binding_state": "approved",
                 "outcome": "approved",
             },
         },

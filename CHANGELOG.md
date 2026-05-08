@@ -2,6 +2,69 @@
 
 ## Unreleased
 
+### Profiles
+- Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
+  for unattended production agents. Tightens defaults to `loop_max=2`,
+  `retry_max=1`, `warn_pct=0.5`. Motivated by the arxiv:2605.00055
+  ambient-persuasion incident where a deployed agent installed 107
+  unauthorized components and overrode its own oversight gate.
+
+### Release Proof
+- Added a deterministic sticky agent proof example that simulates a
+  CrewAI-style retry storm, repeated tool loop, budget burn, local incident
+  output, and dashboard-compatible hosted NDJSON without adding dependencies.
+- Added contract tests that post the sticky proof NDJSON to the local hosted
+  ingest harness so SDK proof events stay aligned with dashboard expectations.
+
+### Activation
+- Added `python -m agentguard.cli ...` fallback guidance to `doctor`, `demo`,
+  and `quickstart` so first-run users are not blocked when console scripts
+  install outside `PATH`.
+- Added a post-demo next-step block so `agentguard demo` points directly to
+  `agentguard quickstart --framework raw --write`, the generated starter, and
+  the follow-up local report command.
+- Added an MCP read-path proof to the proof gallery and test coverage that
+  catches stale local example and sample-doc references.
+- Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
+  `TestModel`, so users can try the pattern without API keys or network calls
+  after installing the optional framework package.
+- Clarified incident-report dashboard handoff copy so hosted ingest is framed as
+  useful when incidents need retained history, alerts, spend trends, or
+  team-visible follow-up, not as a requirement for local safety.
+- Added a concise local-vs-hosted adoption table to the README and dashboard
+  contract docs so the dashboard CTA is explicit without making local SDK use
+  feel limited.
+
+### Release Security
+- Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
+  to OIDC Trusted Publishing for the `pypi` GitHub environment, with PyPI
+  attestations enabled for release artifacts.
+- Added release documentation for the required PyPI trusted-publisher tuple and
+  post-release verification steps.
+- Added an MCP package publishing checklist and normalized npm package metadata
+  so the `@agentguard47/mcp-server` release path does not rely on npm publish
+  autocorrections.
+
+## 1.2.10
+
+### Activation Proof Path
+- Tightened the README and getting-started path around `doctor`, `demo`, and `quickstart` so first-time SDK users can reach local guard proof faster.
+- Added a coding-agent review-loop proof artifact that shows budget and retry guards stopping a simulated review/refinement loop without API keys or network calls.
+- Added sync coverage for the public sample incident and generated PyPI README so release-facing activation assets do not silently drift.
+
+### Release And Distribution Hygiene
+- Added an opt-in activation metrics design doc that defines allowed activation questions and local-first consent boundaries without adding telemetry.
+- Hardened release discussion category handling so missing GitHub Discussion categories do not block the package release path.
+- Updated the package build timestamp seed to the ZIP-safe reproducible epoch so local and CI release builds do not fail on pre-1980 metadata.
+- Clarified hosted ingest language in incident reporting so `HttpSink` is described as event mirroring for retained alerts and follow-up, not a remote kill switch by itself.
+
+## 1.2.9
+
+### Dashboard Contract Alignment
+- Decision-trace helpers now emit non-empty dashboard-parseable `binding_state` values for proposed, edited, overridden, and approved events by default.
+- Added hosted-ingest contract coverage for decision-trace warnings so SDK events stay queryable by the dashboard after ingest.
+- Tightened README and guide copy around the local runtime-control proof path, hosted dashboard handoff, and remote-kill polling boundary.
+
 ## 1.2.8
 
 ### Agent Security Stack Positioning

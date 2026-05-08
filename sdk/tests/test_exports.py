@@ -138,6 +138,7 @@ class TestTopLevelExports(unittest.TestCase):
             "async_trace_agent", "async_trace_tool",
             "patch_openai_async", "patch_anthropic_async",
             "unpatch_openai_async", "unpatch_anthropic_async",
+            "InitConfig", "RepoConfig", "ProfileDefaults", "SUPPORTED_PROFILES",
         }
         self.assertEqual(set(agentguard.__all__), expected)
 

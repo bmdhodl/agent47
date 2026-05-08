@@ -1,0 +1,12 @@
+﻿b088773 Record activation PR handoff
+dfb5a26 Tighten activation proof path (#415)
+dc43104 Clear completed follow-up queue (#413)
+9781e8a Handle missing release discussion category (#412)
+6dcbde6 Document opt-in activation metrics design (#408)
+4dc8b73 Log PR 406 and update follow-up (#407)
+4a020d7 Refresh SDK ops docs (#406)
+490944a Log PR 404 handoff (#405)
+67d781a Add coding-agent review loop proof (#404)
+642edd7 Log queue README datapoint PR (#403)
+86b1cae Add Uber AI budget README datapoint (#402)
+0dad35a docs: add AI contribution policy section (#400)

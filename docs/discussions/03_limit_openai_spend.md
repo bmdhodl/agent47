@@ -20,11 +20,9 @@ pip install agentguard47
 ```python
 from agentguard import Tracer, BudgetGuard, BudgetExceeded, patch_openai
 
-tracer = Tracer(
-    service="my-agent",
-    guards=[BudgetGuard(max_cost_usd=2.00, warn_at_pct=0.8)],
-)
-patch_openai(tracer)
+budget = BudgetGuard(max_cost_usd=2.00, warn_at_pct=0.8)
+tracer = Tracer(service="my-agent")
+patch_openai(tracer, budget_guard=budget)
 
 # Now use OpenAI normally:
 import openai

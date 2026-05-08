@@ -1,0 +1,55 @@
+name: Integration Request
+description: Request or improve support for a Python agent framework, provider, or runtime
+labels: ["type:feature", "component:sdk", "growth"]
+body:
+  - type: input
+    id: integration
+    attributes:
+      label: Integration
+      description: Which framework, provider, runtime, or tool should AgentGuard work with?
+      placeholder: "Pydantic AI, LlamaIndex, OpenAI Agents SDK, smolagents, ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Workflow
+      description: What agent workflow should be guarded?
+      placeholder: "A coding agent calls tools, retries failed patches, and should stop at $5."
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-code
+    attributes:
+      label: Current code
+      description: Paste the smallest representative code shape if you can.
+      render: python
+    validations:
+      required: false
+
+  - type: dropdown
+    id: value
+    attributes:
+      label: Why this matters
+      options:
+        - Popular framework or provider
+        - Blocks my real project
+        - Improves coding-agent safety
+        - Improves MCP or agent-client discovery
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Done looks like
+      description: What would make this integration useful enough?
+      placeholder: |
+        - [ ] local example runs without dashboard access
+        - [ ] docs show the minimal setup
+        - [ ] no hard dependency is added to the core SDK
+    validations:
+      required: true

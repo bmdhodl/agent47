@@ -70,16 +70,16 @@ Skip manual `consume()` calls — let AgentGuard estimate cost automatically:
 ```python
 from agentguard import Tracer, BudgetGuard, JsonlFileSink, patch_openai
 
+budget = BudgetGuard(max_cost_usd=5.00)
 tracer = Tracer(
     sink=JsonlFileSink("traces.jsonl"),
     service="my-agent",
-    guards=[BudgetGuard(max_cost_usd=5.00)],
 )
-patch_openai(tracer)
+patch_openai(tracer, budget_guard=budget)
 
-# Every OpenAI call is now auto-traced with cost estimates.
+# OpenAI chat completions are now auto-traced with cost estimates.
 # BudgetGuard checks the budget after each call.
-# Supports GPT-4, GPT-3.5, and embedding models.
+# Supports patched chat-completion models such as GPT-4 and GPT-3.5.
 ```
 
 The cost estimates use published token pricing. You can override prices for custom or fine-tuned models:
@@ -97,14 +97,15 @@ Budget overruns and loops often go together. An agent stuck in a loop burns thro
 ```python
 from agentguard import Tracer, LoopGuard, BudgetGuard, JsonlFileSink
 
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+loop = LoopGuard(max_repeats=3)
 tracer = Tracer(
     sink=JsonlFileSink("traces.jsonl"),
     service="my-agent",
-    guards=[
-        LoopGuard(max_repeats=3),
-        BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8),
-    ],
+    guards=[loop],
 )
+
+# Use budget.consume(...) where usage is known, or pass budget to provider patching.
 ```
 
 Whichever guard triggers first stops the agent. The loop guard catches pathological repeats; the budget guard catches legitimate-but-expensive runs.

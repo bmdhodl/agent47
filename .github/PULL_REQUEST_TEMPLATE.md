@@ -6,11 +6,19 @@
 
 <!-- Link to GitHub issues: Closes #XX -->
 
+## Proof
+
+<!-- Paste validation commands and results. Link proof artifacts when useful. -->
+
+## Risk And Rollback
+
+<!-- What could break? How would we revert or disable it? -->
+
 ## Scope
 
-- **Related ops/ doc(s):** <!-- NORTHSTAR | SDK_SCOPE | ARCHITECTURE | ROADMAP | DEFINITION_OF_DONE | N/A -->
-- **Does this change the public API?** <!-- Yes / No — if Yes, update ops/02-ARCHITECTURE.md -->
-- **Does this shift roadmap priority?** <!-- Yes / No — if Yes, update ops/03-ROADMAP_NOW_NEXT_LATER.md -->
+- **Related ops/doc(s):** <!-- NORTHSTAR | SDK_SCOPE | ARCHITECTURE | ROADMAP | DEFINITION_OF_DONE | N/A -->
+- **Does this change the public API?** <!-- Yes / No. If yes, update ops/02-ARCHITECTURE.md. -->
+- **Does this shift roadmap priority?** <!-- Yes / No. If yes, update ops/03-ROADMAP_NOW_NEXT_LATER.md. -->
 
 ## Checklist
 

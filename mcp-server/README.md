@@ -16,6 +16,8 @@ The boundary is deliberate:
 npx -y @agentguard47/mcp-server
 ```
 
+Glama listing: <https://glama.ai/mcp/servers/bmdhodl/agent47>
+
 ## Tools
 
 | Tool | Description |
@@ -86,20 +88,36 @@ the default branch root:
 Those root files delegate straight to `mcp-server/` and should stay aligned
 with the package-local versions here.
 
-## Registry Readiness
+## Registry Status
 
-This repo now includes official MCP registry metadata in
-[`server.json`](server.json). The npm package is already public, and the Glama /
-Smithery config now lives next to the source, so the remaining registry work is
-metadata publication:
+This repo includes official MCP registry metadata in [`server.json`](server.json).
+The npm package is public, and the Glama / Smithery config lives next to the
+source.
+
+Current public status:
+
+- npm: `@agentguard47/mcp-server@0.2.2`
+- Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; registry
+  search still reports package `0.2.1` and needs metadata refresh
+- Glama: first release live at <https://glama.ai/mcp/servers/bmdhodl/agent47>;
+  environment schema is indexed, but the public API still returns an empty
+  `tools` array as of 2026-05-08
+
+Official MCP registry publication:
 
 ```bash
 mcp-publisher login github
 mcp-publisher publish
 ```
 
-After that, verify the server is searchable from the MCP Registry API and then
-submit it to downstream directories like Glama and `awesome-mcp-servers`.
+Glama release verification:
+
+```bash
+curl "https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47"
+```
+
+Expected tools after Glama finishes indexing: `query_traces`, `get_trace`,
+`get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`, `check_budget`.
 
 ## Architecture
 

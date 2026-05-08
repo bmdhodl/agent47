@@ -37,7 +37,7 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (latest shipped release: v1.2.8)
+- **Package:** `agentguard47` on PyPI (latest shipped release: v1.2.10)
 - **Landing page:** site/index.html (Vercel)
 
 ## Agent Contract (MANDATORY)
@@ -197,7 +197,7 @@ Read .Codex/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** latest shipped SDK release is v1.2.8. Read `memory/` for the
+**Current:** latest shipped SDK release is v1.2.10. Read `memory/` for the
 current SDK state, blockers, decisions, and distribution priorities.
 
 ## Agent Navigation Guide
@@ -242,7 +242,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** latest shipped release is 1.2.8. Check `sdk/pyproject.toml` for the branch version under preparation.
+- **Version:** latest shipped release is 1.2.10. Check `sdk/pyproject.toml` for the branch version under preparation.
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)
@@ -345,9 +345,10 @@ agentguard demo         # local proof run
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)
-# All OpenAI calls are now tracked and budget-enforced
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)
+# OpenAI chat completions are now tracked and budget-enforced
 ```
 
 **Pattern 2: Stack multiple guards**

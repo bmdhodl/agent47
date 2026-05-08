@@ -36,6 +36,12 @@ _DECISION_EVENT_TYPES = {
     DECISION_APPROVED,
     DECISION_BOUND,
 }
+_DEFAULT_BINDING_STATES = {
+    DECISION_PROPOSED: "proposed",
+    DECISION_EDITED: "edited",
+    DECISION_OVERRIDDEN: "overridden",
+    DECISION_APPROVED: "approved",
+}
 _DECISION_RESERVED_SPAN_KEYS = {
     "decision_id",
     "workflow_id",
@@ -75,6 +81,15 @@ def _require_value(name: str, value: Any) -> Any:
     if value is None:
         raise ValueError(f"{name} must not be None")
     return value
+
+
+def _resolve_binding_state(event_type: str, binding_state: Optional[str]) -> str:
+    if binding_state is not None:
+        return _require_non_empty("binding_state", binding_state)
+    default = _DEFAULT_BINDING_STATES.get(event_type)
+    if default is None:
+        raise ValueError("binding_state must be a non-empty string")
+    return default
 
 
 def _snapshot(value: Any) -> Any:
@@ -233,7 +248,7 @@ def _build_decision_payload(
         "reason": reason,
         "comment": comment,
         "timestamp": timestamp or _timestamp_now(),
-        "binding_state": binding_state,
+        "binding_state": _resolve_binding_state(event_type, binding_state),
         "outcome": outcome,
     }
     return _fit_decision_payload(payload)

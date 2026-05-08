@@ -3,6 +3,80 @@
 
 ---
 
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#412` to make release announcement discussion creation skip safely
+  when GitHub Discussions categories are unavailable.
+- Closed issue `#392`; release-adjacent automation no longer fails on missing
+  Discussions configuration.
+
+### Decisions made
+- Keep deferred phase-2 governance/security issues tracked in GitHub instead of
+  duplicating them in `ops/FOLLOWUP.md`.
+
+### Blockers
+- `#282` and `#279` remain intentionally deferred phase-2 work.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#408` to add a docs-only opt-in activation metrics design.
+- Documented allowed questions, explicit consent boundaries, forbidden fields,
+  zero-dependency transport constraints, and no-default-telemetry non-goals.
+
+### Decisions made
+- Keep SDK activation metrics as design-only unless explicitly approved later.
+- Prefer server-side/package metrics before any local SDK telemetry.
+
+### Blockers
+- None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#406` to refresh stale SDK roadmap and architecture docs.
+- Updated current focus around `v1.2.9`, official MCP Registry listing,
+  dashboard contract boundaries, decision traces, and local proof surfaces.
+
+### Decisions made
+- Keep ops docs SDK-only and concise.
+- Treat remote kill as a documented dashboard boundary, not an SDK behavior
+  claim.
+- Keep repo-only examples distinct from package-installed CLI proof paths.
+
+### Blockers
+- None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#404` to add a local coding-agent review-loop proof.
+- Added `examples/coding_agent_review_loop.py`, docs links, PyPI README sync,
+  focused regression coverage, proof artifacts, and `ops/FOLLOWUP.md`.
+
+### Decisions made
+- Keep activation work focused on local runtime proof: budget stops, retry
+  stops, and incident reports.
+- Track stale roadmap/architecture refresh in `ops/FOLLOWUP.md`; the
+  activation-metrics design is now captured as a docs-only step, not SDK
+  telemetry.
+
+### Blockers
+- None.
+
+## 2026-05-01 | Codex
+
+### What shipped
+- Merged PR `#402` to add a sourced Uber AI-budget overrun datapoint to the README and generated PyPI README.
+- Captured docs validation proof under `proof/queue-uber-readme-2026-05-01/`.
+
+### Decisions made
+- Kept this as SDK positioning only: no runtime behavior changes, no dashboard work, and no unsupported claims beyond the cited Briefs report.
+
+### Blockers
+- None for the Uber README queue item.
+
 ## 2026-04-20 | Codex
 
 ### What shipped
@@ -107,3 +181,42 @@
 
 ### Blockers
 - None for `#376`; issue is closed.
+
+## 2026-04-25 | Codex
+
+### What shipped
+- Merged PR `#390` to align SDK decision traces and docs with the hosted dashboard ingest contract.
+- Staged SDK release `v1.2.9` with release metadata, generated PyPI README, and validation proof.
+
+### Decisions made
+- Keep the SDK local-first: hosted ingest mirrors events, but local guards remain the authoritative runtime stop path.
+- Keep new dashboard-contract guide links on `main` in generated PyPI README until the release tag contains the new guide.
+
+### Blockers
+- None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Merged PR `#415` to tighten the SDK activation path: clearer README quickstart, copy-paste local setup, and a shareable coding-agent review-loop incident artifact.
+- Added tests that keep the sample incident and PyPI README links in sync.
+
+### Decisions made
+- Keep activation proof local-first and zero-network by default.
+- Describe hosted ingest as retained alerts and team-visible follow-up, not as a remote kill switch by itself.
+
+### Blockers
+- None.
+
+## 2026-05-02 | Codex
+
+### What shipped
+- Released SDK `v1.2.10` to PyPI and created the GitHub Release.
+- Included activation proof docs, review-loop incident proof, PyPI README sync, and release-build timestamp hardening.
+
+### Decisions made
+- Keep this as a patch release focused on activation/distribution and release reliability.
+- Continue using `PYPI_TOKEN` until PyPI Trusted Publishing is configured by the package owner.
+
+### Blockers
+- None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.

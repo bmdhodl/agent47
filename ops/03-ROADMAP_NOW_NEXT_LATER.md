@@ -3,6 +3,26 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
+**Last reviewed:** 2026-05-08
+
+## Current Focus Notes
+
+- Latest shipped SDK release is `v1.2.10`; current work is post-release
+  hardening and activation, not a new feature push.
+- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
+  but public registry search still reports MCP package version `0.2.1`; refresh
+  metadata without changing SDK runtime code.
+- Glama first release is live at `https://glama.ai/mcp/servers/bmdhodl/agent47`;
+  the public API has indexed env vars but still returns an empty `tools` array
+  as of 2026-05-08.
+- Dashboard alignment is current for hosted ingest and decision traces. The
+  remote-kill boundary is documented: the SDK emits events and enforces local
+  guards, while the dashboard owns retained history, alerts, and team
+  operations.
+- The strongest package-installed proof path is `doctor` -> `demo` ->
+  `quickstart`; repo checkouts also have starters and the coding-agent
+  review-loop proof.
+
 ## Recently Completed
 
 | Item | Status |
@@ -24,15 +44,19 @@ they directly strengthen coding-agent adoption.
 | Coding-agent skillpack generation | Done - `agentguard skillpack` now generates `.agentguard.json` plus repo-local instructions for Codex, Claude Code, Copilot, and Cursor so coding-agent onboarding no longer depends on manual snippet copying |
 | Managed-agent session correlation | Done - `session_id` now lets disposable harnesses or short-lived workers emit separate traces that still roll up under one higher-level local session for coding-agent and managed-agent runtimes |
 | Budget-aware escalation guard | Done - `BudgetAwareEscalation` now lets apps keep a cheaper default model and escalate hard turns using token, confidence, tool-depth, or custom-rule signals without provider-specific SDK routing |
+| Dashboard contract alignment for v1.2.10 | Done - hosted ingest shape and decision-trace defaults are documented and covered by tests; remote-kill boundaries are documented |
+| Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
+| Follow-up handoff | Done - `ops/FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
+| Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed questions, consent boundaries, forbidden fields, and local-first non-goals without adding telemetry |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
-| Coding-agent positioning and package metadata hardening | PyPI metadata, SDK README, and generated PyPI README all consistently position AgentGuard as zero-dependency runtime guardrails for coding-agent safety |
-| MCP registry readiness | `mcp-server` package metadata and `server.json` are ready for official MCP registry publication without extra repo cleanup |
-| Install-to-first-guard proof hardening | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, `agentguard quickstart`, and a starter run works without undocumented steps or hosted assumptions |
-| Coding-agent starter polish | Checked-in starter files and repo-local `.agentguard.json` guidance stay deterministic, local-first, and safe to copy into real repos without hidden network behavior |
+| Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
+| MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features |
+| Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
+| Ops/doc freshness | `ops/02-ARCHITECTURE.md`, this roadmap, `ops/FOLLOWUP.md`, and memory files stay concise and current enough that agents do not start from stale assumptions |
 
 ## Next (next month)
 
@@ -41,6 +65,7 @@ they directly strengthen coding-agent adoption.
 | Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
+| Release announcement reliability | Release-content automation handles missing GitHub Discussions categories without failing the package release path |
 
 ## Later (ideas bucket)
 

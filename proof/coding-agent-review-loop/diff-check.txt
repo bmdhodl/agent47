@@ -1,0 +1,8 @@
+warning: in the working copy of 'MORNING_REPORT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'PR_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/guides/getting-started.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'examples/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'sdk/PYPI_README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'sdk/tests/test_example_starters.py', LF will be replaced by CRLF the next time Git touches it
+exit=0

@@ -1,0 +1,28 @@
+{
+  "name": "agentguard-mcp",
+  "version": "0.1.0",
+  "description": "Thin npm shim for the Python agentguard-mcp server",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bmdhodl/agent47.git",
+    "directory": "npm/agentguard-mcp"
+  },
+  "homepage": "https://github.com/bmdhodl/agent47/tree/main/agentguard-mcp",
+  "bugs": {
+    "url": "https://github.com/bmdhodl/agent47/issues"
+  },
+  "keywords": [
+    "agentguard",
+    "mcp",
+    "model-context-protocol",
+    "budget-control",
+    "coding-agents"
+  ],
+  "bin": {
+    "agentguard-mcp": "bin/agentguard-mcp.js"
+  },
+  "files": [
+    "bin"
+  ]
+}

@@ -17,11 +17,23 @@ The starter files under `examples/starters/` are the executable counterparts to
 `agentguard quickstart`. They live in this repo for copy-paste onboarding and
 coding-agent setup; they are not included in the installed PyPI wheel.
 
+There is also an optional Pydantic AI starter:
+
+```bash
+pip install agentguard47 pydantic-ai
+python examples/starters/agentguard_pydantic_ai_quickstart.py
+agentguard report .agentguard/traces.jsonl
+```
+
+It uses Pydantic AI's `TestModel`, so it runs without API keys or network calls
+after the optional `pydantic-ai` package is installed.
+
 ## Framework Examples
 
 | File | Framework | What it shows |
 |------|-----------|---------------|
 | `budget_aware_escalation.py` | Raw AgentGuard | Advisor-style escalation from a cheaper local model to a stronger model on hard turns |
+| `coding_agent_review_loop.py` | Raw AgentGuard | Local coding-agent review loop proof: repeated review/edit retries trip `BudgetGuard` and `RetryGuard` without network calls |
 | `disposable_harness_session.py` | Raw AgentGuard | Two tracer instances sharing one `session_id` to simulate a managed-agent session across disposable harnesses |
 | `per_token_budget_spike.py` | Raw AgentGuard | Local token-metered pricing proof: one oversized turn triggers `BudgetGuard` without any API key |
 | **`cost_guardrail.py`** | **OpenAI** | **Full cost guardrail pipeline: auto-budget enforcement, warning/exceeded events, dashboard sync** |
@@ -56,6 +68,10 @@ python examples/disposable_harness_session.py
 # Per-token budget spike demo (local-only)
 python examples/per_token_budget_spike.py
 
+# Coding-agent review loop demo (local-only)
+python examples/coding_agent_review_loop.py
+agentguard incident coding_agent_review_loop_traces.jsonl
+
 # Advisor-style escalation demo (local-only)
 python examples/budget_aware_escalation.py
 
@@ -67,6 +83,13 @@ python examples/cost_guardrail.py
 python examples/openai_agents_with_guards.py
 ```
 
+Sample incident output from a clean coding-agent review-loop run:
+[`docs/examples/coding-agent-review-loop-incident.md`](../docs/examples/coding-agent-review-loop-incident.md)
+
+For a shareable command-by-command tour of the strongest local demos, see the
+proof gallery:
+[`docs/examples/proof-gallery.md`](../docs/examples/proof-gallery.md)
+
 Each example writes traces to a local JSONL file. To send traces to the hosted dashboard instead, replace `JsonlFileSink` with `HttpSink`:
 
 ```python
@@ -77,6 +100,9 @@ sink = HttpSink(
     api_key="ag_your_key_here",
 )
 ```
+
+`HttpSink` mirrors trace and decision events. It does not poll or execute
+dashboard remote kill signals by itself.
 
 If a run trips a guard locally, generate an incident summary:
 

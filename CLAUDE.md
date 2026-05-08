@@ -90,8 +90,10 @@ proof.
 Use the repo's existing proof discipline:
 
 - save artifacts under `proof/<task-name>/`
-- update `PR_DRAFT.md`
-- update `MORNING_REPORT.md`
+- keep PR summaries in the pull request body
+- keep active repo follow-ups in `ops/FOLLOWUP.md`
+- do not add one-off reports, work plans, or handoff notes to the repo root;
+  archive any retained historical notes under `docs/archive/root-reports/`
 
 After a merged PR, add one short SDK-only entry to `inbox/log.md`.
 
@@ -128,8 +130,8 @@ For this repo, the most relevant Claude-side assets are:
 - official MCP Registry listing: live
 - dashboard remains private
 
-Current: latest shipped release: v1.2.8.
-<!-- latest shipped release is 1.2.8 -->
+Current: latest shipped release: v1.2.10.
+<!-- latest shipped release is 1.2.10 -->
 
 Core message to preserve:
 

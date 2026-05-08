@@ -151,11 +151,14 @@ Use the dashboard later for:
 - retained history
 - team visibility
 - alerts
-- remote kill
+- dashboard-driven remote kill signals
 - governance
 
 The SDK should prove local enforcement first. The dashboard remains the control
-plane.
+plane. `HttpSink` sends trace and decision events to the dashboard, but it does
+not poll or execute remote kill signals by itself. See
+[`dashboard-contract.md`](dashboard-contract.md) before claiming remote kill is
+active in an SDK integration.
 
 If the coding agent already supports MCP, add `@agentguard47/mcp-server` only
 after the local SDK path is proven. That MCP bridge is for retained traces and

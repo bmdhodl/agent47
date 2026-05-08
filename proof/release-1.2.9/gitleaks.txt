@@ -1,0 +1,3 @@
+7:52PM INF 339 commits scanned.
+7:52PM INF scanned ~3624577 bytes (3.62 MB) in 668ms
+7:52PM INF no leaks found

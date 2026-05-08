@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Iterable, List, Sequence, Set
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+NPM_COMMAND = "npm.cmd" if sys.platform == "win32" else "npm"
 README_SYNC_INPUTS = {
     "README.md",
     "CHANGELOG.md",
@@ -267,7 +268,7 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
             Step(
                 label="mcp-test",
                 reason="mcp-server edits should still build and pass the lightweight Node test suite",
-                command=["npm", "--prefix", "mcp-server", "test"],
+                command=[NPM_COMMAND, "--prefix", "mcp-server", "test"],
             )
         )
 

@@ -3,7 +3,10 @@
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/main/LICENSE)
 
-**Zero-dependency** runtime guardrails for coding agents and AI agents. Pure Python stdlib - nothing to audit, nothing that can break. Catch loops, cap retries, enforce budgets, and keep the first run local and deterministic.
+**Zero-dependency runtime control for production Python agents.** Catch loops,
+cap retries, enforce budgets, and keep the first run local and deterministic.
+Add the hosted dashboard later when you need retained incidents, alerts, team
+visibility, or dashboard-driven remote kill signals.
 
 ## Install
 
@@ -15,10 +18,13 @@ pip install agentguard47
 
 ```bash
 agentguard doctor
+agentguard demo
 ```
 
-This validates the SDK in local-only mode, writes a small JSONL trace, and
+`doctor` validates the SDK in local-only mode, writes a small JSONL trace, and
 prints the smallest correct next-step snippet for the current environment.
+`demo` proves budget, loop, and retry protection without API keys or network
+calls.
 
 ## Generate a framework starter
 
@@ -73,13 +79,17 @@ the local-first runtime enforcement layer.
 from agentguard import Tracer, LoopGuard, BudgetGuard, JsonlFileSink
 
 sink = JsonlFileSink(".agentguard/traces.jsonl")
+budget = BudgetGuard(max_cost_usd=5.00, max_calls=50)
+loop = LoopGuard(max_repeats=3)
 tracer = Tracer(
     sink=sink,
     service="my-agent",
-    guards=[LoopGuard(max_repeats=3), BudgetGuard(max_cost_usd=5.00)],
+    guards=[loop],
 )
 
 with tracer.trace("agent.run") as span:
+    budget.consume(calls=1, cost_usd=0.02)
+    loop.check("search", {"query": "docs"})
     span.event("reasoning.step", data={"thought": "search docs"})
     with span.span("tool.search"):
         pass  # your tool here
@@ -223,6 +233,13 @@ sink = HttpSink(
 )
 ```
 
+`HttpSink` sends trace and decision events to the hosted dashboard. It does not
+poll or execute remote kill signals by itself; local guards remain the
+authoritative runtime stop path.
+
+Hosted contract guide:
+`docs/guides/dashboard-contract.md` in the main repo.
+
 ## CLI
 
 ```bash
@@ -251,6 +268,35 @@ export_csv("traces.jsonl", "traces.csv")
 ```bash
 python -m agentguard.bench
 ```
+
+## Typed contracts
+
+AgentGuard publishes typed schemas for its public configuration surface so
+agents and tools can introspect the contract instead of scraping prose.
+Schemas are stdlib-only frozen dataclasses (no pydantic dependency, no extra
+install).
+
+```python
+from agentguard import InitConfig, RepoConfig, ProfileDefaults, SUPPORTED_PROFILES
+
+cfg = InitConfig(budget_usd=5.00, profile="coding-agent", warn_pct=0.5)
+cfg.validate()  # raises ValueError on bad input
+
+import agentguard
+agentguard.init(**cfg.to_dict())
+```
+
+| Schema | What it shapes | Source |
+|---|---|---|
+| `InitConfig` | Keyword arguments to `agentguard.init()` | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `RepoConfig` | `.agentguard.json` repo-local defaults | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `ProfileDefaults` | Guard policy shape per built-in profile | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `SUPPORTED_PROFILES` | Tuple of valid profile names | [`agentguard/profiles.py`](agentguard/profiles.py) |
+
+Each schema has a `validate()` method that raises `ValueError` on bad input
+(out-of-range warn_pct, negative budget, unknown profile, header injection
+in api_key, etc.). Validation rules mirror the runtime checks already
+enforced by `init()` and `repo_config`.
 
 ## Migration Guide (v0.5 → v1.0)
 

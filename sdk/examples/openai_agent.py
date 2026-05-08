@@ -42,8 +42,8 @@ tracer = Tracer(sink=sink, service="openai-agent")
 loop_guard = LoopGuard(max_repeats=3)
 budget = BudgetGuard(max_tokens=50_000, max_calls=20)
 
-# Auto-instrument OpenAI — all completions.create calls get traced
-patch_openai(tracer)
+# Auto-instrument OpenAI; chat.completions.create calls are traced and fed into BudgetGuard.
+patch_openai(tracer, budget_guard=budget)
 
 # --- Fake tools (replace with real ones) ---
 def get_weather(city: str) -> str:
@@ -77,8 +77,6 @@ def run(task: str) -> str:
     with tracer.trace("agent.openai_demo", data={"task": task}) as ctx:
         for step in range(10):
             ctx.event("reasoning.step", data={"step": step + 1})
-            budget.consume(calls=1)
-
             # LLM call (auto-traced by patch_openai)
             response = client.chat.completions.create(
                 model="gpt-4o-mini",

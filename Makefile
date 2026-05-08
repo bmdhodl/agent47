@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp
+.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp mcp-budget
 
 # Install SDK in editable mode with dev tools
 install:
@@ -24,7 +24,7 @@ lint:
 fix:
 	ruff check sdk/agentguard/ --fix
 
-# Lint + full test suite (mirrors CI)
+# Lint + full test suite (mirrors CI for the Python 3.9+ SDK)
 check: lint test mcp
 
 # Fast local feedback based on changed files
@@ -38,6 +38,13 @@ release-guard:
 # Build and test the MCP server
 mcp:
 	npm --prefix mcp-server test
+
+# Test the Python MCP budget server package (requires Python 3.10+)
+mcp-budget:
+	python -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 'agentguard-mcp requires Python >=3.10')"
+	python -m pip install -e ./agentguard-mcp
+	cd agentguard-mcp && python -m ruff check agentguard_mcp tests
+	cd agentguard-mcp && python -m pytest
 
 # Security lint (bandit)
 security:

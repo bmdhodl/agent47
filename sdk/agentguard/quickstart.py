@@ -128,6 +128,7 @@ def _render_text(payload: Dict[str, Any], out: TextIO) -> None:
     _print(out, "Next commands:")
     for command in payload["next_commands"]:
         _print(out, f"  {command}")
+    _render_module_fallback(payload["next_commands"], out)
 
 
 def _render_written_text(payload: Dict[str, Any], destination: str, out: TextIO) -> None:
@@ -151,8 +152,10 @@ def _render_written_text(payload: Dict[str, Any], destination: str, out: TextIO)
             _print(out, f"  - {note}")
     _print(out, "")
     _print(out, "Next commands:")
-    for command in _rendered_next_commands(payload["next_commands"], payload["filename"], destination):
+    rendered_commands = _rendered_next_commands(payload["next_commands"], payload["filename"], destination)
+    for command in rendered_commands:
         _print(out, f"  {command}")
+    _render_module_fallback(rendered_commands, out)
 
 
 def _base_payload(
@@ -203,6 +206,25 @@ def _rendered_next_commands(
     for command in commands:
         rendered.append(command.replace(filename, rendered_destination))
     return rendered
+
+
+def _render_module_fallback(commands: List[str], out: TextIO) -> None:
+    fallback_commands = _module_command_fallbacks(commands)
+    if not fallback_commands:
+        return
+
+    _print(out, "")
+    _print(out, "If 'agentguard' is not on PATH:")
+    for command in fallback_commands:
+        _print(out, f"  {command}")
+
+
+def _module_command_fallbacks(commands: List[str]) -> List[str]:
+    fallback_commands: List[str] = []
+    for command in commands:
+        if command.startswith("agentguard "):
+            fallback_commands.append("python -m agentguard.cli " + command[len("agentguard ") :])
+    return fallback_commands
 
 
 def _shell_quote_path(path: str) -> str:

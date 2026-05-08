@@ -6,3 +6,6 @@ contact_links:
   - name: PyPI Package
     url: https://pypi.org/project/agentguard47/
     about: Install the latest version from PyPI.
+  - name: GitHub Discussions
+    url: https://github.com/bmdhodl/agent47/discussions
+    about: Ask broader usage questions or share what you are building.

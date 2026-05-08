@@ -1,13 +1,13 @@
 name: Feature Request
-description: Suggest a new capability for AgentGuard
+description: Suggest a new SDK, MCP, CLI, docs, or example capability
 labels: ["type:feature"]
 body:
   - type: textarea
     id: problem
     attributes:
       label: Problem
-      description: What problem does this solve? What's frustrating today?
-      placeholder: "When I try to ..., I can't because ..."
+      description: What problem does this solve? What is frustrating today?
+      placeholder: "When I try to ..., I cannot because ..."
     validations:
       required: true
 
@@ -30,8 +30,9 @@ body:
       options:
         - SDK core (guards, tracing)
         - Integration (LangChain, LangGraph, CrewAI)
+        - MCP server
         - CLI
-        - Dashboard
+        - Docs or examples
         - Other
     validations:
       required: true
@@ -50,9 +51,9 @@ body:
       label: Acceptance criteria
       description: How will we know this is done? Be specific.
       placeholder: |
-        - [ ] Guard raises exception when budget exceeds $5
-        - [ ] Works with LangChain AgentGuardCallbackHandler
-        - [ ] Test coverage for new code
+        - [ ] Guard raises an exception when the limit is exceeded
+        - [ ] Works in local-only mode
+        - [ ] Test coverage or proof artifact exists
     validations:
       required: true
 
@@ -62,8 +63,8 @@ body:
       label: Roadmap alignment
       description: Does this relate to an existing ops/03-ROADMAP item?
       options:
-        - "Yes — existing Now/Next item"
-        - "Yes — existing Later item"
-        - "No — new idea"
+        - "Yes - existing Now/Next item"
+        - "Yes - existing Later item"
+        - "No - new idea"
     validations:
       required: true

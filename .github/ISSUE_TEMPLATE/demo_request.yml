@@ -1,0 +1,55 @@
+name: Demo Request
+description: Request a runnable local proof, example, or recipe
+labels: ["type:docs", "component:sdk", "growth"]
+body:
+  - type: input
+    id: scenario
+    attributes:
+      label: Scenario
+      description: What should the demo prove?
+      placeholder: "Stop a coding-agent review loop before it burns tokens"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: demo-type
+    attributes:
+      label: Demo type
+      options:
+        - Local-only example
+        - Framework starter
+        - Notebook
+        - Incident/report sample
+        - MCP read-only workflow
+    validations:
+      required: true
+
+  - type: textarea
+    id: user
+    attributes:
+      label: Target user
+      description: Who would run this demo and why?
+      placeholder: "A developer adding guardrails to a LangGraph coding agent."
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Ideal command
+      description: If you know it, what command should a user be able to run?
+      placeholder: "python examples/my_demo.py"
+    validations:
+      required: false
+
+  - type: textarea
+    id: proof
+    attributes:
+      label: Expected proof
+      description: What should the user see when the demo works?
+      placeholder: |
+        - guard exception raised
+        - trace file written
+        - incident report generated
+    validations:
+      required: true

@@ -25,7 +25,8 @@ budget = BudgetGuard(
     on_warning=lambda msg: print(f"  WARNING: {msg}"),
 )
 
-# Connect to the dashboard — traces, costs, and kill signals all flow here
+# Connect to the dashboard for retained traces, costs, alerts, and team visibility.
+# Remote kill signals require explicit polling/handling in the agent runtime.
 tracer = Tracer(
     sink=HttpSink(
         url="https://app.agentguard47.com/api/ingest",
@@ -56,4 +57,4 @@ print(f"\nThe dashboard shows:")
 print(f"  - Full trace timeline with every span")
 print(f"  - Cost breakdown by model")
 print(f"  - Budget guard events")
-print(f"  - Kill switch (stop agents remotely)")
+print(f"  - Remote kill signals for runtimes that poll and handle them")
