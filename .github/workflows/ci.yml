@@ -71,3 +71,21 @@ jobs:
         run: npm --prefix mcp-server ci
       - name: MCP build and tests
         run: npm --prefix mcp-server test
+
+  mcp-budget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Install tools
+        run: python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
+      - name: Install local budget MCP
+        run: python -m pip install -e ./agentguard-mcp
+      - name: Local budget MCP lint and tests
+        run: |
+          cd agentguard-mcp
+          ruff check agentguard_mcp tests
+          python -m pytest

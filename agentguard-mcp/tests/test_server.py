@@ -5,6 +5,7 @@ import importlib
 import json
 import os
 import sys
+from pathlib import Path
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -43,6 +44,12 @@ def test_module_entrypoint_serves_budget_tools_over_stdio(tmp_path):
     async def run_smoke() -> None:
         env = os.environ.copy()
         env["AGENTGUARD_DB_PATH"] = str(tmp_path / "state.db")
+        package_root = Path(__file__).resolve().parents[1]
+        env["PYTHONPATH"] = (
+            f"{package_root}{os.pathsep}{env['PYTHONPATH']}"
+            if env.get("PYTHONPATH")
+            else str(package_root)
+        )
         env.pop("AGENTGUARD_SYNC_URL", None)
         env.pop("AGENTGUARD_SYNC_TOKEN", None)
 
