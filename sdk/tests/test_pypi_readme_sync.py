@@ -56,6 +56,17 @@ def test_generated_pypi_readme_links_unreleased_sample_incident_to_main() -> Non
     )
 
 
+def test_generated_pypi_readme_links_unreleased_release_cadence_to_main() -> None:
+    module = _load_generator_module()
+
+    content = module.build_pypi_readme(REPO_ROOT)
+
+    assert (
+        "https://github.com/bmdhodl/agent47/blob/main/docs/release/cadence.md"
+        in content
+    )
+
+
 def test_committed_pypi_readme_is_in_sync() -> None:
     module = _load_generator_module()
 

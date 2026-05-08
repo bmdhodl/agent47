@@ -9,6 +9,9 @@ permissions:
   contents: read
   issues: write
 
+env:
+  GLAMA_SERVER_SLUG: ${{ github.repository }}
+
 jobs:
   release-cadence:
     runs-on: ubuntu-latest
@@ -77,13 +80,14 @@ jobs:
 
           sdk_version = read_sdk_version()
           mcp_version = read_mcp_version()
+          glama_slug = os.environ.get("GLAMA_SERVER_SLUG") or "bmdhodl/agent47"
           npm_command = "npm.cmd" if os.name == "nt" else "npm"
           npm_ok, npm_latest = run(
               [npm_command, "view", "@agentguard47/mcp-server", "version"]
           )
           pypi_ok, pypi_payload = fetch_json("https://pypi.org/pypi/agentguard47/json")
           glama_ok, glama_payload = fetch_json(
-              "https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47"
+              f"https://glama.ai/api/mcp/v1/servers/{glama_slug}"
           )
 
           pypi_latest = "unknown"
@@ -162,9 +166,6 @@ jobs:
           ]
 
           Path("release-cadence-report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write(f"report_date={today.isoformat()}\n")
           PY
 
       - name: Create or update release queue issue
