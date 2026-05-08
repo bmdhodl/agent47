@@ -6,14 +6,20 @@ This is the MCP-native sibling of [`agentguard47`](https://pypi.org/project/agen
 
 ## Install
 
+`agentguard-mcp` is currently developed from this repository checkout and is
+not published to PyPI or npm yet.
+
 ```bash
-pip install agentguard-mcp
+cd agentguard-mcp
+python -m pip install -e .
 ```
 
-Or run through npm:
+Run the stdio server with either the editable console script or the module
+entrypoint:
 
 ```bash
-npx -y agentguard-mcp
+agentguard-mcp
+python -m agentguard_mcp
 ```
 
 By default, local state is stored at `~/.agentguard/state.db`. Set `AGENTGUARD_DB_PATH` to use a different SQLite file.
@@ -24,8 +30,8 @@ By default, local state is stored at `~/.agentguard/state.db`. Set `AGENTGUARD_D
 {
   "mcpServers": {
     "agentguard-mcp": {
-      "command": "agentguard-mcp",
-      "args": [],
+      "command": "python",
+      "args": ["-m", "agentguard_mcp"],
       "env": {
         "AGENTGUARD_DB_PATH": "~/.agentguard/state.db"
       }
@@ -37,7 +43,7 @@ By default, local state is stored at `~/.agentguard/state.db`. Set `AGENTGUARD_D
 ## Claude Code
 
 ```bash
-claude mcp add agentguard-mcp -- agentguard-mcp
+claude mcp add agentguard-mcp -- python -m agentguard_mcp
 ```
 
 ## Cursor
@@ -46,8 +52,8 @@ claude mcp add agentguard-mcp -- agentguard-mcp
 {
   "mcpServers": {
     "agentguard-mcp": {
-      "command": "npx",
-      "args": ["-y", "agentguard-mcp"]
+      "command": "python",
+      "args": ["-m", "agentguard_mcp"]
     }
   }
 }
@@ -59,8 +65,8 @@ claude mcp add agentguard-mcp -- agentguard-mcp
 {
   "mcpServers": {
     "agentguard-mcp": {
-      "command": "agentguard-mcp",
-      "args": []
+      "command": "python",
+      "args": ["-m", "agentguard_mcp"]
     }
   }
 }
