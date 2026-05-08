@@ -1,4 +1,4 @@
-"""Module entry point for `python -m agentguard_mcp`."""
+"""Run the AgentGuard MCP budget server with ``python -m agentguard_mcp``."""
 
 from agentguard_mcp.server import main
 
