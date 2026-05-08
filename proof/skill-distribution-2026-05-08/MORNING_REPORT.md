@@ -4,7 +4,7 @@ Date: 2026-05-08
 
 ## Outcome
 
-AgentGuard skill distribution is ready for Patrick review. The stale skill version metadata was fixed, the skill now validates with GitHub's `gh skill publish --dry-run`, skills.sh discovery was verified, and the curated-list PR is open.
+AgentGuard skill distribution is ready for review. The stale skill version metadata was fixed, the skill now validates with GitHub's `gh skill publish --dry-run`, skills.sh discovery was verified, and the curated-list PR is open.
 
 ## What Changed
 
@@ -25,7 +25,7 @@ AgentGuard skill distribution is ready for Patrick review. The stale skill versi
 - `gh skill publish --dry-run` -> passed
 - `llms.txt` stale root `SKILL.md` link check -> passed
 - `npx skills add bmdhodl/agent47` in a clean temp folder -> installed `agentguard`
-- `npx skills add K:\agent47` in a clean temp folder -> installed `agentguard` from `skills/agentguard/SKILL.md`
+- `npx skills add <path-to-repo>` in a clean temp folder -> installed `agentguard` from `skills/agentguard/SKILL.md`
 - Clean venv install + quickstart import + `agentguard doctor` -> passed
 - Full repo validation:
   - ruff passed
@@ -38,5 +38,5 @@ AgentGuard skill distribution is ready for Patrick review. The stale skill versi
 ## Notes
 
 - No patch release was cut. The only package-facing correction was skill metadata to match the already shipped `v1.2.10` / PyPI `1.2.10` state.
-- The local global `agentguard47` editable install originally pointed at another worktree, so validation reinstalled editable from `K:\agent47\sdk` before running repo tests.
+- The local global `agentguard47` editable install originally pointed at another worktree, so validation reinstalled editable from this checkout before running repo tests.
 - The awesome-list website build passed after `npm ci`; npm reported existing audit findings in that repo's dependency tree (`1 moderate`, `1 high`), unrelated to the README-only PR.

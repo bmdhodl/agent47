@@ -27,7 +27,7 @@ enough to create surprise spend.
 pip install agentguard47
 ```
 
-### As a skill (Claude Code, Cursor, Cline, 50+ agents)
+### As a skill (Claude Code, Cursor, Cline, and more)
 
 ```bash
 npx skills add bmdhodl/agent47

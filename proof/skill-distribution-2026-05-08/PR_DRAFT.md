@@ -16,9 +16,9 @@ N/A
 - `gh repo view bmdhodl/agent47 --json visibility` -> `PUBLIC`
 - `python -m pip index versions agentguard47` -> latest and installed `1.2.10`
 - `gh skill publish --dry-run` -> passed
-- `rg -n "blob/main/SKILL\.md|SKILL\.md" -S llms.txt README.md sdk/PYPI_README.md skills/agentguard/SKILL.md PR_DRAFT.md MORNING_REPORT.md` -> no stale root `blob/main/SKILL.md` link remains
+- `rg -n "blob/main/SKILL\.md|SKILL\.md" -S llms.txt README.md sdk/PYPI_README.md skills/agentguard/SKILL.md proof/skill-distribution-2026-05-08/PR_DRAFT.md proof/skill-distribution-2026-05-08/MORNING_REPORT.md` -> no stale root `blob/main/SKILL.md` link remains
 - `npx skills add bmdhodl/agent47 && npx skills list` -> public repo resolves and installs `agentguard`
-- `npx skills add K:\agent47 && npx skills list` -> local spec-native path resolves and installs `agentguard`
+- `npx skills add <path-to-repo> && npx skills list` -> local spec-native path resolves and installs `agentguard`
 - clean venv: `pip install agentguard47`, quickstart import, and `agentguard doctor` -> passed
 - `python -m ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py` -> passed
 - `python -m pytest sdk/tests/ -v --cov=agentguard --cov-report=term-missing --cov-fail-under=80` -> `740 passed`, coverage `92.90%`
