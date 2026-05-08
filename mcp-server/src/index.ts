@@ -27,7 +27,7 @@ for (const tool of tools) {
   const toolName = tool.name;
   const handler = tool.handler;
 
-  server.tool(toolName, tool.description, shape, async (args) => {
+  const callback = async (args: Record<string, unknown>) => {
     try {
       const text = await handler(client, args as Record<string, unknown>);
       return { content: [{ type: "text" as const, text }] };
@@ -38,7 +38,13 @@ for (const tool of tools) {
         isError: true,
       };
     }
-  });
+  };
+
+  if (tool.annotations) {
+    server.tool(toolName, tool.description, shape, tool.annotations, callback);
+  } else {
+    server.tool(toolName, tool.description, shape, callback);
+  }
 }
 
 async function main() {

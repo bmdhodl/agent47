@@ -13,7 +13,7 @@
 
 ### Decisions made
 - Keep deferred phase-2 governance/security issues tracked in GitHub instead of
-  duplicating them in `FOLLOWUP.md`.
+  duplicating them in `ops/FOLLOWUP.md`.
 
 ### Blockers
 - `#282` and `#279` remain intentionally deferred phase-2 work.
@@ -53,12 +53,12 @@
 ### What shipped
 - Merged PR `#404` to add a local coding-agent review-loop proof.
 - Added `examples/coding_agent_review_loop.py`, docs links, PyPI README sync,
-  focused regression coverage, proof artifacts, and `FOLLOWUP.md`.
+  focused regression coverage, proof artifacts, and `ops/FOLLOWUP.md`.
 
 ### Decisions made
 - Keep activation work focused on local runtime proof: budget stops, retry
   stops, and incident reports.
-- Track stale roadmap/architecture refresh in `FOLLOWUP.md`; the
+- Track stale roadmap/architecture refresh in `ops/FOLLOWUP.md`; the
   activation-metrics design is now captured as a docs-only step, not SDK
   telemetry.
 
