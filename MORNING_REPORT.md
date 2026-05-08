@@ -14,6 +14,7 @@ AgentGuard skill distribution is ready for Patrick review. The stale skill versi
   - `pip install agentguard47`
   - `npx skills add bmdhodl/agent47`
   - `gh skill install bmdhodl/agent47 agentguard`
+- Updated `llms.txt` so its canonical skill link points to `skills/agentguard/SKILL.md`.
 - Opened awesome-list PR: https://github.com/heilcheng/awesome-agent-skills/pull/225
 
 ## Verification
@@ -22,6 +23,7 @@ AgentGuard skill distribution is ready for Patrick review. The stale skill versi
 - Latest tag: `v1.2.10`
 - PyPI package: `agentguard47` latest `1.2.10`
 - `gh skill publish --dry-run` -> passed
+- `llms.txt` stale root `SKILL.md` link check -> passed
 - `npx skills add bmdhodl/agent47` in a clean temp folder -> installed `agentguard`
 - `npx skills add K:\agent47` in a clean temp folder -> installed `agentguard` from `skills/agentguard/SKILL.md`
 - Clean venv install + quickstart import + `agentguard doctor` -> passed

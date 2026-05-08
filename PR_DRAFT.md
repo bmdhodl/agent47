@@ -3,6 +3,7 @@
 - Move the AgentGuard skill into the spec-native `skills/agentguard/SKILL.md` path so `gh skill publish --dry-run` validates it.
 - Update skill metadata from `1.2.7` to the verified shipped package version `1.2.10`.
 - Add README/PyPI README install docs for both `pip install agentguard47` and skills-based installs.
+- Update `llms.txt` to link to the new canonical skill path.
 - Open curated-list PR: https://github.com/heilcheng/awesome-agent-skills/pull/225
 
 ## Related Issues
@@ -15,6 +16,7 @@ N/A
 - `gh repo view bmdhodl/agent47 --json visibility` -> `PUBLIC`
 - `python -m pip index versions agentguard47` -> latest and installed `1.2.10`
 - `gh skill publish --dry-run` -> passed
+- `rg -n "blob/main/SKILL\.md|SKILL\.md" -S llms.txt README.md sdk/PYPI_README.md skills/agentguard/SKILL.md PR_DRAFT.md MORNING_REPORT.md` -> no stale root `blob/main/SKILL.md` link remains
 - `npx skills add bmdhodl/agent47 && npx skills list` -> public repo resolves and installs `agentguard`
 - `npx skills add K:\agent47 && npx skills list` -> local spec-native path resolves and installs `agentguard`
 - clean venv: `pip install agentguard47`, quickstart import, and `agentguard doctor` -> passed
