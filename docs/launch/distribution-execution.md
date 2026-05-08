@@ -3,6 +3,11 @@
 This is the shortest path from "repo is ready" to "AgentGuard is in front of
 real coding-agent users."
 
+Ongoing release timing lives in
+[`../release/cadence.md`](../release/cadence.md). Use this document for the
+manual distribution steps, and use the cadence doc to decide when a new MCP,
+Glama, or SDK release is actually due.
+
 ## Order of Operations
 
 1. Official MCP Registry

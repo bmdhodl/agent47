@@ -48,6 +48,12 @@
   repo MCP package version is actually published as npm latest without making
   normal CI depend on the network.
 
+### Release Operations
+- Added a release cadence document that separates the weekly MCP / Glama
+  distribution train from the monthly SDK release train.
+- Added a scheduled release cadence workflow that opens or updates one active
+  release queue issue with SDK, npm MCP, and Glama indexing status.
+
 ## 1.2.10
 
 ### Activation Proof Path
