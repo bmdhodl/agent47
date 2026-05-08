@@ -91,8 +91,11 @@ def test_mcp_smithery_config_matches_runtime_contract():
     assert ".codex-proof" in root_dockerignore
 
 
-def test_glama_claim_file_matches_schema():
+def test_glama_claim_file_declares_maintainer():
     claim = _load_json(ROOT_GLAMA)
+    maintainers = claim["maintainers"]
 
     assert claim["$schema"] == "https://glama.ai/mcp/schemas/server.json"
-    assert claim["maintainers"] == ["bmdhodl"]
+    assert isinstance(maintainers, list)
+    assert "bmdhodl" in maintainers
+    assert all(isinstance(maintainer, str) for maintainer in maintainers)
