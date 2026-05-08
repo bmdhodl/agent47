@@ -4,6 +4,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ROOT_DOCKERFILE = REPO_ROOT / "Dockerfile"
 ROOT_DOCKERIGNORE = REPO_ROOT / ".dockerignore"
+ROOT_GLAMA = REPO_ROOT / "glama.json"
 ROOT_SMITHERY = REPO_ROOT / "smithery.yaml"
 MCP_PACKAGE = REPO_ROOT / "mcp-server" / "package.json"
 MCP_SERVER = REPO_ROOT / "mcp-server" / "server.json"
@@ -48,6 +49,7 @@ def test_mcp_registry_metadata_declares_required_env_vars():
 def test_mcp_glama_packaging_files_are_present():
     assert ROOT_DOCKERFILE.exists()
     assert ROOT_DOCKERIGNORE.exists()
+    assert ROOT_GLAMA.exists()
     assert ROOT_SMITHERY.exists()
     assert MCP_DOCKERFILE.exists()
     assert MCP_DOCKERIGNORE.exists()
@@ -87,3 +89,10 @@ def test_mcp_smithery_config_matches_runtime_contract():
     root_dockerignore = ROOT_DOCKERIGNORE.read_text(encoding="utf-8")
     assert "mcp-server/node_modules" in root_dockerignore
     assert ".codex-proof" in root_dockerignore
+
+
+def test_glama_claim_file_matches_schema():
+    claim = _load_json(ROOT_GLAMA)
+
+    assert claim["$schema"] == "https://glama.ai/mcp/schemas/server.json"
+    assert claim["maintainers"] == ["bmdhodl"]

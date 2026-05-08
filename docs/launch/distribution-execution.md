@@ -44,9 +44,9 @@ curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.bmd
 Current listing:
 - URL: `https://glama.ai/mcp/servers/bmdhodl/agent47`
 - Namespace / slug: `bmdhodl/agent47`
-- Status: first release published on 2026-05-08. Glama API shows the
-  environment schema but still returns an empty `tools` array, so recheck before
-  treating the directory listing as fully indexed.
+- Status: first release published on 2026-05-08. Glama renders the tool pages
+  and score page; the public server API still returns an empty `tools` array, so
+  use rendered pages for quality checks until the API catches up.
 
 Listing details:
 - Name: `AgentGuard`
@@ -57,11 +57,13 @@ Listing details:
 - MCP metadata name: `io.github.bmdhodl/agentguard47`
 
 This repo now also ships:
+- [`glama.json`](../../glama.json)
 - [`mcp-server/Dockerfile`](../../mcp-server/Dockerfile)
 - [`mcp-server/smithery.yaml`](../../mcp-server/smithery.yaml)
 
-Those files make the Glama / Smithery build path explicit and document the
-required `AGENTGUARD_API_KEY` configuration for directory checks.
+Those files claim the Glama listing, make the Glama / Smithery build path
+explicit, and document the required `AGENTGUARD_API_KEY` configuration for
+directory checks.
 
 Important:
 - Glama currently scans the repository root when detecting Smithery metadata
@@ -95,6 +97,19 @@ curl "https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47"
 
 Expected tools once indexing completes: `query_traces`, `get_trace`,
 `get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`, `check_budget`.
+
+Glama quality follow-ups:
+- Keep every tool at A on the rendered score pages. `query_traces` should state
+  that it is read-only, returns a JSON `traces` array, defaults to `limit=20`,
+  and should be used to find `trace_id` values before calling `get_trace` or
+  `get_trace_decisions`.
+- If `glama.json` changes, run the Glama claim ownership flow again so the
+  directory picks up the new metadata.
+- Related servers are managed in the Glama UI via Related Servers -> Suggest
+  Server. Suggested related servers for AgentGuard:
+  - `https://glama.ai/mcp/servers/therealsachin/langfuse-mcp-server`
+  - `https://glama.ai/mcp/servers/agarwalvivek29/opentelemetry-mcp`
+  - `https://glama.ai/mcp/servers/getsentry/sentry-mcp`
 
 ## 3. awesome-mcp-servers
 

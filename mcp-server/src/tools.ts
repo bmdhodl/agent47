@@ -16,16 +16,35 @@ export const tools: ToolDefinition[] = [
   {
     name: "query_traces",
     description:
-      "Search recent traces from your AgentGuard-instrumented agents. " +
-      "Filter by service name, time range, or paginate through results.",
+      "Search retained trace summaries from the AgentGuard Read API. " +
+      "This is read-only: it does not mutate agents, traces, budgets, or alerts; " +
+      "it returns JSON with a traces array, defaults to limit 20, and supports service, " +
+      "ISO since/until, and offset pagination filters. " +
+      "Use this to find candidate trace_id values; use get_trace for one full trace " +
+      "or get_trace_decisions for decision.* events from a known trace.",
     inputSchema: {
       type: "object",
       properties: {
-        limit: { type: "number", description: "Max traces to return (default 20, max 500)" },
-        offset: { type: "number", description: "Offset for pagination" },
-        service: { type: "string", description: "Filter by service name" },
-        since: { type: "string", description: "ISO timestamp — only traces after this time" },
-        until: { type: "string", description: "ISO timestamp — only traces before this time" },
+        limit: {
+          type: "number",
+          description: "Maximum trace summaries to return. Defaults to 20; API maximum is 500.",
+        },
+        offset: {
+          type: "number",
+          description: "Zero-based pagination offset for walking additional trace pages.",
+        },
+        service: {
+          type: "string",
+          description: "Exact AgentGuard service name to filter by, such as a repo or agent label.",
+        },
+        since: {
+          type: "string",
+          description: "ISO 8601 timestamp; include only traces that started at or after this time.",
+        },
+        until: {
+          type: "string",
+          description: "ISO 8601 timestamp; include only traces that started at or before this time.",
+        },
       },
     },
     handler: async (client, args) => {
