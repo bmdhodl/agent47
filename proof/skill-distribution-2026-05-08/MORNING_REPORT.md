@@ -8,7 +8,7 @@ AgentGuard skill distribution is ready for review. The stale skill version metad
 
 ## What Changed
 
-- Moved `SKILL.md` to `skills/agentguard/SKILL.md` because `gh skill publish --dry-run` requires skill names to match directory names. Root `SKILL.md` failed as directory `"."`.
+- Canonicalized the skill at `skills/agentguard/SKILL.md` because `gh skill publish --dry-run` requires skill names to match directory names.
 - Updated skill metadata version from `1.2.7` to `1.2.10`.
 - Added README and PyPI README install docs for:
   - `pip install agentguard47`

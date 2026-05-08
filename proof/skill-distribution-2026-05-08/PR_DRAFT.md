@@ -1,6 +1,6 @@
 ## Summary
 
-- Move the AgentGuard skill into the spec-native `skills/agentguard/SKILL.md` path so `gh skill publish --dry-run` validates it.
+- Canonicalize the AgentGuard skill at the spec-native `skills/agentguard/SKILL.md` path so `gh skill publish --dry-run` validates it.
 - Update skill metadata from `1.2.7` to the verified shipped package version `1.2.10`.
 - Add README/PyPI README install docs for both `pip install agentguard47` and skills-based installs.
 - Update `llms.txt` to link to the new canonical skill path.
