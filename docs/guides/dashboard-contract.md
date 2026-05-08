@@ -5,8 +5,8 @@ Use this when you move from local SDK proof to the hosted AgentGuard dashboard.
 The product boundary is deliberate:
 - the SDK owns local runtime enforcement, local traces, local reports, and
   structured event emission
-- the dashboard owns retained history, alerts, team workflows, billing, and
-  remote kill signal management
+- the dashboard owns retained history, alerts, team visibility, spend trends,
+  hosted decision history, and dashboard-managed remote kill signals
 
 ## Local or hosted
 
@@ -20,8 +20,8 @@ risky enough that local files are no longer enough.
 | You want JSONL traces and reports without an API key | You need spend trends across traces, services, or teammates |
 | You are testing an agent before production | Operators need dashboard-managed remote kill signals |
 
-Hosted ingest should make operational follow-up easier. It should not be
-required for local safety, and it should not replace in-process guards.
+Hosted ingest should make operational follow-up easier. It is not required for
+local safety, and it does not replace in-process guards.
 
 ## First path
 
@@ -56,6 +56,25 @@ with:
 - supported records carry both `kind` and `type`
 - network failures are logged instead of crashing the calling agent
 - retries are bounded by `max_retries`
+
+## Contract proof fixture
+
+Use the sticky proof example when you need one local artifact that can also be
+validated by the dashboard ingest contract:
+
+```bash
+PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+```
+
+It writes:
+
+- `sticky_agent_proof_traces.jsonl` for local reports and incident output
+- `sticky_agent_proof_incident.md` for local review or PR evidence
+- `sticky_agent_proof_hosted.ndjson` with dashboard-compatible `span` and
+  `event` records
+
+The hosted NDJSON drops local-only records and mirrors each event `kind` into
+`type`, matching the same normalization boundary used by `HttpSink`.
 
 ## Decision history
 

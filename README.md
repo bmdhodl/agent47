@@ -16,7 +16,7 @@ enough to create surprise spend.
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bmdhodl/agent47/badge)](https://scorecard.dev/viewer/?uri=github.com/bmdhodl/agent47)
+[![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
 ```bash
@@ -46,6 +46,48 @@ Design constraints:
 - no network calls unless you configure `HttpSink`
 - guards raise exceptions inside the running process
 
+## Real Incidents AgentGuard Prevents
+
+### PocketOS — agent deleted prod DB and backups in 9 seconds (May 2026)
+
+A Cursor agent ran a destructive sequence against PocketOS production and
+wiped the live database. Backups went with it.
+
+Reported root cause from the team's postmortem:
+
+- one API key had write + delete on both prod and backups
+- backups lived in the same Railway environment as prod
+- no confirmation step before destructive actions
+- the agent was given enough rope to chain the calls in one turn
+
+Source: [r/devops thread](https://www.reddit.com/r/devops/comments/1t4au5h/pocketos_lost_their_prod_db_backups_to_a_cursor/)
+
+The "AI did it" framing buries the actual lesson: the blast radius was
+infra, not the model. AgentGuard does not replace least-privilege creds or
+isolated backups. It does kill the run before a loop, retry storm, or
+runaway turn finishes the job.
+
+A `BudgetGuard` plus `LoopGuard` wired around the agent loop caps how much
+it can do in one session:
+
+```python
+from agentguard import BudgetGuard, LoopGuard, RateLimitGuard, Tracer
+
+budget = BudgetGuard(max_calls=20, max_cost_usd=1.00)
+loop = LoopGuard(max_repeats=2)
+rate = RateLimitGuard(max_calls_per_minute=10)
+tracer = Tracer(service="cursor-agent", guards=[loop, rate])
+
+with tracer.trace("agent.run"):
+    budget.consume(calls=1)
+    # tool call here — guards raise on overrun
+```
+
+A 9-second sequence of destructive calls trips `LoopGuard` or
+`RateLimitGuard` long before it finishes. The exception kills the run
+in-process. Pair this with scoped credentials and out-of-environment
+backups for the rest of the blast radius.
+
 ## Local Proof In 60 Seconds
 
 ```bash
@@ -57,6 +99,21 @@ agentguard quickstart --framework raw
 `doctor` verifies the install and local trace writing.
 `demo` proves budget, loop, and retry stops offline.
 `quickstart` prints the smallest starter for your stack.
+
+Installed-package proof:
+
+```bash
+agentguard demo
+```
+
+Source-checkout proof with local incident output and hosted-compatible NDJSON:
+
+```bash
+git clone https://github.com/bmdhodl/agent47.git
+cd agent47
+PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
+```
 
 Expected first value moment:
 
@@ -101,16 +158,17 @@ incidents, alerts, or team visibility matter.
 ```python
 from agentguard import BudgetGuard, JsonlFileSink, LoopGuard, Tracer
 
+budget = BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
+loop = LoopGuard(max_repeats=3)
 tracer = Tracer(
     sink=JsonlFileSink(".agentguard/traces.jsonl"),
     service="support-agent",
-    guards=[
-        BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8),
-        LoopGuard(max_repeats=3),
-    ],
+    guards=[loop],
 )
 
 with tracer.trace("agent.run") as span:
+    budget.consume(calls=1, cost_usd=0.02)
+    loop.check("search", {"query": "refund policy"})
     span.event("tool.call", data={"tool": "search", "query": "refund policy"})
     # Call your agent or tool here.
 ```
@@ -130,10 +188,11 @@ provider normally:
 ```python
 from agentguard import BudgetGuard, Tracer, patch_openai
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)
 
-# OpenAI calls are now traced and budget-enforced.
+# OpenAI chat completions are now traced and budget-enforced.
 ```
 
 When accumulated cost crosses the hard limit, `BudgetExceeded` is raised and
@@ -161,6 +220,7 @@ All examples are local-first. No API key is required unless the example says so.
 | Example | What it proves |
 |---|---|
 | [`examples/try_it_now.py`](examples/try_it_now.py) | budget, loop, and retry stops |
+| [`examples/sticky_agent_proof.py`](examples/sticky_agent_proof.py) | one CrewAI-style retry storm proof with local incident and hosted NDJSON outputs |
 | [`examples/coding_agent_review_loop.py`](examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
 | [`examples/per_token_budget_spike.py`](examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
 | [`examples/budget_aware_escalation.py`](examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
@@ -267,8 +327,8 @@ costs, usage, and budget health.
 ## Hosted Dashboard Boundary
 
 The SDK is the free local proof path. The hosted dashboard is for retained
-history, alerts, team visibility, hosted decision history, and remote-control
-operations.
+history, alerts, team visibility, spend trends, hosted decision history, and
+dashboard-managed remote kill signals.
 
 | Use local SDK when | Use hosted dashboard when |
 | --- | --- |
@@ -331,6 +391,9 @@ assert result.passed
 - Trace format: JSONL
 - Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
 - MCP package: [`@agentguard47/mcp-server`](mcp-server/)
+- Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
+
+[![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/card.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 ## Docs
 

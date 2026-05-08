@@ -1,9 +1,11 @@
 import { AgentGuardClient } from "./client.js";
 import { extractDecisionEvents } from "./decisions.js";
+import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 
 export interface ToolDefinition {
   name: string;
   description: string;
+  annotations?: ToolAnnotations;
   inputSchema: {
     type: "object";
     properties: Record<string, unknown>;
@@ -16,16 +18,44 @@ export const tools: ToolDefinition[] = [
   {
     name: "query_traces",
     description:
-      "Search recent traces from your AgentGuard-instrumented agents. " +
-      "Filter by service name, time range, or paginate through results.",
+      "Read-only search for retained AgentGuard trace summaries from the AgentGuard Read API. " +
+      "Requires AGENTGUARD_API_KEY with read access; create keys in the AgentGuard dashboard. " +
+      "Returns JSON with a traces array, newest traces first when the API supports ordering; " +
+      "items include trace_id, service, root_name, event_count, error_count, duration_ms, " +
+      "started_at, API key metadata, and total_cost when available. Defaults to a small page, " +
+      "accepts offset pagination, exact service filtering, and ISO 8601 since/until bounds. " +
+      "Use this to find candidate trace_id values; use get_trace for the full event tree of one trace " +
+      "or get_trace_decisions for decision.* events from a known trace.",
+    annotations: {
+      title: "Query AgentGuard trace summaries",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     inputSchema: {
       type: "object",
       properties: {
-        limit: { type: "number", description: "Max traces to return (default 20, max 500)" },
-        offset: { type: "number", description: "Offset for pagination" },
-        service: { type: "string", description: "Filter by service name" },
-        since: { type: "string", description: "ISO timestamp — only traces after this time" },
-        until: { type: "string", description: "ISO timestamp — only traces before this time" },
+        limit: {
+          type: "number",
+          description: "Maximum trace summaries to return. Defaults to 20; API maximum is 500.",
+        },
+        offset: {
+          type: "number",
+          description: "Zero-based pagination offset for walking additional trace pages.",
+        },
+        service: {
+          type: "string",
+          description: "Exact AgentGuard service name to filter by, such as a repo or agent label.",
+        },
+        since: {
+          type: "string",
+          description: "ISO 8601 timestamp; include only traces that started at or after this time.",
+        },
+        until: {
+          type: "string",
+          description: "ISO 8601 timestamp; include only traces that started at or before this time.",
+        },
       },
     },
     handler: async (client, args) => {

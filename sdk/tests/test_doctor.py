@@ -26,6 +26,9 @@ class TestDoctor(unittest.TestCase):
             self.assertIn("Suggested next step:", output)
             self.assertIn("local_only=True", output)
             self.assertIn("agentguard demo", output)
+            self.assertIn("If 'agentguard' is not on PATH:", output)
+            self.assertIn("python -m agentguard.cli demo", output)
+            self.assertIn(f"python -m agentguard.cli report {trace_path}", output)
 
     def test_run_doctor_json_output_is_parseable(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -128,6 +131,18 @@ class TestDoctor(unittest.TestCase):
             payload = json.loads(buf.getvalue())
             self.assertEqual(payload["repo_config_path"], config_path)
             self.assertIn("Invalid JSON", payload["repo_config_error"])
+
+    def test_run_doctor_quotes_paths_with_spaces_in_fallback_commands(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            trace_path = os.path.join(tmpdir, "space dir", "doctor's trace.jsonl")
+            buf = io.StringIO()
+
+            result = run_doctor(trace_path=trace_path, stream=buf)
+
+            self.assertEqual(result, 0)
+            quoted_path = '"' + trace_path + '"'
+            self.assertIn(f"agentguard report {quoted_path}", buf.getvalue())
+            self.assertIn(f"python -m agentguard.cli report {quoted_path}", buf.getvalue())
 
     def test_run_doctor_fails_without_tearing_down_existing_tracer(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

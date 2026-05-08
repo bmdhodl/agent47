@@ -345,9 +345,10 @@ agentguard demo         # local proof run
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai
 
-tracer = Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)])
-patch_openai(tracer)
-# All OpenAI calls are now tracked and budget-enforced
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="support-agent")
+patch_openai(tracer, budget_guard=budget)
+# OpenAI chat completions are now tracked and budget-enforced
 ```
 
 **Pattern 2: Stack multiple guards**

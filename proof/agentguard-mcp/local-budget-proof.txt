@@ -1,0 +1,9 @@
+﻿db_path C:\Users\patri\AppData\Local\Temp\tmpi09qb3ct\state.db
+set_budget {'scope': 'global', 'tokens_used': 0, 'tokens_limit': None, 'usd_used': 0.0, 'usd_limit': 5.0, 'period': 'day', 'period_resets_at': '2026-05-05T00:00:00Z', 'kill_switch': False}
+record_call_under {'allowed': True, 'reasons': [], 'scopes_checked': ['global', 'server:github', 'tool:github.create_issue', 'session:demo']}
+remaining_after_under {'scope': 'global', 'tokens_used': 1500, 'tokens_limit': None, 'usd_used': 1.25, 'usd_limit': 5.0, 'period': 'day', 'period_resets_at': '2026-05-05T00:00:00Z', 'kill_switch': False}
+record_call_over {'allowed': False, 'reasons': ['global dollar budget exceeded: 7.500000 > 5.000000'], 'scopes_checked': ['global', 'server:github', 'tool:github.create_issue', 'session:demo']}
+remaining_after_over_not_persisted {'scope': 'global', 'tokens_used': 1500, 'tokens_limit': None, 'usd_used': 1.25, 'usd_limit': 5.0, 'period': 'day', 'period_resets_at': '2026-05-05T00:00:00Z', 'kill_switch': False}
+kill_switch_on {'scope': 'server:github', 'tokens_used': 1500, 'tokens_limit': None, 'usd_used': 1.25, 'usd_limit': None, 'period': 'session', 'period_resets_at': None, 'kill_switch': True}
+record_call_killed {'allowed': False, 'reasons': ['server:github is blocked by kill_switch'], 'scopes_checked': ['global', 'server:github', 'tool:github.create_issue', 'session:demo']}
+

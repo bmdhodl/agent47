@@ -41,20 +41,29 @@ curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.bmd
 
 ## 2. Glama
 
-Listing details to reuse:
+Current listing:
+- URL: `https://glama.ai/mcp/servers/bmdhodl/agent47`
+- Namespace / slug: `bmdhodl/agent47`
+- Status: first release published on 2026-05-08. Glama renders the tool pages
+  and score page; the public server API still returns an empty `tools` array, so
+  use rendered pages for quality checks until the API catches up.
+
+Listing details:
 - Name: `AgentGuard`
 - One-liner: `MCP server for coding-agent traces, alerts, costs, usage, and budget health`
+- Description: `Read-only MCP server for coding-agent traces, decision events, alerts, costs, usage, and budget health.`
 - npm package: `@agentguard47/mcp-server`
 - Repo: `https://github.com/bmdhodl/agent47`
 - MCP metadata name: `io.github.bmdhodl/agentguard47`
 
-Use the same description and install command as `mcp-server/server.json`.
 This repo now also ships:
+- [`glama.json`](../../glama.json)
 - [`mcp-server/Dockerfile`](../../mcp-server/Dockerfile)
 - [`mcp-server/smithery.yaml`](../../mcp-server/smithery.yaml)
 
-Those files make the Glama / Smithery build path explicit and document the
-required `AGENTGUARD_API_KEY` configuration for directory checks.
+Those files claim the Glama listing, make the Glama / Smithery build path
+explicit, and document the required `AGENTGUARD_API_KEY` configuration for
+directory checks.
 
 Important:
 - Glama currently scans the repository root when detecting Smithery metadata
@@ -63,6 +72,45 @@ Important:
 - keep the root shim aligned with the real package-local files in
   [`mcp-server/`](../../mcp-server/)
 
+Release procedure used for `0.2.2`:
+
+1. Open `https://glama.ai/mcp/servers/bmdhodl/agent47/admin/dockerfile`.
+2. Use the repository root Dockerfile. It builds `mcp-server/` and runs
+   `node /app/mcp-server/dist/index.js`.
+3. Configure environment variables:
+
+   | Variable | Required | Secret | Default | Description |
+   |---|---:|---:|---|---|
+   | `AGENTGUARD_API_KEY` | Yes | Yes | | AgentGuard read API key for traces, alerts, costs, usage, and budget health |
+   | `AGENTGUARD_URL` | No | No | `https://app.agentguard47.com` | Optional AgentGuard API base URL |
+
+4. Deploy the build test.
+5. After the test passes, create and publish the Glama release with version
+   `0.2.2` and changelog `Initial Glama release for AgentGuard MCP server.`
+
+After release, verify the public API exposes the environment schema and the 7
+tools:
+
+```bash
+curl "https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47"
+```
+
+Expected tools once indexing completes: `query_traces`, `get_trace`,
+`get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`, `check_budget`.
+
+Glama quality follow-ups:
+- Keep every tool at A on the rendered score pages. `query_traces` should state
+  that it is read-only, returns a JSON `traces` array, defaults to `limit=20`,
+  and should be used to find `trace_id` values before calling `get_trace` or
+  `get_trace_decisions`.
+- If `glama.json` changes, run the Glama claim ownership flow again so the
+  directory picks up the new metadata.
+- Related servers are managed in the Glama UI via Related Servers -> Suggest
+  Server. Suggested related servers for AgentGuard:
+  - `https://glama.ai/mcp/servers/therealsachin/langfuse-mcp-server`
+  - `https://glama.ai/mcp/servers/agarwalvivek29/opentelemetry-mcp`
+  - `https://glama.ai/mcp/servers/getsentry/sentry-mcp`
+
 ## 3. awesome-mcp-servers
 
 Open a PR against the upstream list with:
@@ -70,6 +118,7 @@ Open a PR against the upstream list with:
 - category: monitoring / devtools / safety
 - short description: `Runtime guardrails and read access for coding-agent traces, alerts, and budget health`
 - install target: `npx -y @agentguard47/mcp-server`
+- Glama URL: `https://glama.ai/mcp/servers/bmdhodl/agent47`
 
 ## 4. Show HN
 

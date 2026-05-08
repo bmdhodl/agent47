@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "agentguard-mcp": {
+      "command": "npx",
+      "args": ["-y", "agentguard-mcp"]
+    }
+  }
+}

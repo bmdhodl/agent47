@@ -93,7 +93,7 @@ def _run_checks(trace_path: str) -> Dict[str, Any]:
         "integration_hints": hints,
         "next_commands": [
             "agentguard demo",
-            f"agentguard report {normalized_path}",
+            f"agentguard report {_shell_quote_path(normalized_path)}",
         ],
         "recommended_repo_config": _recommended_repo_config(),
         "recommended_snippet": _recommended_snippet(repo_config_path is not None),
@@ -242,6 +242,12 @@ def _render_text(result: Dict[str, Any], out: TextIO) -> None:
     _print(out, "Helpful commands:")
     for command in result["next_commands"]:
         _print(out, f"  {command}")
+    fallback_commands = _module_command_fallbacks(result["next_commands"])
+    if fallback_commands:
+        _print(out, "")
+        _print(out, "If 'agentguard' is not on PATH:")
+        for command in fallback_commands:
+            _print(out, f"  {command}")
 
     if hints:
         _print(out, "")
@@ -252,3 +258,17 @@ def _render_text(result: Dict[str, Any], out: TextIO) -> None:
 
 def _print(stream: TextIO, line: str) -> None:
     stream.write(line + "\n")
+
+
+def _module_command_fallbacks(commands: List[str]) -> List[str]:
+    return [
+        command.replace("agentguard ", "python -m agentguard.cli ", 1)
+        for command in commands
+        if command.startswith("agentguard ")
+    ]
+
+
+def _shell_quote_path(path: str) -> str:
+    if not any(char.isspace() or char in {'"', "'"} for char in path):
+        return path
+    return '"' + path.replace('"', '\\"') + '"'

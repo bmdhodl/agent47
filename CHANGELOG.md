@@ -2,10 +2,29 @@
 
 ## Unreleased
 
+### Profiles
+- Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
+  for unattended production agents. Tightens defaults to `loop_max=2`,
+  `retry_max=1`, `warn_pct=0.5`. Motivated by the arxiv:2605.00055
+  ambient-persuasion incident where a deployed agent installed 107
+  unauthorized components and overrode its own oversight gate.
+
+### Release Proof
+- Added a deterministic sticky agent proof example that simulates a
+  CrewAI-style retry storm, repeated tool loop, budget burn, local incident
+  output, and dashboard-compatible hosted NDJSON without adding dependencies.
+- Added contract tests that post the sticky proof NDJSON to the local hosted
+  ingest harness so SDK proof events stay aligned with dashboard expectations.
+
 ### Activation
+- Added `python -m agentguard.cli ...` fallback guidance to `doctor`, `demo`,
+  and `quickstart` so first-run users are not blocked when console scripts
+  install outside `PATH`.
 - Added a post-demo next-step block so `agentguard demo` points directly to
   `agentguard quickstart --framework raw --write`, the generated starter, and
   the follow-up local report command.
+- Added an MCP read-path proof to the proof gallery and test coverage that
+  catches stale local example and sample-doc references.
 - Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
   `TestModel`, so users can try the pattern without API keys or network calls
   after installing the optional framework package.

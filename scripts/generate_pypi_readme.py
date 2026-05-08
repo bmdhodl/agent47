@@ -33,6 +33,7 @@ UNRELEASED_PATHS = {
     "docs/guides/decision-tracing.md",
     "docs/guides/managed-agent-sessions.md",
     "docs/release/trusted-publishing.md",
+    "examples/sticky_agent_proof.py",
 }
 
 

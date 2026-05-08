@@ -123,15 +123,13 @@ Skip manual `consume()` calls — patch the SDK to auto-track costs:
 ```python
 from agentguard import Tracer, BudgetGuard, patch_openai, patch_anthropic
 
-tracer = Tracer(
-    service="my-agent",
-    guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)],
-)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(service="my-agent")
 
-patch_openai(tracer)      # auto-tracks all ChatCompletion calls
-patch_anthropic(tracer)   # auto-tracks all Messages calls
+patch_openai(tracer, budget_guard=budget)      # traces and checks ChatCompletion calls
+patch_anthropic(tracer, budget_guard=budget)   # traces and checks Messages calls
 
-# Use OpenAI/Anthropic normally — costs tracked automatically
+# Use OpenAI/Anthropic normally. Usage is recorded into the budget guard.
 ```
 
 When done, clean up:

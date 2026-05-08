@@ -1,6 +1,6 @@
 # SDK Distribution
 
-**Last Updated:** 2026-04-02
+**Last Updated:** 2026-05-08
 
 ## Core Message
 AgentGuard stops coding agents from looping, retrying forever, and burning
@@ -12,9 +12,13 @@ budget.
 - teams worried about runaway spend and unsafe automation
 
 ## Channels
-- Official MCP Registry
-- Glama
-- `awesome-mcp-servers`
+- Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; metadata
+  refresh needed because public search still reports MCP package `0.2.1`
+- Glama: first release live at `https://glama.ai/mcp/servers/bmdhodl/agent47`;
+  rendered tool/score pages exist, public API tool catalog still lags, and
+  related-server suggestions need manual Glama UI submission
+- `awesome-mcp-servers`: next distribution step after Glama listing/tool
+  indexing is acceptable for badge/commenting
 - Show HN
 - LangChain / GitHub community posts
 

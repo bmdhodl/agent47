@@ -79,13 +79,17 @@ the local-first runtime enforcement layer.
 from agentguard import Tracer, LoopGuard, BudgetGuard, JsonlFileSink
 
 sink = JsonlFileSink(".agentguard/traces.jsonl")
+budget = BudgetGuard(max_cost_usd=5.00, max_calls=50)
+loop = LoopGuard(max_repeats=3)
 tracer = Tracer(
     sink=sink,
     service="my-agent",
-    guards=[LoopGuard(max_repeats=3), BudgetGuard(max_cost_usd=5.00)],
+    guards=[loop],
 )
 
 with tracer.trace("agent.run") as span:
+    budget.consume(calls=1, cost_usd=0.02)
+    loop.check("search", {"query": "docs"})
     span.event("reasoning.step", data={"thought": "search docs"})
     with span.span("tool.search"):
         pass  # your tool here
@@ -264,6 +268,35 @@ export_csv("traces.jsonl", "traces.csv")
 ```bash
 python -m agentguard.bench
 ```
+
+## Typed contracts
+
+AgentGuard publishes typed schemas for its public configuration surface so
+agents and tools can introspect the contract instead of scraping prose.
+Schemas are stdlib-only frozen dataclasses (no pydantic dependency, no extra
+install).
+
+```python
+from agentguard import InitConfig, RepoConfig, ProfileDefaults, SUPPORTED_PROFILES
+
+cfg = InitConfig(budget_usd=5.00, profile="coding-agent", warn_pct=0.5)
+cfg.validate()  # raises ValueError on bad input
+
+import agentguard
+agentguard.init(**cfg.to_dict())
+```
+
+| Schema | What it shapes | Source |
+|---|---|---|
+| `InitConfig` | Keyword arguments to `agentguard.init()` | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `RepoConfig` | `.agentguard.json` repo-local defaults | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `ProfileDefaults` | Guard policy shape per built-in profile | [`agentguard/schemas.py`](agentguard/schemas.py) |
+| `SUPPORTED_PROFILES` | Tuple of valid profile names | [`agentguard/profiles.py`](agentguard/profiles.py) |
+
+Each schema has a `validate()` method that raises `ValueError` on bad input
+(out-of-range warn_pct, negative budget, unknown profile, header injection
+in api_key, etc.). Validation rules mirror the runtime checks already
+enforced by `init()` and `repo_config`.
 
 ## Migration Guide (v0.5 → v1.0)
 

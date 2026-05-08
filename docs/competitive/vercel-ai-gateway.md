@@ -31,16 +31,14 @@ You run Claude Code on Vercel for production workloads. For development and test
 **With AgentGuard:**
 
 ```python
-from agentguard import Tracer, BudgetGuard, JsonlFileSink
+from agentguard import Tracer, BudgetGuard, JsonlFileSink, patch_anthropic, patch_openai
 
-tracer = Tracer(
-    sink=JsonlFileSink(".agentguard/traces.jsonl"),
-    guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)],
-)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"))
 
 # Same guards work for both providers
-# Production: patch_anthropic(tracer) for Claude
-# Dev: patch_openai(tracer) for local Ollama via OpenAI-compatible API
+# Production: patch_anthropic(tracer, budget_guard=budget) for Claude
+# Dev: patch_openai(tracer, budget_guard=budget) for local Ollama via OpenAI-compatible API
 ```
 
 One SDK. Same budget enforcement whether the call goes to Claude's API or to localhost:11434. Same trace format. Same audit log. The guard does not care where the model lives.
