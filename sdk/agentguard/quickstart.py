@@ -244,6 +244,7 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
     snippet = dedent(
         f"""
         import agentguard
+        from agentguard import BudgetExceeded, LoopDetected
 
         tracer = agentguard.init(
             profile="coding-agent",
@@ -252,22 +253,51 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
             trace_file={trace_file_literal},
             local_only=True,
         )
+        budget = agentguard.get_budget_guard()
+
+        def call_model(span, prompt: str) -> str:
+            # Replace this with your real LLM call. Keep the budget.consume()
+            # line near the provider response when you know the call cost.
+            simulated_cost = {budget_usd / 2 + 0.01:.2f}
+            span.event(
+                "llm.result",
+                data={{"model": "offline-demo-model", "prompt": prompt}},
+                cost_usd=simulated_cost,
+            )
+            if budget is not None:
+                budget.consume(calls=1, cost_usd=simulated_cost)
+            return f"offline answer for {{prompt}}"
 
         @agentguard.trace_tool(tracer)
         def search_docs(query: str) -> str:
             return f"results for {{query}}"
 
         with tracer.trace("agent.run") as span:
+            try:
+                call_model(span, "plan a safe coding-agent change")
+                call_model(span, "retry the same expensive plan")
+            except BudgetExceeded as exc:
+                span.event("guard.budget_exceeded", data={{"message": str(exc)}})
+                print("BudgetGuard stopped simulated spend: " + str(exc))
+
+            try:
+                for _ in range(3):
+                    span.event("tool.search", data={{"query": "agentguard quickstart"}})
+            except LoopDetected as exc:
+                span.event("guard.loop_detected", data={{"message": str(exc)}})
+                print("LoopGuard stopped repeated tool calls: " + str(exc))
+
             result = search_docs("agentguard quickstart")
             span.event("agent.answer", data={{"result": result}})
 
         print("Traces saved to " + {trace_file_literal})
+        print("Inspect with: agentguard report " + {trace_file_literal})
         """
     )
     return _base_payload(
         install_command="pip install agentguard47",
         filename="agentguard_raw_quickstart.py",
-        summary="Offline starter that proves local tracing and guard wiring without any API keys.",
+        summary="Offline starter that proves local tracing plus budget and loop stops without any API keys.",
         snippet=snippet,
         next_commands=[
             "agentguard doctor",
@@ -276,7 +306,8 @@ def _raw_payload(service: str, budget_usd: float, trace_file: str) -> Dict[str, 
         ],
         notes=[
             "This path is fully local. No dashboard and no provider API keys are required.",
-            "Start here if you want a safe first run before wiring a real LLM client.",
+            "The generated file catches simulated guard exceptions so the script exits cleanly.",
+            "Copy the call_model and tool-event pattern into the loop that drives your coding agent.",
             "Commit a .agentguard.json file if you want coding agents to reuse the same local defaults.",
         ],
     )

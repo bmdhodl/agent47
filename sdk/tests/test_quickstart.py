@@ -2,11 +2,13 @@ import ast
 import io
 import json
 import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
 
-from agentguard.cli import _quickstart
+from agentguard.cli import _quickstart, _report
 from agentguard.quickstart import FRAMEWORK_CHOICES, _build_quickstart_payload, run_quickstart
 
 
@@ -111,6 +113,40 @@ class TestQuickstart(unittest.TestCase):
                 self.assertIn("pip install agentguard47", buf.getvalue())
                 self.assertIn("python agentguard_raw_quickstart.py", buf.getvalue())
                 self.assertIn("python -m agentguard.cli report .agentguard/traces.jsonl", buf.getvalue())
+            finally:
+                os.chdir(cwd)
+
+    def test_written_raw_quickstart_runs_and_reports_guard_events(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            cwd = os.getcwd()
+            os.chdir(tmp)
+            try:
+                buf = io.StringIO()
+                result = run_quickstart(framework="raw", write_file=True, stream=buf)
+                self.assertEqual(result, 0)
+
+                completed = subprocess.run(
+                    [sys.executable, "agentguard_raw_quickstart.py"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+                self.assertIn("BudgetGuard stopped simulated spend", completed.stdout)
+                self.assertIn("LoopGuard stopped repeated tool calls", completed.stdout)
+                self.assertTrue(os.path.exists(os.path.join(".agentguard", "traces.jsonl")))
+                with open(os.path.join(".agentguard", "traces.jsonl"), encoding="utf-8") as handle:
+                    names = [json.loads(line)["name"] for line in handle if line.strip()]
+                self.assertIn("guard.budget_exceeded", names)
+                self.assertIn("guard.loop_detected", names)
+                self.assertIn("llm.result", names)
+
+                report = io.StringIO()
+                with redirect_stdout(report):
+                    _report(os.path.join(".agentguard", "traces.jsonl"))
+                self.assertIn("Estimated cost: $", report.getvalue())
+                self.assertIn("guard.budget_exceeded: 1", report.getvalue())
+                self.assertIn("guard.loop_detected: 1", report.getvalue())
             finally:
                 os.chdir(cwd)
 

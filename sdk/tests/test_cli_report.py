@@ -97,6 +97,58 @@ class TestCliReport(unittest.TestCase):
             output = buf.getvalue()
             self.assertIn("Estimated cost: $0.0225", output)
 
+    def test_report_lists_guard_events(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, "traces.jsonl")
+            events = [
+                {
+                    "service": "demo",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "span_id": "s1",
+                    "parent_id": None,
+                    "name": "guard.budget_exceeded",
+                    "ts": 0,
+                    "duration_ms": None,
+                    "data": {"message": "budget exceeded"},
+                    "error": None,
+                },
+                {
+                    "service": "demo",
+                    "kind": "event",
+                    "phase": "emit",
+                    "trace_id": "t1",
+                    "span_id": "s1",
+                    "parent_id": None,
+                    "name": "guard.loop_detected",
+                    "ts": 0,
+                    "duration_ms": None,
+                    "data": {"message": "loop detected"},
+                    "error": None,
+                },
+            ]
+            with open(path, "w", encoding="utf-8") as f:
+                for event in events:
+                    f.write(json.dumps(event) + "\n")
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._report(path)
+
+            output = buf.getvalue()
+            self.assertIn("Guard events:", output)
+            self.assertIn("guard.budget_exceeded: 1", output)
+            self.assertIn("guard.loop_detected: 1", output)
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._report(path, as_json=True)
+
+            payload = json.loads(buf.getvalue())
+            self.assertEqual(payload["guard_events"]["guard.budget_exceeded"], 1)
+            self.assertEqual(payload["guard_events"]["guard.loop_detected"], 1)
+
     def test_incident_command_markdown_format(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = os.path.join(tmpdir, "traces.jsonl")
