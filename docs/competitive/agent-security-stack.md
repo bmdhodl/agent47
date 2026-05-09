@@ -2,7 +2,7 @@
 
 This is a living positioning doc. It explains how AgentGuard fits beside other
 emerging agent-security layers rather than pretending one product should do
-everything. Last updated: 2026-04-16.
+everything. Last updated: 2026-05-09.
 
 ## Why this comparison exists
 
@@ -23,6 +23,13 @@ Trusted credentials do not stop a retry storm. Tool-governance policy does not
 kill a stuck loop already running inside the process. A sandbox can contain
 damage, but it does not enforce a dollar budget or halt a runaway decision flow
 on its own.
+
+Recent coding-agent incidents make that boundary concrete. CVE-2026-39861 /
+GHSA-vp62-r36r-9xqp documented a Claude Code sandbox escape where a symlink
+created inside the sandbox was later followed by an unsandboxed write path,
+allowing a write outside the workspace. AgentGuard does not stop that path
+traversal. It can still cap the compromised run with budgets, retry limits,
+timeouts, and trace evidence once the agent process is instrumented.
 
 ## Layer map
 
@@ -54,7 +61,7 @@ That keeps the repo aligned with its real architecture:
 A coding agent gets a valid non-human identity, is allowed to call a small set
 of MCP tools, and runs inside a sandboxed worker.
 
-Three different failures can still happen:
+Four different failures can still happen:
 
 1. The identity layer correctly authenticates the agent, but the agent burns
    through the run budget with repeated retries.
@@ -62,9 +69,15 @@ Three different failures can still happen:
    an A-B-A-B tool loop after the call returns.
 3. The sandbox correctly contains filesystem access, but the agent keeps
    spawning expensive model turns until the run is no longer economical.
+4. A managed-agent platform performs scheduled memory refinement, grader
+   passes, or delegated subagent work outside the local process that AgentGuard
+   is tracing.
 
-Those are AgentGuard failures to prevent. They happen after identity,
-governance, and isolation have all done their jobs.
+The first three are AgentGuard failures to prevent. They happen after identity,
+governance, and isolation have all done their jobs. The fourth is a boundary to
+document clearly: AgentGuard can enforce the local calls it sees, but
+provider-managed background phases still need provider-side limits and billing
+monitoring.
 
 ```python
 from agentguard import BudgetGuard, LoopGuard, RetryGuard, Tracer

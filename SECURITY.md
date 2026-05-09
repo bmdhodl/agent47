@@ -39,6 +39,27 @@ Out of scope:
 - Third-party integrations (LangChain, OpenAI, etc.)
 - The AgentGuard dashboard (separate security policy)
 
+## Agent Threat Classes
+
+AgentGuard is an in-process runtime guardrail. It is not a filesystem sandbox,
+container runtime, or host isolation layer. These threat classes are in scope
+for documentation and examples because they affect autonomous coding-agent
+blast radius:
+
+- **Sandbox escape via symlink traversal.** CVE-2026-39861 /
+  GHSA-vp62-r36r-9xqp showed a Claude Code sandbox escape where a sandboxed
+  process could create a symlink that the unsandboxed app later followed,
+  allowing writes outside the workspace. AgentGuard does not prevent symlink
+  traversal or replace sandbox path validation. `BudgetGuard`, `LoopGuard`,
+  `RetryGuard`, `TimeoutGuard`, and session-scoped tracing can still limit how
+  long a compromised or prompt-injected autonomous run keeps acting.
+- **Provider-managed background work.** Managed-agent systems can add work
+  outside the traced application process, such as scheduled memory refinement,
+  external graders, or multi-agent orchestration. AgentGuard only enforces
+  limits on code paths that run through its tracers and guards. Provider
+  console limits and billing alerts remain required for provider-managed
+  background phases until explicit integration support exists.
+
 ## Security Design
 
 The AgentGuard SDK is designed with security in mind:

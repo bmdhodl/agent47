@@ -12,6 +12,25 @@ AgentGuard already gives every top-level trace its own `trace_id`. `session_id`
 adds one level above that, so downstream systems can group multiple traces that
 belong to the same managed-agent session.
 
+## Cost surface boundary
+
+Managed-agent platforms can perform work outside the local process that
+AgentGuard instruments. Anthropic describes Managed Agents "Dreaming" as a
+scheduled process that reviews past sessions, memory stores, and feedback to
+surface patterns for future work. If a provider bills that background work, it
+is not currently modeled by AgentGuard's per-call tracking because no local
+`Tracer`, provider patch, or guard sees the call.
+
+Treat provider-managed background phases as an external cost surface:
+- keep `BudgetGuard` on the code and provider calls you run locally
+- use `session_id` to correlate the managed harness traces you can observe
+- keep provider console spend limits and billing alerts enabled for background
+  planning, memory refinement, grader passes, and delegated subagent work
+
+This is a documented gap, not a hidden feature. AgentGuard can enforce the
+runtime paths it instruments. It does not yet enforce provider-managed
+pre-call, between-call, or post-call work.
+
 ## When to use it
 
 Use `session_id` when:
