@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Python 3.9+
 metadata:
   author: bmdhodl
-  version: "1.2.7"
+  version: "1.2.10"
   pypi: agentguard47
 ---
 

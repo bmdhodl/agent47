@@ -20,7 +20,7 @@ AgentGuard stops runaway coding agents mid-run. It raises Python exceptions when
 | File | Description | Tokens (approx) |
 |------|-------------|------------------|
 | [README.md](https://github.com/bmdhodl/agent47/blob/main/README.md) | Full usage guide with examples | ~3500 |
-| [SKILL.md](https://github.com/bmdhodl/agent47/blob/main/SKILL.md) | Declarative capability map for AI agents | ~800 |
+| [SKILL.md](https://github.com/bmdhodl/agent47/blob/main/skills/agentguard/SKILL.md) | Declarative capability map for AI agents | ~800 |
 | [AGENTS.md](https://github.com/bmdhodl/agent47/blob/main/AGENTS.md) | Project structure, API surface, coding patterns | ~1800 |
 | [CLAUDE.md](https://github.com/bmdhodl/agent47/blob/main/CLAUDE.md) | Claude Code agent instructions | ~1800 |
 | [CONTRIBUTING.md](https://github.com/bmdhodl/agent47/blob/main/CONTRIBUTING.md) | Dev setup, test commands, PR guidelines | ~600 |

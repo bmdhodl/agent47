@@ -19,8 +19,24 @@ enough to create surprise spend.
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
+## Install
+
+### As a Python package
+
 ```bash
 pip install agentguard47
+```
+
+### As a skill (Claude Code, Cursor, Cline, and more)
+
+```bash
+npx skills add bmdhodl/agent47
+```
+
+Or with GitHub CLI:
+
+```bash
+gh skill install bmdhodl/agent47 agentguard
 ```
 
 ## Why AgentGuard
