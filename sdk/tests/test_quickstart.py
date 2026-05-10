@@ -125,10 +125,16 @@ class TestQuickstart(unittest.TestCase):
                 result = run_quickstart(framework="raw", write_file=True, stream=buf)
                 self.assertEqual(result, 0)
 
+                env = os.environ.copy()
+                sdk_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+                env["PYTHONPATH"] = os.pathsep.join(
+                    path for path in [sdk_path, env.get("PYTHONPATH", "")] if path
+                )
                 completed = subprocess.run(
                     [sys.executable, "agentguard_raw_quickstart.py"],
                     check=True,
                     capture_output=True,
+                    env=env,
                     text=True,
                 )
 
