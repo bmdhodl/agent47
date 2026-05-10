@@ -44,6 +44,13 @@ def _report(path: str, as_json: bool = False) -> None:
     total = len(events)
     kinds = Counter(e.get("kind", "(unknown)") for e in events)
     names = Counter(e.get("name", "(unknown)") for e in events)
+    guard_counts = Counter(
+        {
+            name: count
+            for name, count in names.items()
+            if isinstance(name, str) and name.startswith("guard.")
+        }
+    )
     loop_hits = names.get("guard.loop_detected", 0)
 
     span_durations: list[float] = []
@@ -74,6 +81,7 @@ def _report(path: str, as_json: bool = False) -> None:
             "llm_results": names.get("llm.result", 0),
             "estimated_cost_usd": round(total_cost, 4),
             "loop_guard_triggered": loop_hits,
+            "guard_events": dict(guard_counts),
             "savings": savings,
         }
         print(json.dumps(result))
@@ -100,6 +108,10 @@ def _report(path: str, as_json: bool = False) -> None:
         print(f"  Loop guard triggered: {loop_hits} time(s)")
     else:
         print("  Loop guard triggered: 0")
+    if guard_counts:
+        print("  Guard events:")
+        for guard_name, count in guard_counts.most_common():
+            print(f"    {guard_name}: {count}")
     incident_hits = sum(
         1 for e in events if isinstance(e.get("name"), str) and e["name"].startswith("guard.")
     )

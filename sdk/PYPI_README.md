@@ -106,41 +106,28 @@ A 9-second sequence of destructive calls trips `LoopGuard` or
 in-process. Pair this with scoped credentials and out-of-environment
 backups for the rest of the blast radius.
 
-## Local Proof In 60 Seconds
+## Local Proof in 60 Seconds
 
 ```bash
+pip install agentguard47
 agentguard doctor
 agentguard demo
-agentguard quickstart --framework raw
+agentguard quickstart --framework raw --write
+python agentguard_raw_quickstart.py
+agentguard report .agentguard/traces.jsonl
 ```
 
-`doctor` verifies the install and local trace writing.
-`demo` proves budget, loop, and retry stops offline.
-`quickstart` prints the smallest starter for your stack.
+This stays fully local. No API key, dashboard, or network call is required
+after installation.
 
-Installed-package proof:
+What you should see:
 
-```bash
-agentguard demo
-```
-
-Source-checkout proof with local incident output and hosted-compatible NDJSON:
-
-```bash
-git clone https://github.com/bmdhodl/agent47.git
-cd agent47
-PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
-agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
-```
-
-Expected first value moment:
-
-```text
-BudgetGuard stops simulated spend.
-LoopGuard stops repeated tool calls.
-RetryGuard stops a retry storm.
-No API keys. No dashboard. No network calls.
-```
+- `doctor` verifies the installed package and writes a local trace.
+- `demo` visibly trips budget, loop, and retry guards offline.
+- `quickstart --write` creates `agentguard_raw_quickstart.py`.
+- The generated file exits cleanly after catching simulated budget and loop
+  stops.
+- `report` shows local trace counts, cost, savings, and guard events.
 
 Notebook version:
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.10/examples/quickstart.ipynb)
