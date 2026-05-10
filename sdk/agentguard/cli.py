@@ -45,7 +45,11 @@ def _report(path: str, as_json: bool = False) -> None:
     kinds = Counter(e.get("kind", "(unknown)") for e in events)
     names = Counter(e.get("name", "(unknown)") for e in events)
     guard_counts = Counter(
-        name for name in names if isinstance(name, str) and name.startswith("guard.")
+        {
+            name: count
+            for name, count in names.items()
+            if isinstance(name, str) and name.startswith("guard.")
+        }
     )
     loop_hits = names.get("guard.loop_detected", 0)
 
