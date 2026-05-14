@@ -162,12 +162,9 @@ def _verify_local_init(trace_path: str) -> int:
 
 
 def _package_version() -> str:
-    try:
-        from importlib.metadata import version
+    from agentguard import __version__
 
-        return version("agentguard47")
-    except Exception:
-        return "0.0.0-dev"
+    return __version__
 
 
 def _recommended_snippet(repo_config_present: bool = False) -> str:

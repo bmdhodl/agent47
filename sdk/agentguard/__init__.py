@@ -1,5 +1,7 @@
 import logging
+import re
 from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
@@ -52,10 +54,31 @@ from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
-try:
-    __version__ = version("agentguard47")
-except PackageNotFoundError:  # pragma: no cover
-    __version__ = "0.0.0-dev"
+
+def _read_source_version() -> str | None:
+    pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    if not pyproject_path.exists():
+        return None
+
+    content = pyproject_path.read_text(encoding="utf-8")
+    match = re.search(r'^version\s*=\s*"([^"]+)"', content, re.MULTILINE)
+    if match is None:
+        return None
+    return match.group(1)
+
+
+def _discover_version() -> str:
+    source_version = _read_source_version()
+    if source_version:
+        return source_version
+
+    try:
+        return version("agentguard47")
+    except PackageNotFoundError:  # pragma: no cover
+        return "0.0.0-dev"
+
+
+__version__ = _discover_version()
 
 # Libraries should not configure logging; only add a NullHandler so
 # consumers do not see "No handler found" warnings.
