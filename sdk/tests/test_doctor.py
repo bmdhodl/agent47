@@ -44,6 +44,7 @@ class TestDoctor(unittest.TestCase):
             self.assertGreaterEqual(payload["events_written"], 4)
             self.assertIn("recommended_snippet", payload)
             self.assertEqual(payload["recommended_repo_config"]["profile"], "coding-agent")
+            self.assertEqual(payload["package_version"], agentguard.__version__)
 
     def test_run_doctor_ignores_api_key_env(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

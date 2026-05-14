@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import tempfile
 import types
+from pathlib import Path
 from typing import Any, Dict, List
 from unittest.mock import patch
 
@@ -492,6 +494,14 @@ class TestGetters:
 
 class TestModuleLevelAccess:
     """Test that init/shutdown are accessible via agentguard module."""
+
+    def test_module_version_matches_repo_pyproject(self):
+        pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
+        content = pyproject_path.read_text(encoding="utf-8")
+        match = re.search(r'^version\s*=\s*"([^"]+)"', content, re.MULTILINE)
+
+        assert match is not None
+        assert agentguard.__version__ == match.group(1)
 
     def test_module_has_init(self):
         assert hasattr(agentguard, "init")
