@@ -2,6 +2,7 @@ import logging
 import re
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
+from typing import Optional
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
@@ -61,7 +62,7 @@ from .sinks import HttpSink
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
 
-def _read_source_version() -> str | None:
+def _read_source_version() -> Optional[str]:
     pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
     if not pyproject_path.exists():
         return None
