@@ -503,6 +503,47 @@ class TestModuleLevelAccess:
         assert match is not None
         assert agentguard.__version__ == match.group(1)
 
+    def test_source_version_ignores_non_agentguard_project_table(self, monkeypatch):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            package_root = Path(tmpdir) / "sdk" / "agentguard"
+            package_root.mkdir(parents=True)
+            pyproject_path = package_root.parent / "pyproject.toml"
+            pyproject_path.write_text(
+                '\n'.join(
+                    [
+                        "[project]",
+                        'name = "some-other-package"',
+                        'version = "9.9.9"',
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            monkeypatch.setattr(agentguard, "__file__", str(package_root / "__init__.py"))
+
+            assert agentguard._read_source_version() is None
+
+    def test_source_version_uses_project_table_version_only(self, monkeypatch):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            package_root = Path(tmpdir) / "sdk" / "agentguard"
+            package_root.mkdir(parents=True)
+            pyproject_path = package_root.parent / "pyproject.toml"
+            pyproject_path.write_text(
+                '\n'.join(
+                    [
+                        "[tool.poetry]",
+                        'version = "9.9.9"',
+                        "",
+                        "[project]",
+                        'name = "agentguard47"',
+                        'version = "1.2.10"',
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            monkeypatch.setattr(agentguard, "__file__", str(package_root / "__init__.py"))
+
+            assert agentguard._read_source_version() == "1.2.10"
+
     def test_module_has_init(self):
         assert hasattr(agentguard, "init")
         assert callable(agentguard.init)

@@ -68,10 +68,32 @@ def _read_source_version() -> Optional[str]:
         return None
 
     content = pyproject_path.read_text(encoding="utf-8")
-    match = re.search(r'^version\s*=\s*"([^"]+)"', content, re.MULTILINE)
-    if match is None:
+    in_project_table = False
+    project_name = None
+    project_version = None
+
+    for raw_line in content.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            in_project_table = line == "[project]"
+            continue
+        if not in_project_table:
+            continue
+
+        name_match = re.match(r'^name\s*=\s*"([^"]+)"', line)
+        if name_match is not None:
+            project_name = name_match.group(1)
+            continue
+
+        version_match = re.match(r'^version\s*=\s*"([^"]+)"', line)
+        if version_match is not None:
+            project_version = version_match.group(1)
+
+    if project_name != "agentguard47" or project_version is None:
         return None
-    return match.group(1)
+    return project_version
 
 
 def _discover_version() -> str:
