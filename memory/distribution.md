@@ -1,6 +1,6 @@
 # SDK Distribution
 
-**Last Updated:** 2026-05-08
+**Last Updated:** 2026-05-15
 
 ## Core Message
 AgentGuard stops coding agents from looping, retrying forever, and burning
@@ -12,11 +12,18 @@ budget.
 - teams worried about runaway spend and unsafe automation
 
 ## Channels
-- Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; metadata
-  refresh needed because public search still reports MCP package `0.2.1`
-- Glama: first release live at `https://glama.ai/mcp/servers/bmdhodl/agent47`;
-  rendered tool/score pages exist, public API tool catalog still lags, and
-  related-server suggestions need manual Glama UI submission
+- npm `@agentguard47/mcp-server`: latest `0.2.2`, modified 2026-05-04; matches
+  `mcp-server/package.json` and `mcp-server/server.json`
+- Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; public API
+  still reports `0.2.1` (statusChangedAt 2026-04-02). Republish requires
+  `mcp-publisher` CLI with maintainer credentials and is NOT scripted in this
+  repo; see `docs/release/mcp-publishing.md`
+- Glama: live at `https://glama.ai/mcp/servers/bmdhodl/agent47` (id
+  `y6zuc6wgtu`). Environment schema present; public API `tools: []` still
+  empty, so the seven expected tools (`query_traces`, `get_trace`,
+  `get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`,
+  `check_budget`) are not yet indexed. Requires manual Glama UI action; no
+  repo automation
 - `awesome-mcp-servers`: next distribution step after Glama listing/tool
   indexing is acceptable for badge/commenting
 - Show HN
