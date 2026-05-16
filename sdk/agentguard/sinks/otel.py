@@ -115,6 +115,8 @@ class OtelTraceSink(TraceSink):
         raw_links = event.get("links")
         if not raw_links:
             return []
+        if not isinstance(raw_links, (list, tuple)):
+            return []
 
         links: List[Any] = []
         for entry in raw_links:

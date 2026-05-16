@@ -7,12 +7,12 @@
 - `Tracer.start_span(...)` accepts a `links` kwarg (list of `Link`). The fake
   tracer in `tests/test_otel_sink.py` was extended to accept it.
 - `Span.get_span_context()` returns the `SpanContext` a `Link` needs.
-- Existing sink stores OTel spans by `span_id` in `self._spans` (otel.py:70).
+- Existing sink stores OTel spans by `span_id` in `self._spans` (otel.py:80).
   Span links reuse that same registry — link targets must already be tracked.
-- Ruff config (`sdk/pyproject.toml:74`) excludes `tests*` and `examples*`, so
-  the 4 pre-existing F401 unused-import warnings in `test_otel_sink.py` are not
-  CI-checked and are out of scope for this task. The production file
-  `agentguard/sinks/otel.py` passes `ruff check` cleanly.
+- The repo lint path targets production code, so the 4 pre-existing F401 unused
+  imports in `test_otel_sink.py` are not CI-checked and are out of scope for
+  this task. The production file `agentguard/sinks/otel.py` passes `ruff check`
+  cleanly.
 - Roadmap `ops/03-ROADMAP_NOW_NEXT_LATER.md:76` explicitly lists this exact
   Later item: "OtelTraceSink supports custom resource attributes and span links
   without pulling the SDK toward generic observability positioning."
@@ -25,6 +25,6 @@
   when a caller passes ints/bools.
 
 ## Test evidence
-- `python -m pytest tests/test_otel_sink.py -q` → 19 passed.
-- `python -m pytest tests/ -q` → 750 passed (no regressions).
+- `python -m pytest tests/test_otel_sink.py -q` → 20 passed.
+- `python -m pytest tests/ -q` → 752 passed (no regressions).
 - `python -m ruff check agentguard/sinks/otel.py` → All checks passed.

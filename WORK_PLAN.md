@@ -26,7 +26,8 @@ inside the existing sink only — no new exporter module, no new dependency.
 - [x] `resource_attributes` constructor arg, backward-compatible (defaults None).
 - [x] Resource attrs stamped on every span; non-string values coerced.
 - [x] `links` on span-start produce OTel `Link` objects to tracked spans.
-- [x] Malformed/unknown links skipped without crashing.
+- [x] Malformed/unknown links skipped without crashing, including truthy
+  non-list `links` values and non-dict link attributes.
 - [x] All 9 original tests still pass; new tests cover both features.
 - [x] No new dependencies; core SDK stays zero-dep.
 
