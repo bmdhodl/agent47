@@ -15,11 +15,17 @@ Usage::
     from agentguard.sinks.otel import OtelTraceSink
     from agentguard import Tracer
 
-    sink = OtelTraceSink(provider)
+    sink = OtelTraceSink(provider, resource_attributes={"deployment.env": "prod"})
     tracer = Tracer(sink=sink, service="my-agent")
 
     with tracer.trace("agent.run") as ctx:
         ctx.event("step", data={"thought": "search docs"})
+
+Custom resource attributes are stamped onto every span this sink emits, so
+downstream collectors can filter on deployment/host/region without a hosted
+control plane. Span links let one span point at sibling spans it consumed
+(e.g. a fan-in step referencing the spans it merged); supply a ``links`` list
+on the span-start event.
 
 Requires ``opentelemetry-api`` and ``opentelemetry-sdk`` (optional deps).
 Core SDK remains zero-dep.
@@ -27,12 +33,12 @@ Core SDK remains zero-dep.
 from __future__ import annotations
 
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from agentguard.tracing import TraceSink
 
 try:
-    from opentelemetry.trace import SpanKind, StatusCode
+    from opentelemetry.trace import Link, SpanKind, StatusCode
 
     _HAS_OTEL = True
 except ImportError:
@@ -50,6 +56,9 @@ class OtelTraceSink(TraceSink):
     Args:
         tracer_provider: An OpenTelemetry TracerProvider instance.
         tracer_name: Name for the OTel tracer. Defaults to ``"agentguard"``.
+        resource_attributes: Optional flat dict of attributes stamped onto
+            every span this sink emits (e.g. ``{"deployment.env": "prod"}``).
+            Values are coerced to strings. Defaults to no extra attributes.
 
     Raises:
         ImportError: If ``opentelemetry-api`` is not installed.
@@ -59,6 +68,7 @@ class OtelTraceSink(TraceSink):
         self,
         tracer_provider: Any,
         tracer_name: str = "agentguard",
+        resource_attributes: Optional[Dict[str, Any]] = None,
     ) -> None:
         if not _HAS_OTEL:
             raise ImportError(
@@ -68,6 +78,12 @@ class OtelTraceSink(TraceSink):
         self._otel_tracer = tracer_provider.get_tracer(tracer_name)
         self._lock = threading.Lock()
         self._spans: Dict[str, Any] = {}  # span_id -> OTel Span
+        # Stamp resource-level attributes onto every span. Coerced to str so a
+        # caller passing ints/bools cannot break OTel attribute validation.
+        self._resource_attributes: Dict[str, str] = {
+            f"agentguard.resource.{k}": str(v)
+            for k, v in (resource_attributes or {}).items()
+        }
 
     def emit(self, event: Dict[str, Any]) -> None:
         """Process an AgentGuard event and map to OTel.
@@ -87,6 +103,37 @@ class OtelTraceSink(TraceSink):
         elif kind == "event":
             self._add_event(event, name, span_id)
 
+    def _build_links(self, event: Dict[str, Any]) -> List[Any]:
+        """Build OTel Link objects from an event's ``links`` field.
+
+        Each link entry is a dict ``{"span_id": ..., "attributes": {...}}``
+        referencing another AgentGuard span this sink already tracks. Links to
+        unknown span_ids are skipped (the referenced span may have ended or
+        never started). Returns an empty list when there are no resolvable
+        links.
+        """
+        raw_links = event.get("links")
+        if not raw_links:
+            return []
+
+        links: List[Any] = []
+        for entry in raw_links:
+            if not isinstance(entry, dict):
+                continue
+            ref_span_id = entry.get("span_id")
+            if not ref_span_id:
+                continue
+            with self._lock:
+                ref_span = self._spans.get(ref_span_id)
+            if ref_span is None:
+                continue
+            link_attrs = {
+                str(k): str(v)[:256]
+                for k, v in (entry.get("attributes") or {}).items()
+            }
+            links.append(Link(ref_span.get_span_context(), attributes=link_attrs))
+        return links
+
     def _start_span(
         self, event: Dict[str, Any], name: str, span_id: Optional[str]
     ) -> None:
@@ -103,10 +150,13 @@ class OtelTraceSink(TraceSink):
 
                 ctx = set_span_in_context(parent_span)
 
+        links = self._build_links(event)
+
         span = self._otel_tracer.start_span(
             name=name,
             kind=SpanKind.INTERNAL,
             context=ctx,
+            links=links,
         )
 
         # Set initial attributes
@@ -115,6 +165,8 @@ class OtelTraceSink(TraceSink):
             "agentguard.span_id": span_id or "",
             "agentguard.service": event.get("service", ""),
         }
+        # Resource-level attributes stamped on every span.
+        attrs.update(self._resource_attributes)
         if parent_id:
             attrs["agentguard.parent_id"] = parent_id
         if event.get("metadata"):

@@ -18,6 +18,17 @@ _mock_trace.StatusCode = type("StatusCode", (), {"OK": 1, "ERROR": 2})()
 _mock_trace.SpanKind = type("SpanKind", (), {"INTERNAL": 1})()
 _mock_trace.set_span_in_context = lambda span, context=None: {"parent_span": span}
 
+
+class _MockLink:
+    """Mock OTel Link — records the linked span context and attributes."""
+
+    def __init__(self, context, attributes=None):
+        self.context = context
+        self.attributes = attributes or {}
+
+
+_mock_trace.Link = _MockLink
+
 _mock_context = types.ModuleType("opentelemetry.context")
 _mock_context.Context = type("Context", (), {})
 
@@ -29,6 +40,8 @@ _mock_otel.context = _mock_context
 class FakeSpan:
     """Mock OTel Span that records calls."""
 
+    _ctx_counter = 0
+
     def __init__(self, name: str):
         self.name = name
         self.attributes: Dict[str, Any] = {}
@@ -37,6 +50,13 @@ class FakeSpan:
         self.status_message: str = ""
         self.ended = False
         self.parent_context: Any = None
+        self.links: List[Any] = []
+        FakeSpan._ctx_counter += 1
+        # Stable unique stand-in for an OTel SpanContext.
+        self._span_context = ("span-context", name, FakeSpan._ctx_counter)
+
+    def get_span_context(self) -> Any:
+        return self._span_context
 
     def set_attribute(self, key: str, value: Any) -> None:
         self.attributes[key] = value
@@ -58,9 +78,16 @@ class FakeTracer:
     def __init__(self):
         self.spans: List[FakeSpan] = []
 
-    def start_span(self, name: str, kind: Any = None, context: Any = None) -> FakeSpan:
+    def start_span(
+        self,
+        name: str,
+        kind: Any = None,
+        context: Any = None,
+        links: Any = None,
+    ) -> FakeSpan:
         span = FakeSpan(name)
         span.parent_context = context
+        span.links = list(links or [])
         self.spans.append(span)
         return span
 
@@ -306,6 +333,152 @@ class TestOtelTraceSink(unittest.TestCase):
         self.assertEqual(span.status_code, 2)  # ERROR
         self.assertEqual(span.attributes["agentguard.error.message"], "something broke")
         self.assertEqual(span.attributes["agentguard.error.type"], "str")
+
+
+    def test_resource_attributes_stamped_on_every_span(self):
+        """Custom resource attributes appear on every emitted span."""
+        sink = self.OtelTraceSink(
+            self.provider,
+            resource_attributes={"deployment.env": "prod", "host": "node-1"},
+        )
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "first",
+            "ts": 100.0, "service": "test",
+        })
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s2", "name": "second",
+            "ts": 101.0, "service": "test",
+        })
+
+        for span in self.provider._tracer.spans:
+            self.assertEqual(
+                span.attributes["agentguard.resource.deployment.env"], "prod"
+            )
+            self.assertEqual(
+                span.attributes["agentguard.resource.host"], "node-1"
+            )
+
+    def test_resource_attributes_coerced_to_string(self):
+        """Non-string resource attribute values are coerced to strings."""
+        sink = self.OtelTraceSink(
+            self.provider,
+            resource_attributes={"replica": 3, "canary": True},
+        )
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 100.0, "service": "test",
+        })
+
+        span = self.provider._tracer.spans[0]
+        self.assertEqual(span.attributes["agentguard.resource.replica"], "3")
+        self.assertEqual(span.attributes["agentguard.resource.canary"], "True")
+
+    def test_no_resource_attributes_by_default(self):
+        """Without resource_attributes, no agentguard.resource.* keys appear."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 100.0, "service": "test",
+        })
+
+        span = self.provider._tracer.spans[0]
+        resource_keys = [
+            k for k in span.attributes if k.startswith("agentguard.resource.")
+        ]
+        self.assertEqual(resource_keys, [])
+
+    def test_span_link_to_tracked_span(self):
+        """A span-start event with links produces an OTel Link to the target."""
+        sink = self.OtelTraceSink(self.provider)
+
+        # Start the span that will be linked to.
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "source", "name": "producer",
+            "ts": 100.0, "service": "test",
+        })
+        # Start a span that links back to the source span.
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "consumer", "name": "fan-in",
+            "ts": 101.0, "service": "test",
+            "links": [
+                {"span_id": "source", "attributes": {"relation": "merged"}}
+            ],
+        })
+
+        consumer_span = self.provider._tracer.spans[1]
+        source_span = self.provider._tracer.spans[0]
+        self.assertEqual(len(consumer_span.links), 1)
+        link = consumer_span.links[0]
+        self.assertEqual(link.context, source_span.get_span_context())
+        self.assertEqual(link.attributes["relation"], "merged")
+
+    def test_span_link_to_unknown_span_skipped(self):
+        """Links referencing untracked span_ids are silently skipped."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 100.0, "service": "test",
+            "links": [{"span_id": "does-not-exist"}],
+        })
+
+        span = self.provider._tracer.spans[0]
+        self.assertEqual(span.links, [])
+
+    def test_multiple_span_links(self):
+        """A span can link to multiple tracked spans at once."""
+        sink = self.OtelTraceSink(self.provider)
+
+        for sid in ("a", "b"):
+            sink.emit({
+                "kind": "span", "phase": "start",
+                "trace_id": "t1", "span_id": sid, "name": sid,
+                "ts": 100.0, "service": "test",
+            })
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "joiner", "name": "join",
+            "ts": 101.0, "service": "test",
+            "links": [{"span_id": "a"}, {"span_id": "b"}],
+        })
+
+        joiner = self.provider._tracer.spans[-1]
+        self.assertEqual(len(joiner.links), 2)
+
+    def test_no_links_by_default(self):
+        """A span-start event without links produces a span with no links."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 100.0, "service": "test",
+        })
+
+        self.assertEqual(self.provider._tracer.spans[0].links, [])
+
+    def test_malformed_link_entries_skipped(self):
+        """Non-dict link entries and entries without span_id are skipped."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "op",
+            "ts": 100.0, "service": "test",
+            "links": ["not-a-dict", {"attributes": {"x": "y"}}, None],
+        })
+
+        self.assertEqual(self.provider._tracer.spans[0].links, [])
 
 
 if __name__ == "__main__":
