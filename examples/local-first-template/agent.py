@@ -16,8 +16,9 @@ import os
 import sys
 import urllib.error
 import urllib.request
+import warnings
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 # Allow `python examples/local-first-template/agent.py` from a source checkout
 # without an editable install. A real consumer just `pip install agentguard47`.
@@ -31,6 +32,7 @@ from agentguard import (  # noqa: E402
     JsonlFileSink,
     RateLimitGuard,
     Tracer,
+    estimate_cost,
 )
 
 from config import AgentPolicy  # noqa: E402
@@ -77,11 +79,20 @@ class LocalChatClient:
                 f"Start llama-server / Ollama first, or run in offline mode. ({exc})"
             ) from exc
         choice = payload["choices"][0]["message"]["content"]
-        usage = payload.get("usage", {})
+        usage = payload.get("usage") or {}
+        # Some local servers omit `usage`. Falling back to 0 would silently
+        # disable the token budget, so estimate from text length (~4 chars
+        # per token) when the server does not report counts.
+        prompt_tokens = int(usage.get("prompt_tokens") or 0)
+        completion_tokens = int(usage.get("completion_tokens") or 0)
+        if prompt_tokens == 0:
+            prompt_tokens = max(1, sum(len(m["content"]) for m in messages) // 4)
+        if completion_tokens == 0:
+            completion_tokens = max(1, len(choice) // 4)
         return {
             "content": choice,
-            "prompt_tokens": int(usage.get("prompt_tokens", 0)),
-            "completion_tokens": int(usage.get("completion_tokens", 0)),
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
         }
 
     def _offline_reply(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
@@ -109,23 +120,35 @@ class LocalChatClient:
 
 def read_file_tool(path: str, *, base_dir: Path) -> str:
     """The one allowed tool: read a text file under base_dir."""
+    if not path:
+        raise ToolDenied("read_file requires a non-empty 'path' argument")
     target = (base_dir / path).resolve()
     if base_dir.resolve() not in target.parents and target != base_dir.resolve():
         raise ToolDenied(f"read_file refused path outside base dir: {path}")
+    if not target.is_file():
+        raise ToolDenied(f"read_file: not a readable file: {path}")
     return target.read_text(encoding="utf-8")
 
 
-def parse_tool_call(content: str) -> Dict[str, Any] | None:
-    """Parse a `TOOL_CALL: name {json-args}` line, or return None."""
+def parse_tool_call(content: str) -> Optional[Dict[str, Any]]:
+    """Parse a `TOOL_CALL: name {json-args}` line.
+
+    Returns None if the content is not a tool call. For a tool call with
+    malformed JSON args, returns the call with ``"valid_args": False`` so the
+    loop can treat it as a failed call instead of crashing on empty args.
+    """
     if not content.startswith("TOOL_CALL:"):
         return None
     rest = content[len("TOOL_CALL:") :].strip()
     name, _, raw_args = rest.partition(" ")
+    valid_args = True
     try:
         args = json.loads(raw_args) if raw_args else {}
+        if not isinstance(args, dict):
+            args, valid_args = {}, False
     except json.JSONDecodeError:
-        args = {}
-    return {"name": name, "args": args}
+        args, valid_args = {}, False
+    return {"name": name, "args": args, "valid_args": valid_args}
 
 
 def run_agent(policy: AgentPolicy, *, offline: bool, base_dir: Path) -> int:
@@ -163,13 +186,25 @@ def run_agent(policy: AgentPolicy, *, offline: bool, base_dir: Path) -> int:
 
                 reply = client.complete(messages)
                 tokens = reply["prompt_tokens"] + reply["completion_tokens"]
-                budget.consume(tokens=tokens, calls=1, cost_usd=0.0)
+                # estimate_cost is ~0 for an unknown local model, but real if
+                # the user points the template at a paid OpenAI-compatible
+                # endpoint -- so the dollar budget actually enforces there.
+                # A local model name is unpriced; suppress that expected warning.
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    cost = estimate_cost(
+                        policy.model,
+                        input_tokens=reply["prompt_tokens"],
+                        output_tokens=reply["completion_tokens"],
+                    )
+                budget.consume(tokens=tokens, calls=1, cost_usd=cost)
                 ctx.event(
                     "llm.call",
                     data={
                         "turn": turn,
                         "tokens": tokens,
                         "tokens_used": budget.state.tokens_used,
+                        "cost_usd": cost,
                         "content": reply["content"][:120],
                     },
                 )
@@ -203,17 +238,46 @@ def run_agent(policy: AgentPolicy, *, offline: bool, base_dir: Path) -> int:
                     )
                     continue
 
+                # Malformed tool args: treat as a failed call, do not crash.
+                if not call["valid_args"]:
+                    ctx.event(
+                        "guard.tool_failed",
+                        data={"tool": call["name"], "reason": "malformed args"},
+                    )
+                    print(f"  [tool FAILED] '{call['name']}' had malformed args")
+                    messages.append(
+                        {
+                            "role": "user",
+                            "content": f"Tool '{call['name']}' args were invalid. "
+                            f"Answer directly instead.",
+                        }
+                    )
+                    continue
+
                 with ctx.span(f"tool.{call['name']}") as tool_ctx:
                     tool_ctx.event("tool.call", data={"tool": call["name"], "args": call["args"]})
-                    result = read_file_tool(
-                        call["args"].get("path", ""), base_dir=base_dir
-                    )
+                    try:
+                        result = read_file_tool(
+                            call["args"].get("path", ""), base_dir=base_dir
+                        )
+                    except ToolDenied as exc:
+                        tool_ctx.event("guard.tool_failed", data={"reason": str(exc)})
+                        print(f"  [tool FAILED] {exc}")
+                        messages.append(
+                            {
+                                "role": "user",
+                                "content": f"read_file failed: {exc}. Answer directly.",
+                            }
+                        )
+                        continue
                     tool_ctx.event("tool.result", data={"chars": len(result)})
                 messages.append(
                     {"role": "user", "content": f"read_file returned: {result}"}
                 )
         except BudgetExceeded as exc:
-            print(f"\n  [budget STOP] {exc}")
+            # RateLimitGuard and BudgetGuard both raise BudgetExceeded; use a
+            # neutral label since either guard could be the stop reason.
+            print(f"\n  [guard STOP] {exc}")
             break
     else:
         print("\n  Loop hit max_calls without a final answer.")

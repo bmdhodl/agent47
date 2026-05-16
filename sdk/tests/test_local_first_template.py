@@ -88,3 +88,30 @@ def test_agent_makes_no_network_call_in_offline_mode() -> None:
     assert "_live_reply" in source
     assert "_offline_reply" in source
     assert 'os.environ.get("AGENTGUARD_LOCAL_DEMO"' in source
+
+
+def test_helpers_handle_bad_input_without_crashing() -> None:
+    """parse_tool_call and read_file_tool degrade gracefully on bad input."""
+    sys.path.insert(0, str(EXAMPLE_DIR))
+    try:
+        from agent import ToolDenied, parse_tool_call, read_file_tool
+    finally:
+        sys.path.pop(0)
+
+    # Not a tool call -> None.
+    assert parse_tool_call("just an answer") is None
+    # Malformed JSON args -> flagged invalid, not a crash.
+    bad = parse_tool_call("TOOL_CALL: read_file {bad json")
+    assert bad is not None and bad["valid_args"] is False
+    # Empty path is refused, not read as a directory.
+    try:
+        read_file_tool("", base_dir=EXAMPLE_DIR)
+        raise AssertionError("empty path should be refused")
+    except ToolDenied:
+        pass
+    # Path traversal is refused.
+    try:
+        read_file_tool("../../../etc/passwd", base_dir=EXAMPLE_DIR)
+        raise AssertionError("traversal should be refused")
+    except ToolDenied:
+        pass

@@ -11,8 +11,8 @@ server on your own machine.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
-from typing import List
+from dataclasses import dataclass
+from typing import Tuple
 
 
 @dataclass(frozen=True)
@@ -43,7 +43,8 @@ class AgentPolicy:
     # The agent may only call tools named here. Anything else is denied and
     # logged. Keep this tight: it is the difference between a helpful agent
     # and one that runs `rm -rf` because the model hallucinated a tool.
-    allowed_tools: List[str] = field(default_factory=lambda: ["read_file"])
+    # A tuple so a frozen policy is genuinely immutable -- no in-place append.
+    allowed_tools: Tuple[str, ...] = ("read_file",)
 
     # --- Audit log ---
     audit_log_path: str = "local_first_template_traces.jsonl"
