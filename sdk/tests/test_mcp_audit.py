@@ -186,6 +186,16 @@ def test_logger_writes_one_jsonl_row_per_call_to_file(tmp_path):
     assert all(r["kind"] == MCP_AUDIT_KIND for r in rows)
 
 
+def test_logger_accepts_pathlike_sink(tmp_path):
+    path = tmp_path / "mcp_audit.jsonl"
+    audit = MCPAuditLogger(path)
+    audit.record(server="github", tool="create_issue", payload={}, decision="allow")
+
+    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+    assert len(rows) == 1
+    assert rows[0]["tool"] == "create_issue"
+
+
 def test_logger_record_returns_written_row():
     sink = _CaptureSink()
     audit = MCPAuditLogger(sink)

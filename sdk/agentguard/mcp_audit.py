@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
@@ -156,12 +157,14 @@ class MCPAuditLogger:
         *,
         digest_algorithm: str = "sha256",
     ) -> None:
-        if isinstance(sink, str):
-            self._sink: TraceSink = JsonlFileSink(sink)
+        if isinstance(sink, (str, os.PathLike)):
+            self._sink: TraceSink = JsonlFileSink(os.fspath(sink))
         elif isinstance(sink, TraceSink):
             self._sink = sink
         else:
-            raise TypeError("sink must be a file path string or a TraceSink instance")
+            raise TypeError(
+                "sink must be a file path, path-like object, or a TraceSink instance"
+            )
         if digest_algorithm not in _SUPPORTED_ALGORITHMS:
             raise ValueError(
                 f"digest_algorithm must be one of {sorted(_SUPPORTED_ALGORITHMS)}, "
