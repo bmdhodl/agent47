@@ -116,7 +116,6 @@ def test_digest_differs_for_different_payloads():
 
 
 def test_digest_carries_algorithm_prefix():
-    assert digest_payload({"x": 1}, algorithm="sha1").startswith("sha1:")
     assert digest_payload({"x": 1}, algorithm="sha256").startswith("sha256:")
 
 
@@ -224,6 +223,6 @@ def test_logger_rejects_invalid_sink_type():
 
 def test_logger_honors_digest_algorithm():
     sink = _CaptureSink()
-    audit = MCPAuditLogger(sink, digest_algorithm="sha1")
+    audit = MCPAuditLogger(sink, digest_algorithm="sha256")
     row = audit.record(server="s", tool="t", payload={"a": 1}, decision="allow")
-    assert row["payload_digest"].startswith("sha1:")
+    assert row["payload_digest"].startswith("sha256:")

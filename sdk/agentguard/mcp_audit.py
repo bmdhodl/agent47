@@ -45,7 +45,7 @@ __all__ = [
 # Schema marker so downstream parsers can branch on row type without guessing.
 MCP_AUDIT_KIND = "mcp.tool_call.audit"
 
-_SUPPORTED_ALGORITHMS = frozenset({"sha256", "sha1", "md5"})
+_SUPPORTED_ALGORITHMS = frozenset({"sha256"})
 
 
 def _require_non_empty(name: str, value: str) -> str:
@@ -69,7 +69,7 @@ def digest_payload(payload: Any, *, algorithm: str = "sha256") -> str:
     Args:
         payload: Any tool-call argument structure. Non-serializable values are
             coerced via the same path the tracing sinks use.
-        algorithm: Hash algorithm name. One of ``sha256``, ``sha1``, ``md5``.
+        algorithm: Hash algorithm name. Currently only ``sha256`` is allowed.
 
     Returns:
         A ``"<algorithm>:<hexdigest>"`` string, e.g. ``"sha256:ab12..."``.
