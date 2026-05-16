@@ -467,6 +467,26 @@ class TestOtelTraceSink(unittest.TestCase):
 
         self.assertEqual(self.provider._tracer.spans[0].links, [])
 
+    def test_link_with_non_dict_attributes_does_not_crash(self):
+        """A link whose 'attributes' is not a dict falls back to empty attrs."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "source", "name": "producer",
+            "ts": 100.0, "service": "test",
+        })
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "consumer", "name": "fan-in",
+            "ts": 101.0, "service": "test",
+            "links": [{"span_id": "source", "attributes": "not-a-dict"}],
+        })
+
+        consumer_span = self.provider._tracer.spans[1]
+        self.assertEqual(len(consumer_span.links), 1)
+        self.assertEqual(consumer_span.links[0].attributes, {})
+
     def test_malformed_link_entries_skipped(self):
         """Non-dict link entries and entries without span_id are skipped."""
         sink = self.OtelTraceSink(self.provider)

@@ -127,9 +127,11 @@ class OtelTraceSink(TraceSink):
                 ref_span = self._spans.get(ref_span_id)
             if ref_span is None:
                 continue
+            raw_attrs = entry.get("attributes")
+            if not isinstance(raw_attrs, dict):
+                raw_attrs = {}
             link_attrs = {
-                str(k): str(v)[:256]
-                for k, v in (entry.get("attributes") or {}).items()
+                str(k): str(v)[:256] for k, v in raw_attrs.items()
             }
             links.append(Link(ref_span.get_span_context(), attributes=link_attrs))
         return links
