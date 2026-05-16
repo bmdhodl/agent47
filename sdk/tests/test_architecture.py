@@ -36,6 +36,7 @@ CORE_MODULES = [
     "export.py",
     "guards.py",
     "instrument.py",
+    "mcp_audit.py",
     "profiles.py",
     "quickstart.py",
     "savings.py",
