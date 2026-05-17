@@ -18,3 +18,10 @@ updates:
       # until Python 3.9 support is intentionally retired.
       - dependency-name: "pytest"
         update-types: ["version-update:semver-major"]
+      # build 1.5.x requires Python >=3.10. The SDK CI floor is still 3.9,
+      # and Dependabot runs pip-compile for this directory with Python 3.9.
+      - dependency-name: "build"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
+      # bandit 1.9.x also requires Python >=3.10.
+      - dependency-name: "bandit"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
