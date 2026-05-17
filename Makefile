@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp mcp-budget
+.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp mcp-budget ci-tools-guard
 
 # Install SDK in editable mode with dev tools
 install:
@@ -18,18 +18,21 @@ structural:
 
 # Lint SDK source
 lint:
-	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py
+	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py
 
 # Lint + auto-fix
 fix:
 	ruff check sdk/agentguard/ --fix
 
 # Lint + full test suite (mirrors CI for the Python 3.9+ SDK)
-check: lint test mcp
+check: ci-tools-guard lint test mcp
 
 # Fast local feedback based on changed files
 preflight:
 	python scripts/sdk_preflight.py
+
+ci-tools-guard:
+	python scripts/ci_tools_requirements_guard.py
 
 # Validate release metadata and doc markers stay aligned
 release-guard:
