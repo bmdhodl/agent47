@@ -14,9 +14,12 @@ from pathlib import Path
 from typing import Callable, Iterable, Optional
 
 try:
+    from packaging.markers import InvalidMarker, Marker
     from packaging.specifiers import SpecifierSet
     from packaging.version import Version
 except Exception:  # pragma: no cover - fallback keeps the script stdlib-runnable.
+    InvalidMarker = None
+    Marker = None
     SpecifierSet = None
     Version = None
 
@@ -24,7 +27,7 @@ except Exception:  # pragma: no cover - fallback keeps the script stdlib-runnabl
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REQUIREMENTS = REPO_ROOT / ".github" / "requirements" / "ci-tools.in"
 DEFAULT_MIN_PYTHON = (3, 9)
-PIN_RE = re.compile(r"^(?P<name>[A-Za-z0-9_.-]+)==(?P<version>[^;\s]+)(?:\s*;.*)?$")
+PIN_RE = re.compile(r"^(?P<name>[A-Za-z0-9_.-]+)==(?P<version>[^;\s]+)(?:\s*;\s*(?P<marker>.+))?$")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -32,6 +35,7 @@ class DirectPin:
     name: str
     version: str
     line_number: int
+    marker: Optional[str] = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -65,6 +69,7 @@ def read_direct_pins(path: Path) -> list[DirectPin]:
                 name=normalize_name(match.group("name")),
                 version=match.group("version"),
                 line_number=line_number,
+                marker=match.group("marker"),
             )
         )
     return pins
@@ -125,6 +130,42 @@ def _fallback_supports_python(specifier: str, python_version: tuple[int, int]) -
     return True
 
 
+def _fallback_marker_applies(marker: str, python_version: tuple[int, int]) -> bool:
+    match = re.fullmatch(r"""python_version\s*(==|!=|<=|>=|<|>)\s*["']([0-9.]+)["']""", marker.strip())
+    if not match:
+        raise ValueError(f"Unsupported environment marker: {marker!r}")
+    operator, version_text = match.groups()
+    candidate = (python_version[0], python_version[1], 0)
+    pinned = _parse_numeric_version(version_text)
+    if operator == "==":
+        return candidate == pinned
+    if operator == "!=":
+        return candidate != pinned
+    if operator == ">=":
+        return candidate >= pinned
+    if operator == ">":
+        return candidate > pinned
+    if operator == "<=":
+        return candidate <= pinned
+    if operator == "<":
+        return candidate < pinned
+    raise ValueError(f"Unsupported environment marker: {marker!r}")
+
+
+def marker_applies(marker: Optional[str], python_version: tuple[int, int]) -> bool:
+    if not marker:
+        return True
+    environment = {"python_version": _version_text(python_version)}
+    if Marker is not None:
+        try:
+            return Marker(marker).evaluate(environment=environment)
+        except Exception as exc:
+            if InvalidMarker is not None and isinstance(exc, InvalidMarker):
+                raise ValueError(f"Unsupported environment marker: {marker!r}") from exc
+            raise
+    return _fallback_marker_applies(marker, python_version)
+
+
 def supports_python(specifier: Optional[str], python_version: tuple[int, int]) -> bool:
     if not specifier:
         return True
@@ -144,7 +185,9 @@ def fetch_pypi_release_metadata(package: str, version: str) -> dict:
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             raise ValueError(f"{package}=={version} does not exist on PyPI") from exc
-        raise
+        raise ValueError(f"Could not fetch PyPI metadata for {package}=={version} from {url}: {exc}") from exc
+    except (TimeoutError, urllib.error.URLError) as exc:
+        raise ValueError(f"Could not fetch PyPI metadata for {package}=={version} from {url}: {exc}") from exc
 
 
 def release_requires_python(metadata: dict) -> tuple[str, ...]:
@@ -162,6 +205,8 @@ def find_incompatible_pins(
 ) -> list[IncompatiblePin]:
     incompatible: list[IncompatiblePin] = []
     for pin in read_direct_pins(requirements_path):
+        if not marker_applies(pin.marker, python_version):
+            continue
         metadata = metadata_lookup(pin.name, pin.version)
         specifiers = release_requires_python(metadata)
         if not any(supports_python(specifier, python_version) for specifier in specifiers):
@@ -187,8 +232,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--min-python", default=_version_text(DEFAULT_MIN_PYTHON))
     args = parser.parse_args(argv)
 
-    python_version = parse_python_version(args.min_python)
-    incompatible = find_incompatible_pins(args.requirements, python_version)
+    try:
+        python_version = parse_python_version(args.min_python)
+        incompatible = find_incompatible_pins(args.requirements, python_version)
+    except ValueError as exc:
+        print(f"ci-tools requirements guard failed: {exc}", file=sys.stderr)
+        return 1
     if incompatible:
         print(format_incompatible(incompatible, python_version), file=sys.stderr)
         return 1

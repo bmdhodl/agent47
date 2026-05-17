@@ -56,3 +56,41 @@ def test_rejects_non_exact_direct_pins(tmp_path: Path) -> None:
         assert "expected an exact direct pin" in str(exc)
     else:
         raise AssertionError("non-exact CI tool pins must fail")
+
+
+def test_skips_pin_when_environment_marker_excludes_python_floor(tmp_path: Path) -> None:
+    requirements = tmp_path / "ci-tools.in"
+    requirements.write_text('future-tool==2.0.0 ; python_version >= "3.10"\n', encoding="utf-8")
+
+    incompatible = guard.find_incompatible_pins(
+        requirements,
+        (3, 9),
+        metadata_lookup=lambda _name, _version: metadata_with_python(">=3.10"),
+    )
+
+    assert incompatible == []
+
+
+def test_validates_pin_when_environment_marker_includes_python_floor(tmp_path: Path) -> None:
+    requirements = tmp_path / "ci-tools.in"
+    requirements.write_text('build==1.5.0 ; python_version >= "3.9"\n', encoding="utf-8")
+
+    incompatible = guard.find_incompatible_pins(
+        requirements,
+        (3, 9),
+        metadata_lookup=lambda _name, _version: metadata_with_python(">=3.10"),
+    )
+
+    assert [item.pin.name for item in incompatible] == ["build"]
+
+
+def test_main_reports_value_errors_without_traceback(tmp_path: Path, capsys) -> None:
+    requirements = tmp_path / "ci-tools.in"
+    requirements.write_text("build==1.4.4\n", encoding="utf-8")
+
+    result = guard.main(["--requirements", str(requirements), "--min-python", "three-nine"])
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert "ci-tools requirements guard failed:" in captured.err
+    assert "Traceback" not in captured.err
