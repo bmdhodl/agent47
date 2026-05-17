@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_DIR = REPO_ROOT / "examples" / "local-first-template"
@@ -115,3 +116,53 @@ def test_helpers_handle_bad_input_without_crashing() -> None:
         raise AssertionError("traversal should be refused")
     except ToolDenied:
         pass
+
+
+def test_live_reply_estimates_tokens_when_usage_is_missing() -> None:
+    """Live mode must still feed BudgetGuard when local servers omit usage."""
+    sys.path.insert(0, str(EXAMPLE_DIR))
+    try:
+        from agent import LocalChatClient
+        from config import AgentPolicy
+    finally:
+        sys.path.pop(0)
+
+    class _FakeResponse:
+        def __enter__(self) -> "_FakeResponse":
+            return self
+
+        def __exit__(self, exc_type, exc, tb) -> None:
+            return None
+
+        def read(self) -> bytes:
+            return json.dumps(
+                {
+                    "choices": [
+                        {"message": {"content": "Local server reply without usage"}}
+                    ]
+                }
+            ).encode("utf-8")
+
+    client = LocalChatClient(AgentPolicy(), offline=False)
+    messages = [{"role": "user", "content": "Summarize this local task"}]
+
+    with patch("agent.urllib.request.urlopen", return_value=_FakeResponse()):
+        reply = client.complete(messages)
+
+    assert reply["content"] == "Local server reply without usage"
+    assert reply["prompt_tokens"] == max(1, len(messages[0]["content"]) // 4)
+    assert reply["completion_tokens"] == max(1, len(reply["content"]) // 4)
+
+
+def test_policy_allowlist_is_tuple_backed() -> None:
+    """A frozen policy should not expose a mutable tool allowlist."""
+    sys.path.insert(0, str(EXAMPLE_DIR))
+    try:
+        from config import AgentPolicy
+    finally:
+        sys.path.pop(0)
+
+    policy = AgentPolicy()
+
+    assert isinstance(policy.allowed_tools, tuple)
+    assert policy.allowed_tools == ("read_file",)
