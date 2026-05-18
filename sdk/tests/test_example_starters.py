@@ -263,6 +263,43 @@ def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:
         assert _normalize_incident_snapshot(actual) == expected
 
 
+def test_coding_agent_review_loop_reruns_do_not_append_stale_trace_events() -> None:
+    example_path = REPO_ROOT / "examples" / "coding_agent_review_loop.py"
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    sdk_path = str(REPO_ROOT / "sdk")
+    env["PYTHONPATH"] = (
+        sdk_path
+        if not existing_pythonpath
+        else os.pathsep.join([sdk_path, existing_pythonpath])
+    )
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        for _ in range(2):
+            result = subprocess.run(
+                [sys.executable, str(example_path)],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                env=env,
+                check=False,
+                timeout=60,
+            )
+            assert result.returncode == 0, result.stderr
+
+        trace_path = Path(tmpdir, "coding_agent_review_loop_traces.jsonl")
+        counts: dict[str, int] = {}
+        with trace_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if not line.strip():
+                    continue
+                name = json.loads(line)["name"]
+                counts[name] = counts.get(name, 0) + 1
+
+        assert counts.get("guard.budget_exceeded") == 1
+        assert counts.get("guard.retry_limit_exceeded") == 1
+
+
 def test_proof_gallery_demo_references_stay_valid() -> None:
     source = PROOF_GALLERY_PATH.read_text(encoding="utf-8")
 
