@@ -230,6 +230,43 @@ def test_coding_agent_review_loop_example_runs_offline() -> None:
         assert "guard.retry_limit_exceeded" in names
 
 
+def test_coding_agent_review_loop_example_resets_trace_on_rerun() -> None:
+    example_path = REPO_ROOT / "examples" / "coding_agent_review_loop.py"
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    sdk_path = str(REPO_ROOT / "sdk")
+    env["PYTHONPATH"] = (
+        sdk_path
+        if not existing_pythonpath
+        else os.pathsep.join([sdk_path, existing_pythonpath])
+    )
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        for _ in range(2):
+            result = subprocess.run(
+                [sys.executable, str(example_path)],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                env=env,
+                check=False,
+                timeout=60,
+            )
+            assert result.returncode == 0, result.stderr
+
+        trace_path = Path(tmpdir, "coding_agent_review_loop_traces.jsonl")
+        names = []
+        with trace_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    names.append(json.loads(line)["name"])
+
+        assert names.count("guard.budget_exceeded") == 1
+        assert names.count("guard.retry_limit_exceeded") == 1
+        assert names.count("review.iteration") == 3
+        assert names.count("tool.retry") == 4
+
+
 def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:
     example_path = REPO_ROOT / "examples" / "coding_agent_review_loop.py"
     sample_path = REPO_ROOT / "docs" / "examples" / "coding-agent-review-loop-incident.md"
