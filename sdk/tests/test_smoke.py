@@ -2,10 +2,12 @@
 """Smoke test: exercises the AgentGuard happy path.
 
 Standalone:
-    PYTHONPATH=sdk python sdk/tests/test_smoke.py
+    python -m pip install -e ./sdk
+    python sdk/tests/test_smoke.py
 
 With pytest:
-    PYTHONPATH=sdk python -m pytest sdk/tests/test_smoke.py -v
+    python -m pip install -e ./sdk
+    python -m pytest sdk/tests/test_smoke.py -v
 """
 from __future__ import annotations
 
