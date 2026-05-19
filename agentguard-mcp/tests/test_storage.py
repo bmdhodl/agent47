@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 import pytest
@@ -68,6 +70,26 @@ def test_record_call_allows_exact_limit_and_persists(tmp_path):
 
     assert result["allowed"] is True
     assert store.check_remaining("global")["tokens_used"] == 10
+
+
+def test_concurrent_record_call_never_exceeds_budget(tmp_path):
+    store = BudgetStore(tmp_path / "state.db")
+    store.set_budget("global", 1, None, "day")
+    started = threading.Barrier(16)
+
+    def record_once():
+        started.wait()
+        return store.record_call("github", "create_issue", 1, 0, 0.0, None)
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        results = list(pool.map(lambda _: record_once(), range(16)))
+
+    allowed = [result for result in results if result["allowed"]]
+    blocked = [result for result in results if not result["allowed"]]
+
+    assert len(allowed) == 1
+    assert len(blocked) == 15
+    assert store.check_remaining("global")["tokens_used"] == 1
 
 
 def test_set_budget_rejects_empty_limits(tmp_path):
