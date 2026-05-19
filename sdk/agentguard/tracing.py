@@ -14,19 +14,20 @@ Usage::
 """
 from __future__ import annotations
 
+import inspect
+import json
 import logging
+import os
+import random
+import threading
+import time
+import uuid
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
-import json
-import os
-import random
-import threading
-import time
-import uuid
 
 from agentguard._trace_naming import normalize_session_id, truncate_name
 
@@ -228,6 +229,49 @@ def _build_trace_event(
     if metadata:
         event["metadata"] = metadata
     return event, safe_data
+
+
+def _callable_accepts_n_positional_args(fn: Any, count: int) -> bool:
+    try:
+        signature = inspect.signature(fn)
+    except (TypeError, ValueError):
+        return count == 2
+
+    required = 0
+    positional = 0
+    for parameter in signature.parameters.values():
+        if parameter.kind == inspect.Parameter.VAR_POSITIONAL:
+            return required <= count
+        if parameter.kind in {
+            inspect.Parameter.POSITIONAL_ONLY,
+            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+        }:
+            positional += 1
+            if parameter.default is inspect.Parameter.empty:
+                required += 1
+    return required <= count <= positional
+
+
+def _check_guard(guard: Any, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+    """Dispatch one guard without swallowing implementation errors."""
+    auto_check = getattr(guard, "auto_check", None)
+    if callable(auto_check):
+        auto_check(name, data)
+        return
+
+    check = getattr(guard, "check", None)
+    if not callable(check):
+        return
+    if _callable_accepts_n_positional_args(check, 2):
+        check(name, data)
+        return
+    if _callable_accepts_n_positional_args(check, 0):
+        check()
+        return
+    raise TypeError(
+        f"Guard {type(guard).__name__}.check must accept either "
+        "(event_name, event_data) or no positional arguments"
+    )
 
 
 @dataclass
@@ -499,17 +543,7 @@ class Tracer:
     def _check_guards(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
         """Run all attached guards. Called on every event, even sampled-out ones."""
         for guard in self._guards:
-            if hasattr(guard, "auto_check"):
-                guard.auto_check(name, data)
-            elif hasattr(guard, "check"):
-                # Backward compat: try check(name, data), then check()
-                try:
-                    guard.check(name, data)
-                except TypeError:
-                    try:
-                        guard.check()
-                    except TypeError:
-                        pass
+            _check_guard(guard, name, data)
 
     def __repr__(self) -> str:
         session_part = ""

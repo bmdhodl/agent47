@@ -24,7 +24,7 @@ import time
 import uuid
 
 from agentguard._trace_naming import normalize_session_id, truncate_name
-from agentguard.tracing import StdoutSink, TraceSink, _build_trace_event
+from agentguard.tracing import StdoutSink, TraceSink, _build_trace_event, _check_guard
 
 
 @dataclass
@@ -237,16 +237,7 @@ class AsyncTracer:
         for guard in self._guards:
             if kind != "event":
                 continue
-            if hasattr(guard, "auto_check"):
-                guard.auto_check(name, safe_data)
-            elif hasattr(guard, "check"):
-                try:
-                    guard.check(name, safe_data)
-                except TypeError:
-                    try:
-                        guard.check()
-                    except TypeError:
-                        pass
+            _check_guard(guard, name, safe_data)
 
     def __repr__(self) -> str:
         session_part = ""

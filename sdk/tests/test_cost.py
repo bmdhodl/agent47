@@ -1,4 +1,5 @@
 import unittest
+from datetime import date
 
 from agentguard.cost import LAST_UPDATED, CostTracker, UnknownModelWarning, estimate_cost
 
@@ -18,6 +19,16 @@ class TestEstimateCost(unittest.TestCase):
             cost = estimate_cost("nonexistent-model", input_tokens=1000, output_tokens=500)
         self.assertEqual(cost, 0.0)
 
+    def test_unknown_model_logs_warning(self) -> None:
+        with self.assertWarns(UnknownModelWarning), self.assertLogs(
+            "agentguard.cost",
+            level="WARNING",
+        ) as logs:
+            cost = estimate_cost("nonexistent-model", input_tokens=1000, output_tokens=500)
+
+        self.assertEqual(cost, 0.0)
+        self.assertTrue(any("Unknown model" in message for message in logs.output))
+
     def test_anthropic_model(self) -> None:
         cost = estimate_cost("claude-3-5-sonnet-20241022", input_tokens=1000, output_tokens=500, provider="anthropic")
         # (1000 * 0.003 + 500 * 0.015) / 1000 = 0.003 + 0.0075 = 0.0105
@@ -32,6 +43,16 @@ class TestEstimateCost(unittest.TestCase):
         cost = estimate_cost("claude-opus-4-6", input_tokens=1000, output_tokens=500, provider="anthropic")
         # (1000 * 0.005 + 500 * 0.025) / 1000 = 0.005 + 0.0125 = 0.0175
         self.assertAlmostEqual(cost, 0.0175, places=6)
+
+    def test_gpt_55_long_context_uses_full_session_multiplier(self) -> None:
+        cost = estimate_cost("gpt-5.5", input_tokens=300_000, output_tokens=10_000, provider="openai")
+        # >272K input tokens: input is 2x and output is 1.5x for the full session.
+        self.assertAlmostEqual(cost, 3.45, places=6)
+
+    def test_gemini_25_pro_long_context_uses_high_token_tier(self) -> None:
+        cost = estimate_cost("gemini-2.5-pro", input_tokens=250_000, output_tokens=10_000, provider="google")
+        # >200K prompt tokens: $2.50 input / $15 output per 1M tokens.
+        self.assertAlmostEqual(cost, 0.775, places=6)
 
     def test_zero_tokens(self) -> None:
         cost = estimate_cost("gpt-4o", input_tokens=0, output_tokens=0, provider="openai")
@@ -85,7 +106,8 @@ class TestCostTracker(unittest.TestCase):
 
 class TestEstimateCostEdgeCases(unittest.TestCase):
     def test_last_updated_marker(self) -> None:
-        self.assertEqual(LAST_UPDATED, "2026-03-26")
+        updated = date.fromisoformat(LAST_UPDATED)
+        self.assertLessEqual((date.today() - updated).days, 90)
 
     def test_very_large_tokens(self) -> None:
         cost = estimate_cost("gpt-4o", input_tokens=1_000_000, output_tokens=1_000_000, provider="openai")

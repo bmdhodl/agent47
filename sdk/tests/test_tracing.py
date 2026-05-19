@@ -3,6 +3,8 @@ import os
 import tempfile
 import unittest
 
+import pytest
+
 from agentguard.tracing import JsonlFileSink, TraceContext, Tracer, _sanitize_data
 
 
@@ -180,6 +182,36 @@ class TestSessionId(unittest.TestCase):
         trace_events = [event for event in captured if event.get("kind") in {"span", "event"}]
         assert trace_events
         assert all(event["session_id"] == "session-123" for event in trace_events)
+
+
+class TestTracerGuardDispatch(unittest.TestCase):
+    def test_buggy_check_guard_type_error_fails_loudly(self) -> None:
+        class BuggyGuard:
+            def check(self, name, data):
+                raise TypeError("guard implementation bug")
+
+        tracer = Tracer(guards=[BuggyGuard()], watermark=False)
+
+        with pytest.raises(TypeError, match="guard implementation bug"), tracer.trace(
+            "agent.run"
+        ) as span:
+            span.event("tool.search", data={"query": "docs"})
+
+    def test_zero_arg_check_guard_is_still_supported(self) -> None:
+        class ZeroArgGuard:
+            def __init__(self) -> None:
+                self.called = False
+
+            def check(self) -> None:
+                self.called = True
+
+        guard = ZeroArgGuard()
+        tracer = Tracer(guards=[guard], watermark=False)
+
+        with tracer.trace("agent.run") as span:
+            span.event("tool.search")
+
+        self.assertTrue(guard.called)
 
 
 if __name__ == "__main__":
