@@ -13,6 +13,7 @@ from agentguard import (
     JsonlFileSink,
     LoopDetected,
     LoopGuard,
+    Tracer,
 )
 from agentguard.instrument import (
     _originals,
@@ -206,6 +207,16 @@ class TestAsyncTraceAgent(unittest.TestCase):
         with self.assertRaises(ValueError):
             asyncio.run(failing())
 
+    def test_sync_tracer_misuse_raises_clear_error(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+
+        @async_trace_agent(tracer)
+        async def my_agent():
+            return "done"
+
+        with self.assertRaisesRegex(TypeError, "AsyncTracer"):
+            asyncio.run(my_agent())
+
 
 class TestAsyncTraceTool(unittest.TestCase):
     def setUp(self):
@@ -260,6 +271,16 @@ class TestAsyncTraceTool(unittest.TestCase):
         error_events = [e for e in events if e.get("name") == "tool.error"]
         self.assertTrue(len(error_events) > 0)
         self.assertEqual(error_events[0]["data"]["tool_name"], "flaky")
+
+    def test_sync_tracer_misuse_raises_clear_error(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+
+        @async_trace_tool(tracer)
+        async def search():
+            return "result"
+
+        with self.assertRaisesRegex(TypeError, "AsyncTracer"):
+            asyncio.run(search())
 
 
 class TestPatchOpenAIAsync(unittest.TestCase):

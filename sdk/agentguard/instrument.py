@@ -323,6 +323,10 @@ def unpatch_anthropic() -> None:
 def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
     """Decorator that wraps an async function in a top-level trace span.
 
+    Requires an ``AsyncTracer`` or tracer-compatible object whose ``trace()``
+    method returns an async context manager. Use ``trace_agent`` with the sync
+    ``Tracer``.
+
     Usage::
 
         @async_trace_agent(tracer)
@@ -335,7 +339,7 @@ def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], 
 
         @functools.wraps(fn)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
-            async with tracer.trace(span_name) as ctx:
+            async with _async_trace_context(tracer, span_name, "async_trace_agent") as ctx:
                 kwargs["_trace_ctx"] = ctx
                 try:
                     return await fn(*args, **kwargs)
@@ -346,7 +350,7 @@ def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], 
 
         @functools.wraps(fn)
         async def simple_wrapper(*args: Any, **kwargs: Any) -> Any:
-            async with tracer.trace(span_name):
+            async with _async_trace_context(tracer, span_name, "async_trace_agent"):
                 return await fn(*args, **kwargs)
 
         import inspect
@@ -368,6 +372,10 @@ def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], 
 def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
     """Decorator that wraps an async function in a tool span.
 
+    Requires an ``AsyncTracer`` or tracer-compatible object whose ``trace()``
+    method returns an async context manager. Use ``trace_tool`` with the sync
+    ``Tracer``.
+
     Usage::
 
         @async_trace_tool(tracer)
@@ -381,7 +389,7 @@ def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F
 
         @functools.wraps(fn)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
-            async with tracer.trace(span_name) as ctx:
+            async with _async_trace_context(tracer, span_name, "async_trace_tool") as ctx:
                 try:
                     result = await fn(*args, **kwargs)
                 except Exception as exc:
@@ -403,6 +411,27 @@ def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F
         return wrapper  # type: ignore[return-value]
 
     return decorator
+
+
+def _async_trace_context(tracer: Any, span_name: str, decorator_name: str) -> Any:
+    """Return an async trace context or raise a clear tracer-mismatch error."""
+    trace = getattr(tracer, "trace", None)
+    if not callable(trace):
+        raise TypeError(
+            f"{decorator_name} requires an AsyncTracer-compatible tracer with trace(). "
+            "Use AsyncTracer with async decorators, or use the sync decorator with Tracer."
+        )
+    context_manager = trace(span_name)
+    if not (
+        hasattr(context_manager, "__aenter__")
+        and hasattr(context_manager, "__aexit__")
+    ):
+        raise TypeError(
+            f"{decorator_name} requires AsyncTracer; got "
+            f"{type(tracer).__name__}. Use AsyncTracer with async decorators, "
+            "or use the sync decorator with Tracer."
+        )
+    return context_manager
 
 
 # ---------------------------------------------------------------------------
