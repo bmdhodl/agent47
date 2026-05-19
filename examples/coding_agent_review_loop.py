@@ -2,7 +2,7 @@
 
 Run:
 
-    PYTHONPATH=sdk python examples/coding_agent_review_loop.py
+    python examples/coding_agent_review_loop.py
     agentguard report coding_agent_review_loop_traces.jsonl
     agentguard incident coding_agent_review_loop_traces.jsonl
 

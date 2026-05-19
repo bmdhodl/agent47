@@ -70,7 +70,7 @@ except EscalationRequired as exc:
 This repo includes a local-only example that simulates a local Llama turn, arms the escalation guard from the result, and then routes the next call to Claude:
 
 ```bash
-PYTHONPATH=sdk python examples/budget_aware_escalation.py
+python examples/budget_aware_escalation.py
 ```
 
 Expected output:

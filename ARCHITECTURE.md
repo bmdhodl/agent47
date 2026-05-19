@@ -28,8 +28,7 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 
 ### MCP servers (two distinct surfaces)
 - [`mcp-server/`](mcp-server/): the published **read-only** TypeScript MCP server (`@agentguard47/mcp-server`). Exposes AgentGuard traces, decision events, alerts, usage, cost, and budget health from the hosted dashboard to MCP clients.
-- [`agentguard-mcp/`](agentguard-mcp/): a newer **local-budget** Python MCP server (`agentguard_mcp`). Lets MCP clients record tool calls and enforce per-tool / per-server / per-session / per-day budgets. State lives in local SQLite (`~/.agentguard/state.db`); no account, no telemetry unless `AGENTGUARD_SYNC_URL` is opted into. Modules: `server.py`, `storage.py`, `sync.py`, `__main__.py`. Not yet published to PyPI/npm.
-- [`npm/`](npm/): `npm/agentguard-mcp/` is a thin npm shim that lets `npx`/Node users launch the Python `agentguard-mcp` server.
+- [`agentguard-mcp/`](agentguard-mcp/): a newer **local-budget** Python MCP server (`agentguard_mcp`). Lets MCP clients record tool calls and enforce per-tool / per-server / per-session / per-day budgets. State lives in local SQLite (`~/.agentguard/state.db`); no account, no telemetry unless `AGENTGUARD_SYNC_URL` is opted into. Modules: `server.py`, `storage.py`, `sync.py`, `__main__.py`. It is developed from this repository checkout and is not published to PyPI/npm.
 
 ### Distribution, docs, and tooling
 - [`skills/`](skills/): distributable agent skill packs. `skills/agentguard/SKILL.md` is the AgentGuard skill, also surfaced through the SDK `skillpack` CLI command.
@@ -65,7 +64,6 @@ flowchart TD
     M1 --> C1["Codex / Claude Code / Cursor / other MCP clients"]
     C2["MCP-compatible tools"] --> M2["agentguard-mcp/ (Python, local budgets)\nrecords tool calls, enforces per-tool/server/session/day budgets"]
     M2 --> SQL["Local SQLite state (~/.agentguard/state.db)"]
-    N["npm/agentguard-mcp shim"] -.launches.-> M2
 ```
 
 The two MCP servers are independent: `mcp-server/` is a read-only window onto hosted data; `agentguard-mcp/` is a local-first enforcement server with no hosted dependency.
@@ -103,7 +101,7 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
 
 - Architecture knowledge is still split between this root doc and [`ops/02-ARCHITECTURE.md`](ops/02-ARCHITECTURE.md). They can drift if only one gets updated; treat this root doc as the law.
 - The public repo still contains [`site/`](site/), which creates recurring boundary confusion because the private dashboard repo also owns hosted product surfaces.
-- Two MCP packages now coexist (`mcp-server/` TypeScript read-only, `agentguard-mcp/` Python local-budget) plus the `npm/` shim. Their naming overlaps and release/distribution story still needs consolidating; `agentguard-mcp` is not yet published.
+- Two MCP packages now coexist (`mcp-server/` TypeScript read-only, `agentguard-mcp/` Python local-budget). Their naming overlaps and release/distribution story still needs consolidating; `agentguard-mcp` is not yet published.
 - Some tests still intentionally import private tracing helpers for hardening coverage, so internal refactors need compatibility shims or test cleanup rather than assuming internals are free to disappear.
 - Generated/scratch artifacts (`output/`, root-level `*.jsonl` trace files) accumulate at the repo root and are easy to mistake for first-class modules.
 - Local PR proof is strong, but some supporting repo tooling around GitHub review/check inspection is fragile on Windows shells and depends on manual `gh` fallbacks.
@@ -111,4 +109,4 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
 ## 9. Change Log
 
 - 2026-04-09: Created root `ARCHITECTURE.md` as the repo-level architecture law for future nightshift and PR work.
-- 2026-05-17: Refreshed directory map, data flow, and abstractions to match the repo as of 2026-05-17 — added the Python `agentguard-mcp/` local-budget server, the `npm/` shim, and `skills/`; documented the two distinct MCP surfaces and the current `sdk/agentguard/` module layout.
+- 2026-05-17: Refreshed directory map, data flow, and abstractions to match the repo as of 2026-05-17 — added the Python `agentguard-mcp/` local-budget server and `skills/`; documented the two distinct MCP surfaces and the current `sdk/agentguard/` module layout.

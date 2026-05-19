@@ -13,13 +13,11 @@ per-tool, per-server, per-session, and global budgets in tokens and dollars.
 - Added read-time period rollover for `session`, `day`, and `month`.
 - Added an opt-in `AGENTGUARD_SYNC_URL` hook that POSTs usage events through a
   bounded background worker with a 2 second timeout.
-- Added a thin npm shim package at `npm/agentguard-mcp/`.
 - Added install/config docs and Claude Desktop, Cursor, and Cline examples.
 - Added proof at `proof/agentguard-mcp/local-budget-proof.txt`.
 
 ## What is left
 - Publish `agentguard-mcp` to PyPI.
-- Publish the unscoped npm shim as `agentguard-mcp`.
 - Capture Claude Desktop screenshots from a real configured client.
 - Open registry PRs/listings for mcp.so, Smithery, Glama, PulseMCP, and
   `awesome-mcp-servers`.
@@ -34,11 +32,8 @@ per-tool, per-server, per-session, and global budgets in tokens and dollars.
 - Bandit passed via `python -m bandit`.
 - Release guard passed.
 - Python package build passed.
-- npm shim dry-run pack passed.
 - `make` is unavailable in this Windows shell, so direct equivalents were run.
 
 ## Unknowns for Patrick
 - Whether to keep the new package as a subdirectory publish or split it into a
   dedicated repo after the draft PR.
-- Whether the npm shim should auto-install/upgrade the Python package on every
-  run or only on first run.
