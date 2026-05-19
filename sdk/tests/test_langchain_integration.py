@@ -51,6 +51,26 @@ class TestLangChainIntegration(unittest.TestCase):
         self.assertEqual(handler._run_to_span, {})
         self.assertIsNone(handler._root_ctx)
 
+    def test_stale_child_end_does_not_close_new_active_run(self):
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        chain_id = uuid.uuid4()
+        llm_id = uuid.uuid4()
+
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_chain_end({"output": "done"}, run_id=chain_id)
+
+        next_chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "next"}, {}, run_id=next_chain_id)
+        handler.on_llm_end(_MockResponse(), run_id=llm_id)
+
+        self.assertEqual(len(handler._span_stack), 1)
+        self.assertIn(str(next_chain_id), handler._run_to_span)
+        handler.on_chain_end({"output": "done"}, run_id=next_chain_id)
+        self.assertEqual(handler._span_stack, [])
+        self.assertEqual(handler._run_to_span, {})
+        self.assertIsNone(handler._root_ctx)
+
     def test_concurrent_callback_lifecycles_do_not_corrupt_state(self):
         handler = AgentGuardCallbackHandler(tracer=self.tracer)
 

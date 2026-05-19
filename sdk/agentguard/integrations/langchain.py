@@ -76,10 +76,10 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     ) -> None:
         with self._lock:
             ctx = self._pop_span(run_id)
-        if ctx is None:
-            return
-        ctx.event("chain.outputs", data={"outputs": _safe_dict(outputs)})
-        self._exit_span(ctx, None, None, None)
+            if ctx is None:
+                return
+            ctx.event("chain.outputs", data={"outputs": _safe_dict(outputs)})
+            self._exit_span(ctx, None, None, None)
 
     def on_chain_error(
         self,
@@ -90,9 +90,9 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     ) -> None:
         with self._lock:
             ctx = self._pop_span(run_id)
-        if ctx is None:
-            return
-        self._exit_span(ctx, type(error), error, error.__traceback__)
+            if ctx is None:
+                return
+            self._exit_span(ctx, type(error), error, error.__traceback__)
 
     # -- llm ------------------------------------------------------------------
 
@@ -121,8 +121,8 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     ) -> None:
         with self._lock:
             ctx = self._pop_span(run_id)
-        if ctx is None:
-            return
+            if ctx is None:
+                return
         usage = _extract_token_usage(response)
         model_name = _extract_model_name(response)
         provider = infer_provider(model_name)
@@ -148,18 +148,20 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
                         consume_kwargs["cost_usd"] = payload["cost_usd"]
                     self._budget_guard.consume(**consume_kwargs)
                 except BudgetExceeded as e:
-                    ctx.event("guard.budget_exceeded", data={
-                        "tokens_used": self._budget_guard.state.tokens_used,
-                        "tokens_limit": self._budget_guard.max_tokens,
-                        "calls_used": self._budget_guard.state.calls_used,
-                        "calls_limit": self._budget_guard.max_calls,
-                        "error": str(e),
-                    })
-                    ctx.event("llm.end", data=payload)
-                    self._exit_span(ctx, None, None, None)
+                    with self._lock:
+                        ctx.event("guard.budget_exceeded", data={
+                            "tokens_used": self._budget_guard.state.tokens_used,
+                            "tokens_limit": self._budget_guard.max_tokens,
+                            "calls_used": self._budget_guard.state.calls_used,
+                            "calls_limit": self._budget_guard.max_calls,
+                            "error": str(e),
+                        })
+                        ctx.event("llm.end", data=payload)
+                        self._exit_span(ctx, None, None, None)
                     raise
-        ctx.event("llm.end", data=payload)
-        self._exit_span(ctx, None, None, None)
+        with self._lock:
+            ctx.event("llm.end", data=payload)
+            self._exit_span(ctx, None, None, None)
 
     def on_llm_error(
         self,
@@ -170,9 +172,9 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     ) -> None:
         with self._lock:
             ctx = self._pop_span(run_id)
-        if ctx is None:
-            return
-        self._exit_span(ctx, type(error), error, error.__traceback__)
+            if ctx is None:
+                return
+            self._exit_span(ctx, type(error), error, error.__traceback__)
 
     # -- tools ----------------------------------------------------------------
 
@@ -187,31 +189,33 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         tool_name = serialized.get("name") or serialized.get("id", "tool")
         if isinstance(tool_name, list):
             tool_name = tool_name[-1]
-        with self._lock:
-            current_ctx = self._span_stack[-1] if self._span_stack else None
         if self._loop_guard:
             try:
                 self._loop_guard.check(tool_name=tool_name, tool_args={"input": input_str})
             except LoopDetected as e:
-                if current_ctx:
-                    current_ctx.event("guard.loop_detected", data={
-                        "tool_name": tool_name,
-                        "repeat_count": self._loop_guard.max_repeats,
-                        "error": str(e),
-                    })
+                with self._lock:
+                    current_ctx = self._span_stack[-1] if self._span_stack else None
+                    if current_ctx:
+                        current_ctx.event("guard.loop_detected", data={
+                            "tool_name": tool_name,
+                            "repeat_count": self._loop_guard.max_repeats,
+                            "error": str(e),
+                        })
                 raise
         if self._budget_guard:
             try:
                 self._budget_guard.consume(calls=1)
             except BudgetExceeded as e:
-                if current_ctx:
-                    current_ctx.event("guard.budget_exceeded", data={
-                        "tokens_used": self._budget_guard.state.tokens_used,
-                        "tokens_limit": self._budget_guard.max_tokens,
-                        "calls_used": self._budget_guard.state.calls_used,
-                        "calls_limit": self._budget_guard.max_calls,
-                        "error": str(e),
-                    })
+                with self._lock:
+                    current_ctx = self._span_stack[-1] if self._span_stack else None
+                    if current_ctx:
+                        current_ctx.event("guard.budget_exceeded", data={
+                            "tokens_used": self._budget_guard.state.tokens_used,
+                            "tokens_limit": self._budget_guard.max_tokens,
+                            "calls_used": self._budget_guard.state.calls_used,
+                            "calls_limit": self._budget_guard.max_calls,
+                            "error": str(e),
+                        })
                 raise
         with self._lock:
             parent = self._span_stack[-1] if self._span_stack else None
@@ -230,10 +234,10 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     ) -> None:
         with self._lock:
             ctx = self._pop_span(run_id)
-        if ctx is None:
-            return
-        ctx.event("tool.result", data={"output": str(output)})
-        self._exit_span(ctx, None, None, None)
+            if ctx is None:
+                return
+            ctx.event("tool.result", data={"output": str(output)})
+            self._exit_span(ctx, None, None, None)
 
     def on_tool_error(
         self,
@@ -244,9 +248,9 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     ) -> None:
         with self._lock:
             ctx = self._pop_span(run_id)
-        if ctx is None:
-            return
-        self._exit_span(ctx, type(error), error, error.__traceback__)
+            if ctx is None:
+                return
+            self._exit_span(ctx, type(error), error, error.__traceback__)
 
     # -- helpers --------------------------------------------------------------
 
@@ -263,7 +267,9 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         return ctx
 
     def _pop_span(self, run_id: Optional[uuid.UUID]) -> Optional[TraceContext]:
-        if run_id and str(run_id) in self._run_to_span:
+        if run_id and str(run_id) not in self._run_to_span:
+            return None
+        if run_id:
             ctx = self._run_to_span.pop(str(run_id))
             if ctx in self._span_stack:
                 while self._span_stack and self._span_stack[-1] is not ctx:
@@ -279,10 +285,11 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
         return None
 
     def _exit_span(self, ctx: TraceContext, exc_type: Any, exc: Any, tb: Any) -> None:
-        ctx_mgr = self._span_contexts.pop(id(ctx), ctx)
-        ctx_mgr.__exit__(exc_type, exc, tb)
-        if not self._span_stack:
-            self._root_ctx = None
+        with self._lock:
+            ctx_mgr = self._span_contexts.pop(id(ctx), ctx)
+            ctx_mgr.__exit__(exc_type, exc, tb)
+            if not self._span_stack:
+                self._root_ctx = None
 
     def _forget_run_for_span(self, ctx: TraceContext) -> None:
         for run_key, mapped_ctx in list(self._run_to_span.items()):
