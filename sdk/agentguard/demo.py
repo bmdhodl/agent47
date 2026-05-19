@@ -4,6 +4,7 @@ import os
 import sys
 from typing import Optional, TextIO
 
+from agentguard.first_run import local_proof_commands
 from agentguard.guards import (
     BudgetExceeded,
     BudgetGuard,
@@ -68,11 +69,7 @@ def run_offline_demo(
     _print(out, f"View incident report: agentguard incident {rendered_trace_path}")
     _print(out, "")
     _print(out, "Next: add AgentGuard to a repo")
-    next_commands = [
-        "agentguard quickstart --framework raw --write",
-        "python agentguard_raw_quickstart.py",
-        "agentguard report .agentguard/traces.jsonl",
-    ]
+    next_commands = local_proof_commands()
     for command in next_commands:
         _print(out, f"  {command}")
     _print(out, "")

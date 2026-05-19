@@ -9,6 +9,7 @@ from unittest.mock import patch
 import agentguard
 from agentguard.cli import _doctor
 from agentguard.doctor import run_doctor
+from agentguard.first_run import local_proof_commands
 
 
 class TestDoctor(unittest.TestCase):
@@ -26,8 +27,13 @@ class TestDoctor(unittest.TestCase):
             self.assertIn("Suggested next step:", output)
             self.assertIn("local_only=True", output)
             self.assertIn("agentguard demo", output)
+            self.assertIn("agentguard quickstart --framework raw --write", output)
+            self.assertIn("python agentguard_raw_quickstart.py", output)
+            self.assertIn("agentguard report .agentguard/traces.jsonl", output)
             self.assertIn("If 'agentguard' is not on PATH:", output)
             self.assertIn("python -m agentguard.cli demo", output)
+            self.assertIn("python -m agentguard.cli quickstart --framework raw --write", output)
+            self.assertIn("python -m agentguard.cli report .agentguard/traces.jsonl", output)
             self.assertIn(f"python -m agentguard.cli report {trace_path}", output)
 
     def test_run_doctor_json_output_is_parseable(self) -> None:
@@ -42,6 +48,7 @@ class TestDoctor(unittest.TestCase):
             self.assertEqual(payload["status"], "ok")
             self.assertEqual(payload["trace_file"], trace_path)
             self.assertGreaterEqual(payload["events_written"], 4)
+            self.assertEqual(payload["next_commands"][:4], local_proof_commands(include_demo=True))
             self.assertIn("recommended_snippet", payload)
             self.assertEqual(payload["recommended_repo_config"]["profile"], "coding-agent")
 
