@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 if TYPE_CHECKING:
     from agentguard.cost import CostTracker
@@ -188,6 +188,46 @@ def _sanitize_data(data: Optional[Any]) -> Optional[Dict[str, Any]]:
         )
         return _fit_mapping_data(safe_data, _MAX_EVENT_DATA_BYTES)
     return safe_data
+
+
+def _build_trace_event(
+    *,
+    service: str,
+    session_id: Optional[str],
+    kind: str,
+    phase: str,
+    trace_id: str,
+    span_id: str,
+    parent_id: Optional[str],
+    name: str,
+    data: Optional[Dict[str, Any]] = None,
+    duration_ms: Optional[float] = None,
+    error: Optional[Dict[str, Any]] = None,
+    cost_usd: Optional[float] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
+    """Build one JSON-safe trace event for sync and async tracers."""
+    safe_data = _sanitize_data(data)
+    event: Dict[str, Any] = {
+        "service": service,
+        "kind": kind,
+        "phase": phase,
+        "trace_id": trace_id,
+        "span_id": span_id,
+        "parent_id": parent_id,
+        "name": name,
+        "ts": time.time(),
+        "duration_ms": duration_ms,
+        "data": safe_data or {},
+        "error": error,
+    }
+    if session_id is not None:
+        event["session_id"] = session_id
+    if cost_usd is not None:
+        event["cost_usd"] = cost_usd
+    if metadata:
+        event["metadata"] = metadata
+    return event, safe_data
 
 
 @dataclass
@@ -423,26 +463,21 @@ class Tracer:
         Note: sampling is handled by TraceContext — if this method is
         called, the event should be emitted.
         """
-        safe_data = _sanitize_data(data)
-        event: Dict[str, Any] = {
-            "service": self._service,
-            "kind": kind,
-            "phase": phase,
-            "trace_id": trace_id,
-            "span_id": span_id,
-            "parent_id": parent_id,
-            "name": name,
-            "ts": time.time(),
-            "duration_ms": duration_ms,
-            "data": safe_data or {},
-            "error": error,
-        }
-        if self._session_id is not None:
-            event["session_id"] = self._session_id
-        if cost_usd is not None:
-            event["cost_usd"] = cost_usd
-        if self._metadata:
-            event["metadata"] = self._metadata
+        event, safe_data = _build_trace_event(
+            service=self._service,
+            session_id=self._session_id,
+            kind=kind,
+            phase=phase,
+            trace_id=trace_id,
+            span_id=span_id,
+            parent_id=parent_id,
+            name=name,
+            data=data,
+            duration_ms=duration_ms,
+            error=error,
+            cost_usd=cost_usd,
+            metadata=self._metadata,
+        )
         if self._watermark and not self._watermark_emitted:
             self._watermark_emitted = True
             wm: Dict[str, Any] = {

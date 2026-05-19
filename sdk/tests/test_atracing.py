@@ -140,6 +140,20 @@ class TestAsyncTracer(unittest.TestCase):
         self.assertTrue(trace_events)
         self.assertTrue(all(event["session_id"] == "session-123" for event in trace_events))
 
+    def test_event_data_is_truncated_like_sync_tracer(self):
+        async def run():
+            tracer = AsyncTracer(sink=JsonlFileSink(self.path), service="test")
+            async with tracer.trace("agent.run") as span:
+                span.event("oversized", data={"blob": "x" * 70_000})
+
+        asyncio.run(run())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        oversized = next(event for event in events if event["name"] == "oversized")
+        self.assertTrue(oversized["data"]["blob"].endswith("...[truncated]"))
+        self.assertLess(len(json.dumps(oversized["data"]).encode("utf-8")), 70_000)
+
 
 class TestAsyncTracerRepr(unittest.TestCase):
     def test_repr(self):
