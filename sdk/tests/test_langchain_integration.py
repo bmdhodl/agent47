@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+import threading
 import unittest
 import uuid
 
@@ -33,6 +34,60 @@ class TestLangChainIntegration(unittest.TestCase):
         kinds = [e["kind"] for e in events]
         self.assertIn("span", kinds)
         self.assertIn("event", kinds)
+        self.assertEqual(handler._span_stack, [])
+        self.assertEqual(handler._run_to_span, {})
+        self.assertIsNone(handler._root_ctx)
+
+    def test_parent_end_closes_never_ended_child_run(self):
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        chain_id = uuid.uuid4()
+        llm_id = uuid.uuid4()
+
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_chain_end({"output": "done"}, run_id=chain_id)
+
+        self.assertEqual(handler._span_stack, [])
+        self.assertEqual(handler._run_to_span, {})
+        self.assertIsNone(handler._root_ctx)
+
+    def test_stale_child_end_does_not_close_new_active_run(self):
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        chain_id = uuid.uuid4()
+        llm_id = uuid.uuid4()
+
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        handler.on_chain_end({"output": "done"}, run_id=chain_id)
+
+        next_chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "next"}, {}, run_id=next_chain_id)
+        handler.on_llm_end(_MockResponse(), run_id=llm_id)
+
+        self.assertEqual(len(handler._span_stack), 1)
+        self.assertIn(str(next_chain_id), handler._run_to_span)
+        handler.on_chain_end({"output": "done"}, run_id=next_chain_id)
+        self.assertEqual(handler._span_stack, [])
+        self.assertEqual(handler._run_to_span, {})
+        self.assertIsNone(handler._root_ctx)
+
+    def test_concurrent_callback_lifecycles_do_not_corrupt_state(self):
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+
+        def run_lifecycle(index: int) -> None:
+            run_id = uuid.uuid4()
+            handler.on_chain_start({"name": f"agent-{index}"}, {"input": index}, run_id=run_id)
+            handler.on_chain_end({"output": index}, run_id=run_id)
+
+        threads = [threading.Thread(target=run_lifecycle, args=(index,)) for index in range(8)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        self.assertEqual(handler._span_stack, [])
+        self.assertEqual(handler._run_to_span, {})
+        self.assertIsNone(handler._root_ctx)
 
     def test_nested_llm_creates_span(self):
         handler = AgentGuardCallbackHandler(tracer=self.tracer)
