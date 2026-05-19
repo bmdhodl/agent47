@@ -67,6 +67,17 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
 LAST_UPDATED = "2026-05-19"
 
 
+def _resolve_prices(provider: str, model: str, input_tokens: int) -> Optional[Tuple[float, float]]:
+    prices = _PRICES.get((provider, model))
+    if not prices:
+        return None
+    if provider == "openai" and model == "gpt-5.5" and input_tokens > 272_000:
+        return (prices[0] * 2, prices[1] * 1.5)
+    if provider == "google" and model == "gemini-2.5-pro" and input_tokens > 200_000:
+        return (0.0025, 0.015)
+    return prices
+
+
 def estimate_cost(
     model: str,
     input_tokens: int = 0,
@@ -86,13 +97,16 @@ def estimate_cost(
         Estimated cost in USD. Returns 0.0 if model not found.
     """
     if provider:
-        prices = _PRICES.get((provider, model))
+        prices = _resolve_prices(provider, model, input_tokens)
         if prices:
             return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
     else:
         # Try all providers
-        for (_p, m), prices in _PRICES.items():
+        for (_p, m), _prices in _PRICES.items():
             if m == model:
+                prices = _resolve_prices(_p, m, input_tokens)
+                if not prices:
+                    continue
                 return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
     message = (
         f"Unknown model '{model}'. Pricing data last updated {LAST_UPDATED}. "
