@@ -93,6 +93,9 @@ def _run_checks(trace_path: str) -> Dict[str, Any]:
         "integration_hints": hints,
         "next_commands": [
             "agentguard demo",
+            "agentguard quickstart --framework raw --write",
+            "python agentguard_raw_quickstart.py",
+            "agentguard report .agentguard/traces.jsonl",
             f"agentguard report {_shell_quote_path(normalized_path)}",
         ],
         "recommended_repo_config": _recommended_repo_config(),
