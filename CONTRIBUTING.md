@@ -6,9 +6,7 @@ agent repo.
 
 ## Best First Contributions
 
-Start with issues labeled
-[`good first issue`](https://github.com/bmdhodl/agent47/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-or one of these small scopes:
+Start with one of these small scopes:
 
 - improve an example without adding dependencies
 - add a focused test for an existing guard, CLI command, or helper

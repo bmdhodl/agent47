@@ -2,13 +2,13 @@
 """End-to-end verification of the cost guardrail pipeline (T1-T7).
 
 Runs a local simulated agent with:
-- Tracer → JsonlFileSink (writes events to JSONL)
+- Tracer to JsonlFileSink (writes events to JSONL)
 - BudgetGuard with warning at 50% and limit
 - patch_openai() with budget_guard wired in
 - Simulated LLM calls that trigger warning and exceeded events
 - Reads back JSONL and verifies the full pipeline
 
-Run: PYTHONPATH=sdk python sdk/tests/e2e_cost_guardrail.py
+Run: python sdk/tests/e2e_cost_guardrail.py
 """
 from __future__ import annotations
 
@@ -82,9 +82,8 @@ def main():
     print("\n=== E2E Cost Guardrail Pipeline Verification ===\n")
 
     # ---- Setup ----
-    tmpfile = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
-    trace_path = tmpfile.name
-    tmpfile.close()
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as tmpfile:
+        trace_path = tmpfile.name
 
     warnings_received = []
 
@@ -106,9 +105,9 @@ def main():
         _originals.clear()
         patch_openai(tracer, budget_guard=guard)
 
-        # Make a few calls — should cross 30% warning threshold
+        # Make a few calls so the 30% warning threshold is crossed.
         client = cls()
-        for i in range(3):
+        for _ in range(3):
             client.chat.completions.create(model="gpt-4o")
 
         check("Guard tracked tokens", guard.state.tokens_used == 4500, f"got {guard.state.tokens_used}")
@@ -120,7 +119,7 @@ def main():
         del sys.modules["openai"]
 
         # ---- Phase 2: Over-budget call ----
-        print("\nPhase 2: Over-budget call → BudgetExceeded")
+        print("\nPhase 2: Over-budget call -> BudgetExceeded")
 
         guard2 = BudgetGuard(max_cost_usd=0.0001)
         tracer2 = Tracer(sink=sink, service="e2e-cost-test", guards=[guard2])
@@ -147,7 +146,7 @@ def main():
         print("\nPhase 3: Verify JSONL output")
 
         events = []
-        with open(trace_path, "r") as f:
+        with open(trace_path) as f:
             for line in f:
                 line = line.strip()
                 if line:

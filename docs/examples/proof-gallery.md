@@ -44,7 +44,7 @@ Sample incident:
 ## 3. Sticky Agent Proof
 
 ```bash
-PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
 agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
 ```
 
@@ -160,7 +160,7 @@ Requires AGENTGUARD_API_KEY for retained hosted data. Does not add local runtime
 The most shareable public demo for the release train is the sticky agent proof:
 
 ```bash
-PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
 agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
 ```
 

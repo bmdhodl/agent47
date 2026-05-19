@@ -2,7 +2,7 @@
 
 Run:
 
-    PYTHONPATH=sdk python examples/budget_aware_escalation.py
+    python examples/budget_aware_escalation.py
 """
 from __future__ import annotations
 

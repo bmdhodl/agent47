@@ -464,7 +464,6 @@ Useful links:
 
 - [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - [`GOLDEN_PRINCIPLES.md`](GOLDEN_PRINCIPLES.md)
-- [good first issues](https://github.com/bmdhodl/agent47/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
 
 ## License
 

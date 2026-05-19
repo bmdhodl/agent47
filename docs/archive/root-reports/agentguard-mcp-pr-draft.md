@@ -7,12 +7,11 @@ Add local-first agentguard-mcp budget server
 - add a new `agentguard-mcp` Python package that exposes MCP tools for local token and dollar budgets
 - persist budget definitions and usage events in SQLite with session/day/month read-time rollover
 - add kill-switch handling, projected-usage checks, matching scope accounting, and an opt-in bounded non-blocking sync hook
-- add a thin `agentguard-mcp` npm shim plus Claude Desktop, Claude Code, Cursor, and Cline setup docs
+- add Claude Desktop, Claude Code, Cursor, and Cline setup docs
 - save local proof for budget set, call recorded, budget exceeded, and kill-switch blocked behavior
 
 ## Scope
 - `agentguard-mcp/`
-- `npm/agentguard-mcp/`
 - `examples/agentguard-mcp/`
 - `proof/agentguard-mcp/`
 - `Makefile`
@@ -29,7 +28,7 @@ Add local-first agentguard-mcp budget server
 - medium: this adds a new publishable package surface and one new runtime dependency on the official `mcp` SDK inside that package only
 - core SDK behavior is unchanged
 - existing TypeScript MCP behavior is unchanged
-- rollback is a straight revert of the new package, npm shim, examples, proof, and Makefile target
+- rollback is a straight revert of the new package, examples, proof, and Makefile target
 
 ## Validation
 - `python -m pip install -e .\agentguard-mcp`
@@ -46,7 +45,6 @@ Add local-first agentguard-mcp budget server
 - `python scripts/sdk_release_guard.py`
 - `python scripts/sdk_preflight.py`
 - `python -m build .\agentguard-mcp`
-- `cd npm/agentguard-mcp && npm pack --dry-run`
 
 `make` is unavailable in this Windows shell, so Makefile-equivalent commands
 were run directly. Proof is saved in `proof/agentguard-mcp/local-budget-proof.txt`.
