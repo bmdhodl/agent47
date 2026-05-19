@@ -127,14 +127,14 @@ class TestTracerGuardFallback(unittest.TestCase):
             ctx.event("step")
 
     def test_guard_with_incompatible_check(self):
-        """Guard.check() that raises TypeError is silently ignored."""
+        """Guard.check() TypeError fails loudly."""
         class BadGuard:
             def check(self, *args, **kwargs):
                 raise TypeError("bad")
 
         sink = StdoutSink()
         tracer = Tracer(sink=sink, guards=[BadGuard()])
-        with tracer.trace("test") as ctx:
+        with self.assertRaisesRegex(TypeError, "bad"), tracer.trace("test") as ctx:
             ctx.event("step")
 
 
@@ -585,7 +585,7 @@ class TestAsyncTracerGuardFallback(unittest.TestCase):
         asyncio.run(run())
 
     def test_async_guard_with_incompatible_check(self):
-        """Guard.check() that raises TypeError is silently ignored (async)."""
+        """Guard.check() TypeError fails loudly (async)."""
         import asyncio
         from agentguard.atracing import AsyncTracer
 
@@ -600,7 +600,8 @@ class TestAsyncTracerGuardFallback(unittest.TestCase):
             async with tracer.trace("test") as ctx:
                 ctx.event("step")
 
-        asyncio.run(run())
+        with self.assertRaisesRegex(TypeError, "bad"):
+            asyncio.run(run())
 
 
 # ---------------------------------------------------------------------------
