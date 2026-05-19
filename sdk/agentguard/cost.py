@@ -4,9 +4,12 @@ Hardcoded pricing dict — no network calls, no dependencies.
 """
 from __future__ import annotations
 
+import logging
 import threading
 import warnings
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger("agentguard.cost")
 
 
 class UnknownModelWarning(UserWarning):
@@ -15,12 +18,17 @@ class UnknownModelWarning(UserWarning):
 
 
 # Prices per 1K tokens: (input_price, output_price)
-# Last updated: 2026-03-26
-# Verified directly against current Anthropic and Google pricing pages.
-# OpenAI entries were retained from the prior table because the official
-# pricing page was not fetchable from this environment due to Cloudflare.
+# Last updated: 2026-05-19
+# Verified against official OpenAI, Anthropic, and Google pricing pages.
 _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     # OpenAI
+    ("openai", "gpt-5.5"): (0.005, 0.030),
+    ("openai", "gpt-5.5-pro"): (0.030, 0.180),
+    ("openai", "gpt-5.4"): (0.0025, 0.015),
+    ("openai", "gpt-5.4-mini"): (0.00075, 0.0045),
+    ("openai", "gpt-5.4-nano"): (0.0002, 0.00125),
+    ("openai", "gpt-5.4-pro"): (0.030, 0.180),
+    ("openai", "gpt-5.3-codex"): (0.00175, 0.014),
     ("openai", "gpt-4o"): (0.0025, 0.010),
     ("openai", "gpt-4o-mini"): (0.00015, 0.0006),
     ("openai", "gpt-4-turbo"): (0.01, 0.03),
@@ -30,6 +38,10 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("openai", "o1-mini"): (0.003, 0.012),
     ("openai", "o3-mini"): (0.0011, 0.0044),
     # Anthropic
+    ("anthropic", "claude-opus-4-7"): (0.005, 0.025),
+    ("anthropic", "claude-opus-4-5"): (0.005, 0.025),
+    ("anthropic", "claude-sonnet-4-6"): (0.003, 0.015),
+    ("anthropic", "claude-sonnet-4-5"): (0.003, 0.015),
     ("anthropic", "claude-3-5-sonnet-20241022"): (0.003, 0.015),
     ("anthropic", "claude-3-5-haiku-20241022"): (0.0008, 0.004),
     ("anthropic", "claude-3-opus-20240229"): (0.015, 0.075),
@@ -39,6 +51,9 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("anthropic", "claude-opus-4-20250515"): (0.015, 0.075),
     ("anthropic", "claude-opus-4-6"): (0.005, 0.025),
     # Google
+    ("google", "gemini-2.5-pro"): (0.00125, 0.010),
+    ("google", "gemini-2.5-flash"): (0.00030, 0.00250),
+    ("google", "gemini-2.5-flash-lite"): (0.00010, 0.00040),
     ("google", "gemini-1.5-pro"): (0.00125, 0.005),
     ("google", "gemini-1.5-flash"): (0.000075, 0.0003),
     ("google", "gemini-2.0-flash"): (0.0001, 0.0004),
@@ -49,7 +64,7 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("meta", "llama-3.1-70b"): (0.00035, 0.0004),
 }
 
-LAST_UPDATED = "2026-03-26"
+LAST_UPDATED = "2026-05-19"
 
 
 def estimate_cost(
@@ -79,12 +94,12 @@ def estimate_cost(
         for (_p, m), prices in _PRICES.items():
             if m == model:
                 return (input_tokens * prices[0] + output_tokens * prices[1]) / 1000.0
-    warnings.warn(
+    message = (
         f"Unknown model '{model}'. Pricing data last updated {LAST_UPDATED}. "
-        f"Cost estimate is $0.00.",
-        UnknownModelWarning,
-        stacklevel=2,
+        "Cost estimate is $0.00."
     )
+    logger.warning(message)
+    warnings.warn(message, UnknownModelWarning, stacklevel=2)
     return 0.0
 
 

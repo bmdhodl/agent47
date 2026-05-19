@@ -1,4 +1,5 @@
 import unittest
+from datetime import date
 
 from agentguard.cost import LAST_UPDATED, CostTracker, UnknownModelWarning, estimate_cost
 
@@ -17,6 +18,16 @@ class TestEstimateCost(unittest.TestCase):
         with self.assertWarns(UnknownModelWarning):
             cost = estimate_cost("nonexistent-model", input_tokens=1000, output_tokens=500)
         self.assertEqual(cost, 0.0)
+
+    def test_unknown_model_logs_warning(self) -> None:
+        with self.assertWarns(UnknownModelWarning), self.assertLogs(
+            "agentguard.cost",
+            level="WARNING",
+        ) as logs:
+            cost = estimate_cost("nonexistent-model", input_tokens=1000, output_tokens=500)
+
+        self.assertEqual(cost, 0.0)
+        self.assertTrue(any("Unknown model" in message for message in logs.output))
 
     def test_anthropic_model(self) -> None:
         cost = estimate_cost("claude-3-5-sonnet-20241022", input_tokens=1000, output_tokens=500, provider="anthropic")
@@ -85,7 +96,8 @@ class TestCostTracker(unittest.TestCase):
 
 class TestEstimateCostEdgeCases(unittest.TestCase):
     def test_last_updated_marker(self) -> None:
-        self.assertEqual(LAST_UPDATED, "2026-03-26")
+        updated = date.fromisoformat(LAST_UPDATED)
+        self.assertLessEqual((date.today() - updated).days, 90)
 
     def test_very_large_tokens(self) -> None:
         cost = estimate_cost("gpt-4o", input_tokens=1_000_000, output_tokens=1_000_000, provider="openai")

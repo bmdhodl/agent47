@@ -8,6 +8,8 @@ import types
 import unittest
 from unittest.mock import MagicMock
 
+import pytest
+
 from agentguard import (
     AsyncTracer,
     JsonlFileSink,
@@ -154,6 +156,23 @@ class TestAsyncTracer(unittest.TestCase):
         oversized = next(event for event in events if event["name"] == "oversized")
         self.assertTrue(oversized["data"]["blob"].endswith("...[truncated]"))
         self.assertLess(len(json.dumps(oversized["data"]).encode("utf-8")), 70_000)
+
+    def test_buggy_check_guard_type_error_fails_loudly(self):
+        class BuggyGuard:
+            def check(self, name, data):
+                raise TypeError("async guard implementation bug")
+
+        async def run():
+            tracer = AsyncTracer(
+                sink=JsonlFileSink(self.path),
+                service="test",
+                guards=[BuggyGuard()],
+            )
+            async with tracer.trace("agent.run") as span:
+                span.event("tool.search", data={"query": "docs"})
+
+        with pytest.raises(TypeError, match="async guard implementation bug"):
+            asyncio.run(run())
 
 
 class TestAsyncTracerRepr(unittest.TestCase):
