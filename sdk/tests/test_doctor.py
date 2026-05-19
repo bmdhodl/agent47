@@ -9,6 +9,7 @@ from unittest.mock import patch
 import agentguard
 from agentguard.cli import _doctor
 from agentguard.doctor import run_doctor
+from agentguard.first_run import local_proof_commands
 
 
 class TestDoctor(unittest.TestCase):
@@ -47,15 +48,7 @@ class TestDoctor(unittest.TestCase):
             self.assertEqual(payload["status"], "ok")
             self.assertEqual(payload["trace_file"], trace_path)
             self.assertGreaterEqual(payload["events_written"], 4)
-            self.assertEqual(
-                payload["next_commands"][:4],
-                [
-                    "agentguard demo",
-                    "agentguard quickstart --framework raw --write",
-                    "python agentguard_raw_quickstart.py",
-                    "agentguard report .agentguard/traces.jsonl",
-                ],
-            )
+            self.assertEqual(payload["next_commands"][:4], local_proof_commands(include_demo=True))
             self.assertIn("recommended_snippet", payload)
             self.assertEqual(payload["recommended_repo_config"]["profile"], "coding-agent")
 

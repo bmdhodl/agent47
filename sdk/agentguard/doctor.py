@@ -8,6 +8,7 @@ import sys
 from typing import Any, Dict, List, Optional, TextIO, Tuple
 
 from agentguard.evaluation import _load_events
+from agentguard.first_run import local_proof_commands
 from agentguard.repo_config import load_repo_config_safely
 from agentguard.setup import get_tracer, init, shutdown
 
@@ -92,10 +93,7 @@ def _run_checks(trace_path: str) -> Dict[str, Any]:
         "detected_integrations": detected,
         "integration_hints": hints,
         "next_commands": [
-            "agentguard demo",
-            "agentguard quickstart --framework raw --write",
-            "python agentguard_raw_quickstart.py",
-            "agentguard report .agentguard/traces.jsonl",
+            *local_proof_commands(include_demo=True),
             f"agentguard report {_shell_quote_path(normalized_path)}",
         ],
         "recommended_repo_config": _recommended_repo_config(),
