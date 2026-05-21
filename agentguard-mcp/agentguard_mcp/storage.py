@@ -201,19 +201,32 @@ class BudgetStore:
 
         current = now or utc_now()
         scopes = matching_scopes(server, tool, session_id)
-        configured = [budget for budget in self._get_budgets(scopes) if budget is not None]
-        kill_reasons = [
-            f"{budget.scope} is blocked by kill_switch" for budget in configured if budget.kill_switch
-        ]
-        if kill_reasons:
-            return {"allowed": False, "reasons": kill_reasons, "scopes_checked": scopes}
 
-        reasons = self._budget_exceeded_reasons(configured, tokens_in + tokens_out, cost_usd, current)
-        if reasons:
-            return {"allowed": False, "reasons": reasons, "scopes_checked": scopes}
-
-        timestamp = format_utc(current)
+        # The budget check and the usage write must be one atomic critical
+        # section. If they are not, two concurrent callers can each read
+        # "room available", both write, and push usage past the limit
+        # (a time-of-check-to-time-of-use race). Hold the lock across the
+        # whole check-then-act and use one connection so the read and the
+        # INSERT commit together.
         with self._lock, self._connection() as conn:
+            configured = [
+                budget for budget in self._get_budgets_conn(conn, scopes) if budget is not None
+            ]
+            kill_reasons = [
+                f"{budget.scope} is blocked by kill_switch"
+                for budget in configured
+                if budget.kill_switch
+            ]
+            if kill_reasons:
+                return {"allowed": False, "reasons": kill_reasons, "scopes_checked": scopes}
+
+            reasons = self._budget_exceeded_reasons_conn(
+                conn, configured, tokens_in + tokens_out, cost_usd, current
+            )
+            if reasons:
+                return {"allowed": False, "reasons": reasons, "scopes_checked": scopes}
+
+            timestamp = format_utc(current)
             conn.executemany(
                 """
                     INSERT INTO usage_events (
@@ -229,27 +242,33 @@ class BudgetStore:
 
         return {"allowed": True, "reasons": [], "scopes_checked": scopes}
 
-    def _budget_exceeded_reasons(
+    def _budget_exceeded_reasons_conn(
         self,
+        conn: sqlite3.Connection,
         budgets: list[Budget],
         added_tokens: int,
         added_cost_usd: float,
         now: datetime,
     ) -> list[str]:
+        """Budget overrun check that reads through an existing connection.
+
+        Used inside ``record_call`` so the check and the INSERT share one
+        connection and one lock, closing the TOCTOU race.
+        """
         reasons: list[str] = []
         for budget in budgets:
-            snapshot = self.check_remaining(budget.scope, now)
-            projected_tokens = snapshot["tokens_used"] + added_tokens
-            projected_usd = snapshot["usd_used"] + added_cost_usd
-            if snapshot["tokens_limit"] is not None and projected_tokens > snapshot["tokens_limit"]:
+            tokens_used, usd_used = self._usage_for_conn(conn, budget.scope, budget.period, now)
+            projected_tokens = tokens_used + added_tokens
+            projected_usd = usd_used + added_cost_usd
+            if budget.limit_tokens is not None and projected_tokens > budget.limit_tokens:
                 reasons.append(
                     f"{budget.scope} token budget exceeded: "
-                    f"{projected_tokens} > {snapshot['tokens_limit']}"
+                    f"{projected_tokens} > {budget.limit_tokens}"
                 )
-            if snapshot["usd_limit"] is not None and projected_usd > snapshot["usd_limit"]:
+            if budget.limit_usd is not None and projected_usd > budget.limit_usd:
                 reasons.append(
                     f"{budget.scope} dollar budget exceeded: "
-                    f"{projected_usd:.6f} > {snapshot['usd_limit']:.6f}"
+                    f"{projected_usd:.6f} > {budget.limit_usd:.6f}"
                 )
         return reasons
 
@@ -303,12 +322,12 @@ class BudgetStore:
         finally:
             conn.close()
 
-    def _get_budget(self, scope: str) -> Budget | None:
-        with self._connection() as conn:
-            row = conn.execute(
-                "SELECT scope, limit_tokens, limit_usd, period, kill_switch FROM budgets WHERE scope = ?",
-                (scope,),
-            ).fetchone()
+    def _get_budget_conn(self, conn: sqlite3.Connection, scope: str) -> Budget | None:
+        """Load one budget through an existing connection."""
+        row = conn.execute(
+            "SELECT scope, limit_tokens, limit_usd, period, kill_switch FROM budgets WHERE scope = ?",
+            (scope,),
+        ).fetchone()
         if row is None:
             return None
         return Budget(
@@ -319,8 +338,32 @@ class BudgetStore:
             kill_switch=bool(row["kill_switch"]),
         )
 
-    def _get_budgets(self, scopes: list[str]) -> list[Budget | None]:
-        return [self._get_budget(scope) for scope in scopes]
+    def _get_budget(self, scope: str) -> Budget | None:
+        with self._connection() as conn:
+            return self._get_budget_conn(conn, scope)
+
+    def _get_budgets_conn(
+        self, conn: sqlite3.Connection, scopes: list[str]
+    ) -> list[Budget | None]:
+        """Load budgets for several scopes through an existing connection."""
+        return [self._get_budget_conn(conn, scope) for scope in scopes]
+
+    def _usage_for_conn(
+        self, conn: sqlite3.Connection, scope: str, period: Period, now: datetime
+    ) -> tuple[int, float]:
+        """Sum recorded usage for a scope through an existing connection."""
+        since = format_utc(period_start(period, now))
+        row = conn.execute(
+            """
+            SELECT
+                COALESCE(SUM(tokens_in + tokens_out), 0) AS tokens_used,
+                COALESCE(SUM(cost_usd), 0.0) AS usd_used
+            FROM usage_events
+            WHERE scope = ? AND ts >= ?
+            """,
+            (scope, since),
+        ).fetchone()
+        return int(row["tokens_used"]), float(row["usd_used"])
 
     def _usage_for(self, scope: str, period: Period, now: datetime) -> tuple[int, float]:
         since = format_utc(period_start(period, now))

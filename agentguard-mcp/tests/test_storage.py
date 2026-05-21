@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import threading
 from datetime import datetime, timezone
 
 import pytest
@@ -75,3 +76,40 @@ def test_set_budget_rejects_empty_limits(tmp_path):
 
     with pytest.raises(ValueError, match="set at least one"):
         store.set_budget("global", None, None, "day")
+
+
+def test_concurrent_record_calls_never_overrun_budget(tmp_path):
+    """record_call must not let concurrent writers exceed the token budget.
+
+    The budget check and the usage write must be atomic. Without that,
+    two writers can both read "room available", both write, and push
+    usage past the limit (a TOCTOU race).
+    """
+    store = BudgetStore(tmp_path / "state.db")
+    store.set_budget("global", 1_000, None, "session")
+
+    allowed: list[int] = []
+    lock = threading.Lock()
+    barrier = threading.Barrier(20)
+
+    def worker() -> None:
+        barrier.wait()
+        result = store.record_call("srv", "tool", 100, 0, 0.0, None)
+        if result["allowed"]:
+            with lock:
+                allowed.append(1)
+
+    threads = [threading.Thread(target=worker) for _ in range(20)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    final_tokens = store.check_remaining("global")["tokens_used"]
+    # Budget is 1000 tokens, each call costs 100 -> at most 10 may pass.
+    assert final_tokens <= 1_000, (
+        f"budget overrun: {final_tokens} tokens recorded, limit is 1000"
+    )
+    assert len(allowed) == 10, (
+        f"expected exactly 10 allowed calls, got {len(allowed)}"
+    )
