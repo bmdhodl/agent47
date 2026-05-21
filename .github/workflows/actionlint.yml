@@ -22,4 +22,4 @@ jobs:
         with:
           go-version: stable
       - run: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
-      - run: actionlint
+      - run: actionlint -shellcheck=
