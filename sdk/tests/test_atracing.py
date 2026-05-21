@@ -13,6 +13,7 @@ from agentguard import (
     JsonlFileSink,
     LoopDetected,
     LoopGuard,
+    Tracer,
 )
 from agentguard.instrument import (
     _originals,
@@ -364,6 +365,171 @@ class TestPatchAnthropicAsync(unittest.TestCase):
         self.assertIsNotNone(result)
         names = [e["name"] for e in captured]
         self.assertTrue(any("llm.anthropic" in n for n in names))
+
+
+class TestAsyncDecoratorsWithSyncTracer(unittest.TestCase):
+    """Async decorators must accept a sync Tracer, not only an AsyncTracer.
+
+    A sync Tracer is the documented default tracer. Applying an async
+    decorator while a sync Tracer is configured is a normal usage
+    combination and must not raise.
+    """
+
+    def setUp(self):
+        self.fd, self.path = tempfile.mkstemp(suffix=".jsonl")
+        os.close(self.fd)
+
+    def tearDown(self):
+        os.unlink(self.path)
+
+    def test_async_trace_agent_works_with_sync_tracer(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+
+        @async_trace_agent(tracer)
+        async def my_agent(x):
+            return x + 1
+
+        result = asyncio.run(my_agent(5))
+        self.assertEqual(result, 6)
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        names = [e["name"] for e in events]
+        self.assertIn("agent.my_agent", names)
+
+    def test_async_trace_tool_works_with_sync_tracer(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+
+        @async_trace_tool(tracer)
+        async def search(query):
+            return f"results for {query}"
+
+        result = asyncio.run(search("hello"))
+        self.assertEqual(result, "results for hello")
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        names = [e["name"] for e in events]
+        self.assertIn("tool.search", names)
+        self.assertIn("tool.result", names)
+
+    def test_async_trace_agent_sync_tracer_preserves_exceptions(self):
+        tracer = Tracer(sink=JsonlFileSink(self.path), service="test")
+
+        @async_trace_agent(tracer)
+        async def failing():
+            raise ValueError("boom")
+
+        with self.assertRaises(ValueError):
+            asyncio.run(failing())
+
+        with open(self.path) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        end_events = [e for e in events if e.get("phase") == "end"]
+        self.assertTrue(end_events)
+        self.assertEqual(end_events[-1]["error"]["type"], "ValueError")
+
+
+class TestSyncAsyncTracerParity(unittest.TestCase):
+    """AsyncTracer must produce the same event shape as the sync Tracer.
+
+    Observable behavior must not depend on which tracer the caller picked.
+    """
+
+    def setUp(self):
+        self.fd_sync, self.path_sync = tempfile.mkstemp(suffix=".jsonl")
+        os.close(self.fd_sync)
+        self.fd_async, self.path_async = tempfile.mkstemp(suffix=".jsonl")
+        os.close(self.fd_async)
+
+    def tearDown(self):
+        os.unlink(self.path_sync)
+        os.unlink(self.path_async)
+
+    def _sync_event(self, name, data):
+        tracer = Tracer(
+            sink=JsonlFileSink(self.path_sync), service="test", watermark=False
+        )
+        with tracer.trace("agent.run") as span:
+            span.event(name, data=data)
+        with open(self.path_sync) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        return next(e for e in events if e["name"] == name)
+
+    def _async_event(self, name, data):
+        async def run():
+            tracer = AsyncTracer(sink=JsonlFileSink(self.path_async), service="test")
+            async with tracer.trace("agent.run") as span:
+                span.event(name, data=data)
+
+        asyncio.run(run())
+        with open(self.path_async) as f:
+            events = [json.loads(line) for line in f if line.strip()]
+        return next(e for e in events if e["name"] == name)
+
+    def test_oversized_event_data_truncated_like_sync(self):
+        """A 100 KB payload must be truncated to <=64 KB on both paths."""
+        big_payload = {"blob": "x" * 100_000}
+        sync_event = self._sync_event("big", big_payload)
+        async_event = self._async_event("big", big_payload)
+
+        sync_size = len(json.dumps(sync_event["data"]).encode("utf-8"))
+        async_size = len(json.dumps(async_event["data"]).encode("utf-8"))
+
+        # Sync truncates to the 64 KB limit; async must do the same.
+        self.assertLessEqual(sync_size, 65_536)
+        self.assertLessEqual(
+            async_size,
+            65_536,
+            "AsyncTracer did not truncate oversized event data like the "
+            "sync Tracer does",
+        )
+
+    def test_long_event_name_truncated_like_sync(self):
+        """An over-length event name must be truncated on both paths."""
+        long_name = "n" * 5000
+
+        # The name is truncated, so look the event up by kind, not name.
+        tracer = Tracer(
+            sink=JsonlFileSink(self.path_sync), service="test", watermark=False
+        )
+        with tracer.trace("agent.run") as span:
+            span.event(long_name, data={"k": "v"})
+        with open(self.path_sync) as f:
+            sync_events = [json.loads(line) for line in f if line.strip()]
+        sync_event = next(e for e in sync_events if e["kind"] == "event")
+
+        async def run():
+            atracer = AsyncTracer(
+                sink=JsonlFileSink(self.path_async), service="test"
+            )
+            async with atracer.trace("agent.run") as span:
+                span.event(long_name, data={"k": "v"})
+
+        asyncio.run(run())
+        with open(self.path_async) as f:
+            async_events = [json.loads(line) for line in f if line.strip()]
+        async_event = next(e for e in async_events if e["kind"] == "event")
+
+        self.assertEqual(
+            async_event["name"],
+            sync_event["name"],
+            "AsyncTracer did not truncate the event name like the sync "
+            "Tracer does",
+        )
+
+    def test_non_serializable_event_data_coerced_like_sync(self):
+        """Non-JSON values must be coerced identically on both paths."""
+
+        class Widget:
+            pass
+
+        payload = {"widget": Widget()}
+        sync_event = self._sync_event("w", payload)
+        async_event = self._async_event("w", payload)
+
+        # Sync coerces unknown objects to a marker dict; async must match.
+        self.assertEqual(async_event["data"], sync_event["data"])
 
 
 class TestAsyncExports(unittest.TestCase):

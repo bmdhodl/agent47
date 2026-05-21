@@ -320,6 +320,47 @@ def unpatch_anthropic() -> None:
 # ---------------------------------------------------------------------------
 
 
+class _AsyncTraceCM:
+    """Bridge a tracer's ``trace()`` span into the async-with protocol.
+
+    AgentGuard ships two tracers: ``AsyncTracer`` (whose ``trace()`` is an
+    async context manager) and the default sync ``Tracer`` (whose
+    ``trace()`` is a sync context manager). The async decorators must
+    accept either one — applying ``@async_trace_agent`` while a plain
+    ``Tracer`` is configured is a normal usage combination.
+
+    This wrapper enters/exits an async context manager directly, and
+    enters/exits a sync one without raising. Either way the caller gets
+    the underlying span object.
+    """
+
+    __slots__ = ("_cm", "_is_async")
+
+    def __init__(self, cm: Any) -> None:
+        self._cm = cm
+        self._is_async = hasattr(cm, "__aenter__")
+
+    async def __aenter__(self) -> Any:
+        if self._is_async:
+            return await self._cm.__aenter__()
+        return self._cm.__enter__()
+
+    async def __aexit__(self, exc_type: Any, exc: Any, tb: Any) -> Any:
+        if self._is_async:
+            return await self._cm.__aexit__(exc_type, exc, tb)
+        return self._cm.__exit__(exc_type, exc, tb)
+
+
+def _async_trace(tracer: Any, name: str, data: Optional[Dict[str, Any]] = None) -> _AsyncTraceCM:
+    """Open ``tracer.trace(...)`` as an async context manager.
+
+    Works with both ``AsyncTracer`` and the sync ``Tracer``.
+    """
+    if data is not None:
+        return _AsyncTraceCM(tracer.trace(name, data=data))
+    return _AsyncTraceCM(tracer.trace(name))
+
+
 def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
     """Decorator that wraps an async function in a top-level trace span.
 
@@ -335,7 +376,7 @@ def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], 
 
         @functools.wraps(fn)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
-            async with tracer.trace(span_name) as ctx:
+            async with _async_trace(tracer, span_name) as ctx:
                 kwargs["_trace_ctx"] = ctx
                 try:
                     return await fn(*args, **kwargs)
@@ -346,7 +387,7 @@ def async_trace_agent(tracer: Any, name: Optional[str] = None) -> Callable[[F], 
 
         @functools.wraps(fn)
         async def simple_wrapper(*args: Any, **kwargs: Any) -> Any:
-            async with tracer.trace(span_name):
+            async with _async_trace(tracer, span_name):
                 return await fn(*args, **kwargs)
 
         import inspect
@@ -381,7 +422,7 @@ def async_trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F
 
         @functools.wraps(fn)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
-            async with tracer.trace(span_name) as ctx:
+            async with _async_trace(tracer, span_name) as ctx:
                 try:
                     result = await fn(*args, **kwargs)
                 except Exception as exc:

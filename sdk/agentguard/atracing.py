@@ -24,7 +24,7 @@ import time
 import uuid
 
 from agentguard._trace_naming import normalize_session_id, truncate_name
-from agentguard.tracing import StdoutSink, TraceSink
+from agentguard.tracing import StdoutSink, TraceSink, _sanitize_data
 
 
 @dataclass
@@ -114,7 +114,7 @@ class AsyncTraceContext:
             trace_id=self.trace_id,
             span_id=_new_id(),
             parent_id=self.span_id,
-            name=name,
+            name=truncate_name(name),
             data=data,
         )
         async with ctx:
@@ -130,9 +130,12 @@ class AsyncTraceContext:
 
         Note: event() is synchronous — no I/O is performed directly.
 
+        The name is truncated exactly as the sync Tracer does; data is
+        size-capped and coerced to JSON-safe values inside ``_emit``.
+
         Args:
             name: Name of the event.
-            data: Optional data to attach to the event.
+            data: Optional data to attach to the event (max 64 KB serialized).
             cost_usd: Optional cost in USD for this event.
         """
         self.tracer._emit(
@@ -141,7 +144,7 @@ class AsyncTraceContext:
             trace_id=self.trace_id,
             span_id=self.span_id,
             parent_id=self.parent_id,
-            name=name,
+            name=truncate_name(name),
             data=data,
             cost_usd=cost_usd,
         )
@@ -196,7 +199,7 @@ class AsyncTracer:
             trace_id=_new_id(),
             span_id=_new_id(),
             parent_id=None,
-            name=name,
+            name=truncate_name(name),
             data=data,
         )
         async with ctx:
@@ -216,7 +219,12 @@ class AsyncTracer:
         error: Optional[Dict[str, Any]] = None,
         cost_usd: Optional[float] = None,
     ) -> None:
-        """Internal: build and emit a trace event (sync)."""
+        """Internal: build and emit a trace event (sync).
+
+        Data is sanitized with the same helper the sync Tracer uses, so
+        async and sync emit byte-identical event payloads.
+        """
+        safe_data = _sanitize_data(data)
         event: Dict[str, Any] = {
             "service": self._service,
             "kind": kind,
@@ -227,7 +235,7 @@ class AsyncTracer:
             "name": name,
             "ts": time.time(),
             "duration_ms": duration_ms,
-            "data": data or {},
+            "data": safe_data or {},
             "error": error,
         }
         if self._session_id is not None:
@@ -241,10 +249,10 @@ class AsyncTracer:
             if kind != "event":
                 continue
             if hasattr(guard, "auto_check"):
-                guard.auto_check(name, data)
+                guard.auto_check(name, safe_data)
             elif hasattr(guard, "check"):
                 try:
-                    guard.check(name, data)
+                    guard.check(name, safe_data)
                 except TypeError:
                     try:
                         guard.check()
