@@ -48,6 +48,7 @@ from .instrument import (
     unpatch_openai,
     unpatch_openai_async,
 )
+from .mcp_audit import MCPAuditLogger, build_mcp_audit_row, digest_payload
 from .schemas import (
     SUPPORTED_PROFILES,
     InitConfig,
@@ -91,6 +92,7 @@ __all__ = [
     "JsonlFileSink",
     "LoopDetected",
     "LoopGuard",
+    "MCPAuditLogger",
     "ProfileDefaults",
     "RateLimitGuard",
     "RepoConfig",
@@ -104,7 +106,9 @@ __all__ = [
     "__version__",
     "async_trace_agent",
     "async_trace_tool",
+    "build_mcp_audit_row",
     "decision_flow",
+    "digest_payload",
     "estimate_cost",
     "extract_decision_events",
     "extract_decision_payload",

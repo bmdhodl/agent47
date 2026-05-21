@@ -129,6 +129,7 @@ class TestTopLevelExports(unittest.TestCase):
             "log_decision_overridden", "log_decision_approved",
             "log_decision_bound",
             "estimate_cost",
+            "MCPAuditLogger", "build_mcp_audit_row", "digest_payload",
             "HttpSink",
             "EvalSuite", "EvalResult", "AssertionResult", "summarize_trace",
             "trace_agent", "trace_tool",
