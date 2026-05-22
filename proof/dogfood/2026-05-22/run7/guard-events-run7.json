@@ -1,0 +1,33 @@
+{
+    "run":  "run7",
+    "demo_guard_events":  [
+                              {
+                                  "name":  "guard.budget_exceeded",
+                                  "count":  1
+                              },
+                              {
+                                  "name":  "guard.budget_warning",
+                                  "count":  1
+                              },
+                              {
+                                  "name":  "guard.loop_detected",
+                                  "count":  1
+                              },
+                              {
+                                  "name":  "guard.retry_limit_exceeded",
+                                  "count":  1
+                              }
+                          ],
+    "review_loop_guard_events":  [
+                                     {
+                                         "name":  "guard.budget_exceeded",
+                                         "data":  "{\"attempt\":3,\"cost_used_usd\":0.051,\"reason\":\"Cost budget exceeded: $0.0510 \\u003e $0.0450 (this call added $0.0205)\",\"tokens_used\":12300}"
+                                     },
+                                     {
+                                         "name":  "guard.retry_limit_exceeded",
+                                         "data":  "{\"attempt\":4,\"reason\":\"Retry limit exceeded: apply_patch attempted 4 times (limit: 3)\",\"tool_name\":\"apply_patch\"}"
+                                     }
+                                 ],
+    "demo_trace_count":  36,
+    "review_loop_trace_count":  14
+}
