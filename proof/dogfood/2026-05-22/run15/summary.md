@@ -43,6 +43,7 @@ AgentGuard enforcement was real and trace-backed.
 - `release-guard.txt`
 - `git-diff-check.txt`
 - `artifact-scan.txt`
+- `pr-506-review-state.json`
 
 ## Validation
 
@@ -50,6 +51,7 @@ AgentGuard enforcement was real and trace-backed.
 - Release guard with npm metadata check: passed.
 - `git diff --check`: passed.
 - Artifact scan: passed, UTF-8 without BOM/NUL bytes and no local Windows user paths.
+- PR #506 review-thread sweep: 0 active unresolved threads; merge remains blocked only on required review.
 
 ## Notes
 
