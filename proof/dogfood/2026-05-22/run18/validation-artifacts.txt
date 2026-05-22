@@ -1,0 +1,1 @@
+Artifact UTF-8/BOM/NUL/local-path scan passed.

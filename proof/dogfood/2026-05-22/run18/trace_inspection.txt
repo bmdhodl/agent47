@@ -1,0 +1,15 @@
+doctor: 4 events
+demo: 36 events
+  guard.budget_exceeded: 1
+  guard.budget_warning: 1
+  guard.loop_detected: 1
+  guard.retry_limit_exceeded: 1
+    - guard.budget_warning: cost_used=0.84
+    - guard.budget_exceeded: Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)
+    - guard.loop_detected: Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+    - guard.retry_limit_exceeded: Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+review_loop: 14 events
+  guard.budget_exceeded: 1
+  guard.retry_limit_exceeded: 1
+    - guard.budget_exceeded: attempt=3
+    - guard.retry_limit_exceeded: attempt=4
