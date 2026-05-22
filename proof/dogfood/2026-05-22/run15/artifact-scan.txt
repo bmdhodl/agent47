@@ -1,0 +1,1 @@
+Artifact scan passed: UTF-8, no BOM, no NUL bytes, no local Windows user paths.
