@@ -1,0 +1,4 @@
+COMMAND: python -c "import agentguard; print(agentguard.__file__)"
+EXIT: 0
+
+sdk\agentguard\__init__.py

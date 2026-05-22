@@ -1,3 +1,6 @@
+COMMAND: python -m agentguard.cli incident proof/dogfood/2026-05-22/run5/coding_agent_review_loop_traces-run5.jsonl
+EXIT: 0
+
 # AgentGuard Incident Report
 
 Status: **incident**
