@@ -220,14 +220,22 @@ def test_coding_agent_review_loop_example_runs_offline() -> None:
 
         trace_path = Path(tmpdir, "coding_agent_review_loop_traces.jsonl")
         assert trace_path.exists()
-        names = []
+        events = []
         with trace_path.open("r", encoding="utf-8") as handle:
             for line in handle:
                 if line.strip():
-                    names.append(json.loads(line)["name"])
+                    events.append(json.loads(line))
+        names = [event["name"] for event in events]
         assert "review.iteration" in names
         assert "guard.budget_exceeded" in names
         assert "guard.retry_limit_exceeded" in names
+
+        budget_event = next(
+            event for event in events if event["name"] == "guard.budget_exceeded"
+        )
+        assert "cost_usd" not in budget_event["data"]
+        assert budget_event["data"]["blocked_call_cost_usd"] == 0.0205
+        assert budget_event["data"]["cumulative_cost_usd"] == 0.051
 
 
 def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:

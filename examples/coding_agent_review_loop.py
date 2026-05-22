@@ -81,7 +81,8 @@ def _run_review_budget_loop(tracer: Tracer) -> None:
                     data={
                         "attempt": turn["attempt"],
                         "reason": str(exc),
-                        "cost_usd": round(budget.state.cost_used, 6),
+                        "blocked_call_cost_usd": round(cost, 6),
+                        "cumulative_cost_usd": round(budget.state.cost_used, 6),
                         "tokens_used": budget.state.tokens_used,
                     },
                 )
