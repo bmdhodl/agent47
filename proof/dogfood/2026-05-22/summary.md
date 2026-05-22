@@ -7,16 +7,16 @@ SDK-only recurring dogfood run for the public AgentGuard47 repository.
 ## Repo Binding
 
 - Repository: `bmdhodl/agent47`
-- Checkout: `C:\Users\patri\.codex\worktrees\7a15\agent47`
+- Checkout: `<repo_root>`
 - Head: `a2d9cce2fa8096d469fafcc8a4de1dac056d3166`
-- Repo-local import proof: `C:\Users\patri\.codex\worktrees\7a15\agent47\sdk\agentguard\__init__.py`
+- Repo-local import proof: `<repo_root>\sdk\agentguard\__init__.py`
 - Python: `3.13.2`
 - AgentGuard package version: `1.2.10`
 
 ## Commands Run
 
 ```powershell
-$env:PYTHONPATH = "C:\Users\patri\.codex\worktrees\7a15\agent47\sdk"
+$env:PYTHONPATH = "<repo_root>\sdk"
 agentguard doctor
 python -m agentguard.cli doctor
 python -m agentguard.cli demo
