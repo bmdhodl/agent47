@@ -1,0 +1,54 @@
+{
+    "demo":  [
+                 {
+                     "name":  "guard.budget_warning",
+                     "data":  {
+                                  "cost_used":  0.84,
+                                  "limit_usd":  1.0
+                              }
+                 },
+                 {
+                     "name":  "guard.budget_exceeded",
+                     "data":  {
+                                  "cost_used":  1.08,
+                                  "limit_usd":  1.0,
+                                  "message":  "Cost budget exceeded: $1.0800 \u003e $1.0000 (this call added $0.1200)"
+                              }
+                 },
+                 {
+                     "name":  "guard.loop_detected",
+                     "data":  {
+                                  "message":  "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+                                  "tool_name":  "search"
+                              }
+                 },
+                 {
+                     "name":  "guard.retry_limit_exceeded",
+                     "data":  {
+                                  "message":  "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+                                  "tool_name":  "fetch_docs"
+                              }
+                 }
+             ],
+    "review_loop":  [
+                        {
+                            "name":  "guard.budget_exceeded",
+                            "data":  {
+                                         "attempt":  3,
+                                         "cost_used":  0.051,
+                                         "message":  "Cost budget exceeded: $0.0510 \u003e $0.0450 (this call added $0.0205)",
+                                         "reason":  "Cost budget exceeded: $0.0510 \u003e $0.0450 (this call added $0.0205)",
+                                         "tokens_used":  12300
+                                     }
+                        },
+                        {
+                            "name":  "guard.retry_limit_exceeded",
+                            "data":  {
+                                         "attempt":  4,
+                                         "message":  "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+                                         "reason":  "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+                                         "tool_name":  "apply_patch"
+                                     }
+                        }
+                    ]
+}
