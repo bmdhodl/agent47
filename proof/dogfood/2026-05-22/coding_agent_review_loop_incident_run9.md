@@ -1,4 +1,4 @@
-﻿# AgentGuard Incident Report
+# AgentGuard Incident Report
 
 Status: **incident**
 Severity: **critical**

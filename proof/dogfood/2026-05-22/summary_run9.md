@@ -28,6 +28,10 @@ python -m agentguard.cli report agentguard_demo_traces.jsonl
 python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl
 ```
 
+The runtime commands generated the root-level trace files with their default
+names. Those files were then copied into this proof folder with `_run9`
+suffixes so repeated runs on the same date do not overwrite prior artifacts.
+
 ## Guard Events Observed
 
 ### `agentguard_demo_traces_run9.jsonl`
@@ -53,8 +57,10 @@ Real enforcement confirmed. This run is not counted from command success alone:
 
 ## Freshness And Repo Health
 
-- `ops/03-ROADMAP_NOW_NEXT_LATER.md`: `2 weeks ago`, stale by repo policy.
-- `ops/02-ARCHITECTURE.md`: `3 weeks ago`, stale by repo policy.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md`: `2 weeks ago`; AGENTS.md requires a
+  warning when the roadmap freshness check is older than 5 days.
+- `ops/02-ARCHITECTURE.md`: `3 weeks ago`; AGENTS.md requires a warning when
+  the architecture freshness check is older than 14 days.
 - Latest GitHub release: `v1.2.10`, published 2026-05-02.
 - PyPI latest: `agentguard47==1.2.10`.
 - npm latest: `@agentguard47/mcp-server@0.2.2`.
