@@ -1,0 +1,12 @@
+agentguard_demo_traces.jsonl
+  total_events=36
+  guard_counts={'guard.budget_exceeded': 1, 'guard.budget_warning': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+  guard.budget_warning: severity=None message=None cost_usd=None cost_used=0.84 cumulative_cost_usd=None blocked_call_cost_usd=None tool=None
+  guard.budget_exceeded: severity=None message=Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200) cost_usd=None cost_used=1.08 cumulative_cost_usd=None blocked_call_cost_usd=None tool=None
+  guard.loop_detected: severity=None message=Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop. cost_usd=None cost_used=None cumulative_cost_usd=None blocked_call_cost_usd=None tool=None
+  guard.retry_limit_exceeded: severity=None message=Retry limit exceeded: fetch_docs attempted 3 times (limit: 2) cost_usd=None cost_used=None cumulative_cost_usd=None blocked_call_cost_usd=None tool=None
+coding_agent_review_loop_traces.jsonl
+  total_events=14
+  guard_counts={'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}
+  guard.budget_exceeded: severity=None message=None cost_usd=0.051 cost_used=None cumulative_cost_usd=None blocked_call_cost_usd=None tool=None
+  guard.retry_limit_exceeded: severity=None message=None cost_usd=None cost_used=None cumulative_cost_usd=None blocked_call_cost_usd=None tool=None
