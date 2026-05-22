@@ -1,0 +1,54 @@
+Dogfood operator run17 command output summary
+
+repo-bound import:
+- imported agentguard from the checkout SDK path
+
+agentguard doctor:
+- passed
+- wrote agentguard_doctor_trace.jsonl
+- reported agentguard47 1.2.10
+
+python -m agentguard.cli doctor:
+- passed
+- wrote agentguard_doctor_trace.jsonl
+
+agentguard demo:
+- passed
+- wrote agentguard_demo_traces.jsonl
+- warning fired at $0.84
+- budget stopped on call 9 at $1.08 > $1.00
+- loop stopped repeated tool.search({\"query\":\"python asyncio\"})
+- retry stopped fetch_docs attempt 3 with limit 2
+
+python -m agentguard.cli demo:
+- passed
+- wrote agentguard_demo_traces.jsonl
+- warning fired at $0.84
+- budget stopped on call 9 at $1.08 > $1.00
+- loop stopped repeated tool.search({"query":"python asyncio"})
+- retry stopped fetch_docs attempt 3 with limit 2
+
+python examples/coding_agent_review_loop.py:
+- passed
+- wrote coding_agent_review_loop_traces.jsonl
+- budget stopped review attempt 3 at $0.0510 > $0.0450
+- retry stopped apply_patch attempt 4 with limit 3
+
+python -m agentguard.cli report agentguard_demo_traces.jsonl:
+- passed
+- total events: 36
+- guard events: guard.budget_warning=1, guard.budget_exceeded=1, guard.loop_detected=1, guard.retry_limit_exceeded=1
+
+python -m agentguard.cli incident agentguard_demo_traces.jsonl:
+- passed
+- primary cause: loop_detected
+
+python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl:
+- passed
+- primary cause: retry_limit_exceeded
+
+python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q:
+- 35 passed in 2.45s
+
+python scripts/sdk_release_guard.py --check-mcp-npm:
+- Release guard passed.

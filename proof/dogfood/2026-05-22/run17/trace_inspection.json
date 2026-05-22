@@ -1,0 +1,39 @@
+{
+  "demo": {
+    "counts": {
+      "demo.budget_guard": 2,
+      "demo.loop_guard": 2,
+      "demo.retry_guard": 2,
+      "guard.budget_exceeded": 1,
+      "guard.budget_warning": 1,
+      "guard.loop_detected": 1,
+      "guard.retry_limit_exceeded": 1,
+      "llm.result": 9,
+      "reasoning.step": 9,
+      "tool.error": 2,
+      "tool.retry": 3,
+      "tool.search": 3
+    },
+    "guard_event_count": 4
+  },
+  "doctor": {
+    "counts": {
+      "doctor.verify": 2,
+      "reasoning.step": 1,
+      "tool.check": 1
+    },
+    "guard_event_count": 2
+  },
+  "review_loop": {
+    "counts": {
+      "coding_agent.review_loop.budget": 2,
+      "coding_agent.review_loop.retry_storm": 2,
+      "guard.budget_exceeded": 1,
+      "guard.retry_limit_exceeded": 1,
+      "review.iteration": 3,
+      "tool.retry": 4,
+      "watermark": 1
+    },
+    "guard_event_count": 2
+  }
+}
