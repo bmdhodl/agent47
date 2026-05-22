@@ -233,6 +233,7 @@ def test_coding_agent_review_loop_example_runs_offline() -> None:
         assert "guard.budget_exceeded" in names
         assert "guard.retry_limit_exceeded" in names
         assert guard_budget_event is not None
+        assert "message" in guard_budget_event["data"]
         assert "cost_used" in guard_budget_event["data"]
         assert "cost_usd" not in guard_budget_event["data"]
 

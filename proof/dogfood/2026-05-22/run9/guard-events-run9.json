@@ -21,32 +21,32 @@
           "name": "guard.budget_warning",
           "level": null,
           "message": null,
+          "reason": null,
           "cost_used": 0.84,
-          "cost_used_usd": null,
           "cost_usd": null
         },
         {
           "name": "guard.budget_exceeded",
           "level": null,
           "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)",
+          "reason": null,
           "cost_used": 1.08,
-          "cost_used_usd": null,
           "cost_usd": null
         },
         {
           "name": "guard.loop_detected",
           "level": null,
           "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+          "reason": null,
           "cost_used": null,
-          "cost_used_usd": null,
           "cost_usd": null
         },
         {
           "name": "guard.retry_limit_exceeded",
           "level": null,
           "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+          "reason": null,
           "cost_used": null,
-          "cost_used_usd": null,
           "cost_usd": null
         }
       ]
@@ -62,17 +62,17 @@
         {
           "name": "guard.budget_exceeded",
           "level": null,
-          "message": null,
+          "message": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+          "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
           "cost_used": 0.051,
-          "cost_used_usd": null,
           "cost_usd": null
         },
         {
           "name": "guard.retry_limit_exceeded",
           "level": null,
-          "message": null,
+          "message": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+          "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
           "cost_used": null,
-          "cost_used_usd": null,
           "cost_usd": null
         }
       ]

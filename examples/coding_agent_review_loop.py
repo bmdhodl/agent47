@@ -80,6 +80,7 @@ def _run_review_budget_loop(tracer: Tracer) -> None:
                     "guard.budget_exceeded",
                     data={
                         "attempt": turn["attempt"],
+                        "message": str(exc),
                         "reason": str(exc),
                         "cost_used": round(budget.state.cost_used, 6),
                         "tokens_used": budget.state.tokens_used,
@@ -114,6 +115,7 @@ def _run_retry_storm(tracer: Tracer) -> None:
                     data={
                         "tool_name": "apply_patch",
                         "attempt": attempt,
+                        "message": str(exc),
                         "reason": str(exc),
                     },
                 )

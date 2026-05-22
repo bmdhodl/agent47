@@ -9,7 +9,7 @@ Primary cause: **retry_limit_exceeded**
 - Total events: 14
 - Spans: 4
 - Events: 9
-- Duration: 1.7 ms
+- Duration: 1.3 ms
 - Estimated cost: $0.0510
 - Guard events: 2
 - Errors: 0
@@ -27,8 +27,8 @@ Primary cause: **retry_limit_exceeded**
 
 ## Guard Events
 
-- `guard.budget_exceeded` (critical)
-- `guard.retry_limit_exceeded` (critical)
+- `guard.budget_exceeded` (critical): Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)
+- `guard.retry_limit_exceeded` (critical): Retry limit exceeded: apply_patch attempted 4 times (limit: 3)
 
 ## Recommended Next Steps
 

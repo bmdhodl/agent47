@@ -2,7 +2,7 @@ PS> python -m agentguard.cli report agentguard_demo_traces.jsonl
 AgentGuard report
   Total events: 36
   Spans: 6  Events: 30
-  Approx run time: 3.0 ms
+  Approx run time: 3.7 ms
   Reasoning steps: 9
   Tool results: 0
   LLM results: 9

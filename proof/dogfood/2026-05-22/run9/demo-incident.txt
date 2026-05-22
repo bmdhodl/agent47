@@ -10,7 +10,7 @@ Primary cause: **loop_detected**
 - Total events: 36
 - Spans: 6
 - Events: 30
-- Duration: 3.0 ms
+- Duration: 3.7 ms
 - Estimated cost: $1.0800
 - Guard events: 4
 - Errors: 0
