@@ -1,0 +1,4 @@
+PS> python -c "import agentguard, pathlib; p=pathlib.Path(agentguard.__file__).resolve(); print('sdk/agentguard/__init__.py'); print('repo_bound=', p.name == '__init__.py' and p.parent.name == 'agentguard')"
+sdk/agentguard/__init__.py
+repo_bound= True
+EXIT_CODE=0

@@ -1,0 +1,15 @@
+agentguard_doctor_trace.jsonl: 4 events
+agentguard_demo_traces.jsonl: 36 events
+  guard.budget_exceeded: 1
+    Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)
+  guard.budget_warning: 1
+    {'cost_used': 0.84, 'limit_usd': 1.0}
+  guard.loop_detected: 1
+    Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+  guard.retry_limit_exceeded: 1
+    Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+coding_agent_review_loop_traces.jsonl: 14 events
+  guard.budget_exceeded: 1
+    {'attempt': 3, 'cost_used': 0.051, 'reason': 'Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)', 'tokens_used': 12300}
+  guard.retry_limit_exceeded: 1
+    {'attempt': 4, 'reason': 'Retry limit exceeded: apply_patch attempted 4 times (limit: 3)', 'tool_name': 'apply_patch'}

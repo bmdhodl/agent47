@@ -1,0 +1,37 @@
+PS> python -m pytest sdk/tests/test_example_starters.py::test_coding_agent_review_loop_example_runs_offline sdk/tests/test_example_starters.py::test_coding_agent_review_loop_sample_incident_is_in_sync -q
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\b49c\agent47\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 2 items
+
+sdk\tests\test_example_starters.py ..                                    [100%]
+
+============================== 2 passed in 0.44s ==============================
+EXIT_CODE=0
+
+PS> python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\b49c\agent47\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 35 items
+
+sdk\tests\test_demo.py ...                                               [  8%]
+sdk\tests\test_doctor.py .........                                       [ 34%]
+sdk\tests\test_cli_report.py .........                                   [ 60%]
+sdk\tests\test_example_starters.py .........                             [ 85%]
+sdk\tests\test_mcp_registry_metadata.py .....                            [100%]
+
+============================= 35 passed in 1.33s ==============================
+EXIT_CODE=0
+
+PS> python scripts/sdk_release_guard.py --check-mcp-npm
+Release guard passed.
+EXIT_CODE=0
+
+PS> git diff --check
+EXIT_CODE=0
+
