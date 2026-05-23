@@ -67,7 +67,9 @@ Trace inspection is saved in `trace-inspection.txt` and `trace-inspection.json`.
 
 ## Repo Health Snapshot
 
-- PR #506 is open, green from the prior push, and still `REVIEW_REQUIRED` / `BLOCKED` before this run's push.
+- PR #506 refreshed after commit `74007aa`; CI and CodeQL are green.
+- Post-push review-thread sweep found 0 unresolved threads on PR #506.
+- PR #506 remains `REVIEW_REQUIRED` / `BLOCKED`.
 - Open PR review-thread sweep found 0 unresolved threads across open PRs.
 - Latest GitHub release is `v1.2.10`, published 2026-05-02.
 - PyPI latest is `agentguard47 1.2.10`; local `sdk/pyproject.toml` is `1.2.10`.
@@ -86,3 +88,5 @@ Trace inspection is saved in `trace-inspection.txt` and `trace-inspection.json`.
 - `mcp-registry-search.json`
 - `glama-server.json`
 - `distribution-inspection.txt`
+- `post-push-pr-506-state.json`
+- `post-push-review-threads-506.json`
