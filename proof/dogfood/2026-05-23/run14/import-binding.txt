@@ -1,0 +1,2 @@
+PYTHONPATH=./sdk
+repo_agentguard=sdk/agentguard/__init__.py

@@ -1,0 +1,11 @@
+json ok: github-release.json
+json ok: guard-events.json
+json ok: issue-list.json
+json ok: open-pr-active-review-threads.json
+json ok: open-pr-review-threads.json
+json ok: pr-506-prepush-state.json
+json ok: pr-508-state.json
+json ok: pr-list.json
+jsonl ok: agentguard_demo_traces.jsonl
+jsonl ok: agentguard_doctor_trace.jsonl
+jsonl ok: coding_agent_review_loop_traces.jsonl
