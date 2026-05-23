@@ -1,0 +1,26 @@
+{
+    "github_release":  {
+                           "isDraft":  false,
+                           "isPrerelease":  false,
+                           "name":  "AgentGuard v1.2.10",
+                           "publishedAt":  "2026-05-02T15:48:03Z",
+                           "tagName":  "v1.2.10",
+                           "url":  "https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"
+                       },
+    "pypi_agentguard47":  {
+                              "version":  "1.2.10",
+                              "name":  "agentguard47",
+                              "upload_time_iso_8601":  "2026-05-02T15:47:13.253870Z"
+                          },
+    "local_sdk_version":  "1.2.10",
+    "npm_mcp_server":  {
+                           "version":  "0.2.2",
+                           "time.modified":  "2026-05-04T19:38:49.604Z"
+                       },
+    "local_mcp_package_version":  "0.2.2",
+    "local_mcp_server_version":  "0.2.2",
+    "mcp_registry_version":  "0.2.1",
+    "mcp_registry_package_version":  "0.2.1",
+    "glama_tools_count":  0,
+    "glama_url":  "https://glama.ai/mcp/servers/y6zuc6wgtu"
+}
