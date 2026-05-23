@@ -1,4 +1,4 @@
-﻿Run13 dogfood proof is committed on PR #506 at `692ea74`.
+Run13 dogfood proof is committed on PR #506 at `692ea74`.
 
 Artifacts:
 - `proof/dogfood/2026-05-23/run13/summary_run13.md`

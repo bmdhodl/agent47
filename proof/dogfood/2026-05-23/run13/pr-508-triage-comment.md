@@ -1,4 +1,4 @@
-﻿Run13 dogfood repo-health sweep rechecked this failure.
+Run13 dogfood repo-health sweep rechecked this failure.
 
 Current failure root cause: `sdk/tests/test_ci_guardrails.py::test_actionlint_workflow_is_wired` still asserts the old pinned setup-go v5 action:
 
