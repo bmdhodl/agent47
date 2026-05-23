@@ -1,0 +1,19 @@
+Validation
+==========
+
+Commands:
+- agentguard doctor
+- PYTHONPATH=./sdk python -m agentguard.cli doctor
+- PYTHONPATH=./sdk python -m agentguard.cli demo
+- PYTHONPATH=./sdk python examples/coding_agent_review_loop.py
+- PYTHONPATH=./sdk python -m agentguard.cli report agentguard_demo_traces.jsonl
+- PYTHONPATH=./sdk python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl
+- python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q
+- python scripts/sdk_release_guard.py --check-mcp-npm
+
+Results:
+- Dogfood proof commands passed.
+- Guard event extraction passed.
+- Focused pytest slice passed: 35 passed in 1.60s.
+- Release guard passed.
+- Artifact UTF-8/BOM/NUL/local-path/JSON scan passed.
