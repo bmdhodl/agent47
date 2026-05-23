@@ -60,6 +60,9 @@ Concrete enforcement:
 - `git diff --check`: passed before summary creation.
 - Review thread sweep: 23 open PRs inspected, 0 active unresolved non-outdated
   review threads found.
+- Refreshed PR #506 CI and CodeQL on commit `a551923`: passed.
+- Post-wait PR #506 sweep: no PR comments or review threads on the latest
+  proof commit; PR remains blocked only on required human review.
 
 ## Repo Health
 
