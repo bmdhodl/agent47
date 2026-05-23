@@ -1,0 +1,13 @@
+query($owner:String!, $repo:String!) {
+  repository(owner:$owner, name:$repo) {
+    pullRequests(first:100, states:OPEN, orderBy:{field:UPDATED_AT, direction:DESC}) {
+      nodes {
+        number
+        title
+        mergeStateStatus
+        reviewDecision
+        reviewThreads(first:100) { nodes { isResolved isOutdated path line } }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+python -m pip install -e ./sdk attempted first; Windows blocked replacing the existing global agentguard.exe shim. Repo-bound PYTHONPATH=./sdk import and both CLI forms were used for proof instead.
