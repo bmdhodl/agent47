@@ -1,0 +1,4 @@
+$ python scripts/sdk_release_guard.py --check-mcp-npm
+Release guard passed.
+
+exit_code=0

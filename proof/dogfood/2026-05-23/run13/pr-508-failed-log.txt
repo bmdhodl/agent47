@@ -1,0 +1,1081 @@
+test (3.12)	UNKNOWN STEP	﻿2026-05-23T12:32:33.7548690Z Current runner version: '2.334.0'
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7567597Z ##[group]Runner Image Provisioner
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7568315Z Hosted Compute Agent
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7568774Z Version: 20260213.493
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7569214Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7569979Z Build Date: 2026-02-13T00:28:41Z
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7570489Z Worker ID: {c5db3eb9-2109-4ca2-a0f6-18a1b56874c5}
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7571032Z Azure Region: westus
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7571443Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7572546Z ##[group]Operating System
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7572984Z Ubuntu
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7573354Z 24.04.4
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7573800Z LTS
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7574144Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7574562Z ##[group]Runner Image
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7575023Z Image: ubuntu-24.04
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7575442Z Version: 20260518.149.1
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7576415Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260518.149/images/ubuntu/Ubuntu2404-Readme.md
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7577541Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260518.149
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7578248Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7579071Z ##[group]GITHUB_TOKEN Permissions
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7580876Z Contents: read
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7581323Z Metadata: read
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7581750Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7583336Z Secret source: Dependabot
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7583938Z Prepare workflow directory
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7880473Z Prepare all required actions
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:33.7910101Z Getting action download info
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.2284274Z Download action repository 'actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd' (SHA:de0fac2e4500dabe0009e67214ff5f5447ce83dd)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.3339916Z Download action repository 'actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405' (SHA:a309ff8b426b58ec0e2a45f0f869d46889d02405)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.4463756Z Download action repository 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' (SHA:043fb46d1a93c77aae656e7c1c64a875d1fc6a0a)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.6541005Z Complete job name: test (3.12)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7148234Z ##[group]Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7149081Z with:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7149404Z   repository: bmdhodl/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7150162Z   token: ***
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7150486Z   ssh-strict: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7150829Z   ssh-user: git
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7151182Z   persist-credentials: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7151550Z   clean: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7151894Z   sparse-checkout-cone-mode: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7152283Z   fetch-depth: 1
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7152607Z   fetch-tags: false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7152948Z   show-progress: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7153293Z   lfs: false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7153598Z   submodules: false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7153936Z   set-safe-directory: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7154487Z env:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7154815Z   PYTHONPATH: sdk
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7155136Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7949069Z Syncing repository: bmdhodl/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7950867Z ##[group]Getting Git version info
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7951420Z Working directory is '/home/runner/work/agent47/agent47'
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7952232Z [command]/usr/bin/git version
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.7968813Z git version 2.54.0
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8017654Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8029791Z Temporarily overriding HOME='/home/runner/work/_temp/d0ef312a-f798-4237-ad29-52b133048767' before making global git config changes
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8031790Z Adding repository directory to the temporary git global config as a safe directory
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8034058Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/agent47/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8061719Z Deleting the contents of '/home/runner/work/agent47/agent47'
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8065202Z ##[group]Initializing the repository
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8068901Z [command]/usr/bin/git init /home/runner/work/agent47/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8125727Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8127096Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8128129Z hint: to use in all of your new repositories, which will suppress this warning,
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8128737Z hint: call:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8129046Z hint:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8129442Z hint: 	git config --global init.defaultBranch <name>
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8130113Z hint:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8130561Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8131529Z hint: 'development'. The just-created branch can be renamed via this command:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8132105Z hint:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8132417Z hint: 	git branch -m <name>
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8132773Z hint:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8133249Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8134154Z Initialized empty Git repository in /home/runner/work/agent47/agent47/.git/
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8135985Z [command]/usr/bin/git remote add origin https://github.com/bmdhodl/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8159853Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8160462Z ##[group]Disabling automatic garbage collection
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8162366Z [command]/usr/bin/git config --local gc.auto 0
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8185316Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8185942Z ##[group]Setting up auth
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8186443Z Removing SSH command configuration
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8191115Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8217128Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8463741Z Removing HTTP extra header
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8468266Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8496018Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8697034Z Removing includeIf entries pointing to credentials config files
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8701123Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8726979Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8910247Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8938920Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/agent47/agent47/.git.path /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8962554Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/agent47/agent47/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.8988079Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.9018062Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.9039096Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.9040237Z ##[group]Fetching the repository
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:34.9046628Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3d4e92c7acd8ff74a13f6c5567666453b3bf6c3d:refs/remotes/pull/508/merge
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4674529Z From https://github.com/bmdhodl/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4675753Z  * [new ref]         3d4e92c7acd8ff74a13f6c5567666453b3bf6c3d -> pull/508/merge
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4695518Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4696649Z ##[group]Determining the checkout info
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4697599Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4700976Z [command]/usr/bin/git sparse-checkout disable
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4732621Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4755328Z ##[group]Checking out the ref
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4758282Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/508/merge
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4975825Z Note: switching to 'refs/remotes/pull/508/merge'.
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4976652Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4977322Z You are in 'detached HEAD' state. You can look around, make experimental
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4979113Z changes and commit them, and you can discard any commits you make in this
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4980637Z state without impacting any branches by switching back to a branch.
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4981334Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4982034Z If you want to create a new branch to retain commits you create, you may
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4983411Z do so (now or later) by using -c with the switch command. Example:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4984025Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4984305Z   git switch -c <new-branch-name>
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4984745Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4984998Z Or undo this operation with:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4985468Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4985749Z   git switch -
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4986072Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4986594Z Turn off this advice by setting config variable advice.detachedHead to false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4987410Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4988380Z HEAD is now at 3d4e92c Merge 03ad8afc88089a7dbc2c9324286291dada61c8e4 into a2d9cce2fa8096d469fafcc8a4de1dac056d3166
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.4991672Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5012705Z [command]/usr/bin/git log -1 --format=%H
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5031391Z 3d4e92c7acd8ff74a13f6c5567666453b3bf6c3d
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5302815Z ##[group]Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5304083Z with:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5304742Z   python-version: 3.12
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5305480Z   cache: pip
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5306147Z   check-latest: false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5307083Z   token: ***
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5307757Z   update-environment: true
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5308561Z   allow-prereleases: false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5309328Z   freethreaded: false
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5310254Z env:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5310845Z   PYTHONPATH: sdk
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.5311498Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.6300887Z ##[group]Installed versions
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.6393651Z Successfully set up CPython (3.12.13)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.6395374Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:35.7232083Z [command]/opt/hostedtoolcache/Python/3.12.13/x64/bin/pip cache dir
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:36.0847599Z /home/runner/.cache/pip
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:36.3595750Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.13-pip-b7b197f07fe5a1c71687903b8ee7c83fe930ca6692c969b1fac79e9f5cf9cfd6
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:37.6629837Z Received 0 of 52550996 (0.0%), 0.0 MBs/sec
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.0619686Z Received 52550996 of 52550996 (100.0%), 35.8 MBs/sec
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.0620376Z Cache Size: ~50 MB (52550996 B)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.0710771Z [command]/usr/bin/tar -xf /home/runner/work/_temp/5cc86a7e-87b8-4d31-8d39-ddfee8088234/cache.tzst -P -C /home/runner/work/agent47/agent47 --use-compress-program unzstd
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1429002Z Cache restored successfully
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1454904Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.13-pip-b7b197f07fe5a1c71687903b8ee7c83fe930ca6692c969b1fac79e9f5cf9cfd6
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1604593Z ##[group]Run python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1605135Z ^[[36;1mpython -m pip install --require-hashes -r .github/requirements/ci-tools.txt^[[0m
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1641797Z shell: /usr/bin/bash -e {0}
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1642023Z env:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1642183Z   PYTHONPATH: sdk
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1642422Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1643012Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1643353Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1643663Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1643992Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1644298Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:38.1644553Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.1224654Z Collecting bandit==1.8.6 (from -r .github/requirements/ci-tools.txt (line 7))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.1234166Z   Using cached bandit-1.8.6-py3-none-any.whl (133 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.1332540Z Collecting build==1.4.4 (from -r .github/requirements/ci-tools.txt (line 11))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.1732397Z   Downloading build-1.4.4-py3-none-any.whl (25 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.2001567Z Collecting colorama==0.4.6 (from -r .github/requirements/ci-tools.txt (line 15))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.2010465Z   Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4677483Z Collecting coverage==7.10.7 (from coverage[toml]==7.10.7->-r .github/requirements/ci-tools.txt (line 22))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4688415Z   Using cached coverage-7.10.7-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (252 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4765362Z Collecting exceptiongroup==1.3.1 (from -r .github/requirements/ci-tools.txt (line 128))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4774252Z   Using cached exceptiongroup-1.3.1-py3-none-any.whl (16 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4899914Z Collecting importlib-metadata==8.7.1 (from -r .github/requirements/ci-tools.txt (line 132))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4909629Z   Using cached importlib_metadata-8.7.1-py3-none-any.whl (27 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4974998Z Collecting iniconfig==2.1.0 (from -r .github/requirements/ci-tools.txt (line 136))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.4984146Z   Using cached iniconfig-2.1.0-py3-none-any.whl (6.0 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5067274Z Collecting markdown-it-py==3.0.0 (from -r .github/requirements/ci-tools.txt (line 140))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5076128Z   Using cached markdown_it_py-3.0.0-py3-none-any.whl (87 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5148697Z Collecting mdurl==0.1.2 (from -r .github/requirements/ci-tools.txt (line 144))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5157443Z   Using cached mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5236555Z Collecting packaging==26.1 (from -r .github/requirements/ci-tools.txt (line 148))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5245453Z   Using cached packaging-26.1-py3-none-any.whl (95 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5570500Z Collecting pluggy==1.6.0 (from -r .github/requirements/ci-tools.txt (line 154))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5579454Z   Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5685018Z Collecting pygments==2.20.0 (from -r .github/requirements/ci-tools.txt (line 160))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5694108Z   Using cached pygments-2.20.0-py3-none-any.whl (1.2 MB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5771986Z Collecting pyproject-hooks==1.2.0 (from -r .github/requirements/ci-tools.txt (line 166))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5780656Z   Using cached pyproject_hooks-1.2.0-py3-none-any.whl (10 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5926477Z Collecting pytest==8.4.2 (from -r .github/requirements/ci-tools.txt (line 170))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.5936537Z   Using cached pytest-8.4.2-py3-none-any.whl (365 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.6034375Z Collecting pytest-cov==7.1.0 (from -r .github/requirements/ci-tools.txt (line 176))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.6042929Z   Using cached pytest_cov-7.1.0-py3-none-any.whl (22 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.6265445Z Collecting pyyaml==6.0.3 (from -r .github/requirements/ci-tools.txt (line 180))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.6274179Z   Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.6444524Z Collecting rich==15.0.0 (from -r .github/requirements/ci-tools.txt (line 255))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.6453031Z   Using cached rich-15.0.0-py3-none-any.whl (310 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.8727777Z Collecting ruff==0.15.12 (from -r .github/requirements/ci-tools.txt (line 259))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:39.8754509Z   Downloading ruff-0.15.12-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.3 MB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0155628Z      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.3/11.3 MB 91.3 MB/s  0:00:00
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0351836Z Collecting stevedore==5.5.0 (from -r .github/requirements/ci-tools.txt (line 279))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0361125Z   Using cached stevedore-5.5.0-py3-none-any.whl (49 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0486576Z Collecting tomli==2.4.1 (from -r .github/requirements/ci-tools.txt (line 283))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0495415Z   Using cached tomli-2.4.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (253 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0681066Z Collecting typing-extensions==4.15.0 (from -r .github/requirements/ci-tools.txt (line 335))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0689640Z   Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0792032Z Collecting zipp==3.23.1 (from -r .github/requirements/ci-tools.txt (line 339))
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.0800663Z   Using cached zipp-3.23.1-py3-none-any.whl (10 kB)
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:40.1305141Z Installing collected packages: zipp, typing-extensions, tomli, stevedore, ruff, pyyaml, pyproject-hooks, pygments, pluggy, packaging, mdurl, iniconfig, coverage, colorama, pytest, markdown-it-py, importlib-metadata, exceptiongroup, build, rich, pytest-cov, bandit
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.6814062Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.6832903Z Successfully installed bandit-1.8.6 build-1.4.4 colorama-0.4.6 coverage-7.10.7 exceptiongroup-1.3.1 importlib-metadata-8.7.1 iniconfig-2.1.0 markdown-it-py-3.0.0 mdurl-0.1.2 packaging-26.1 pluggy-1.6.0 pygments-2.20.0 pyproject-hooks-1.2.0 pytest-8.4.2 pytest-cov-7.1.0 pyyaml-6.0.3 rich-15.0.0 ruff-0.15.12 stevedore-5.5.0 tomli-2.4.1 typing-extensions-4.15.0 zipp-3.23.1
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7482727Z ##[group]Run python -m pytest sdk/tests/ -v \
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7483039Z ^[[36;1mpython -m pytest sdk/tests/ -v \^[[0m
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7483258Z ^[[36;1m  --cov=agentguard \^[[0m
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7483481Z ^[[36;1m  --cov-report=term-missing \^[[0m
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7483703Z ^[[36;1m  --cov-report=xml:coverage.xml \^[[0m
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7483916Z ^[[36;1m  --cov-fail-under=80^[[0m
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7513823Z shell: /usr/bin/bash -e {0}
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7514020Z env:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7514177Z   PYTHONPATH: sdk
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7514411Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7514746Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7515068Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7515356Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7515642Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7515987Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:41.7516231Z ##[endgroup]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:42.4662118Z ============================= test session starts ==============================
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:42.4662885Z platform linux -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.12.13/x64/bin/python
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:42.4663291Z cachedir: .pytest_cache
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:42.4663543Z rootdir: /home/runner/work/agent47/agent47/sdk
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:42.4663905Z configfile: pyproject.toml
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:42.4664163Z plugins: cov-7.1.0
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.5622843Z collecting ... collected 761 items
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.5623147Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.6647096Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_core_modules_stdlib_only PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.7765919Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_core_does_not_import_integrations PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.7800423Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_module_exceeds_line_limit PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.7818423Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_public_exports_have_docstrings PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.7836422Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_public_naming_conventions PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.7900462Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_hardcoded_absolute_paths PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8371000Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_thread_safe_classes_have_lock PASSED [  0%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8403016Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_guard_check_methods_raise_not_return PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8415683Z sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_sinks_implement_emit PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8433955Z sdk/tests/test_async_patches.py::TestPatchOpenaiAsync::test_double_patch_is_idempotent PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8450410Z sdk/tests/test_async_patches.py::TestPatchOpenaiAsync::test_patch_no_openai_installed PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8465753Z sdk/tests/test_async_patches.py::TestPatchOpenaiAsync::test_patch_wraps_init PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8480254Z sdk/tests/test_async_patches.py::TestPatchOpenaiAsync::test_unpatch_restores_init PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8493761Z sdk/tests/test_async_patches.py::TestPatchOpenaiAsync::test_unpatch_without_patch PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8509680Z sdk/tests/test_async_patches.py::TestPatchAnthropicAsync::test_double_patch_is_idempotent PASSED [  1%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8525162Z sdk/tests/test_async_patches.py::TestPatchAnthropicAsync::test_patch_no_anthropic_installed PASSED [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8538803Z sdk/tests/test_async_patches.py::TestPatchAnthropicAsync::test_patch_wraps_init PASSED [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8553208Z sdk/tests/test_async_patches.py::TestPatchAnthropicAsync::test_unpatch_restores_init PASSED [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8566732Z sdk/tests/test_async_patches.py::TestPatchAnthropicAsync::test_unpatch_without_patch PASSED [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8609020Z sdk/tests/test_atracing.py::TestAsyncTracer::test_buggy_check_guard_type_error_fails_loudly PASSED [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8626614Z sdk/tests/test_atracing.py::TestAsyncTracer::test_cost_tracker PASSED    [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8748218Z sdk/tests/test_atracing.py::TestAsyncTracer::test_duration_recorded PASSED [  2%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8766736Z sdk/tests/test_atracing.py::TestAsyncTracer::test_error_recorded_on_exception PASSED [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8792463Z sdk/tests/test_atracing.py::TestAsyncTracer::test_event_data_is_truncated_like_sync_tracer PASSED [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8811585Z sdk/tests/test_atracing.py::TestAsyncTracer::test_guards_auto_check PASSED [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8830161Z sdk/tests/test_atracing.py::TestAsyncTracer::test_nested_spans PASSED    [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8847636Z sdk/tests/test_atracing.py::TestAsyncTracer::test_session_id_emitted PASSED [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8873072Z sdk/tests/test_atracing.py::TestAsyncTracer::test_trace_emits_start_and_end PASSED [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8886127Z sdk/tests/test_atracing.py::TestAsyncTracerRepr::test_repr PASSED        [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8905863Z sdk/tests/test_atracing.py::TestAsyncTracerRepr::test_repr_includes_session_id_when_set PASSED [  3%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8927300Z sdk/tests/test_atracing.py::TestAsyncTracerRepr::test_service_is_truncated_like_sync_tracer PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8947493Z sdk/tests/test_atracing.py::TestAsyncTraceAgent::test_custom_name PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8964843Z sdk/tests/test_atracing.py::TestAsyncTraceAgent::test_preserves_exceptions PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.8984547Z sdk/tests/test_atracing.py::TestAsyncTraceAgent::test_sync_tracer_misuse_raises_clear_error PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9002465Z sdk/tests/test_atracing.py::TestAsyncTraceAgent::test_wraps_async_function PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9021555Z sdk/tests/test_atracing.py::TestAsyncTraceTool::test_emits_tool_error_and_reraises PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9039176Z sdk/tests/test_atracing.py::TestAsyncTraceTool::test_emits_tool_result PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9054857Z sdk/tests/test_atracing.py::TestAsyncTraceTool::test_sync_tracer_misuse_raises_clear_error PASSED [  4%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9072748Z sdk/tests/test_atracing.py::TestAsyncTraceTool::test_wraps_async_tool PASSED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9101442Z sdk/tests/test_atracing.py::TestPatchOpenAIAsync::test_patch_traces_async_create PASSED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9116523Z sdk/tests/test_atracing.py::TestPatchOpenAIAsync::test_unpatch_restores PASSED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9145778Z sdk/tests/test_atracing.py::TestPatchAnthropicAsync::test_patch_traces_async_create PASSED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9160441Z sdk/tests/test_atracing.py::TestAsyncExports::test_all_async_exports PASSED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9278795Z sdk/tests/test_ci_guardrails.py::test_actionlint_workflow_is_wired FAILED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9312226Z sdk/tests/test_ci_tools_requirements_guard.py::test_rejects_direct_pin_above_ci_python_floor PASSED [  5%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9328612Z sdk/tests/test_ci_tools_requirements_guard.py::test_accepts_direct_pin_matching_ci_python_floor PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9344327Z sdk/tests/test_ci_tools_requirements_guard.py::test_rejects_non_exact_direct_pins PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9362377Z sdk/tests/test_ci_tools_requirements_guard.py::test_skips_pin_when_environment_marker_excludes_python_floor PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9379806Z sdk/tests/test_ci_tools_requirements_guard.py::test_validates_pin_when_environment_marker_includes_python_floor PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9405201Z sdk/tests/test_ci_tools_requirements_guard.py::test_main_reports_value_errors_without_traceback PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9423712Z sdk/tests/test_cli_report.py::TestCliReport::test_decisions_command_outputs_human_summary PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9438887Z sdk/tests/test_cli_report.py::TestCliReport::test_decisions_command_outputs_json PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9457724Z sdk/tests/test_cli_report.py::TestCliReport::test_incident_command_json PASSED [  6%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9474859Z sdk/tests/test_cli_report.py::TestCliReport::test_incident_command_markdown_format PASSED [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9489109Z sdk/tests/test_cli_report.py::TestCliReport::test_report_empty_json_format PASSED [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9505897Z sdk/tests/test_cli_report.py::TestCliReport::test_report_json_includes_savings PASSED [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9523762Z sdk/tests/test_cli_report.py::TestCliReport::test_report_lists_guard_events PASSED [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9539301Z sdk/tests/test_cli_report.py::TestCliReport::test_report_output PASSED   [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9556824Z sdk/tests/test_cli_report.py::TestCliReport::test_report_with_cost PASSED [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9606975Z sdk/tests/test_concurrency.py::TestBudgetGuardThreadSafety::test_concurrent_consume_cost PASSED [  7%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9652012Z sdk/tests/test_concurrency.py::TestBudgetGuardThreadSafety::test_concurrent_consume_tokens PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9701262Z sdk/tests/test_concurrency.py::TestBudgetGuardThreadSafety::test_concurrent_consume_with_budget_exceeded PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9725326Z sdk/tests/test_concurrency.py::TestBudgetGuardThreadSafety::test_concurrent_reset PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9774932Z sdk/tests/test_concurrency.py::TestRateLimitGuardThreadSafety::test_concurrent_check PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:43.9794445Z sdk/tests/test_concurrency.py::TestRateLimitGuardThreadSafety::test_concurrent_reset PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0296807Z sdk/tests/test_concurrency.py::TestJsonlFileSinkThreadSafety::test_concurrent_writes PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0335383Z sdk/tests/test_concurrency.py::TestLoopGuardThreadSafety::test_concurrent_checks_no_crash PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0348387Z sdk/tests/test_cost.py::TestEstimateCost::test_anthropic_haiku_45_uses_refreshed_rate PASSED [  8%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0360841Z sdk/tests/test_cost.py::TestEstimateCost::test_anthropic_model PASSED    [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0372656Z sdk/tests/test_cost.py::TestEstimateCost::test_anthropic_opus_46_uses_refreshed_rate PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0384253Z sdk/tests/test_cost.py::TestEstimateCost::test_gemini_25_pro_long_context_uses_high_token_tier PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0395815Z sdk/tests/test_cost.py::TestEstimateCost::test_gpt_55_long_context_uses_full_session_multiplier PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0407038Z sdk/tests/test_cost.py::TestEstimateCost::test_known_model_with_provider PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.0418356Z sdk/tests/test_cost.py::TestEstimateCost::test_known_model_without_provider PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1057395Z sdk/tests/test_cost.py::TestEstimateCost::test_unknown_model_logs_warning PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1074791Z sdk/tests/test_cost.py::TestEstimateCost::test_unknown_model_returns_zero PASSED [  9%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1089672Z sdk/tests/test_cost.py::TestEstimateCost::test_wrong_provider PASSED     [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1102340Z sdk/tests/test_cost.py::TestEstimateCost::test_zero_tokens PASSED        [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1114742Z sdk/tests/test_cost.py::TestCostTracker::test_accumulates_cost PASSED    [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1126080Z sdk/tests/test_cost.py::TestCostTracker::test_empty_tracker PASSED       [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1140343Z sdk/tests/test_cost.py::TestCostTracker::test_many_calls_accumulate PASSED [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1151631Z sdk/tests/test_cost.py::TestCostTracker::test_to_dict PASSED             [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1166583Z sdk/tests/test_cost.py::TestCostTracker::test_unknown_model_adds_zero PASSED [ 10%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1178689Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_gemini_model PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1190604Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_input_only PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1202190Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_last_updated_marker PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1213643Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_mistral_model PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1224998Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_output_only PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1236272Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_single_token PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1249328Z sdk/tests/test_cost.py::TestEstimateCostEdgeCases::test_very_large_tokens PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1261066Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_top_level_cost_preferred PASSED [ 11%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1272235Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_fallback_to_data_cost PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1283226Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_no_cost_returns_none PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1294069Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_empty_event PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1304989Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_non_numeric_cost_ignored PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1315814Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_int_cost_returned_as_float PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1326411Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_zero_cost_returned PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1336986Z sdk/tests/test_cost_guardrail.py::TestExtractCost::test_data_not_dict_ignored PASSED [ 12%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1351925Z sdk/tests/test_cost_guardrail.py::TestSummarizeTraceNoDuplicates::test_top_level_cost_only_counted_once PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1363410Z sdk/tests/test_cost_guardrail.py::TestSummarizeTraceNoDuplicates::test_data_cost_used_as_fallback PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1384417Z sdk/tests/test_cost_guardrail.py::TestSamplingRateValidation::test_negative_sampling_rate_rejected PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1396010Z sdk/tests/test_cost_guardrail.py::TestSamplingRateValidation::test_above_one_sampling_rate_rejected PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1407311Z sdk/tests/test_cost_guardrail.py::TestSamplingRateValidation::test_zero_sampling_rate_allowed PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1418498Z sdk/tests/test_cost_guardrail.py::TestSamplingRateValidation::test_one_sampling_rate_allowed PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1431692Z sdk/tests/test_cost_guardrail.py::TestGuardsFiringWhenSampledOut::test_budget_guard_fires_on_sampled_out_trace PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1444339Z sdk/tests/test_cost_guardrail.py::TestGuardsFiringWhenSampledOut::test_loop_guard_fires_on_sampled_out_trace PASSED [ 13%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1462445Z sdk/tests/test_cost_guardrail.py::TestHttpSinkBufferLimit::test_buffer_overflow_drops_oldest PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1475527Z sdk/tests/test_cost_guardrail.py::TestHttpSinkBufferLimit::test_default_max_buffer_size PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1491460Z sdk/tests/test_cost_guardrail.py::TestBudgetGuardWiringOpenAI::test_patch_openai_with_budget_guard_consumes PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1505595Z sdk/tests/test_cost_guardrail.py::TestBudgetGuardWiringOpenAI::test_patch_openai_without_budget_guard PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1520295Z sdk/tests/test_cost_guardrail.py::TestBudgetGuardWiringAnthropic::test_patch_anthropic_with_budget_guard_consumes PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1534417Z sdk/tests/test_cost_guardrail.py::TestBudgetExceededEvent::test_exceeded_event_emitted_on_openai PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1548506Z sdk/tests/test_cost_guardrail.py::TestBudgetExceededEvent::test_exceeded_event_emitted_on_anthropic PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1566012Z sdk/tests/test_cost_guardrail.py::TestBudgetExceededEvent::test_consume_budget_helper_emits_and_reraises PASSED [ 14%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1580097Z sdk/tests/test_cost_guardrail.py::TestBudgetWarningEvent::test_warning_event_emitted_on_openai PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1596100Z sdk/tests/test_cost_guardrail.py::TestBudgetWarningEvent::test_consume_budget_detects_warning_transition PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1612881Z sdk/tests/test_cost_guardrail.py::TestBudgetWarningEvent::test_warning_not_emitted_twice PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1626800Z sdk/tests/test_cost_guardrail.py::TestCostPromotedToTopLevel::test_openai_cost_at_top_level PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1640421Z sdk/tests/test_cost_guardrail.py::TestCostPromotedToTopLevel::test_anthropic_cost_at_top_level PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1652550Z sdk/tests/test_cost_guardrail.py::TestCostPromotedToTopLevel::test_tracer_event_passes_cost_usd_to_emit PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1668542Z sdk/tests/test_cost_guardrail.py::TestAsyncTraceContextCostUsd::test_async_event_with_cost_usd PASSED [ 15%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1683871Z sdk/tests/test_cost_guardrail.py::TestAsyncTraceContextCostUsd::test_async_event_without_cost_usd PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1700873Z sdk/tests/test_cost_guardrail.py::TestCliReportCostExtraction::test_report_with_top_level_cost PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1719454Z sdk/tests/test_cost_guardrail.py::TestEndToEndCostGuardrail::test_full_pipeline_openai PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1739987Z sdk/tests/test_cost_guardrail.py::TestEndToEndCostGuardrail::test_full_pipeline_under_budget PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1760964Z sdk/tests/test_coverage_gaps.py::TestLoopGuardValidation::test_max_repeats_too_low PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1781065Z sdk/tests/test_coverage_gaps.py::TestLoopGuardValidation::test_max_repeats_zero PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1801537Z sdk/tests/test_coverage_gaps.py::TestLoopGuardValidation::test_window_less_than_max_repeats PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1818051Z sdk/tests/test_coverage_gaps.py::TestTimeoutGuardValidation::test_max_seconds_negative PASSED [ 16%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1830448Z sdk/tests/test_coverage_gaps.py::TestTimeoutGuardValidation::test_max_seconds_zero PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1843115Z sdk/tests/test_coverage_gaps.py::TestBudgetGuardWarning::test_call_warning PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1854805Z sdk/tests/test_coverage_gaps.py::TestBudgetGuardWarning::test_cost_warning PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1866294Z sdk/tests/test_coverage_gaps.py::TestBudgetGuardWarning::test_no_warning_below_threshold PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1878203Z sdk/tests/test_coverage_gaps.py::TestBudgetGuardWarning::test_token_warning PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1891090Z sdk/tests/test_coverage_gaps.py::TestRateLimitGuardExpiry::test_expired_timestamps_cleaned PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1908345Z sdk/tests/test_coverage_gaps.py::TestTracerGuardFallback::test_guard_with_incompatible_check PASSED [ 17%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1922921Z sdk/tests/test_coverage_gaps.py::TestTracerGuardFallback::test_guard_with_no_check_args PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1938013Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_assert_budget_under_fail PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1951824Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_assert_budget_under_pass PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1967318Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_assert_budget_under_with_calls PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1981405Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_assert_cost_under_fail PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.1995304Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_assert_tool_called_with_prefix PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2008730Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_events_property PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2022724Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_summarize_trace_with_llm_and_empty_lines PASSED [ 18%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2036822Z sdk/tests/test_coverage_gaps.py::TestEvalSuiteEdgeCases::test_summarize_trace_with_malformed_jsonl PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2058778Z sdk/tests/test_coverage_gaps.py::TestSetupAutoPatching::test_init_without_openai_installed PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2071100Z sdk/tests/test_coverage_gaps.py::TestSetupAutoPatching::test_shutdown_without_init PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2490742Z sdk/tests/test_coverage_gaps.py::TestSetupWithApiKey::test_init_creates_http_sink PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2508388Z sdk/tests/test_coverage_gaps.py::TestCliSummarize::test_summarize_valid_file PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2523614Z sdk/tests/test_coverage_gaps.py::TestCliSummarize::test_summarize_with_bad_json_and_empty_lines PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2537862Z sdk/tests/test_coverage_gaps.py::TestCliReport::test_report_empty_file PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2554825Z sdk/tests/test_coverage_gaps.py::TestCliReport::test_report_text_and_json PASSED [ 19%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2569775Z sdk/tests/test_coverage_gaps.py::TestCliReport::test_report_with_bad_json_and_empty_lines PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2585177Z sdk/tests/test_coverage_gaps.py::TestCliReport::test_report_with_loop_guard_hit PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2600928Z sdk/tests/test_coverage_gaps.py::TestCliEval::test_eval_failure_exits PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2613849Z sdk/tests/test_coverage_gaps.py::TestLanggraphNonSerializable::test_summarize_state_with_non_serializable PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2626038Z sdk/tests/test_coverage_gaps.py::TestCrewaiEdgeCases::test_extract_raw_output_dict PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2637467Z sdk/tests/test_coverage_gaps.py::TestCrewaiEdgeCases::test_extract_raw_output_none PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2649263Z sdk/tests/test_coverage_gaps.py::TestCrewaiEdgeCases::test_extract_raw_output_object PASSED [ 20%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2660795Z sdk/tests/test_coverage_gaps.py::TestCrewaiEdgeCases::test_extract_task_description_none PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2672485Z sdk/tests/test_coverage_gaps.py::TestCrewaiEdgeCases::test_extract_tool_output_none PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2691483Z sdk/tests/test_coverage_gaps.py::TestAsyncTracerGuardFallback::test_async_guard_with_incompatible_check PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2707861Z sdk/tests/test_coverage_gaps.py::TestAsyncTracerGuardFallback::test_async_guard_with_no_check_args PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2722550Z sdk/tests/test_coverage_gaps.py::TestTraceAgentKwargs::test_trace_agent_with_kwargs_exception PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2736095Z sdk/tests/test_coverage_gaps.py::TestTraceAgentKwargs::test_trace_agent_with_kwargs_function PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2749903Z sdk/tests/test_coverage_gaps.py::TestTraceAgentKwargs::test_trace_agent_with_trace_ctx_param PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2817407Z sdk/tests/test_coverage_gaps.py::TestHttpSinkEdgeCases::test_repr PASSED [ 21%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2837777Z sdk/tests/test_coverage_gaps.py::TestHttpSinkEdgeCases::test_send_empty_batch PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2853072Z sdk/tests/test_coverage_gaps.py::TestHttpSinkEdgeCases::test_validate_url_hostname_resolves_to_private PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2866632Z sdk/tests/test_coverage_gaps.py::TestHttpSinkEdgeCases::test_validate_url_invalid_idna_hostname PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2915889Z sdk/tests/test_coverage_gaps.py::TestHttpSinkEdgeCases::test_validate_url_unresolvable_hostname PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2934215Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_budget_guard_fires PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2950497Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_crew_callback PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2965201Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_default_tracer PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2982461Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_loop_guard_fires PASSED [ 22%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.2998619Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_step_callback_dict_input PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3015259Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_step_callback_with_tool PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3031441Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_step_callback_without_tool PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3047746Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_step_truncates_long_input PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3066077Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_task_callback PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3084164Z sdk/tests/test_crewai_integration.py::TestCrewHandler::test_task_callback_dict PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3101222Z sdk/tests/test_dashboard_handoff_docs.py::test_dashboard_handoff_copy_stays_local_first PASSED [ 23%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3118549Z sdk/tests/test_dashboard_handoff_docs.py::test_handoff_docs_do_not_overstate_httpsink_remote_control PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3133776Z sdk/tests/test_decision_trace.py::test_log_decision_proposed_emits_required_schema_fields PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3151560Z sdk/tests/test_decision_trace.py::test_log_decision_edited_computes_diff_from_original_proposal PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3175181Z sdk/tests/test_decision_trace.py::test_decision_flow_keeps_decision_state_across_events PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3189800Z sdk/tests/test_decision_trace.py::test_decision_flow_accepts_tracer_for_top_level_workflow PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3209849Z sdk/tests/test_decision_trace.py::test_decision_flow_requires_proposal_before_approval PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3234414Z sdk/tests/test_decision_trace.py::test_log_decision_bound_requires_explicit_binding_outcome_fields PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3247242Z sdk/tests/test_decision_trace.py::test_decision_helpers_reject_empty_binding_state_override PASSED [ 24%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3267314Z sdk/tests/test_decision_trace.py::test_log_decision_proposed_rejects_none_proposal PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3298663Z sdk/tests/test_decision_trace.py::test_decision_flow_rejects_reserved_span_data_keys PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3320752Z sdk/tests/test_decision_trace.py::test_decision_payload_preserves_schema_for_large_non_serializable_values PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3332072Z sdk/tests/test_decision_trace.py::test_extract_decision_payload_normalizes_trace_fields PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3344325Z sdk/tests/test_decision_trace.py::test_extract_decision_events_filters_by_workflow PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3357031Z sdk/tests/test_decision_trace.py::test_is_decision_event_ignores_non_string_names_and_event_types PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3397215Z sdk/tests/test_demo.py::TestOfflineDemo::test_cli_demo_writes_trace_file PASSED [ 25%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3434760Z sdk/tests/test_demo.py::TestOfflineDemo::test_run_offline_demo_quotes_paths_with_spaces_in_guidance PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3477184Z sdk/tests/test_demo.py::TestOfflineDemo::test_run_offline_demo_writes_trace_and_explains_boundary PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3513694Z sdk/tests/test_doctor.py::TestDoctor::test_cli_doctor_writes_trace_file PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3566034Z sdk/tests/test_doctor.py::TestDoctor::test_detected_integrations_are_reported PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3583382Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_fails_without_tearing_down_existing_tracer PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3625800Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_ignores_api_key_env PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3657705Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_json_output_is_parseable PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3690887Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_quotes_paths_with_spaces_in_fallback_commands PASSED [ 26%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3724252Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_reports_repo_config PASSED [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3758160Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_reports_repo_config_errors_without_failing PASSED [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3792343Z sdk/tests/test_doctor.py::TestDoctor::test_run_doctor_writes_local_trace_and_snippet PASSED [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3805780Z sdk/tests/test_dx.py::TestGuardRepr::test_budget_aware_escalation_repr PASSED [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3818678Z sdk/tests/test_dx.py::TestGuardRepr::test_budget_guard_repr_all_limits PASSED [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3830711Z sdk/tests/test_dx.py::TestGuardRepr::test_budget_guard_repr_cost_only PASSED [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3842534Z sdk/tests/test_dx.py::TestGuardRepr::test_loop_guard_repr PASSED         [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3854705Z sdk/tests/test_dx.py::TestGuardRepr::test_timeout_guard_repr PASSED      [ 27%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3867144Z sdk/tests/test_dx.py::TestSinkRepr::test_jsonl_file_sink_repr PASSED     [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3878981Z sdk/tests/test_dx.py::TestSinkRepr::test_stdout_sink_repr PASSED         [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3891607Z sdk/tests/test_dx.py::TestTracerRepr::test_tracer_repr_custom PASSED     [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3903241Z sdk/tests/test_dx.py::TestTracerRepr::test_tracer_repr_default PASSED    [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3915435Z sdk/tests/test_dx.py::TestTracerRepr::test_tracer_repr_includes_session_id_when_set PASSED [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3928008Z sdk/tests/test_dx.py::TestDocstrings::test_budget_aware_escalation_has_usage_example PASSED [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3939987Z sdk/tests/test_dx.py::TestDocstrings::test_budget_guard_has_usage_example PASSED [ 28%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3953366Z sdk/tests/test_dx.py::TestDocstrings::test_check_method_has_docstring PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3965163Z sdk/tests/test_dx.py::TestDocstrings::test_consume_method_has_docstring PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3976787Z sdk/tests/test_dx.py::TestDocstrings::test_eval_suite_has_docstring PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3988308Z sdk/tests/test_dx.py::TestDocstrings::test_jsonl_file_sink_has_docstring PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.3999939Z sdk/tests/test_dx.py::TestDocstrings::test_loop_guard_has_usage_example PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4011442Z sdk/tests/test_dx.py::TestDocstrings::test_timeout_guard_has_usage_example PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4023122Z sdk/tests/test_dx.py::TestDocstrings::test_tracer_has_docstring PASSED   [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4036647Z sdk/tests/test_dx.py::TestTracerGuardsParam::test_tracer_guards_default_empty PASSED [ 29%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4053917Z sdk/tests/test_dx.py::TestTracerGuardsParam::test_tracer_with_loop_guard_auto_checks PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4073414Z sdk/tests/test_dx.py::TestTracerGuardsParam::test_tracer_without_guards_no_error PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4086622Z sdk/tests/test_dx.py::TestBetterErrorMessages::test_budget_exceeded_includes_call_detail PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4099005Z sdk/tests/test_dx.py::TestBetterErrorMessages::test_loop_detected_includes_args PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4616862Z sdk/tests/test_dx.py::TestBetterErrorMessages::test_timeout_exceeded_includes_elapsed PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4629647Z sdk/tests/test_dx.py::TestPyTypedMarker::test_py_typed_file_exists PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4643339Z sdk/tests/test_dx.py::TestTracerContextManager::test_context_manager_calls_shutdown PASSED [ 30%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4655451Z sdk/tests/test_dx.py::TestTracerContextManager::test_context_manager_does_not_suppress_exceptions PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4668379Z sdk/tests/test_dx.py::TestTracerContextManager::test_context_manager_no_shutdown_if_missing PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4681077Z sdk/tests/test_dx.py::TestTracerContextManager::test_context_manager_returns_tracer PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4693620Z sdk/tests/test_dx.py::TestTracerContextManager::test_context_manager_shutdown_on_exception PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4706177Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_cost_from_data_dict PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4717899Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_cost_from_top_level PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4729482Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_empty_list PASSED [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4741309Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_errors PASSED   [ 31%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4756737Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_from_file PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4769090Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_from_list PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4781642Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_invalid_input_type PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4793650Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_loop_detections PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4812232Z sdk/tests/test_dx.py::TestSummarizeTrace::test_summarize_real_trace PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4828309Z sdk/tests/test_dx.py::TestWatermark::test_watermark_disabled PASSED      [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4844218Z sdk/tests/test_dx.py::TestWatermark::test_watermark_emitted_by_default PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4861039Z sdk/tests/test_dx.py::TestWatermark::test_watermark_emitted_only_once PASSED [ 32%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4876598Z sdk/tests/test_dx.py::TestWatermark::test_watermark_includes_metadata PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:44.4894001Z sdk/tests/test_dx.py::TestWatermark::test_watermark_is_first_event PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.0065566Z sdk/tests/test_e2e_pipeline.py::TestE2EPipeline::test_full_pipeline PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.3091704Z sdk/tests/test_e2e_pipeline.py::TestSamplingIsolation::test_sampling_zero_no_http_events PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6133736Z sdk/tests/test_e2e_pipeline.py::TestAuthFailure::test_wrong_api_key_rejected PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6211657Z sdk/tests/test_e2e_pipeline.py::TestConcurrentTraces::test_concurrent_jsonl_writes PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6227213Z sdk/tests/test_evaluation.py::TestEvalSuiteNoLoops::test_fails_when_loops_present PASSED [ 33%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6241985Z sdk/tests/test_evaluation.py::TestEvalSuiteNoLoops::test_passes_when_no_loops PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6256710Z sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_counts_trace_tool_span_once_with_result_event PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6270772Z sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_fails_when_tool_called_over_limit PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6284920Z sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_fails_when_tool_not_called_enough PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6299095Z sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_ignores_unrelated_tool_result_events PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6313057Z sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_passes_when_tool_called_at_most_limit PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6327822Z sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_passes_when_tool_called_enough PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6342618Z sdk/tests/test_evaluation.py::TestEvalSuiteBudget::test_fails_over_budget PASSED [ 34%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6356305Z sdk/tests/test_evaluation.py::TestEvalSuiteBudget::test_passes_under_budget PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6370412Z sdk/tests/test_evaluation.py::TestEvalSuiteCompletesWithin::test_fails_slow_trace PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6383882Z sdk/tests/test_evaluation.py::TestEvalSuiteCompletesWithin::test_passes_fast_trace PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6397874Z sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_fails_when_event_missing PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6411822Z sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_fails_when_span_missing PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6425374Z sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_passes_when_event_found PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6439139Z sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_passes_when_span_found PASSED [ 35%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6453580Z sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_fails_when_error_type_present PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6466830Z sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_fails_with_errors PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6479970Z sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_passes_no_errors PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6493670Z sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_passes_when_error_type_absent PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6508173Z sdk/tests/test_evaluation.py::TestEvalSuiteBudgetEvents::test_fails_when_budget_exceeded PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6522090Z sdk/tests/test_evaluation.py::TestEvalSuiteBudgetEvents::test_passes_when_budget_not_exceeded PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6536493Z sdk/tests/test_evaluation.py::TestEvalSuiteTotalEvents::test_fails_when_total_events_hits_limit PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6550466Z sdk/tests/test_evaluation.py::TestEvalSuiteTotalEvents::test_passes_when_total_events_under_limit PASSED [ 36%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6565339Z sdk/tests/test_evaluation.py::TestEvalSuiteChaining::test_multiple_assertions_chained PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6578931Z sdk/tests/test_evaluation.py::TestEvalSuiteEdgeCases::test_empty_trace PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6593234Z sdk/tests/test_evaluation.py::TestEvalSuiteEdgeCases::test_malformed_jsonl PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6607756Z sdk/tests/test_evaluation.py::TestEvalResult::test_summary_format PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.6642317Z sdk/tests/test_example_starters.py::test_quickstart_payloads_have_matching_starter_files PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.7663017Z sdk/tests/test_example_starters.py::test_raw_starter_runs_and_writes_trace PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.7687341Z sdk/tests/test_example_starters.py::test_pydantic_ai_starter_is_optional_and_local_first PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.8719928Z sdk/tests/test_example_starters.py::test_disposable_harness_example_links_session_id PASSED [ 37%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:45.9741445Z sdk/tests/test_example_starters.py::test_per_token_budget_spike_example_runs PASSED [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.0758563Z sdk/tests/test_example_starters.py::test_coding_agent_review_loop_example_runs_offline PASSED [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.1789141Z sdk/tests/test_example_starters.py::test_coding_agent_review_loop_sample_incident_is_in_sync PASSED [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.1819595Z sdk/tests/test_example_starters.py::test_proof_gallery_demo_references_stay_valid PASSED [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2842979Z sdk/tests/test_example_starters.py::test_budget_aware_escalation_example_runs PASSED [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2857670Z sdk/tests/test_export.py::TestLoadEvents::test_empty_file PASSED         [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2872101Z sdk/tests/test_export.py::TestLoadEvents::test_load_valid_events PASSED  [ 38%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2885709Z sdk/tests/test_export.py::TestLoadEvents::test_skip_empty_lines PASSED   [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2899794Z sdk/tests/test_export.py::TestLoadEvents::test_skip_malformed_lines PASSED [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2918698Z sdk/tests/test_export.py::TestExportJson::test_export_json PASSED        [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2935128Z sdk/tests/test_export.py::TestExportJson::test_export_json_empty PASSED  [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2953020Z sdk/tests/test_export.py::TestExportCsv::test_export_csv PASSED          [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2969360Z sdk/tests/test_export.py::TestExportCsv::test_export_csv_custom_columns PASSED [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2983154Z sdk/tests/test_export.py::TestExportCsv::test_export_csv_empty PASSED    [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.2999877Z sdk/tests/test_export.py::TestExportCsv::test_export_csv_error_flattened PASSED [ 39%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3018892Z sdk/tests/test_export.py::TestExportJsonl::test_export_jsonl_normalizes PASSED [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3031990Z sdk/tests/test_exports.py::TestTopLevelExports::test_all_list_complete PASSED [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3043736Z sdk/tests/test_exports.py::TestTopLevelExports::test_cost PASSED         [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3055105Z sdk/tests/test_exports.py::TestTopLevelExports::test_decision_tracing PASSED [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3066280Z sdk/tests/test_exports.py::TestTopLevelExports::test_evaluation PASSED   [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3077799Z sdk/tests/test_exports.py::TestTopLevelExports::test_exceptions PASSED   [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3088998Z sdk/tests/test_exports.py::TestTopLevelExports::test_guards PASSED       [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3100323Z sdk/tests/test_exports.py::TestTopLevelExports::test_http_sink PASSED    [ 40%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3112076Z sdk/tests/test_exports.py::TestTopLevelExports::test_instrument_decorators PASSED [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3123226Z sdk/tests/test_exports.py::TestTopLevelExports::test_instrument_patches PASSED [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3135135Z sdk/tests/test_exports.py::TestTopLevelExports::test_instrument_unpatches PASSED [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3146396Z sdk/tests/test_exports.py::TestTopLevelExports::test_jsonl_file_sink PASSED [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3158468Z sdk/tests/test_exports.py::TestTopLevelExports::test_legacy_guard_exports_do_not_create_import_cycle PASSED [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3169736Z sdk/tests/test_exports.py::TestTopLevelExports::test_stdout_sink PASSED  [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3180956Z sdk/tests/test_exports.py::TestTopLevelExports::test_trace_sink PASSED   [ 41%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3193940Z sdk/tests/test_exports.py::TestTopLevelExports::test_tracer PASSED       [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3510070Z sdk/tests/test_first_run.py::TestImportSideEffects::test_import_is_silent PASSED [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3837331Z sdk/tests/test_first_run.py::TestImportSideEffects::test_import_does_not_touch_home_directory PASSED [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3852019Z sdk/tests/test_guards.py::TestLoopGuard::test_detects_repeats PASSED     [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3865625Z sdk/tests/test_guards.py::TestLoopGuardWindowBehavior::test_different_args_dont_trigger PASSED [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3878756Z sdk/tests/test_guards.py::TestLoopGuardWindowBehavior::test_exact_window_boundary PASSED [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3891794Z sdk/tests/test_guards.py::TestLoopGuardWindowBehavior::test_repeats_separated_by_different_calls_pass PASSED [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3904084Z sdk/tests/test_guards.py::TestLoopGuardWindowBehavior::test_reset_clears_history PASSED [ 42%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3916866Z sdk/tests/test_guards.py::TestLoopGuardWindowBehavior::test_window_maxlen_limits_history PASSED [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3930073Z sdk/tests/test_guards.py::TestLoopGuardAutoCheck::test_auto_check_different_names_ok PASSED [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3942903Z sdk/tests/test_guards.py::TestLoopGuardAutoCheck::test_auto_check_triggers_loop_detection PASSED [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3955917Z sdk/tests/test_guards.py::TestBudgetGuard::test_call_budget PASSED       [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3968224Z sdk/tests/test_guards.py::TestBudgetGuard::test_cost_budget PASSED       [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3980732Z sdk/tests/test_guards.py::TestBudgetGuard::test_cost_budget_exact_threshold PASSED [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.3992735Z sdk/tests/test_guards.py::TestBudgetGuard::test_cost_only_budget PASSED  [ 43%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4004641Z sdk/tests/test_guards.py::TestBudgetGuard::test_cost_tracks_in_state PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4016623Z sdk/tests/test_guards.py::TestBudgetGuard::test_requires_at_least_one_limit PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4028599Z sdk/tests/test_guards.py::TestBudgetGuard::test_reset_clears_all_state PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4040996Z sdk/tests/test_guards.py::TestBudgetGuard::test_token_budget PASSED      [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4053844Z sdk/tests/test_guards.py::TestBudgetGuardInputValidation::test_float_tokens_accepted PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4066079Z sdk/tests/test_guards.py::TestBudgetGuardInputValidation::test_none_tokens_raises_type_error PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4078317Z sdk/tests/test_guards.py::TestBudgetGuardInputValidation::test_string_calls_raises_type_error PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4090423Z sdk/tests/test_guards.py::TestBudgetGuardInputValidation::test_string_cost_raises_type_error PASSED [ 44%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4103352Z sdk/tests/test_guards.py::TestBudgetGuardInputValidation::test_string_tokens_raises_type_error PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4116553Z sdk/tests/test_guards.py::TestBudgetExceededPrecision::test_cost_exceeded_uses_consistent_precision PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4129166Z sdk/tests/test_guards.py::TestBudgetGuardWarnAtPct::test_no_warning_without_callback PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4141609Z sdk/tests/test_guards.py::TestBudgetGuardWarnAtPct::test_token_warning PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4153520Z sdk/tests/test_guards.py::TestBudgetGuardWarnAtPct::test_warning_callback_fires PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4165469Z sdk/tests/test_guards.py::TestBudgetGuardWarnAtPct::test_warning_fires_once PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4177759Z sdk/tests/test_guards.py::TestBudgetGuardWarnAtPct::test_warning_resets_with_guard PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4190161Z sdk/tests/test_guards.py::TestTimeoutGuard::test_check_before_start_raises PASSED [ 45%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4202045Z sdk/tests/test_guards.py::TestTimeoutGuard::test_invalid_max_seconds PASSED [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.4213765Z sdk/tests/test_guards.py::TestTimeoutGuard::test_no_timeout PASSED       [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.5233196Z sdk/tests/test_guards.py::TestTimeoutGuard::test_reset PASSED            [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.6253332Z sdk/tests/test_guards.py::TestTimeoutGuard::test_timeout_exceeded PASSED [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.6266815Z sdk/tests/test_guards.py::TestTimeoutGuardAutoCheck::test_auto_check_after_start PASSED [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.6279755Z sdk/tests/test_guards.py::TestTimeoutGuardAutoCheck::test_auto_check_before_start_is_noop PASSED [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.6798781Z sdk/tests/test_guards.py::TestTimeoutGuardContextManager::test_context_manager_manual_check_inside PASSED [ 46%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7317440Z sdk/tests/test_guards.py::TestTimeoutGuardContextManager::test_context_manager_no_check_if_exception PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7835388Z sdk/tests/test_guards.py::TestTimeoutGuardContextManager::test_context_manager_raises_on_timeout PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7846963Z sdk/tests/test_guards.py::TestTimeoutGuardContextManager::test_context_manager_returns_self PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7859071Z sdk/tests/test_guards.py::TestTimeoutGuardContextManager::test_context_manager_starts_timer PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7872026Z sdk/tests/test_guards.py::TestFuzzyLoopGuardFrequency::test_different_tools_dont_trigger PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7884221Z sdk/tests/test_guards.py::TestFuzzyLoopGuardFrequency::test_same_tool_different_args_triggers PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7896387Z sdk/tests/test_guards.py::TestFuzzyLoopGuardFrequency::test_window_eviction PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7909441Z sdk/tests/test_guards.py::TestFuzzyLoopGuardAlternation::test_ababab_triggers PASSED [ 47%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7921698Z sdk/tests/test_guards.py::TestFuzzyLoopGuardAlternation::test_no_alternation_for_varied_pattern PASSED [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7934051Z sdk/tests/test_guards.py::TestFuzzyLoopGuardMisc::test_auto_check_triggers_fuzzy_detection PASSED [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7945730Z sdk/tests/test_guards.py::TestFuzzyLoopGuardMisc::test_invalid_max_alternations PASSED [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7957492Z sdk/tests/test_guards.py::TestFuzzyLoopGuardMisc::test_invalid_max_tool_repeats PASSED [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7968793Z sdk/tests/test_guards.py::TestFuzzyLoopGuardMisc::test_repr PASSED       [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.7980725Z sdk/tests/test_guards.py::TestFuzzyLoopGuardMisc::test_reset PASSED      [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8019832Z sdk/tests/test_guards.py::TestRateLimitGuard::test_auto_check_delegates PASSED [ 48%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8031635Z sdk/tests/test_guards.py::TestRateLimitGuard::test_invalid_limit PASSED  [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8043123Z sdk/tests/test_guards.py::TestRateLimitGuard::test_repr PASSED           [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8054654Z sdk/tests/test_guards.py::TestRateLimitGuard::test_reset PASSED          [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8066764Z sdk/tests/test_guards.py::TestRateLimitGuard::test_under_limit PASSED    [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8079131Z sdk/tests/test_guards.py::TestRetryGuard::test_direct_check_raises_after_limit PASSED [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8091180Z sdk/tests/test_guards.py::TestRetryGuard::test_explicit_retry_does_not_double_count_following_tool_error PASSED [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8102588Z sdk/tests/test_guards.py::TestRetryGuard::test_invalid_limit PASSED      [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8113641Z sdk/tests/test_guards.py::TestRetryGuard::test_repr PASSED               [ 49%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8124886Z sdk/tests/test_guards.py::TestRetryGuard::test_reset_clears_all_counters PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8136364Z sdk/tests/test_guards.py::TestRetryGuard::test_result_clears_pending_explicit_retry_marker PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8148340Z sdk/tests/test_guards.py::TestRetryGuard::test_result_event_resets_counter PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8159910Z sdk/tests/test_guards.py::TestRetryGuard::test_tool_error_counts_when_no_explicit_retry_event_exists PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8171356Z sdk/tests/test_guards.py::TestRetryGuard::test_tool_error_is_implicit_retry PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8183125Z sdk/tests/test_guards.py::TestRetryGuard::test_tool_specific_retry_name_supported PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8195046Z sdk/tests/test_guards.py::TestEscalationSignalFactories::test_confidence_factory_validation PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8206466Z sdk/tests/test_guards.py::TestEscalationSignalFactories::test_custom_factory_requires_callable PASSED [ 50%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8217976Z sdk/tests/test_guards.py::TestEscalationSignalFactories::test_token_count_factory PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8229877Z sdk/tests/test_guards.py::TestEscalationSignalFactories::test_tool_call_depth_factory_validation PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8243105Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_confidence_signal_raises_escalation_required PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8255081Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_custom_rule_signal_can_trigger PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8284166Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_escalated_model_events_do_not_rearm PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8285080Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_invalid_models_raise_value_error PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8291189Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_none_overrides_do_not_erase_derived_metrics PASSED [ 51%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8304491Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_reset_clears_pending_and_history PASSED [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8317586Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_token_count_signal_selects_escalate_model PASSED [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8330363Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_tool_call_depth_signal_uses_auto_check_for_next_call PASSED [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8343319Z sdk/tests/test_guards.py::TestBudgetAwareEscalation::test_usage_total_tokens_is_supported_in_event_data PASSED [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8355800Z sdk/tests/test_guards.py::TestBaseGuard::test_auto_check_is_noop PASSED  [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8367919Z sdk/tests/test_guards.py::TestBaseGuard::test_isinstance_checks PASSED   [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8379753Z sdk/tests/test_guards.py::TestBaseGuard::test_reset_is_noop PASSED       [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8392193Z sdk/tests/test_guards.py::TestBaseGuard::test_subclass_can_override PASSED [ 52%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8407728Z sdk/tests/test_guards.py::TestTracerAutoCheckDispatch::test_auto_check_called_on_events PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8422516Z sdk/tests/test_guards.py::TestTracerAutoCheckDispatch::test_backward_compat_check_dispatch PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8437345Z sdk/tests/test_guards.py::TestTracerAutoCheckDispatch::test_backward_compat_no_args_check PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8452977Z sdk/tests/test_guards.py::TestEvalCostUnder::test_fails_over_cost PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8466931Z sdk/tests/test_guards.py::TestEvalCostUnder::test_passes_under_cost PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8481193Z sdk/tests/test_guards.py::TestEvalCostUnder::test_top_level_cost_usd PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8495685Z sdk/tests/test_guards.py::TestEvalNoBudgetWarnings::test_fails_with_warnings PASSED [ 53%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8511441Z sdk/tests/test_guards.py::TestEvalNoBudgetWarnings::test_passes_no_warnings PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8523226Z sdk/tests/test_hardening.py::TestAgentGuardError::test_base_exception_exists PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8537101Z sdk/tests/test_hardening.py::TestAgentGuardError::test_loop_detected_inherits PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8548637Z sdk/tests/test_hardening.py::TestAgentGuardError::test_budget_exceeded_inherits PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8560035Z sdk/tests/test_hardening.py::TestAgentGuardError::test_timeout_exceeded_inherits PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8572485Z sdk/tests/test_hardening.py::TestAgentGuardError::test_catch_all_agentguard_errors PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8585088Z sdk/tests/test_hardening.py::TestAgentGuardError::test_catch_specific_still_works PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8596525Z sdk/tests/test_hardening.py::TestAgentGuardError::test_agentguard_error_importable PASSED [ 54%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8607675Z sdk/tests/test_hardening.py::TestVersion::test_version_attribute_exists PASSED [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8618668Z sdk/tests/test_hardening.py::TestVersion::test_version_is_string PASSED  [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8629982Z sdk/tests/test_hardening.py::TestVersion::test_version_in_all PASSED     [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8704645Z sdk/tests/test_hardening.py::TestLoopGuardThreadSafety::test_concurrent_checks_no_crash PASSED [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8759353Z sdk/tests/test_hardening.py::TestLoopGuardThreadSafety::test_concurrent_reset_no_crash PASSED [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8853887Z sdk/tests/test_hardening.py::TestFuzzyLoopGuardThreadSafety::test_concurrent_checks_no_crash PASSED [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8872088Z sdk/tests/test_hardening.py::TestHeaderInjection::test_newline_in_api_key_rejected PASSED [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8884267Z sdk/tests/test_hardening.py::TestHeaderInjection::test_carriage_return_in_api_key_rejected PASSED [ 55%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8895833Z sdk/tests/test_hardening.py::TestHeaderInjection::test_clean_api_key_accepted PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8908091Z sdk/tests/test_hardening.py::TestHeaderInjection::test_init_rejects_crlf_api_key PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8924689Z sdk/tests/test_hardening.py::TestSsrfRedirectProtection::test_redirect_to_private_ip_blocked PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8937745Z sdk/tests/test_hardening.py::TestSsrfRedirectProtection::test_redirect_to_metadata_endpoint_blocked PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8950865Z sdk/tests/test_hardening.py::TestEventDataSizeLimit::test_small_data_passes_through PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8962546Z sdk/tests/test_hardening.py::TestEventDataSizeLimit::test_none_passes_through PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8981972Z sdk/tests/test_hardening.py::TestEventDataSizeLimit::test_oversized_data_truncated PASSED [ 56%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.8994110Z sdk/tests/test_hardening.py::TestEventDataSizeLimit::test_non_serializable_data_replaced PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9008473Z sdk/tests/test_hardening.py::TestEventDataSizeLimit::test_exactly_at_limit_passes PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9024719Z sdk/tests/test_hardening.py::TestInitValidation::test_warn_pct_too_low PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9037684Z sdk/tests/test_hardening.py::TestInitValidation::test_warn_pct_too_high PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9056450Z sdk/tests/test_hardening.py::TestInitValidation::test_warn_pct_valid_boundaries PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9077428Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_ascii_hostname_allowed PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9089952Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_ip_address_allowed PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9102615Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_private_ip_blocked PASSED [ 57%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9114413Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_allow_private_flag PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9131547Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_non_ascii_hostname_rejected PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9143820Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_punycode_direct_allowed PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9155712Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_invalid_scheme_rejected PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9167487Z sdk/tests/test_hardening.py::TestIdnSsrfProtection::test_missing_hostname_rejected PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9179170Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_short_name_passes_through PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9190607Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_exact_limit_passes_through PASSED [ 58%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9202917Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_long_name_truncated PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9216825Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_truncation_logs_warning PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9228355Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_tracer_truncates_service_name PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9241289Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_span_name_truncated PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9256076Z sdk/tests/test_hardening.py::TestNameLengthLimits::test_event_name_truncated PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9438681Z sdk/tests/test_hosted_ingest_contract.py::TestHostedIngestContract::test_meta_only_batches_fail_like_hosted_ingest PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9481268Z sdk/tests/test_hosted_ingest_contract.py::TestHostedIngestContract::test_http_sink_posts_only_hosted_compatible_trace_records PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9559075Z sdk/tests/test_hosted_ingest_contract.py::TestHostedIngestContract::test_decision_trace_events_are_hosted_queryable_by_default PASSED [ 59%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:46.9580272Z sdk/tests/test_hosted_ingest_contract.py::TestHostedIngestContract::test_local_ingest_reports_decision_trace_warnings_like_dashboard PASSED [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:47.2613886Z sdk/tests/test_http_sink.py::TestHttpSink::test_batch_flush PASSED       [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:47.7637655Z sdk/tests/test_http_sink.py::TestHttpSink::test_interval_flush PASSED    [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:47.7649662Z sdk/tests/test_http_sink.py::TestHttpSink::test_normalize_event_for_ingest_accepts_type_only_payloads PASSED [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:47.7661498Z sdk/tests/test_http_sink.py::TestHttpSink::test_normalize_event_for_ingest_drops_meta_and_adds_type_alias PASSED [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:47.7673152Z sdk/tests/test_http_sink.py::TestHttpSink::test_normalize_event_for_ingest_preserves_ad_hoc_payloads PASSED [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:48.2706729Z sdk/tests/test_http_sink.py::TestHttpSink::test_shutdown_flushes_remaining PASSED [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:48.2723239Z sdk/tests/test_http_sink.py::TestHttpSinkHTTPWarning::test_no_warning_on_http_without_api_key PASSED [ 60%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:48.2746439Z sdk/tests/test_http_sink.py::TestHttpSinkHTTPWarning::test_no_warning_on_https PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:48.2764463Z sdk/tests/test_http_sink.py::TestHttpSinkHTTPWarning::test_warns_on_http_with_api_key PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2817767Z sdk/tests/test_http_sink.py::TestHttpSinkRetryAfterHttpDate::test_http_date_retry_after_does_not_crash PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2831531Z sdk/tests/test_http_sink.py::TestHttpSinkExports::test_importable_from_top_level PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2847332Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_allow_private_flag PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2861981Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_allows_public_ip PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2874763Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_10_range PASSED [ 61%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2887227Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_172_16_range PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2899835Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_192_168_range PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2912174Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_invalid_scheme PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2925460Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_ipv6_loopback PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2938141Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_link_local PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2950154Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_localhost_127_range PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2962708Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_localhost_ip PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2974747Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_no_hostname PASSED [ 62%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.2988946Z sdk/tests/test_http_sink.py::TestHttpSinkSSRF::test_blocks_zero_network PASSED [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3005449Z sdk/tests/test_init.py::TestInit::test_init_returns_tracer PASSED        [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3020825Z sdk/tests/test_init.py::TestInit::test_init_default_local_sink PASSED    [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3037689Z sdk/tests/test_init.py::TestInit::test_init_custom_trace_file PASSED     [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3053115Z sdk/tests/test_init.py::TestInit::test_init_custom_service PASSED        [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3068129Z sdk/tests/test_init.py::TestInit::test_init_custom_session_id PASSED     [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3083321Z sdk/tests/test_init.py::TestInit::test_init_default_service PASSED       [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3104234Z sdk/tests/test_init.py::TestInit::test_init_idempotency_raises PASSED    [ 63%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3121967Z sdk/tests/test_init.py::TestInit::test_init_after_shutdown_works PASSED  [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3146337Z sdk/tests/test_init.py::TestInitEnvVars::test_service_from_env PASSED    [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3170300Z sdk/tests/test_init.py::TestInitEnvVars::test_trace_file_from_env PASSED [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3194945Z sdk/tests/test_init.py::TestInitEnvVars::test_budget_from_env PASSED     [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3220299Z sdk/tests/test_init.py::TestInitEnvVars::test_invalid_budget_env_ignored PASSED [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3254834Z sdk/tests/test_init.py::TestInitEnvVars::test_invalid_budget_env_falls_back_to_repo_config_budget PASSED [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3278932Z sdk/tests/test_init.py::TestInitEnvVars::test_kwargs_override_env PASSED [ 64%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3298534Z sdk/tests/test_init.py::TestInitEnvVars::test_repo_config_applies_when_kwargs_and_env_missing PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3321085Z sdk/tests/test_init.py::TestInitEnvVars::test_repo_config_trace_directory_is_created PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3347965Z sdk/tests/test_init.py::TestInitEnvVars::test_env_overrides_repo_config PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3365914Z sdk/tests/test_init.py::TestInitEnvVars::test_kwargs_override_repo_config PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3384762Z sdk/tests/test_init.py::TestInitEnvVars::test_malformed_repo_config_is_ignored_when_all_values_are_explicit PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3407178Z sdk/tests/test_init.py::TestInitEnvVars::test_malformed_repo_config_falls_back_to_defaults_with_warning PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3433941Z sdk/tests/test_init.py::TestInitEnvVars::test_local_only_ignores_api_key_env PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3461568Z sdk/tests/test_init.py::TestInitEnvVars::test_local_only_conflicts_with_api_key PASSED [ 65%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3601407Z sdk/tests/test_init.py::TestInitEnvVars::test_api_key_not_logged PASSED  [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3622141Z sdk/tests/test_init.py::TestInitEnvVars::test_session_id_not_logged_raw PASSED [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3642011Z sdk/tests/test_init.py::TestInitEnvVars::test_blank_session_id_rejected PASSED [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3657579Z sdk/tests/test_init.py::TestInitBudgetGuard::test_no_budget_by_default PASSED [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3673286Z sdk/tests/test_init.py::TestInitBudgetGuard::test_budget_creates_guard PASSED [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3688417Z sdk/tests/test_init.py::TestInitBudgetGuard::test_budget_warning_threshold PASSED [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3703700Z sdk/tests/test_init.py::TestInitBudgetGuard::test_budget_guard_in_tracer_guards PASSED [ 66%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3718667Z sdk/tests/test_init.py::TestInitLoopGuard::test_loop_guard_default PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3734137Z sdk/tests/test_init.py::TestInitLoopGuard::test_loop_guard_custom PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3749480Z sdk/tests/test_init.py::TestInitLoopGuard::test_coding_agent_profile_tightens_guard_defaults PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3765210Z sdk/tests/test_init.py::TestInitLoopGuard::test_deployed_agent_profile_tightens_guard_defaults PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3783699Z sdk/tests/test_init.py::TestInitLoopGuard::test_repo_config_profile_applies_retry_guard PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3803209Z sdk/tests/test_init.py::TestInitLoopGuard::test_repo_config_profile_applies_when_core_args_are_explicit PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3825919Z sdk/tests/test_init.py::TestInitAutoPatch::test_auto_patch_openai PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3841432Z sdk/tests/test_init.py::TestInitAutoPatch::test_auto_patch_disabled PASSED [ 67%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3856520Z sdk/tests/test_init.py::TestShutdown::test_shutdown_clears_state PASSED  [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3868814Z sdk/tests/test_init.py::TestShutdown::test_shutdown_safe_when_not_initialized PASSED [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3887261Z sdk/tests/test_init.py::TestShutdown::test_shutdown_unpatches PASSED     [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3900020Z sdk/tests/test_init.py::TestGetters::test_get_tracer_before_init PASSED  [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3915456Z sdk/tests/test_init.py::TestGetters::test_get_tracer_after_init PASSED   [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3930668Z sdk/tests/test_init.py::TestGetters::test_get_budget_guard_no_budget PASSED [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3945567Z sdk/tests/test_init.py::TestGetters::test_get_budget_guard_with_budget PASSED [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3957715Z sdk/tests/test_init.py::TestModuleLevelAccess::test_module_has_init PASSED [ 68%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3970082Z sdk/tests/test_init.py::TestModuleLevelAccess::test_module_has_shutdown PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.3986650Z sdk/tests/test_init.py::TestModuleLevelAccess::test_two_line_quickstart PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4004020Z sdk/tests/test_instrument.py::TestTraceAgentDecorator::test_custom_name PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4020186Z sdk/tests/test_instrument.py::TestTraceAgentDecorator::test_preserves_exceptions PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4036802Z sdk/tests/test_instrument.py::TestTraceAgentDecorator::test_wraps_function_in_trace PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4053976Z sdk/tests/test_instrument.py::TestTraceToolDecorator::test_custom_tool_name PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4070895Z sdk/tests/test_instrument.py::TestTraceToolDecorator::test_emits_tool_error_event_and_reraises PASSED [ 69%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4087066Z sdk/tests/test_instrument.py::TestTraceToolDecorator::test_emits_tool_result_event PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4103618Z sdk/tests/test_instrument.py::TestTraceToolDecorator::test_wraps_tool_in_span PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4120650Z sdk/tests/test_instrument.py::TestPatchOpenAI::test_no_crash_without_openai PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4137150Z sdk/tests/test_instrument.py::TestPatchAnthropic::test_no_crash_without_anthropic PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4155206Z sdk/tests/test_instrument.py::TestEmitLlmResult::test_normalizes_anthropic_usage PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4174425Z sdk/tests/test_instrument.py::TestEmitLlmResult::test_normalizes_openai_usage PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4201949Z sdk/tests/test_instrument_patch.py::TestPatchOpenAIModern::test_create_returns_result PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4217173Z sdk/tests/test_instrument_patch.py::TestPatchOpenAIModern::test_patch_is_idempotent PASSED [ 70%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4242818Z sdk/tests/test_instrument_patch.py::TestPatchOpenAIModern::test_patch_traces_create_call PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4259058Z sdk/tests/test_instrument_patch.py::TestPatchOpenAIModern::test_unpatch_restores_original PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4286097Z sdk/tests/test_instrument_patch.py::TestPatchAnthropicModern::test_create_returns_result PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4301531Z sdk/tests/test_instrument_patch.py::TestPatchAnthropicModern::test_patch_is_idempotent PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4337644Z sdk/tests/test_instrument_patch.py::TestPatchAnthropicModern::test_patch_traces_create_call PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4353074Z sdk/tests/test_instrument_patch.py::TestPatchAnthropicModern::test_unpatch_restores_original PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4366176Z sdk/tests/test_instrument_patch.py::TestUnpatchSafeWhenNotPatched::test_unpatch_anthropic_safe PASSED [ 71%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.4380311Z sdk/tests/test_instrument_patch.py::TestUnpatchSafeWhenNotPatched::test_unpatch_openai_safe PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9472986Z sdk/tests/test_integration_cost_guardrail.py::TestIntegrationCostGuardrail::test_cost_guardrail_pipeline PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9488068Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_build_traces_url_encodes_query_values PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9500918Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_build_traces_url_strips_trailing_slash PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9513395Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_build_traces_url_with_service PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9526047Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_build_traces_url_with_trace_id PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9538300Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_build_traces_url_with_trace_id_and_service PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9550490Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_build_traces_url_without_trace_id PASSED [ 72%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9562774Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_extract_traces_falls_back_to_data PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9574968Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_extract_traces_prefers_traces_key PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9587043Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_extract_traces_returns_empty_list_for_unexpected_payload PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9599223Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_find_trace_returns_matching_trace PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9613493Z sdk/tests/test_integration_dashboard_script.py::TestIntegrationDashboardHelpers::test_find_trace_returns_none_when_missing PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9634990Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_budget_guard_cost_usd_on_llm_end PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9655191Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_budget_guard_on_llm_end PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9672200Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_chain_lifecycle PASSED [ 73%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9718664Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_concurrent_callback_lifecycles_do_not_corrupt_state PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9738356Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_llm_end_includes_cost_for_known_model PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9763789Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_llm_end_no_cost_for_unknown_model PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9784099Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_llm_end_normalizes_anthropic_usage PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9802635Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_nested_llm_creates_span PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9819600Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_parent_end_closes_never_ended_child_run PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9837857Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_stale_child_end_does_not_close_new_active_run PASSED [ 74%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9854655Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_tool_with_budget_guard PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9871898Z sdk/tests/test_langchain_integration.py::TestLangChainIntegration::test_tool_with_loop_guard PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9884383Z sdk/tests/test_langchain_integration.py::TestExtractModelName::test_from_llm_output PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9896052Z sdk/tests/test_langchain_integration.py::TestExtractModelName::test_from_metadata_model_id PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9907700Z sdk/tests/test_langchain_integration.py::TestExtractModelName::test_from_response_metadata PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9919754Z sdk/tests/test_langchain_integration.py::TestExtractModelName::test_returns_unknown_for_empty_dicts PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9931862Z sdk/tests/test_langchain_integration.py::TestExtractModelName::test_returns_unknown_when_no_model PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9946171Z sdk/tests/test_langchain_integration.py::TestExtractTokenUsage::test_ignores_model_extraction_errors PASSED [ 75%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9963549Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_basic_node_tracing PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9982045Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_budget_guard_fires PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:51.9997896Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_custom_name PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0012682Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_default_tracer PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0028602Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_guard_node_functional_form PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0046852Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_loop_guard_fires PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0062454Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_node_exception_propagates PASSED [ 76%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0077625Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_node_returns_none PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0094029Z sdk/tests/test_langgraph_integration.py::TestGuardedNode::test_node_with_dict_state PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0106582Z sdk/tests/test_langgraph_integration.py::TestSummarizeState::test_dict_state_with_messages PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0118272Z sdk/tests/test_langgraph_integration.py::TestSummarizeState::test_non_dict_state PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0131640Z sdk/tests/test_langgraph_integration.py::TestSummarizeState::test_none_state PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0144501Z sdk/tests/test_mcp_registry_metadata.py::test_mcp_registry_metadata_matches_package PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0156313Z sdk/tests/test_mcp_registry_metadata.py::test_mcp_registry_metadata_declares_required_env_vars PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0168457Z sdk/tests/test_mcp_registry_metadata.py::test_mcp_glama_packaging_files_are_present PASSED [ 77%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0181856Z sdk/tests/test_mcp_registry_metadata.py::test_mcp_smithery_config_matches_runtime_contract PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0195133Z sdk/tests/test_mcp_registry_metadata.py::test_glama_claim_file_declares_maintainer PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0212651Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_cost_attribute PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0227486Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_custom_tracer_name PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0243146Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_end_without_start_ignored PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0258238Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_metadata_as_attributes PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0273627Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_parent_child_linking PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0288433Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_parent_id_attribute PASSED [ 78%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0303777Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_point_event PASSED  [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0320669Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_shutdown_ends_orphans PASSED [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0336048Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_span_lifecycle PASSED [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0351008Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_span_with_error PASSED [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0368078Z sdk/tests/test_otel_sink.py::TestOtelTraceSink::test_string_error_handling PASSED [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0386048Z sdk/tests/test_production.py::TestTracerMetadata::test_metadata_attached_to_events PASSED [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0402126Z sdk/tests/test_production.py::TestTracerMetadata::test_no_metadata_when_empty PASSED [ 79%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0430361Z sdk/tests/test_production.py::TestTracerSamplingRate::test_sampling_concurrent_traces_isolated PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0443776Z sdk/tests/test_production.py::TestTracerSamplingRate::test_sampling_nested_traces_isolated PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0455967Z sdk/tests/test_production.py::TestTracerSamplingRate::test_sampling_one_emits_all PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0489073Z sdk/tests/test_production.py::TestTracerSamplingRate::test_sampling_partial PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.0501875Z sdk/tests/test_production.py::TestTracerSamplingRate::test_sampling_zero_emits_nothing PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.3538299Z sdk/tests/test_production.py::TestHttpSinkGzip::test_gzip_compressed PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.6570958Z sdk/tests/test_production.py::TestHttpSinkGzip::test_idempotency_key_present PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:52.9602665Z sdk/tests/test_production.py::TestHttpSinkGzip::test_no_compression PASSED [ 80%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.6646376Z sdk/tests/test_production.py::TestHttpSinkGzip::test_unique_idempotency_keys PASSED [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.6868076Z sdk/tests/test_production.py::TestExportJson::test_export_json PASSED    [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.6885710Z sdk/tests/test_production.py::TestExportCsv::test_export_csv PASSED      [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.6899685Z sdk/tests/test_production.py::TestExportCsv::test_export_csv_empty PASSED [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.6917021Z sdk/tests/test_production.py::TestExportJsonl::test_export_jsonl_normalizes PASSED [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.6931802Z sdk/tests/test_production.py::TestCliEvalCi::test_eval_ci_flag_exists PASSED [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7021825Z sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_includes_current_release_notes PASSED [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7089428Z sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_links_unreleased_guide_to_main PASSED [ 81%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7156928Z sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_links_unreleased_sample_incident_to_main PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7225051Z sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_links_unreleased_release_cadence_to_main PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7295512Z sdk/tests/test_pypi_readme_sync.py::test_committed_pypi_readme_is_in_sync PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7314911Z sdk/tests/test_quickstart.py::TestQuickstart::test_cli_quickstart_can_write_file PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7328272Z sdk/tests/test_quickstart.py::TestQuickstart::test_cli_quickstart_prints_snippet PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7341682Z sdk/tests/test_quickstart.py::TestQuickstart::test_default_trace_file_uses_agentguard_directory PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7353357Z sdk/tests/test_quickstart.py::TestQuickstart::test_invalid_framework_returns_error PASSED [ 82%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7366041Z sdk/tests/test_quickstart.py::TestQuickstart::test_langgraph_quickstart_is_local PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7379051Z sdk/tests/test_quickstart.py::TestQuickstart::test_openai_quickstart_json_is_parseable PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7392246Z sdk/tests/test_quickstart.py::TestQuickstart::test_raw_quickstart_includes_local_only_starter PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7421407Z sdk/tests/test_quickstart.py::TestQuickstart::test_snippets_escape_service_and_trace_file_literals PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7438520Z sdk/tests/test_quickstart.py::TestQuickstart::test_write_creates_default_framework_file PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7456716Z sdk/tests/test_quickstart.py::TestQuickstart::test_write_force_overwrites_custom_output_and_json_reports_path PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7472499Z sdk/tests/test_quickstart.py::TestQuickstart::test_write_refuses_to_overwrite_without_force PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7486764Z sdk/tests/test_quickstart.py::TestQuickstart::test_write_reports_filesystem_errors_cleanly PASSED [ 83%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.7503590Z sdk/tests/test_quickstart.py::TestQuickstart::test_written_next_commands_quote_paths_with_spaces PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.8534672Z sdk/tests/test_quickstart.py::TestQuickstart::test_written_raw_quickstart_runs_and_reports_guard_events PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.8828199Z sdk/tests/test_release_discussion_category.py::TestDiscussionCategoryResolution::test_cli_exits_nonzero_for_error_payload PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9110929Z sdk/tests/test_release_discussion_category.py::TestDiscussionCategoryResolution::test_cli_prints_node_id_for_valid_category PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9122710Z sdk/tests/test_release_discussion_category.py::TestDiscussionCategoryResolution::test_extracts_matching_category_node_id PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9134267Z sdk/tests/test_release_discussion_category.py::TestDiscussionCategoryResolution::test_rejects_github_error_object PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9147571Z sdk/tests/test_release_discussion_category.py::TestDiscussionCategoryResolution::test_rejects_missing_or_blank_node_id PASSED [ 84%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9164796Z sdk/tests/test_repo_config.py::test_find_repo_config_walks_upward PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9180515Z sdk/tests/test_repo_config.py::test_load_repo_config_resolves_relative_trace_path PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9195606Z sdk/tests/test_repo_config.py::test_load_repo_config_ignores_unknown_keys PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9214324Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_invalid_service PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9233536Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_invalid_top_level_shape PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9259710Z sdk/tests/test_repo_config.py::test_load_repo_config_includes_path_in_json_errors PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9283425Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_invalid_profile PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9304770Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_boolean_numerics[payload0-budget_usd] PASSED [ 85%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9321257Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_boolean_numerics[payload1-warn_pct] PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9341124Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_boolean_numerics[payload2-loop_max] PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9361134Z sdk/tests/test_repo_config.py::test_load_repo_config_rejects_boolean_numerics[payload3-retry_max] PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9378214Z sdk/tests/test_repo_config.py::test_load_repo_config_safely_returns_error_string PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9394309Z sdk/tests/test_reporting.py::TestIncidentSummary::test_budget_exceeded_summary PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9406962Z sdk/tests/test_reporting.py::TestIncidentSummary::test_error_incident_keeps_legacy_estimate_without_ledger_overwrite PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9419055Z sdk/tests/test_reporting.py::TestIncidentSummary::test_non_dict_error_marks_incident PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9432572Z sdk/tests/test_reporting.py::TestIncidentSummary::test_retry_limit_exceeded_sets_primary_cause PASSED [ 86%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9444971Z sdk/tests/test_reporting.py::TestIncidentSummary::test_warning_only_summary PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9458439Z sdk/tests/test_reporting.py::TestIncidentRendering::test_html_report_contains_title PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9474129Z sdk/tests/test_reporting.py::TestIncidentRendering::test_json_report_is_parseable PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9490439Z sdk/tests/test_reporting.py::TestIncidentRendering::test_markdown_report_contains_upgrade_path PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9503174Z sdk/tests/test_savings.py::TestNormalizeUsage::test_bool_values_are_treated_as_malformed PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9515326Z sdk/tests/test_savings.py::TestNormalizeUsage::test_normalizes_anthropic_usage_with_cache_fields PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9526964Z sdk/tests/test_savings.py::TestNormalizeUsage::test_normalizes_openai_usage_with_cache_details PASSED [ 87%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9539172Z sdk/tests/test_savings.py::TestNormalizeUsage::test_returns_none_for_missing_usage_shape PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9554641Z sdk/tests/test_savings.py::TestSummarizeSavings::test_accepts_trace_file_path PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9568049Z sdk/tests/test_savings.py::TestSummarizeSavings::test_estimated_usd_rounds_after_aggregating_multiple_traces PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9579921Z sdk/tests/test_savings.py::TestSummarizeSavings::test_ignores_malformed_usage_fields PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9592801Z sdk/tests/test_savings.py::TestSummarizeSavings::test_reports_estimated_loop_savings_once_per_trace PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9605274Z sdk/tests/test_savings.py::TestSummarizeSavings::test_reports_estimated_retry_savings_from_nested_cost PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9617567Z sdk/tests/test_savings.py::TestSummarizeSavings::test_reports_exact_anthropic_cache_savings PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9629996Z sdk/tests/test_savings.py::TestSummarizeSavings::test_reports_exact_openai_cache_savings PASSED [ 88%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9646600Z sdk/tests/test_savings.py::TestSummarizeSavings::test_unknown_model_does_not_warn_during_reporting_summary PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9657793Z sdk/tests/test_schemas.py::TestSchemaExports::test_schemas_importable_from_package_root PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9668986Z sdk/tests/test_schemas.py::TestSchemaExports::test_supported_profiles_matches_runtime PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9680433Z sdk/tests/test_schemas.py::TestInitConfig::test_defaults_validate PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9691672Z sdk/tests/test_schemas.py::TestInitConfig::test_valid_full_config PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9703423Z sdk/tests/test_schemas.py::TestInitConfig::test_warn_pct_out_of_range_rejected PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9718690Z sdk/tests/test_schemas.py::TestInitConfig::test_local_only_with_api_key_rejected PASSED [ 89%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9733045Z sdk/tests/test_schemas.py::TestInitConfig::test_api_key_with_newline_rejected PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9744250Z sdk/tests/test_schemas.py::TestInitConfig::test_negative_budget_rejected PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9755374Z sdk/tests/test_schemas.py::TestInitConfig::test_unknown_profile_rejected PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9766441Z sdk/tests/test_schemas.py::TestInitConfig::test_zero_loop_max_rejected PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9777621Z sdk/tests/test_schemas.py::TestInitConfig::test_negative_retry_max_rejected PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9788758Z sdk/tests/test_schemas.py::TestInitConfig::test_empty_string_service_rejected PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9801107Z sdk/tests/test_schemas.py::TestInitConfig::test_to_dict_roundtrips_through_init_signature PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9811947Z sdk/tests/test_schemas.py::TestRepoConfig::test_defaults_validate PASSED [ 90%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9822793Z sdk/tests/test_schemas.py::TestRepoConfig::test_valid_full_config PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9833815Z sdk/tests/test_schemas.py::TestRepoConfig::test_to_dict_omits_unset_fields PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9845039Z sdk/tests/test_schemas.py::TestRepoConfig::test_negative_budget_rejected PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9856583Z sdk/tests/test_schemas.py::TestRepoConfig::test_unknown_profile_rejected PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9867977Z sdk/tests/test_schemas.py::TestRepoConfig::test_warn_pct_out_of_range_rejected PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9879021Z sdk/tests/test_schemas.py::TestProfileDefaults::test_valid PASSED        [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9890716Z sdk/tests/test_schemas.py::TestProfileDefaults::test_zero_loop_max_rejected PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9901962Z sdk/tests/test_schemas.py::TestProfileDefaults::test_warn_pct_out_of_range_rejected PASSED [ 91%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9913117Z sdk/tests/test_schemas.py::TestProfileDefaults::test_negative_retry_max_rejected PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9925801Z sdk/tests/test_schemas.py::TestProfileDefaults::test_matches_runtime_profile_defaults PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9940145Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_changed_test_file_runs_directly PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9952839Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_conftest_change_runs_hosted_ingest_regressions PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9966529Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_integration_dashboard_script_change_runs_helper_tests PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9978151Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_mcp_server_change_runs_mcp_test_step PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:53.9990794Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_non_test_sdk_script_change_gets_import_check PASSED [ 92%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0002785Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_preflight_script_change_runs_its_own_tests PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0014288Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_readme_sync_inputs_add_sync_checks PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0027640Z sdk/tests/test_sdk_preflight.py::TestBuildPlan::test_sdk_code_change_adds_targeted_checks PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0501351Z sdk/tests/test_sdk_preflight.py::TestPlanCli::test_plan_output_is_json PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0520094Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_changelog_reports_missing_version PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0549899Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_metadata_reports_version_drift PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0570650Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_reports_latest_drift PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0588759Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_reports_missing_npm PASSED [ 93%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0607086Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_reports_unpublished_version PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0636611Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_uses_env_command_by_default PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0654598Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_pypi_readme_reports_generation_errors PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0717148Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_release_markers_reports_mismatch PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.0790721Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardHelpers::test_collect_findings_is_clean_for_current_repo PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1319892Z sdk/tests/test_sdk_release_guard.py::TestReleaseGuardCli::test_json_output_is_parseable PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1335634Z sdk/tests/test_skillpack.py::TestSkillpack::test_all_targets_json_is_parseable PASSED [ 94%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1355034Z sdk/tests/test_skillpack.py::TestSkillpack::test_cli_skillpack_can_write_target_specific_pack PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1367184Z sdk/tests/test_skillpack.py::TestSkillpack::test_invalid_budget_returns_error PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1379065Z sdk/tests/test_skillpack.py::TestSkillpack::test_invalid_service_returns_error PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1391594Z sdk/tests/test_skillpack.py::TestSkillpack::test_invalid_target_returns_error PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1403373Z sdk/tests/test_skillpack.py::TestSkillpack::test_invalid_trace_file_returns_error PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1414705Z sdk/tests/test_skillpack.py::TestSkillpack::test_target_choices_stay_stable PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1427786Z sdk/tests/test_skillpack.py::TestSkillpack::test_target_specific_text_mentions_expected_path PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1450839Z sdk/tests/test_skillpack.py::TestSkillpack::test_write_creates_default_pack PASSED [ 95%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1470007Z sdk/tests/test_skillpack.py::TestSkillpack::test_write_refuses_to_overwrite_without_force PASSED [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1510115Z sdk/tests/test_smoke.py::test_smoke PASSED                               [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1579002Z sdk/tests/test_sticky_agent_proof.py::test_sticky_agent_proof_writes_local_and_hosted_artifacts PASSED [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1637572Z sdk/tests/test_sticky_agent_proof.py::test_sticky_agent_proof_hosted_ndjson_matches_ingest_contract PASSED [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1653792Z sdk/tests/test_tracing.py::test_trace_emits_events PASSED                [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1666861Z sdk/tests/test_tracing.py::TestTraceContextCost::test_cost_accumulates_within_trace PASSED [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1678446Z sdk/tests/test_tracing.py::TestTraceContextCost::test_cost_property_lazy_init PASSED [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1690592Z sdk/tests/test_tracing.py::TestTraceContextCost::test_cost_property_same_instance PASSED [ 96%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1703336Z sdk/tests/test_tracing.py::TestEmitCostUsd::test_cost_usd_included_when_set PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1715375Z sdk/tests/test_tracing.py::TestEmitCostUsd::test_cost_usd_omitted_when_none PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1727527Z sdk/tests/test_tracing.py::TestEmitCostUsd::test_cost_usd_zero_is_included PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1740311Z sdk/tests/test_tracing.py::TestSanitizeData::test_sanitize_data_coerces_non_serializable_values PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1759878Z sdk/tests/test_tracing.py::TestSanitizeData::test_sanitize_data_preserves_top_level_keys_when_truncating PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1773760Z sdk/tests/test_tracing.py::TestSanitizeData::test_sanitize_data_wraps_non_mapping_payloads PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1795633Z sdk/tests/test_tracing.py::TestSanitizeData::test_span_data_is_sanitized_on_emit PASSED [ 97%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1809764Z sdk/tests/test_tracing.py::TestSessionId::test_tracer_emits_session_id_on_all_events PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1832926Z sdk/tests/test_tracing.py::TestTracerGuardDispatch::test_buggy_check_guard_type_error_fails_loudly PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1848885Z sdk/tests/test_tracing.py::TestTracerGuardDispatch::test_zero_arg_check_guard_is_still_supported PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1862167Z sdk/tests/test_v1_coverage.py::TestStdoutSink::test_emit_prints_json PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1873776Z sdk/tests/test_v1_coverage.py::TestStdoutSink::test_repr PASSED          [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.1991717Z sdk/tests/test_v1_coverage.py::TestJsonlFileSinkEdgeCases::test_concurrent_writes PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2008128Z sdk/tests/test_v1_coverage.py::TestCliSubcommands::test_eval_ci_passes PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2023476Z sdk/tests/test_v1_coverage.py::TestCliSubcommands::test_eval_passes PASSED [ 98%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2039002Z sdk/tests/test_v1_coverage.py::TestCliSubcommands::test_report PASSED    [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2054346Z sdk/tests/test_v1_coverage.py::TestCliSubcommands::test_summarize PASSED [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2078545Z sdk/tests/test_v1_coverage.py::TestHttpSinkUrlValidation::test_allows_clean_url PASSED [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2100181Z sdk/tests/test_v1_coverage.py::TestHttpSinkUrlValidation::test_allows_url_with_non_secret_params PASSED [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2119014Z sdk/tests/test_v1_coverage.py::TestHttpSinkUrlValidation::test_rejects_key_in_query_string PASSED [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2138105Z sdk/tests/test_v1_coverage.py::TestHttpSinkUrlValidation::test_rejects_token_in_query_string PASSED [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:54.2152708Z sdk/tests/test_v1_coverage.py::TestTracerGuardsWithBudgetGuard::test_tracer_with_budget_guard PASSED [ 99%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4166190Z sdk/tests/test_v1_coverage.py::TestAsyncTracerMetadata::test_async_tracer_does_not_crash PASSED [100%]
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4166738Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4166904Z =================================== FAILURES ===================================
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4167445Z ______________________ test_actionlint_workflow_is_wired _______________________
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4168034Z sdk/tests/test_ci_guardrails.py:16: in test_actionlint_workflow_is_wired
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4168636Z     assert "actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5" in text
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4171351Z E   assert 'actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5' in 'name: Actionlint\n\non:\n  pull_request:\n    paths:\n      - ".github/workflows/**"\n  push:\n    branches:\n      - main\n    paths:\n      - ".github/workflows/**"\n\npermissions:\n  contents: read\n\njobs:\n  actionlint:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6\n      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0\n        with:\n          go-version: stable\n      - run: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12\n      - run: actionlint -shellcheck=\n'
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4173553Z ================================ tests coverage ================================
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4174046Z _______________ coverage: platform linux, python 3.12.13-final-0 _______________
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4174380Z 
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4174543Z Name                                       Stmts   Miss  Cover   Missing
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4174967Z ------------------------------------------------------------------------
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4175407Z sdk/agentguard/__init__.py                    18      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4175707Z sdk/agentguard/_trace_naming.py               16      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4176010Z sdk/agentguard/atracing.py                    72      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4176340Z sdk/agentguard/cli.py                        118      1    99%   149
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4176655Z sdk/agentguard/cost.py                        51      1    98%   109
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4177146Z sdk/agentguard/decision.py                   214     30    86%   91, 97, 100-101, 110, 112, 116-117, 125, 149, 156-161, 167, 169, 181, 184, 203, 205, 209, 234, 540-542, 549, 551, 773, 780
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4177838Z sdk/agentguard/demo.py                        95      2    98%   46, 177
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4178183Z sdk/agentguard/doctor.py                     136     15    89%   57, 121, 159, 223-230, 232, 254-257
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4178669Z sdk/agentguard/escalation.py                 225     23    90%   51, 57, 69, 81, 94, 105, 152, 154, 161-164, 166, 168, 181, 186, 244, 307, 362, 390-392, 398, 411, 414
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4179112Z sdk/agentguard/evaluation.py                 264      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4179410Z sdk/agentguard/export.py                      31      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4179886Z sdk/agentguard/first_run.py                   10      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4180199Z sdk/agentguard/guards.py                     284      3    99%   164, 232, 237
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4180624Z sdk/agentguard/instrument.py                 280     32    89%   62, 205-219, 226, 229, 256-257, 276, 297, 342-349, 366, 420, 479, 482, 519, 540
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4181045Z sdk/agentguard/integrations/__init__.py        4      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4181356Z sdk/agentguard/integrations/crewai.py         79      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4181910Z sdk/agentguard/integrations/langchain.py     226     61    73%   15, 39, 66-68, 80, 91-95, 110-111, 150-161, 173-177, 191, 208-219, 223-224, 239-240, 249-253, 281-285, 306, 313-318, 325-329, 342-343, 360-361
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4182468Z sdk/agentguard/integrations/langgraph.py      43      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4182765Z sdk/agentguard/profiles.py                    15      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4183086Z sdk/agentguard/quickstart.py                 169      5    97%   50-52, 70, 214
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4183561Z sdk/agentguard/repo_config.py                 80      8    90%   18, 31, 38-39, 56, 71, 82, 88
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4183940Z sdk/agentguard/reporting.py                  129      7    95%   21, 46, 131, 253-258
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4184315Z sdk/agentguard/savings.py                    138      7    95%   29, 91, 136, 152, 156, 170, 178
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4184683Z sdk/agentguard/schemas.py                     96     11    89%   75, 78, 102, 109, 194-200
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4185019Z sdk/agentguard/setup.py                      101      3    97%   262-264
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4185324Z sdk/agentguard/sinks/__init__.py               3      0   100%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4185649Z sdk/agentguard/sinks/http.py                 175     12    93%   146-147, 344-350, 357-368
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4186005Z sdk/agentguard/sinks/otel.py                  98      6    94%   64, 152-153, 179, 198-199
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4186347Z sdk/agentguard/skillpack.py                  127      4    97%   63-65, 82
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4186713Z sdk/agentguard/tracing.py                    228     12    95%   104, 142, 164-170, 237-238, 264, 271
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4187088Z sdk/agentguard/usage.py                       91     17    81%   15, 17, 19, 58, 78, 87, 99-113
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4187422Z ------------------------------------------------------------------------
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4187686Z TOTAL                                       3616    260    93%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4187928Z Coverage XML written to file coverage.xml
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4188195Z Required test coverage of 80% reached. Total coverage: 92.81%
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4188493Z =========================== short test summary info ============================
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4190524Z FAILED sdk/tests/test_ci_guardrails.py::test_actionlint_workflow_is_wired - assert 'actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5' in 'name: Actionlint\n\non:\n  pull_request:\n    paths:\n      - ".github/workflows/**"\n  push:\n    branches:\n      - main\n    paths:\n      - ".github/workflows/**"\n\npermissions:\n  contents: read\n\njobs:\n  actionlint:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6\n      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0\n        with:\n          go-version: stable\n      - run: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12\n      - run: actionlint -shellcheck=\n'
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4192461Z ======================== 1 failed, 760 passed in 12.89s ========================
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.4938372Z ##[error]Process completed with exit code 1.
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5032745Z Post job cleanup.
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5717930Z [command]/usr/bin/git version
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5747473Z git version 2.54.0
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5775126Z Temporarily overriding HOME='/home/runner/work/_temp/681e4091-5b0f-45e6-ad30-4f96b7110e74' before making global git config changes
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5775829Z Adding repository directory to the temporary git global config as a safe directory
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5779244Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/agent47/agent47
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5803621Z Removing SSH command configuration
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5808448Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.5835403Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6019207Z Removing HTTP extra header
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6023359Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6050046Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6230218Z Removing includeIf entries pointing to credentials config files
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6235955Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6255148Z includeif.gitdir:/home/runner/work/agent47/agent47/.git.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6255755Z includeif.gitdir:/home/runner/work/agent47/agent47/.git/worktrees/*.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6256222Z includeif.gitdir:/github/workspace/.git.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6256503Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6262818Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/agent47/agent47/.git.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6280382Z /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6287940Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/agent47/agent47/.git.path /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6314873Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/agent47/agent47/.git/worktrees/*.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6332207Z /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6339216Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/agent47/agent47/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6365752Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6382930Z /github/runner_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6388920Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6413159Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6430110Z /github/runner_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6437449Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6463634Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6638735Z Removing credentials config '/home/runner/work/_temp/git-credentials-1b67c279-77d4-4fe1-a6de-fc0ae253808a.config'
+test (3.12)	UNKNOWN STEP	2026-05-23T12:32:55.6765401Z Cleaning up orphan processes

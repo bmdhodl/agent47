@@ -1,0 +1,53 @@
+$ git log -1 --format=%cr -- ops/03-ROADMAP_NOW_NEXT_LATER.md
+2 weeks ago
+
+exit_code=0
+
+$ git log -1 --format=%cr -- ops/02-ARCHITECTURE.md
+3 weeks ago
+
+exit_code=0
+
+$ gh release view --json tagName,publishedAt,url,name
+{"name":"AgentGuard v1.2.10","publishedAt":"2026-05-02T15:48:03Z","tagName":"v1.2.10","url":"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"}
+
+exit_code=0
+
+$ python -m pip index versions agentguard47
+agentguard47 (1.2.10)
+Available versions: 1.2.10, 1.2.9, 1.2.8, 1.2.6, 1.2.5, 1.2.4, 1.2.3, 1.2.2, 1.2.1, 1.2.0, 1.0.0, 0.8.0, 0.7.0, 0.6.0, 0.5.0, 0.4.0, 0.3.0, 0.2.0
+  INSTALLED: 1.2.10
+  LATEST:    1.2.10
+WARNING: pip index is currently an experimental command. It may be removed/changed in a future release without prior warning.
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+
+exit_code=0
+
+$ python -c import tomllib; print(tomllib.load(open("sdk/pyproject.toml","rb"))["project"]["version"])
+1.2.10
+
+exit_code=0
+
+$ npm view @agentguard47/mcp-server version time.modified
+FileNotFoundError(2, 'The system cannot find the file specified', None, 2, None)
+exit_code=-127
+
+$ node -e const p=require("./mcp-server/package.json"); const s=require("./mcp-server/server.json"); console.log(JSON.stringify({package:p.version,server:s.version}))
+{"package":"0.2.2","server":"0.2.2"}
+
+exit_code=0
+
+$ GET mcp_registry https://registry.modelcontextprotocol.io/v0/servers/io.github.bmdhodl/agentguard47
+<HTTPError 404: 'Not Found'>
+exit_code=-1
+
+$ GET glama https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47
+<HTTPError 403: 'Forbidden'>
+exit_code=-1
+
+$ npm.cmd view @agentguard47/mcp-server version time.modified
+version = '0.2.2'
+time.modified = '2026-05-04T19:38:49.604Z'
+exit_code=0

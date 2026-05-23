@@ -1,0 +1,50 @@
+{
+  "open_pr_count": 25,
+  "active_unresolved_non_outdated_threads": 0,
+  "pr_506": {
+    "reviewDecision": "REVIEW_REQUIRED",
+    "mergeStateStatus": "BLOCKED",
+    "headRefOid": "c121f963968b72ca0bab3648c66aed019cab8762"
+  },
+  "failing_or_pending_prs": [
+    {
+      "number": 508,
+      "title": "chore(deps): bump actions/setup-go from 5.6.0 to 6.4.0",
+      "failures": [
+        [
+          "test (3.9)",
+          "CANCELLED"
+        ],
+        [
+          "test (3.9)",
+          "CANCELLED"
+        ],
+        [
+          "test (3.12)",
+          "FAILURE"
+        ],
+        [
+          "test (3.10)",
+          "CANCELLED"
+        ],
+        [
+          "test (3.11)",
+          "FAILURE"
+        ],
+        [
+          "test (3.12)",
+          "CANCELLED"
+        ]
+      ],
+      "pending": []
+    }
+  ],
+  "tracked_issues": [
+    "- #507: security: sdk pip-audit vulns (pypdf, pytest, requests, urllib3, etc.) (https://github.com/bmdhodl/agent47/issues/507)",
+    "- #490: Dogfood operator rolling proof log (https://github.com/bmdhodl/agent47/issues/490)",
+    "- #473: [ops-cadence] Docs need refresh (https://github.com/bmdhodl/agent47/issues/473)",
+    "- #469: security: sdk pip-audit findings (pypdf, python-multipart, urllib3, etc.) (https://github.com/bmdhodl/agent47/issues/469)",
+    "- #468: [release-cadence] Active release queue (https://github.com/bmdhodl/agent47/issues/468)",
+    "- #464: Track Managed Agents Dreaming cost surface (https://github.com/bmdhodl/agent47/issues/464)"
+  ]
+}

@@ -1,0 +1,2 @@
+PYTHONPATH=C:\Users\patri\.codex\worktrees\a965\agent47\sdk
+C:\Users\patri\.codex\worktrees\a965\agent47\sdk\agentguard\__init__.py

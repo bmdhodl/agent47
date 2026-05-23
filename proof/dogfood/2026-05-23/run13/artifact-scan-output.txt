@@ -1,0 +1,2 @@
+artifact files scanned: 32
+artifact scan passed: no BOM, no NUL bytes, JSON artifacts parse
