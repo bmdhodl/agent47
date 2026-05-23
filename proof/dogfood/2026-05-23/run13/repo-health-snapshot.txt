@@ -46,5 +46,12 @@
     "- #469: security: sdk pip-audit findings (pypdf, python-multipart, urllib3, etc.) (https://github.com/bmdhodl/agent47/issues/469)",
     "- #468: [release-cadence] Active release queue (https://github.com/bmdhodl/agent47/issues/468)",
     "- #464: Track Managed Agents Dreaming cost surface (https://github.com/bmdhodl/agent47/issues/464)"
-  ]
+  ],
+  "pr_506_final": {
+    "reviewDecision": "REVIEW_REQUIRED",
+    "mergeStateStatus": "BLOCKED",
+    "headRefOid": "b01b448b2d96df6cb749509c50e3f67613accffa",
+    "active_unresolved_non_outdated_threads": 0,
+    "review_comments": 0
+  }
 }

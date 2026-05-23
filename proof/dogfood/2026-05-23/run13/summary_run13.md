@@ -35,7 +35,7 @@ Real enforcement. This was not stdout-only proof: raw JSONL traces and incident/
 ## Repo health
 - Open PRs: 25.
 - Active unresolved non-outdated review threads across open PRs: 0.
-- PR #506 status: `REVIEW_REQUIRED` / `BLOCKED` on `c121f963968b72ca0bab3648c66aed019cab8762`.
+- PR #506 final status: `REVIEW_REQUIRED` / `BLOCKED` on `b01b448b2d96df6cb749509c50e3f67613accffa`; checks green; final review sweep found `0` active unresolved non-outdated threads and `0` review comments.
 - Failing/pending PR checks: [
   {
     "number": 508,

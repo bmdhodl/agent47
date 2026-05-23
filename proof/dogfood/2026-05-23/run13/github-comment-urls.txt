@@ -1,3 +1,5 @@
 ﻿issue_490=https://github.com/bmdhodl/agent47/issues/490#issuecomment-4526479280
 pr_506=https://github.com/bmdhodl/agent47/pull/506#issuecomment-4526479317
 pr_508=https://github.com/bmdhodl/agent47/pull/508#issuecomment-4526479352
+pr_506_final=https://github.com/bmdhodl/agent47/pull/506#issuecomment-4526491089
+issue_490_final=https://github.com/bmdhodl/agent47/issues/490#issuecomment-4526491121

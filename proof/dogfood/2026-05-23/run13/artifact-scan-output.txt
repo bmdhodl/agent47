@@ -1,2 +1,5 @@
-artifact files scanned: 32
-artifact scan passed: no BOM, no NUL bytes, JSON artifacts parse
+artifact files scanned: 41
+problems:
+proof\dogfood\2026-05-23\run13\github-comment-urls.txt: UTF-8 BOM
+proof\dogfood\2026-05-23\run13\github-proof-comment.md: UTF-8 BOM
+proof\dogfood\2026-05-23\run13\pr-508-triage-comment.md: UTF-8 BOM
