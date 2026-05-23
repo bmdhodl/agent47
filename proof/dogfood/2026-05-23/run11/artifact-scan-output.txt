@@ -1,0 +1,1 @@
+﻿artifact scan passed: UTF-8, no BOM, no NUL bytes, JSON parse passed
