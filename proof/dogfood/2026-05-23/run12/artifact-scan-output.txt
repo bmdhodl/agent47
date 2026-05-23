@@ -1,0 +1,5 @@
+artifact scan passed
+- no UTF-8 BOM
+- no NUL bytes
+- no local checkout path
+- JSON and JSONL artifacts parse

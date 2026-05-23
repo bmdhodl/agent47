@@ -1,0 +1,312 @@
+
+## where agentguard
+where.exe agentguard
+C:\Python313\Scripts\agentguard.exe
+exit_code=0
+
+
+## installed agentguard doctor
+agentguard doctor
+AgentGuard doctor
+No dashboard. No network calls. Local verification only.
+
+[ok] Python: 3.13.2
+[ok] agentguard47: 1.2.10
+[ok] init(local_only=True): wrote 4 events to agentguard_doctor_trace.jsonl
+[ok] Optional integrations detected: openai, anthropic, langchain, langgraph, crewai
+
+Suggested repo config (.agentguard.json):
+{
+  "profile": "coding-agent",
+  "service": "my-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+
+Suggested next step:
+import agentguard
+
+agentguard.init(
+    service="my-agent",
+    budget_usd=5.00,
+    local_only=True,
+)
+
+Helpful commands:
+  agentguard demo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+  agentguard report agentguard_doctor_trace.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli demo
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+  python -m agentguard.cli report agentguard_doctor_trace.jsonl
+
+Integration hints:
+  - openai: init() can auto-patch installed OpenAI clients.
+  - anthropic: init() can auto-patch installed Anthropic clients.
+  - langchain: Use agentguard.integrations.langchain.AgentGuardCallbackHandler for callback-based tracing.
+  - langgraph: Use agentguard.integrations.langgraph.guarded_node for node-level enforcement.
+  - crewai: Use agentguard.integrations.crewai.AgentGuardCrewHandler for CrewAI callbacks.
+exit_code=0
+
+## repo doctor
+python -m agentguard.cli doctor
+AgentGuard doctor
+No dashboard. No network calls. Local verification only.
+
+[ok] Python: 3.13.2
+[ok] agentguard47: 1.2.10
+[ok] init(local_only=True): wrote 4 events to agentguard_doctor_trace.jsonl
+[ok] Optional integrations detected: openai, anthropic, langchain, langgraph, crewai
+
+Suggested repo config (.agentguard.json):
+{
+  "profile": "coding-agent",
+  "service": "my-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+
+Suggested next step:
+import agentguard
+
+agentguard.init(
+    service="my-agent",
+    budget_usd=5.00,
+    local_only=True,
+)
+
+Helpful commands:
+  agentguard demo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+  agentguard report agentguard_doctor_trace.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli demo
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+  python -m agentguard.cli report agentguard_doctor_trace.jsonl
+
+Integration hints:
+  - openai: init() can auto-patch installed OpenAI clients.
+  - anthropic: init() can auto-patch installed Anthropic clients.
+  - langchain: Use agentguard.integrations.langchain.AgentGuardCallbackHandler for callback-based tracing.
+  - langgraph: Use agentguard.integrations.langgraph.guarded_node for node-level enforcement.
+  - crewai: Use agentguard.integrations.crewai.AgentGuardCrewHandler for CrewAI callbacks.
+exit_code=0
+
+## repo demo
+python -m agentguard.cli demo
+AgentGuard offline demo
+No API keys. No dashboard. No network calls.
+
+1. BudgetGuard: stopping runaway spend
+  warning: Budget warning: cost 84% of limit reached (threshold: 80%)
+  warning fired at $0.84
+  stopped on call 9: cost $1.08 exceeded $1.00
+
+2. LoopGuard: stopping repeated tool calls
+  tool.search attempt 1 allowed
+  tool.search attempt 2 allowed
+  stopped on repeated tool call: Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+
+3. RetryGuard: stopping retry storms
+  fetch_docs retry 1 allowed
+  fetch_docs retry 2 allowed
+  stopped retry storm: Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+
+Local proof complete.
+Trace written to: agentguard_demo_traces.jsonl
+View summary: agentguard report agentguard_demo_traces.jsonl
+View incident report: agentguard incident agentguard_demo_traces.jsonl
+
+Next: add AgentGuard to a repo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli report agentguard_demo_traces.jsonl
+  python -m agentguard.cli incident agentguard_demo_traces.jsonl
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.
+exit_code=0
+
+## coding agent review loop
+python examples/coding_agent_review_loop.py
+AgentGuard coding-agent review loop proof
+No API keys. No dashboard. No network calls.
+Review attempt 1: 3300 tokens -> $0.0135 (running total $0.0135)
+Review attempt 2: 4100 tokens -> $0.0170 (running total $0.0305)
+BudgetGuard stopped review loop on attempt 3: 4900 tokens -> $0.0205
+Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)
+Retry attempt 1: apply_patch still retrying
+Retry attempt 2: apply_patch still retrying
+Retry attempt 3: apply_patch still retrying
+RetryGuard stopped retry storm on attempt 4: Retry limit exceeded: apply_patch attempted 4 times (limit: 3)
+Trace written to coding_agent_review_loop_traces.jsonl
+Next: agentguard incident coding_agent_review_loop_traces.jsonl
+exit_code=0
+
+## demo report
+python -m agentguard.cli report agentguard_demo_traces.jsonl
+AgentGuard report
+  Total events: 36
+  Spans: 6  Events: 30
+  Approx run time: 3.2 ms
+  Reasoning steps: 9
+  Tool results: 0
+  LLM results: 9
+  Estimated cost: $1.0800
+  Savings ledger: exact 0 tokens / $0.0000, estimated 500 tokens / $0.1200
+  Loop guard triggered: 1 time(s)
+  Guard events:
+    guard.budget_warning: 1
+    guard.budget_exceeded: 1
+    guard.loop_detected: 1
+    guard.retry_limit_exceeded: 1
+  Incident hint: rerun with `agentguard incident` for a shareable incident report
+
+Traced by AgentGuard | agentguard47.com
+exit_code=0
+
+## demo incident
+python -m agentguard.cli incident agentguard_demo_traces.jsonl
+# AgentGuard Incident Report
+
+Status: **incident**
+Severity: **critical**
+Primary cause: **loop_detected**
+
+## Summary
+
+- Total events: 36
+- Spans: 6
+- Events: 30
+- Duration: 3.2 ms
+- Estimated cost: $1.0800
+- Guard events: 4
+- Errors: 0
+- Exact savings: $0.0000
+- Estimated savings: $0.1200
+
+## Savings Ledger
+
+- Exact tokens saved: 0
+- Estimated tokens saved: 500
+- Exact dollars saved: $0.0000
+- Estimated dollars saved: $0.1200
+- Savings reasons:
+  - `budget_overrun_stopped` (estimated): 500 tokens / $0.1200 across 1 occurrence(s)
+
+## Guard Events
+
+- `guard.budget_warning` (warning)
+- `guard.budget_exceeded` (critical): Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)
+- `guard.loop_detected` (critical): Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+- `guard.retry_limit_exceeded` (critical): Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+
+## Recommended Next Steps
+
+- Tighten LoopGuard or FuzzyLoopGuard thresholds around the repeated tool path.
+- Add a cheaper fallback or deterministic exit when the same tool repeats.
+- Review the trace timeline to confirm the failure path before widening limits.
+- Keep one-off investigations local; add HttpSink only when future incidents need retained history, alerts, or team-visible follow-up.
+
+## Upgrade Path
+
+Keep this report local if it is a one-off investigation. Add hosted ingest only when future incidents need retained history, alerts, spend trends, or team-visible follow-up:
+
+```python
+from agentguard import Tracer, HttpSink
+
+tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_..."))
+```
+exit_code=0
+
+## review incident
+python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl
+# AgentGuard Incident Report
+
+Status: **incident**
+Severity: **critical**
+Primary cause: **retry_limit_exceeded**
+
+## Summary
+
+- Total events: 14
+- Spans: 4
+- Events: 9
+- Duration: 1.2 ms
+- Estimated cost: $0.1020
+- Guard events: 2
+- Errors: 0
+- Exact savings: $0.0000
+- Estimated savings: $0.0205
+
+## Savings Ledger
+
+- Exact tokens saved: 0
+- Estimated tokens saved: 0
+- Exact dollars saved: $0.0000
+- Estimated dollars saved: $0.0205
+- Savings reasons:
+  - `budget_overrun_stopped` (estimated): 0 tokens / $0.0205 across 1 occurrence(s)
+
+## Guard Events
+
+- `guard.budget_exceeded` (critical)
+- `guard.retry_limit_exceeded` (critical)
+
+## Recommended Next Steps
+
+- Add exponential backoff or a deterministic fallback before retrying the same tool.
+- Treat repeated upstream failures as a stop condition instead of widening the retry ceiling.
+- Review the trace timeline to confirm the failure path before widening limits.
+- Keep one-off investigations local; add HttpSink only when future incidents need retained history, alerts, or team-visible follow-up.
+
+## Upgrade Path
+
+Keep this report local if it is a one-off investigation. Add hosted ingest only when future incidents need retained history, alerts, spend trends, or team-visible follow-up:
+
+```python
+from agentguard import Tracer, HttpSink
+
+tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_..."))
+```
+exit_code=0
+
+## focused tests
+python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 35 items
+
+sdk\tests\test_demo.py ...                                               [  8%]
+sdk\tests\test_doctor.py .........                                       [ 34%]
+sdk\tests\test_cli_report.py .........                                   [ 60%]
+sdk\tests\test_example_starters.py .........                             [ 85%]
+sdk\tests\test_mcp_registry_metadata.py .....                            [100%]
+
+============================= 35 passed in 1.37s ==============================
+exit_code=0
+
+## release guard
+python scripts/sdk_release_guard.py --check-mcp-npm
+Release guard passed.
+exit_code=0
+
+## import binding rerun
+python -c 'import agentguard; print(agentguard.__file__)'
+<repo>\sdk\agentguard\__init__.py
+exit_code=0

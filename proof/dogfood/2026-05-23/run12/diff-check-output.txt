@@ -1,0 +1,88 @@
+git : warning: in the working copy of 'proof/dogfood/2026-05-23/run12/artifact-scan-output.txt', LF will be replaced
+exit_code=0
+by CRLF the next time Git touches it
+exit_code=0
+At line:19 char:15
+exit_code=0
++ $diffOutput = git diff --check 2>&1 | Out-String
+exit_code=0
++               ~~~~~~~~~~~~~~~~~~~~~
+exit_code=0
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+exit_code=0
+    + FullyQualifiedErrorId : NativeCommandError
+exit_code=0
+
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/command-output.txt', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/demo-incident.txt', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/demo-report.txt', LF will be replaced by CRLF the next
+exit_code=0
+time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/diff-check-output.txt', LF will be replaced by CRLF
+exit_code=0
+the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/guard-events-output.txt', LF will be replaced by CRLF
+exit_code=0
+the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/import-binding.txt', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/installed-doctor.txt', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/release-distribution-snapshot.txt', LF will be
+exit_code=0
+replaced by CRLF the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/release-guard-output.txt', LF will be replaced by CRLF
+exit_code=0
+the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/repo-demo.txt', LF will be replaced by CRLF the next
+exit_code=0
+time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/repo-doctor.txt', LF will be replaced by CRLF the next
+exit_code=0
+time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/repo-health-snapshot.txt', LF will be replaced by CRLF
+exit_code=0
+the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/review-incident.txt', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/review-loop.txt', LF will be replaced by CRLF the next
+exit_code=0
+time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/review-thread-sweep-output.txt', LF will be replaced
+exit_code=0
+by CRLF the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/summary_run12.md', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/validation-output.txt', LF will be replaced by CRLF
+exit_code=0
+the next time Git touches it
+exit_code=0
+warning: in the working copy of 'proof/dogfood/2026-05-23/run12/where-agentguard.txt', LF will be replaced by CRLF the
+exit_code=0
+next time Git touches it
+exit_code=0

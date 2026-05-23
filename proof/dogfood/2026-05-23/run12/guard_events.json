@@ -1,0 +1,94 @@
+{
+    "run":  "run12",
+    "date":  "2026-05-23",
+    "demo":  [
+                 {
+                     "name":  "guard.budget_warning",
+                     "data":  {
+                                  "cost_used":  0.84,
+                                  "limit_usd":  1.0
+                              },
+                     "trace_id":  "4688f1017839400ea1cd704eea902755",
+                     "span_id":  "ad535a54169d48fd8d6ab86294c8aa0b",
+                     "ts":  1779564775.4292126
+                 },
+                 {
+                     "name":  "guard.budget_exceeded",
+                     "data":  {
+                                  "cost_used":  1.08,
+                                  "limit_usd":  1.0,
+                                  "message":  "Cost budget exceeded: $1.0800 \u003e $1.0000 (this call added $0.1200)"
+                              },
+                     "trace_id":  "4688f1017839400ea1cd704eea902755",
+                     "span_id":  "ad535a54169d48fd8d6ab86294c8aa0b",
+                     "ts":  1779564775.4298944
+                 },
+                 {
+                     "name":  "guard.loop_detected",
+                     "data":  {
+                                  "message":  "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+                                  "tool_name":  "search"
+                              },
+                     "trace_id":  "71e2e57652f7420e951c94379e2c5539",
+                     "span_id":  "ddcc353592b34bfc9bd789da44b0af24",
+                     "ts":  1779564775.4308574
+                 },
+                 {
+                     "name":  "guard.retry_limit_exceeded",
+                     "data":  {
+                                  "message":  "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+                                  "tool_name":  "fetch_docs"
+                              },
+                     "trace_id":  "af473b095bad42c390d90e99b4eee165",
+                     "span_id":  "56ef622272ec40a193f472d522fb1acd",
+                     "ts":  1779564775.431898
+                 }
+             ],
+    "review_loop":  [
+                        {
+                            "name":  "guard.budget_exceeded",
+                            "data":  {
+                                         "attempt":  3,
+                                         "cost_usd":  0.051,
+                                         "reason":  "Cost budget exceeded: $0.0510 \u003e $0.0450 (this call added $0.0205)",
+                                         "tokens_used":  12300
+                                     },
+                            "trace_id":  "9af8511b7ebc448d86807b5c0d9c6bd8",
+                            "span_id":  "7c620ea3337847e991a3ff8af1fa9539",
+                            "ts":  1779564775.7718298
+                        },
+                        {
+                            "name":  "guard.retry_limit_exceeded",
+                            "data":  {
+                                         "attempt":  4,
+                                         "reason":  "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+                                         "tool_name":  "apply_patch"
+                                     },
+                            "trace_id":  "48535a5fb04746e4af862107157975fc",
+                            "span_id":  "7eed38a36b744d5c80eaee12a708e503",
+                            "ts":  1779564775.7727182
+                        }
+                    ],
+    "doctor":  [
+                   {
+                       "name":  "doctor.verify",
+                       "phase":  "start",
+                       "data":  {
+
+                                },
+                       "trace_id":  "1ee172e5a9a44fddbc6b26a84fab8e60",
+                       "span_id":  "d8db6528326a4901820a8691936cb4b2",
+                       "ts":  1779564775.0804641
+                   },
+                   {
+                       "name":  "doctor.verify",
+                       "phase":  "end",
+                       "data":  {
+
+                                },
+                       "trace_id":  "1ee172e5a9a44fddbc6b26a84fab8e60",
+                       "span_id":  "d8db6528326a4901820a8691936cb4b2",
+                       "ts":  1779564775.0810978
+                   }
+               ]
+}

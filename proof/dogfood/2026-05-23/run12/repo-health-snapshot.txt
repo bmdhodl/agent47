@@ -1,0 +1,49 @@
+# Repo Health Snapshot - 2026-05-23 run12
+
+Open PRs: 25
+Active unresolved non-outdated review threads: 0
+
+## PRs
+- #510 chore(deps): bump qs from 6.15.0 to 6.15.2 in /mcp-server - REVIEW_REQUIRED / BLOCKED / green
+- #509 chore(deps): bump github/codeql-action from 4.35.3 to 4.36.0 - REVIEW_REQUIRED / BLOCKED / green
+- #508 chore(deps): bump actions/setup-go from 5.6.0 to 6.4.0 - REVIEW_REQUIRED / BLOCKED / failing: test (3.9), test (3.9), test (3.12), test (3.10), test (3.11), test (3.12)
+- #506 Add dogfood proof for 2026-05-22 run 11 - REVIEW_REQUIRED / BLOCKED / green
+- #505 Add dogfood proof for 2026-05-22 run 10 - REVIEW_REQUIRED / BLOCKED / green
+- #504 Add dogfood proof for 2026-05-22 run 9 - REVIEW_REQUIRED / BLOCKED / green
+- #503 Add dogfood proof for 2026-05-22 run 8 - REVIEW_REQUIRED / BLOCKED / green
+- #502 Fix review-loop dogfood cost accounting - REVIEW_REQUIRED / BLOCKED / green
+- #501 Add dogfood proof for 2026-05-22 run 7 - REVIEW_REQUIRED / BLOCKED / green
+- #500 Add dogfood proof for 2026-05-22 run 6 - REVIEW_REQUIRED / BLOCKED / green
+- #499 Add dogfood proof for 2026-05-22 run 5 - REVIEW_REQUIRED / BLOCKED / green
+- #498 Add dogfood proof for 2026-05-22 run 4 - REVIEW_REQUIRED / BLOCKED / green
+- #497 Add dogfood proof for 2026-05-22 run 3 - REVIEW_REQUIRED / BLOCKED / green
+- #496 Add dogfood proof for 2026-05-22 run 2 - REVIEW_REQUIRED / BLOCKED / green
+- #495 Add dogfood proof for 2026-05-22 - REVIEW_REQUIRED / BLOCKED / green
+- #494 Add dogfood proof for 2026-05-21 run 4 - REVIEW_REQUIRED / BLOCKED / green
+- #493 Add dogfood proof for 2026-05-21 run 3 - REVIEW_REQUIRED / BLOCKED / green
+- #491 Add dogfood proof for 2026-05-21 - REVIEW_REQUIRED / BLOCKED / green
+- #480 Make coding-agent review loop proof deterministic - REVIEW_REQUIRED / BLOCKED / green
+- #479 chore(deps): bump ruff from 0.15.12 to 0.15.13 in /.github/requirements - REVIEW_REQUIRED / BLOCKED / green
+- #476 Add custom resource attributes and span links to OtelTraceSink - REVIEW_REQUIRED / BLOCKED / green
+- #475 Add local-first agent template example - REVIEW_REQUIRED / BLOCKED / green
+- #474 Add audit-only MCP tool-call audit-log primitive - REVIEW_REQUIRED / BLOCKED / green
+- #471 fix: report source version in local doctor runs - REVIEW_REQUIRED / BLOCKED / green
+- #460 chore(deps): bump fast-uri from 3.1.0 to 3.1.2 in /mcp-server - REVIEW_REQUIRED / BLOCKED / green
+
+## Issues
+- #507 security: sdk pip-audit vulns (pypdf, pytest, requests, urllib3, etc.) - type:security, security
+- #490 Dogfood operator rolling proof log -
+- #473 [ops-cadence] Docs need refresh -
+- #469 security: sdk pip-audit findings (pypdf, python-multipart, urllib3, etc.) - security
+- #468 [release-cadence] Active release queue -
+- #466 Scout: 0 comments posted, 9 targets (2026-05-10) - scout
+- #464 Track Managed Agents Dreaming cost surface -
+- #418 deps: weekly drift report - dependencies
+- #282 Switch PyPI publish workflow to Trusted Publishing - type:security, type:release, deferred:phase-2
+- #279 Resolve remaining repo-level Scorecard governance findings - type:security, component:infra, deferred:phase-2
+
+## Notes
+- PR #506 remains the consolidated rolling dogfood proof PR and is blocked only by required human review.
+- PR #508 remains the only failing PR; prior triage points at setup-go guardrail expectation drift.
+- #473 tracks stale roadmap/architecture freshness.
+- #490 is the rolling dogfood issue sink.
