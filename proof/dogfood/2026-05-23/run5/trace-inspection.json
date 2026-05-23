@@ -1,0 +1,104 @@
+{
+  "traces": [
+    {
+      "event_count": 4,
+      "event_counts": {
+        "doctor.verify": 2,
+        "reasoning.step": 1,
+        "tool.check": 1
+      },
+      "guard_events": [],
+      "label": "doctor",
+      "path": "agentguard_doctor_trace.jsonl"
+    },
+    {
+      "event_count": 36,
+      "event_counts": {
+        "demo.budget_guard": 2,
+        "demo.loop_guard": 2,
+        "demo.retry_guard": 2,
+        "guard.budget_exceeded": 1,
+        "guard.budget_warning": 1,
+        "guard.loop_detected": 1,
+        "guard.retry_limit_exceeded": 1,
+        "llm.result": 9,
+        "reasoning.step": 9,
+        "tool.error": 2,
+        "tool.retry": 3,
+        "tool.search": 3
+      },
+      "guard_events": [
+        {
+          "data": {
+            "cost_used": 0.84,
+            "limit_usd": 1.0
+          },
+          "error": null,
+          "name": "guard.budget_warning"
+        },
+        {
+          "data": {
+            "cost_used": 1.08,
+            "limit_usd": 1.0,
+            "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+          },
+          "error": null,
+          "name": "guard.budget_exceeded"
+        },
+        {
+          "data": {
+            "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+            "tool_name": "search"
+          },
+          "error": null,
+          "name": "guard.loop_detected"
+        },
+        {
+          "data": {
+            "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+            "tool_name": "fetch_docs"
+          },
+          "error": null,
+          "name": "guard.retry_limit_exceeded"
+        }
+      ],
+      "label": "demo",
+      "path": "agentguard_demo_traces.jsonl"
+    },
+    {
+      "event_count": 14,
+      "event_counts": {
+        "coding_agent.review_loop.budget": 2,
+        "coding_agent.review_loop.retry_storm": 2,
+        "guard.budget_exceeded": 1,
+        "guard.retry_limit_exceeded": 1,
+        "review.iteration": 3,
+        "tool.retry": 4,
+        "watermark": 1
+      },
+      "guard_events": [
+        {
+          "data": {
+            "attempt": 3,
+            "cost_usd": 0.051,
+            "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+            "tokens_used": 12300
+          },
+          "error": null,
+          "name": "guard.budget_exceeded"
+        },
+        {
+          "data": {
+            "attempt": 4,
+            "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+            "tool_name": "apply_patch"
+          },
+          "error": null,
+          "name": "guard.retry_limit_exceeded"
+        }
+      ],
+      "label": "review_loop",
+      "path": "coding_agent_review_loop_traces.jsonl"
+    }
+  ]
+}

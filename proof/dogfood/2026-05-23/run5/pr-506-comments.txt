@@ -1,0 +1,354 @@
+author:	Copilot (AI)
+association:	none
+edited:	false
+status:	commented
+--
+## Pull request overview
+
+Adds a new dogfood proof bundle for the 2026-05-22 “run 11” execution under `proof/dogfood/2026-05-22/run11/`, capturing doctor/demo/review-loop traces plus the corresponding `report` and `incident` outputs. This fits the repo’s existing “proof/” evidence pattern by preserving real guard-trigger output for later regression/debug reference (including the known review-loop report/incident cost-estimation drift referenced in #502).
+
+**Changes:**
+- Add a run summary documenting commands executed, guard events observed, and distribution/health notes.
+- Add raw trace artifacts (`*.jsonl`) for doctor, demo, and review-loop runs.
+- Add the rendered `agentguard report` and `agentguard incident` outputs for demo and review-loop traces.
+
+### Reviewed changes
+
+Copilot reviewed 8 out of 8 changed files in this pull request and generated no comments.
+
+<details>
+<summary>Show a summary per file</summary>
+
+| File | Description |
+| ---- | ----------- |
+| proof/dogfood/2026-05-22/run11/summary.md | Run 11 narrative summary: commands, observed guard events, health/distribution snapshot. |
+| proof/dogfood/2026-05-22/run11/agentguard_doctor_trace.jsonl | Raw trace output from `agentguard doctor`. |
+| proof/dogfood/2026-05-22/run11/agentguard_demo_traces.jsonl | Raw trace output from `agentguard demo`, including guard event evidence. |
+| proof/dogfood/2026-05-22/run11/coding_agent_review_loop_traces.jsonl | Raw trace output from the coding-agent review-loop run, including budget/retry guard events. |
+| proof/dogfood/2026-05-22/run11/demo_report.txt | `agentguard report` output for demo traces. |
+| proof/dogfood/2026-05-22/run11/demo_incident.md | `agentguard incident` output for demo traces. |
+| proof/dogfood/2026-05-22/run11/review_loop_report.txt | `agentguard report` output for review-loop traces (shows the known cost estimate drift). |
+| proof/dogfood/2026-05-22/run11/review_loop_incident.md | `agentguard incident` output for review-loop traces (shows the known cost estimate drift). |
+</details>
+
+
+
+
+
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run 13 - 2026-05-22
+
+Artifacts added to PR #506 in commit `55cd8b4`:
+
+- `proof/dogfood/2026-05-22/run13/summary.md`
+- `proof/dogfood/2026-05-22/run13/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run13/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run13/trace-inspection.txt`
+- `proof/dogfood/2026-05-22/run13/demo-report.txt`
+- `proof/dogfood/2026-05-22/run13/review-loop-incident.txt`
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.73s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Notes:
+
+- `pip install -e ./sdk` logged a Windows access-denied warning while replacing `agentguard.exe`, but repo-local import binding resolved correctly and both CLI forms ran successfully with `PYTHONPATH=./sdk`.
+- This proof-only branch still shows the known review-loop incident cost-reporting drift (`$0.1020` reported for `$0.0510` enforced). PR #502 already carries the code fix, so this run did not duplicate it.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood operator run 15 - 2026-05-22
+
+Artifacts added to PR #506 in commit `5f6c53a`:
+
+- `proof/dogfood/2026-05-22/run15/summary.md`
+- `proof/dogfood/2026-05-22/run15/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-22/run15/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run15/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run15/trace-inspection.txt`
+- `proof/dogfood/2026-05-22/run15/demo-report.txt`
+- `proof/dogfood/2026-05-22/run15/review-loop-incident.txt`
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.53s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- This proof-only branch still shows the known review-loop incident estimated-cost drift (`$0.1020` incident estimate for `$0.0510` enforced). PR #502 already carries the code fix and remains review-blocked.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run 15 final closeout: added follow-up commit `12a92d8` with `proof/dogfood/2026-05-22/run15/pr-506-review-state.json` and updated the summary. Refreshed CI and CodeQL are green. Final review-thread sweep shows 0 active unresolved threads; PR remains blocked only on required human review.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood operator run 16 - 2026-05-22
+
+Artifacts added to PR #506 in commit `d716bd5`:
+
+- `proof/dogfood/2026-05-22/run16/summary.md`
+- `proof/dogfood/2026-05-22/run16/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-22/run16/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run16/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run16/trace_inspection.txt`
+- `proof/dogfood/2026-05-22/run16/demo_report.txt`
+- `proof/dogfood/2026-05-22/run16/demo_incident.txt`
+- `proof/dogfood/2026-05-22/run16/review_loop_incident.txt`
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.60s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+- Refreshed CI and CodeQL on PR #506: green
+- Post-wait GraphQL review-thread sweep: 0 threads
+
+Repo health notes:
+
+- PR #506 remains blocked only on required human review.
+- This proof-only branch still shows the known review-loop incident estimated-cost drift (`$0.1020` incident estimate for `$0.0510` enforced). PR #502 already carries the code fix and remains review-blocked.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run 18 - 2026-05-22
+
+Artifacts added to PR #506 in commit `882ddb3`:
+
+- `proof/dogfood/2026-05-22/run18/summary.md`
+- `proof/dogfood/2026-05-22/run18/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-22/run18/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run18/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run18/trace_inspection.txt`
+- `proof/dogfood/2026-05-22/run18/demo-report.txt`
+- `proof/dogfood/2026-05-22/run18/demo-incident.txt`
+- `proof/dogfood/2026-05-22/run18/review-loop-incident.txt`
+- release snapshot and validation files under the same run directory
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 2.07s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed after artifact whitespace cleanup
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated proof PR for today.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+- MCP Registry still reports `0.2.1`; Glama API still returns `tools: []`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run 18 final closeout: refreshed CI and CodeQL are green on `882ddb3`. Final review-thread sweep found 0 active unresolved threads on all open PRs, including 0 threads on #506. PR #506 remains blocked only on required human review.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run 19 - 2026-05-22
+
+Artifacts added to PR #506 in commit `eef53ad`:
+
+- `proof/dogfood/2026-05-22/run19/summary.md`
+- `proof/dogfood/2026-05-22/run19/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run19/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run19/guard_events.json`
+- `proof/dogfood/2026-05-22/run19/demo_report.txt`
+- `proof/dogfood/2026-05-22/run19/review_loop_incident.txt`
+- doctor/stdout captures under the same run directory
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.80s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated proof PR for today.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Run 19 final closeout: refreshed CI and CodeQL are green on `eef53ad`. After a post-push wait, REST review comments for #506 are empty and GraphQL review-thread sweep found 0 active unresolved threads across 23 open PRs. PR #506 remains blocked only on required human review.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-23 run1.
+
+Artifacts added:
+- `proof/dogfood/2026-05-23/run1/summary.md`
+- `proof/dogfood/2026-05-23/run1/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run1/coding_agent_review_loop_traces.jsonl`
+- report/incident/stdout captures in the same folder
+
+Commands passed:
+- `agentguard doctor`
+- `python -m agentguard.cli doctor`
+- `python -m agentguard.cli demo`
+- `python examples/coding_agent_review_loop.py`
+- demo/report incident commands for both trace files
+
+Concrete guard behavior observed:
+- demo trace: `guard.budget_warning=1`, `guard.budget_exceeded=1`, `guard.loop_detected=1`, `guard.retry_limit_exceeded=1`
+- review-loop trace: `guard.budget_exceeded=1` at `$0.0510 > $0.0450`, `guard.retry_limit_exceeded=1` for `apply_patch` attempt 4
+
+Validation:
+- focused dogfood/CLI/metadata tests: `35 passed in 1.68s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- proof artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Release/distribution snapshot:
+- GitHub release: `v1.2.10`
+- PyPI `agentguard47`: `1.2.10`
+- local SDK: `1.2.10`
+- npm/local MCP: `0.2.2`
+- MCP Registry still reports `0.2.1`; Glama API still returns `tools: []`
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Post-push closeout for 2026-05-23 run1:
+
+- PR #506 CI and CodeQL are green after commit `145a00b`.
+- PR #506 has no review comments or review threads.
+- Full open-PR review-thread sweep found `0` active unresolved non-outdated threads.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run 2 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `238d09b` with the final review-sweep artifact.
+- Refreshed CI and CodeQL are green on `238d09b`.
+- PR #506 has 0 review threads; full open-PR sweep found `0` active unresolved non-outdated threads.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-23 run4.
+
+Artifacts added in commit `e9519b1` on PR #506:
+- `proof/dogfood/2026-05-23/run4/SUMMARY.md`
+- `proof/dogfood/2026-05-23/run4/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run4/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run4/trace_inspection.json`
+- `proof/dogfood/2026-05-23/run4/agentguard_demo_report.txt`
+- `proof/dogfood/2026-05-23/run4/coding_agent_review_loop_incident.md`
+- validation, release/distribution, issue, and PR review-state snapshots in the same folder
+
+Commands passed:
+- `agentguard doctor`
+- `python -m agentguard.cli doctor`
+- `python -m agentguard.cli demo`
+- `python examples/coding_agent_review_loop.py`
+- demo/report/incident commands for the generated trace files
+
+Concrete guard behavior observed:
+- demo trace: `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review-loop trace: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+
+Validation:
+- focused dogfood/CLI/metadata tests: `35 passed in 1.69s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- proof artifact UTF-8/BOM/NUL/local-path scan: passed
+- JSON artifact parse check: passed
+- PR #506 refreshed CI and CodeQL: green on `e9519b1`
+
+Repo health:
+- PR #506 has no review comments or review threads after the post-push wait.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across `23` open PRs.
+- PR #506 remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Release/package alignment remains GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`.
+- Distribution drift remains: MCP Registry still reports `0.2.1`; Glama API still returns zero indexed tools.
+--

@@ -1,0 +1,209 @@
+[
+    {
+        "number":  506,
+        "title":  "Add dogfood proof for 2026-05-22 run 11",
+        "url":  "https://github.com/bmdhodl/agent47/pull/506",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    },
+    {
+        "number":  505,
+        "title":  "Add dogfood proof for 2026-05-22 run 10",
+        "url":  "https://github.com/bmdhodl/agent47/pull/505",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  5
+    },
+    {
+        "number":  504,
+        "title":  "Add dogfood proof for 2026-05-22 run 9",
+        "url":  "https://github.com/bmdhodl/agent47/pull/504",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  4
+    },
+    {
+        "number":  503,
+        "title":  "Add dogfood proof for 2026-05-22 run 8",
+        "url":  "https://github.com/bmdhodl/agent47/pull/503",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  1
+    },
+    {
+        "number":  502,
+        "title":  "Fix review-loop dogfood cost accounting",
+        "url":  "https://github.com/bmdhodl/agent47/pull/502",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  1
+    },
+    {
+        "number":  501,
+        "title":  "Add dogfood proof for 2026-05-22 run 7",
+        "url":  "https://github.com/bmdhodl/agent47/pull/501",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  5
+    },
+    {
+        "number":  500,
+        "title":  "Add dogfood proof for 2026-05-22 run 6",
+        "url":  "https://github.com/bmdhodl/agent47/pull/500",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  4
+    },
+    {
+        "number":  499,
+        "title":  "Add dogfood proof for 2026-05-22 run 5",
+        "url":  "https://github.com/bmdhodl/agent47/pull/499",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  4
+    },
+    {
+        "number":  498,
+        "title":  "Add dogfood proof for 2026-05-22 run 4",
+        "url":  "https://github.com/bmdhodl/agent47/pull/498",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  1
+    },
+    {
+        "number":  497,
+        "title":  "Add dogfood proof for 2026-05-22 run 3",
+        "url":  "https://github.com/bmdhodl/agent47/pull/497",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    },
+    {
+        "number":  496,
+        "title":  "Add dogfood proof for 2026-05-22 run 2",
+        "url":  "https://github.com/bmdhodl/agent47/pull/496",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  2
+    },
+    {
+        "number":  495,
+        "title":  "Add dogfood proof for 2026-05-22",
+        "url":  "https://github.com/bmdhodl/agent47/pull/495",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  3
+    },
+    {
+        "number":  494,
+        "title":  "Add dogfood proof for 2026-05-21 run 4",
+        "url":  "https://github.com/bmdhodl/agent47/pull/494",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  7
+    },
+    {
+        "number":  493,
+        "title":  "Add dogfood proof for 2026-05-21 run 3",
+        "url":  "https://github.com/bmdhodl/agent47/pull/493",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  2
+    },
+    {
+        "number":  491,
+        "title":  "Add dogfood proof for 2026-05-21",
+        "url":  "https://github.com/bmdhodl/agent47/pull/491",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    },
+    {
+        "number":  480,
+        "title":  "Make coding-agent review loop proof deterministic",
+        "url":  "https://github.com/bmdhodl/agent47/pull/480",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    },
+    {
+        "number":  479,
+        "title":  "chore(deps): bump ruff from 0.15.12 to 0.15.13 in /.github/requirements",
+        "url":  "https://github.com/bmdhodl/agent47/pull/479",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    },
+    {
+        "number":  477,
+        "title":  "chore(deps): bump github/codeql-action from 4.35.3 to 4.35.5",
+        "url":  "https://github.com/bmdhodl/agent47/pull/477",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    },
+    {
+        "number":  476,
+        "title":  "Add custom resource attributes and span links to OtelTraceSink",
+        "url":  "https://github.com/bmdhodl/agent47/pull/476",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  7
+    },
+    {
+        "number":  475,
+        "title":  "Add local-first agent template example",
+        "url":  "https://github.com/bmdhodl/agent47/pull/475",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  7
+    },
+    {
+        "number":  474,
+        "title":  "Add audit-only MCP tool-call audit-log primitive",
+        "url":  "https://github.com/bmdhodl/agent47/pull/474",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  2
+    },
+    {
+        "number":  471,
+        "title":  "fix: report source version in local doctor runs",
+        "url":  "https://github.com/bmdhodl/agent47/pull/471",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  1
+    },
+    {
+        "number":  460,
+        "title":  "chore(deps): bump fast-uri from 3.1.0 to 3.1.2 in /mcp-server",
+        "url":  "https://github.com/bmdhodl/agent47/pull/460",
+        "mergeStateStatus":  "BLOCKED",
+        "reviewDecision":  "REVIEW_REQUIRED",
+        "activeUnresolvedNonOutdatedThreads":  0,
+        "totalThreads":  0
+    }
+]
