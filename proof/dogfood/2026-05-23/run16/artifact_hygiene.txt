@@ -1,0 +1,6 @@
+artifact hygiene scan
+files_scanned=33
+local-path-leak=none
+bom=none
+nul-byte=none
+json-parse=passed

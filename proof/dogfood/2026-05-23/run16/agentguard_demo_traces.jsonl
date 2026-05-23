@@ -1,0 +1,72 @@
+{"data": {}, "duration_ms": null, "error": null, "kind": "span", "name": "demo.budget_guard", "parent_id": null, "phase": "start", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3276792}
+
+{"data": {"step": 1, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3279808}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3281758}
+
+{"data": {"step": 2, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.328432}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3285909}
+
+{"data": {"step": 3, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3287244}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3288536}
+
+{"data": {"step": 4, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.328971}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.329085}
+
+{"data": {"step": 5, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.329209}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.329323}
+
+{"data": {"step": 6, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3294377}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.329611}
+
+{"data": {"step": 7, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.329746}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.32987}
+
+{"data": {"cost_used": 0.84, "limit_usd": 1.0}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.budget_warning", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.329997}
+
+{"data": {"step": 8, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.330119}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3302324}
+
+{"data": {"step": 9, "thought": "issuing another model call"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3303435}
+
+{"cost_usd": 0.12, "data": {"model": "offline-demo-model", "usage": {"total_tokens": 500}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3304582}
+
+{"data": {"cost_used": 1.08, "limit_usd": 1.0, "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.budget_exceeded", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.3305924}
+
+{"data": {}, "duration_ms": 3.0316000047605485, "error": null, "kind": "span", "name": "demo.budget_guard", "parent_id": null, "phase": "end", "service": "agentguard-offline-demo", "span_id": "125bdd5e0d8848b7aa2269d7b5e326c3", "trace_id": "3611994a60b146dab7e66bc2fc64eb6f", "ts": 1779579328.33071}
+
+{"data": {}, "duration_ms": null, "error": null, "kind": "span", "name": "demo.loop_guard", "parent_id": null, "phase": "start", "service": "agentguard-offline-demo", "span_id": "3c4ee0a3838944c7a65e087972ec5664", "trace_id": "161f5bb1ffa34192bb2dfdd7fa3db581", "ts": 1779579328.3308327}
+
+{"data": {"query": "python asyncio"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.search", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "3c4ee0a3838944c7a65e087972ec5664", "trace_id": "161f5bb1ffa34192bb2dfdd7fa3db581", "ts": 1779579328.3309581}
+
+{"data": {"query": "python asyncio"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.search", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "3c4ee0a3838944c7a65e087972ec5664", "trace_id": "161f5bb1ffa34192bb2dfdd7fa3db581", "ts": 1779579328.3311253}
+
+{"data": {"query": "python asyncio"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.search", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "3c4ee0a3838944c7a65e087972ec5664", "trace_id": "161f5bb1ffa34192bb2dfdd7fa3db581", "ts": 1779579328.3312483}
+
+{"data": {"message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.", "tool_name": "search"}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.loop_detected", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "3c4ee0a3838944c7a65e087972ec5664", "trace_id": "161f5bb1ffa34192bb2dfdd7fa3db581", "ts": 1779579328.3313684}
+
+{"data": {}, "duration_ms": 0.6557000015163794, "error": null, "kind": "span", "name": "demo.loop_guard", "parent_id": null, "phase": "end", "service": "agentguard-offline-demo", "span_id": "3c4ee0a3838944c7a65e087972ec5664", "trace_id": "161f5bb1ffa34192bb2dfdd7fa3db581", "ts": 1779579328.3314888}
+
+{"data": {}, "duration_ms": null, "error": null, "kind": "span", "name": "demo.retry_guard", "parent_id": null, "phase": "start", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.3316073}
+
+{"data": {"attempt": 1, "tool_name": "fetch_docs"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.retry", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.3317556}
+
+{"data": {"error_type": "TimeoutError", "message": "upstream timeout on attempt 1", "tool_name": "fetch_docs"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.error", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.3318813}
+
+{"data": {"attempt": 2, "tool_name": "fetch_docs"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.retry", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.331999}
+
+{"data": {"error_type": "TimeoutError", "message": "upstream timeout on attempt 2", "tool_name": "fetch_docs"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.error", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.3321185}
+
+{"data": {"attempt": 3, "tool_name": "fetch_docs"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.retry", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.332233}
+
+{"data": {"message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)", "tool_name": "fetch_docs"}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.retry_limit_exceeded", "parent_id": null, "phase": "emit", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.3323443}
+
+{"data": {}, "duration_ms": 0.8572000006097369, "error": null, "kind": "span", "name": "demo.retry_guard", "parent_id": null, "phase": "end", "service": "agentguard-offline-demo", "span_id": "7d5962c6036d4c75a66c4c3120875cef", "trace_id": "53daa3357541426dbe435051a63839de", "ts": 1779579328.3324647}
+
