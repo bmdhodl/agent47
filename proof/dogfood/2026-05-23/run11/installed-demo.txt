@@ -1,13 +1,37 @@
-Installed/PATH agentguard demo:
-agentguard : Traceback (most recent call last):
-At line:14 char:1
-+ agentguard demo 2>&1 | Tee-Object -FilePath "$runDir/installed-demo.t ...
-+ ~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "C:\Python313\Scripts\agentguard.exe\__main__.py", line 4, in <module>
-    from agentguard.cli import main
-ModuleNotFoundError: No module named 'agentguard'
+Installed/PATH agentguard demo:
+
+
+agentguard : Traceback (most recent call last):
+
+
+At line:14 char:1
+
+
++ agentguard demo 2>&1 | Tee-Object -FilePath "$runDir/installed-demo.t ...
+
+
++ ~~~~~~~~~~~~~~~~~~~~
+
+
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+
+
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+
+
+  File "<frozen runpy>", line 88, in _run_code
+
+
+  File "C:\Python313\Scripts\agentguard.exe\__main__.py", line 4, in <module>
+
+
+    from agentguard.cli import main
+
+
+ModuleNotFoundError: No module named 'agentguard'

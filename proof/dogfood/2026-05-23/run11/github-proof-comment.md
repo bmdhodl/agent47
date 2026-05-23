@@ -19,4 +19,4 @@ Repo health:
 - PR #508 is still failing CI from the setup-go Dependabot bump guardrail expectation.
 - Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`; MCP Registry timed out from this host, and Glama still reports `tools=[]`.
 
-I will recheck CI and review threads after GitHub finishes the refreshed checks for `3a61407`.
+I will recheck CI and review threads after GitHub finishes the refreshed checks for `3a61407`.

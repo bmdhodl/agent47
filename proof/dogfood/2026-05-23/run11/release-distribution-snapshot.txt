@@ -1,62 +1,178 @@
-GitHub latest release:
-{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-02T15:48:03Z","tagName":"v1.2.10","url":"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"}
-
-Local SDK version:
-version = "1.2.10"
-
-PyPI latest:
-1.2.10
-
-npm latest:
-0.2.2
-
-Local MCP package:
-"version": "0.2.2",
-
-Local MCP server manifest:
-"version": "0.2.2",
-
-MCP Registry API:
-ERROR: The operation has timed out.
-
-Glama API:
-{
-    "attributes":  [
-                       "hosting:local-only"
-                   ],
-    "description":  "AgentGuard47 is runtime safety infrastructure for AI agents. It adds budget caps, loop detection, retry limits, timeouts, local traces, and incident reports so agents can stop bad runs while they are happening, not just explain them afterward.",
-    "environmentVariablesJsonSchema":  {
-                                           "properties":  {
-                                                              "AGENTGUARD_URL":  {
-                                                                                     "description":  "Optional AgentGuard API base URL. Defaults to production.",
-                                                                                     "type":  "string",
-                                                                                     "default":  "https://app.agentguard47.com"
-                                                                                 },
-                                                              "AGENTGUARD_API_KEY":  {
-                                                                                         "description":  "AgentGuard read API key for traces, alerts, costs, usage, and budget health.",
-                                                                                         "type":  "string"
-                                                                                     }
-                                                          },
-                                           "type":  "object",
-                                           "required":  [
-                                                            "AGENTGUARD_API_KEY"
-                                                        ]
-                                       },
-    "id":  "y6zuc6wgtu",
-    "name":  "Agentguard47",
-    "namespace":  "bmdhodl",
-    "repository":  {
-                       "url":  "https://github.com/bmdhodl/agent47"
-                   },
-    "slug":  "agent47",
-    "spdxLicense":  {
-                        "name":  "MIT License",
-                        "url":  "https://spdx.org/licenses/MIT.json"
-                    },
-    "tools":  [
-
-              ],
-    "url":  "https://glama.ai/mcp/servers/y6zuc6wgtu"
-}
-
-
+GitHub latest release:
+
+
+{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-02T15:48:03Z","tagName":"v1.2.10","url":"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"}
+
+
+
+
+
+Local SDK version:
+
+
+version = "1.2.10"
+
+
+
+
+
+PyPI latest:
+
+
+1.2.10
+
+
+
+
+
+npm latest:
+
+
+0.2.2
+
+
+
+
+
+Local MCP package:
+
+
+"version": "0.2.2",
+
+
+
+
+
+Local MCP server manifest:
+
+
+"version": "0.2.2",
+
+
+
+
+
+MCP Registry API:
+
+
+ERROR: The operation has timed out.
+
+
+
+
+
+Glama API:
+
+
+{
+
+
+    "attributes":  [
+
+
+                       "hosting:local-only"
+
+
+                   ],
+
+
+    "description":  "AgentGuard47 is runtime safety infrastructure for AI agents. It adds budget caps, loop detection, retry limits, timeouts, local traces, and incident reports so agents can stop bad runs while they are happening, not just explain them afterward.",
+
+
+    "environmentVariablesJsonSchema":  {
+
+
+                                           "properties":  {
+
+
+                                                              "AGENTGUARD_URL":  {
+
+
+                                                                                     "description":  "Optional AgentGuard API base URL. Defaults to production.",
+
+
+                                                                                     "type":  "string",
+
+
+                                                                                     "default":  "https://app.agentguard47.com"
+
+
+                                                                                 },
+
+
+                                                              "AGENTGUARD_API_KEY":  {
+
+
+                                                                                         "description":  "AgentGuard read API key for traces, alerts, costs, usage, and budget health.",
+
+
+                                                                                         "type":  "string"
+
+
+                                                                                     }
+
+
+                                                          },
+
+
+                                           "type":  "object",
+
+
+                                           "required":  [
+
+
+                                                            "AGENTGUARD_API_KEY"
+
+
+                                                        ]
+
+
+                                       },
+
+
+    "id":  "y6zuc6wgtu",
+
+
+    "name":  "Agentguard47",
+
+
+    "namespace":  "bmdhodl",
+
+
+    "repository":  {
+
+
+                       "url":  "https://github.com/bmdhodl/agent47"
+
+
+                   },
+
+
+    "slug":  "agent47",
+
+
+    "spdxLicense":  {
+
+
+                        "name":  "MIT License",
+
+
+                        "url":  "https://spdx.org/licenses/MIT.json"
+
+
+                    },
+
+
+    "tools":  [
+
+
+
+
+
+              ],
+
+
+    "url":  "https://glama.ai/mcp/servers/y6zuc6wgtu"
+
+
+}
