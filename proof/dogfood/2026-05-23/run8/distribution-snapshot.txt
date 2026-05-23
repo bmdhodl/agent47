@@ -1,0 +1,7 @@
+$ distribution-snapshot.txt
+exit_code=0
+
+version = "1.2.10"
+  "version": "0.2.2",
+  "version": "0.2.2",
+      "version": "0.2.2",

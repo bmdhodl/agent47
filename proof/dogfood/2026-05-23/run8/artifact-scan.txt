@@ -1,0 +1,4 @@
+local-path-leak=none
+bom=none
+nul-byte=none
+json-parse=passed

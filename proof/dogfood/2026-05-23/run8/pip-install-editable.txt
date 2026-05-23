@@ -1,0 +1,29 @@
+$ pip-install-editable.txt
+exit_code=1
+
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9135 sha256=036adb830fb6f863336562dfa896ae366114dc0b4f85fcc0597899ea0e8d7cd8
+  Stored in directory: <temp>
+Successfully built agentguard47
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 1.2.10
+    Uninstalling agentguard47-1.2.10:
+ERROR: Could not install packages due to an OSError: [WinError 5] Access is denied: 'c:\\python313\\scripts\\agentguard.exe'
+Check the permissions.
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip

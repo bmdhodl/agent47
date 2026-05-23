@@ -1,0 +1,4 @@
+$ release-guard.txt
+exit_code=0
+
+Release guard passed.
