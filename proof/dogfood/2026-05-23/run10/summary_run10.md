@@ -50,6 +50,9 @@ Enforcement was real. This run does not count stdout-only success as proof; the 
 - `proof/dogfood/2026-05-23/run10/repo-health-snapshot.txt`
 - `proof/dogfood/2026-05-23/run10/pr-506-review-state.json`
 - `proof/dogfood/2026-05-23/run10/open-pr-review-thread-sweep.json`
+- `proof/dogfood/2026-05-23/run10/pr-506-post-push-view.json`
+- `proof/dogfood/2026-05-23/run10/pr-506-post-push-threads.json`
+- `proof/dogfood/2026-05-23/run10/open-pr-review-thread-sweep-post-push.json`
 
 ## Validation
 
@@ -64,5 +67,5 @@ Enforcement was real. This run does not count stdout-only success as proof; the 
 - Official MCP Registry still reports `0.2.1`.
 - Glama API still returns an empty `tools` array.
 - PR #506 was green before this commit and still `REVIEW_REQUIRED`.
-- The pre-push open-PR review-thread sweep found 0 active unresolved non-outdated threads across 25 open PRs.
+- The pre-push and post-push open-PR review-thread sweeps found 0 active unresolved non-outdated threads across 25 open PRs.
 - PR #508 still has failing CI from the setup-go Dependabot bump and needs the guardrail expectation updated or the Dependabot branch refreshed.
