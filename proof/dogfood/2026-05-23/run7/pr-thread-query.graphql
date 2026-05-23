@@ -1,25 +1,73 @@
-query($owner:String!, $repo:String!, $number:Int!) {
-  repository(owner:$owner, name:$repo) {
-    pullRequest(number:$number) {
-      number
-      reviewDecision
-      mergeStateStatus
-      reviewThreads(first:100) {
-        nodes {
-          isResolved
-          isOutdated
-          comments(first:20) {
-            nodes {
-              author { login }
-              body
-              path
-              line
-              url
-              createdAt
-            }
-          }
-        }
-      }
-    }
-  }
-}
+query($owner:String!, $repo:String!, $number:Int!) {
+
+
+  repository(owner:$owner, name:$repo) {
+
+
+    pullRequest(number:$number) {
+
+
+      number
+
+
+      reviewDecision
+
+
+      mergeStateStatus
+
+
+      reviewThreads(first:100) {
+
+
+        nodes {
+
+
+          isResolved
+
+
+          isOutdated
+
+
+          comments(first:20) {
+
+
+            nodes {
+
+
+              author { login }
+
+
+              body
+
+
+              path
+
+
+              line
+
+
+              url
+
+
+              createdAt
+
+
+            }
+
+
+          }
+
+
+        }
+
+
+      }
+
+
+    }
+
+
+  }
+
+
+}
