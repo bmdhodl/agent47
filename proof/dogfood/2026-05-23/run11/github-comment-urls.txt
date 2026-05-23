@@ -1,0 +1,2 @@
+issue_comment=https://github.com/bmdhodl/agent47/issues/490#issuecomment-4526226121
+pr_comment=https://github.com/bmdhodl/agent47/pull/506#issuecomment-4526226159

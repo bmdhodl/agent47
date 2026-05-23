@@ -1,13 +1,13 @@
-{
-  "active_unresolved_non_outdated_count": 0,
-  "open_pr_count": 25,
-  "pr506": {
-    "active_unresolved_non_outdated": [],
-    "active_unresolved_non_outdated_count": 0,
-    "number": 506,
-    "returncode": 0,
-    "thread_count": 0,
-    "title": "Add dogfood proof for 2026-05-22 run 11",
-    "url": "https://github.com/bmdhodl/agent47/pull/506"
-  }
-}
+{
+  "active_unresolved_non_outdated_count": 0,
+  "open_pr_count": 25,
+  "pr506": {
+    "active_unresolved_non_outdated": [],
+    "active_unresolved_non_outdated_count": 0,
+    "number": 506,
+    "returncode": 0,
+    "thread_count": 0,
+    "title": "Add dogfood proof for 2026-05-22 run 11",
+    "url": "https://github.com/bmdhodl/agent47/pull/506"
+  }
+}

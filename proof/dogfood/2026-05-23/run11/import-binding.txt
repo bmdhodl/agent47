@@ -1,2 +1,2 @@
-PYTHONPATH=<repo>\sdk
-<repo>\sdk\agentguard\__init__.py
+PYTHONPATH=<repo>\sdk
+<repo>\sdk\agentguard\__init__.py
