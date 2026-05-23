@@ -1,0 +1,7 @@
+mcp-registry-search.json
+  contains 0.2.1: True
+  contains 0.2.2: False
+glama-server.json
+  id: y6zuc6wgtu
+  tools_count: 0
+  env_count: 0

@@ -1,0 +1,7 @@
+{
+    "pypi_pip_index":  "python : WARNING: pip index is currently an experimental command. It may be removed/changed in a future release \r\nwithout prior warning.\r\nAt line:4 char:13\r\n+ $pipIndex = python -m pip index versions agentguard47 2\u003e\u00261 | Out-Stri ...\r\n+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (WARNING: pip in... prior warning.:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nagentguard47 (1.2.10)\r\nAvailable versions: 1.2.10, 1.2.9, 1.2.8, 1.2.6, 1.2.5, 1.2.4, 1.2.3, 1.2.2, 1.2.1, 1.2.0, 1.0.0, 0.8.0, 0.7.0, 0.6.0, 0.5.0, 0.4.0, 0.3.0, 0.2.0\r\n  INSTALLED: 1.2.10\r\n  LATEST:    1.2.10\r\n\r\n[notice] A new release of pip is available: 24.3.1 -\u003e 26.1.1\r\n[notice] To update, run: python.exe -m pip install --upgrade pip",
+    "npm_mcp_server_version":  "0.2.2",
+    "local_sdk_version":  "1.2.10",
+    "local_mcp_package_version":  "0.2.2",
+    "local_mcp_server_json_version":  "0.2.2"
+}
