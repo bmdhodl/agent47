@@ -89,3 +89,4 @@ This counts as real dogfood proof because the run produced guard events and inci
 - `git diff --check` passed with no output.
 - Artifact hygiene passed: UTF-8, no BOM, no NUL bytes, JSON/JSONL parsed, and no exact local repo path leak.
 - Final GitHub publication is recorded in PR/issue comments after push.
+- Post-wait review sweep found 25 open PRs, 56 review threads, and 0 active unresolved non-outdated threads.
