@@ -1,0 +1,6 @@
+local sdk pyproject version:
+version = "1.2.10"
+local mcp package/server versions:
+mcp-server/package.json:3: "version": "0.2.2",
+mcp-server/server.json:9: "version": "0.2.2",
+mcp-server/server.json:14: "version": "0.2.2",

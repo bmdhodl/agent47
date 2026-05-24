@@ -1,0 +1,50 @@
+# AgentGuard Incident Report
+
+Status: **incident**
+Severity: **critical**
+Primary cause: **loop_detected**
+
+## Summary
+
+- Total events: 36
+- Spans: 6
+- Events: 30
+- Duration: 3.1 ms
+- Estimated cost: $1.0800
+- Guard events: 4
+- Errors: 0
+- Exact savings: $0.0000
+- Estimated savings: $0.1200
+
+## Savings Ledger
+
+- Exact tokens saved: 0
+- Estimated tokens saved: 500
+- Exact dollars saved: $0.0000
+- Estimated dollars saved: $0.1200
+- Savings reasons:
+  - `budget_overrun_stopped` (estimated): 500 tokens / $0.1200 across 1 occurrence(s)
+
+## Guard Events
+
+- `guard.budget_warning` (warning)
+- `guard.budget_exceeded` (critical): Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)
+- `guard.loop_detected` (critical): Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+- `guard.retry_limit_exceeded` (critical): Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+
+## Recommended Next Steps
+
+- Tighten LoopGuard or FuzzyLoopGuard thresholds around the repeated tool path.
+- Add a cheaper fallback or deterministic exit when the same tool repeats.
+- Review the trace timeline to confirm the failure path before widening limits.
+- Keep one-off investigations local; add HttpSink only when future incidents need retained history, alerts, or team-visible follow-up.
+
+## Upgrade Path
+
+Keep this report local if it is a one-off investigation. Add hosted ingest only when future incidents need retained history, alerts, spend trends, or team-visible follow-up:
+
+```python
+from agentguard import Tracer, HttpSink
+
+tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_..."))
+```

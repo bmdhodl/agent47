@@ -1,0 +1,8 @@
+Artifact hygiene for dogfood run15
+
+Files checked: 33
+Status: passed
+- UTF-8 readable; no BOM detected
+- no NUL bytes detected
+- JSON/JSONL parse passed
+- no exact local repo path leak detected

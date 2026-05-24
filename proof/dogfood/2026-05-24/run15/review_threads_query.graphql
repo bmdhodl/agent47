@@ -1,0 +1,26 @@
+query($owner:String!, $name:String!) {
+  repository(owner:$owner, name:$name) {
+    pullRequests(states:OPEN, first:100, orderBy:{field:UPDATED_AT, direction:DESC}) {
+      totalCount
+      nodes {
+        number
+        title
+        reviewThreads(first:100) {
+          totalCount
+          nodes {
+            isResolved
+            isOutdated
+            comments(first:10) {
+              nodes {
+                author { login }
+                url
+                body
+                createdAt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

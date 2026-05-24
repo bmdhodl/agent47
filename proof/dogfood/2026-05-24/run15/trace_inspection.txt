@@ -1,0 +1,23 @@
+Trace inspection for dogfood run15
+
+Total trace records inspected: 94
+Important guard/doctor events inspected: 14
+
+Important event counts:
+- doctor.verify: 4
+- guard.budget_exceeded: 3
+- guard.budget_warning: 2
+- guard.loop_detected: 2
+- guard.retry_limit_exceeded: 3
+
+Concrete enforcement events:
+- installed_demo_traces.jsonl:16 guard.budget_warning phase=emit limit_usd=1.0
+- installed_demo_traces.jsonl:21 guard.budget_exceeded phase=emit limit_usd=1.0
+- installed_demo_traces.jsonl:27 guard.loop_detected phase=emit 
+- installed_demo_traces.jsonl:35 guard.retry_limit_exceeded phase=emit 
+- repo_demo_traces.jsonl:16 guard.budget_warning phase=emit limit_usd=1.0
+- repo_demo_traces.jsonl:21 guard.budget_exceeded phase=emit limit_usd=1.0
+- repo_demo_traces.jsonl:27 guard.loop_detected phase=emit 
+- repo_demo_traces.jsonl:35 guard.retry_limit_exceeded phase=emit 
+- review_loop_traces.jsonl:6 guard.budget_exceeded phase=emit attempt=3
+- review_loop_traces.jsonl:13 guard.retry_limit_exceeded phase=emit attempt=4

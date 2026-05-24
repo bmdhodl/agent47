@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 0 items
+
+============================ no tests ran in 0.01s ============================
+python : ERROR: file or directory not found: sdk/tests/test_release_metadata.py
+At line:2 char:87
++ ... TH='.\sdk'; python -m pytest sdk/tests/test_demo.py sdk/tests/test_do ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: file or ...ase_metadata.py:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+

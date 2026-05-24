@@ -1,0 +1,188 @@
+{
+  "trace_files": [
+    "installed_doctor_trace.jsonl",
+    "installed_demo_traces.jsonl",
+    "repo_doctor_trace.jsonl",
+    "repo_demo_traces.jsonl",
+    "review_loop_traces.jsonl"
+  ],
+  "event_count": 94,
+  "important_event_count": 14,
+  "important_events": [
+    {
+      "trace_file": "installed_doctor_trace.jsonl",
+      "line": 1,
+      "name": "doctor.verify",
+      "phase": "start",
+      "kind": "span",
+      "data": {},
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "installed_doctor_trace.jsonl",
+      "line": 4,
+      "name": "doctor.verify",
+      "phase": "end",
+      "kind": "span",
+      "data": {},
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "installed_demo_traces.jsonl",
+      "line": 16,
+      "name": "guard.budget_warning",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "cost_used": 0.84,
+        "limit_usd": 1.0
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "installed_demo_traces.jsonl",
+      "line": 21,
+      "name": "guard.budget_exceeded",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "cost_used": 1.08,
+        "limit_usd": 1.0,
+        "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "installed_demo_traces.jsonl",
+      "line": 27,
+      "name": "guard.loop_detected",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+        "tool_name": "search"
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "installed_demo_traces.jsonl",
+      "line": 35,
+      "name": "guard.retry_limit_exceeded",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+        "tool_name": "fetch_docs"
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "repo_doctor_trace.jsonl",
+      "line": 1,
+      "name": "doctor.verify",
+      "phase": "start",
+      "kind": "span",
+      "data": {},
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "repo_doctor_trace.jsonl",
+      "line": 4,
+      "name": "doctor.verify",
+      "phase": "end",
+      "kind": "span",
+      "data": {},
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "repo_demo_traces.jsonl",
+      "line": 16,
+      "name": "guard.budget_warning",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "cost_used": 0.84,
+        "limit_usd": 1.0
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "repo_demo_traces.jsonl",
+      "line": 21,
+      "name": "guard.budget_exceeded",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "cost_used": 1.08,
+        "limit_usd": 1.0,
+        "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "repo_demo_traces.jsonl",
+      "line": 27,
+      "name": "guard.loop_detected",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+        "tool_name": "search"
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "repo_demo_traces.jsonl",
+      "line": 35,
+      "name": "guard.retry_limit_exceeded",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+        "tool_name": "fetch_docs"
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "review_loop_traces.jsonl",
+      "line": 6,
+      "name": "guard.budget_exceeded",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "attempt": 3,
+        "cost_usd": 0.051,
+        "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+        "tokens_used": 12300
+      },
+      "cost_usd": null,
+      "error": null
+    },
+    {
+      "trace_file": "review_loop_traces.jsonl",
+      "line": 13,
+      "name": "guard.retry_limit_exceeded",
+      "phase": "emit",
+      "kind": "event",
+      "data": {
+        "attempt": 4,
+        "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+        "tool_name": "apply_patch"
+      },
+      "cost_usd": null,
+      "error": null
+    }
+  ]
+}
