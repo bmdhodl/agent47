@@ -1,0 +1,12 @@
+
+sdk\pyproject.toml:7:version = "1.2.10"
+sdk\pyproject.toml:69:package-dir = {"" = "."}
+sdk\pyproject.toml:71:[tool.setuptools.packages.find]
+sdk\pyproject.toml:76:[tool.setuptools.package-data]
+sdk\pyproject.toml:80:target-version = "py39"
+mcp-server\package.json:3:  "version": "0.2.2",
+mcp-server\server.json:9:  "version": "0.2.2",
+mcp-server\server.json:10:  "packages": [
+mcp-server\server.json:14:      "version": "0.2.2",
+
+

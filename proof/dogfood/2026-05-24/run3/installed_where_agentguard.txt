@@ -1,0 +1,2 @@
+## command: where.exe agentguard
+C:\Python313\Scripts\agentguard.exe
