@@ -1,0 +1,31 @@
+
+
+HelpUri            :
+FileVersionInfo    : File:             C:\Python313\Scripts\agentguard.exe
+                     InternalName:
+                     OriginalFilename:
+                     FileVersion:
+                     FileDescription:
+                     Product:
+                     ProductVersion:
+                     Debug:            False
+                     Patched:          False
+                     PreRelease:       False
+                     PrivateBuild:     False
+                     SpecialBuild:     False
+                     Language:
+
+Path               : C:\Python313\Scripts\agentguard.exe
+Extension          : .exe
+Definition         : C:\Python313\Scripts\agentguard.exe
+Source             : C:\Python313\Scripts\agentguard.exe
+Version            : 0.0.0.0
+Visibility         : Public
+OutputType         : {System.String}
+Name               : agentguard.exe
+CommandType        : Application
+ModuleName         :
+Module             :
+RemotingCapability : PowerShell
+Parameters         :
+ParameterSets      :
