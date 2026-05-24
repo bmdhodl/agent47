@@ -1,0 +1,41 @@
+# Commands
+
+## installed_where_agentguard
+where agentguard
+exit_code=0
+
+## installed_doctor
+agentguard doctor --trace-file proof/dogfood/2026-05-24/run10/installed_agentguard_doctor_trace.jsonl
+exit_code=0
+
+## installed_demo
+agentguard demo --trace-file proof/dogfood/2026-05-24/run10/installed_agentguard_demo_traces.jsonl
+exit_code=0
+
+## repo_doctor
+python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-24/run10/repo_agentguard_doctor_trace.jsonl
+exit_code=0
+
+## repo_demo
+python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-24/run10/repo_agentguard_demo_traces.jsonl
+exit_code=0
+
+## repo_review_loop
+python examples/coding_agent_review_loop.py
+exit_code=0
+
+## repo_demo_report
+python -m agentguard.cli report proof/dogfood/2026-05-24/run10/repo_agentguard_demo_traces.jsonl
+exit_code=0
+
+## repo_demo_incident
+python -m agentguard.cli incident proof/dogfood/2026-05-24/run10/repo_agentguard_demo_traces.jsonl
+exit_code=0
+
+## repo_review_loop_report
+python -m agentguard.cli report proof/dogfood/2026-05-24/run10/repo_coding_agent_review_loop_traces.jsonl
+exit_code=0
+
+## repo_review_loop_incident
+python -m agentguard.cli incident proof/dogfood/2026-05-24/run10/repo_coding_agent_review_loop_traces.jsonl
+exit_code=0
