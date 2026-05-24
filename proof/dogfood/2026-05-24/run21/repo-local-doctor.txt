@@ -1,0 +1,87 @@
+AgentGuard doctor
+
+No dashboard. No network calls. Local verification only.
+
+
+
+[ok] Python: 3.13.2
+
+[ok] agentguard47: 1.2.10
+
+[ok] init(local_only=True): wrote 4 events to agentguard_doctor_trace.jsonl
+
+[ok] Optional integrations detected: openai, anthropic, langchain, langgraph, crewai
+
+
+
+Suggested repo config (.agentguard.json):
+
+{
+
+  "profile": "coding-agent",
+
+  "service": "my-agent",
+
+  "trace_file": ".agentguard/traces.jsonl",
+
+  "budget_usd": 5.0
+
+}
+
+
+
+Suggested next step:
+
+import agentguard
+
+
+
+agentguard.init(
+
+    service="my-agent",
+
+    budget_usd=5.00,
+
+    local_only=True,
+
+)
+
+
+
+Helpful commands:
+
+  agentguard demo
+
+  agentguard quickstart --framework raw --write
+
+  python agentguard_raw_quickstart.py
+
+  agentguard report .agentguard/traces.jsonl
+
+  agentguard report agentguard_doctor_trace.jsonl
+
+
+
+If 'agentguard' is not on PATH:
+
+  python -m agentguard.cli demo
+
+  python -m agentguard.cli quickstart --framework raw --write
+
+  python -m agentguard.cli report .agentguard/traces.jsonl
+
+  python -m agentguard.cli report agentguard_doctor_trace.jsonl
+
+
+
+Integration hints:
+
+  - openai: init() can auto-patch installed OpenAI clients.
+
+  - anthropic: init() can auto-patch installed Anthropic clients.
+
+  - langchain: Use agentguard.integrations.langchain.AgentGuardCallbackHandler for callback-based tracing.
+
+  - langgraph: Use agentguard.integrations.langgraph.guarded_node for node-level enforcement.
+
+  - crewai: Use agentguard.integrations.crewai.AgentGuardCrewHandler for CrewAI callbacks.

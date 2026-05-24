@@ -1,0 +1,39 @@
+# Trace Inspection
+
+
+
+## Event counts
+
+- doctor.verify: 4
+
+- guard.budget_exceeded: 3
+
+- guard.budget_warning: 2
+
+- guard.loop_detected: 2
+
+- guard.retry_limit_exceeded: 3
+
+
+
+## Enforcement events
+
+- installed-demo-traces.jsonl:16 guard.budget_warning ()
+
+- installed-demo-traces.jsonl:21 guard.budget_exceeded (message=Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200))
+
+- installed-demo-traces.jsonl:27 guard.loop_detected (message=Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop., tool_name=search)
+
+- installed-demo-traces.jsonl:35 guard.retry_limit_exceeded (message=Retry limit exceeded: fetch_docs attempted 3 times (limit: 2), tool_name=fetch_docs)
+
+- repo-local-demo-traces.jsonl:16 guard.budget_warning ()
+
+- repo-local-demo-traces.jsonl:21 guard.budget_exceeded (message=Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200))
+
+- repo-local-demo-traces.jsonl:27 guard.loop_detected (message=Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop., tool_name=search)
+
+- repo-local-demo-traces.jsonl:35 guard.retry_limit_exceeded (message=Retry limit exceeded: fetch_docs attempted 3 times (limit: 2), tool_name=fetch_docs)
+
+- review-loop-traces.jsonl:6 guard.budget_exceeded (attempt=3)
+
+- review-loop-traces.jsonl:13 guard.retry_limit_exceeded (attempt=4, tool_name=apply_patch)

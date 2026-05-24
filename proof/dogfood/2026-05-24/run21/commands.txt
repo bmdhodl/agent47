@@ -1,0 +1,69 @@
+Run started: 2026-05-24T16:58:21.9532577-05:00
+
+HEAD: 09b6f01bbfcb87fdf0504960bf2b876c34b85b6d
+
+Toplevel: <repo>
+
+Roadmap staleness: 2 weeks ago
+
+Architecture staleness: 3 weeks ago
+
+where agentguard
+
+
+
+## installed agentguard doctor
+
+agentguard doctor
+
+exit=0
+
+
+
+## installed agentguard demo
+
+agentguard demo
+
+exit=0
+
+
+
+## repo-local doctor
+
+PYTHONPATH=./sdk python -m agentguard.cli doctor
+
+exit=0
+
+
+
+## repo-local demo
+
+PYTHONPATH=./sdk python -m agentguard.cli demo
+
+exit=0
+
+
+
+## repo-local coding agent review loop
+
+PYTHONPATH=./sdk python examples/coding_agent_review_loop.py
+
+exit=0
+
+
+
+## report demo traces
+
+PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-24/run21/repo-local-demo-traces.jsonl
+
+exit=0
+
+
+
+## incident review loop traces
+
+PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-24/run21/review-loop-traces.jsonl
+
+exit=0
+
+Run finished: 2026-05-24T16:58:28.6629079-05:00
