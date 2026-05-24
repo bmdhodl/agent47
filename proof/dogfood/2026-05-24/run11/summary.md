@@ -56,6 +56,7 @@ stdout both show AgentGuard stopping budget, loop, and retry failure modes.
 - `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
 - `git diff --check`: passed.
 - Review-thread sweep before push: PR #506 has 0 active unresolved non-outdated threads.
+- Post-wait PR #506 checks: CI and CodeQL passed; 0 active unresolved non-outdated threads.
 
 ## Repo Health Snapshot
 
