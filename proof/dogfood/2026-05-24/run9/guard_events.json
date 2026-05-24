@@ -1,0 +1,298 @@
+{
+  "traces": [
+    {
+      "event_count": 4,
+      "file": "installed_agentguard_doctor_trace.jsonl",
+      "guard_events": [
+        {
+          "data": {},
+          "duration_ms": null,
+          "error": null,
+          "kind": "span",
+          "name": "doctor.verify",
+          "parent_id": null,
+          "phase": "start",
+          "service": "agentguard-doctor",
+          "span_id": "2262cd97bf7e45efa71d7a51e989028d",
+          "trace_id": "61c01c2f18234beb8d1875b53e02af7d",
+          "ts": 1779615982.2683134
+        },
+        {
+          "data": {},
+          "duration_ms": 0.6742999976268038,
+          "error": null,
+          "kind": "span",
+          "name": "doctor.verify",
+          "parent_id": null,
+          "phase": "end",
+          "service": "agentguard-doctor",
+          "span_id": "2262cd97bf7e45efa71d7a51e989028d",
+          "trace_id": "61c01c2f18234beb8d1875b53e02af7d",
+          "ts": 1779615982.2689874
+        }
+      ],
+      "name_counts": {
+        "doctor.verify": 2,
+        "reasoning.step": 1,
+        "tool.check": 1
+      }
+    },
+    {
+      "event_count": 36,
+      "file": "installed_agentguard_demo_traces.jsonl",
+      "guard_events": [
+        {
+          "data": {
+            "cost_used": 0.84,
+            "limit_usd": 1.0
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_warning",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "0a0116ea0d944a41887d623b78079f17",
+          "trace_id": "3b2af7fd94914febb309703c17686868",
+          "ts": 1779615982.5015483
+        },
+        {
+          "data": {
+            "cost_used": 1.08,
+            "limit_usd": 1.0,
+            "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "0a0116ea0d944a41887d623b78079f17",
+          "trace_id": "3b2af7fd94914febb309703c17686868",
+          "ts": 1779615982.502205
+        },
+        {
+          "data": {
+            "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+            "tool_name": "search"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.loop_detected",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "b4c1bc7f28e64bd085afdefc289fa21f",
+          "trace_id": "e4ffb19321c74fb49bf0b211590ec3f7",
+          "ts": 1779615982.5029857
+        },
+        {
+          "data": {
+            "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+            "tool_name": "fetch_docs"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.retry_limit_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "98b12a5571b5449caad44edfc2eb2ddf",
+          "trace_id": "9b667d73afd44c2584b7baaf2be5eaa0",
+          "ts": 1779615982.5039759
+        }
+      ],
+      "name_counts": {
+        "demo.budget_guard": 2,
+        "demo.loop_guard": 2,
+        "demo.retry_guard": 2,
+        "guard.budget_exceeded": 1,
+        "guard.budget_warning": 1,
+        "guard.loop_detected": 1,
+        "guard.retry_limit_exceeded": 1,
+        "llm.result": 9,
+        "reasoning.step": 9,
+        "tool.error": 2,
+        "tool.retry": 3,
+        "tool.search": 3
+      }
+    },
+    {
+      "event_count": 4,
+      "file": "repo_agentguard_doctor_trace.jsonl",
+      "guard_events": [
+        {
+          "data": {},
+          "duration_ms": null,
+          "error": null,
+          "kind": "span",
+          "name": "doctor.verify",
+          "parent_id": null,
+          "phase": "start",
+          "service": "agentguard-doctor",
+          "span_id": "9bc758c6897b4739906ce42c241cfda0",
+          "trace_id": "a148c62169f7434c825d75c88f7b48c4",
+          "ts": 1779615982.8859124
+        },
+        {
+          "data": {},
+          "duration_ms": 0.687899999320507,
+          "error": null,
+          "kind": "span",
+          "name": "doctor.verify",
+          "parent_id": null,
+          "phase": "end",
+          "service": "agentguard-doctor",
+          "span_id": "9bc758c6897b4739906ce42c241cfda0",
+          "trace_id": "a148c62169f7434c825d75c88f7b48c4",
+          "ts": 1779615982.8865988
+        }
+      ],
+      "name_counts": {
+        "doctor.verify": 2,
+        "reasoning.step": 1,
+        "tool.check": 1
+      }
+    },
+    {
+      "event_count": 36,
+      "file": "repo_agentguard_demo_traces.jsonl",
+      "guard_events": [
+        {
+          "data": {
+            "cost_used": 0.84,
+            "limit_usd": 1.0
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_warning",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "224c1f1113664c8ca57c1a7ff8f4db1d",
+          "trace_id": "1674ec5dbc0a4ed3816202106ac92d7e",
+          "ts": 1779615983.1059492
+        },
+        {
+          "data": {
+            "cost_used": 1.08,
+            "limit_usd": 1.0,
+            "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "224c1f1113664c8ca57c1a7ff8f4db1d",
+          "trace_id": "1674ec5dbc0a4ed3816202106ac92d7e",
+          "ts": 1779615983.1065764
+        },
+        {
+          "data": {
+            "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+            "tool_name": "search"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.loop_detected",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "d8e042360cc0497e9dbef7f0a651dd0e",
+          "trace_id": "7f0dfdac455e42f9ae935b5029bfcc13",
+          "ts": 1779615983.1073306
+        },
+        {
+          "data": {
+            "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+            "tool_name": "fetch_docs"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.retry_limit_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "2502943864744a1c80f15765ecdcee0d",
+          "trace_id": "3c6a8f05726945e791d1137a9afbc86d",
+          "ts": 1779615983.1083019
+        }
+      ],
+      "name_counts": {
+        "demo.budget_guard": 2,
+        "demo.loop_guard": 2,
+        "demo.retry_guard": 2,
+        "guard.budget_exceeded": 1,
+        "guard.budget_warning": 1,
+        "guard.loop_detected": 1,
+        "guard.retry_limit_exceeded": 1,
+        "llm.result": 9,
+        "reasoning.step": 9,
+        "tool.error": 2,
+        "tool.retry": 3,
+        "tool.search": 3
+      }
+    },
+    {
+      "event_count": 14,
+      "file": "repo_coding_agent_review_loop_traces.jsonl",
+      "guard_events": [
+        {
+          "data": {
+            "attempt": 3,
+            "cost_usd": 0.051,
+            "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+            "tokens_used": 12300
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "coding-agent-review-loop",
+          "span_id": "a188af96ce7a4008b0793f0cf0dbb6c3",
+          "trace_id": "8b433531419844d48fa2fdae5f6466f1",
+          "ts": 1779615983.3172474
+        },
+        {
+          "data": {
+            "attempt": 4,
+            "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+            "tool_name": "apply_patch"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.retry_limit_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "coding-agent-review-loop",
+          "span_id": "04702bf317b0423d9499dc766625d53d",
+          "trace_id": "164d09e30fde48eaade52f30c34de3d0",
+          "ts": 1779615983.318214
+        }
+      ],
+      "name_counts": {
+        "coding_agent.review_loop.budget": 2,
+        "coding_agent.review_loop.retry_storm": 2,
+        "guard.budget_exceeded": 1,
+        "guard.retry_limit_exceeded": 1,
+        "review.iteration": 3,
+        "tool.retry": 4,
+        "watermark": 1
+      }
+    }
+  ]
+}

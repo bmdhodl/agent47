@@ -1,0 +1,91 @@
+{
+  "_id": "@agentguard47/mcp-server@0.2.2",
+  "_rev": "4-747fb725ac05892ea9c68de86a6c3ce8",
+  "name": "@agentguard47/mcp-server",
+  "dist-tags": {
+    "latest": "0.2.2"
+  },
+  "versions": [
+    "0.1.0",
+    "0.2.0",
+    "0.2.1",
+    "0.2.2"
+  ],
+  "time": {
+    "created": "2026-02-08T07:33:34.246Z",
+    "modified": "2026-05-04T19:38:49.604Z",
+    "0.1.0": "2026-02-08T07:33:34.488Z",
+    "0.2.0": "2026-02-15T00:10:01.653Z",
+    "0.2.1": "2026-04-02T16:23:02.520Z",
+    "0.2.2": "2026-05-04T19:38:49.493Z"
+  },
+  "bugs": {
+    "url": "https://github.com/bmdhodl/agent47/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/bmdhodl/agent47/tree/main/mcp-server",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "agentguard",
+    "coding-agents",
+    "agent-safety",
+    "runtime-guardrails",
+    "budget-health",
+    "incident-context"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bmdhodl/agent47.git",
+    "directory": "mcp-server"
+  },
+  "description": "Read-only MCP server for coding-agent traces, decision events, alerts, costs, usage, and budget health",
+  "maintainers": [
+    "pat9000 <patrickhughes013@gmail.com>"
+  ],
+  "readmeFilename": "README.md",
+  "_contentLength": 11186,
+  "version": "0.2.2",
+  "mcpName": "io.github.bmdhodl/agentguard47",
+  "type": "module",
+  "bin": {
+    "agentguard-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "npm run build && node --test dist/__tests__/*.test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.2",
+    "typescript": "^5.0.0"
+  },
+  "_nodeVersion": "22.14.0",
+  "_npmVersion": "10.9.2",
+  "dist": {
+    "integrity": "sha512-Ds6U5nJqu1FK8eL2IyOXPsbVXykapapRg3Mf1MviIMxFuBqjk93Or6w8OttSQGq3A0N2UVbOFQiDiSV45VtvLA==",
+    "shasum": "3362b9e5b4289c41a3fece209c8d7427fc939ea9",
+    "tarball": "https://registry.npmjs.org/@agentguard47/mcp-server/-/mcp-server-0.2.2.tgz",
+    "fileCount": 19,
+    "unpackedSize": 26093,
+    "signatures": [
+      {
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+        "sig": "MEUCIQDwHIBIVs8CL0Eqv9FSD4ICxOKKe8uT9j5BliSCwKmPiAIgWGX7NrK4SPkjJMj0yD7oA/6maLmqfk39bwmpLrJbAEo="
+      }
+    ]
+  },
+  "_npmUser": "pat9000 <patrickhughes013@gmail.com>",
+  "directories": {},
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages-npm-production",
+    "tmp": "tmp/mcp-server_0.2.2_1777923529287_0.6676280177923957"
+  },
+  "_hasShrinkwrap": false
+}

@@ -1,0 +1,14 @@
+CodeQL	pass	2s	https://github.com/bmdhodl/agent47/runs/77585273913	
+analyze	pass	1m3s	https://github.com/bmdhodl/agent47/actions/runs/26356918208/job/77585219799	
+lint	pass	15s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218042	
+lint	pass	14s	https://github.com/bmdhodl/agent47/actions/runs/26356918200/job/77585219845	
+mcp	pass	16s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218038	
+mcp	pass	13s	https://github.com/bmdhodl/agent47/actions/runs/26356918200/job/77585219838	
+mcp-budget	pass	19s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218047	
+mcp-budget	pass	24s	https://github.com/bmdhodl/agent47/actions/runs/26356918200/job/77585219846	
+test (3.10)	pass	28s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218037	
+test (3.11)	pass	22s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218048	
+test (3.12)	pass	28s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218045	
+test (3.12)	pass	28s	https://github.com/bmdhodl/agent47/actions/runs/26356918200/job/77585219844	
+test (3.9)	pass	39s	https://github.com/bmdhodl/agent47/actions/runs/26356917500/job/77585218035	
+test (3.9)	pass	34s	https://github.com/bmdhodl/agent47/actions/runs/26356918200/job/77585219842	
