@@ -69,6 +69,9 @@ successful command exits.
   passed.
 - Open-PR review-thread sweep: 25 open PRs, 56 review threads, 0 active
   unresolved non-outdated threads.
+- Post-push CI/CodeQL: green on commit `7d2cc71`.
+- Post-wait review-thread sweep: 25 open PRs, 56 review threads, 0 active
+  unresolved non-outdated threads.
 
 ## Repo Health Snapshot
 
@@ -116,8 +119,12 @@ successful command exits.
 - `open_prs.json`
 - `open_issues.json`
 - `pr506_snapshot.json`
+- `pr506_post_wait_snapshot.json`
+- `pr506_checks_post_wait.txt`
 - `review_thread_summary.json`
 - `review_thread_active_summary.json`
+- `review_thread_post_wait_summary.json`
+- `review_thread_post_wait_active_summary.json`
 
 ## Docs Updates Needed
 
