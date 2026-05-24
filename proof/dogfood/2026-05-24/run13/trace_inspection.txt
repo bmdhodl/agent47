@@ -1,0 +1,27 @@
+{"attempt": null, "current_cost_usd": null, "file": "repo_doctor_trace.jsonl", "kind": "span", "limit": null, "line": 1, "max_cost_usd": null, "message": null, "name": "doctor.verify", "phase": "start", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "repo_doctor_trace.jsonl", "kind": "span", "limit": null, "line": 4, "max_cost_usd": null, "message": null, "name": "doctor.verify", "phase": "end", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "repo_demo_traces.jsonl", "kind": "event", "limit": null, "line": 16, "max_cost_usd": null, "message": null, "name": "guard.budget_warning", "phase": "emit", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "repo_demo_traces.jsonl", "kind": "event", "limit": null, "line": 21, "max_cost_usd": null, "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)", "name": "guard.budget_exceeded", "phase": "emit", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "repo_demo_traces.jsonl", "kind": "event", "limit": null, "line": 27, "max_cost_usd": null, "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.", "name": "guard.loop_detected", "phase": "emit", "severity": null, "tool_name": "search"}
+
+{"attempt": null, "current_cost_usd": null, "file": "repo_demo_traces.jsonl", "kind": "event", "limit": null, "line": 35, "max_cost_usd": null, "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)", "name": "guard.retry_limit_exceeded", "phase": "emit", "severity": null, "tool_name": "fetch_docs"}
+
+{"attempt": 3, "current_cost_usd": null, "file": "review_loop_traces.jsonl", "kind": "event", "limit": null, "line": 6, "max_cost_usd": null, "message": null, "name": "guard.budget_exceeded", "phase": "emit", "severity": null, "tool_name": null}
+
+{"attempt": 4, "current_cost_usd": null, "file": "review_loop_traces.jsonl", "kind": "event", "limit": null, "line": 13, "max_cost_usd": null, "message": null, "name": "guard.retry_limit_exceeded", "phase": "emit", "severity": null, "tool_name": "apply_patch"}
+
+{"attempt": null, "current_cost_usd": null, "file": "installed_doctor_trace.jsonl", "kind": "span", "limit": null, "line": 1, "max_cost_usd": null, "message": null, "name": "doctor.verify", "phase": "start", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "installed_doctor_trace.jsonl", "kind": "span", "limit": null, "line": 4, "max_cost_usd": null, "message": null, "name": "doctor.verify", "phase": "end", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "installed_demo_traces.jsonl", "kind": "event", "limit": null, "line": 16, "max_cost_usd": null, "message": null, "name": "guard.budget_warning", "phase": "emit", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "installed_demo_traces.jsonl", "kind": "event", "limit": null, "line": 21, "max_cost_usd": null, "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)", "name": "guard.budget_exceeded", "phase": "emit", "severity": null, "tool_name": null}
+
+{"attempt": null, "current_cost_usd": null, "file": "installed_demo_traces.jsonl", "kind": "event", "limit": null, "line": 27, "max_cost_usd": null, "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.", "name": "guard.loop_detected", "phase": "emit", "severity": null, "tool_name": "search"}
+
+{"attempt": null, "current_cost_usd": null, "file": "installed_demo_traces.jsonl", "kind": "event", "limit": null, "line": 35, "max_cost_usd": null, "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)", "name": "guard.retry_limit_exceeded", "phase": "emit", "severity": null, "tool_name": "fetch_docs"}

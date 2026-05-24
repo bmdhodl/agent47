@@ -1,0 +1,7 @@
+{"data": {}, "duration_ms": null, "error": null, "kind": "span", "name": "doctor.verify", "parent_id": null, "phase": "start", "service": "agentguard-doctor", "span_id": "527b48e473674cdab0cc9c764d1af03e", "trace_id": "b3cf5436adfe4c7e874429aad307c59c", "ts": 1779630621.458274}
+
+{"data": {"thought": "verifying local SDK path"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-doctor", "span_id": "527b48e473674cdab0cc9c764d1af03e", "trace_id": "b3cf5436adfe4c7e874429aad307c59c", "ts": 1779630621.4585688}
+
+{"data": {"result": "ok", "tool": "doctor"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.check", "parent_id": null, "phase": "emit", "service": "agentguard-doctor", "span_id": "527b48e473674cdab0cc9c764d1af03e", "trace_id": "b3cf5436adfe4c7e874429aad307c59c", "ts": 1779630621.4587488}
+
+{"data": {}, "duration_ms": 0.7011000125203282, "error": null, "kind": "span", "name": "doctor.verify", "parent_id": null, "phase": "end", "service": "agentguard-doctor", "span_id": "527b48e473674cdab0cc9c764d1af03e", "trace_id": "b3cf5436adfe4c7e874429aad307c59c", "ts": 1779630621.4589736}

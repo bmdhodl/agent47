@@ -1,0 +1,3 @@
+<stale-editable-worktree>\sdk\agentguard\__init__.py
+
+C:\Python313\python.exe
