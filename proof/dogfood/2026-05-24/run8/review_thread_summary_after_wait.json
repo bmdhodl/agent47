@@ -1,0 +1,10 @@
+{
+  "reviewDecision": "REVIEW_REQUIRED",
+  "mergeable": "MERGEABLE",
+  "checks_total": 14,
+  "checks_non_success": [],
+  "review_comments_count": 0,
+  "review_threads_count": 0,
+  "active_unresolved_non_outdated_threads_count": 0,
+  "active_unresolved_non_outdated_threads": []
+}

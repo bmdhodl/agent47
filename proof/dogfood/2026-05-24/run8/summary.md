@@ -93,6 +93,10 @@ The extracted event list is saved in `guard_events.json` and
 - `pr506_snapshot.json`
 - `pr506_checks_before_push.txt`
 - `pr506_comments.txt`
+- `pr506_after_wait.json`
+- `pr506_review_comments_after_wait.json`
+- `pr506_review_threads_after_wait.json`
+- `review_thread_summary_after_wait.json`
 - `issue490_comments.txt`
 - `issue473_snapshot.txt`
 - `issue511_snapshot.txt`
@@ -106,6 +110,8 @@ The extracted event list is saved in `guard_events.json` and
 - Focused pytest slice: 35 passed.
 - MCP npm release guard: passed.
 - Artifact hygiene: UTF-8 without BOM, no NUL bytes, no local absolute paths.
+- Refreshed PR `#506` checks on commit `91675d7`: all 14 checks completed successfully.
+- Post-wait PR review sweep: 0 review comments and 0 active unresolved non-outdated review threads.
 
 ## Release and distribution snapshot
 
