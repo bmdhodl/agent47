@@ -1,0 +1,1 @@
+passed: no NUL bytes, no UTF-8 BOM, required JSON parses

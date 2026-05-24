@@ -1,0 +1,89 @@
+# Command log - 2026-05-24 run19
+
+## Bind editable SDK to this checkout
+Command: `python -m pip install -e ./sdk`
+Output: `pip_install_editable.txt`
+
+## Installed import path
+Command: `python -c import-path check`
+Output: `installed_agentguard_where.txt`
+
+## Installed agentguard doctor
+Command: `agentguard doctor --trace-file proof/dogfood/2026-05-24/run19/installed_agentguard_doctor_trace.jsonl`
+Output: `installed_agentguard_doctor.txt`
+
+## Installed agentguard demo
+Command: `agentguard demo --trace-file proof/dogfood/2026-05-24/run19/installed_agentguard_demo_traces.jsonl`
+Output: `installed_agentguard_demo.txt`
+
+## Repo import path
+Command: `PYTHONPATH=./sdk python -c import-path check`
+Output: `repo_import_path.txt`
+
+## Repo-local doctor
+Command: `PYTHONPATH=./sdk python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-24/run19/repo_agentguard_doctor_trace.jsonl`
+Output: `repo_agentguard_doctor.txt`
+
+## Repo-local demo
+Command: `PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-24/run19/repo_agentguard_demo_traces.jsonl`
+Output: `repo_agentguard_demo.txt`
+
+## Repo-local coding-agent review loop
+Command: `PYTHONPATH=./sdk python examples/coding_agent_review_loop.py`
+Output: `repo_coding_agent_review_loop.txt`
+
+## Repo-local demo report
+Command: `PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-24/run19/repo_agentguard_demo_traces.jsonl`
+Output: `repo_agentguard_report_demo.txt`
+
+## Repo-local review-loop incident
+Command: `PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-24/run19/repo_coding_agent_review_loop_traces.jsonl`
+Output: `repo_agentguard_incident_review_loop.txt`
+
+## Focused proof tests
+Command: `PYTHONPATH=./sdk python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q`
+Output: `validation_pytest.txt`
+
+## Release guard MCP npm check
+Command: `python scripts/sdk_release_guard.py --check-mcp-npm`
+Output: `validation_release_guard.txt`
+
+## GitHub release view
+Command: `gh release view --json tagName,name,publishedAt,url,isPrerelease,isDraft`
+Output: `github_release_snapshot.json`
+
+## PyPI package versions
+Command: `python -m pip index versions agentguard47`
+Output: `pypi_snapshot.txt`
+
+## npm MCP package version
+Command: `npm view @agentguard47/mcp-server version`
+Output: `npm_mcp_snapshot.txt`
+
+## Open PR snapshot
+Command: `gh pr list --state open --limit 50 --json ...`
+Output: `open_prs_snapshot.json`
+
+## Open issue snapshot
+Command: `gh issue list --state open --limit 50 --json ...`
+Output: `open_issues_snapshot.json`
+
+## PR 506 snapshot
+Command: `gh pr view 506 --json ...`
+Output: `pr506_snapshot.json`
+
+## Issue 490 snapshot
+Command: `gh issue view 490 --comments --json ...`
+Output: `issue490_snapshot.json`
+
+## Issue 473 snapshot
+Command: `gh issue view 473 --comments --json ...`
+Output: `issue473_snapshot.json`
+
+## Review-thread sweep
+Command: `gh api graphql pullRequest.reviewThreads`
+Output: `review_thread_summary.json`
+
+## Artifact hygiene
+Command: `JSON/NUL/BOM scan plus git diff --check`
+Output: `artifact_hygiene.txt, git_diff_check.txt`

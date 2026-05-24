@@ -1,0 +1,10 @@
+{
+  "guard_events": 14,
+  "seen": [
+    "doctor.verify",
+    "guard.budget_exceeded",
+    "guard.budget_warning",
+    "guard.loop_detected",
+    "guard.retry_limit_exceeded"
+  ]
+}
