@@ -1,0 +1,193 @@
+{
+  "installed_demo": {
+    "interesting_events": [
+      {
+        "cost_usd": null,
+        "data": {
+          "cost_used": 0.84,
+          "limit_usd": 1.0
+        },
+        "line": 16,
+        "name": "guard.budget_warning",
+        "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "installed_demo"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "cost_used": 1.08,
+          "limit_usd": 1.0,
+          "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+        },
+        "line": 21,
+        "name": "guard.budget_exceeded",
+        "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "installed_demo"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+          "tool_name": "search"
+        },
+        "line": 27,
+        "name": "guard.loop_detected",
+        "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "installed_demo"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+          "tool_name": "fetch_docs"
+        },
+        "line": 35,
+        "name": "guard.retry_limit_exceeded",
+        "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "installed_demo"
+      }
+    ],
+    "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl",
+    "total_events": 36
+  },
+  "installed_doctor": {
+    "interesting_events": [
+      {
+        "cost_usd": null,
+        "data": {},
+        "line": 1,
+        "name": "doctor.verify",
+        "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_doctor_trace.jsonl",
+        "phase": "start",
+        "trace": "installed_doctor"
+      },
+      {
+        "cost_usd": null,
+        "data": {},
+        "line": 4,
+        "name": "doctor.verify",
+        "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_doctor_trace.jsonl",
+        "phase": "end",
+        "trace": "installed_doctor"
+      }
+    ],
+    "path": "proof/dogfood/2026-05-24/run11/installed_agentguard_doctor_trace.jsonl",
+    "total_events": 4
+  },
+  "repo_demo": {
+    "interesting_events": [
+      {
+        "cost_usd": null,
+        "data": {
+          "cost_used": 0.84,
+          "limit_usd": 1.0
+        },
+        "line": 16,
+        "name": "guard.budget_warning",
+        "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "repo_demo"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "cost_used": 1.08,
+          "limit_usd": 1.0,
+          "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+        },
+        "line": 21,
+        "name": "guard.budget_exceeded",
+        "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "repo_demo"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+          "tool_name": "search"
+        },
+        "line": 27,
+        "name": "guard.loop_detected",
+        "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "repo_demo"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+          "tool_name": "fetch_docs"
+        },
+        "line": 35,
+        "name": "guard.retry_limit_exceeded",
+        "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl",
+        "phase": "emit",
+        "trace": "repo_demo"
+      }
+    ],
+    "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl",
+    "total_events": 36
+  },
+  "repo_doctor": {
+    "interesting_events": [
+      {
+        "cost_usd": null,
+        "data": {},
+        "line": 1,
+        "name": "doctor.verify",
+        "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_doctor_trace.jsonl",
+        "phase": "start",
+        "trace": "repo_doctor"
+      },
+      {
+        "cost_usd": null,
+        "data": {},
+        "line": 4,
+        "name": "doctor.verify",
+        "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_doctor_trace.jsonl",
+        "phase": "end",
+        "trace": "repo_doctor"
+      }
+    ],
+    "path": "proof/dogfood/2026-05-24/run11/repo_agentguard_doctor_trace.jsonl",
+    "total_events": 4
+  },
+  "review_loop": {
+    "interesting_events": [
+      {
+        "cost_usd": null,
+        "data": {
+          "attempt": 3,
+          "cost_usd": 0.051,
+          "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+          "tokens_used": 12300
+        },
+        "line": 6,
+        "name": "guard.budget_exceeded",
+        "path": "proof/dogfood/2026-05-24/run11/repo_coding_agent_review_loop_traces.jsonl",
+        "phase": "emit",
+        "trace": "review_loop"
+      },
+      {
+        "cost_usd": null,
+        "data": {
+          "attempt": 4,
+          "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+          "tool_name": "apply_patch"
+        },
+        "line": 13,
+        "name": "guard.retry_limit_exceeded",
+        "path": "proof/dogfood/2026-05-24/run11/repo_coding_agent_review_loop_traces.jsonl",
+        "phase": "emit",
+        "trace": "review_loop"
+      }
+    ],
+    "path": "proof/dogfood/2026-05-24/run11/repo_coding_agent_review_loop_traces.jsonl",
+    "total_events": 14
+  }
+}

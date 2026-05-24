@@ -1,0 +1,1 @@
+﻿artifact hygiene passed: utf-8, no BOM/NUL/local absolute paths, JSON parseable

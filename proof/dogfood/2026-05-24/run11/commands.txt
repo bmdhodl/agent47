@@ -1,0 +1,9 @@
+agentguard doctor --trace-file proof/dogfood/2026-05-24/run11/installed_agentguard_doctor_trace.jsonl
+agentguard demo --trace-file proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl
+python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-24/run11/repo_agentguard_doctor_trace.jsonl
+python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl
+python examples/coding_agent_review_loop.py
+python -m agentguard.cli report proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl
+python -m agentguard.cli incident proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl
+python -m agentguard.cli report proof/dogfood/2026-05-24/run11/repo_coding_agent_review_loop_traces.jsonl
+python -m agentguard.cli incident proof/dogfood/2026-05-24/run11/repo_coding_agent_review_loop_traces.jsonl

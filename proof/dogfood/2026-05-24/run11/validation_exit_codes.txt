@@ -1,0 +1,5 @@
+focused_pytest=0
+release_guard_check_mcp_npm=0
+git_diff_check=0
+git_diff_check_final=0
+artifact_hygiene=0

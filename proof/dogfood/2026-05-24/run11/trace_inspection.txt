@@ -1,0 +1,33 @@
+## installed_doctor
+path: proof/dogfood/2026-05-24/run11/installed_agentguard_doctor_trace.jsonl
+total_events: 4
+- line 1: doctor.verify phase=start cost=None data={}
+- line 4: doctor.verify phase=end cost=None data={}
+
+## installed_demo
+path: proof/dogfood/2026-05-24/run11/installed_agentguard_demo_traces.jsonl
+total_events: 36
+- line 16: guard.budget_warning phase=emit cost=None data={"cost_used": 0.84, "limit_usd": 1.0}
+- line 21: guard.budget_exceeded phase=emit cost=None data={"cost_used": 1.08, "limit_usd": 1.0, "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"}
+- line 27: guard.loop_detected phase=emit cost=None data={"message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.", "tool_name": "search"}
+- line 35: guard.retry_limit_exceeded phase=emit cost=None data={"message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)", "tool_name": "fetch_docs"}
+
+## repo_doctor
+path: proof/dogfood/2026-05-24/run11/repo_agentguard_doctor_trace.jsonl
+total_events: 4
+- line 1: doctor.verify phase=start cost=None data={}
+- line 4: doctor.verify phase=end cost=None data={}
+
+## repo_demo
+path: proof/dogfood/2026-05-24/run11/repo_agentguard_demo_traces.jsonl
+total_events: 36
+- line 16: guard.budget_warning phase=emit cost=None data={"cost_used": 0.84, "limit_usd": 1.0}
+- line 21: guard.budget_exceeded phase=emit cost=None data={"cost_used": 1.08, "limit_usd": 1.0, "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"}
+- line 27: guard.loop_detected phase=emit cost=None data={"message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.", "tool_name": "search"}
+- line 35: guard.retry_limit_exceeded phase=emit cost=None data={"message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)", "tool_name": "fetch_docs"}
+
+## review_loop
+path: proof/dogfood/2026-05-24/run11/repo_coding_agent_review_loop_traces.jsonl
+total_events: 14
+- line 6: guard.budget_exceeded phase=emit cost=None data={"attempt": 3, "cost_usd": 0.051, "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)", "tokens_used": 12300}
+- line 13: guard.retry_limit_exceeded phase=emit cost=None data={"attempt": 4, "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)", "tool_name": "apply_patch"}

@@ -1,0 +1,46 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0 -- <python>
+cachedir: .pytest_cache
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collecting ... collected 36 items
+
+sdk\tests\test_doctor.py::TestDoctor::test_cli_doctor_writes_trace_file PASSED [  2%]
+sdk\tests\test_doctor.py::TestDoctor::test_detected_integrations_are_reported PASSED [  5%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_fails_without_tearing_down_existing_tracer PASSED [  8%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_ignores_api_key_env PASSED [ 11%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_json_output_is_parseable PASSED [ 13%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_quotes_paths_with_spaces_in_fallback_commands PASSED [ 16%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_reports_repo_config PASSED [ 19%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_reports_repo_config_errors_without_failing PASSED [ 22%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_writes_local_trace_and_snippet PASSED [ 25%]
+sdk\tests\test_demo.py::TestOfflineDemo::test_cli_demo_writes_trace_file PASSED [ 27%]
+sdk\tests\test_demo.py::TestOfflineDemo::test_run_offline_demo_quotes_paths_with_spaces_in_guidance PASSED [ 30%]
+sdk\tests\test_demo.py::TestOfflineDemo::test_run_offline_demo_writes_trace_and_explains_boundary PASSED [ 33%]
+sdk\tests\test_cli_report.py::TestCliReport::test_decisions_command_outputs_human_summary PASSED [ 36%]
+sdk\tests\test_cli_report.py::TestCliReport::test_decisions_command_outputs_json PASSED [ 38%]
+sdk\tests\test_cli_report.py::TestCliReport::test_incident_command_json PASSED [ 41%]
+sdk\tests\test_cli_report.py::TestCliReport::test_incident_command_markdown_format PASSED [ 44%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_empty_json_format PASSED [ 47%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_json_includes_savings PASSED [ 50%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_lists_guard_events PASSED [ 52%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_output PASSED   [ 55%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_with_cost PASSED [ 58%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_registry_metadata_matches_package PASSED [ 61%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_registry_metadata_declares_required_env_vars PASSED [ 63%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_glama_packaging_files_are_present PASSED [ 66%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_smithery_config_matches_runtime_contract PASSED [ 69%]
+sdk\tests\test_mcp_registry_metadata.py::test_glama_claim_file_declares_maintainer PASSED [ 72%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_changelog_reports_missing_version PASSED [ 75%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_metadata_reports_version_drift PASSED [ 77%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_reports_latest_drift PASSED [ 80%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_reports_missing_npm PASSED [ 83%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_reports_unpublished_version PASSED [ 86%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_mcp_npm_package_uses_env_command_by_default PASSED [ 88%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_pypi_readme_reports_generation_errors PASSED [ 91%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_check_release_markers_reports_mismatch PASSED [ 94%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardHelpers::test_collect_findings_is_clean_for_current_repo PASSED [ 97%]
+sdk\tests\test_sdk_release_guard.py::TestReleaseGuardCli::test_json_output_is_parseable PASSED [100%]
+
+============================= 36 passed in 0.73s ==============================
