@@ -41,6 +41,7 @@ Enforcement was real. The proof is trace-backed and not based on exit codes alon
 - Parsed proof: `guard_events.json`, `trace_inspection.txt`, `trace_parse_output.txt`
 - Validation: `pytest_focused.txt`, `release_guard_check_mcp_npm.txt`
 - Live repo/package snapshots: `open_prs.json`, `open_issues.json`, `pr_506_snapshot.json`, `issue_490_snapshot.json`, `pr_506_review_threads.json`, `pr_506_checks.txt`, `github_release.json`, `pypi_agentguard47_versions.txt`, `npm_mcp_version.txt`, `npm_mcp_dist_tags.json`
+- Post-wait review artifacts: `pr_506_post_wait_snapshot.json`, `pr_506_post_wait_review_threads.json`, `review_thread_summary.txt`, `review_thread_parse_output.txt`
 
 ## Repo health notes
 
@@ -50,6 +51,7 @@ Enforcement was real. The proof is trace-backed and not based on exit codes alon
 - PyPI latest remains `agentguard47==1.2.10`.
 - npm latest remains `@agentguard47/mcp-server@0.2.2`.
 - PR #506 checks were green at snapshot time and review remains required.
+- Post-wait review sweep found 0 active unresolved non-outdated threads.
 - PR #508 still has failing/cancelled Python checks.
 - PRs #509 and #510 remain green but need human review.
 
