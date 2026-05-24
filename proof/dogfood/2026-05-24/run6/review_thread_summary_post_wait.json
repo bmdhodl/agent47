@@ -1,844 +1,565 @@
 {
 
+    "capturedAtUtc":  "2026-05-24T06:57:05.4713591Z",
 
     "openPrCount":  25,
 
-
     "totalReviewThreads":  56,
-
 
     "activeUnresolvedNonOutdatedThreadCount":  0,
 
-
     "prs":  [
 
-
                 {
-
 
                     "number":  510,
 
-
                     "title":  "chore(deps): bump qs from 6.15.0 to 6.15.2 in /mcp-server",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  509,
 
-
                     "title":  "chore(deps): bump github/codeql-action from 4.35.3 to 4.36.0",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  508,
 
-
                     "title":  "chore(deps): bump actions/setup-go from 5.6.0 to 6.4.0",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  506,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 11",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  505,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 10",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  5,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  504,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 9",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  4,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  503,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 8",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  1,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  502,
 
-
                     "title":  "Fix review-loop dogfood cost accounting",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  1,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  501,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 7",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  5,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  500,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 6",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  4,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  499,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 5",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  4,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  498,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 4",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  1,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  497,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 3",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  496,
 
-
                     "title":  "Add dogfood proof for 2026-05-22 run 2",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  2,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  495,
 
-
                     "title":  "Add dogfood proof for 2026-05-22",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  3,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  494,
 
-
                     "title":  "Add dogfood proof for 2026-05-21 run 4",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  7,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  493,
 
-
                     "title":  "Add dogfood proof for 2026-05-21 run 3",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  2,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  491,
 
-
                     "title":  "Add dogfood proof for 2026-05-21",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  480,
 
-
                     "title":  "Make coding-agent review loop proof deterministic",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  479,
 
-
                     "title":  "chore(deps): bump ruff from 0.15.12 to 0.15.13 in /.github/requirements",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  476,
 
-
                     "title":  "Add custom resource attributes and span links to OtelTraceSink",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  7,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  475,
 
-
                     "title":  "Add local-first agent template example",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  7,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  474,
 
-
                     "title":  "Add audit-only MCP tool-call audit-log primitive",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  2,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  471,
 
-
                     "title":  "fix: report source version in local doctor runs",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  1,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 },
 
-
                 {
-
 
                     "number":  460,
 
-
                     "title":  "chore(deps): bump fast-uri from 3.1.0 to 3.1.2 in /mcp-server",
-
 
                     "reviewDecision":  "REVIEW_REQUIRED",
 
-
                     "mergeStateStatus":  "BLOCKED",
-
 
                     "threadCount":  0,
 
-
                     "activeUnresolvedNonOutdatedThreadCount":  0,
-
 
                     "activeThreads":  [
 
 
 
-
-
                                       ]
-
 
                 }
 
-
             ]
-
 
 }

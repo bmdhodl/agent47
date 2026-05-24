@@ -40,6 +40,8 @@ CLI exits.
 - `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
 - Artifact hygiene: UTF-8, no BOM, no NUL bytes, JSON/JSONL parse passed, no local path leaks.
 - Pre-push open PR review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads.
+- Post-push PR #506 checks: CI and CodeQL green on commit `22d406a`.
+- Post-wait review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads.
 
 ## Release and distribution snapshot
 
