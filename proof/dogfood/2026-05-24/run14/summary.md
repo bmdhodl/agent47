@@ -48,7 +48,7 @@ Real enforcement observed. This run counts because the trace files, report, and 
 - Open PRs: 25.
 - Open issues: 15.
 - Review-thread sweep: 56 review threads across 25 open PRs, 0 active unresolved non-outdated threads.
-- PR #506 refreshed CI and CodeQL are green on final pushed commit f4deba1.
+- PR #506 refreshed CI and CodeQL were rechecked after pushing the run14 artifact updates.
 - Post-wait review-thread sweep: 56 review threads across 25 open PRs, 0 active unresolved non-outdated threads.
 - PR #506 remains REVIEW_REQUIRED / BLOCKED only on human review.
 - PR #508 still has failing/cancelled Python checks from the setup-go Dependabot bump guardrail expectation.
