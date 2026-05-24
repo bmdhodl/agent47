@@ -1,0 +1,45 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collecting ... collected 35 items
+
+sdk\tests\test_demo.py::TestOfflineDemo::test_cli_demo_writes_trace_file PASSED [  2%]
+sdk\tests\test_demo.py::TestOfflineDemo::test_run_offline_demo_quotes_paths_with_spaces_in_guidance PASSED [  5%]
+sdk\tests\test_demo.py::TestOfflineDemo::test_run_offline_demo_writes_trace_and_explains_boundary PASSED [  8%]
+sdk\tests\test_doctor.py::TestDoctor::test_cli_doctor_writes_trace_file PASSED [ 11%]
+sdk\tests\test_doctor.py::TestDoctor::test_detected_integrations_are_reported PASSED [ 14%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_fails_without_tearing_down_existing_tracer PASSED [ 17%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_ignores_api_key_env PASSED [ 20%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_json_output_is_parseable PASSED [ 22%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_quotes_paths_with_spaces_in_fallback_commands PASSED [ 25%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_reports_repo_config PASSED [ 28%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_reports_repo_config_errors_without_failing PASSED [ 31%]
+sdk\tests\test_doctor.py::TestDoctor::test_run_doctor_writes_local_trace_and_snippet PASSED [ 34%]
+sdk\tests\test_cli_report.py::TestCliReport::test_decisions_command_outputs_human_summary PASSED [ 37%]
+sdk\tests\test_cli_report.py::TestCliReport::test_decisions_command_outputs_json PASSED [ 40%]
+sdk\tests\test_cli_report.py::TestCliReport::test_incident_command_json PASSED [ 42%]
+sdk\tests\test_cli_report.py::TestCliReport::test_incident_command_markdown_format PASSED [ 45%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_empty_json_format PASSED [ 48%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_json_includes_savings PASSED [ 51%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_lists_guard_events PASSED [ 54%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_output PASSED   [ 57%]
+sdk\tests\test_cli_report.py::TestCliReport::test_report_with_cost PASSED [ 60%]
+sdk\tests\test_example_starters.py::test_quickstart_payloads_have_matching_starter_files PASSED [ 62%]
+sdk\tests\test_example_starters.py::test_raw_starter_runs_and_writes_trace PASSED [ 65%]
+sdk\tests\test_example_starters.py::test_pydantic_ai_starter_is_optional_and_local_first PASSED [ 68%]
+sdk\tests\test_example_starters.py::test_disposable_harness_example_links_session_id PASSED [ 71%]
+sdk\tests\test_example_starters.py::test_per_token_budget_spike_example_runs PASSED [ 74%]
+sdk\tests\test_example_starters.py::test_coding_agent_review_loop_example_runs_offline PASSED [ 77%]
+sdk\tests\test_example_starters.py::test_coding_agent_review_loop_sample_incident_is_in_sync PASSED [ 80%]
+sdk\tests\test_example_starters.py::test_proof_gallery_demo_references_stay_valid PASSED [ 82%]
+sdk\tests\test_example_starters.py::test_budget_aware_escalation_example_runs PASSED [ 85%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_registry_metadata_matches_package PASSED [ 88%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_registry_metadata_declares_required_env_vars PASSED [ 91%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_glama_packaging_files_are_present PASSED [ 94%]
+sdk\tests\test_mcp_registry_metadata.py::test_mcp_smithery_config_matches_runtime_contract PASSED [ 97%]
+sdk\tests\test_mcp_registry_metadata.py::test_glama_claim_file_declares_maintainer PASSED [100%]
+
+============================= 35 passed in 1.67s ==============================
