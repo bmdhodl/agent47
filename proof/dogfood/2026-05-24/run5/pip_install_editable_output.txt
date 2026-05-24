@@ -1,0 +1,34 @@
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9137 sha256=a1a1d89de7c199b660447fd3122577d4babbcae55076de99469fc19324e5c539
+  Stored in directory: <temp>\pip-ephem-wheel-cache-zoxeku3e\wheels\ee\2c\5f\bdef38124824bfd0c628af9e3db6d31bada43f89dc8de9eb2b
+Successfully built agentguard47
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 1.2.10
+    Uninstalling agentguard47-1.2.10:
+      Successfully uninstalled agentguard47-1.2.10
+python :   WARNING: The script agentguard.exe is installed in 
+'<python-user-scripts>' which is not on PATH.
+At line:4 char:1
++ python -m pip install -e .\sdk *> (Join-Path $run 'pip_install_editab ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (  WARNING: The ...is not on PATH.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed agentguard47-1.2.10
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
