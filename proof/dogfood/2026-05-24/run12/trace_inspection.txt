@@ -1,0 +1,15 @@
+﻿coding_agent_review_loop_traces.jsonl:6 | guard.budget_exceeded
+coding_agent_review_loop_traces.jsonl:13 | guard.retry_limit_exceeded
+installed-demo-trace.jsonl:16 | guard.budget_warning
+installed-demo-trace.jsonl:21 | guard.budget_exceeded | Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)
+installed-demo-trace.jsonl:27 | guard.loop_detected | Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+installed-demo-trace.jsonl:35 | guard.retry_limit_exceeded | Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+installed-doctor-trace.jsonl:1 | doctor.verify
+installed-doctor-trace.jsonl:4 | doctor.verify
+repo-local-demo-trace.jsonl:16 | guard.budget_warning
+repo-local-demo-trace.jsonl:21 | guard.budget_exceeded | Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)
+repo-local-demo-trace.jsonl:27 | guard.loop_detected | Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+repo-local-demo-trace.jsonl:35 | guard.retry_limit_exceeded | Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+repo-local-doctor-trace.jsonl:1 | doctor.verify
+repo-local-doctor-trace.jsonl:4 | doctor.verify
+

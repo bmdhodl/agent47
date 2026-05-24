@@ -1,0 +1,4 @@
+﻿sdk-version = "1.2.10"
+mcp-package=0.2.2
+mcp-server=0.2.2
+

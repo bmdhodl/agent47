@@ -1,0 +1,3 @@
+﻿artifact hygiene scan
+no local absolute paths or NUL markers found by text scan
+json/jsonl parse passed
