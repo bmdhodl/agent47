@@ -1,6 +1,10 @@
 artifact_hygiene.txt	57
-artifact_path.txt	1990
+artifact_path.txt	1272
 command_log.txt	3216
+final_pr506_checks.txt	1293
+final_pr506_review_threads.json	86
+final_pr506_snapshot.json	107495
+final_review_summary.json	85
 git_diff_check.txt	0
 git_status_after_artifacts.txt	35
 github_release_snapshot.json	188
@@ -33,7 +37,7 @@ repo_coding_agent_review_loop_traces.jsonl	5103
 repo_import_path.txt	72
 review_thread_summary.json	137
 review_thread_summary_raw.json	151
-summary.md	4095
+summary.md	4290
 trace_inspection.txt	5165
 trace_parse_result.txt	180
 validation_pytest.txt	789

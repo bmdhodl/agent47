@@ -52,6 +52,10 @@ Real enforcement was observed in trace output.
 - `post_wait_pr506_checks.txt`
 - `post_wait_pr506_snapshot.json`
 - `post_wait_review_thread_summary.json`
+- `final_pr506_checks.txt`
+- `final_pr506_snapshot.json`
+- `final_pr506_review_threads.json`
+- `final_review_summary.json`
 
 ## Validation
 
@@ -60,6 +64,7 @@ Real enforcement was observed in trace output.
 - Parsed guard events: 14 matching events across installed and repo-local traces.
 - Review-thread sweep for PR #506: 0 active unresolved non-outdated threads.
 - Post-wait open-PR review sweep: 25 open PRs, 56 total review threads, 0 active unresolved non-outdated threads.
+- Final PR #506 review sweep: 0 active unresolved non-outdated threads.
 - Release/package alignment: GitHub release `v1.2.10`, PyPI `agentguard47` latest/installed `1.2.10`, npm MCP `0.2.2`, local MCP `0.2.2`.
 
 ## Repo health notes
