@@ -1,12 +1,12 @@
 뿯붿Defaulting to user installation because normal site-packages is not writeable
-python : WARNING: Ignoring invalid distribution ~gentguard47 
+python : WARNING: Ignoring invalid distribution ~gentguard47
 (<user-home>\AppData\Roaming\Python\Python313\site-packages)
 At line:15 char:1
 + python -m pip install -e ./sdk 2>&1 | Tee-Object -FilePath "$runDir/p ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
- 
+
 Obtaining file:///<repo>/sdk
   Installing build dependencies: started
   Installing build dependencies: finished with status 'done'
@@ -28,7 +28,7 @@ Installing collected packages: agentguard47
     Found existing installation: agentguard47 1.2.10
     Uninstalling agentguard47-1.2.10:
       Successfully uninstalled agentguard47-1.2.10
-  WARNING: The script agentguard.exe is installed in '<user-home>\AppData\Roaming\Python\Python313\Scripts' which 
+  WARNING: The script agentguard.exe is installed in '<user-home>\AppData\Roaming\Python\Python313\Scripts' which
 is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 WARNING: Ignoring invalid distribution ~gentguard47 (<user-home>\AppData\Roaming\Python\Python313\site-packages)
