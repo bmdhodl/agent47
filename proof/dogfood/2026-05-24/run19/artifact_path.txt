@@ -1,79 +1,40 @@
-
-
-Name                                       Length
-
-----                                       ------
-
-artifact_hygiene.txt                           58
-
-artifact_path.txt                            1988
-
-command_log.txt                              3305
-
-github_release_snapshot.json                  190
-
-git_diff_check.txt                              0
-
-git_status_after_artifacts.txt                 37
-
-guard_events.json                            5961
-
-installed_agentguard_demo.txt                1734
-
-installed_agentguard_demo_traces.jsonl      12353
-
-installed_agentguard_doctor.txt              1691
-
-installed_agentguard_doctor_trace.jsonl      1203
-
-installed_agentguard_where.txt                 74
-
-issue473_snapshot.json                       3507
-
-issue490_snapshot.json                     141788
-
-npm_mcp_snapshot.txt                            8
-
-open_issues_snapshot.json                    4716
-
-open_prs_snapshot.json                     103190
-
-pip_install_editable.txt                     2842
-
-pr506_snapshot.json                        105590
-
-pypi_snapshot.txt                            1066
-
-release_distribution_snapshot.txt             366
-
-repo_agentguard_demo.txt                     1709
-
-repo_agentguard_demo_traces.jsonl           12355
-
-repo_agentguard_doctor.txt                   1676
-
-repo_agentguard_doctor_trace.jsonl           1202
-
-repo_agentguard_incident_review_loop.txt     1498
-
-repo_agentguard_report_demo.txt               570
-
-repo_coding_agent_review_loop.txt             735
-
-repo_coding_agent_review_loop_traces.jsonl   5117
-
-repo_import_path.txt                           74
-
-review_thread_summary.json                    142
-
-review_thread_summary_raw.json                153
-
-summary.md                                   3942
-
-trace_inspection.txt                         5188
-
-trace_parse_result.txt                        190
-
-validation_pytest.txt                         804
-
-validation_release_guard.txt                   24
+artifact_hygiene.txt	57
+artifact_path.txt	1990
+command_log.txt	3216
+git_diff_check.txt	0
+git_status_after_artifacts.txt	35
+github_release_snapshot.json	188
+guard_events.json	5770
+installed_agentguard_demo.txt	1699
+installed_agentguard_demo_traces.jsonl	12317
+installed_agentguard_doctor.txt	1646
+installed_agentguard_doctor_trace.jsonl	1199
+installed_agentguard_where.txt	72
+issue473_snapshot.json	3505
+issue490_snapshot.json	141786
+npm_mcp_snapshot.txt	6
+open_issues_snapshot.json	4714
+open_prs_snapshot.json	103188
+pip_install_editable.txt	2798
+post_wait_pr506_checks.txt	1291
+post_wait_pr506_snapshot.json	107495
+post_wait_review_thread_summary.json	122
+pr506_snapshot.json	105588
+pypi_snapshot.txt	1046
+release_distribution_snapshot.txt	358
+repo_agentguard_demo.txt	1674
+repo_agentguard_demo_traces.jsonl	12319
+repo_agentguard_doctor.txt	1631
+repo_agentguard_doctor_trace.jsonl	1198
+repo_agentguard_incident_review_loop.txt	1449
+repo_agentguard_report_demo.txt	551
+repo_coding_agent_review_loop.txt	722
+repo_coding_agent_review_loop_traces.jsonl	5103
+repo_import_path.txt	72
+review_thread_summary.json	137
+review_thread_summary_raw.json	151
+summary.md	4095
+trace_inspection.txt	5165
+trace_parse_result.txt	180
+validation_pytest.txt	789
+validation_release_guard.txt	22
