@@ -1,0 +1,1 @@
+artifact hygiene passed: no BOM, NUL, or local path leaks

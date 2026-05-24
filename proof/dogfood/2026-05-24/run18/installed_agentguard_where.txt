@@ -1,0 +1,7 @@
+# installed_agentguard_where
+start: 2026-05-24T13:54:26.3184344-05:00
+end: 2026-05-24T13:54:26.5874635-05:00
+exit_code: 0
+
+<python-scripts>\agentguard.exe
+<repo>\sdk\agentguard\__init__.py

@@ -1,0 +1,39 @@
+# repo_agentguard_demo
+start: 2026-05-24T13:54:27.6031103-05:00
+end: 2026-05-24T13:54:27.8186368-05:00
+exit_code: 0
+
+AgentGuard offline demo
+No API keys. No dashboard. No network calls.
+
+1. BudgetGuard: stopping runaway spend
+  warning: Budget warning: cost 84% of limit reached (threshold: 80%)
+  warning fired at $0.84
+  stopped on call 9: cost $1.08 exceeded $1.00
+
+2. LoopGuard: stopping repeated tool calls
+  tool.search attempt 1 allowed
+  tool.search attempt 2 allowed
+  stopped on repeated tool call: Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+
+3. RetryGuard: stopping retry storms
+  fetch_docs retry 1 allowed
+  fetch_docs retry 2 allowed
+  stopped retry storm: Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+
+Local proof complete.
+Trace written to: agentguard_demo_traces.jsonl
+View summary: agentguard report agentguard_demo_traces.jsonl
+View incident report: agentguard incident agentguard_demo_traces.jsonl
+
+Next: add AgentGuard to a repo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli report agentguard_demo_traces.jsonl
+  python -m agentguard.cli incident agentguard_demo_traces.jsonl
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.
