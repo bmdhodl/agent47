@@ -1,0 +1,16 @@
+agentguard_doctor_trace_installed.jsonl | doctor.verify | start | {}
+agentguard_doctor_trace_installed.jsonl | doctor.verify | end | {}
+agentguard_doctor_trace.jsonl | doctor.verify | start | {}
+agentguard_doctor_trace.jsonl | doctor.verify | end | {}
+agentguard_demo_traces_installed.jsonl | guard.budget_warning | emit | {"cost_used":0.84,"limit_usd":1.0}
+agentguard_demo_traces_installed.jsonl | guard.budget_exceeded | emit | {"cost_used":1.08,"limit_usd":1.0,"message":"Cost budget exceeded: $1.0800 \u003e $1.0000 (this call added $0.1200)"}
+agentguard_demo_traces_installed.jsonl | guard.loop_detected | emit | {"message":"Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.","tool_name":"search"}
+agentguard_demo_traces_installed.jsonl | guard.retry_limit_exceeded | emit | {"message":"Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)","tool_name":"fetch_docs"}
+agentguard_demo_traces.jsonl | guard.budget_warning | emit | {"cost_used":0.84,"limit_usd":1.0}
+agentguard_demo_traces.jsonl | guard.budget_exceeded | emit | {"cost_used":1.08,"limit_usd":1.0,"message":"Cost budget exceeded: $1.0800 \u003e $1.0000 (this call added $0.1200)"}
+agentguard_demo_traces.jsonl | guard.loop_detected | emit | {"message":"Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.","tool_name":"search"}
+agentguard_demo_traces.jsonl | guard.retry_limit_exceeded | emit | {"message":"Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)","tool_name":"fetch_docs"}
+coding_agent_review_loop_traces.jsonl | guard.budget_exceeded | emit | {"attempt":3,"cost_usd":0.051,"reason":"Cost budget exceeded: $0.0510 \u003e $0.0450 (this call added $0.0205)","tokens_used":12300}
+coding_agent_review_loop_traces.jsonl | guard.retry_limit_exceeded | emit | {"attempt":4,"reason":"Retry limit exceeded: apply_patch attempted 4 times (limit: 3)","tool_name":"apply_patch"}
+coding_agent_review_loop_traces.jsonl | guard.budget_exceeded | emit | {"attempt":3,"cost_usd":0.051,"reason":"Cost budget exceeded: $0.0510 \u003e $0.0450 (this call added $0.0205)","tokens_used":12300}
+coding_agent_review_loop_traces.jsonl | guard.retry_limit_exceeded | emit | {"attempt":4,"reason":"Retry limit exceeded: apply_patch attempted 4 times (limit: 3)","tool_name":"apply_patch"}
