@@ -1,0 +1,10 @@
+git : warning: in the working copy of 'proof/dogfood/2026-05-24/run14/artifact_hygiene.txt', LF will be replaced by 
+CRLF the next time Git touches it
+At line:19 char:7
++ $diff=git diff --check 2>&1 | Out-String
++       ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: in the working copy of 'proof/dogfood/2026-05-24/run14/summary.md', LF will be replaced by CRLF the next time 
+Git touches it
