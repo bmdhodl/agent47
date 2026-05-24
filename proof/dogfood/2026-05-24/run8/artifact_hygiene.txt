@@ -1,0 +1,1 @@
+OK: UTF-8 without BOM, no NUL bytes, no local absolute paths

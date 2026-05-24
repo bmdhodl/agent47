@@ -1,0 +1,71 @@
+author:	github-actions
+association:	none
+edited:	false
+status:	none
+--
+Staleness check update:
+
+### ROADMAP — 9 days since last update
+- [ ] Update Now/Next items in `ops/03-ROADMAP_NOW_NEXT_LATER.md`
+- [ ] Add 1–3 current focus notes
+
+### ARCHITECTURE — 16 days since last update
+- [ ] Review `ops/02-ARCHITECTURE.md` — any boundary changes?
+--
+author:	github-actions
+association:	none
+edited:	false
+status:	none
+--
+Staleness check update:
+
+### ROADMAP — 10 days since last update
+- [ ] Update Now/Next items in `ops/03-ROADMAP_NOW_NEXT_LATER.md`
+- [ ] Add 1–3 current focus notes
+--
+author:	github-actions
+association:	none
+edited:	false
+status:	none
+--
+Staleness check update:
+
+### ROADMAP — 11 days since last update
+- [ ] Update Now/Next items in `ops/03-ROADMAP_NOW_NEXT_LATER.md`
+- [ ] Add 1–3 current focus notes
+--
+author:	github-actions
+association:	none
+edited:	false
+status:	none
+--
+Staleness check update:
+
+### ROADMAP — 12 days since last update
+- [ ] Update Now/Next items in `ops/03-ROADMAP_NOW_NEXT_LATER.md`
+- [ ] Add 1–3 current focus notes
+--
+author:	github-actions
+association:	none
+edited:	false
+status:	none
+--
+Staleness check update:
+
+### ROADMAP — 13 days since last update
+- [ ] Update Now/Next items in `ops/03-ROADMAP_NOW_NEXT_LATER.md`
+- [ ] Add 1–3 current focus notes
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Current dogfood run still sees ops freshness drift:
+
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md`: 2 weeks ago
+- `ops/02-ARCHITECTURE.md`: 3 weeks ago
+
+No new issue needed because this issue already tracks the hygiene gap. Recommended next action remains a small docs-freshness PR that refreshes roadmap + architecture against current SDK state and distribution blockers.
+
+--

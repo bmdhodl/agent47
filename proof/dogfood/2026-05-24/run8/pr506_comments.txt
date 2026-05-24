@@ -1,0 +1,1303 @@
+author:	Copilot (AI)
+association:	none
+edited:	false
+status:	commented
+--
+## Pull request overview
+
+Adds a new dogfood proof bundle for the 2026-05-22 “run 11” execution under `proof/dogfood/2026-05-22/run11/`, capturing doctor/demo/review-loop traces plus the corresponding `report` and `incident` outputs. This fits the repo’s existing “proof/” evidence pattern by preserving real guard-trigger output for later regression/debug reference (including the known review-loop report/incident cost-estimation drift referenced in #502).
+
+**Changes:**
+- Add a run summary documenting commands executed, guard events observed, and distribution/health notes.
+- Add raw trace artifacts (`*.jsonl`) for doctor, demo, and review-loop runs.
+- Add the rendered `agentguard report` and `agentguard incident` outputs for demo and review-loop traces.
+
+### Reviewed changes
+
+Copilot reviewed 8 out of 8 changed files in this pull request and generated no comments.
+
+<details>
+<summary>Show a summary per file</summary>
+
+| File | Description |
+| ---- | ----------- |
+| proof/dogfood/2026-05-22/run11/summary.md | Run 11 narrative summary: commands, observed guard events, health/distribution snapshot. |
+| proof/dogfood/2026-05-22/run11/agentguard_doctor_trace.jsonl | Raw trace output from `agentguard doctor`. |
+| proof/dogfood/2026-05-22/run11/agentguard_demo_traces.jsonl | Raw trace output from `agentguard demo`, including guard event evidence. |
+| proof/dogfood/2026-05-22/run11/coding_agent_review_loop_traces.jsonl | Raw trace output from the coding-agent review-loop run, including budget/retry guard events. |
+| proof/dogfood/2026-05-22/run11/demo_report.txt | `agentguard report` output for demo traces. |
+| proof/dogfood/2026-05-22/run11/demo_incident.md | `agentguard incident` output for demo traces. |
+| proof/dogfood/2026-05-22/run11/review_loop_report.txt | `agentguard report` output for review-loop traces (shows the known cost estimate drift). |
+| proof/dogfood/2026-05-22/run11/review_loop_incident.md | `agentguard incident` output for review-loop traces (shows the known cost estimate drift). |
+</details>
+
+
+
+
+
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run 13 - 2026-05-22
+
+Artifacts added to PR #506 in commit `55cd8b4`:
+
+- `proof/dogfood/2026-05-22/run13/summary.md`
+- `proof/dogfood/2026-05-22/run13/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run13/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run13/trace-inspection.txt`
+- `proof/dogfood/2026-05-22/run13/demo-report.txt`
+- `proof/dogfood/2026-05-22/run13/review-loop-incident.txt`
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.73s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Notes:
+
+- `pip install -e ./sdk` logged a Windows access-denied warning while replacing `agentguard.exe`, but repo-local import binding resolved correctly and both CLI forms ran successfully with `PYTHONPATH=./sdk`.
+- This proof-only branch still shows the known review-loop incident cost-reporting drift (`$0.1020` reported for `$0.0510` enforced). PR #502 already carries the code fix, so this run did not duplicate it.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood operator run 15 - 2026-05-22
+
+Artifacts added to PR #506 in commit `5f6c53a`:
+
+- `proof/dogfood/2026-05-22/run15/summary.md`
+- `proof/dogfood/2026-05-22/run15/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-22/run15/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run15/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run15/trace-inspection.txt`
+- `proof/dogfood/2026-05-22/run15/demo-report.txt`
+- `proof/dogfood/2026-05-22/run15/review-loop-incident.txt`
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.53s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- This proof-only branch still shows the known review-loop incident estimated-cost drift (`$0.1020` incident estimate for `$0.0510` enforced). PR #502 already carries the code fix and remains review-blocked.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run 15 final closeout: added follow-up commit `12a92d8` with `proof/dogfood/2026-05-22/run15/pr-506-review-state.json` and updated the summary. Refreshed CI and CodeQL are green. Final review-thread sweep shows 0 active unresolved threads; PR remains blocked only on required human review.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood operator run 16 - 2026-05-22
+
+Artifacts added to PR #506 in commit `d716bd5`:
+
+- `proof/dogfood/2026-05-22/run16/summary.md`
+- `proof/dogfood/2026-05-22/run16/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-22/run16/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run16/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run16/trace_inspection.txt`
+- `proof/dogfood/2026-05-22/run16/demo_report.txt`
+- `proof/dogfood/2026-05-22/run16/demo_incident.txt`
+- `proof/dogfood/2026-05-22/run16/review_loop_incident.txt`
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.60s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+- Refreshed CI and CodeQL on PR #506: green
+- Post-wait GraphQL review-thread sweep: 0 threads
+
+Repo health notes:
+
+- PR #506 remains blocked only on required human review.
+- This proof-only branch still shows the known review-loop incident estimated-cost drift (`$0.1020` incident estimate for `$0.0510` enforced). PR #502 already carries the code fix and remains review-blocked.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run 18 - 2026-05-22
+
+Artifacts added to PR #506 in commit `882ddb3`:
+
+- `proof/dogfood/2026-05-22/run18/summary.md`
+- `proof/dogfood/2026-05-22/run18/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-22/run18/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run18/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run18/trace_inspection.txt`
+- `proof/dogfood/2026-05-22/run18/demo-report.txt`
+- `proof/dogfood/2026-05-22/run18/demo-incident.txt`
+- `proof/dogfood/2026-05-22/run18/review-loop-incident.txt`
+- release snapshot and validation files under the same run directory
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 2.07s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed after artifact whitespace cleanup
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated proof PR for today.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+- MCP Registry still reports `0.2.1`; Glama API still returns `tools: []`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run 18 final closeout: refreshed CI and CodeQL are green on `882ddb3`. Final review-thread sweep found 0 active unresolved threads on all open PRs, including 0 threads on #506. PR #506 remains blocked only on required human review.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run 19 - 2026-05-22
+
+Artifacts added to PR #506 in commit `eef53ad`:
+
+- `proof/dogfood/2026-05-22/run19/summary.md`
+- `proof/dogfood/2026-05-22/run19/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-22/run19/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-22/run19/guard_events.json`
+- `proof/dogfood/2026-05-22/run19/demo_report.txt`
+- `proof/dogfood/2026-05-22/run19/review_loop_incident.txt`
+- doctor/stdout captures under the same run directory
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.80s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated proof PR for today.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 tracks this.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Run 19 final closeout: refreshed CI and CodeQL are green on `eef53ad`. After a post-push wait, REST review comments for #506 are empty and GraphQL review-thread sweep found 0 active unresolved threads across 23 open PRs. PR #506 remains blocked only on required human review.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-23 run1.
+
+Artifacts added:
+- `proof/dogfood/2026-05-23/run1/summary.md`
+- `proof/dogfood/2026-05-23/run1/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run1/coding_agent_review_loop_traces.jsonl`
+- report/incident/stdout captures in the same folder
+
+Commands passed:
+- `agentguard doctor`
+- `python -m agentguard.cli doctor`
+- `python -m agentguard.cli demo`
+- `python examples/coding_agent_review_loop.py`
+- demo/report incident commands for both trace files
+
+Concrete guard behavior observed:
+- demo trace: `guard.budget_warning=1`, `guard.budget_exceeded=1`, `guard.loop_detected=1`, `guard.retry_limit_exceeded=1`
+- review-loop trace: `guard.budget_exceeded=1` at `$0.0510 > $0.0450`, `guard.retry_limit_exceeded=1` for `apply_patch` attempt 4
+
+Validation:
+- focused dogfood/CLI/metadata tests: `35 passed in 1.68s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- proof artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Release/distribution snapshot:
+- GitHub release: `v1.2.10`
+- PyPI `agentguard47`: `1.2.10`
+- local SDK: `1.2.10`
+- npm/local MCP: `0.2.2`
+- MCP Registry still reports `0.2.1`; Glama API still returns `tools: []`
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Post-push closeout for 2026-05-23 run1:
+
+- PR #506 CI and CodeQL are green after commit `145a00b`.
+- PR #506 has no review comments or review threads.
+- Full open-PR review-thread sweep found `0` active unresolved non-outdated threads.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run 2 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `238d09b` with the final review-sweep artifact.
+- Refreshed CI and CodeQL are green on `238d09b`.
+- PR #506 has 0 review threads; full open-PR sweep found `0` active unresolved non-outdated threads.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-23 run4.
+
+Artifacts added in commit `e9519b1` on PR #506:
+- `proof/dogfood/2026-05-23/run4/SUMMARY.md`
+- `proof/dogfood/2026-05-23/run4/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run4/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run4/trace_inspection.json`
+- `proof/dogfood/2026-05-23/run4/agentguard_demo_report.txt`
+- `proof/dogfood/2026-05-23/run4/coding_agent_review_loop_incident.md`
+- validation, release/distribution, issue, and PR review-state snapshots in the same folder
+
+Commands passed:
+- `agentguard doctor`
+- `python -m agentguard.cli doctor`
+- `python -m agentguard.cli demo`
+- `python examples/coding_agent_review_loop.py`
+- demo/report/incident commands for the generated trace files
+
+Concrete guard behavior observed:
+- demo trace: `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review-loop trace: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+
+Validation:
+- focused dogfood/CLI/metadata tests: `35 passed in 1.69s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- proof artifact UTF-8/BOM/NUL/local-path scan: passed
+- JSON artifact parse check: passed
+- PR #506 refreshed CI and CodeQL: green on `e9519b1`
+
+Repo health:
+- PR #506 has no review comments or review threads after the post-push wait.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across `23` open PRs.
+- PR #506 remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Release/package alignment remains GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`.
+- Distribution drift remains: MCP Registry still reports `0.2.1`; Glama API still returns zero indexed tools.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿## Dogfood operator run5 - 2026-05-23
+
+Artifacts added to PR #506 in commit `4aa0491`:
+
+- `proof/dogfood/2026-05-23/run5/summary.md`
+- `proof/dogfood/2026-05-23/run5/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-23/run5/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run5/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run5/trace-inspection.txt`
+- `proof/dogfood/2026-05-23/run5/trace-inspection.json`
+- `proof/dogfood/2026-05-23/run5/demo-report.txt`
+- `proof/dogfood/2026-05-23/run5/demo-incident.txt`
+- `proof/dogfood/2026-05-23/run5/review-loop-incident.txt`
+- validation, release/distribution, issue, and PR review snapshots under the same folder
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.55s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- JSON artifact parse: passed
+- Artifact UTF-8/BOM/NUL/local-path scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated rolling proof PR.
+- Open PR sweep found 23 open PRs and 0 active unresolved non-outdated review threads before push.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks docs freshness.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+- Official MCP Registry still reports `0.2.1`; Glama API still returns an empty `tools` array.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Run5 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `4aa0491`.
+- Refreshed CI and CodeQL are green on `4aa0491`.
+- PR #506 has no REST review comments and no review threads after the post-push wait.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across 23 open PRs.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood operator run6 - 2026-05-23
+
+Artifacts added to PR #506 in commit `a2773f3`:
+
+- `proof/dogfood/2026-05-23/run6/summary.md`
+- `proof/dogfood/2026-05-23/run6/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-23/run6/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run6/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run6/trace-inspection.txt`
+- `proof/dogfood/2026-05-23/run6/trace-inspection.json`
+- `proof/dogfood/2026-05-23/run6/demo-report.txt`
+- `proof/dogfood/2026-05-23/run6/demo-incident.txt`
+- `proof/dogfood/2026-05-23/run6/review-loop-report.txt`
+- `proof/dogfood/2026-05-23/run6/review-loop-incident.txt`
+- validation, release/distribution, issue, and PR review snapshots under the same folder
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.45s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed after generated snapshot cleanup
+- Artifact local-path/BOM/NUL/JSON scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated rolling proof PR.
+- Open PR sweep found 23 open PRs before push.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks docs freshness.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+- Official MCP Registry still reports `0.2.1`; Glama API still returns an empty `tools` array.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run6 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `a2773f3`.
+- Refreshed CI and CodeQL are green on `a2773f3`.
+- PR #506 has no REST review comments and no review threads after the post-push wait.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across 23 open PRs.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood operator run7 - 2026-05-23
+
+Artifacts added to PR #506 in commit `4092d1d`:
+
+- `proof/dogfood/2026-05-23/run7/summary.md`
+- `proof/dogfood/2026-05-23/run7/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-23/run7/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run7/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run7/trace-inspection.txt`
+- `proof/dogfood/2026-05-23/run7/trace-inspection.json`
+- `proof/dogfood/2026-05-23/run7/demo-report.txt`
+- `proof/dogfood/2026-05-23/run7/demo-incident.txt`
+- `proof/dogfood/2026-05-23/run7/review-loop-report.txt`
+- `proof/dogfood/2026-05-23/run7/review-loop-incident.txt`
+- validation, release/distribution, issue, and PR review snapshots under the same folder
+
+Concrete guard behavior observed:
+
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo budget enforcement stopped at `$1.0800 > $1.0000`; loop enforcement stopped repeated `tool.search({"query":"python asyncio"})`; retry enforcement stopped `fetch_docs` after 3 attempts with limit 2.
+- Coding-agent review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.
+
+Validation:
+
+- Focused SDK proof tests: `35 passed in 1.64s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- Artifact local-path/BOM/NUL/JSON scan: passed
+
+Repo health notes:
+
+- PR #506 remains the consolidated rolling proof PR.
+- `ops/03-ROADMAP_NOW_NEXT_LATER.md` is 2 weeks old and `ops/02-ARCHITECTURE.md` is 3 weeks old; #473 still tracks docs freshness.
+- GitHub release/PyPI/local SDK metadata align at `1.2.10`; npm/local MCP metadata align at `0.2.2`.
+- Official MCP Registry still reports `0.2.1`; Glama API still returns an empty `tools` array.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run7 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `0a873c8`.
+- Refreshed CI and CodeQL are green on `0a873c8`.
+- PR #506 has no review threads after the final post-push wait.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across 23 open PRs.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood operator run8 proof is pushed in `4d977b9`.
+
+Artifacts: `proof/dogfood/2026-05-23/run8/`
+
+Guard proof:
+- demo: `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+
+Validation:
+- focused SDK proof tests: `35 passed in 1.95s`
+- release guard: passed
+- `git diff --check`: passed
+- artifact local-path/BOM/NUL/JSON scan: passed
+
+CI is running for `4d977b9`; I will recheck CI and review threads after it settles.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run8 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `4d977b9`.
+- Refreshed CI and CodeQL are green on `4d977b9`.
+- PR #506 has no REST review comments and no review threads after the post-push wait.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across 25 open PRs.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is failing CI and needs failed-log triage or a Dependabot rebase/recreate.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood operator run 9 proof published.
+
+Artifacts:
+- `proof/dogfood/2026-05-23/run9/summary_run9.md`
+- `proof/dogfood/2026-05-23/run9/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run9/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run9/demo_report.md`
+- `proof/dogfood/2026-05-23/run9/demo_incident.md`
+- `proof/dogfood/2026-05-23/run9/review_loop_incident.md`
+- `proof/dogfood/2026-05-23/run9/guard_events_run9.json`
+- `proof/dogfood/2026-05-23/run9/repo_health_run9.md`
+
+Proof commands:
+- `agentguard doctor`
+- `python -m agentguard.cli doctor`
+- `python -m agentguard.cli demo`
+- `python examples\coding_agent_review_loop.py`
+- `python -m agentguard.cli report agentguard_demo_traces.jsonl`
+- `python -m agentguard.cli incident agentguard_demo_traces.jsonl`
+- `python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl`
+
+Concrete guard behavior:
+- Demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`.
+- Demo stopped budget at `$1.0800 > $1.0000`.
+- Demo stopped repeated `tool.search({"query":"python asyncio"})`.
+- Demo stopped `fetch_docs` retry attempt 3 with limit 2.
+- Review-loop proof emitted `guard.budget_exceeded` at `$0.0510 > $0.0450`.
+- Review-loop proof stopped `apply_patch` retry attempt 4 with limit 3.
+
+Validation:
+- Focused proof/metadata tests: `35 passed in 1.55s`.
+- `python scripts\sdk_release_guard.py --check-mcp-npm`: `Release guard passed.`
+- Artifact scan passed: UTF-8 without BOM, no NUL bytes, no local checkout path.
+
+Repo health:
+- PR `#506` is green but still `REVIEW_REQUIRED` / `BLOCKED`.
+- All open PR review-thread sweep found 0 active unresolved non-outdated threads.
+- PR `#508` has failing CI due the actionlint workflow guardrail test still expecting the old `actions/setup-go` v5 pin after Dependabot moved it to v6.4.0.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`; MCP Registry still reports `0.2.1`, and Glama still reports `tools=0`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run9 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `9e98011`.
+- Refreshed CI and CodeQL are green on `9e98011`.
+- After the post-push wait, PR #506 still has no review threads.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 has a concrete triage comment for the failing `test_actionlint_workflow_is_wired` guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood operator run10 proof is pushed in `6214e3a`.
+
+Artifacts: `proof/dogfood/2026-05-23/run10/`
+
+Guard proof:
+- demo: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+
+Validation:
+- focused SDK proof tests: `35 passed in 2.43s` and rerun captured in `validation-output.txt`
+- release guard: passed
+- `git diff --check`: passed
+- artifact UTF-8/BOM/NUL/local-path/JSON scan: passed
+
+Repo health:
+- PR #506 had 0 review threads before push and remains `REVIEW_REQUIRED`.
+- Full open-PR thread sweep found 0 active unresolved non-outdated threads across 25 open PRs before push.
+- PR #508 is still failing CI from the setup-go Dependabot bump guardrail expectation.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`; MCP Registry still reports `0.2.1`, and Glama still reports `tools=[]`.
+
+I will recheck CI and review threads after GitHub finishes the refreshed checks for `6214e3a`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run10 final closeout for 2026-05-23:
+
+- PR #506 latest commit is 379291a.
+- Refreshed CI and CodeQL are green after rerunning transient checkout/auth failures.
+- PR #506 has $active active unresolved non-outdated review threads after the final sweep.
+- Full open-PR review-thread sweep artifact shows ^@ active unresolved non-outdated threads across 25 open PRs.
+- PR remains REVIEW_REQUIRED / BLOCKED only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Dogfood operator run11 proof is pushed in `3a61407`.
+
+Artifacts: `proof/dogfood/2026-05-23/run11/`
+
+Guard proof:
+- demo: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+- doctor trace: `doctor.verify` start/end events
+
+Validation:
+- focused SDK proof tests: `35 passed in 1.54s`
+- release guard: passed
+- `git diff --check`: passed
+- artifact UTF-8/BOM/NUL/local-path/JSON scan: passed
+
+Repo health:
+- PR #506 had 0 active unresolved non-outdated review threads before push and remains `REVIEW_REQUIRED`.
+- Full open-PR thread sweep found 0 active unresolved non-outdated threads across 25 open PRs before push.
+- PR #508 is still failing CI from the setup-go Dependabot bump guardrail expectation.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`; MCP Registry timed out from this host, and Glama still reports `tools=[]`.
+
+I will recheck CI and review threads after GitHub finishes the refreshed checks for `3a61407`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Run11 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `b661c97`.
+- Refreshed CI and CodeQL are green after rerunning one transient checkout/auth failure.
+- PR #506 has 0 review threads after the final sweep.
+- Full open-PR review-thread sweep artifact showed 0 active unresolved non-outdated threads across 25 open PRs.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood operator run12 proof is pushed in `7660e6b`.
+
+Artifacts: `proof/dogfood/2026-05-23/run12/`
+
+Guard proof:
+- demo: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+- doctor trace: `doctor.verify` start/end events
+
+Validation:
+- focused SDK proof tests: `35 passed in 1.37s`
+- release guard: passed
+- `git diff --check HEAD^ HEAD`: passed
+- artifact UTF-8/BOM/NUL/local-path/JSON scan: passed
+
+Repo health:
+- PR #506 had 0 active unresolved non-outdated review threads before push and remains `REVIEW_REQUIRED`.
+- Full open-PR thread sweep found 0 active unresolved non-outdated threads across 25 open PRs before push.
+- PR #508 is still failing CI from the setup-go Dependabot bump guardrail expectation.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`; MCP Registry direct endpoint returned 404, and Glama still reports `tools=[]`.
+
+I will recheck CI and review threads after GitHub finishes the refreshed checks for `7660e6b`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Run12 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `c121f96`.
+- Refreshed CI and CodeQL are green on `c121f96`.
+- PR #506 has 0 active unresolved non-outdated review threads after the post-push wait.
+- Full open-PR review-thread sweep found 0 active unresolved non-outdated threads across 25 open PRs.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Run13 dogfood proof is committed on PR #506 at `692ea74`.
+
+Artifacts:
+- `proof/dogfood/2026-05-23/run13/summary_run13.md`
+- `proof/dogfood/2026-05-23/run13/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-23/run13/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-23/run13/repo_agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-23/run13/guard-events-output.txt`
+- `proof/dogfood/2026-05-23/run13/demo-report.txt`
+- `proof/dogfood/2026-05-23/run13/demo-incident.txt`
+- `proof/dogfood/2026-05-23/run13/review-incident.txt`
+- `proof/dogfood/2026-05-23/run13/validation-output.txt`
+- `proof/dogfood/2026-05-23/run13/repo-health-snapshot.txt`
+
+Concrete guard behavior observed:
+- Demo trace: `guard.budget_warning=1`, `guard.budget_exceeded=1`, `guard.loop_detected=1`, `guard.retry_limit_exceeded=1`.
+- Demo budget stop: `$1.0800 > $1.0000`.
+- Demo loop stop: repeated `tool.search` killed by LoopGuard.
+- Demo retry stop: `fetch_docs` attempt 3 killed with limit 2.
+- Review-loop budget stop: `$0.0510 > $0.0450` on attempt 3.
+- Review-loop retry stop: `apply_patch` attempt 4 killed with limit 3.
+- Doctor trace emitted `doctor.verify` start/end events.
+
+Validation:
+- Focused proof/CLI/metadata tests: `35 passed in 1.38s`.
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
+- `git diff --check HEAD`: passed.
+- Artifact scan: passed, no BOM/NUL bytes, JSON artifacts parse.
+
+Repo health note: PR #508 remains failing because `sdk/tests/test_ci_guardrails.py` expects the old setup-go v5 pin while the Dependabot branch now has setup-go v6.4.0. Open PR review-thread sweep found 0 active unresolved non-outdated threads across 25 open PRs.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final run13 closeout for PR #506 after post-push wait:
+
+- Head: `b01b448b2d96df6cb749509c50e3f67613accffa`.
+- Checks: green (`gh pr checks 506` saved at `proof/dogfood/2026-05-23/run13/pr-506-final-checks.txt`).
+- Review comments: `0`.
+- Active unresolved non-outdated review threads: `0`.
+- Dogfood proof remains trace-backed in `proof/dogfood/2026-05-23/run13/summary_run13.md`.
+
+PR remains blocked only on required human review.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final live run13 verification after encoding-fix push: PR #506 head `b9b26cad336f894036584b9ddd4376f4bf92f055` has green CI/CodeQL, 0 REST review comments, and 0 review threads. PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood operator run14 proof is pushed in `12e15b8`.
+
+Artifacts: `proof/dogfood/2026-05-23/run14/`
+
+Guard proof:
+- demo: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+- doctor: local setup verification and `agentguard_doctor_trace.jsonl`
+
+Validation:
+- focused SDK proof tests: `35 passed in 1.47s`
+- release guard: passed
+- `git diff --check`: passed
+- artifact UTF-8/BOM/NUL/local-path scan: passed
+- JSON/JSONL parse scan: passed
+
+Repo health:
+- PR #506 was green before this push and remains the consolidated rolling proof PR.
+- Open PR thread sweep found 0 active unresolved non-outdated threads before push.
+- PR #508 is still failing CI from the setup-go Dependabot bump guardrail expectation.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`.
+
+I will recheck CI and review threads after GitHub finishes the refreshed checks for `12e15b8`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final run14 closeout for 2026-05-23:
+
+- PR #506 latest commit is 12e15b8.
+- Refreshed CI and CodeQL are green on 12e15b8.
+- PR #506 has 0 REST review comments after the post-push wait.
+- Full open-PR review-thread sweep found $(.Count) active unresolved non-outdated threads.
+- PR remains REVIEW_REQUIRED / BLOCKED only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final live run14 verification after closeout-artifact push:
+
+- PR #506 latest commit is 27708c4.
+- Refreshed CI and CodeQL are green on 27708c4.
+- PR #506 REST review comments: $(.Count).
+- PR #506 active unresolved non-outdated review threads: $pr506Active.
+- Full open-PR active unresolved non-outdated review threads: $allActive.
+- PR remains REVIEW_REQUIRED / BLOCKED only because human review is required.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood run15 proof is in `proof/dogfood/2026-05-23/run15/`.
+
+Guard behavior observed:
+- demo: `guard.budget_warning=1`, `guard.budget_exceeded=1` at `$1.0800 > $1.0000`, `guard.loop_detected=1`, `guard.retry_limit_exceeded=1`
+- review loop: `guard.budget_exceeded=1` at `$0.0510 > $0.0450`, `guard.retry_limit_exceeded=1` for `apply_patch` attempt 4
+
+Validation:
+- focused dogfood slice: `35 passed in 1.60s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- review-thread sweep: `0` active unresolved non-outdated threads across open PRs
+
+Repo health:
+- PR #506 remains green but blocked on required human review
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation
+- release/package alignment remains GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+﻿Run15 final closeout for 2026-05-23:
+
+- PR #506 latest commit is `1184ca9`.
+- Refreshed CI and CodeQL are green on `1184ca9`.
+- PR #506 has 0 active unresolved non-outdated review threads after the post-push wait.
+- Proof bundle is `proof/dogfood/2026-05-23/run15/` with raw doctor/demo/review-loop traces, report/incident output, repo-health snapshots, and final PR sweep artifacts.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood proof 2026-05-23 run16
+
+Artifacts committed on PR #506 in `proof/dogfood/2026-05-23/run16/` at commit `a49015a`.
+
+Concrete guard behavior observed from JSONL traces:
+- `agentguard_demo_traces.jsonl`: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected` for repeated `tool.search`, and `guard.retry_limit_exceeded` for `fetch_docs` attempt 3 with limit 2.
+- `python_module_demo_traces.jsonl`: same budget, loop, and retry guard behavior through the repo-local module path.
+- `coding_agent_review_loop_traces.jsonl`: `guard.budget_exceeded` at `$0.0510 > $0.0450` on review attempt 3 and `guard.retry_limit_exceeded` for `apply_patch` attempt 4 with limit 3.
+
+Validation:
+- Focused proof tests: `35 passed in 1.47s`.
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
+- `git diff --check`: passed.
+- Artifact hygiene: no local path leaks, no BOMs, no NUL bytes, JSON parse passed.
+- PR #506 checks: green after push.
+- PR review sweep: 25 open PRs, 0 active unresolved non-outdated review threads; PR #506 remains `REVIEW_REQUIRED` / `BLOCKED`.
+
+Repo health notes:
+- GitHub/PyPI/local SDK remain aligned at `1.2.10`.
+- npm/local MCP remain aligned at `0.2.2`.
+- Official MCP Registry still reports `0.2.1`; Glama API still reports `tools: []`.
+- Roadmap and architecture freshness warnings remain active: roadmap `2 weeks ago`, architecture `3 weeks ago`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood operator run17 proof is in `proof/dogfood/2026-05-23/run17/`.
+
+Concrete guard behavior observed:
+- demo: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, and `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450` on attempt 3, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+- doctor: local setup verification emitted `doctor.verify` events
+
+Validation:
+- focused proof tests: `35 passed in 1.47s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- artifact hygiene: no local path leaks, BOMs, NUL bytes, or JSON parse failures
+
+Repo health:
+- PR #506 remains the consolidated rolling proof PR and is blocked only on required human review.
+- Open PR review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads.
+- PR #508 still has failing CI from the setup-go Dependabot bump guardrail expectation.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`.
+- Distribution drift remains: MCP Registry reports `0.2.1`; Glama returns `tools: []`.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final run17 closeout for 2026-05-23:
+
+- PR #506 latest commit is `49e2f83`.
+- Refreshed CI and CodeQL are green after the post-push wait.
+- PR #506 REST review comments: `0`.
+- PR #506 active review threads: `0`.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-24 run1.
+
+Artifacts added to PR #506 in commit `15511d3`:
+- `proof/dogfood/2026-05-24/run1/summary.md`
+- `proof/dogfood/2026-05-24/run1/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-24/run1/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-24/run1/guard_events.json`
+- report/incident/stdout/release/PR/issue/review-thread snapshots in the same folder
+
+Concrete guard behavior observed:
+- demo: `guard.budget_warning=1`, `guard.budget_exceeded=1` at `$1.0800 > $1.0000`, `guard.loop_detected=1`, `guard.retry_limit_exceeded=1`
+- review loop: `guard.budget_exceeded=1` at `$0.0510 > $0.0450` on attempt 3, `guard.retry_limit_exceeded=1` for `apply_patch` attempt 4
+- doctor: setup verification traces emitted as expected
+
+Validation before push:
+- focused proof tests: `110 passed in 0.66s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- trace parser check: passed with required guard events present
+- `git diff --check`: passed
+- artifact hygiene: UTF-8/no BOM/no NUL/no local path leaks, JSON parse passed
+- pre-push open-PR review-thread sweep: 25 open PRs, 56 threads, 0 active unresolved non-outdated threads
+
+Repo health:
+- PR #506 remains the consolidated rolling proof PR.
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation.
+- GitHub/PyPI/local SDK align at `1.2.10`; npm/local MCP align at `0.2.2`.
+- Roadmap and architecture are stale by repo thresholds; #473 tracks docs freshness.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final 2026-05-24 run1 closeout:
+
+- PR #506 latest commit is `15511d3`.
+- Refreshed CI and CodeQL are green on `15511d3`.
+- PR #506 has no new actionable review comments after the post-push wait.
+- Full open-PR review-thread sweep found `0` active unresolved non-outdated threads across `25` open PRs and `56` threads.
+- PR #506 remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-24 run2.
+
+Artifacts added to PR #506 in commits `28d8f7a` and `8cb9f68`:
+- `proof/dogfood/2026-05-24/run2/summary.md`
+- `proof/dogfood/2026-05-24/run2/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-24/run2/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-24/run2/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-24/run2/guard_events.json`
+- report/incident/stdout/release/PR/issue/review-thread snapshots in the same folder
+
+Concrete guard behavior observed:
+- demo: `guard.budget_warning=1`, `guard.budget_exceeded=1` at `$1.0800 > $1.0000`, `guard.loop_detected=1`, `guard.retry_limit_exceeded=1`
+- review loop: `guard.budget_exceeded=1` at `$0.0510 > $0.0450` on attempt 3, `guard.retry_limit_exceeded=1` for `apply_patch` attempt 4
+- doctor: setup verification trace emitted as expected
+
+Validation:
+- focused proof tests: `35 passed in 1.39s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed after trimming `gh pr checks` trailing whitespace
+- artifact hygiene: UTF-8/no BOM/no NUL/no local path leaks, JSON/JSONL parse passed
+- refreshed PR #506 CI and CodeQL: green on `8cb9f68`
+- post-wait review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads
+
+Repo health:
+- PR #506 remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation.
+- GitHub/PyPI/local SDK align at `1.2.10`; npm/local MCP align at `0.2.2`.
+- MCP Registry still reports `0.2.1`; Glama API returned 403 from this environment.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-24 run3.
+
+Artifacts added to PR #506 in commit `8d263ed`:
+- `proof/dogfood/2026-05-24/run3/summary.md`
+- `proof/dogfood/2026-05-24/run3/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-24/run3/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-24/run3/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-24/run3/guard_events.json`
+- report/incident/stdout/release/distribution/PR/issue/review-thread snapshots in the same folder
+
+Concrete guard behavior observed:
+- demo: `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, and `guard.retry_limit_exceeded`
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450` on attempt 3, plus `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+- doctor: setup verification trace emitted as expected
+
+Validation before push:
+- focused proof tests: `35 passed in 1.54s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- artifact hygiene: UTF-8/no BOM/no NUL/no local path leaks, JSON/JSONL parse passed
+- open-PR review-thread sweep: 25 open PRs, 56 threads, 0 active unresolved non-outdated threads
+
+Repo health:
+- PR #506 remains the consolidated rolling proof PR.
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation.
+- PR #509 and #510 are green Dependabot PRs but require review.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`.
+- Distribution drift remains: MCP Registry reports `0.2.1`; Glama API returns an empty `tools` array.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final 2026-05-24 run3 closeout:
+
+- PR #506 latest commit is `8d263ed`.
+- Refreshed CI and CodeQL are green on `8d263ed`.
+- PR #506 has no new actionable review comments after the post-push wait.
+- Full open-PR review-thread sweep found `0` active unresolved non-outdated threads across `25` open PRs and `56` threads.
+- Proof bundle is `proof/dogfood/2026-05-24/run3/` with raw doctor/demo/review-loop traces, report/incident output, repo-health snapshots, and distribution checks.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Dogfood proof update for 2026-05-24 run4.
+
+Artifacts added to PR #506 in commit `9c96e8b`:
+- `proof/dogfood/2026-05-24/run4/summary.md`
+- `proof/dogfood/2026-05-24/run4/agentguard_doctor_trace_installed.jsonl`
+- `proof/dogfood/2026-05-24/run4/agentguard_doctor_trace.jsonl`
+- `proof/dogfood/2026-05-24/run4/agentguard_demo_traces.jsonl`
+- `proof/dogfood/2026-05-24/run4/coding_agent_review_loop_traces.jsonl`
+- `proof/dogfood/2026-05-24/run4/guard_events.json`
+- report/incident/release/distribution/PR/issue/review-thread snapshots in the same folder
+
+Concrete guard behavior observed:
+- installed doctor and repo-local doctor both emitted `doctor.verify` events
+- demo trace emitted `guard.budget_warning`, `guard.budget_exceeded` at `$1.0800 > $1.0000`, `guard.loop_detected`, and `guard.retry_limit_exceeded`
+- review loop trace emitted `guard.budget_exceeded` at `$0.0510 > $0.0450` on attempt 3 and `guard.retry_limit_exceeded` for `apply_patch` attempt 4
+
+Validation before push:
+- focused proof tests: `35 passed in 1.53s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- artifact hygiene: UTF-8/no BOM/no NUL/no local path leaks, JSON/JSONL parse passed
+- open-PR review-thread sweep: 25 open PRs, 56 threads, 0 active unresolved non-outdated threads
+
+Repo health:
+- PR #506 remains the consolidated rolling proof PR.
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation.
+- PR #509 and PR #510 are green Dependabot PRs but require review.
+- Release/package state remains aligned for GitHub/PyPI/local SDK `1.2.10` and npm/local MCP `0.2.2`.
+- Distribution drift remains: MCP Registry reports `0.2.1`; Glama API returns an empty `tools` array.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+Final 2026-05-24 run4 closeout:
+
+- PR #506 latest commit is `3a94737`.
+- Refreshed CI and CodeQL are green on `3a94737`.
+- PR #506 REST review comments: `0`.
+- Full open-PR GraphQL sweep found `0` active unresolved non-outdated threads across `25` open PRs and `56` threads.
+- Proof bundle is `proof/dogfood/2026-05-24/run4/` with raw installed/repo-local doctor traces, demo/review-loop traces, report/incident output, release/distribution snapshots, and post-wait review artifacts.
+- PR remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood proof - 2026-05-24 run5
+
+Artifact bundle: `proof/dogfood/2026-05-24/run5/`
+Commit: `7d2cc71`
+
+Guard behavior observed from raw traces:
+- installed doctor after editable install: `doctor.verify` start/end
+- repo-local doctor: `doctor.verify` start/end
+- demo: `guard.budget_warning` at `$0.8400 / $1.0000`
+- demo: `guard.budget_exceeded` at `$1.0800 > $1.0000`
+- demo: `guard.loop_detected` for repeated `tool.search`
+- demo: `guard.retry_limit_exceeded` for `fetch_docs` attempt 3 with limit 2
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`
+- review loop: `guard.retry_limit_exceeded` for `apply_patch` attempt 4 with limit 3
+
+Validation:
+- focused proof/CLI/metadata tests: `35 passed in 1.50s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- artifact hygiene: UTF-8/no BOM/no NUL/no local path leaks; JSON/JSONL parse passed
+- review-thread sweep: 25 open PRs, 56 threads, 0 active unresolved non-outdated threads
+
+Repo-health notes:
+- installed `agentguard` console script existed but initially failed with `ModuleNotFoundError`; `python -m pip install -e ./sdk` repaired the package-installed proof path and is captured in the bundle.
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation.
+- PR #509/#510 are green but still require review.
+- #473 still tracks stale roadmap/architecture docs.
+- MCP Registry still reports `0.2.1`; Glama API still returns `tools: []`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood run5 final closeout
+
+Final pushed commit: `3a7b33c`
+
+Post-push status:
+- CI and CodeQL are green on `3a7b33c`.
+- Post-wait review-thread sweep: 25 open PRs, 56 threads, 0 active unresolved non-outdated threads.
+- PR #506 remains blocked only by required human review.
+
+Artifacts remain in `proof/dogfood/2026-05-24/run5/`; the post-wait files in that bundle capture the first pushed run5 commit, and this comment records the final commit's green CI/review closeout.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood proof - 2026-05-24 run6
+
+Artifact bundle: `proof/dogfood/2026-05-24/run6/`
+Commit: `22d406a`
+
+Guard behavior observed from raw traces:
+- installed doctor: `doctor.verify` start/end
+- repo-local doctor: `doctor.verify` start/end
+- demo: `guard.budget_warning` at `$0.8400 / $1.0000`
+- demo: `guard.budget_exceeded` at `$1.0800 > $1.0000`
+- demo: `guard.loop_detected` for repeated `tool.search`
+- demo: `guard.retry_limit_exceeded` for `fetch_docs` attempt 3 with limit 2
+- review loop: `guard.budget_exceeded` at `$0.0510 > $0.0450`
+- review loop: `guard.retry_limit_exceeded` for `apply_patch` attempt 4 with limit 3
+
+Validation:
+- focused proof/CLI/metadata tests: `35 passed in 1.47s`
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed
+- `git diff --check`: passed
+- artifact hygiene: UTF-8/no BOM/no NUL/no local path leaks; JSON/JSONL parse passed
+- pre-push review-thread sweep: 25 open PRs, 56 threads, 0 active unresolved non-outdated threads
+
+Repo-health notes:
+- PR #506 remains the consolidated rolling proof PR.
+- PR #508 still has failing Python checks from the setup-go Dependabot bump guardrail expectation.
+- PR #509/#510 are green but still require review.
+- #473 still tracks stale roadmap/architecture docs.
+- GitHub/PyPI/local SDK align at `1.2.10`; npm/local MCP align at `0.2.2`; MCP Registry still reports `0.2.1`; Glama still returns `tools: []`.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood run6 final closeout
+
+Final pushed commit: `8d03101`
+
+Post-push status:
+- CI and CodeQL are green on `8d03101`.
+- PR #506 REST review comments: 0.
+- Full open-PR review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads.
+- Proof bundle is `proof/dogfood/2026-05-24/run6/` with raw installed/repo-local doctor traces, demo/review-loop traces, guard event parse, report/incident output, release/distribution snapshots, and post-wait PR artifacts.
+- PR #506 remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+- Separate repo-health item: PR #508 is still failing CI due the setup-go Dependabot bump guardrail expectation.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood run7 - 2026-05-24
+
+Proof bundle: `proof/dogfood/2026-05-24/run7/`
+Commit: `4f850e0`
+
+Commands/proof:
+- `agentguard doctor` and `agentguard demo` ran through the installed console script.
+- `python -m agentguard.cli doctor` and `python -m agentguard.cli demo` ran against the repo-local SDK.
+- `python examples/coding_agent_review_loop.py` ran the coding-agent review-loop proof.
+
+Guard behavior observed in raw JSONL:
+- Demo emitted `guard.budget_warning` at `$0.8400 / $1.0000`.
+- Demo emitted `guard.budget_exceeded` at `$1.0800 > $1.0000`.
+- Demo emitted `guard.loop_detected` for repeated `tool.search`.
+- Demo emitted `guard.retry_limit_exceeded` for `fetch_docs` attempt 3 with limit 2.
+- Review loop emitted `guard.budget_exceeded` at `$0.0510 > $0.0450`.
+- Review loop emitted `guard.retry_limit_exceeded` for `apply_patch` attempt 4 with limit 3.
+
+Validation:
+- Focused proof/CLI/metadata tests: `36 passed in 0.46s`.
+- `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
+- Artifact hygiene: UTF-8/no BOM, no NUL bytes, JSON/JSONL parse passed.
+- `git diff --check`: passed.
+- Pre-push review-thread sweep: 25 open PRs, 0 active unresolved non-outdated threads.
+
+Repo health notes:
+- PR #508 still has failing/cancelled Python CI for the setup-go Dependabot bump guardrail expectation.
+- PR #509 and #510 are green but require review.
+- Issue #473 continues to track stale roadmap/architecture docs.
+- Issue #507/#469 remain security/dependency audit sinks.
+- Issue #511 tracks the Claude-default docs audit.
+--
+author:	bmdhodl
+association:	owner
+edited:	false
+status:	none
+--
+## Dogfood run7 final closeout
+
+Post-push checks for commit `4f850e0` are green: CI matrix, MCP, MCP budget, lint, and CodeQL passed.
+
+Post-wait review sweep:
+- PR review comments: 0
+- Active unresolved non-outdated review threads: 0
+- PR state remains `REVIEW_REQUIRED` / `BLOCKED` only because human review is required.
+
+No new code fix was needed. The durable proof artifact remains `proof/dogfood/2026-05-24/run7/`, and the rolling issue was updated for this run.
+--
