@@ -46,6 +46,9 @@ Proof is trace-backed.
 - `focused-tests.txt`
 - `release-guard.txt`
 - `pre_push_review_thread_summary.json`
+- `post_wait_pr_checks.txt`
+- `post_wait_review_thread_summary.json`
+- `post_wait_pr_506_view.json`
 - release, distribution, PR, and issue snapshots in this directory
 
 ## Validation
@@ -54,6 +57,8 @@ Proof is trace-backed.
 - `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
 - `git diff --check`: passed before summary cleanup.
 - Pre-push review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads.
+- Post-wait PR checks: CI, MCP, MCP budget, lint, and CodeQL passed.
+- Post-wait review-thread sweep: 25 open PRs, 56 review threads, 0 active unresolved non-outdated threads.
 
 ## Repo Health Snapshot
 
