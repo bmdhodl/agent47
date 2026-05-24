@@ -1,0 +1,21 @@
+query($owner:String!, $repo:String!) {
+  repository(owner:$owner, name:$repo) {
+    pullRequests(first: 50, states: OPEN, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      nodes {
+        number
+        title
+        url
+        reviewDecision
+        reviewThreads(first: 100) {
+          nodes {
+            isResolved
+            isOutdated
+            comments(first: 5) {
+              nodes { author { login } body path line url createdAt }
+            }
+          }
+        }
+      }
+    }
+  }
+}

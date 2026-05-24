@@ -1,0 +1,143 @@
+[
+  {
+    "events": [
+      {
+        "data": {
+          "cost_used": 0.84,
+          "limit_usd": 1.0
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.budget_warning",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "a8457781804e4204b979d43985384f46",
+        "trace_id": "885af8b78cb746429dcc0be7fff3f67c",
+        "ts": 1779583060.3172388
+      },
+      {
+        "data": {
+          "cost_used": 1.08,
+          "limit_usd": 1.0,
+          "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.budget_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "a8457781804e4204b979d43985384f46",
+        "trace_id": "885af8b78cb746429dcc0be7fff3f67c",
+        "ts": 1779583060.3179002
+      },
+      {
+        "data": {
+          "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+          "tool_name": "search"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.loop_detected",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "5795bc38d38c42adb84beb47e341dfc2",
+        "trace_id": "e82fce998ba24a4f977333f5175d01f9",
+        "ts": 1779583060.3186593
+      },
+      {
+        "data": {
+          "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+          "tool_name": "fetch_docs"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.retry_limit_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "7bc07bb7b4ad4ebbae9e987d21753af8",
+        "trace_id": "28e62b0812014446a2a22f5fc983d8fe",
+        "ts": 1779583060.3196342
+      }
+    ],
+    "file": "proof\\dogfood\\2026-05-23\\run17\\agentguard_demo_traces.jsonl"
+  },
+  {
+    "events": [
+      {
+        "data": {
+          "attempt": 3,
+          "cost_usd": 0.051,
+          "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+          "tokens_used": 12300
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.budget_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "coding-agent-review-loop",
+        "span_id": "65b62c87521d499cbc82e222439a1986",
+        "trace_id": "4b753b2473094efba87b4ab180a30725",
+        "ts": 1779583060.5031214
+      },
+      {
+        "data": {
+          "attempt": 4,
+          "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+          "tool_name": "apply_patch"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.retry_limit_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "coding-agent-review-loop",
+        "span_id": "2e8873c013004025942c82b3c3b2cf9f",
+        "trace_id": "397dc9c88f3e48b2bf5015444b866438",
+        "ts": 1779583060.5041265
+      }
+    ],
+    "file": "proof\\dogfood\\2026-05-23\\run17\\coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "events": [
+      {
+        "data": {},
+        "duration_ms": null,
+        "error": null,
+        "kind": "span",
+        "name": "doctor.verify",
+        "parent_id": null,
+        "phase": "start",
+        "service": "agentguard-doctor",
+        "span_id": "cc00551032954220ba4e12aafc3f3215",
+        "trace_id": "9ed6f3f1521d44dc825733692e2ddce8",
+        "ts": 1779583060.1128967
+      },
+      {
+        "data": {},
+        "duration_ms": 0.7342999961110763,
+        "error": null,
+        "kind": "span",
+        "name": "doctor.verify",
+        "parent_id": null,
+        "phase": "end",
+        "service": "agentguard-doctor",
+        "span_id": "cc00551032954220ba4e12aafc3f3215",
+        "trace_id": "9ed6f3f1521d44dc825733692e2ddce8",
+        "ts": 1779583060.1136305
+      }
+    ],
+    "file": "proof\\dogfood\\2026-05-23\\run17\\agentguard_doctor_trace.jsonl"
+  }
+]

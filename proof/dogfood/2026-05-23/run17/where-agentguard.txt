@@ -1,0 +1,2 @@
+where agentguard:
+C:\Python313\Scripts\agentguard.exe
