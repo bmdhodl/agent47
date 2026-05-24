@@ -1,0 +1,2 @@
+C:\Python313\Scripts\agentguard.exe
+# ExitCode: 0

@@ -1,0 +1,24 @@
+agentguard_doctor_trace_installed.jsonl: 2 selected events
+  doctor.verify: 2
+    line 1: doctor.verify
+    line 4: doctor.verify
+agentguard_doctor_trace.jsonl: 2 selected events
+  doctor.verify: 2
+    line 1: doctor.verify
+    line 4: doctor.verify
+agentguard_demo_traces.jsonl: 4 selected events
+  guard.budget_exceeded: 1
+  guard.budget_warning: 1
+  guard.loop_detected: 1
+  guard.retry_limit_exceeded: 1
+    line 16: guard.budget_warning
+    line 21: guard.budget_exceeded
+    line 27: guard.loop_detected - search
+    line 35: guard.retry_limit_exceeded - fetch_docs
+coding_agent_review_loop_traces.jsonl: 2 selected events
+  guard.budget_exceeded: 1
+  guard.retry_limit_exceeded: 1
+    line 6: guard.budget_exceeded - Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)
+    line 13: guard.retry_limit_exceeded - Retry limit exceeded: apply_patch attempted 4 times (limit: 3)
+
+Required guard events present: yes
