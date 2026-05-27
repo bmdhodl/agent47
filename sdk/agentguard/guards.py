@@ -267,6 +267,11 @@ class BudgetGuard(BaseGuard):
             raise TypeError(
                 f"cost_usd must be a number, got {type(cost_usd).__name__}: {cost_usd!r}"
             )
+        # Attribute the call to any active goal BEFORE budget checks so the
+        # goal ledger includes the call even when this consume call is the one
+        # that trips BudgetExceeded.
+        from .goal import _record_consume
+        _record_consume(tokens=tokens, calls=calls, cost_usd=cost_usd)
         with self._lock:
             self.state.tokens_used += tokens
             self.state.calls_used += calls
@@ -336,6 +341,33 @@ class BudgetGuard(BaseGuard):
         if self._max_cost_usd is not None:
             parts.append(f"max_cost_usd={self._max_cost_usd}")
         return f"BudgetGuard({', '.join(parts)})"
+
+    def goal(self, name: str, verifier: Callable[[], bool]) -> Any:
+        """Open a goal-level metering block.
+
+        Returns a context manager. Inside the block, every ``consume(...)`` call
+        is also recorded against the goal's ledger. On block exit, ``verifier``
+        runs and ``g.succeeded`` is populated.
+
+        Example::
+
+            guard = BudgetGuard(max_cost_usd=5.00)
+            with guard.goal("refund ch_abc123", verifier=refund_ok) as g:
+                g.attempt()
+                agent.run_until_done()
+            print(g.cost_usd, g.attempts, g.succeeded, g.failure_cost)
+
+        See ``agentguard.goal.Goal`` for the full ledger shape.
+
+        Args:
+            name: Caller-supplied label for the goal.
+            verifier: Zero-arg callable returning bool.
+
+        Returns:
+            A context manager that yields a ``Goal`` instance.
+        """
+        from .goal import _GoalContext
+        return _GoalContext(name, verifier)
 
 
 class TimeoutGuard(BaseGuard):

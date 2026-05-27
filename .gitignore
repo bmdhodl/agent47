@@ -39,3 +39,4 @@ context/
 # MCP local auth/build artifacts
 mcp-server/.mcpregistry_github_token
 mcp-server/*.tgz
+/sdk/traces.jsonl
