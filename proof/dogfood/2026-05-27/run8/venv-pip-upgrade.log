@@ -1,0 +1,10 @@
+Requirement already satisfied: pip in <temp> (24.3.1)
+Collecting pip
+  Using cached pip-26.1.1-py3-none-any.whl.metadata (4.6 kB)
+Using cached pip-26.1.1-py3-none-any.whl (1.8 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.3.1
+    Uninstalling pip-24.3.1:
+      Successfully uninstalled pip-24.3.1
+Successfully installed pip-26.1.1

@@ -1,0 +1,4 @@
+agentguard_demo_traces.jsonl: parsed 36 JSONL events
+agentguard_doctor_trace.jsonl: parsed 4 JSONL events
+coding_agent_review_loop_traces.jsonl: parsed 14 JSONL events
+artifact JSONL and BOM validation passed
