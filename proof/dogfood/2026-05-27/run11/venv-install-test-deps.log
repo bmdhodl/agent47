@@ -1,0 +1,46 @@
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting pytest
+  Using cached pytest-9.0.3-py3-none-any.whl.metadata (7.6 kB)
+Collecting colorama>=0.4 (from pytest)
+  Using cached colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Using cached iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Using cached pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+Using cached pytest-9.0.3-py3-none-any.whl (375 kB)
+Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Using cached iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Using cached pygments-2.20.0-py3-none-any.whl (1.2 MB)
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9338 sha256=02942a630348d6c586800d73df445211d6f5a354b295b771b178ec99e943f067
+  Stored in directory: <pip-temp>
+Successfully built agentguard47
+Installing collected packages: pygments, pluggy, packaging, iniconfig, colorama, agentguard47, pytest
+Successfully installed agentguard47-1.2.10 colorama-0.4.6 iniconfig-2.3.0 packaging-26.2 pluggy-1.6.0 pygments-2.20.0 pytest-9.0.3
+python.exe :
+At line:38 char:44
++ ... deps.log' { & $venvPython -m pip install -e (Join-Path $repo 'sdk') p ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: <temp-venv>\Scripts\python.exe -m pip
+install --upgrade pip
+EXIT_CODE=0

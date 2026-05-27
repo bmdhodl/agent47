@@ -1,0 +1,12 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.0.3, pluggy-1.6.0
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+collected 31 items
+
+..\..\..\..\sdk\tests\test_demo.py ...                                   [  9%]
+..\..\..\..\sdk\tests\test_doctor.py .........                           [ 38%]
+..\..\..\..\sdk\tests\test_guards.py ...................                 [100%]
+
+============================= 31 passed in 0.24s ==============================
+EXIT_CODE=0
