@@ -156,6 +156,28 @@ def test_threadpool_consume_records_active_goal() -> None:
     assert guard.state.cost_used == pytest.approx(0.03)
 
 
+def test_concurrent_threadpool_consumes_record_active_goal() -> None:
+    """Concurrent worker-thread consume calls keep the goal ledger complete."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+
+    with guard.goal("concurrent-threadpool-goal", verifier=lambda: True) as g:
+        g.attempt()
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [
+                executor.submit(
+                    lambda: guard.consume(tokens=10, calls=1, cost_usd=0.01)
+                )
+                for _ in range(20)
+            ]
+            for future in futures:
+                future.result()
+
+    assert g.succeeded is True
+    assert g.cost_usd == pytest.approx(0.20)
+    assert len(g.calls) == 20
+    assert guard.state.cost_used == pytest.approx(0.20)
+
+
 def test_to_dict_is_json_serializable() -> None:
     import json
 

@@ -207,12 +207,16 @@ def _record_consume(
             if not owner._active_goal_stack:
                 return
             goal = owner._active_goal_stack[-1]
-    goal._record(
-        Call(
-            tokens=int(tokens),
-            calls=int(calls),
-            cost_usd=float(cost_usd),
-            attempt_idx=goal.attempts if goal.attempts > 0 else 1,
-            ts=time.time(),
-        )
+            goal._record(_build_call(goal, tokens, calls, cost_usd))
+            return
+    goal._record(_build_call(goal, tokens, calls, cost_usd))
+
+
+def _build_call(goal: Goal, tokens: int, calls: int, cost_usd: float) -> Call:
+    return Call(
+        tokens=int(tokens),
+        calls=int(calls),
+        cost_usd=float(cost_usd),
+        attempt_idx=goal.attempts if goal.attempts > 0 else 1,
+        ts=time.time(),
     )
