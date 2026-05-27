@@ -1,0 +1,6 @@
+WARNING: pip index is currently an experimental command. It may be removed/changed in a future release without prior warning.
+WARNING: Ignoring invalid distribution ~gentguard47 (C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+WARNING: Ignoring invalid distribution ~gentguard47 (C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip

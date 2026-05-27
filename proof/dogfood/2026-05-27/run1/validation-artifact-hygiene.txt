@@ -1,0 +1,1 @@
+artifact hygiene passed: no BOM, NUL, absolute checkout path leaks; JSON/JSONL parsed

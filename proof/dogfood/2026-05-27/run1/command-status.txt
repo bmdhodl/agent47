@@ -1,0 +1,16 @@
+0	pip-install-editable	python -m pip install -e ./sdk
+0	installed-agentguard-doctor	agentguard doctor --trace-file installed_agentguard_doctor_trace.jsonl
+0	installed-agentguard-demo	agentguard demo --trace-file installed_agentguard_demo_traces.jsonl
+0	repo-agentguard-doctor	PYTHONPATH=./sdk python -m agentguard.cli doctor --trace-file repo_agentguard_doctor_trace.jsonl
+0	repo-agentguard-demo	PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file repo_agentguard_demo_traces.jsonl
+0	repo-review-loop	PYTHONPATH=./sdk python examples/coding_agent_review_loop.py
+0	repo-demo-report	PYTHONPATH=./sdk python -m agentguard.cli report repo_agentguard_demo_traces.jsonl
+0	repo-demo-incident	PYTHONPATH=./sdk python -m agentguard.cli incident repo_agentguard_demo_traces.jsonl
+0	repo-review-loop-report	PYTHONPATH=./sdk python -m agentguard.cli report repo_coding_agent_review_loop_traces.jsonl
+0	repo-review-loop-incident	PYTHONPATH=./sdk python -m agentguard.cli incident repo_coding_agent_review_loop_traces.jsonl
+0	npm-mcp-server	cmd /c npm view @agentguard47/mcp-server version name dist-tags.latest --json
+0	glama-agent47	curl.exe -L -sS https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47
+0	mcp-registry-agentguard-search	curl.exe -L -sS https://registry.modelcontextprotocol.io/v0/servers?search=agentguard47
+0	validation-focused-tests	see validation-focused-tests.txt
+0	validation-release-guard	see validation-release-guard.txt
+0	validation-git-diff-check	see validation-git-diff-check.txt

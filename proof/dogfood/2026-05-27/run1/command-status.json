@@ -1,0 +1,82 @@
+[
+  {
+    "name": "pip-install-editable",
+    "command": "python -m pip install -e ./sdk",
+    "exit_code": 0
+  },
+  {
+    "name": "installed-agentguard-doctor",
+    "command": "agentguard doctor --trace-file installed_agentguard_doctor_trace.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "installed-agentguard-demo",
+    "command": "agentguard demo --trace-file installed_agentguard_demo_traces.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-agentguard-doctor",
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli doctor --trace-file repo_agentguard_doctor_trace.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-agentguard-demo",
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file repo_agentguard_demo_traces.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-review-loop",
+    "command": "PYTHONPATH=./sdk python examples/coding_agent_review_loop.py",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-demo-report",
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli report repo_agentguard_demo_traces.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-demo-incident",
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli incident repo_agentguard_demo_traces.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-review-loop-report",
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli report repo_coding_agent_review_loop_traces.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "repo-review-loop-incident",
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli incident repo_coding_agent_review_loop_traces.jsonl",
+    "exit_code": 0
+  },
+  {
+    "name": "npm-mcp-server",
+    "command": "cmd /c npm view @agentguard47/mcp-server version name dist-tags.latest --json",
+    "exit_code": 0
+  },
+  {
+    "name": "glama-agent47",
+    "command": "curl.exe -L -sS https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47",
+    "exit_code": 0
+  },
+  {
+    "name": "mcp-registry-agentguard-search",
+    "command": "curl.exe -L -sS https://registry.modelcontextprotocol.io/v0/servers?search=agentguard47",
+    "exit_code": 0
+  },
+  {
+    "name": "validation-focused-tests",
+    "command": "see validation-focused-tests.txt",
+    "exit_code": 0
+  },
+  {
+    "name": "validation-release-guard",
+    "command": "see validation-release-guard.txt",
+    "exit_code": 0
+  },
+  {
+    "name": "validation-git-diff-check",
+    "command": "see validation-git-diff-check.txt",
+    "exit_code": 0
+  }
+]
