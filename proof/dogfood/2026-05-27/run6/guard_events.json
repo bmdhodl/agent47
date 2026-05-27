@@ -1,0 +1,22 @@
+{
+  "agentguard_demo_traces.jsonl": {
+    "guard_events": {
+      "guard.budget_exceeded": 1,
+      "guard.budget_warning": 1,
+      "guard.loop_detected": 1,
+      "guard.retry_limit_exceeded": 1
+    },
+    "total_events": 36
+  },
+  "agentguard_doctor_trace.jsonl": {
+    "guard_events": {},
+    "total_events": 4
+  },
+  "coding_agent_review_loop_traces.jsonl": {
+    "guard_events": {
+      "guard.budget_exceeded": 1,
+      "guard.retry_limit_exceeded": 1
+    },
+    "total_events": 14
+  }
+}
