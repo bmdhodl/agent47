@@ -1,0 +1,21 @@
+Artifact hygiene: PASS
+BAD_ARTIFACTS=[]
+
+agentguard_demo_traces.jsonl	bytes=12387	bom=False	nul_first_1000=False
+agentguard_doctor_trace.jsonl	bytes=1205	bom=False	nul_first_1000=False
+coding_agent_review_loop_incident.md	bytes=1498	bom=False	nul_first_1000=False
+coding_agent_review_loop_traces.jsonl	bytes=5129	bom=False	nul_first_1000=False
+demo-report.log	bytes=628	bom=False	nul_first_1000=False
+focused-pytest.log	bytes=706	bom=False	nul_first_1000=False
+guard_events.json	bytes=3854	bom=False	nul_first_1000=False
+installed-agentguard-demo.log	bytes=1299	bom=False	nul_first_1000=False
+installed-agentguard-doctor.log	bytes=1301	bom=False	nul_first_1000=False
+repo-agentguard-demo.log	bytes=1635	bom=False	nul_first_1000=False
+repo-agentguard-doctor.log	bytes=1285	bom=False	nul_first_1000=False
+review-loop-example.log	bytes=795	bom=False	nul_first_1000=False
+review-loop-incident.log	bytes=1650	bom=False	nul_first_1000=False
+review-loop-report.log	bytes=585	bom=False	nul_first_1000=False
+summary.md	bytes=2876	bom=False	nul_first_1000=False
+trace_inspection.txt	bytes=3189	bom=False	nul_first_1000=False
+venv-create.log	bytes=58	bom=False	nul_first_1000=False
+venv-install-test-deps.log	bytes=2614	bom=False	nul_first_1000=False

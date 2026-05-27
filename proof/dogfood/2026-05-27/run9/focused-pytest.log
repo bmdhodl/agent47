@@ -1,0 +1,14 @@
+COMMAND: <temp-venv>\Scripts\python.exe -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_example_starters.py -q
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+collected 21 items
+
+sdk\tests\test_demo.py ...                                               [ 14%]
+sdk\tests\test_doctor.py .........                                       [ 57%]
+sdk\tests\test_example_starters.py .........                             [100%]
+
+============================= 21 passed in 1.06s ==============================
+
+EXIT_CODE: 0

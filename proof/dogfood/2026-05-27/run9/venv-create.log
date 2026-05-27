@@ -1,0 +1,3 @@
+COMMAND: py -3.11 -m venv <temp-venv>
+
+EXIT_CODE: 0
