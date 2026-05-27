@@ -1,0 +1,19 @@
+Guard event validation
+installed_demo_traces.jsonl: events=36, guards={'guard.budget_exceeded': 1, 'guard.budget_warning': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}, missing=[]
+checkout_demo_traces.jsonl: events=36, guards={'guard.budget_exceeded': 1, 'guard.budget_warning': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}, missing=[]
+review_loop_traces.jsonl: events=14, guards={'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}, missing=[]
+
+Exit files
+checkout_demo.exit: 0
+checkout_doctor.exit: 0
+focused_pytest.exit: 0
+incident.exit: 0
+installed_demo.exit: 0
+installed_doctor.exit: 0
+release_guard_mcp_npm.exit: 0
+report.exit: 0
+review_loop.exit: 0
+
+bad_bytes=
+path_leaks=
+validation=passed

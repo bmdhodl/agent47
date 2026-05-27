@@ -1,0 +1,6 @@
+usage: agentguard demo [-h] [--trace-file TRACE_FILE]
+
+options:
+  -h, --help            show this help message and exit
+  --trace-file TRACE_FILE
+                        Where to write the local JSONL trace.

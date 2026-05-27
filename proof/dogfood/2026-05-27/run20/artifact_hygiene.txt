@@ -1,0 +1,1 @@
+artifact hygiene passed: UTF-8 decodable, no BOM, no NUL bytes, no exact local checkout path
