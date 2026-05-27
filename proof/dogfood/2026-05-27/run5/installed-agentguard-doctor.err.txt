@@ -1,0 +1,21 @@
+﻿agentguard : Traceback (most recent call last):
+At line:17 char:53
++ ... d-doctor' { agentguard doctor --trace-file (Join-Path $run 'installed ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Python313\Scripts\agentguard.exe\__main__.py", line 4, in <module>
+    from agentguard.cli import main
+  File "<stale-editable-checkout>\sdk\agentguard\__init__.py", line 63, in <module>
+    __version__ = version("agentguard47")
+  File "C:\Python313\Lib\importlib\metadata\__init__.py", line 987, in version
+    return distribution(distribution_name).version
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\<user>\AppData\Roaming\Python\Python313\site-packages\importlib_metadata\__init__.py", line 557, in
+version
+    return md_none(self.metadata)['Version']
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable

@@ -1,0 +1,3 @@
+﻿checkout_demo_trace.jsonl: 4 guard events; seen=['guard.budget_exceeded', 'guard.budget_warning', 'guard.loop_detected', 'guard.retry_limit_exceeded']; missing=[]
+coding_agent_review_loop_traces.jsonl: 2 guard events; seen=['guard.budget_exceeded', 'guard.retry_limit_exceeded']; missing=[]
+validation_passed=True
