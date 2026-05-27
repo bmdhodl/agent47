@@ -1,0 +1,5 @@
+pytest-focused=0
+release-guard-mcp-npm=0
+git-diff-check=0
+artifact-hygiene=0
+guard-event-validation=0

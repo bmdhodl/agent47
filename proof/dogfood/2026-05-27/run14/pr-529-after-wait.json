@@ -1,0 +1,325 @@
+{
+    "comments":  [
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD3KN-Q",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Post-PR dogfood closeout for run9:\n\n- CI and CodeQL are green on PR #529.\n- Copilot reviewed 7/19 files and generated no comments.\n- Review-thread query returned zero threads.\n- Local proof remains: focused pytest 21 passed, `git diff --check` passed, artifact hygiene passed.\n\nThis PR is ready for human review; it is blocked only by the required review gate.",
+                         "createdAt":  "2026-05-27T11:32:11Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4554132985",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD3lUeg",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "﻿Post-PR dogfood closeout for run10 / review fix:\n\n- Added commit `581c9dd` to this branch.\n- Fixed the run9 proof hygiene review: normalized/redacted the run9 artifacts and resolved the review thread.\n- Added fresh proof bundle `proof/dogfood/2026-05-27/run10/`.\n- Guard behavior observed: demo budget warning/exceeded, loop detected, retry limit exceeded; review-loop budget exceeded at `$0.0510 \u003e $0.0450`; review-loop retry limit exceeded for `apply_patch` attempt 4.\n- Local validation: focused pytest `31 passed`, guard-event parser found the expected guard events, artifact hygiene passed, and `git diff --cached --check` passed before commit.\n- CI and CodeQL are green on the updated branch.\n\nStill blocked only by the required human review gate.\r\n",
+                         "createdAt":  "2026-05-27T12:39:14Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4554577018",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD4AXYg",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Post-PR dogfood closeout for run11:\n\n- Added commit `0a88787` to this branch.\n- Added fresh proof bundle `proof/dogfood/2026-05-27/run11/`.\n- Guard behavior observed: demo budget warning/exceeded, loop detected, retry limit exceeded; review-loop budget exceeded at `$0.0510 \u003e $0.0450`; review-loop retry limit exceeded for `apply_patch` attempt 4.\n- Local validation: focused pytest `31 passed`, guard-event parser found the expected guard events, artifact hygiene passed, and `git diff --check HEAD^ -- proof/dogfood/2026-05-27/run11` passed after the amend.\n- CI and CodeQL are green on commit `0a88787`.\n- Review-thread query shows the existing Codex thread is resolved and no new unresolved threads appeared after the review wait.\n\nStill blocked only by the required human review gate.",
+                         "createdAt":  "2026-05-27T13:37:26Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4555020130",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD4gfEw",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Dogfood run12 proof update:\n\n- Added commit `ba13c30` to this branch.\n- Added fresh proof bundle `proof/dogfood/2026-05-27/run12/`.\n- Both global `agentguard doctor/demo` and checkout-bound `python -m agentguard.cli doctor/demo` passed in this worker.\n- Guard behavior observed: demo budget warning/exceeded, loop detected, retry limit exceeded; review-loop budget exceeded at `$0.0510 \u003e $0.0450`; review-loop retry limit exceeded for `apply_patch` attempt 4.\n- Local validation: guard-event parser found the expected 4 demo guard events and 2 review-loop guard events, artifact hygiene passed, `git diff --check -- proof/dogfood/2026-05-27/run12` passed, and focused pytest passed (`21 passed`).\n\nCI is running on the updated branch; I will check it before closeout.",
+                         "createdAt":  "2026-05-27T14:37:56Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4555546387",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD4jbPA",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Post-run12 closeout:\n\n- CI and CodeQL are green on commit `ba13c30`.\n- Review-thread query still shows only the prior resolved thread; no new unresolved review threads appeared after the review wait.\n- Local proof remains: guard-event validation passed, artifact hygiene passed, `git diff --check -- proof/dogfood/2026-05-27/run12` passed, and focused pytest passed (`21 passed`).\n- Also resolved three outdated review threads on PR #530 that were left over from its earlier implementation.\n\nPR #529 remains blocked only by the required human review gate.",
+                         "createdAt":  "2026-05-27T14:43:06Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4555594556",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD4-sZw",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Dogfood run13 proof update:\n\n- Added commit `df41ddb` to this branch.\n- Added fresh proof bundle `proof/dogfood/2026-05-27/run13/`.\n- Both global `agentguard doctor/demo` and checkout-bound `python -m agentguard.cli doctor/demo` passed.\n- Guard behavior observed: demo budget warning/exceeded, loop detected, retry limit exceeded; review-loop budget exceeded at `$0.0510 \u003e $0.0450`; review-loop retry limit exceeded for `apply_patch` attempt 4.\n- Local validation: guard-event parser found the expected 4 demo guard events and 2 review-loop guard events, artifact hygiene passed, `git diff --check -- proof/dogfood/2026-05-27/run13` passed, `py -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py -q` passed (`30 passed`), and `py scripts/sdk_release_guard.py --check-mcp-npm` passed.\n\nCI is running on the updated branch; I will check it before closeout.",
+                         "createdAt":  "2026-05-27T15:32:45Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4556041319",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD5A9aA",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Post-run13 closeout:\n\n- CI and CodeQL are green on commit `df41ddb`.\n- Review-thread query still shows only the prior resolved run9 hygiene thread; no unresolved review threads appeared after the review wait.\n- Local proof remains: guard-event validation passed, artifact hygiene passed, `git diff --check -- proof/dogfood/2026-05-27/run13` passed, focused pytest passed (`30 passed`), and `py scripts/sdk_release_guard.py --check-mcp-npm` passed.\n- Rolling dogfood issue #490 was updated with the run13 proof summary.\n\nPR #529 remains blocked only by the required human review gate.",
+                         "createdAt":  "2026-05-27T15:36:33Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4556078440",
+                         "viewerDidAuthor":  true
+                     },
+                     {
+                         "id":  "IC_kwDORIKzHM8AAAABD5e6lQ",
+                         "author":  {
+                                        "login":  "bmdhodl"
+                                    },
+                         "authorAssociation":  "OWNER",
+                         "body":  "Dogfood run14 proof update:\n\n- Added commit `2bd88d1` to this branch.\n- Added fresh proof bundle `proof/dogfood/2026-05-27/run14/`.\n- Both global `agentguard doctor/demo` and checkout-bound `python -m agentguard.cli doctor/demo` passed.\n- Guard behavior observed: demo emitted `guard.budget_warning`, `guard.budget_exceeded`, `guard.loop_detected`, and `guard.retry_limit_exceeded`; review-loop emitted `guard.budget_exceeded` at `$0.0510 \u003e $0.0450` and `guard.retry_limit_exceeded` for `apply_patch` attempt 4.\n- Local validation: guard-event parser passed, artifact hygiene passed, `git diff --check -- proof/dogfood/2026-05-27/run14` passed after cleanup, focused pytest passed (`30 passed`), and `py scripts/sdk_release_guard.py --check-mcp-npm` passed.\n\nCI is running on the updated branch; I will check it before closeout.",
+                         "createdAt":  "2026-05-27T16:37:28Z",
+                         "includesCreatedEdit":  false,
+                         "isMinimized":  false,
+                         "minimizedReason":  "",
+                         "reactionGroups":  [
+
+                                            ],
+                         "url":  "https://github.com/bmdhodl/agent47/pull/529#issuecomment-4556569237",
+                         "viewerDidAuthor":  true
+                     }
+                 ],
+    "headRefOid":  "2bd88d12668c5f21864cc3f7c208f733241fe639",
+    "id":  "PR_kwDORIKzHM7fzR71",
+    "mergeStateStatus":  "BLOCKED",
+    "number":  529,
+    "reviewDecision":  "REVIEW_REQUIRED",
+    "reviews":  [
+                    {
+                        "id":  "PRR_kwDORIKzHM8AAAABBJeB0Q",
+                        "author":  {
+                                       "login":  "copilot-pull-request-reviewer"
+                                   },
+                        "authorAssociation":  "NONE",
+                        "body":  "\n\nCopilot reviewed 7 out of 19 changed files in this pull request and generated no comments.\n\n\n\n\n",
+                        "submittedAt":  "2026-05-27T11:29:53Z",
+                        "includesCreatedEdit":  false,
+                        "reactionGroups":  [
+
+                                           ],
+                        "state":  "COMMENTED",
+                        "commit":  {
+                                       "oid":  "82d15fb4d4ccc109bd211df7f041661ca15d7a57"
+                                   }
+                    },
+                    {
+                        "id":  "PRR_kwDORIKzHM8AAAABBJe1gg",
+                        "author":  {
+                                       "login":  "chatgpt-codex-connector"
+                                   },
+                        "authorAssociation":  "NONE",
+                        "body":  "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `82d15fb4d4`\n    \n\n\u003cdetails\u003e \u003csummary\u003eℹ️ About Codex in GitHub\u003c/summary\u003e\n\u003cbr/\u003e\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n\u003c/details\u003e",
+                        "submittedAt":  "2026-05-27T11:32:13Z",
+                        "includesCreatedEdit":  false,
+                        "reactionGroups":  [
+
+                                           ],
+                        "state":  "COMMENTED",
+                        "commit":  {
+                                       "oid":  "82d15fb4d4ccc109bd211df7f041661ca15d7a57"
+                                   }
+                    }
+                ],
+    "statusCheckRollup":  [
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:42Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809545/job/78125467433",
+                                  "name":  "test (3.9)",
+                                  "startedAt":  "2026-05-27T16:37:09Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:42Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468905",
+                                  "name":  "test (3.9)",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:38:14Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809546/job/78125467990",
+                                  "name":  "analyze",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CodeQL"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:36Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468870",
+                                  "name":  "test (3.10)",
+                                  "startedAt":  "2026-05-27T16:37:09Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:35Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809545/job/78125467453",
+                                  "name":  "test (3.12)",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:33Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468893",
+                                  "name":  "test (3.11)",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:36Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468871",
+                                  "name":  "test (3.12)",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:21Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809545/job/78125467432",
+                                  "name":  "lint",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:25Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468899",
+                                  "name":  "lint",
+                                  "startedAt":  "2026-05-27T16:37:09Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:25Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809545/job/78125467461",
+                                  "name":  "mcp",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:21Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468887",
+                                  "name":  "mcp",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:31Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809545/job/78125467459",
+                                  "name":  "mcp-budget",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:37:29Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/actions/runs/26524809787/job/78125468851",
+                                  "name":  "mcp-budget",
+                                  "startedAt":  "2026-05-27T16:37:08Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  "CI"
+                              },
+                              {
+                                  "__typename":  "CheckRun",
+                                  "completedAt":  "2026-05-27T16:38:06Z",
+                                  "conclusion":  "SUCCESS",
+                                  "detailsUrl":  "https://github.com/bmdhodl/agent47/runs/78125648875",
+                                  "name":  "CodeQL",
+                                  "startedAt":  "2026-05-27T16:38:04Z",
+                                  "status":  "COMPLETED",
+                                  "workflowName":  ""
+                              }
+                          ],
+    "title":  "Add dogfood proof for 2026-05-27 run9",
+    "url":  "https://github.com/bmdhodl/agent47/pull/529"
+}
