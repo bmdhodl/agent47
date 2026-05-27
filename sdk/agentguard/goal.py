@@ -151,12 +151,13 @@ class _GoalContext:
     Verifier exceptions propagate (fail loudly).
     """
 
-    def __init__(self, name: str, verifier: Callable[[], bool]) -> None:
+    def __init__(self, name: str, verifier: Callable[[], bool], owner: Any = None) -> None:
         if not callable(verifier):
             raise TypeError(
                 f"verifier must be callable, got {type(verifier).__name__}"
             )
         self._goal = Goal(name=name, verifier=verifier)
+        self._owner = owner
         self._token = None  # type: ignore[assignment]
 
     def __enter__(self) -> Goal:
@@ -164,6 +165,9 @@ class _GoalContext:
         if parent is not None:
             parent.sub_goals.append(self._goal)
         self._goal.start_ts = time.time()
+        if self._owner is not None:
+            with self._owner._lock:
+                self._owner._active_goal_stack.append(self._goal)
         self._token = _active_goals.set((*_active_goals.get(), self._goal))
         return self._goal
 
@@ -171,6 +175,12 @@ class _GoalContext:
         self._goal.end_ts = time.time()
         if self._token is not None:
             _active_goals.reset(self._token)
+        if self._owner is not None:
+            with self._owner._lock:
+                for idx in range(len(self._owner._active_goal_stack) - 1, -1, -1):
+                    if self._owner._active_goal_stack[idx] is self._goal:
+                        del self._owner._active_goal_stack[idx]
+                        break
         # Only run the verifier if the block exited cleanly. If an exception
         # is propagating, the goal clearly did not succeed; do not also swallow
         # by calling the verifier.
@@ -180,13 +190,23 @@ class _GoalContext:
             self._goal.succeeded = False
 
 
-def _record_consume(tokens: int, calls: int, cost_usd: float) -> None:
+def _record_consume(
+    tokens: int,
+    calls: int,
+    cost_usd: float,
+    owner: Any = None,
+) -> None:
     """Hook called from ``BudgetGuard.consume`` to attribute the call to the
     innermost active goal, if any. No-op when no goal is active.
     """
     goal = _current_goal()
     if goal is None:
-        return
+        if owner is None:
+            return
+        with owner._lock:
+            if not owner._active_goal_stack:
+                return
+            goal = owner._active_goal_stack[-1]
     goal._record(
         Call(
             tokens=int(tokens),

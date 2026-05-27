@@ -1,6 +1,8 @@
 """Tests for goal-level metering (BudgetGuard.goal)."""
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+
 import pytest
 
 from agentguard import BudgetGuard, Goal
@@ -135,6 +137,23 @@ def test_consume_outside_goal_is_unaffected() -> None:
     guard.consume(tokens=100, calls=1, cost_usd=0.05)
     assert guard.state.cost_used == pytest.approx(0.05)
     assert guard.state.calls_used == 1
+
+
+def test_threadpool_consume_records_active_goal() -> None:
+    """Worker-thread consume calls are attributed to the active goal."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+
+    with guard.goal("threadpool-goal", verifier=lambda: True) as g:
+        g.attempt()
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(
+                lambda: guard.consume(tokens=10, calls=1, cost_usd=0.03)
+            ).result()
+
+    assert g.succeeded is True
+    assert g.cost_usd == pytest.approx(0.03)
+    assert len(g.calls) == 1
+    assert guard.state.cost_used == pytest.approx(0.03)
 
 
 def test_to_dict_is_json_serializable() -> None:
