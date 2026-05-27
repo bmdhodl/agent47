@@ -1,0 +1,9 @@
+installed-agentguard-doctor: exit 0
+installed-agentguard-demo: exit 0
+repo-agentguard-doctor: exit 0
+repo-agentguard-demo: exit 0
+repo-review-loop: exit 0
+repo-demo-report: exit 0
+repo-demo-incident: exit 0
+repo-review-loop-report: exit 0
+repo-review-loop-incident: exit 0
