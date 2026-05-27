@@ -224,7 +224,6 @@ class BudgetGuard(BaseGuard):
         self._on_warning = on_warning
         self._warned = False
         self._lock = threading.Lock()
-        self._active_goal_stack: list[Any] = []
         self.state = BudgetState()
 
     @property
@@ -272,7 +271,7 @@ class BudgetGuard(BaseGuard):
         # goal ledger includes the call even when this consume call is the one
         # that trips BudgetExceeded.
         from .goal import _record_consume
-        _record_consume(tokens=tokens, calls=calls, cost_usd=cost_usd, owner=self)
+        _record_consume(tokens=tokens, calls=calls, cost_usd=cost_usd)
         with self._lock:
             self.state.tokens_used += tokens
             self.state.calls_used += calls
@@ -368,7 +367,7 @@ class BudgetGuard(BaseGuard):
             A context manager that yields a ``Goal`` instance.
         """
         from .goal import _GoalContext
-        return _GoalContext(name, verifier, owner=self)
+        return _GoalContext(name, verifier)
 
 
 class TimeoutGuard(BaseGuard):

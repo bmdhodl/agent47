@@ -15,8 +15,10 @@ rationale.
 """
 from __future__ import annotations
 
+import threading
 import time
-from contextvars import ContextVar
+from concurrent.futures import ThreadPoolExecutor
+from contextvars import ContextVar, copy_context
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -136,12 +138,47 @@ class Goal:
 _active_goals: ContextVar[Tuple[Goal, ...]] = ContextVar(
     "agentguard_active_goals", default=()
 )
+_submit_patch_lock = threading.Lock()
+_submit_patch_depth = 0
+_original_threadpool_submit = None
 
 
 def _current_goal() -> Optional[Goal]:
     """Return the innermost active goal, or None if no goal block is open."""
     stack = _active_goals.get()
     return stack[-1] if stack else None
+
+
+def _install_threadpool_context_patch() -> None:
+    """Propagate the active goal context through ThreadPoolExecutor.submit."""
+    global _original_threadpool_submit, _submit_patch_depth
+    with _submit_patch_lock:
+        if _submit_patch_depth == 0:
+            _original_threadpool_submit = ThreadPoolExecutor.submit
+
+            def submit_with_context(executor, fn, *args, **kwargs):
+                ctx = copy_context()
+
+                def run_with_context(*run_args, **run_kwargs):
+                    return ctx.run(fn, *run_args, **run_kwargs)
+
+                return _original_threadpool_submit(
+                    executor, run_with_context, *args, **kwargs
+                )
+
+            ThreadPoolExecutor.submit = submit_with_context  # type: ignore[method-assign]
+        _submit_patch_depth += 1
+
+
+def _uninstall_threadpool_context_patch() -> None:
+    global _original_threadpool_submit, _submit_patch_depth
+    with _submit_patch_lock:
+        if _submit_patch_depth == 0:
+            return
+        _submit_patch_depth -= 1
+        if _submit_patch_depth == 0 and _original_threadpool_submit is not None:
+            ThreadPoolExecutor.submit = _original_threadpool_submit
+            _original_threadpool_submit = None
 
 
 class _GoalContext:
@@ -151,13 +188,12 @@ class _GoalContext:
     Verifier exceptions propagate (fail loudly).
     """
 
-    def __init__(self, name: str, verifier: Callable[[], bool], owner: Any = None) -> None:
+    def __init__(self, name: str, verifier: Callable[[], bool]) -> None:
         if not callable(verifier):
             raise TypeError(
                 f"verifier must be callable, got {type(verifier).__name__}"
             )
         self._goal = Goal(name=name, verifier=verifier)
-        self._owner = owner
         self._token = None  # type: ignore[assignment]
 
     def __enter__(self) -> Goal:
@@ -165,22 +201,15 @@ class _GoalContext:
         if parent is not None:
             parent.sub_goals.append(self._goal)
         self._goal.start_ts = time.time()
-        if self._owner is not None:
-            with self._owner._lock:
-                self._owner._active_goal_stack.append(self._goal)
         self._token = _active_goals.set((*_active_goals.get(), self._goal))
+        _install_threadpool_context_patch()
         return self._goal
 
     def __exit__(self, exc_type, exc, tb) -> None:
         self._goal.end_ts = time.time()
         if self._token is not None:
             _active_goals.reset(self._token)
-        if self._owner is not None:
-            with self._owner._lock:
-                for idx in range(len(self._owner._active_goal_stack) - 1, -1, -1):
-                    if self._owner._active_goal_stack[idx] is self._goal:
-                        del self._owner._active_goal_stack[idx]
-                        break
+        _uninstall_threadpool_context_patch()
         # Only run the verifier if the block exited cleanly. If an exception
         # is propagating, the goal clearly did not succeed; do not also swallow
         # by calling the verifier.
@@ -190,25 +219,13 @@ class _GoalContext:
             self._goal.succeeded = False
 
 
-def _record_consume(
-    tokens: int,
-    calls: int,
-    cost_usd: float,
-    owner: Any = None,
-) -> None:
+def _record_consume(tokens: int, calls: int, cost_usd: float) -> None:
     """Hook called from ``BudgetGuard.consume`` to attribute the call to the
     innermost active goal, if any. No-op when no goal is active.
     """
     goal = _current_goal()
     if goal is None:
-        if owner is None:
-            return
-        with owner._lock:
-            if not owner._active_goal_stack:
-                return
-            goal = owner._active_goal_stack[-1]
-            goal._record(_build_call(goal, tokens, calls, cost_usd))
-            return
+        return
     goal._record(_build_call(goal, tokens, calls, cost_usd))
 
 
