@@ -1,0 +1,9 @@
+exit files: all 0
+demo guard events:
+  guard.budget_exceeded: 1
+  guard.budget_warning: 1
+  guard.loop_detected: 1
+  guard.retry_limit_exceeded: 1
+review-loop guard events:
+  guard.budget_exceeded: 1
+  guard.retry_limit_exceeded: 1

@@ -1,0 +1,17 @@
+{"name":"AgentGuard v1.2.10","publishedAt":"2026-05-02T15:48:03Z","tagName":"v1.2.10","url":"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"}
+python : WARNING: pip index is currently an experimental command. It may be removed/changed in a future release 
+without prior warning.
+At line:32 char:2
++  python -m pip index versions agentguard47 >> "$run/release-health.lo ...
++  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: pip in... prior warning.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+agentguard47 (1.2.10)
+Available versions: 1.2.10, 1.2.9, 1.2.8, 1.2.6, 1.2.5, 1.2.4, 1.2.3, 1.2.2, 1.2.1, 1.2.0, 1.0.0, 0.8.0, 0.7.0, 0.6.0, 0.5.0, 0.4.0, 0.3.0, 0.2.0
+  INSTALLED: 1.2.10
+  LATEST:    1.2.10
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+0.2.2
