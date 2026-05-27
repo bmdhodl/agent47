@@ -1,0 +1,16 @@
+agentguard-demo.exit=0
+agentguard-doctor.exit=0
+artifact-hygiene.exit=0
+checkout-demo.exit=0
+checkout-demo-report.exit=0
+checkout-doctor.exit=0
+demo-incident.exit=0
+demo-report.exit=0
+git-diff-check.exit=0
+guard-event-validation.exit=0
+pytest-focused.exit=0
+release-guard-mcp-npm.exit=0
+release-health.exit=0
+review-loop.exit=0
+review-loop-incident.exit=0
+staleness.exit=0

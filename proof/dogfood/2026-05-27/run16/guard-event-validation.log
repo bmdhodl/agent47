@@ -1,0 +1,2 @@
+demo: {'guard.budget_exceeded': 1, 'guard.budget_warning': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+review_loop: {'guard.budget_exceeded': 2, 'guard.retry_limit_exceeded': 2}
