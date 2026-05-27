@@ -1,0 +1,10 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <worktree>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 9 items
+
+sdk\tests\test_architecture.py .........                                 [100%]
+
+============================== 9 passed in 0.15s ==============================

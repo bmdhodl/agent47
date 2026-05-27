@@ -59,10 +59,15 @@ from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
-try:
-    __version__ = version("agentguard47")
-except PackageNotFoundError:  # pragma: no cover
-    __version__ = "0.0.0-dev"
+
+def _package_version(package_name: str = "agentguard47") -> str:
+    try:
+        return version(package_name)
+    except (PackageNotFoundError, TypeError):  # pragma: no cover
+        return "0.0.0-dev"
+
+
+__version__ = _package_version()
 
 # Libraries should not configure logging; only add a NullHandler so
 # consumers do not see "No handler found" warnings.

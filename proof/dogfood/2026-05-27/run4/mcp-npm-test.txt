@@ -1,0 +1,68 @@
+
+> @agentguard47/mcp-server@0.2.2 test
+> npm run build && node --test dist/__tests__/*.test.js
+
+
+> @agentguard47/mcp-server@0.2.2 build
+> tsc
+
+TAP version 13
+# Subtest: client requires AGENTGUARD_API_KEY
+ok 1 - client requires AGENTGUARD_API_KEY
+  ---
+  duration_ms: 0.6789
+  ...
+# Subtest: client trims base URL, encodes trace IDs, and sends bearer auth
+ok 2 - client trims base URL, encodes trace IDs, and sends bearer auth
+  ---
+  duration_ms: 12.6791
+  ...
+# Subtest: isDecisionEvent recognizes decision lifecycle events
+ok 3 - isDecisionEvent recognizes decision lifecycle events
+  ---
+  duration_ms: 0.4457
+  ...
+# Subtest: extractDecisionPayload normalizes trace and event fields
+ok 4 - extractDecisionPayload normalizes trace and event fields
+  ---
+  duration_ms: 0.1858
+  ...
+# Subtest: extractDecisionEvents filters by workflow and trace
+ok 5 - extractDecisionEvents filters by workflow and trace
+  ---
+  duration_ms: 0.166
+  ...
+# Subtest: buildToolShape supports string, number, and boolean fields
+ok 6 - buildToolShape supports string, number, and boolean fields
+  ---
+  duration_ms: 1.3477
+  ...
+# Subtest: query_traces exposes read-only annotations and agent-use guidance
+ok 7 - query_traces exposes read-only annotations and agent-use guidance
+  ---
+  duration_ms: 0.6483
+  ...
+# Subtest: get_trace_decisions returns normalized decision payloads
+ok 8 - get_trace_decisions returns normalized decision payloads
+  ---
+  duration_ms: 0.3028
+  ...
+# Subtest: check_budget returns warning status and cost summary
+ok 9 - check_budget returns warning status and cost summary
+  ---
+  duration_ms: 0.2218
+  ...
+# Subtest: all tools expose object input schemas
+ok 10 - all tools expose object input schemas
+  ---
+  duration_ms: 0.0926
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.2404

@@ -1,0 +1,9 @@
+git : warning: in the working copy of 'sdk/agentguard/__init__.py', LF will be replaced by CRLF the next time Git 
+touches it
+At line:16 char:36
++ Save-RunCommand 'git-diff-check' { git diff --check };
++                                    ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: in the working copy of 'sdk/tests/test_hardening.py', LF will be replaced by CRLF the next time Git touches it

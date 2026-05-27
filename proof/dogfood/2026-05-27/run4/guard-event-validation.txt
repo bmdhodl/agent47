@@ -1,0 +1,3 @@
+demo-trace.jsonl {'guard.budget_warning': 1, 'guard.budget_exceeded': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+review-loop-trace.jsonl {'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}
+repo-doctor-trace.jsonl {'doctor.verify': 2}

@@ -1,0 +1,1 @@
+<worktree>\.github\requirements\ci-tools.in direct pins support Python 3.9
