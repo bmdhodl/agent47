@@ -1,0 +1,4 @@
+guard-event validation passed
+checkout_demo_trace.jsonl {'guard.budget_exceeded': 1, 'guard.budget_warning': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+review_loop_trace.jsonl {'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}
+checkout_doctor_trace.jsonl {}

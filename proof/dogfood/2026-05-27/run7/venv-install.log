@@ -1,0 +1,58 @@
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting pytest
+  Using cached pytest-9.0.3-py3-none-any.whl.metadata (7.6 kB)
+Collecting ruff
+  Downloading ruff-0.15.14-py3-none-win_amd64.whl.metadata (27 kB)
+Collecting bandit
+  Using cached bandit-1.9.4-py3-none-any.whl.metadata (7.1 kB)
+Collecting colorama>=0.4 (from pytest)
+  Using cached colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Using cached iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Using cached pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting PyYAML>=5.3.1 (from bandit)
+  Downloading pyyaml-6.0.3-cp311-cp311-win_amd64.whl.metadata (2.4 kB)
+Collecting stevedore>=1.20.0 (from bandit)
+  Using cached stevedore-5.8.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting rich (from bandit)
+  Using cached rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting markdown-it-py>=2.2.0 (from rich->bandit)
+  Using cached markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->bandit)
+  Using cached mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Using cached pytest-9.0.3-py3-none-any.whl (375 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading ruff-0.15.14-py3-none-win_amd64.whl (11.9 MB)
+   ---------------------------------------- 11.9/11.9 MB 25.8 MB/s  0:00:00
+Using cached bandit-1.9.4-py3-none-any.whl (134 kB)
+Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Using cached iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Using cached pygments-2.20.0-py3-none-any.whl (1.2 MB)
+Using cached pyyaml-6.0.3-cp311-cp311-win_amd64.whl (158 kB)
+Using cached stevedore-5.8.0-py3-none-any.whl (54 kB)
+Using cached rich-15.0.0-py3-none-any.whl (310 kB)
+Using cached markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Using cached mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9337 sha256=8b3573f54302e7a9e6fc9287f1211b65835def4da9184615f8f96592ec8b3560
+  Stored in directory: <user-home>\AppData\Local\Temp\pip-ephem-wheel-cache-91x1wsbh\wheels\96\58\3a\a35b4fd766ed9fded71542a5807c66191ea77c697b516dbfbe
+Successfully built agentguard47
+Installing collected packages: stevedore, ruff, PyYAML, pygments, pluggy, packaging, mdurl, iniconfig, colorama, agentguard47, pytest, markdown-it-py, rich, bandit
+
+Successfully installed PyYAML-6.0.3 agentguard47-1.2.10 bandit-1.9.4 colorama-0.4.6 iniconfig-2.3.0 markdown-it-py-4.2.0 mdurl-0.1.2 packaging-26.2 pluggy-1.6.0 pygments-2.20.0 pytest-9.0.3 rich-15.0.0 ruff-0.15.14 stevedore-5.8.0

@@ -1,0 +1,14 @@
+PR #476: reviewDecision=REVIEW_REQUIRED mergeState=DIRTY unresolved_active_threads=0
+PR #508: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=0
+PR #519: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=0
+PR #520: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=6
+  https://github.com/bmdhodl/agent47/pull/520#discussion_r3308466147
+  https://github.com/bmdhodl/agent47/pull/520#discussion_r3308466150
+  https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469469
+  https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469493
+  https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469515
+  https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469529
+PR #523: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=0
+PR #524: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=0
+PR #525: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=0
+PR #526: reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED unresolved_active_threads=0

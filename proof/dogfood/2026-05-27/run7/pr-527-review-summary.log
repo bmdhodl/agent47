@@ -1,0 +1,17 @@
+��PR #527 https://github.com/bmdhodl/agent47/pull/527
+reviewDecision=REVIEW_REQUIRED mergeState=BLOCKED
+comments=0 reviews=2 threads=3
+active_unresolved_threads=3
+proof/dogfood/2026-05-27/run7/review-loop.log:1 https://github.com/bmdhodl/agent47/pull/527#discussion_r3309896428
+**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Regenerate the corrupted review-loop log**
+
+For anyone using this dogfood run as proof, `review-loop.log` is not a clean command transcript: it starts with mojibake instead of the checkout-review heading and also has a corrupted exit marker at the end. Since this PR is adding proof artifacts, keeping an encoding-corrupted log makes the evidence hard to audit with normal text tooling and undermines the run summary; please regenerate or re-encode this log as plain UTF-8 before committing it.
+
+Useful? React with =�Mܠ/ =�N�.
+---
+proof/dogfood/2026-05-27/run7/review-loop-report.md:10 https://github.com/bmdhodl/agent47/pull/527#discussion_r3309904659
+`Estimated cost: $0.1020` is inconsistent with the underlying `review_loop_trace.jsonl`, which contains three `review.iteration` events with top-level `cost_usd` values summing to $0.0510 (0.0135 + 0.0170 + 0.0205). For proof artifacts, please either regenerate this report with the corrected cost accounting or add an explicit note in the report that this value is known to be double-counted on `main` so readers don t treat it as ground truth.
+---
+proof/dogfood/2026-05-27/run7/review-loop-incident.md:17 https://github.com/bmdhodl/agent47/pull/527#discussion_r3309904708
+This incident report lists `Estimated cost: $0.1020`, but the associated `review_loop_trace.jsonl` has three `review.iteration` events whose `cost_usd` values sum to $0.0510. Please regenerate the incident report after the cost double-counting fix, or add an explicit  known issue  note so the incident summary doesn t mislead readers about actual spend.
+---

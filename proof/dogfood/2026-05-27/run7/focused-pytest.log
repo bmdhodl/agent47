@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+collected 38 items
+
+sdk\tests\test_demo.py ...                                               [  7%]
+sdk\tests\test_doctor.py .........                                       [ 31%]
+sdk\tests\test_cli_report.py .........                                   [ 55%]
+sdk\tests\test_example_starters.py .........                             [ 78%]
+sdk\tests\test_reporting.py ........                                     [100%]
+
+============================= 38 passed in 1.06s ==============================
