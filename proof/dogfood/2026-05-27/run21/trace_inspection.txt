@@ -1,0 +1,21 @@
+Run: run21
+Timestamp: 2026-05-27T18:43:40.0070011-05:00
+Repo: <repo>
+Commit: d678be3
+Branch: dogfood-2026-05-27-run9-worker
+agentguard shim: C:\Python313\Scripts\agentguard.exe
+Repo-local import: <repo>/sdk/agentguard/__init__.py
+Guard event counts:
+agentguard_demo_traces.jsonl, guard.budget_warning: 1
+agentguard_demo_traces.jsonl, guard.budget_exceeded: 1
+agentguard_demo_traces.jsonl, guard.loop_detected: 1
+agentguard_demo_traces.jsonl, guard.retry_limit_exceeded: 1
+coding_agent_review_loop_traces.jsonl, guard.budget_exceeded: 1
+coding_agent_review_loop_traces.jsonl, guard.retry_limit_exceeded: 1
+Guard event details:
+agentguard_demo_traces.jsonl | guard.budget_warning | error= | cost_usd= | data={"cost_used":0.84,"limit_usd":1.0}
+agentguard_demo_traces.jsonl | guard.budget_exceeded | error= | cost_usd= | data={"cost_used":1.08,"limit_usd":1.0,"message":"Cost budget exceeded: $1.0800 \u003e $1.0000 (this call added $0.1200)"}
+agentguard_demo_traces.jsonl | guard.loop_detected | error= | cost_usd= | data={"message":"Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.","tool_name":"search"}
+agentguard_demo_traces.jsonl | guard.retry_limit_exceeded | error= | cost_usd= | data={"message":"Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)","tool_name":"fetch_docs"}
+coding_agent_review_loop_traces.jsonl | guard.budget_exceeded | error= | cost_usd= | data={"attempt":3,"cost_usd":0.051,"reason":"Cost budget exceeded: $0.0510 \u003e $0.0450 (this call added $0.0205)","tokens_used":12300}
+coding_agent_review_loop_traces.jsonl | guard.retry_limit_exceeded | error= | cost_usd= | data={"attempt":4,"reason":"Retry limit exceeded: apply_patch attempted 4 times (limit: 3)","tool_name":"apply_patch"}
