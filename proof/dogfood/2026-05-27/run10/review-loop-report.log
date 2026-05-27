@@ -1,8 +1,8 @@
-COMMAND: python -m agentguard.cli report coding_agent_review_loop_traces.jsonl
+COMMAND: PYTHONNOUSERSITE=1 PYTHONPATH=./sdk python -m agentguard.cli report coding_agent_review_loop_traces.jsonl
 AgentGuard report
   Total events: 14
   Spans: 4  Events: 9
-  Approx run time: 1.3 ms
+  Approx run time: 1.5 ms
   Reasoning steps: 0
   Tool results: 0
   LLM results: 0
@@ -15,4 +15,5 @@ AgentGuard report
   Incident hint: rerun with `agentguard incident` for a shareable incident report
 
 Traced by AgentGuard | agentguard47.com
+
 EXIT_CODE: 0

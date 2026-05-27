@@ -1,0 +1,3 @@
+COMMAND: git diff --check HEAD^ -- proof/dogfood/2026-05-27/run9 proof/dogfood/2026-05-27/run10
+RESULT: passed with exit code 0. Git emitted Windows autocrlf working-tree warnings only; no whitespace errors were reported.
+EXIT_CODE: 0

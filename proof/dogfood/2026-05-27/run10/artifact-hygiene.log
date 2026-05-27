@@ -1,0 +1,3 @@
+COMMAND: artifact hygiene check for run9/run10
+artifact hygiene passed: no UTF-8 BOM, NUL bytes, or unredacted local paths in run9/run10
+EXIT_CODE: 0
