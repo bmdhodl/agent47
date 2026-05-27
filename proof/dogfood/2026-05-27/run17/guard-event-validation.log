@@ -1,0 +1,4 @@
+checkout_demo guard events: {'guard.budget_exceeded': 1, 'guard.budget_warning': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+review_loop guard events: {'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}
+review_loop budget reasons: ['Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)']
+review_loop retry reasons: ['Retry limit exceeded: apply_patch attempted 4 times (limit: 3)']

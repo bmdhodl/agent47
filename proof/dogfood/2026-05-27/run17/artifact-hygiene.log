@@ -1,0 +1,2 @@
+Artifact hygiene passed: local paths redacted; no UTF-8 BOM or NUL bytes found.
+No local path leaks found.
