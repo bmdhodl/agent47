@@ -1,0 +1,8 @@
+git : warning: in the working copy of 'proof/dogfood/2026-05-27/run18/release-health.log', LF will be replaced by CRLF 
+the next time Git touches it
+At line:11 char:1
++ git diff --check HEAD -- $run > (Join-Path $runAbs 'git-diff-check.lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
