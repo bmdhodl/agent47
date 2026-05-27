@@ -46,6 +46,13 @@ gh skill install bmdhodl/agent47 agentguard
 Most agent tooling tells you what happened after the run. AgentGuard stops the
 bad run while it is happening.
 
+AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
+runs inside the agent's process, sees the call graph, and raises exceptions
+that kill the run before the next bad call lands. Routers and gateways like
+Manifest or Vercel AI Gateway sit at the network layer and shape egress
+traffic. The layers are complementary — see the
+[competitive notes](#runtime-control-vs-observability) for when each fits.
+
 | Problem | What AgentGuard does |
 |---|---|
 | Agent loops on the same tool | Raises `LoopDetected` |
@@ -281,6 +288,7 @@ layer.
 Competitive notes:
 
 - [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/competitive/vercel-ai-gateway.md)
+- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md)
 
 ## Decision Traces
