@@ -164,7 +164,7 @@ class _GoalContext:
         if parent is not None:
             parent.sub_goals.append(self._goal)
         self._goal.start_ts = time.time()
-        self._token = _active_goals.set(_active_goals.get() + (self._goal,))
+        self._token = _active_goals.set((*_active_goals.get(), self._goal))
         return self._goal
 
     def __exit__(self, exc_type, exc, tb) -> None:
