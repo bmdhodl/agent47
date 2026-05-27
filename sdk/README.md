@@ -141,6 +141,49 @@ rate = RateLimitGuard(max_calls_per_minute=60)
 rate.check()
 ```
 
+## Goal-level metering
+
+Measuring cost per completed goal, not per call.
+
+`BudgetGuard.consume(...)` records token / call / dollar spend. When you wrap
+work inside a `guard.goal(...)` block, every `consume(...)` made inside the
+block (including nested function calls, async tasks, or threadpool workers
+via `contextvars`) is also attributed to that goal. On block exit, the
+verifier you supply runs and the goal's `succeeded` flag is set. Failed
+attempts are billed as `failure_cost` so you can see the "failure tax" line
+item directly.
+
+```python
+from agentguard import BudgetGuard
+
+guard = BudgetGuard(max_cost_usd=5.00)
+
+def refund_verified() -> bool:
+    return stripe.charges.retrieve("ch_abc123").refunded
+
+with guard.goal("refund ch_abc123", verifier=refund_verified) as g:
+    for _ in range(3):
+        g.attempt()
+        try:
+            agent.run_until_done()
+            break
+        except TransientFailure:
+            continue
+
+print(g.cost_usd)      # 0.42  -- total spend across all attempts
+print(g.attempts)      # 3
+print(g.succeeded)     # True
+print(g.failure_cost)  # 0.31  -- cost of attempts 1 and 2
+print(g.duration_sec)  # 47.2
+print(g.to_dict())     # JSON-serializable ledger
+```
+
+Goals nest. A parent goal that spawns sub-goals reports `cost_usd` as own
+direct calls plus sub-goal totals (no double-counting). Goals do not cross
+sessions; serialize and ship the ledger to your dashboard or analytics
+pipeline. v1 requires a binary callable verifier (LLM-as-judge is a future
+extension).
+
 ## Auto-Instrumentation
 
 ```python

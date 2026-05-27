@@ -16,6 +16,7 @@ from .decision import (
     log_decision_proposed,
 )
 from .evaluation import AssertionResult, EvalResult, EvalSuite, summarize_trace
+from .goal import Call, Goal
 from .guards import (
     AgentGuardError,
     BaseGuard,
@@ -80,12 +81,14 @@ __all__ = [
     "BudgetExceeded",
     "BudgetGuard",
     "BudgetWarning",
+    "Call",
     "DecisionTrace",
     "EscalationRequired",
     "EscalationSignal",
     "EvalResult",
     "EvalSuite",
     "FuzzyLoopGuard",
+    "Goal",
     "HttpSink",
     "InitConfig",
     "JsonlFileSink",
