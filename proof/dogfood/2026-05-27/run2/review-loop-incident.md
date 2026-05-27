@@ -9,7 +9,7 @@ Primary cause: **retry_limit_exceeded**
 - Total events: 14
 - Spans: 4
 - Events: 9
-- Duration: 1.7 ms
+- Duration: 1.4 ms
 - Estimated cost: $0.0510
 - Guard events: 2
 - Errors: 0

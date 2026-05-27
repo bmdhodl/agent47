@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import json
+import math
 import os
 import re
 import subprocess
@@ -221,13 +222,32 @@ def test_coding_agent_review_loop_example_runs_offline() -> None:
         trace_path = Path(tmpdir, "coding_agent_review_loop_traces.jsonl")
         assert trace_path.exists()
         names = []
+        budget_events = []
         with trace_path.open("r", encoding="utf-8") as handle:
             for line in handle:
                 if line.strip():
-                    names.append(json.loads(line)["name"])
+                    event = json.loads(line)
+                    names.append(event["name"])
+                    if event["name"] == "guard.budget_exceeded":
+                        budget_events.append(event)
         assert "review.iteration" in names
         assert "guard.budget_exceeded" in names
         assert "guard.retry_limit_exceeded" in names
+        assert budget_events
+        iteration_costs = []
+        with trace_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    event = json.loads(line)
+                    if event["name"] == "review.iteration":
+                        iteration_costs.append(event["cost_usd"])
+        assert "cost_usd" not in budget_events[0].get("data", {})
+        assert "cost_usd" not in budget_events[0]
+        assert math.isclose(
+            budget_events[0]["data"]["total_cost_usd"],
+            sum(iteration_costs),
+            rel_tol=1e-9,
+        )
 
 
 def test_coding_agent_review_loop_sample_incident_is_in_sync() -> None:
