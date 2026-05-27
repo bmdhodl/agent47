@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <repo>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 29 items
+
+sdk\tests\test_demo.py ...                                               [ 10%]
+sdk\tests\test_doctor.py .........                                       [ 41%]
+sdk\tests\test_cli_report.py .........                                   [ 72%]
+sdk\tests\test_reporting.py ........                                     [100%]
+
+============================= 29 passed in 0.36s ==============================

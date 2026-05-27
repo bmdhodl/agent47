@@ -1,0 +1,20 @@
+exit=0 name=pip-install-editable command=python -m pip install -e .\sdk
+exit=0 name=installed-agentguard-doctor command=agentguard doctor --trace-file '<repo>\proof\dogfood\2026-05-27\run1\installed_agentguard_doctor_trace.jsonl'
+exit=0 name=installed-agentguard-demo command=agentguard demo --trace-file '<repo>\proof\dogfood\2026-05-27\run1\installed_agentguard_demo_traces.jsonl'
+exit=0 name=installed-demo-report command=agentguard report '<repo>\proof\dogfood\2026-05-27\run1\installed_agentguard_demo_traces.jsonl'
+exit=0 name=installed-demo-incident command=agentguard incident '<repo>\proof\dogfood\2026-05-27\run1\installed_agentguard_demo_traces.jsonl'
+exit=0 name=repo-agentguard-doctor command=$env:PYTHONPATH='<repo>\sdk'; python -m agentguard.cli doctor --trace-file '<repo>\proof\dogfood\2026-05-27\run1\repo_agentguard_doctor_trace.jsonl'
+exit=0 name=repo-agentguard-demo command=$env:PYTHONPATH='<repo>\sdk'; python -m agentguard.cli demo --trace-file '<repo>\proof\dogfood\2026-05-27\run1\repo_agentguard_demo_traces.jsonl'
+exit=0 name=repo-demo-report command=$env:PYTHONPATH='<repo>\sdk'; python -m agentguard.cli report '<repo>\proof\dogfood\2026-05-27\run1\repo_agentguard_demo_traces.jsonl'
+exit=0 name=repo-demo-incident command=$env:PYTHONPATH='<repo>\sdk'; python -m agentguard.cli incident '<repo>\proof\dogfood\2026-05-27\run1\repo_agentguard_demo_traces.jsonl'
+exit=0 name=repo-review-loop command=$env:PYTHONPATH='<repo>\sdk'; Set-Location -LiteralPath '<repo>\proof\dogfood\2026-05-27\run1'; python '<repo>\examples\coding_agent_review_loop.py'
+exit=0 name=repo-review-loop-report command=$env:PYTHONPATH='<repo>\sdk'; python -m agentguard.cli report '<repo>\proof\dogfood\2026-05-27\run1\coding_agent_review_loop_traces.jsonl'
+exit=0 name=repo-review-loop-incident command=$env:PYTHONPATH='<repo>\sdk'; python -m agentguard.cli incident '<repo>\proof\dogfood\2026-05-27\run1\coding_agent_review_loop_traces.jsonl'
+exit=0 name=focused-tests command=python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_reporting.py -q
+exit=0 name=open-prs command=gh pr list --state open --json number,title,headRefName,baseRefName,isDraft,mergeStateStatus,reviewDecision,statusCheckRollup,updatedAt,url --limit 30
+exit=0 name=open-issues command=gh issue list --state open --json number,title,labels,updatedAt,url --limit 50
+exit=0 name=github-release command=gh release view --json tagName,name,publishedAt,url,isDraft,isPrerelease,targetCommitish
+exit=0 name=pr-517-review command=gh pr view 517 --comments --json number,title,url,reviewDecision,mergeStateStatus,comments,reviews,latestReviews,statusCheckRollup
+exit=0 name=pr-508-review command=gh pr view 508 --comments --json number,title,url,reviewDecision,mergeStateStatus,comments,reviews,latestReviews,statusCheckRollup
+exit=0 name=distribution-snapshots command=Set-Location -LiteralPath '<repo>\proof\dogfood\2026-05-27\run1'; python fetch_distribution_snapshots.py
+exit=0 name=extract-guard-events command=Set-Location -LiteralPath '<repo>\proof\dogfood\2026-05-27\run1'; python extract_guard_events.py

@@ -1,0 +1,532 @@
+[
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 1,
+    "name": "demo.budget_guard",
+    "phase": "start",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "cost_used": 0.84,
+      "limit_usd": 1.0
+    },
+    "error": null,
+    "kind": "event",
+    "line": 16,
+    "name": "guard.budget_warning",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "cost_used": 1.08,
+      "limit_usd": 1.0,
+      "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 21,
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 22,
+    "name": "demo.budget_guard",
+    "phase": "end",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 23,
+    "name": "demo.loop_guard",
+    "phase": "start",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+      "tool_name": "search"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 27,
+    "name": "guard.loop_detected",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 28,
+    "name": "demo.loop_guard",
+    "phase": "end",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 29,
+    "name": "demo.retry_guard",
+    "phase": "start",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 1,
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 30,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 2,
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 32,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 3,
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 34,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 35,
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 36,
+    "name": "demo.retry_guard",
+    "phase": "end",
+    "service": "agentguard-offline-demo",
+    "trace_file": "installed_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 1,
+    "name": "demo.budget_guard",
+    "phase": "start",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "cost_used": 0.84,
+      "limit_usd": 1.0
+    },
+    "error": null,
+    "kind": "event",
+    "line": 16,
+    "name": "guard.budget_warning",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "cost_used": 1.08,
+      "limit_usd": 1.0,
+      "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 21,
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 22,
+    "name": "demo.budget_guard",
+    "phase": "end",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 23,
+    "name": "demo.loop_guard",
+    "phase": "start",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+      "tool_name": "search"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 27,
+    "name": "guard.loop_detected",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 28,
+    "name": "demo.loop_guard",
+    "phase": "end",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 29,
+    "name": "demo.retry_guard",
+    "phase": "start",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 1,
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 30,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 2,
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 32,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 3,
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 34,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+      "tool_name": "fetch_docs"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 35,
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 36,
+    "name": "demo.retry_guard",
+    "phase": "end",
+    "service": "agentguard-offline-demo",
+    "trace_file": "repo_agentguard_demo_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "meta",
+    "line": 1,
+    "name": "watermark",
+    "phase": null,
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 2,
+    "name": "coding_agent.review_loop.budget",
+    "phase": "start",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": 0.0135,
+    "data": {
+      "attempt": 1,
+      "cost_usd": 0.0135,
+      "input_tokens": 2600,
+      "model": "gpt-4o",
+      "output_tokens": 700,
+      "reviewer_comment": "tighten tests and rerun"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 3,
+    "name": "review.iteration",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": 0.017,
+    "data": {
+      "attempt": 2,
+      "cost_usd": 0.017,
+      "input_tokens": 3200,
+      "model": "gpt-4o",
+      "output_tokens": 900,
+      "reviewer_comment": "address new reviewer concern"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 4,
+    "name": "review.iteration",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": 0.0205,
+    "data": {
+      "attempt": 3,
+      "cost_usd": 0.0205,
+      "input_tokens": 3800,
+      "model": "gpt-4o",
+      "output_tokens": 1100,
+      "reviewer_comment": "same concern resurfaced after edits"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 5,
+    "name": "review.iteration",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 3,
+      "cost_usd": 0.051,
+      "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+      "tokens_used": 12300
+    },
+    "error": null,
+    "kind": "event",
+    "line": 6,
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 7,
+    "name": "coding_agent.review_loop.budget",
+    "phase": "end",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 8,
+    "name": "coding_agent.review_loop.retry_storm",
+    "phase": "start",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 1,
+      "reason": "review feedback still unresolved",
+      "tool_name": "apply_patch"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 9,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 2,
+      "reason": "review feedback still unresolved",
+      "tool_name": "apply_patch"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 10,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 3,
+      "reason": "review feedback still unresolved",
+      "tool_name": "apply_patch"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 11,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 4,
+      "reason": "review feedback still unresolved",
+      "tool_name": "apply_patch"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 12,
+    "name": "tool.retry",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 4,
+      "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+      "tool_name": "apply_patch"
+    },
+    "error": null,
+    "kind": "event",
+    "line": 13,
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  },
+  {
+    "cost_usd": null,
+    "data": {},
+    "error": null,
+    "kind": "span",
+    "line": 14,
+    "name": "coding_agent.review_loop.retry_storm",
+    "phase": "end",
+    "service": "coding-agent-review-loop",
+    "trace_file": "coding_agent_review_loop_traces.jsonl"
+  }
+]
