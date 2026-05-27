@@ -1,0 +1,52 @@
+python.exe : WARNING: Ignoring invalid distribution ~gentguard47
+
+
+(<user-path>)
+
+
+At line:20 char:9
+
+
++         & $Exe @ArgList > $out 2> $err
+
+
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
+
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+
+
+
+WARNING: Ignoring invalid distribution ~gentguard47 (<user-path>)
+
+
+  WARNING: The script agentguard.exe is installed in '<user-path>' which
+
+
+is not on PATH.
+
+
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+
+
+WARNING: Ignoring invalid distribution ~gentguard47 (<user-path>)
+
+
+WARNING: Ignoring invalid distribution ~gentguard47 (<user-path>)
+
+
+WARNING: Ignoring invalid distribution ~gentguard47 (<user-path>)
+
+
+
+
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+
+
+[notice] To update, run: python.exe -m pip install --upgrade pip

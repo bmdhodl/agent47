@@ -1,0 +1,31 @@
+pip-install-editable exit=0 command=python -m pip install -e ./sdk
+
+
+installed-agentguard-doctor exit=0 command=agentguard doctor --trace-file proof\dogfood\2026-05-26\run2\installed_agentguard_doctor_trace.jsonl
+
+
+installed-agentguard-demo exit=0 command=agentguard demo --trace-file proof\dogfood\2026-05-26\run2\installed_agentguard_demo_traces.jsonl
+
+
+repo-agentguard-doctor exit=0 command=python -m agentguard.cli doctor --trace-file proof\dogfood\2026-05-26\run2\repo_agentguard_doctor_trace.jsonl
+
+
+repo-agentguard-demo exit=0 command=python -m agentguard.cli demo --trace-file proof\dogfood\2026-05-26\run2\repo_agentguard_demo_traces.jsonl
+
+
+repo-review-loop exit=0 command=python <repo>\examples\coding_agent_review_loop.py
+
+
+repo-review-loop-report exit=0 command=agentguard report proof\dogfood\2026-05-26\run2\coding_agent_review_loop_traces.jsonl
+
+
+repo-review-loop-incident exit=0 command=agentguard incident proof\dogfood\2026-05-26\run2\coding_agent_review_loop_traces.jsonl
+
+
+repo-demo-report exit=0 command=agentguard report proof\dogfood\2026-05-26\run2\repo_agentguard_demo_traces.jsonl
+
+
+repo-demo-incident exit=0 command=agentguard incident proof\dogfood\2026-05-26\run2\repo_agentguard_demo_traces.jsonl
+
+
+focused-tests exit=0 command=python -m pytest sdk/tests/test_doctor.py sdk/tests/test_demo.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py::test_coding_agent_review_loop_example_runs_offline sdk/tests/test_example_starters.py::test_coding_agent_review_loop_sample_incident_is_in_sync -q
