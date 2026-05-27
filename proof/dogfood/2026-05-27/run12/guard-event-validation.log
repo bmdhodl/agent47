@@ -1,0 +1,19 @@
+{
+  "agentguard_demo_traces.jsonl": {
+    "events": 36,
+    "guard_events": [
+      "guard.budget_warning",
+      "guard.budget_exceeded",
+      "guard.loop_detected",
+      "guard.retry_limit_exceeded"
+    ]
+  },
+  "coding_agent_review_loop_traces.jsonl": {
+    "events": 14,
+    "guard_events": [
+      "guard.budget_exceeded",
+      "guard.retry_limit_exceeded"
+    ]
+  }
+}
+guard-event validation passed
