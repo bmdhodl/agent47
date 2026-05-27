@@ -1,0 +1,3 @@
+proof/dogfood/2026-05-27/run3/agentguard_demo_traces.jsonl events 36 guards {'guard.budget_warning': 1, 'guard.budget_exceeded': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+proof/dogfood/2026-05-27/run3/coding_agent_review_loop_traces.jsonl events 14 guards {'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}
+proof/dogfood/2026-05-27/run3/agentguard_doctor_trace.jsonl events 4 guards {}

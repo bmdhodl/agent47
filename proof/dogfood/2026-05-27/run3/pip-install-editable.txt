@@ -1,0 +1,39 @@
+Defaulting to user installation because normal site-packages is not writeable
+python : WARNING: Ignoring invalid distribution ~gentguard47 
+(<python-user-site>)
+At line:6 char:1
++ python -m pip install -e ./sdk 2>&1 | Tee-Object -FilePath "$proof/pi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9338 sha256=3fee251bf49250984a11c75a2cd1b5cb04460e9d8b993a93c0a16e57702e8e10
+  Stored in directory: <temp>\pip-ephem-wheel-cache-u8droxok\wheels\e2\8b\b5\c3c6464204a85e9eca094355b0cc6ea9451a3dc1067c4909d2
+Successfully built agentguard47
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 None
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+error: uninstall-no-record-file
+
+× Cannot uninstall agentguard47 None
+╰─> The package's contents are unknown: no RECORD file was found for agentguard47.
+
+hint: You might be able to recover from this via: pip install --force-reinstall --no-deps agentguard47==1.2.10

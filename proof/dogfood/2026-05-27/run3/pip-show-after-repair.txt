@@ -1,0 +1,18 @@
+python : WARNING: Ignoring invalid distribution ~gentguard47 
+(<python-user-site>)
+At line:6 char:1
++ python -m pip show agentguard47 2>&1 | Tee-Object -FilePath "$proof/p ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Name: agentguard47
+Version: None
+Summary: 
+Home-page: 
+Author: 
+Author-email: 
+License: 
+Location: <python-user-site>
+Requires: 
+Required-by: 

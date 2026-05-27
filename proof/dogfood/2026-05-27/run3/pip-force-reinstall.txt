@@ -1,0 +1,27 @@
+Defaulting to user installation because normal site-packages is not writeable
+python : WARNING: Ignoring invalid distribution ~gentguard47 
+(<python-user-site>)
+At line:4 char:1
++ python -m pip install --force-reinstall --no-deps agentguard47==1.2.1 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Collecting agentguard47==1.2.10
+  Using cached agentguard47-1.2.10-py3-none-any.whl.metadata (34 kB)
+Using cached agentguard47-1.2.10-py3-none-any.whl (86 kB)
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 None
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+error: uninstall-no-record-file
+
+Cannot uninstall agentguard47 None
+
+The package's contents are unknown: no RECORD file was found for agentguard47.
+
+hint: You might be able to recover from this via: pip install --force-reinstall --no-deps agentguard47==1.2.10

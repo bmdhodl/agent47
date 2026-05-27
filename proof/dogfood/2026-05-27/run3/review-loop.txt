@@ -1,0 +1,21 @@
+python : Traceback (most recent call last):
+At line:10 char:1
++ python examples/coding_agent_review_loop.py 2>&1 | Tee-Object -FilePa ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<repo>\examples\coding_agent_review_loop.py", line 13, in <module>
+    from agentguard import (
+    ...<7 lines>...
+    )
+  File "<stale-agent47-worktree>/sdk\agentguard\__init__.py", line 63, in <module>
+    __version__ = version("agentguard47")
+  File "<python-install>\Lib\importlib\metadata\__init__.py", line 987, in version
+    return distribution(distribution_name).version
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<python-user-site>\importlib_metadata\__init__.py", line 557, in 
+version
+    return md_none(self.metadata)['Version']
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
