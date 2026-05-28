@@ -1,0 +1,2 @@
+{"total_events": 14, "spans": 4, "events": 9, "approx_run_time_ms": 1.534800001536496, "reasoning_steps": 0, "tool_results": 0, "llm_results": 0, "estimated_cost_usd": 0.102, "loop_guard_triggered": 0, "guard_events": {"guard.budget_exceeded": 1, "guard.retry_limit_exceeded": 1}, "savings": {"exact_tokens_saved": 0, "estimated_tokens_saved": 0, "exact_usd_saved": 0.0, "estimated_usd_saved": 0.0205, "reasons": [{"kind": "budget_overrun_stopped", "confidence": "estimated", "occurrences": 1, "tokens_saved": 0, "usd_saved": 0.0205}]}}
+

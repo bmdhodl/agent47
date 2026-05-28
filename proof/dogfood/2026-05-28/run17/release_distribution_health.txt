@@ -1,0 +1,8 @@
+GitHub release: v1.2.10 https://github.com/bmdhodl/agent47/releases/tag/v1.2.10
+PyPI: agentguard47 (1.2.10) | Available versions: 1.2.10, 1.2.9, 1.2.8, 1.2.6, 1.2.5, 1.2.4, 1.2.3, 1.2.2, 1.2.1, 1.2.0, 1.0.0, 0.8.0, 0.7.0, 0.6.0, 0.5.0, 0.4.0, 0.3.0, 0.2.0 |   INSTALLED: 1.2.10
+Local SDK: 1.2.10
+npm @agentguard47/mcp-server: 0.2.2
+Local MCP: 0.2.2
+Glama tool count: 0
+MCP Registry endpoint: HTTP 404
+

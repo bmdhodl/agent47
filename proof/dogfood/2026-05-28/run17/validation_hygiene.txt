@@ -1,0 +1,8 @@
+artifact hygiene passed for 31 files
+- UTF-8 decode passed
+- BOM check passed
+- NUL byte check passed
+- JSON files parsed
+- JSONL files parsed line by line
+- local path scan found no user-specific worktree paths
+git diff --check passed
