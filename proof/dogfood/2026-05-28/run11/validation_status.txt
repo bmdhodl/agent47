@@ -1,0 +1,3 @@
+trace_inspection_exit=1
+pytest_exit=passed
+release_guard_exit=see stdout
