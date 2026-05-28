@@ -1,0 +1,27 @@
+# Trace inspection
+
+## doctor
+- path: proof/dogfood/2026-05-28/run1/doctor-trace.jsonl
+- event_count: 4
+- kinds: {'span': 2, 'event': 2}
+- guard events: {}
+
+## demo
+- path: proof/dogfood/2026-05-28/run1/demo-trace.jsonl
+- event_count: 36
+- kinds: {'span': 6, 'event': 30}
+- guard events: {'guard.budget_warning': 1, 'guard.budget_exceeded': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
+
+## review_loop
+- path: proof/dogfood/2026-05-28/run1/review-loop-traces.jsonl
+- event_count: 14
+- kinds: {'meta': 1, 'span': 4, 'event': 9}
+- guard events: {'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}
+
+## Guard event details
+- demo: guard.budget_warning data={'cost_used': 0.84, 'limit_usd': 1.0}
+- demo: guard.budget_exceeded data={'cost_used': 1.08, 'limit_usd': 1.0, 'message': 'Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)'}
+- demo: guard.loop_detected data={'message': 'Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.', 'tool_name': 'search'}
+- demo: guard.retry_limit_exceeded data={'message': 'Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)', 'tool_name': 'fetch_docs'}
+- review_loop: guard.budget_exceeded data={'attempt': 3, 'cost_usd': 0.051, 'reason': 'Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)', 'tokens_used': 12300}
+- review_loop: guard.retry_limit_exceeded data={'attempt': 4, 'reason': 'Retry limit exceeded: apply_patch attempted 4 times (limit: 3)', 'tool_name': 'apply_patch'}

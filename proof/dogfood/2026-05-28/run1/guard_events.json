@@ -1,0 +1,72 @@
+[
+  {
+    "cost_usd": null,
+    "data": {
+      "cost_used": 0.84,
+      "limit_usd": 1.0
+    },
+    "name": "guard.budget_warning",
+    "source": "demo",
+    "span_id": "7712e4881345485db3167ba073b24d37",
+    "trace_id": "80970559d4ee474297d9a75cf46cb0e2"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "cost_used": 1.08,
+      "limit_usd": 1.0,
+      "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+    },
+    "name": "guard.budget_exceeded",
+    "source": "demo",
+    "span_id": "7712e4881345485db3167ba073b24d37",
+    "trace_id": "80970559d4ee474297d9a75cf46cb0e2"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+      "tool_name": "search"
+    },
+    "name": "guard.loop_detected",
+    "source": "demo",
+    "span_id": "fec68b6b05d340ff9f96d44a1d9d5096",
+    "trace_id": "1df0e484fda34b26b97aa1046f0ee683"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+      "tool_name": "fetch_docs"
+    },
+    "name": "guard.retry_limit_exceeded",
+    "source": "demo",
+    "span_id": "6d456f99aabc45c5b14b7057be347418",
+    "trace_id": "9f508b403835461ab27aeca5e8c269b5"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 3,
+      "cost_usd": 0.051,
+      "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+      "tokens_used": 12300
+    },
+    "name": "guard.budget_exceeded",
+    "source": "review_loop",
+    "span_id": "abba1ecf6049402b952298989b024b92",
+    "trace_id": "ac7d514196864be4bd784adeaf32af0f"
+  },
+  {
+    "cost_usd": null,
+    "data": {
+      "attempt": 4,
+      "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+      "tool_name": "apply_patch"
+    },
+    "name": "guard.retry_limit_exceeded",
+    "source": "review_loop",
+    "span_id": "fc4061ba0ffa4fd193348553c86ec2b5",
+    "trace_id": "ca06dd83f0134424932930582237a51c"
+  }
+]
