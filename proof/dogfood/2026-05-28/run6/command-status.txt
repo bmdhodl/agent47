@@ -1,0 +1,84 @@
+## repo_identity
+started=2026-05-28T02:50:57.1407043-05:00
+exit=0
+finished=2026-05-28T02:50:57.5942465-05:00
+stdout=proof\dogfood\2026-05-28\run6\repo_identity.out.txt
+stderr=proof\dogfood\2026-05-28\run6\repo_identity.err.txt
+
+## installed_import_identity
+started=2026-05-28T02:50:57.6222623-05:00
+exit=0
+finished=2026-05-28T02:50:57.8267833-05:00
+stdout=proof\dogfood\2026-05-28\run6\installed_import_identity.out.txt
+stderr=proof\dogfood\2026-05-28\run6\installed_import_identity.err.txt
+
+## repo_local_import_identity
+started=2026-05-28T02:50:57.8572828-05:00
+exit=0
+finished=2026-05-28T02:50:58.0843220-05:00
+stdout=proof\dogfood\2026-05-28\run6\repo_local_import_identity.out.txt
+stderr=proof\dogfood\2026-05-28\run6\repo_local_import_identity.err.txt
+
+## installed_agentguard_doctor
+started=2026-05-28T02:50:58.1148210-05:00
+exit=0
+finished=2026-05-28T02:50:58.3398320-05:00
+stdout=proof\dogfood\2026-05-28\run6\installed_agentguard_doctor.out.txt
+stderr=proof\dogfood\2026-05-28\run6\installed_agentguard_doctor.err.txt
+
+## installed_agentguard_demo
+started=2026-05-28T02:50:58.3783311-05:00
+exit=0
+finished=2026-05-28T02:50:58.5913464-05:00
+stdout=proof\dogfood\2026-05-28\run6\installed_agentguard_demo.out.txt
+stderr=proof\dogfood\2026-05-28\run6\installed_agentguard_demo.err.txt
+
+## repo_agentguard_doctor
+started=2026-05-28T02:50:58.6278532-05:00
+exit=0
+finished=2026-05-28T02:50:58.8392640-05:00
+stdout=proof\dogfood\2026-05-28\run6\repo_agentguard_doctor.out.txt
+stderr=proof\dogfood\2026-05-28\run6\repo_agentguard_doctor.err.txt
+
+## repo_agentguard_demo
+started=2026-05-28T02:50:58.8702626-05:00
+exit=0
+finished=2026-05-28T02:50:59.0812752-05:00
+stdout=proof\dogfood\2026-05-28\run6\repo_agentguard_demo.out.txt
+stderr=proof\dogfood\2026-05-28\run6\repo_agentguard_demo.err.txt
+
+## repo_review_loop
+started=2026-05-28T02:50:59.1232743-05:00
+exit=0
+finished=2026-05-28T02:50:59.3221353-05:00
+stdout=proof\dogfood\2026-05-28\run6\repo_review_loop.out.txt
+stderr=proof\dogfood\2026-05-28\run6\repo_review_loop.err.txt
+
+## repo_demo_report
+started=2026-05-28T02:50:59.3576340-05:00
+exit=0
+finished=2026-05-28T02:50:59.5676605-05:00
+stdout=proof\dogfood\2026-05-28\run6\repo_demo_report.out.txt
+stderr=proof\dogfood\2026-05-28\run6\repo_demo_report.err.txt
+
+## review_loop_report
+started=2026-05-28T02:50:59.6096584-05:00
+exit=0
+finished=2026-05-28T02:50:59.8150779-05:00
+stdout=proof\dogfood\2026-05-28\run6\review_loop_report.out.txt
+stderr=proof\dogfood\2026-05-28\run6\review_loop_report.err.txt
+
+## review_loop_incident_json
+started=2026-05-28T02:50:59.8470840-05:00
+exit=0
+finished=2026-05-28T02:51:00.0527141-05:00
+stdout=proof\dogfood\2026-05-28\run6\review_loop_incident_json.out.txt
+stderr=proof\dogfood\2026-05-28\run6\review_loop_incident_json.err.txt
+
+## review_loop_incident_markdown
+started=2026-05-28T02:51:00.0832197-05:00
+exit=0
+finished=2026-05-28T02:51:00.2852221-05:00
+stdout=proof\dogfood\2026-05-28\run6\review_loop_incident_markdown.out.txt
+stderr=proof\dogfood\2026-05-28\run6\review_loop_incident_markdown.err.txt
+

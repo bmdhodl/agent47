@@ -1,0 +1,252 @@
+{
+  "files": {
+    "coding_agent_review_loop_traces.jsonl": {
+      "event_count": 14,
+      "guard_event_count": 2,
+      "guard_event_names": {
+        "guard.budget_exceeded": 1,
+        "guard.retry_limit_exceeded": 1
+      },
+      "guard_events": [
+        {
+          "data": {
+            "attempt": 3,
+            "cost_usd": 0.051,
+            "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+            "tokens_used": 12300
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "coding-agent-review-loop",
+          "span_id": "9755e2f071a643a98d3a215e5298ae3d",
+          "trace_id": "8e68c262feb44e24b8452a31d55b50c1",
+          "ts": 1779954659.307137
+        },
+        {
+          "data": {
+            "attempt": 4,
+            "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+            "tool_name": "apply_patch"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.retry_limit_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "coding-agent-review-loop",
+          "span_id": "f4a3fa5f9cba4be8ba635991893f4283",
+          "trace_id": "95c581f270b94d2bab44d32564d2d625",
+          "ts": 1779954659.3079834
+        }
+      ]
+    },
+    "repo_demo_traces.jsonl": {
+      "event_count": 36,
+      "guard_event_count": 4,
+      "guard_event_names": {
+        "guard.budget_exceeded": 1,
+        "guard.budget_warning": 1,
+        "guard.loop_detected": 1,
+        "guard.retry_limit_exceeded": 1
+      },
+      "guard_events": [
+        {
+          "data": {
+            "cost_used": 0.84,
+            "limit_usd": 1.0
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_warning",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "7348377bfb594a0cb03e5a3c75b051be",
+          "trace_id": "19f62fbef01141348de7b251bd52be40",
+          "ts": 1779954659.0632005
+        },
+        {
+          "data": {
+            "cost_used": 1.08,
+            "limit_usd": 1.0,
+            "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.budget_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "7348377bfb594a0cb03e5a3c75b051be",
+          "trace_id": "19f62fbef01141348de7b251bd52be40",
+          "ts": 1779954659.0639343
+        },
+        {
+          "data": {
+            "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+            "tool_name": "search"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.loop_detected",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "1b08dc17611547f7936b139b38c7fb6f",
+          "trace_id": "96e7d070ed9746c5af3531eeb727e87f",
+          "ts": 1779954659.0647445
+        },
+        {
+          "data": {
+            "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+            "tool_name": "fetch_docs"
+          },
+          "duration_ms": null,
+          "error": null,
+          "kind": "event",
+          "name": "guard.retry_limit_exceeded",
+          "parent_id": null,
+          "phase": "emit",
+          "service": "agentguard-offline-demo",
+          "span_id": "a4cbf8d0b90c41f8a08feff70e40a569",
+          "trace_id": "2ac57e441f4047b49c5b0d4bba94a6c4",
+          "ts": 1779954659.065697
+        }
+      ]
+    },
+    "repo_doctor_traces.jsonl": {
+      "event_count": 4,
+      "guard_event_count": 0,
+      "guard_event_names": {},
+      "guard_events": []
+    }
+  },
+  "guard_events": [
+    {
+      "event": {
+        "data": {
+          "cost_used": 0.84,
+          "limit_usd": 1.0
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.budget_warning",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "7348377bfb594a0cb03e5a3c75b051be",
+        "trace_id": "19f62fbef01141348de7b251bd52be40",
+        "ts": 1779954659.0632005
+      },
+      "trace_file": "repo_demo_traces.jsonl"
+    },
+    {
+      "event": {
+        "data": {
+          "cost_used": 1.08,
+          "limit_usd": 1.0,
+          "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.budget_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "7348377bfb594a0cb03e5a3c75b051be",
+        "trace_id": "19f62fbef01141348de7b251bd52be40",
+        "ts": 1779954659.0639343
+      },
+      "trace_file": "repo_demo_traces.jsonl"
+    },
+    {
+      "event": {
+        "data": {
+          "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+          "tool_name": "search"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.loop_detected",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "1b08dc17611547f7936b139b38c7fb6f",
+        "trace_id": "96e7d070ed9746c5af3531eeb727e87f",
+        "ts": 1779954659.0647445
+      },
+      "trace_file": "repo_demo_traces.jsonl"
+    },
+    {
+      "event": {
+        "data": {
+          "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+          "tool_name": "fetch_docs"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.retry_limit_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "agentguard-offline-demo",
+        "span_id": "a4cbf8d0b90c41f8a08feff70e40a569",
+        "trace_id": "2ac57e441f4047b49c5b0d4bba94a6c4",
+        "ts": 1779954659.065697
+      },
+      "trace_file": "repo_demo_traces.jsonl"
+    },
+    {
+      "event": {
+        "data": {
+          "attempt": 3,
+          "cost_usd": 0.051,
+          "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+          "tokens_used": 12300
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.budget_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "coding-agent-review-loop",
+        "span_id": "9755e2f071a643a98d3a215e5298ae3d",
+        "trace_id": "8e68c262feb44e24b8452a31d55b50c1",
+        "ts": 1779954659.307137
+      },
+      "trace_file": "coding_agent_review_loop_traces.jsonl"
+    },
+    {
+      "event": {
+        "data": {
+          "attempt": 4,
+          "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+          "tool_name": "apply_patch"
+        },
+        "duration_ms": null,
+        "error": null,
+        "kind": "event",
+        "name": "guard.retry_limit_exceeded",
+        "parent_id": null,
+        "phase": "emit",
+        "service": "coding-agent-review-loop",
+        "span_id": "f4a3fa5f9cba4be8ba635991893f4283",
+        "trace_id": "95c581f270b94d2bab44d32564d2d625",
+        "ts": 1779954659.3079834
+      },
+      "trace_file": "coding_agent_review_loop_traces.jsonl"
+    }
+  ]
+}

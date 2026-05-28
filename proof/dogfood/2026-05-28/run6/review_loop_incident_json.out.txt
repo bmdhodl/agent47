@@ -1,0 +1,55 @@
+{
+  "cost_usd": 0.10200000000000001,
+  "critical_count": 2,
+  "duration_ms": 1.3289999988046475,
+  "error_details": [],
+  "errors": 0,
+  "estimated_savings_usd": 0.102,
+  "events": 9,
+  "exact_savings_usd": 0.0,
+  "guard_event_count": 2,
+  "guard_events": [
+    {
+      "cost_usd": 0.051,
+      "message": "",
+      "name": "guard.budget_exceeded",
+      "severity": "critical"
+    },
+    {
+      "cost_usd": null,
+      "message": "",
+      "name": "guard.retry_limit_exceeded",
+      "severity": "critical"
+    }
+  ],
+  "llm_calls": 0,
+  "loop_detections": 0,
+  "primary_cause": "retry_limit_exceeded",
+  "recommendations": [
+    "Add exponential backoff or a deterministic fallback before retrying the same tool.",
+    "Treat repeated upstream failures as a stop condition instead of widening the retry ceiling.",
+    "Review the trace timeline to confirm the failure path before widening limits.",
+    "Keep one-off investigations local; add HttpSink only when future incidents need retained history, alerts, or team-visible follow-up."
+  ],
+  "savings": {
+    "estimated_tokens_saved": 0,
+    "estimated_usd_saved": 0.0205,
+    "exact_tokens_saved": 0,
+    "exact_usd_saved": 0.0,
+    "reasons": [
+      {
+        "confidence": "estimated",
+        "kind": "budget_overrun_stopped",
+        "occurrences": 1,
+        "tokens_saved": 0,
+        "usd_saved": 0.0205
+      }
+    ]
+  },
+  "severity": "critical",
+  "spans": 4,
+  "status": "incident",
+  "tool_calls": 0,
+  "total_events": 14,
+  "warning_count": 0
+}

@@ -1,0 +1,30 @@
+## focused_pytest
+exit=0
+stdout=proof\dogfood\2026-05-28\run6\focused_pytest.out.txt
+stderr=proof\dogfood\2026-05-28\run6\focused_pytest.err.txt
+
+## release_guard
+exit=0
+stdout=proof\dogfood\2026-05-28\run6\release_guard.out.txt
+stderr=proof\dogfood\2026-05-28\run6\release_guard.err.txt
+
+## git_diff_check
+exit=0
+stdout=proof\dogfood\2026-05-28\run6\git_diff_check.out.txt
+stderr=proof\dogfood\2026-05-28\run6\git_diff_check.err.txt
+
+## release_list
+exit=0
+stdout=proof\dogfood\2026-05-28\run6\release_list.out.txt
+stderr=proof\dogfood\2026-05-28\run6\release_list.err.txt
+
+## pypi_versions
+exit=0
+stdout=proof\dogfood\2026-05-28\run6\pypi_versions.out.txt
+stderr=proof\dogfood\2026-05-28\run6\pypi_versions.err.txt
+
+## npm_mcp_version
+exit=0
+stdout=proof\dogfood\2026-05-28\run6\npm_mcp_version.out.txt
+stderr=proof\dogfood\2026-05-28\run6\npm_mcp_version.err.txt
+

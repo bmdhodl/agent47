@@ -1,0 +1,3 @@
+<stale-installed-checkout>\sdk\agentguard\__init__.py
+1.2.10
+1.2.10
