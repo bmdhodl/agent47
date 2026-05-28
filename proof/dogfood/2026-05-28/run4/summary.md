@@ -13,7 +13,9 @@
 agentguard doctor --trace-file proof/dogfood/2026-05-28/run4/agentguard_doctor_trace.jsonl
 agentguard demo --trace-file proof/dogfood/2026-05-28/run4/agentguard_demo_traces.jsonl
 $env:PYTHONPATH = (Resolve-Path 'sdk').Path
-python examples/coding_agent_review_loop.py
+Push-Location proof/dogfood/2026-05-28/run4
+python ../../../../examples/coding_agent_review_loop.py
+Pop-Location
 python -m agentguard.cli report proof/dogfood/2026-05-28/run4/agentguard_demo_traces.jsonl
 python -m agentguard.cli incident proof/dogfood/2026-05-28/run4/agentguard_demo_traces.jsonl
 python -m agentguard.cli report proof/dogfood/2026-05-28/run4/coding_agent_review_loop_traces.jsonl
