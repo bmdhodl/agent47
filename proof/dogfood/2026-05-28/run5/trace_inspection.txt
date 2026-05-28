@@ -1,0 +1,12 @@
+AgentGuard dogfood trace inspection - 2026-05-28 run5
+
+installed-doctor-trace.jsonl: 4 event(s); guard events: none
+installed-demo-trace.jsonl: 36 event(s); guard events: guard.budget_warning, guard.budget_exceeded, guard.loop_detected, guard.retry_limit_exceeded
+repo-doctor-trace.jsonl: 4 event(s); guard events: none
+repo-demo-trace.jsonl: 36 event(s); guard events: guard.budget_warning, guard.budget_exceeded, guard.loop_detected, guard.retry_limit_exceeded
+review-loop-trace.jsonl: 14 event(s); guard events: guard.budget_exceeded, guard.retry_limit_exceeded
+
+Observed guard events: guard.budget_exceeded, guard.budget_warning, guard.loop_detected, guard.retry_limit_exceeded
+Required enforcement present: True
+
+Review-loop enforcement: budget exceeded at $0.0510 > $0.0450 and retry limit exceeded on apply_patch attempt 4.

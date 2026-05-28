@@ -1,0 +1,107 @@
+[
+  {
+    "data": {
+      "cost_used": 0.84,
+      "limit_usd": 1.0
+    },
+    "name": "guard.budget_warning",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "installed-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "cost_used": 1.08,
+      "limit_usd": 1.0,
+      "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+    },
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "installed-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+      "tool_name": "search"
+    },
+    "name": "guard.loop_detected",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "installed-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+      "tool_name": "fetch_docs"
+    },
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "installed-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "cost_used": 0.84,
+      "limit_usd": 1.0
+    },
+    "name": "guard.budget_warning",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "repo-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "cost_used": 1.08,
+      "limit_usd": 1.0,
+      "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+    },
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "repo-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+      "tool_name": "search"
+    },
+    "name": "guard.loop_detected",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "repo-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+      "tool_name": "fetch_docs"
+    },
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "repo-demo-trace.jsonl"
+  },
+  {
+    "data": {
+      "attempt": 3,
+      "cost_usd": 0.051,
+      "reason": "Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)",
+      "tokens_used": 12300
+    },
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "review-loop-trace.jsonl"
+  },
+  {
+    "data": {
+      "attempt": 4,
+      "reason": "Retry limit exceeded: apply_patch attempted 4 times (limit: 3)",
+      "tool_name": "apply_patch"
+    },
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace_file": "review-loop-trace.jsonl"
+  }
+]
