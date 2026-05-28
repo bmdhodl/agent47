@@ -1,0 +1,92 @@
+[
+    {
+        "name":  "00_where_agentguard",
+        "command":  "where.exe agentguard; python -c \"import agentguard; print(agentguard.__file__)\"",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:48:23.3738109-05:00",
+        "ended_at":  "2026-05-27T23:48:23.7108179-05:00",
+        "stdout":  "00_where_agentguard.stdout.txt",
+        "stderr":  "00_where_agentguard.stderr.txt"
+    },
+    {
+        "name":  "01_installed_doctor",
+        "command":  "agentguard doctor --trace-file \u0027<repo>\\proof\\dogfood\\2026-05-28\\run3\\installed_agentguard_doctor_trace.jsonl\u0027",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:49.7577750-05:00",
+        "ended_at":  "2026-05-27T23:47:50.0534158-05:00",
+        "stdout":  "01_installed_doctor.stdout.txt",
+        "stderr":  "01_installed_doctor.stderr.txt"
+    },
+    {
+        "name":  "02_installed_demo",
+        "command":  "agentguard demo --trace-file \u0027<repo>\\proof\\dogfood\\2026-05-28\\run3\\installed_agentguard_demo_traces.jsonl\u0027",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:50.0544159-05:00",
+        "ended_at":  "2026-05-27T23:47:50.3554303-05:00",
+        "stdout":  "02_installed_demo.stdout.txt",
+        "stderr":  "02_installed_demo.stderr.txt"
+    },
+    {
+        "name":  "03_repo_import",
+        "command":  "$env:PYTHONPATH=./sdk; python -c \"import agentguard; print(agentguard.__file__)\"",
+        "cwd":  "import",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:48:23.7243217-05:00",
+        "ended_at":  "2026-05-27T23:48:23.8523383-05:00",
+        "stdout":  "03_repo_import.stdout.txt",
+        "stderr":  "03_repo_import.stderr.txt"
+    },
+    {
+        "name":  "04_repo_doctor",
+        "command":  "$env:PYTHONPATH=\u0027<repo>\\sdk\u0027; python -m agentguard.cli doctor --trace-file \u0027<repo>\\proof\\dogfood\\2026-05-28\\run3\\repo_agentguard_doctor_trace.jsonl\u0027",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:50.4874452-05:00",
+        "ended_at":  "2026-05-27T23:47:50.8009967-05:00",
+        "stdout":  "04_repo_doctor.stdout.txt",
+        "stderr":  "04_repo_doctor.stderr.txt"
+    },
+    {
+        "name":  "05_repo_demo",
+        "command":  "$env:PYTHONPATH=\u0027<repo>\\sdk\u0027; python -m agentguard.cli demo --trace-file \u0027<repo>\\proof\\dogfood\\2026-05-28\\run3\\repo_agentguard_demo_traces.jsonl\u0027",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:50.8019975-05:00",
+        "ended_at":  "2026-05-27T23:47:51.1059449-05:00",
+        "stdout":  "05_repo_demo.stdout.txt",
+        "stderr":  "05_repo_demo.stderr.txt"
+    },
+    {
+        "name":  "06_review_loop",
+        "command":  "$env:PYTHONPATH=\u0027<repo>\\sdk\u0027; python \u0027<repo>\\examples\\coding_agent_review_loop.py\u0027",
+        "cwd":  "<repo>\\proof\\dogfood\\2026-05-28\\run3",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:51.1069476-05:00",
+        "ended_at":  "2026-05-27T23:47:51.3939488-05:00",
+        "stdout":  "06_review_loop.stdout.txt",
+        "stderr":  "06_review_loop.stderr.txt"
+    },
+    {
+        "name":  "07_repo_demo_report",
+        "command":  "$env:PYTHONPATH=\u0027<repo>\\sdk\u0027; python -m agentguard.cli report \u0027<repo>\\proof\\dogfood\\2026-05-28\\run3\\repo_agentguard_demo_traces.jsonl\u0027",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:51.3949490-05:00",
+        "ended_at":  "2026-05-27T23:47:51.6839757-05:00",
+        "stdout":  "07_repo_demo_report.stdout.txt",
+        "stderr":  "07_repo_demo_report.stderr.txt"
+    },
+    {
+        "name":  "08_review_loop_incident",
+        "command":  "$env:PYTHONPATH=\u0027<repo>\\sdk\u0027; python -m agentguard.cli incident \u0027<repo>\\proof\\dogfood\\2026-05-28\\run3\\coding_agent_review_loop_traces.jsonl\u0027",
+        "cwd":  "<repo>",
+        "exit_code":  0,
+        "started_at":  "2026-05-27T23:47:51.6854778-05:00",
+        "ended_at":  "2026-05-27T23:47:51.9779974-05:00",
+        "stdout":  "08_review_loop_incident.stdout.txt",
+        "stderr":  "08_review_loop_incident.stderr.txt"
+    }
+]

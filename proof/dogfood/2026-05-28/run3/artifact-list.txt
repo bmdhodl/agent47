@@ -1,0 +1,43 @@
+
+Name                                    Length
+----                                    ------
+00_where_agentguard.stderr.txt               0
+00_where_agentguard.stdout.txt              92
+01_installed_doctor.stderr.txt               0
+01_installed_doctor.stdout.txt            1668
+02_installed_demo.stderr.txt                 0
+02_installed_demo.stdout.txt              1733
+03_repo_import.stderr.txt                    0
+03_repo_import.stdout.txt                   38
+04_repo_doctor.stderr.txt                    0
+04_repo_doctor.stdout.txt                 1653
+05_repo_demo.stderr.txt                      0
+05_repo_demo.stdout.txt                   1708
+06_review_loop.stderr.txt                    0
+06_review_loop.stdout.txt                  726
+07_repo_demo_report.stderr.txt               0
+07_repo_demo_report.stdout.txt             555
+08_review_loop_incident.stderr.txt           0
+08_review_loop_incident.stdout.txt        1453
+artifact-list.txt                         1352
+coding_agent_review_loop_traces.jsonl     5119
+command-status.json                       5292
+command-status.txt                        1073
+github-release.json                        192
+guard_events.json                         3646
+installed_agentguard_demo_traces.jsonl   12357
+installed_agentguard_doctor_trace.jsonl   1202
+npm-mcp-version.txt                         10
+pypi-agentguard47-versions.txt             215
+pytest-focused.stderr.txt                    2
+pytest-focused.stdout.txt                  755
+release-guard.stderr.txt                     2
+release-guard.stdout.txt                    26
+repo_agentguard_demo_traces.jsonl        12354
+repo_agentguard_doctor_trace.jsonl        1203
+repo_health.md                            6179
+summary.md                                2886
+trace_inspection.md                       1306
+
+
+
