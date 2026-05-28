@@ -1,0 +1,18 @@
+demo_trace.jsonl events=36
+  guard.budget_warning: cost_used=0.84 limit_usd=1.0
+  guard.budget_exceeded: cost_used=1.08 limit_usd=1.0 message="Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)"
+  guard.loop_detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls
+  guard.retry_limit_exceeded: fetch_docs attempted 3 times with limit 2
+
+coding_agent_review_loop_traces.jsonl events=14
+  review.iteration: 3
+  guard.budget_exceeded: attempt=3 cost_usd=0.051 tokens_used=12300 reason="Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)"
+  guard.retry_limit_exceeded: attempt=4 tool_name=apply_patch reason="Retry limit exceeded: apply_patch attempted 4 times (limit: 3)"
+
+doctor_trace.jsonl events=4
+  doctor.verify: 2
+
+installed_doctor_trace.jsonl events=4
+  doctor.verify: 2
+
+Conclusion: enforcement was real. This run does not rely on command success alone.
