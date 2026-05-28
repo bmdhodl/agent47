@@ -1,0 +1,17 @@
+run=run20
+repo=bmdhodl/agent47
+head_before=821a896
+installed_agentguard_doctor: out_exists=True out_bytes=1480 err_bytes=0
+installed_agentguard_demo: out_exists=True out_bytes=1461 err_bytes=0
+import_binding: out_exists=True out_bytes=42 err_bytes=0
+repo_agentguard_doctor: out_exists=True out_bytes=1480 err_bytes=0
+repo_agentguard_demo: out_exists=True out_bytes=1461 err_bytes=0
+coding_agent_review_loop: out_exists=True out_bytes=711 err_bytes=0
+demo_report_json: out_exists=False out_bytes=0 err_bytes=0
+review_loop_report_json: out_exists=False out_bytes=0 err_bytes=0
+review_loop_incident_md: out_exists=False out_bytes=0 err_bytes=0
+review_loop_incident_json: out_exists=False out_bytes=0 err_bytes=0
+demo_report.json: moved_from=demo_report_json.out.txt exists=True
+review_loop_report.json: moved_from=review_loop_report_json.out.txt exists=True
+review_loop_incident.md: moved_from=review_loop_incident_md.out.txt exists=True
+review_loop_incident.json: moved_from=review_loop_incident_json.out.txt exists=True

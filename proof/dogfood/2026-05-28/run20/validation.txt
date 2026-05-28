@@ -1,0 +1,11 @@
+python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q
+35 passed in 1.83s
+
+python scripts/sdk_release_guard.py --check-mcp-npm
+Release guard passed.
+
+git diff --check
+passed
+
+artifact hygiene
+JSON/JSONL parse passed. UTF-8/BOM/NUL/local-path hygiene passed for 29 files.
