@@ -111,6 +111,27 @@ A 9-second sequence of destructive calls trips `LoopGuard` or
 in-process. Pair this with scoped credentials and out-of-environment
 backups for the rest of the blast radius.
 
+### Microsoft — engineers told to ease off Claude Code over inference cost (May 2026)
+
+Microsoft engineering management reportedly asked teams to reduce Claude
+Code usage after monthly inference bills exceeded budget. If Microsoft
+cannot absorb coding-agent inference cost without a memo, runaway agent
+spend is no longer a solo-founder problem.
+
+Source: [TheNextWeb](https://thenextweb.com/news/microsoft-claude-code-retreat-ai-cost)
+
+A memo asks engineers to self-throttle. A `BudgetGuard` makes the cap a
+config value enforced inside the process:
+
+```python
+from agentguard import BudgetGuard
+
+BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
+```
+
+The guard raises `BudgetExceeded` before the run blows the cap. Same
+conversation, one config line instead of a memo.
+
 ## Local Proof in 60 Seconds
 
 ```bash
