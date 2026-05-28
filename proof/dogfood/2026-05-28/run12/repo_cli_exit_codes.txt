@@ -1,0 +1,4 @@
+repo_doctor_exit=0
+repo_demo_exit=0
+repo_demo_report_exit=0
+repo_demo_incident_exit=0

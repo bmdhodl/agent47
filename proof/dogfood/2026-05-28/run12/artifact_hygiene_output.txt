@@ -1,0 +1,2 @@
+artifact_files= 28
+artifact hygiene passed: utf8, no BOM/NUL/local-path leaks, JSON/JSONL parse clean
