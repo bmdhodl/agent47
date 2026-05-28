@@ -1,0 +1,13 @@
+COMMAND: python scripts/sdk_release_guard.py --check-mcp-npm
+Release guard passed.
+EXIT_CODE: 0
+
+COMMAND: gh release view --json tagName,publishedAt,url
+{"publishedAt":"2026-05-02T15:48:03Z","tagName":"v1.2.10","url":"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"}
+
+COMMAND: PyPI latest version probe
+pypi_version=1.2.10
+pypi_upload_time=2026-05-02T15:47:11.756969Z
+
+COMMAND: npm view @agentguard47/mcp-server version --json
+"0.2.2"

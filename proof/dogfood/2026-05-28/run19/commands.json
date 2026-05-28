@@ -1,0 +1,42 @@
+[
+    {
+        "name":  "repo-import",
+        "command":  "python -c \"import agentguard; print(agentguard.__file__)\"",
+        "exit_code":  0
+    },
+    {
+        "name":  "path-agentguard-doctor",
+        "command":  "agentguard doctor",
+        "exit_code":  0
+    },
+    {
+        "name":  "repo-cli-doctor",
+        "command":  "python -m agentguard.cli doctor",
+        "exit_code":  0
+    },
+    {
+        "name":  "repo-cli-demo",
+        "command":  "python -m agentguard.cli demo",
+        "exit_code":  0
+    },
+    {
+        "name":  "review-loop-example",
+        "command":  "python examples/coding_agent_review_loop.py",
+        "exit_code":  0
+    },
+    {
+        "name":  "demo-report",
+        "command":  "python -m agentguard.cli report agentguard_demo_traces.jsonl",
+        "exit_code":  0
+    },
+    {
+        "name":  "demo-incident",
+        "command":  "python -m agentguard.cli incident agentguard_demo_traces.jsonl",
+        "exit_code":  0
+    },
+    {
+        "name":  "review-loop-incident",
+        "command":  "python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl",
+        "exit_code":  0
+    }
+]

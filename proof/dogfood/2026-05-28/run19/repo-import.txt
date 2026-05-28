@@ -1,0 +1,5 @@
+COMMAND: python -c "import agentguard; print(agentguard.__file__)"
+PYTHONPATH: <repo>\sdk
+--- output ---
+<repo>\sdk\agentguard\__init__.py
+EXIT_CODE: 0
