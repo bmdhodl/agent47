@@ -1,0 +1,8 @@
+github_release=v1.2.10 https://github.com/bmdhodl/agent47/releases/tag/v1.2.10 published=2026-05-02T15:48:03Z
+pypi_version=1.2.10
+npm_mcp_version=0.2.2
+local_sdk_version=1.2.10
+local_mcp_package=0.2.2
+local_mcp_server=0.2.2
+glama_tool_count=0
+mcp_registry_error=The remote server returned an error: (404) Not Found.

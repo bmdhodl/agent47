@@ -1,0 +1,24 @@
+Run: 2026-05-28 run16
+Branch: dogfood-2026-05-28-run16-worker
+Base proof commit: b1e3b87 Add dogfood proof for 2026-05-28 run15
+
+Commands run:
+- agentguard doctor --trace-file proof/dogfood/2026-05-28/run16/installed_doctor_trace.jsonl --json
+- agentguard demo --trace-file proof/dogfood/2026-05-28/run16/installed_demo_trace.jsonl
+- agentguard report proof/dogfood/2026-05-28/run16/installed_demo_trace.jsonl
+- agentguard incident proof/dogfood/2026-05-28/run16/installed_demo_trace.jsonl
+- PYTHONPATH=./sdk python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-28/run16/doctor_trace.jsonl --json
+- PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-28/run16/demo_trace.jsonl
+- PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-28/run16/demo_trace.jsonl
+- PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-28/run16/demo_trace.jsonl
+- PYTHONPATH=./sdk python examples/coding_agent_review_loop.py from the run artifact directory
+- PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-28/run16/coding_agent_review_loop_traces.jsonl
+- PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-28/run16/coding_agent_review_loop_traces.jsonl
+- PYTHONPATH=./sdk python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_example_starters.py sdk/tests/test_cli_report.py -q
+- PYTHONPATH=./sdk python scripts/sdk_release_guard.py --check-mcp-npm
+
+Exit status:
+- Proof generation: passed.
+- Focused tests: 30 passed in 1.39s.
+- Release guard: passed.
+- Import binding: <repo>/sdk/agentguard/__init__.py, version 1.2.10.
