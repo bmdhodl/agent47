@@ -4,11 +4,12 @@
 
 - `agentguard doctor --trace-file proof/dogfood/2026-05-28/run5/installed-doctor-trace.jsonl`
 - `agentguard demo --trace-file proof/dogfood/2026-05-28/run5/installed-demo-trace.jsonl`
-- `PYTHONPATH=./sdk python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-28/run5/repo-doctor-trace.jsonl`
-- `PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-28/run5/repo-demo-trace.jsonl`
-- `PYTHONPATH=./sdk python examples/coding_agent_review_loop.py`
-- `PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-28/run5/repo-demo-trace.jsonl`
-- `PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-28/run5/review-loop-trace.jsonl`
+- PowerShell set `$env:PYTHONPATH='./sdk'` before the repo-local commands below.
+- `python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-28/run5/repo-doctor-trace.jsonl`
+- `python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-28/run5/repo-demo-trace.jsonl`
+- `python examples/coding_agent_review_loop.py`
+- `python -m agentguard.cli report proof/dogfood/2026-05-28/run5/repo-demo-trace.jsonl`
+- `python -m agentguard.cli incident proof/dogfood/2026-05-28/run5/review-loop-trace.jsonl`
 
 ## Guard behavior observed
 

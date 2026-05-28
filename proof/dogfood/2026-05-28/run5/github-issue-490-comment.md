@@ -10,8 +10,8 @@ Artifacts:
 
 Commands/proof:
 - PATH `agentguard doctor` and `agentguard demo` ran with trace files in the proof bundle.
-- Checkout-bound `PYTHONPATH=./sdk python -m agentguard.cli doctor` and `demo` ran with trace files in the proof bundle.
-- `PYTHONPATH=./sdk python examples/coding_agent_review_loop.py` produced the review-loop trace.
+- PowerShell set `$env:PYTHONPATH='./sdk'` before the checkout-bound `python -m agentguard.cli doctor`, `demo`, `report`, `incident`, and review-loop example commands.
+- `python examples/coding_agent_review_loop.py` produced the review-loop trace.
 - `agentguard report` counted 36 total demo events and 4 guard events.
 - `agentguard incident` classified the review-loop trace as `Status: incident`, `Severity: critical`, `Primary cause: retry_limit_exceeded`.
 

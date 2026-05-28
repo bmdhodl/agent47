@@ -87,6 +87,8 @@ If 'agentguard' is not on PATH:
 SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.
 exit=0
 
+PowerShell environment set before repo-local commands: $env:PYTHONPATH='./sdk'
+
 > python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-28/run5/repo-doctor-trace.jsonl
 AgentGuard doctor
 No dashboard. No network calls. Local verification only.
