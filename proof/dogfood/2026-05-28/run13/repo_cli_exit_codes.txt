@@ -1,0 +1,4 @@
+repo doctor exit: 0
+repo demo exit: 0
+repo demo report exit: 0
+repo demo incident exit: 0

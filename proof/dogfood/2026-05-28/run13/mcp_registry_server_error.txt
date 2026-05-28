@@ -1,0 +1,9 @@
+Invoke-RestMethod : {"detail":"Endpoint not found. See /docs for the API documentation.","status":404,"title":"Not 
+Found"}
+At line:2 char:441
++ ... 8 }; try { (Invoke-RestMethod -Uri 'https://registry.modelcontextprot ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-RestMethod], WebExc 
+   eption
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
+

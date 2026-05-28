@@ -1,0 +1,33 @@
+installed_doctor: 4 events
+  doctor.verify: 2
+  reasoning.step: 1
+  tool.check: 1
+installed_demo: 36 events
+  guard.budget_exceeded: 1
+  guard.budget_warning: 1
+  guard.loop_detected: 1
+  guard.retry_limit_exceeded: 1
+repo_doctor: 4 events
+  doctor.verify: 2
+  reasoning.step: 1
+  tool.check: 1
+repo_demo: 36 events
+  guard.budget_exceeded: 1
+  guard.budget_warning: 1
+  guard.loop_detected: 1
+  guard.retry_limit_exceeded: 1
+review_loop: 14 events
+  guard.budget_exceeded: 1
+  guard.retry_limit_exceeded: 1
+
+Guard events observed:
+- installed_demo line 16: guard.budget_warning error=None data={'cost_used': 0.84, 'limit_usd': 1.0}
+- installed_demo line 21: guard.budget_exceeded error=None data={'cost_used': 1.08, 'limit_usd': 1.0, 'message': 'Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)'}
+- installed_demo line 27: guard.loop_detected error=None data={'message': 'Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.', 'tool_name': 'search'}
+- installed_demo line 35: guard.retry_limit_exceeded error=None data={'message': 'Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)', 'tool_name': 'fetch_docs'}
+- repo_demo line 16: guard.budget_warning error=None data={'cost_used': 0.84, 'limit_usd': 1.0}
+- repo_demo line 21: guard.budget_exceeded error=None data={'cost_used': 1.08, 'limit_usd': 1.0, 'message': 'Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)'}
+- repo_demo line 27: guard.loop_detected error=None data={'message': 'Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.', 'tool_name': 'search'}
+- repo_demo line 35: guard.retry_limit_exceeded error=None data={'message': 'Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)', 'tool_name': 'fetch_docs'}
+- review_loop line 6: guard.budget_exceeded error=None data={'attempt': 3, 'cost_usd': 0.051, 'reason': 'Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)', 'tokens_used': 12300}
+- review_loop line 13: guard.retry_limit_exceeded error=None data={'attempt': 4, 'reason': 'Retry limit exceeded: apply_patch attempted 4 times (limit: 3)', 'tool_name': 'apply_patch'}

@@ -1,0 +1,2 @@
+installed doctor exit: 0
+installed demo exit: 0
