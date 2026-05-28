@@ -1,0 +1,2 @@
+sdk\agentguard\__init__.py
+python.exe

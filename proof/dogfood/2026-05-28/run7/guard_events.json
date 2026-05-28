@@ -1,0 +1,50 @@
+[
+  {
+    "cost_usd": null,
+    "message": null,
+    "name": "guard.budget_warning",
+    "phase": "emit",
+    "severity": null,
+    "trace": "demo"
+  },
+  {
+    "cost_usd": null,
+    "message": "Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)",
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace": "demo"
+  },
+  {
+    "cost_usd": null,
+    "message": "Loop detected: tool.search({\"query\":\"python asyncio\"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.",
+    "name": "guard.loop_detected",
+    "phase": "emit",
+    "severity": null,
+    "trace": "demo"
+  },
+  {
+    "cost_usd": null,
+    "message": "Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)",
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace": "demo"
+  },
+  {
+    "cost_usd": null,
+    "message": null,
+    "name": "guard.budget_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace": "review_loop"
+  },
+  {
+    "cost_usd": null,
+    "message": null,
+    "name": "guard.retry_limit_exceeded",
+    "phase": "emit",
+    "severity": null,
+    "trace": "review_loop"
+  }
+]

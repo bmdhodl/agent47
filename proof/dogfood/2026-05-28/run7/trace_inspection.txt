@@ -1,0 +1,9 @@
+doctor: 4 events, 0 guard events
+demo: 36 events, 4 guard events
+  - guard.budget_exceeded: 1
+  - guard.budget_warning: 1
+  - guard.loop_detected: 1
+  - guard.retry_limit_exceeded: 1
+review_loop: 14 events, 2 guard events
+  - guard.budget_exceeded: 1
+  - guard.retry_limit_exceeded: 1
