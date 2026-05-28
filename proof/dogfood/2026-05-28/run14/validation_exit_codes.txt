@@ -1,0 +1,4 @@
+focused_pytest=0
+release_guard=0
+diff_check=0
+diff_check_after_summary=0

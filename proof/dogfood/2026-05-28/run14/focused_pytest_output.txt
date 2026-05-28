@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <repo>/sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
+collected 43 items
+
+sdk\tests\test_doctor.py .........                                       [ 20%]
+sdk\tests\test_demo.py ...                                               [ 27%]
+sdk\tests\test_quickstart.py ..............                              [ 60%]
+sdk\tests\test_pypi_readme_sync.py .....                                 [ 72%]
+sdk\tests\test_dashboard_handoff_docs.py ..                              [ 76%]
+sdk\tests\test_sdk_release_guard.py ..........                           [100%]
+
+============================= 43 passed in 1.41s ==============================
+

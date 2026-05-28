@@ -1,0 +1,2 @@
+installed_doctor=0
+installed_demo=0
