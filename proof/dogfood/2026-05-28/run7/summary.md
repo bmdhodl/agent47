@@ -20,6 +20,7 @@ gh issue list --state open --limit 30 --json number,title,labels,updatedAt,url
 gh release view --json tagName,publishedAt,url,isPrerelease,isDraft,name
 python -m pip index versions agentguard47
 npm view @agentguard47/mcp-server version
+$env:PYTHONPATH=(Resolve-Path .\sdk).Path
 python -c "import agentguard, sys; print(agentguard.__file__); print(sys.executable)"
 python -m agentguard.cli doctor --trace-file agentguard_doctor_trace.jsonl
 python -m agentguard.cli demo --trace-file agentguard_demo_traces.jsonl
