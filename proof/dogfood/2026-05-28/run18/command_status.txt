@@ -1,0 +1,102 @@
+Dogfood run18 command status
+Runtime: 2026-05-28T15:06:11.1181217-05:00
+Checkout: 0ce08b7b31c47e9f8abcf179c2b1d9da7302cf29
+Branch: detached origin/dogfood-2026-05-28-run15-worker
+
+## import binding
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -c 'import agentguard; print(agentguard.__file__)'" *> proof/dogfood/2026-05-28/run18/import_binding.txt
+Exit: 0
+
+## installed doctor
+Command: agentguard doctor --json --trace-file proof/dogfood/2026-05-28/run18/installed_doctor_trace.jsonl *> proof/dogfood/2026-05-28/run18/installed_doctor_output.json
+Exit: 0
+
+## installed demo
+Command: agentguard demo --trace-file proof/dogfood/2026-05-28/run18/installed_demo_trace.jsonl *> proof/dogfood/2026-05-28/run18/installed_demo_output.txt
+Exit: 0
+
+## installed demo report
+Command: agentguard report proof/dogfood/2026-05-28/run18/installed_demo_trace.jsonl *> proof/dogfood/2026-05-28/run18/installed_demo_report.txt
+Exit: 0
+
+## installed demo incident
+Command: agentguard incident proof/dogfood/2026-05-28/run18/installed_demo_trace.jsonl *> proof/dogfood/2026-05-28/run18/installed_demo_incident.md
+Exit: 0
+
+## repo doctor
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli doctor --json --trace-file proof/dogfood/2026-05-28/run18/doctor_trace.jsonl" *> proof/dogfood/2026-05-28/run18/doctor_output.json
+Exit: 0
+
+## repo demo
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-28/run18/demo_trace.jsonl" *> proof/dogfood/2026-05-28/run18/demo_output.txt
+Exit: 0
+
+## repo demo report text
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli report proof/dogfood/2026-05-28/run18/demo_trace.jsonl" *> proof/dogfood/2026-05-28/run18/demo_report.txt
+Exit: 0
+
+## repo demo report json
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli report --json proof/dogfood/2026-05-28/run18/demo_trace.jsonl" *> proof/dogfood/2026-05-28/run18/demo_report.json
+Exit: 0
+
+## repo demo incident
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli incident proof/dogfood/2026-05-28/run18/demo_trace.jsonl" *> proof/dogfood/2026-05-28/run18/demo_incident.md
+Exit: 0
+
+## review loop example
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python examples/coding_agent_review_loop.py" *> proof/dogfood/2026-05-28/run18/review_loop_output.txt
+Exit: 0
+
+## review loop report text
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli report proof/dogfood/2026-05-28/run18/coding_agent_review_loop_traces.jsonl" *> proof/dogfood/2026-05-28/run18/review_loop_report.txt
+Exit: 0
+
+## review loop report json
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli report --json proof/dogfood/2026-05-28/run18/coding_agent_review_loop_traces.jsonl" *> proof/dogfood/2026-05-28/run18/review_loop_report.json
+Exit: 0
+
+## review loop incident
+Command: powershell -NoProfile -Command "$env:PYTHONPATH='./sdk'; python -m agentguard.cli incident proof/dogfood/2026-05-28/run18/coding_agent_review_loop_traces.jsonl" *> proof/dogfood/2026-05-28/run18/review_loop_incident.md
+Exit: 0
+focused_tests_exit=0
+release_guard_exit=0
+git_diff_check_exit=0
+artifact_hygiene_exit=1
+
+## rerun repo doctor
+Command: PYTHONPATH=./sdk python -m agentguard.cli doctor --json --trace-file proof/dogfood/2026-05-28/run18/doctor_trace.jsonl
+Exit: 0
+
+## rerun repo demo
+Command: PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-28/run18/demo_trace.jsonl
+Exit: 0
+
+## rerun repo demo report text
+Command: PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-28/run18/demo_trace.jsonl
+Exit: 0
+
+## rerun repo demo report json
+Command: PYTHONPATH=./sdk python -m agentguard.cli report --json proof/dogfood/2026-05-28/run18/demo_trace.jsonl
+Exit: 0
+
+## rerun repo demo incident
+Command: PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-28/run18/demo_trace.jsonl
+Exit: 0
+
+## rerun review loop report text
+Command: PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-28/run18/coding_agent_review_loop_traces.jsonl
+Exit: 0
+
+## rerun review loop report json
+Command: PYTHONPATH=./sdk python -m agentguard.cli report --json proof/dogfood/2026-05-28/run18/coding_agent_review_loop_traces.jsonl
+Exit: 0
+
+## rerun review loop incident
+Command: PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-28/run18/coding_agent_review_loop_traces.jsonl
+Exit: 0
+focused_tests_rerun_exit=0
+release_guard_rerun_exit=0
+git_diff_check_rerun_exit=0
+artifact_hygiene_rerun_exit=1
+artifact_hygiene_final_exit=0
+final_artifact_hygiene_exit=0
