@@ -13,7 +13,7 @@
 - guard events: {'guard.budget_warning': 1, 'guard.budget_exceeded': 1, 'guard.loop_detected': 1, 'guard.retry_limit_exceeded': 1}
 
 ## review_loop
-- path: proof/dogfood/2026-05-28/run1/review-loop-traces.jsonl
+- path: proof/dogfood/2026-05-28/run1/coding_agent_review_loop_traces.jsonl
 - event_count: 14
 - kinds: {'meta': 1, 'span': 4, 'event': 9}
 - guard events: {'guard.budget_exceeded': 1, 'guard.retry_limit_exceeded': 1}

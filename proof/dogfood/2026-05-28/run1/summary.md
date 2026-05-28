@@ -23,6 +23,7 @@ Keep a real AgentGuard workflow running against the public SDK checkout and leav
 - `python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-28/run1/doctor-trace.jsonl`
 - `python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-28/run1/demo-trace.jsonl`
 - `python examples/coding_agent_review_loop.py`
+- `Move-Item coding_agent_review_loop_traces.jsonl proof/dogfood/2026-05-28/run1/coding_agent_review_loop_traces.jsonl`
 - `python -m agentguard.cli report proof/dogfood/2026-05-28/run1/demo-trace.jsonl`
 - `python -m agentguard.cli incident proof/dogfood/2026-05-28/run1/demo-trace.jsonl --format markdown`
 - `python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q`
@@ -39,7 +40,7 @@ From `demo-trace.jsonl`:
 - `guard.loop_detected`: 1
 - `guard.retry_limit_exceeded`: 1
 
-From `review-loop-traces.jsonl`:
+From `coding_agent_review_loop_traces.jsonl`:
 
 - `guard.budget_exceeded`: 1
 - `guard.retry_limit_exceeded`: 1
@@ -56,7 +57,7 @@ Concrete enforcement was real:
 
 - Raw doctor trace: `doctor-trace.jsonl`
 - Raw demo trace: `demo-trace.jsonl`
-- Raw coding-agent review-loop trace: `review-loop-traces.jsonl`
+- Raw coding-agent review-loop trace: `coding_agent_review_loop_traces.jsonl`
 - Command output: `doctor-output.txt`, `demo-output.txt`, `review-loop-output.txt`
 - Report and incident output: `report-output.txt`, `incident-output.md`
 - Parsed proof: `guard_events.json`, `trace_inspection.txt`
