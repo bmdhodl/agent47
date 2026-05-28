@@ -1,4 +1,4 @@
-﻿# Release Snapshot - 2026-05-28 run2
+# Release Snapshot - 2026-05-28 run2
 
 - GitHub repo: `bmdhodl/agent47`
 - Default branch: `main`

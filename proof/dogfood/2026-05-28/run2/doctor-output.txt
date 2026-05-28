@@ -1,4 +1,4 @@
-﻿AgentGuard doctor
+AgentGuard doctor
 No dashboard. No network calls. Local verification only.
 
 [ok] Python: 3.13.2

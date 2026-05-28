@@ -1,4 +1,4 @@
-﻿AgentGuard coding-agent review loop proof
+AgentGuard coding-agent review loop proof
 No API keys. No dashboard. No network calls.
 Review attempt 1: 3300 tokens -> $0.0135 (running total $0.0135)
 Review attempt 2: 4100 tokens -> $0.0170 (running total $0.0305)

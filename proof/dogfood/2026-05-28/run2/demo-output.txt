@@ -1,4 +1,4 @@
-﻿AgentGuard offline demo
+AgentGuard offline demo
 No API keys. No dashboard. No network calls.
 
 1. BudgetGuard: stopping runaway spend

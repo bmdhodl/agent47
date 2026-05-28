@@ -1,4 +1,4 @@
-﻿AgentGuard report
+AgentGuard report
   Total events: 36
   Spans: 6  Events: 30
   Approx run time: 3.2 ms

@@ -1,4 +1,4 @@
-﻿# Dogfood Proof - 2026-05-28 run2
+# Dogfood Proof - 2026-05-28 run2
 
 Host run time: 2026-05-27T22:46:15-05:00. Artifact date follows the UTC automation day.
 
@@ -46,6 +46,7 @@ This counts as real enforcement: the trace files show guard events emitted by Ag
 - Focused pytest: `110 passed in 0.71s`
 - Release guard: `Release guard passed.`
 - Artifact validation: `artifact validation passed: 6 guard events`
+- UTF-8/JSONL validation: no BOM, traces parse, 6 guard events
 - Local path leak scan: clean
 - Release/package snapshot: GitHub release `v1.2.10`, PyPI `agentguard47==1.2.10`, npm `@agentguard47/mcp-server==0.2.2`
 
