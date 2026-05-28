@@ -1,0 +1,3 @@
+<python>\python.exe
+<other-checkout>\sdk\agentguard\__init__.py
+1.2.10

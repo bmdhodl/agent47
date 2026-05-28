@@ -1,0 +1,35 @@
+{
+  "coding_agent_review_loop_traces.jsonl": {
+    "events": 14,
+    "guard_events": [
+      "guard.budget_exceeded",
+      "guard.retry_limit_exceeded"
+    ]
+  },
+  "installed_demo_trace.jsonl": {
+    "events": 36,
+    "guard_events": [
+      "guard.budget_warning",
+      "guard.budget_exceeded",
+      "guard.loop_detected",
+      "guard.retry_limit_exceeded"
+    ]
+  },
+  "installed_doctor_trace.jsonl": {
+    "events": 4,
+    "guard_events": []
+  },
+  "repo_demo_trace.jsonl": {
+    "events": 36,
+    "guard_events": [
+      "guard.budget_warning",
+      "guard.budget_exceeded",
+      "guard.loop_detected",
+      "guard.retry_limit_exceeded"
+    ]
+  },
+  "repo_doctor_trace.jsonl": {
+    "events": 4,
+    "guard_events": []
+  }
+}

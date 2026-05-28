@@ -1,0 +1,24 @@
+# installed_demo_trace.jsonl
+total_events=36
+name=guard.budget_warning
+name=guard.budget_exceeded | message='Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)'
+name=guard.loop_detected | message='Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.'
+name=guard.retry_limit_exceeded | message='Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)'
+
+# repo_demo_trace.jsonl
+total_events=36
+name=guard.budget_warning
+name=guard.budget_exceeded | message='Cost budget exceeded: $1.0800 > $1.0000 (this call added $0.1200)'
+name=guard.loop_detected | message='Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.'
+name=guard.retry_limit_exceeded | message='Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)'
+
+# coding_agent_review_loop_traces.jsonl
+total_events=14
+name=guard.budget_exceeded | attempt=3
+name=guard.retry_limit_exceeded | attempt=4
+
+# repo_doctor_trace.jsonl
+total_events=4
+
+# installed_doctor_trace.jsonl
+total_events=4

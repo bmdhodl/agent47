@@ -1,0 +1,7 @@
+focused pytest: 35 passed in 1.58s
+release guard: passed
+artifact hygiene: passed
+PyPI agentguard47: 1.2.10 latest and installed
+npm @agentguard47/mcp-server: 0.2.2
+MCP Registry: still reports 0.2.1
+Glama API: tools array still empty
