@@ -1,0 +1,48 @@
+Artifact hygiene command/checklist used for this proof bundle.
+
+Working directory:
+  repo root
+
+Target:
+  proof/dogfood/2026-05-28/run6
+
+Checklist:
+  1. Read every file in the proof bundle as bytes.
+  2. Fail if a file starts with UTF-8 BOM bytes EF BB BF.
+  3. Fail if a file contains NUL bytes.
+  4. Decode as UTF-8 and fail if saved text contains local absolute path prefixes. The actual local prefixes used in the scan are redacted here as:
+     - <user-home>
+     - <external-worktrees>
+     - <extended-user-home>
+  5. Parse every .json file with ConvertFrom-Json.
+  6. Parse every non-empty line in every .jsonl file with ConvertFrom-Json.
+  7. Write artifact_hygiene.txt with either the error list or "artifact hygiene passed".
+
+PowerShell command shape:
+
+  $proof = 'proof/dogfood/2026-05-28/run6'
+  $errors = @()
+  Get-ChildItem $proof -File -Recurse | ForEach-Object {
+    $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+    if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) { $errors += "BOM: $($_.FullName)" }
+    if ($bytes -contains 0) { $errors += "NUL: $($_.FullName)" }
+    $text = [System.Text.Encoding]::UTF8.GetString($bytes)
+    foreach ($needle in @('<user-home>', '<external-worktrees>', '<extended-user-home>')) {
+      if ($text.Contains($needle)) { $errors += "local path leak $needle in $($_.FullName)" }
+    }
+    if ($_.Extension -eq '.json') {
+      try { $null = $text | ConvertFrom-Json } catch { $errors += "JSON parse failed: $($_.FullName): $($_.Exception.Message)" }
+    }
+    if ($_.Extension -eq '.jsonl') {
+      $lineNo = 0
+      foreach ($line in ($text -split "`r?`n")) {
+        $lineNo++
+        if ($line.Trim()) {
+          try { $null = $line | ConvertFrom-Json } catch { $errors += "JSONL parse failed: $($_.FullName):$lineNo $($_.Exception.Message)" }
+        }
+      }
+    }
+  }
+
+Result:
+  artifact hygiene passed

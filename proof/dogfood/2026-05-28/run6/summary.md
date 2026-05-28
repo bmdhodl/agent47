@@ -49,7 +49,7 @@ This is real enforcement proof, not command-only success: the raw traces contain
 - Focused dogfood pytest slice: 35 passed.
 - `python scripts/sdk_release_guard.py --check-mcp-npm`: passed.
 - `git diff --check`: passed.
-- Artifact path hygiene scan: run after sanitizing saved text transcripts.
+- Artifact hygiene scan: passed; exact checklist and command shape are saved in `artifact_hygiene_command.txt`.
 
 ## Docs Updates Needed
 
