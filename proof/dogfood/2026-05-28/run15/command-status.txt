@@ -1,0 +1,29 @@
+Run started: 2026-05-28T12:06:49.6493521-05:00
+HEAD: b0e872025e0b0980555ad5b3d376ec28f481744b
+Branch: dogfood-2026-05-28-run15-worker
+PYTHONPATH: ./sdk
+Import binding:
+<repo>/sdk/agentguard/__init__.py
+1.2.10
+
+## doctor
+doctor exit_code=0
+
+## demo
+demo exit_code=0
+
+## coding_agent_review_loop
+coding_agent_review_loop exit_code=0
+
+## report demo
+report demo exit_code=0
+
+## report review loop
+report review loop exit_code=0
+
+## incident review loop markdown
+incident review loop markdown exit_code=0
+
+## incident review loop json
+incident review loop json exit_code=0
+Run completed: 2026-05-28T12:06:51.3927777-05:00

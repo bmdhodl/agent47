@@ -1,0 +1,2 @@
+<repo>/sdk/agentguard/__init__.py
+1.2.10
