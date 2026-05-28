@@ -475,6 +475,18 @@ memory/       SDK-only state and decisions
 - Hosted ingest API keys should be stored in environment variables.
 - Local guards remain authoritative even when hosted ingest is configured.
 
+### Threat model: agent data exfiltration
+
+A recurring class of agent attack uses the agent's own write surface as an
+outbound channel. Example pattern from Microsoft Copilot Cowork (May 2026):
+the agent emails the user's own inbox with no approval, the rendered message
+fetches an external image, and the image URL encodes data the attacker wanted
+out. AgentGuard's network and URL policies are designed to catch this class
+at runtime by gating which hosts an agent may reach, regardless of which
+tool initiated the request.
+
+Citation: https://simonwillison.net/2026/May/26/copilot-cowork-exfiltrates-files/
+
 Report security issues through GitHub Security Advisories or by email:
 `pat@bmdpat.com`.
 
