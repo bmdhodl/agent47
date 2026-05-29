@@ -1,0 +1,7 @@
+Invoke-WebRequest : The operation has timed out.
+At line:81 char:8
++ try { (Invoke-WebRequest -UseBasicParsing -Uri 'https://glama.ai/api/ ...
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-WebRequest], WebExc
+   eption
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand

@@ -1,0 +1,18 @@
+python : WARNING: Ignoring invalid distribution ~gentguard47
+(<home>\AppData\Roaming\Python\Python313\site-packages)
+At line:19 char:40
++ ... voke-Capture '01_editable_install' { python -m pip install -e .\sdk }
++                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+WARNING: Ignoring invalid distribution ~gentguard47 (<home>\AppData\Roaming\Python\Python313\site-packages)
+  WARNING: The script agentguard.exe is installed in '<home>\AppData\Roaming\Python\Python313\Scripts' which
+is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+WARNING: Ignoring invalid distribution ~gentguard47 (<home>\AppData\Roaming\Python\Python313\site-packages)
+WARNING: Ignoring invalid distribution ~gentguard47 (<home>\AppData\Roaming\Python\Python313\site-packages)
+WARNING: Ignoring invalid distribution ~gentguard47 (<home>\AppData\Roaming\Python\Python313\site-packages)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip

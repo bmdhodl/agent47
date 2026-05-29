@@ -1,0 +1,20 @@
+GitHub release:
+{"name":"AgentGuard v1.2.10","publishedAt":"2026-05-02T15:48:03Z","tagName":"v1.2.10","url":"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10"}
+
+Local SDK version:
+1.2.10
+
+PyPI latest:
+1.2.10
+
+npm latest:
+0.2.2
+
+Local MCP package version:
+0.2.2
+
+Official MCP registry snapshot:
+Registry search still shows io.github.bmdhodl/agentguard47 at v0.2.1. Direct JSON endpoint attempted during this run returned HTTP 404.
+
+Glama snapshot:
+Glama API request timed out from this host during run14.

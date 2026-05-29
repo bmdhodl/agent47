@@ -1,0 +1,86 @@
+[
+    {
+        "name":  "00_python_version",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\00_python_version.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\00_python_version.err.txt"
+    },
+    {
+        "name":  "01_editable_install",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\01_editable_install.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\01_editable_install.err.txt"
+    },
+    {
+        "name":  "02_import_binding",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\02_import_binding.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\02_import_binding.err.txt"
+    },
+    {
+        "name":  "03_path_agentguard_doctor",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\03_path_agentguard_doctor.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\03_path_agentguard_doctor.err.txt"
+    },
+    {
+        "name":  "04_module_doctor",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\04_module_doctor.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\04_module_doctor.err.txt"
+    },
+    {
+        "name":  "05_path_agentguard_demo",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\05_path_agentguard_demo.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\05_path_agentguard_demo.err.txt"
+    },
+    {
+        "name":  "06_module_demo",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\06_module_demo.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\06_module_demo.err.txt"
+    },
+    {
+        "name":  "07_review_loop",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\07_review_loop.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\07_review_loop.err.txt"
+    },
+    {
+        "name":  "08_demo_report",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\08_demo_report.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\08_demo_report.err.txt"
+    },
+    {
+        "name":  "09_demo_incident",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\09_demo_incident.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\09_demo_incident.err.txt"
+    },
+    {
+        "name":  "10_review_loop_incident",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\10_review_loop_incident.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\10_review_loop_incident.err.txt"
+    },
+    {
+        "name":  "11_focused_tests",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\11_focused_tests.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\11_focused_tests.err.txt"
+    },
+    {
+        "name":  "12_release_guard_mcp_npm",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\12_release_guard_mcp_npm.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\12_release_guard_mcp_npm.err.txt"
+    },
+    {
+        "name":  "13_staleness",
+        "exit_code":  0,
+        "stdout":  "proof\\dogfood\\2026-05-29\\run14\\13_staleness.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run14\\13_staleness.err.txt"
+    }
+]

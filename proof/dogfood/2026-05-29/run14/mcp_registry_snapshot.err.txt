@@ -1,0 +1,8 @@
+Invoke-WebRequest : {"detail":"Endpoint not found. See /docs for the API documentation.","status":404,"title":"Not
+Found"}
+At line:76 char:8
++ try { (Invoke-WebRequest -UseBasicParsing -Uri 'https://registry.mode ...
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-WebRequest], WebExc
+   eption
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
