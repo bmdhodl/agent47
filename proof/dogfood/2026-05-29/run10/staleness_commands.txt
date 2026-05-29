@@ -1,0 +1,2 @@
+git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md
+git log -1 --format='%cr' -- ops/02-ARCHITECTURE.md

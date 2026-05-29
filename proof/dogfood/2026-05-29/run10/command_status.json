@@ -1,0 +1,57 @@
+{
+    "editable_install":  {
+                             "command":  "python -m pip install -e ./sdk",
+                             "status":  "completed",
+                             "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                         },
+    "installed_agentguard_doctor":  {
+                                        "command":  "agentguard doctor --json",
+                                        "status":  "completed",
+                                        "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                                    },
+    "installed_agentguard_demo":  {
+                                      "command":  "agentguard demo",
+                                      "status":  "completed",
+                                      "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                                  },
+    "repo_local_doctor":  {
+                              "command":  "PYTHONPATH=./sdk python -m agentguard.cli doctor --json",
+                              "status":  "completed",
+                              "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                          },
+    "repo_local_demo":  {
+                            "command":  "PYTHONPATH=./sdk python -m agentguard.cli demo",
+                            "status":  "completed",
+                            "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                        },
+    "repo_local_review_loop":  {
+                                   "command":  "PYTHONPATH=./sdk python examples/coding_agent_review_loop.py",
+                                   "status":  "completed",
+                                   "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                               },
+    "demo_report":  {
+                        "command":  "PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-29/run10/agentguard_demo_traces.jsonl",
+                        "status":  "completed",
+                        "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                    },
+    "review_loop_incident":  {
+                                 "command":  "PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-29/run10/coding_agent_review_loop_traces.jsonl",
+                                 "status":  "completed",
+                                 "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                             },
+    "focused_pytest":  {
+                           "command":  "python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q",
+                           "status":  "completed",
+                           "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                       },
+    "release_guard_mcp_npm":  {
+                                  "command":  "python scripts/sdk_release_guard.py --check-mcp-npm",
+                                  "status":  "completed",
+                                  "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                              },
+    "git_diff_check":  {
+                           "command":  "git diff --check",
+                           "status":  "completed",
+                           "evidence":  "expected output artifact present; final artifact hygiene and focused validation passed"
+                       }
+}
