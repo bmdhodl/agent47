@@ -3,3 +3,4 @@ focused pytest passed.
 release guard passed.
 git diff --check passed before summary creation.
 artifact hygiene passed after UTF-8/BOM/path normalization.
+post-commit artifact normalization removed CRLF/trailing whitespace before final git show --check.

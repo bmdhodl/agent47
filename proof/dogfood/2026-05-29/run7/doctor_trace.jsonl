@@ -1,4 +1,10 @@
-{"data": {}, "duration_ms": null, "error": null, "kind": "span", "name": "doctor.verify", "parent_id": null, "phase": "start", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.6135645}
-{"data": {"thought": "verifying local SDK path"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.6138105}
-{"data": {"result": "ok", "tool": "doctor"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.check", "parent_id": null, "phase": "emit", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.613978}
-{"data": {}, "duration_ms": 0.6389000045601279, "error": null, "kind": "span", "name": "doctor.verify", "parent_id": null, "phase": "end", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.6142035}
+{"data": {}, "duration_ms": null, "error": null, "kind": "span", "name": "doctor.verify", "parent_id": null, "phase": "start", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.6135645}
+
+
+{"data": {"thought": "verifying local SDK path"}, "duration_ms": null, "error": null, "kind": "event", "name": "reasoning.step", "parent_id": null, "phase": "emit", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.6138105}
+
+
+{"data": {"result": "ok", "tool": "doctor"}, "duration_ms": null, "error": null, "kind": "event", "name": "tool.check", "parent_id": null, "phase": "emit", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.613978}
+
+
+{"data": {}, "duration_ms": 0.6389000045601279, "error": null, "kind": "span", "name": "doctor.verify", "parent_id": null, "phase": "end", "service": "agentguard-doctor", "span_id": "21780a5defac45f5ac2c824ecd1769bf", "trace_id": "0df33207391c4d268013f6607832699b", "ts": 1780042946.6142035}
