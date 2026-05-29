@@ -1,0 +1,2 @@
+agentguard_file=sdk/agentguard/__init__.py
+agentguard_version=1.2.10
