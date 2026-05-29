@@ -1,0 +1,202 @@
+[
+    {
+        "name":  "editable install",
+        "command":  "python -m pip install -e ./sdk",
+        "exit_code":  0,
+        "output_file":  "editable-install.out.txt",
+        "started_at":  "2026-05-29T17:40:04.1531998-05:00",
+        "ended_at":  "2026-05-29T17:40:15.8199309-05:00"
+    },
+    {
+        "name":  "import binding",
+        "command":  "C:\\Python313\\python.exe -c \"import agentguard, pathlib; print(pathlib.Path(agentguard.__file__).as_posix()); print(agentguard.__version__)\"",
+        "exit_code":  0,
+        "output_file":  "import-binding.out.txt",
+        "started_at":  "2026-05-29T17:40:15.8214346-05:00",
+        "ended_at":  "2026-05-29T17:41:23.7296678-05:00"
+    },
+    {
+        "name":  "installed doctor",
+        "command":  "agentguard doctor --trace-file proof/dogfood/2026-05-29/run21/installed_doctor_trace.jsonl --json",
+        "exit_code":  0,
+        "output_file":  "installed-doctor.out.txt",
+        "started_at":  "2026-05-29T17:40:16.5625823-05:00",
+        "ended_at":  "2026-05-29T17:40:17.0307035-05:00"
+    },
+    {
+        "name":  "installed demo",
+        "command":  "agentguard demo --trace-file proof/dogfood/2026-05-29/run21/installed_demo_trace.jsonl",
+        "exit_code":  0,
+        "output_file":  "installed-demo.out.txt",
+        "started_at":  "2026-05-29T17:40:17.0307035-05:00",
+        "ended_at":  "2026-05-29T17:40:17.3687539-05:00"
+    },
+    {
+        "name":  "repo doctor",
+        "command":  "python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-29/run21/repo_doctor_trace.jsonl --json",
+        "exit_code":  0,
+        "output_file":  "repo-doctor.out.txt",
+        "started_at":  "2026-05-29T17:40:17.3687539-05:00",
+        "ended_at":  "2026-05-29T17:40:17.7372833-05:00"
+    },
+    {
+        "name":  "repo demo",
+        "command":  "python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-29/run21/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "output_file":  "repo-demo.out.txt",
+        "started_at":  "2026-05-29T17:40:17.7377833-05:00",
+        "ended_at":  "2026-05-29T17:40:18.0767980-05:00"
+    },
+    {
+        "name":  "coding agent review loop",
+        "command":  "$env:PYTHONPATH=\u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\\sdk\u0027; python \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\\examples\\coding_agent_review_loop.py\u0027",
+        "exit_code":  0,
+        "output_file":  "review-loop.out.txt",
+        "started_at":  "2026-05-29T17:40:18.0767980-05:00",
+        "ended_at":  "2026-05-29T17:40:18.4048125-05:00"
+    },
+    {
+        "name":  "demo report",
+        "command":  "python -m agentguard.cli report proof/dogfood/2026-05-29/run21/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "output_file":  "demo-report.out.txt",
+        "started_at":  "2026-05-29T17:40:18.4053122-05:00",
+        "ended_at":  "2026-05-29T17:40:18.7228323-05:00"
+    },
+    {
+        "name":  "demo incident",
+        "command":  "python -m agentguard.cli incident --format markdown proof/dogfood/2026-05-29/run21/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "output_file":  "demo-incident.out.txt",
+        "started_at":  "2026-05-29T17:40:18.7228323-05:00",
+        "ended_at":  "2026-05-29T17:40:19.0539487-05:00"
+    },
+    {
+        "name":  "review loop incident",
+        "command":  "python -m agentguard.cli incident --format markdown proof/dogfood/2026-05-29/run21/coding_agent_review_loop_traces.jsonl",
+        "exit_code":  0,
+        "output_file":  "review-loop-incident.out.txt",
+        "started_at":  "2026-05-29T17:40:19.0544520-05:00",
+        "ended_at":  "2026-05-29T17:40:19.3995694-05:00"
+    },
+    {
+        "name":  "focused tests",
+        "command":  "python -m pytest sdk/tests/test_doctor.py sdk/tests/test_demo.py sdk/tests/test_cli_report.py sdk/tests/test_mcp_registry_metadata.py sdk/tests/test_sdk_release_guard.py -q",
+        "exit_code":  0,
+        "output_file":  "focused-tests.out.txt",
+        "started_at":  "2026-05-29T17:40:19.3995694-05:00",
+        "ended_at":  "2026-05-29T17:40:20.6346502-05:00"
+    },
+    {
+        "name":  "release guard",
+        "command":  "python scripts/sdk_release_guard.py --check-mcp-npm",
+        "exit_code":  0,
+        "output_file":  "release-guard.out.txt",
+        "started_at":  "2026-05-29T17:40:20.6346502-05:00",
+        "ended_at":  "2026-05-29T17:40:22.3269414-05:00"
+    },
+    {
+        "name":  "staleness",
+        "command":  "git log -1 --format=\u0027%cr\u0027 -- ops/03-ROADMAP_NOW_NEXT_LATER.md; git log -1 --format=\u0027%cr\u0027 -- ops/02-ARCHITECTURE.md",
+        "exit_code":  0,
+        "output_file":  "staleness.out.txt",
+        "started_at":  "2026-05-29T17:40:22.3269414-05:00",
+        "ended_at":  "2026-05-29T17:40:22.6034495-05:00"
+    },
+    {
+        "name":  "github release",
+        "command":  "gh release view v1.2.10 --json tagName,name,publishedAt,url,isDraft,isPrerelease",
+        "exit_code":  0,
+        "output_file":  "github-release.json",
+        "started_at":  "2026-05-29T17:40:22.6039483-05:00",
+        "ended_at":  "2026-05-29T17:40:23.1216951-05:00"
+    },
+    {
+        "name":  "open prs",
+        "command":  "gh pr list --state open --limit 50 --json number,title,headRefName,mergeStateStatus,reviewDecision,isDraft,statusCheckRollup,url",
+        "exit_code":  0,
+        "output_file":  "open-prs.json",
+        "started_at":  "2026-05-29T17:40:23.1216951-05:00",
+        "ended_at":  "2026-05-29T17:40:28.8376834-05:00"
+    },
+    {
+        "name":  "open issues",
+        "command":  "gh issue list --state open --limit 50 --json number,title,labels,updatedAt,url",
+        "exit_code":  0,
+        "output_file":  "open-issues.json",
+        "started_at":  "2026-05-29T17:40:28.8381822-05:00",
+        "ended_at":  "2026-05-29T17:40:29.3739380-05:00"
+    },
+    {
+        "name":  "pr 544 status",
+        "command":  "gh pr view 544 --json number,title,state,isDraft,mergeStateStatus,reviewDecision,headRefName,headRefOid,statusCheckRollup,url",
+        "exit_code":  0,
+        "output_file":  "pr-544-status.json",
+        "started_at":  "2026-05-29T17:40:29.3744393-05:00",
+        "ended_at":  "2026-05-29T17:40:30.1521353-05:00"
+    },
+    {
+        "name":  "rest review comments",
+        "command":  "gh api repos/bmdhodl/agent47/pulls/544/comments",
+        "exit_code":  0,
+        "output_file":  "pr-544-review-comments.json",
+        "started_at":  "2026-05-29T17:40:30.1521353-05:00",
+        "ended_at":  "2026-05-29T17:40:30.5516534-05:00"
+    },
+    {
+        "name":  "graphql review threads",
+        "command":  "gh api graphql -f query=\"query { repository(owner: \\\"bmdhodl\\\", name: \\\"agent47\\\") { pullRequest(number: 544) { reviewThreads(first: 50) { totalCount nodes { isResolved isOutdated path line comments(first: 10) { nodes { author { login } body url createdAt } } } } } } }\"",
+        "exit_code":  0,
+        "output_file":  "pr-544-review-threads.json",
+        "started_at":  "2026-05-29T17:40:30.5516534-05:00",
+        "ended_at":  "2026-05-29T17:42:55.2691815-05:00"
+    },
+    {
+        "name":  "npm mcp version",
+        "command":  "npm view @agentguard47/mcp-server version",
+        "exit_code":  0,
+        "output_file":  "npm-mcp-version.out.txt",
+        "started_at":  "2026-05-29T17:40:30.7616580-05:00",
+        "ended_at":  "2026-05-29T17:40:31.5748210-05:00"
+    },
+    {
+        "name":  "pypi agentguard47",
+        "command":  "C:\\Python313\\python.exe -c \"import json, urllib.request; data=json.load(urllib.request.urlopen(\u0027https://pypi.org/pypi/agentguard47/json\u0027, timeout=20)); print(data[\u0027info\u0027][\u0027version\u0027]); print(data[\u0027info\u0027][\u0027name\u0027]); print(data[\u0027info\u0027][\u0027summary\u0027])\"",
+        "exit_code":  0,
+        "output_file":  "pypi-agentguard47.out.txt",
+        "started_at":  "2026-05-29T17:40:31.5753218-05:00",
+        "ended_at":  "2026-05-29T17:42:12.5693842-05:00"
+    },
+    {
+        "name":  "mcp registry search",
+        "command":  "C:\\Python313\\python.exe -c \"import urllib.request; print(urllib.request.urlopen(\u0027https://registry.modelcontextprotocol.io/v0/servers?search=agentguard47\u0027, timeout=20).read().decode())\"",
+        "exit_code":  0,
+        "output_file":  "mcp-registry-search.json",
+        "started_at":  "2026-05-29T17:40:31.7428331-05:00",
+        "ended_at":  "2026-05-29T17:42:35.3902755-05:00"
+    },
+    {
+        "name":  "glama api",
+        "command":  "C:\\Python313\\python.exe -c \"import urllib.request; print(urllib.request.urlopen(\u0027https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47\u0027, timeout=20).read().decode())\"",
+        "exit_code":  0,
+        "output_file":  "glama-api.out.txt",
+        "started_at":  "2026-05-29T17:40:31.9113678-05:00",
+        "ended_at":  "2026-05-29T17:42:35.3902755-05:00"
+    },
+    {
+        "name":  "open pr review threads",
+        "command":  "gh api graphql -f query=\"query { repository(owner: \\\"bmdhodl\\\", name: \\\"agent47\\\") { pullRequests(first: 50, states: OPEN, orderBy: {field: UPDATED_AT, direction: DESC}) { nodes { number title url reviewThreads(first: 50) { totalCount nodes { isResolved isOutdated path line comments(first: 5) { nodes { author { login } body url createdAt } } } } } } } }\"",
+        "exit_code":  0,
+        "output_file":  "open-pr-review-threads.json",
+        "started_at":  "2026-05-29T17:40:32.0848820-05:00",
+        "ended_at":  "2026-05-29T17:43:12.0178567-05:00"
+    },
+    {
+        "name":  "git diff check",
+        "command":  "git diff --check",
+        "exit_code":  0,
+        "output_file":  "git-diff-check.out.txt",
+        "started_at":  "2026-05-29T17:40:32.2593845-05:00",
+        "ended_at":  "2026-05-29T17:45:29.9719770-05:00"
+    }
+]

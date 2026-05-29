@@ -1,0 +1,10 @@
+query {
+  repository(owner: "bmdhodl", name: "agent47") {
+    pullRequest(number: 544) {
+      reviewThreads(first: 50) {
+        totalCount
+        nodes { isResolved isOutdated path line comments(first: 10) { nodes { author { login } body url createdAt } } }
+      }
+    }
+  }
+}

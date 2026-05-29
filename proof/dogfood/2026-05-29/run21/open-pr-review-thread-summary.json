@@ -1,0 +1,9 @@
+{
+    "number":  518,
+    "title":  "Add dogfood proof for 2026-05-27 run1",
+    "url":  "https://github.com/bmdhodl/agent47/pull/518",
+    "active_thread_count":  1,
+    "paths":  [
+                  "proof/dogfood/2026-05-27/run1/coding_agent_review_loop_traces.jsonl"
+              ]
+}

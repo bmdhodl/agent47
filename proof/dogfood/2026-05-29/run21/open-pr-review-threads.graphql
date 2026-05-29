@@ -1,0 +1,15 @@
+query {
+  repository(owner: "bmdhodl", name: "agent47") {
+    pullRequests(first: 50, states: OPEN, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      nodes {
+        number
+        title
+        url
+        reviewThreads(first: 50) {
+          totalCount
+          nodes { isResolved isOutdated path line comments(first: 5) { nodes { author { login } body url createdAt } } }
+        }
+      }
+    }
+  }
+}

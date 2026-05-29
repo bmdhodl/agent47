@@ -1,0 +1,66 @@
+[
+    {
+        "file":  "installed_doctor_trace.jsonl",
+        "record_count":  4,
+        "guard_or_doctor_events":  [
+                                       "doctor.verify",
+                                       "doctor.verify"
+                                   ],
+        "has_budget_exceeded":  false,
+        "has_loop_detected":  false,
+        "has_retry_limit":  false,
+        "has_doctor_verify":  true
+    },
+    {
+        "file":  "installed_demo_trace.jsonl",
+        "record_count":  36,
+        "guard_or_doctor_events":  [
+                                       "guard.budget_warning",
+                                       "guard.budget_exceeded",
+                                       "guard.loop_detected",
+                                       "guard.retry_limit_exceeded"
+                                   ],
+        "has_budget_exceeded":  true,
+        "has_loop_detected":  true,
+        "has_retry_limit":  true,
+        "has_doctor_verify":  false
+    },
+    {
+        "file":  "repo_doctor_trace.jsonl",
+        "record_count":  4,
+        "guard_or_doctor_events":  [
+                                       "doctor.verify",
+                                       "doctor.verify"
+                                   ],
+        "has_budget_exceeded":  false,
+        "has_loop_detected":  false,
+        "has_retry_limit":  false,
+        "has_doctor_verify":  true
+    },
+    {
+        "file":  "repo_demo_trace.jsonl",
+        "record_count":  36,
+        "guard_or_doctor_events":  [
+                                       "guard.budget_warning",
+                                       "guard.budget_exceeded",
+                                       "guard.loop_detected",
+                                       "guard.retry_limit_exceeded"
+                                   ],
+        "has_budget_exceeded":  true,
+        "has_loop_detected":  true,
+        "has_retry_limit":  true,
+        "has_doctor_verify":  false
+    },
+    {
+        "file":  "coding_agent_review_loop_traces.jsonl",
+        "record_count":  14,
+        "guard_or_doctor_events":  [
+                                       "guard.budget_exceeded",
+                                       "guard.retry_limit_exceeded"
+                                   ],
+        "has_budget_exceeded":  true,
+        "has_loop_detected":  false,
+        "has_retry_limit":  true,
+        "has_doctor_verify":  false
+    }
+]
