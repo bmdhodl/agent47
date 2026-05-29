@@ -1,0 +1,11 @@
+Commands run on 2026-05-29 run1:
+- python -m pip install -e ./sdk -> passed; repaired local editable binding to this checkout
+- agentguard doctor --trace-file doctor_trace.jsonl --json -> passed
+- agentguard demo --trace-file demo_trace.jsonl -> passed
+- PYTHONPATH=./sdk python -m agentguard.cli doctor --trace-file doctor_trace_repo_local.jsonl --json -> passed
+- PYTHONPATH=./sdk python -m agentguard.cli demo --trace-file demo_trace_repo_local.jsonl -> passed
+- PYTHONPATH=./sdk python examples/coding_agent_review_loop.py -> passed
+- PYTHONPATH=./sdk python -m agentguard.cli report demo_trace_repo_local.jsonl -> passed
+- PYTHONPATH=./sdk python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl -> passed
+- PYTHONPATH=./sdk python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q -> 35 passed in 1.47s
+- python scripts/sdk_release_guard.py --check-mcp-npm -> Release guard passed

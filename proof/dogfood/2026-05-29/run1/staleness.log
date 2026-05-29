@@ -1,0 +1,5 @@
+Staleness commands:
+- git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md -> 3 weeks ago
+- git log -1 --format='%cr' -- ops/02-ARCHITECTURE.md -> 4 weeks ago
+
+Both remain beyond AGENTS.md thresholds. Existing tracker: https://github.com/bmdhodl/agent47/issues/473
