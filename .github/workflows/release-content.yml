@@ -1,9 +1,9 @@
-name: Release Content — Auto-generate announcements
+name: Release Content - Auto-generate announcements
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types:
+      - published
 
 permissions:
   contents: read
@@ -15,22 +15,25 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
+          ref: ${{ github.event.release.tag_name }}
           fetch-depth: 0  # full history for changelog
 
       - name: Get release info
         id: release
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          TAG="$RELEASE_TAG"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-          # Find previous tag
-          PREV_TAG=$(git tag --sort=-creatordate | sed -n '2p')
+          # Find previous tag.
+          PREV_TAG=$(git tag --sort=-creatordate | awk -v current="$TAG" '$0 != current { print; exit }')
           if [ -z "$PREV_TAG" ]; then
             PREV_TAG=$(git rev-list --max-parents=0 HEAD)
           fi
           echo "prev_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
 
-          # Generate changelog
+          # Generate changelog.
           CHANGELOG=$(git log --oneline "$PREV_TAG".."$TAG" -- sdk/ | head -20)
           echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
           echo "$CHANGELOG" >> "$GITHUB_OUTPUT"
@@ -92,13 +95,13 @@ jobs:
         run: |
           TAG="${{ steps.release.outputs.tag }}"
 
-          # Skip if no DASHBOARD_PAT configured
+          # Skip if no DASHBOARD_PAT configured.
           if [ -z "$GH_TOKEN" ]; then
-            echo "No DASHBOARD_PAT — skipping social queue"
+            echo "No DASHBOARD_PAT - skipping social queue"
             exit 0
           fi
 
-          # Trigger X post
+          # Trigger X post.
           gh workflow run add-social-post.yml \
             --repo bmdhodl/agent47-dashboard \
             -f platform=x \
@@ -109,14 +112,14 @@ jobs:
 
           changelog: https://github.com/bmdhodl/agent47/releases/tag/$TAG" || echo "Failed to trigger X post workflow"
 
-          # Trigger LinkedIn post
+          # Trigger LinkedIn post.
           gh workflow run add-social-post.yml \
             --repo bmdhodl/agent47-dashboard \
             -f platform=linkedin \
             -f title="$TAG released" \
             -f body="AgentGuard $TAG is now available on PyPI.
 
-          Runtime guardrails for AI agents — loop detection, budget enforcement, cost tracking. Zero dependencies.
+          Runtime guardrails for AI agents - loop detection, budget enforcement, cost tracking. Zero dependencies.
 
           Upgrade: pip install --upgrade agentguard47
 
