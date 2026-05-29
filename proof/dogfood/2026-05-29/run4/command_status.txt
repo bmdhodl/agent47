@@ -1,0 +1,8 @@
+python -m pip install -e ./sdk => exit 0
+agentguard doctor --json => exit 0
+agentguard demo => exit 0
+PYTHONPATH=./sdk python -m agentguard.cli doctor --json => exit 0
+PYTHONPATH=./sdk python -m agentguard.cli demo => exit 0
+PYTHONPATH=./sdk python examples/coding_agent_review_loop.py => exit 0
+PYTHONPATH=./sdk python -m agentguard.cli report demo_trace_repo_local.jsonl => exit 0
+PYTHONPATH=./sdk python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl => exit 0

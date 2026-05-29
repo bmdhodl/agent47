@@ -1,0 +1,28 @@
+Defaulting to user installation because normal site-packages is not writeable
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-site-packages>)
+Obtaining file:///<checkout>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9937 sha256=bd07cefde4a73a7545c401d20b89ea3a4c91e5dde365bf1f3ac3b8f980fd7627
+  Stored in directory: <temp-path>
+Successfully built agentguard47
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-site-packages>)
+Installing collected packages: agentguard47
+  WARNING: The script agentguard.exe is installed in '<python-scripts>' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-site-packages>)
+Successfully installed agentguard47-1.2.10
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-site-packages>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-site-packages>)
+System.Management.Automation.RemoteException
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
