@@ -1,0 +1,13 @@
+base_head=0ed449844b533fd699ef13a5ca3f8f4592c3cc55
+note=CLI writes default trace filenames; raw traces were copied into this run folder immediately after each proof command.
+python -m pip install -e ./sdk exit=0
+installed CLI agentguard doctor --json exit=0
+installed CLI agentguard demo exit=0
+repo-local import binding exit=0
+repo-local PYTHONPATH=./sdk python -m agentguard.cli doctor --json exit=0
+repo-local PYTHONPATH=./sdk python -m agentguard.cli demo exit=0
+repo-local PYTHONPATH=./sdk python examples/coding_agent_review_loop.py exit=0
+repo-local python -m agentguard.cli report proof/dogfood/2026-05-29/run3/demo_trace_repo_local.jsonl exit=0
+repo-local python -m agentguard.cli incident proof/dogfood/2026-05-29/run3/coding_agent_review_loop_traces.jsonl exit=0
+installed CLI agentguard doctor --json rerun_for_trace_copy exit=0
+repo-local PYTHONPATH=./sdk python -m agentguard.cli doctor --json rerun_for_trace_copy exit=0
