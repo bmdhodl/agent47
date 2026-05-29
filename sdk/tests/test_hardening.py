@@ -73,6 +73,14 @@ class TestVersion:
     def test_version_in_all(self):
         assert "__version__" in agentguard.__all__
 
+    def test_malformed_package_metadata_falls_back_to_dev_version(self, monkeypatch):
+        def broken_version(_: str) -> str:
+            raise TypeError("'NoneType' object is not subscriptable")
+
+        monkeypatch.setattr(agentguard, "version", broken_version)
+
+        assert agentguard._package_version() == "0.0.0-dev"
+
 
 # --- Thread safety: LoopGuard ---
 

@@ -17,7 +17,7 @@ enough to create surprise spend.
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.10/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.11/LICENSE)
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -158,7 +158,7 @@ What you should see:
 - `report` shows local trace counts, cost, savings, and guard events.
 
 Notebook version:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.10/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.11/examples/quickstart.ipynb)
 
 ## Copy-Paste Repo Setup
 
@@ -252,12 +252,12 @@ All examples are local-first. No API key is required unless the example says so.
 
 | Example | What it proves |
 |---|---|
-| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/try_it_now.py) | budget, loop, and retry stops |
+| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.11/examples/try_it_now.py) | budget, loop, and retry stops |
 | [`examples/sticky_agent_proof.py`](https://github.com/bmdhodl/agent47/blob/main/examples/sticky_agent_proof.py) | one CrewAI-style retry storm proof with local incident and hosted NDJSON outputs |
-| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
-| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
-| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
-| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
+| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.11/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
+| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.11/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
+| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.11/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
+| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.11/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
 
 Sample incident:
 [`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
@@ -266,7 +266,7 @@ Proof gallery:
 [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md)
 
 Starter files:
-[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.10/examples/starters)
+[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.11/examples/starters)
 
 ## Framework Integrations
 
@@ -308,8 +308,8 @@ layer.
 
 Competitive notes:
 
-- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/competitive/vercel-ai-gateway.md)
-- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/competitive/manifest.md)
+- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/competitive/vercel-ai-gateway.md)
+- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md)
 
 ## Decision Traces
@@ -424,7 +424,7 @@ assert result.passed
 - Core runtime dependencies: zero
 - Trace format: JSONL
 - Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
-- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.10/mcp-server)
+- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.11/mcp-server)
 - Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/card.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
@@ -433,14 +433,15 @@ assert result.passed
 
 | Topic | Link |
 |---|---|
-| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/getting-started.md) |
-| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/coding-agents.md) |
-| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/coding-agent-safety-pack.md) |
+| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/guides/getting-started.md) |
+| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/guides/coding-agents.md) |
+| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/guides/coding-agent-safety-pack.md) |
 | Dashboard contract | [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md) |
 | Decision traces | [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md) |
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/managed-agent-sessions.md) |
-| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/activation-metrics-design.md) |
+| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md) |
+| Releasing | [`docs/RELEASING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/docs/RELEASING.md) |
 | Release cadence | [`docs/release/cadence.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/cadence.md) |
 | PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/trusted-publishing.md) |
 
@@ -481,9 +482,9 @@ A recurring class of agent attack uses the agent's own write surface as an
 outbound channel. Example pattern from Microsoft Copilot Cowork (May 2026):
 the agent emails the user's own inbox with no approval, the rendered message
 fetches an external image, and the image URL encodes data the attacker wanted
-out. AgentGuard's network and URL policies are designed to catch this class
-at runtime by gating which hosts an agent may reach, regardless of which
-tool initiated the request.
+out. AgentGuard does not replace an egress firewall or tool-permission layer,
+but it gives the agent runtime hard stops for runaway loops, retries, and
+budget burn that can turn one bad tool call into a sustained incident.
 
 Citation: https://simonwillison.net/2026/May/26/copilot-cowork-exfiltrates-files/
 
@@ -505,24 +506,83 @@ python scripts/sdk_release_guard.py
 
 Useful links:
 
-- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/CONTRIBUTING.md)
-- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/GOLDEN_PRINCIPLES.md)
+- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/CONTRIBUTING.md)
+- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.11/GOLDEN_PRINCIPLES.md)
 
 ## License
 
-MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.10/LICENSE).
+MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.11/LICENSE).
 
-## Latest Release Notes (1.2.10)
+## Latest Release Notes (1.2.11)
 
-### Activation Proof Path
-- Tightened the README and getting-started path around `doctor`, `demo`, and `quickstart` so first-time SDK users can reach local guard proof faster.
-- Added a coding-agent review-loop proof artifact that shows budget and retry guards stopping a simulated review/refinement loop without API keys or network calls.
-- Added sync coverage for the public sample incident and generated PyPI README so release-facing activation assets do not silently drift.
+### Reliability
+- Hardened `agentguard.__version__` so malformed local package metadata falls
+  back to `0.0.0-dev` instead of crashing source-checkout imports.
+- Fixed the coding-agent review-loop proof to record cumulative guard spend as
+  `total_cost_usd`, preventing local reports from double-counting the stopped
+  budget event.
 
-### Release And Distribution Hygiene
-- Added an opt-in activation metrics design doc that defines allowed activation questions and local-first consent boundaries without adding telemetry.
-- Hardened release discussion category handling so missing GitHub Discussion categories do not block the package release path.
-- Updated the package build timestamp seed to the ZIP-safe reproducible epoch so local and CI release builds do not fail on pre-1980 metadata.
-- Clarified hosted ingest language in incident reporting so `HttpSink` is described as event mirroring for retained alerts and follow-up, not a remote kill switch by itself.
+### Public Docs
+- Corrected the README threat-model copy so AgentGuard is positioned as local
+  runtime hard stops for loops, retries, and budget burn, not as a replacement
+  for egress firewalls or tool-permission layers.
+- Added release runbook documentation for tag-triggered PyPI publish and
+  GitHub Release creation.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.10/CHANGELOG.md)
+### Profiles
+- Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
+  for unattended production agents. Tightens defaults to `loop_max=2`,
+  `retry_max=1`, `warn_pct=0.5`. Motivated by the arxiv:2605.00055
+  ambient-persuasion incident where a deployed agent installed 107
+  unauthorized components and overrode its own oversight gate.
+
+### Release Proof
+- Added a deterministic sticky agent proof example that simulates a
+  CrewAI-style retry storm, repeated tool loop, budget burn, local incident
+  output, and dashboard-compatible hosted NDJSON without adding dependencies.
+- Added contract tests that post the sticky proof NDJSON to the local hosted
+  ingest harness so SDK proof events stay aligned with dashboard expectations.
+
+### Activation
+- Added `python -m agentguard.cli ...` fallback guidance to `doctor`, `demo`,
+  and `quickstart` so first-run users are not blocked when console scripts
+  install outside `PATH`.
+- Added a post-demo next-step block so `agentguard demo` points directly to
+  `agentguard quickstart --framework raw --write`, the generated starter, and
+  the follow-up local report command.
+- Added an MCP read-path proof to the proof gallery and test coverage that
+  catches stale local example and sample-doc references.
+- Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
+  `TestModel`, so users can try the pattern without API keys or network calls
+  after installing the optional framework package.
+- Clarified incident-report dashboard handoff copy so hosted ingest is framed as
+  useful when incidents need retained history, alerts, spend trends, or
+  team-visible follow-up, not as a requirement for local safety.
+- Added a concise local-vs-hosted adoption table to the README and dashboard
+  contract docs so the dashboard CTA is explicit without making local SDK use
+  feel limited.
+
+### Release Security
+- Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
+  to OIDC Trusted Publishing for the `pypi` GitHub environment, with PyPI
+  attestations enabled for release artifacts.
+- Added release documentation for the required PyPI trusted-publisher tuple and
+  post-release verification steps.
+- Added an MCP package publishing checklist and normalized npm package metadata
+  so the `@agentguard47/mcp-server` release path does not rely on npm publish
+  autocorrections.
+- Added an optional release-guard npm check so release operators can verify the
+  repo MCP package version is actually published as npm latest without making
+  normal CI depend on the network.
+
+### Release Operations
+- Added a release cadence document that separates the weekly MCP / Glama
+  distribution train from the monthly SDK release train.
+- Added a scheduled release cadence workflow that opens or updates one active
+  release queue issue with SDK, npm MCP, and Glama indexing status.
+- Added tag/version validation to the PyPI publish workflow and creates the
+  GitHub Release only after PyPI publish succeeds.
+- Refreshed the MCP server lockfile so `npm audit` no longer reports the
+  transitive `fast-uri` or `qs` advisories.
+
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.11/CHANGELOG.md)

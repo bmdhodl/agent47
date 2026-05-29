@@ -1,6 +1,6 @@
 # Architecture
 
-**Last reviewed:** 2026-05-02
+**Last reviewed:** 2026-05-29
 
 ## High-level shape
 
@@ -127,6 +127,14 @@ The SDK uses deterministic local proof before hosted adoption:
 - `agentguard quickstart` and `examples/starters/` provide minimal stack-specific starters.
 - `examples/coding_agent_review_loop.py` demonstrates a coding-agent review/refinement loop stopped by `BudgetGuard` and a patch retry storm stopped by `RetryGuard`.
 - `agentguard report` and `agentguard incident` turn local traces into readable proof artifacts.
+
+## Release flow
+
+SDK releases are tag-triggered from `main`. The publish workflow validates that
+the pushed `vX.Y.Z` tag matches `sdk/pyproject.toml`, runs the release gates,
+publishes `agentguard47` to PyPI, then creates the GitHub Release. The GitHub
+Release is intentionally last so the public release page does not advertise a
+version that failed to publish.
 
 These proof surfaces should stay offline by default and must not require the
 hosted dashboard.

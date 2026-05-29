@@ -3,11 +3,11 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-08
+**Last reviewed:** 2026-05-29
 
 ## Current Focus Notes
 
-- Latest shipped SDK release is `v1.2.10`; current work is post-release
+- Latest shipped SDK release is `v1.2.11`; current work is post-release
   hardening and activation, not a new feature push.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
   but public registry search still reports MCP package version `0.2.1`; refresh
@@ -54,6 +54,7 @@ they directly strengthen coding-agent adoption.
 | Item | Success Signal |
 |------|---------------|
 | Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
+| Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
 | Ops/doc freshness | `ops/02-ARCHITECTURE.md`, this roadmap, `ops/FOLLOWUP.md`, and memory files stay concise and current enough that agents do not start from stale assumptions |

@@ -1,0 +1,37 @@
+# Categorization for `gh release create --generate-notes`, called from
+# `.github/workflows/publish.yml` after PyPI publish succeeds.
+#
+# GitHub's generated notes group by PR labels. Labels follow the repo's
+# existing `type:*` scheme from the issue templates.
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+      - dependencies
+  categories:
+    - title: "Security"
+      labels:
+        - type:security
+    - title: "Features"
+      labels:
+        - type:feature
+        - enhancement
+    - title: "Fixes"
+      labels:
+        - type:bug
+        - bug
+    - title: "Performance and refactors"
+      labels:
+        - type:perf
+        - type:refactor
+    - title: "CI and tests"
+      labels:
+        - type:ci
+        - type:test
+    - title: "Docs"
+      labels:
+        - type:docs
+        - documentation
+    - title: "Other changes"
+      labels:
+        - "*"
