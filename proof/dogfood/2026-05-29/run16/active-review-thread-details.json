@@ -1,0 +1,147 @@
+[
+    {
+        "number":  520,
+        "title":  "Add tag-triggered GitHub Release workflow",
+        "active_threads":  [
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_uCK",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  ".github/workflows/release.yml",
+                                                                      "line":  20,
+                                                                      "body":  "**\u003csub\u003e\u003csub\u003e![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)\u003c/sub\u003e\u003c/sub\u003e  Gate release creation on successful publishing**\n\nWhen a release tag points at a commit whose `sdk/pyproject.toml` version matches but the separate `.github/workflows/publish.yml` job later fails its lint/tests/release-guard/build/PyPI upload, this workflow still creates the public GitHub Release because both workflows are independent `push`-tag triggers with no `needs`/`workflow_run` ordering. That can leave users and the release-content links pointing at an announced version that is not actually installable from PyPI.\n\nUseful? React with 👍 / 👎.",
+                                                                      "author":  {
+                                                                                     "login":  "chatgpt-codex-connector"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/520#discussion_r3308466147",
+                                                                      "createdAt":  "2026-05-27T04:34:40Z"
+                                                                  }
+                                                              ]
+                                                }
+                               },
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_uCN",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  "docs/RELEASING.md",
+                                                                      "line":  33,
+                                                                      "body":  "**\u003csub\u003e\u003csub\u003e![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)\u003c/sub\u003e\u003c/sub\u003e  Align prerelease docs with the publish guard**\n\nFollowing this documented `vX.Y.Z-rc.N` path currently cannot publish successfully: `.github/workflows/publish.yml` runs `scripts/sdk_release_guard.py`, and that guard\u0027s release-marker regexes only accept stable `\\d+\\.\\d+\\.\\d+` versions before comparing to the full project version. A prerelease package version such as `1.2.11-rc.1` therefore fails the metadata-sync gate before PyPI upload, even though this doc says prereleases are supported and the new release workflow will mark them as prereleases.\n\nUseful? React with 👍 / 👎.",
+                                                                      "author":  {
+                                                                                     "login":  "chatgpt-codex-connector"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/520#discussion_r3308466150",
+                                                                      "createdAt":  "2026-05-27T04:34:40Z"
+                                                                  }
+                                                              ]
+                                                }
+                               },
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_unU",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  ".github/release.yml",
+                                                                      "line":  21,
+                                                                      "body":  "The configured release-note labels do not match the repository\u0027s established label scheme. The issue templates apply `type:feature`, `type:bug`, and `type:docs` (for example, `.github/ISSUE_TEMPLATE/feature_request.yml:3` and `.github/ISSUE_TEMPLATE/bug_report.yml:3`), but these categories only match bare labels like `feature`, `bug`, and `docs`, so normally labeled PRs will fall into “Other changes”. Add the existing `type:*` labels here or update the repository labeling scheme consistently.",
+                                                                      "author":  {
+                                                                                     "login":  "copilot-pull-request-reviewer"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469469",
+                                                                      "createdAt":  "2026-05-27T04:35:45Z"
+                                                                  }
+                                                              ]
+                                                }
+                               },
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_unk",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  "docs/RELEASING.md",
+                                                                      "line":  43,
+                                                                      "body":  "This documentation tells release managers to use bare labels, but the repository\u0027s issue templates use prefixed labels such as `type:feature`, `type:bug`, and `type:docs`. As written, following this guidance will not categorize PRs created with the existing labels; update the documented labels to match the release-note config after aligning it with the repo label scheme.\n",
+                                                                      "author":  {
+                                                                                     "login":  "copilot-pull-request-reviewer"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469493",
+                                                                      "createdAt":  "2026-05-27T04:35:45Z"
+                                                                  }
+                                                              ]
+                                                }
+                               },
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_un2",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  ".github/workflows/release.yml",
+                                                                      "line":  44,
+                                                                      "body":  "This step only checks the tag string before creating the public GitHub Release, while the actual SDK release gates in `publish.yml` still run separately and can fail later. A stale CHANGELOG/PYPI README or failing tests could leave a GitHub Release visible for a package that was not successfully published. Reuse the release guard/tests here or create the GitHub Release only after the publish workflow succeeds.",
+                                                                      "author":  {
+                                                                                     "login":  "copilot-pull-request-reviewer"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469515",
+                                                                      "createdAt":  "2026-05-27T04:35:45Z"
+                                                                  }
+                                                              ]
+                                                }
+                               },
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_uoD",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  ".github/release.yml",
+                                                                      "line":  2,
+                                                                      "body":  "This comment says missing labels are handled by title prefix, but the generated-notes configuration below only defines label-based categories. Remove the title-prefix claim or add the mechanism that implements it so maintainers do not rely on behavior that will not happen.\n",
+                                                                      "author":  {
+                                                                                     "login":  "copilot-pull-request-reviewer"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/520#discussion_r3308469529",
+                                                                      "createdAt":  "2026-05-27T04:35:46Z"
+                                                                  }
+                                                              ]
+                                                }
+                               }
+                           ]
+    },
+    {
+        "number":  518,
+        "title":  "Add dogfood proof for 2026-05-27 run1",
+        "active_threads":  [
+                               {
+                                   "id":  "PRRT_kwDORIKzHM6E_CFt",
+                                   "isResolved":  false,
+                                   "isOutdated":  false,
+                                   "comments":  {
+                                                    "nodes":  [
+                                                                  {
+                                                                      "path":  "proof/dogfood/2026-05-27/run1/coding_agent_review_loop_traces.jsonl",
+                                                                      "line":  6,
+                                                                      "body":  "This guard event stores the cumulative run total in `data.cost_usd`, while the preceding `review.iteration` events already store per-turn `cost_usd`. The report/incident commands fall back to `data.cost_usd` for cost extraction, so this trace is rendered as `$0.1020` even though the three iterations only total `$0.0510`. Please rename this cumulative field (for example to `total_cost_usd`) or regenerate the artifact after fixing the source so the proof reports the actual review-loop cost.\n",
+                                                                      "author":  {
+                                                                                     "login":  "copilot-pull-request-reviewer"
+                                                                                 },
+                                                                      "url":  "https://github.com/bmdhodl/agent47/pull/518#discussion_r3308218724",
+                                                                      "createdAt":  "2026-05-27T03:22:33Z"
+                                                                  }
+                                                              ]
+                                                }
+                               }
+                           ]
+    }
+]
