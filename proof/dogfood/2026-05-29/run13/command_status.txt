@@ -1,0 +1,12 @@
+branch: dogfood-2026-05-29-run2-worker
+head: 17b7179a290344aed9ea6fc60aef976e579f3b8f
+started: 2026-05-29T09:29:21.4795601-05:00
+import_binding exit=0
+path_agentguard_doctor exit=0
+module_doctor exit=0
+module_demo exit=0
+review_loop exit=0
+demo_report exit=0
+demo_incident exit=0
+review_loop_incident exit=0
+finished: 2026-05-29T09:29:23.1862004-05:00
