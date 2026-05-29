@@ -1,0 +1,92 @@
+[
+    {
+        "name":  "install-editable",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python -m pip install -e ./sdk",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:21.0725335-05:00",
+        "ended":  "2026-05-29T13:35:28.5619734-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\install-editable.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\install-editable.err.txt"
+    },
+    {
+        "name":  "import-binding",
+        "command":  "python -c \"import agentguard, pathlib, importlib.metadata as m; print(m.version(\u0027agentguard47\u0027)); print(pathlib.Path(agentguard.__file__).resolve())\"",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:28.5639749-05:00",
+        "ended":  "2026-05-29T13:36:04.6811215-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\import-binding.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\import-binding.err.txt"
+    },
+    {
+        "name":  "installed-doctor",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; \u0026 \"$env:APPDATA\\Python\\Python313\\Scripts\\agentguard.exe\" doctor --trace-file proof/dogfood/2026-05-29/run17/installed_doctor_trace.jsonl --json",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:29.0205019-05:00",
+        "ended":  "2026-05-29T13:35:29.5125172-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\installed-doctor.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\installed-doctor.err.txt"
+    },
+    {
+        "name":  "installed-demo",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; \u0026 \"$env:APPDATA\\Python\\Python313\\Scripts\\agentguard.exe\" demo --trace-file proof/dogfood/2026-05-29/run17/installed_demo_trace.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:29.5125172-05:00",
+        "ended":  "2026-05-29T13:35:29.8760368-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\installed-demo.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\installed-demo.err.txt"
+    },
+    {
+        "name":  "repo-doctor",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-29/run17/repo_doctor_trace.jsonl --json",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:29.8765375-05:00",
+        "ended":  "2026-05-29T13:35:30.2425335-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\repo-doctor.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\repo-doctor.err.txt"
+    },
+    {
+        "name":  "repo-demo",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-29/run17/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:30.2430333-05:00",
+        "ended":  "2026-05-29T13:35:30.6040838-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\repo-demo.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\repo-demo.err.txt"
+    },
+    {
+        "name":  "review-loop",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python examples/coding_agent_review_loop.py; Move-Item -Force -LiteralPath coding_agent_review_loop_traces.jsonl -Destination proof/dogfood/2026-05-29/run17/coding_agent_review_loop_traces.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:30.6045847-05:00",
+        "ended":  "2026-05-29T13:36:39.4067480-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\review-loop.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\review-loop.err.txt"
+    },
+    {
+        "name":  "demo-report",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python -m agentguard.cli report proof/dogfood/2026-05-29/run17/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:30.9416061-05:00",
+        "ended":  "2026-05-29T13:35:31.2911157-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\demo-report.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\demo-report.err.txt"
+    },
+    {
+        "name":  "demo-incident",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python -m agentguard.cli incident --format markdown proof/dogfood/2026-05-29/run17/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:31.2916161-05:00",
+        "ended":  "2026-05-29T13:35:31.6338464-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\demo-incident.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\demo-incident.err.txt"
+    },
+    {
+        "name":  "review-loop-incident",
+        "command":  "Set-Location -LiteralPath \u0027C:\\Users\\patri\\.codex\\worktrees\\fe7a\\agent47\u0027; python -m agentguard.cli incident --format markdown proof/dogfood/2026-05-29/run17/coding_agent_review_loop_traces.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T13:35:31.6338464-05:00",
+        "ended":  "2026-05-29T13:35:31.9858738-05:00",
+        "stdout":  "proof\\dogfood\\2026-05-29\\run17\\review-loop-incident.out.txt",
+        "stderr":  "proof\\dogfood\\2026-05-29\\run17\\review-loop-incident.err.txt"
+    }
+]

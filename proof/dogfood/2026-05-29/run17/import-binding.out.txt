@@ -1,0 +1,2 @@
+1.2.10
+C:\Users\patri\.codex\worktrees\fe7a\agent47\sdk\agentguard\__init__.py

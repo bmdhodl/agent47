@@ -1,0 +1,22 @@
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///C:/Users/patri/.codex/worktrees/fe7a/agent47/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9937 sha256=5dd4d962d3715e18f4d20dc9d589f2a00d14f94aee7095b9590c0cc56905e44c
+  Stored in directory: C:\Users\patri\AppData\Local\Temp\pip-ephem-wheel-cache-zwix73li\wheels\75\3b\f7\b4a24dff980eec63abfce35c8778fc8b1f6ab4d6060e19744f
+Successfully built agentguard47
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 1.2.10
+    Uninstalling agentguard47-1.2.10:
+      Successfully uninstalled agentguard47-1.2.10
+Successfully installed agentguard47-1.2.10
