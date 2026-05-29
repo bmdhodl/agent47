@@ -1,0 +1,72 @@
+{
+
+
+
+  "guard_event_count": 22,
+
+
+
+  "missing_required": [],
+
+
+
+  "required_present": [
+
+
+
+    "guard.budget_exceeded",
+
+
+
+    "guard.loop_detected",
+
+
+
+    "guard.retry_limit_exceeded"
+
+
+
+  ],
+
+
+
+  "seen": [
+
+
+
+    "demo.budget_guard",
+
+
+
+    "demo.loop_guard",
+
+
+
+    "demo.retry_guard",
+
+
+
+    "guard.budget_exceeded",
+
+
+
+    "guard.budget_warning",
+
+
+
+    "guard.loop_detected",
+
+
+
+    "guard.retry_limit_exceeded"
+
+
+
+  ]
+
+
+
+}
+
+
+

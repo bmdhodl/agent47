@@ -1,0 +1,60 @@
+{
+  "gh_release": {
+    "exit_code": 0,
+    "output": "{\"name\":\"AgentGuard v1.2.10\",\"publishedAt\":\"2026-05-02T15:48:03Z\",\"tagName\":\"v1.2.10\",\"url\":\"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10\"}"
+  },
+  "glama_api": {
+    "body_preview": "{\"attributes\":[\"hosting:local-only\"],\"description\":\"AgentGuard47 is runtime safety infrastructure for AI agents. It adds budget caps, loop detection, retry limits, timeouts, local traces, and incident reports so agents can stop bad runs while they are happening, not just explain them afterward.\",\"environmentVariablesJsonSchema\":{\"properties\":{\"AGENTGUARD_URL\":{\"description\":\"Optional AgentGuard API base URL. Defaults to production.\",\"type\":\"string\",\"default\":\"https://app.agentguard47.com\"},\"AGENTGUARD_API_KEY\":{\"description\":\"AgentGuard read API key for traces, alerts, costs, usage, and budget health.\",\"type\":\"string\"}},\"type\":\"object\",\"required\":[\"AGENTGUARD_API_KEY\"]},\"id\":\"y6zuc6wgtu\",\"name\":\"Agentguard47\",\"namespace\":\"bmdhodl\",\"repository\":{\"url\":\"https://github.com/bmdhodl/agent47\"},\"slug\":\"agent47\",\"spdxLicense\":{\"name\":\"MIT License\",\"url\":\"https://spdx.org/licenses/MIT.json\"},\"tools\":[],\"url\":\"https://glama.ai/mcp/servers/y6zuc6wgtu\"}",
+    "json": {
+      "attributes": [
+        "hosting:local-only"
+      ],
+      "description": "AgentGuard47 is runtime safety infrastructure for AI agents. It adds budget caps, loop detection, retry limits, timeouts, local traces, and incident reports so agents can stop bad runs while they are happening, not just explain them afterward.",
+      "environmentVariablesJsonSchema": {
+        "properties": {
+          "AGENTGUARD_API_KEY": {
+            "description": "AgentGuard read API key for traces, alerts, costs, usage, and budget health.",
+            "type": "string"
+          },
+          "AGENTGUARD_URL": {
+            "default": "https://app.agentguard47.com",
+            "description": "Optional AgentGuard API base URL. Defaults to production.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "AGENTGUARD_API_KEY"
+        ],
+        "type": "object"
+      },
+      "id": "y6zuc6wgtu",
+      "name": "Agentguard47",
+      "namespace": "bmdhodl",
+      "repository": {
+        "url": "https://github.com/bmdhodl/agent47"
+      },
+      "slug": "agent47",
+      "spdxLicense": {
+        "name": "MIT License",
+        "url": "https://spdx.org/licenses/MIT.json"
+      },
+      "tools": [],
+      "url": "https://glama.ai/mcp/servers/y6zuc6wgtu"
+    },
+    "status": 200,
+    "url": "https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47"
+  },
+  "mcp_registry_server": {
+    "error": "HTTP Error 404: Not Found",
+    "status": 404,
+    "url": "https://registry.modelcontextprotocol.io/v0/servers/io.github.bmdhodl/agentguard47"
+  },
+  "npm_mcp_version": {
+    "exit_code": 0,
+    "output": "0.2.2"
+  },
+  "pypi_versions": {
+    "exit_code": 0,
+    "output": "WARNING: pip index is currently an experimental command. It may be removed/changed in a future release without prior warning.\nagentguard47 (1.2.10)\nAvailable versions: 1.2.10, 1.2.9, 1.2.8, 1.2.6, 1.2.5, 1.2.4, 1.2.3, 1.2.2, 1.2.1, 1.2.0, 1.0.0, 0.8.0, 0.7.0, 0.6.0, 0.5.0, 0.4.0, 0.3.0, 0.2.0\n  INSTALLED: 1.2.10\n  LATEST:    1.2.10\nWARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)\nWARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)\n\n[notice] A new release of pip is available: 24.3.1 -> 26.1.1\n[notice] To update, run: python.exe -m pip install --upgrade pip"
+  }
+}

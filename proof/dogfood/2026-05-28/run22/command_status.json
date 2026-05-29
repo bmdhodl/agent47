@@ -1,0 +1,633 @@
+[
+
+
+
+  {
+
+
+
+    "name": "installed-agentguard-doctor",
+
+
+
+    "command": [
+
+
+
+      "agentguard",
+
+
+
+      "doctor",
+
+
+
+      "--trace-file",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\installed_doctor_trace.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:16.551996-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:16.763090-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "installed-agentguard-demo",
+
+
+
+    "command": [
+
+
+
+      "agentguard",
+
+
+
+      "demo",
+
+
+
+      "--trace-file",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\installed_demo_trace.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:16.763131-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:16.966651-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "repo-import-binding",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-c",
+
+
+
+      "import agentguard; print(agentguard.__file__); print(getattr(agentguard, \"__version__\", \"unknown\"))"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:16.966672-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:17.152049-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "repo-local-doctor",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "doctor",
+
+
+
+      "--trace-file",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\doctor_trace.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:17.152089-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:17.358549-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "repo-local-demo",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "demo",
+
+
+
+      "--trace-file",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\demo_trace.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:17.358585-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:17.558263-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "review-loop-example",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "<repo>\\examples\\coding_agent_review_loop.py"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>\\proof\\dogfood\\2026-05-28\\run22",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:17.558300-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:17.747717-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "demo-report-json",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "report",
+
+
+
+      "--json",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\demo_trace.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:17.747767-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:17.947559-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "demo-incident-md",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "incident",
+
+
+
+      "--format",
+
+
+
+      "markdown",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\demo_trace.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:17.947596-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:18.141782-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "review-loop-report-json",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "report",
+
+
+
+      "--json",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\coding_agent_review_loop_traces.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:18.141822-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:18.338138-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "review-loop-incident-md",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "incident",
+
+
+
+      "--format",
+
+
+
+      "markdown",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\coding_agent_review_loop_traces.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:18.338180-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:18.532717-05:00"
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "name": "review-loop-incident-json",
+
+
+
+    "command": [
+
+
+
+      "python3.13",
+
+
+
+      "-m",
+
+
+
+      "agentguard.cli",
+
+
+
+      "incident",
+
+
+
+      "--format",
+
+
+
+      "json",
+
+
+
+      "<repo>\\proof\\dogfood\\2026-05-28\\run22\\coding_agent_review_loop_traces.jsonl"
+
+
+
+    ],
+
+
+
+    "cwd": "<repo>",
+
+
+
+    "exit_code": 0,
+
+
+
+    "started": "2026-05-28T19:12:18.532771-05:00",
+
+
+
+    "ended": "2026-05-28T19:12:18.726698-05:00"
+
+
+
+  }
+
+
+
+]
