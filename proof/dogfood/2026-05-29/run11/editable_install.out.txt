@@ -1,0 +1,22 @@
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9937 sha256=32ef52ffa4549ef40e3025b4ebeb6dda971d74a54251a8a83924feef0a9d581c
+  Stored in directory: <user-path>
+Successfully built agentguard47
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 1.2.10
+    Uninstalling agentguard47-1.2.10:
+      Successfully uninstalled agentguard47-1.2.10
+Successfully installed agentguard47-1.2.10

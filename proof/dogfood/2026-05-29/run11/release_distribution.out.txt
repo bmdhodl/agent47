@@ -1,0 +1,20 @@
+{
+  "github_release": {
+    "command": "gh release view --json tagName,name,url",
+    "exit_code": 0,
+    "stdout": "{\"name\":\"AgentGuard v1.2.10\",\"tagName\":\"v1.2.10\",\"url\":\"https://github.com/bmdhodl/agent47/releases/tag/v1.2.10\"}",
+    "stderr": ""
+  },
+  "pypi_latest": {
+    "command": "python -m pip index versions agentguard47",
+    "exit_code": 0,
+    "stdout": "agentguard47 (1.2.10)\nAvailable versions: 1.2.10, 1.2.9, 1.2.8, 1.2.6, 1.2.5, 1.2.4, 1.2.3, 1.2.2, 1.2.1, 1.2.0, 1.0.0, 0.8.0, 0.7.0, 0.6.0, 0.5.0, 0.4.0, 0.3.0, 0.2.0\n  INSTALLED: 1.2.10\n  LATEST:    1.2.10",
+    "stderr": "WARNING: pip index is currently an experimental command. It may be removed/changed in a future release without prior warning.\nWARNING: Ignoring invalid distribution ~gentguard47 (C:\\Users\\patri\\AppData\\Roaming\\Python\\Python313\\site-packages)\nWARNING: Ignoring invalid distribution ~gentguard47 (C:\\Users\\patri\\AppData\\Roaming\\Python\\Python313\\site-packages)\n\n[notice] A new release of pip is available: 24.3.1 -> 26.1.1\n[notice] To update, run: python.exe -m pip install --upgrade pip"
+  },
+  "npm_mcp_latest": {
+    "command": "npm view @agentguard47/mcp-server version",
+    "exit_code": 0,
+    "stdout": "0.2.2",
+    "stderr": ""
+  }
+}

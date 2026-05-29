@@ -1,0 +1,73 @@
+{
+  "base": {
+    "commit": "e791488fc66b63b92b05806b0e6264df6c40ce8a",
+    "branch": "dogfood-2026-05-29-run2-worker",
+    "recorded_at": "2026-05-29T12:28:17.825281+00:00"
+  },
+  "editable_install": {
+    "command": "python -m pip install -e ./sdk",
+    "exit_code": 0,
+    "stdout_bytes": 1466,
+    "stderr_bytes": 956
+  },
+  "installed_agentguard_doctor": {
+    "command": "agentguard doctor --json",
+    "exit_code": 0,
+    "stdout_bytes": 1229,
+    "stderr_bytes": 0
+  },
+  "installed_agentguard_demo": {
+    "command": "agentguard demo",
+    "exit_code": 0,
+    "stdout_bytes": 1461,
+    "stderr_bytes": 0
+  },
+  "repo_local_doctor": {
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli doctor --json",
+    "exit_code": 0,
+    "stdout_bytes": 1229,
+    "stderr_bytes": 0
+  },
+  "repo_local_demo": {
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli demo",
+    "exit_code": 0,
+    "stdout_bytes": 1461,
+    "stderr_bytes": 0
+  },
+  "repo_local_review_loop": {
+    "command": "PYTHONPATH=./sdk python examples/coding_agent_review_loop.py",
+    "exit_code": 0,
+    "stdout_bytes": 711,
+    "stderr_bytes": 0
+  },
+  "demo_report": {
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli report proof/dogfood/2026-05-29/run11/agentguard_demo_traces.jsonl",
+    "exit_code": 0,
+    "stdout_bytes": 534,
+    "stderr_bytes": 0
+  },
+  "review_loop_incident": {
+    "command": "PYTHONPATH=./sdk python -m agentguard.cli incident proof/dogfood/2026-05-29/run11/coding_agent_review_loop_traces.jsonl",
+    "exit_code": 0,
+    "stdout_bytes": 1402,
+    "stderr_bytes": 0
+  },
+  "focused_pytest": {
+    "command": "python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q",
+    "exit_code": 0,
+    "stdout_bytes": 776,
+    "stderr_bytes": 0
+  },
+  "release_guard": {
+    "command": "python scripts/sdk_release_guard.py --check-mcp-npm",
+    "exit_code": 0,
+    "stdout_bytes": 22,
+    "stderr_bytes": 0
+  },
+  "git_diff_check": {
+    "command": "git diff --check",
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stderr_bytes": 0
+  }
+}
