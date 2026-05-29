@@ -1,0 +1,16 @@
+{
+  "demo": "exit_code=0",
+  "demo_incident": "exit_code=0",
+  "demo_report": "exit_code=0",
+  "demo_report_json": "exit_code=0",
+  "doctor": "exit_code=0",
+  "glama_api": "exit_code=0",
+  "import_binding": "exit_code=0",
+  "npm_mcp": "exit_code=0",
+  "official_mcp_registry_api": "exit_code=0",
+  "pypi_versions": "exit_code=0",
+  "release_github": "exit_code=0",
+  "review_loop": "exit_code=0",
+  "review_loop_incident": "exit_code=0",
+  "staleness": "exit_code=0"
+}

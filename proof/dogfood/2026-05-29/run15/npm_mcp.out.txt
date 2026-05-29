@@ -1,0 +1,4 @@
+{
+  "version": "0.2.2",
+  "dist-tags.latest": "0.2.2"
+}
