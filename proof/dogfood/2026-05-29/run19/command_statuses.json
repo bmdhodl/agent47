@@ -1,0 +1,170 @@
+[
+    {
+        "name":  "editable-install",
+        "command":  "python -m pip install -e ./sdk",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:25.3441236-05:00",
+        "finished_at":  "2026-05-29T15:39:36.4419232-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/editable-install.out.txt"
+    },
+    {
+        "name":  "import-binding",
+        "command":  "python - \u003c\u003cPY import agentguard; import importlib.metadata as m; print(agentguard.__file__); print(m.version(\"agentguard47\")) PY",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:36.4439225-05:00",
+        "finished_at":  "2026-05-29T15:39:37.0254854-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/import-binding.out.txt"
+    },
+    {
+        "name":  "installed-doctor",
+        "command":  "agentguard doctor --trace-file proof/dogfood/2026-05-29/run19/installed_doctor_trace.jsonl --json",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:37.0254854-05:00",
+        "finished_at":  "2026-05-29T15:39:37.8550330-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/installed-doctor.out.txt"
+    },
+    {
+        "name":  "installed-demo",
+        "command":  "agentguard demo --trace-file proof/dogfood/2026-05-29/run19/installed_demo_trace.jsonl",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:37.8555327-05:00",
+        "finished_at":  "2026-05-29T15:39:38.6510877-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/installed-demo.out.txt"
+    },
+    {
+        "name":  "repo-doctor",
+        "command":  "python -m agentguard.cli doctor --trace-file proof/dogfood/2026-05-29/run19/repo_doctor_trace.jsonl --json",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:38.6515864-05:00",
+        "finished_at":  "2026-05-29T15:39:39.2246528-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/repo-doctor.out.txt"
+    },
+    {
+        "name":  "repo-demo",
+        "command":  "python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-29/run19/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:39.2251528-05:00",
+        "finished_at":  "2026-05-29T15:39:39.6806635-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/repo-demo.out.txt"
+    },
+    {
+        "name":  "review-loop",
+        "command":  "python examples/coding_agent_review_loop.py",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:39.6821633-05:00",
+        "finished_at":  "2026-05-29T15:39:40.5547271-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/review-loop.out.txt"
+    },
+    {
+        "name":  "demo-report",
+        "command":  "python -m agentguard.cli report proof/dogfood/2026-05-29/run19/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:40.5592282-05:00",
+        "finished_at":  "2026-05-29T15:39:40.9717501-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/demo-report.out.txt"
+    },
+    {
+        "name":  "demo-incident",
+        "command":  "python -m agentguard.cli incident --format markdown proof/dogfood/2026-05-29/run19/repo_demo_trace.jsonl",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:40.9722504-05:00",
+        "finished_at":  "2026-05-29T15:39:41.7757891-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/demo-incident.out.txt"
+    },
+    {
+        "name":  "review-loop-incident",
+        "command":  "python -m agentguard.cli incident --format markdown proof/dogfood/2026-05-29/run19/coding_agent_review_loop_traces.jsonl",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:41.7757891-05:00",
+        "finished_at":  "2026-05-29T15:39:42.1668188-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/review-loop-incident.out.txt"
+    },
+    {
+        "name":  "focused-tests",
+        "command":  "python -m pytest sdk/tests/test_doctor.py sdk/tests/test_demo.py sdk/tests/test_cli_report.py sdk/tests/test_mcp_registry_metadata.py sdk/tests/test_sdk_release_guard.py -q",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:42.1673191-05:00",
+        "finished_at":  "2026-05-29T15:39:44.8490448-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/focused-tests.out.txt"
+    },
+    {
+        "name":  "release-guard",
+        "command":  "python scripts/sdk_release_guard.py --check-mcp-npm",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:44.8490448-05:00",
+        "finished_at":  "2026-05-29T15:39:47.4938236-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/release-guard.out.txt"
+    },
+    {
+        "name":  "git-diff-check",
+        "command":  "git diff --check",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:47.4938236-05:00",
+        "finished_at":  "2026-05-29T15:39:47.7539295-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/git-diff-check.out.txt"
+    },
+    {
+        "name":  "staleness",
+        "command":  "git log -1 --format=\u0027%cr\u0027 -- ops/03-ROADMAP_NOW_NEXT_LATER.md; git log -1 --format=\u0027%cr\u0027 -- ops/02-ARCHITECTURE.md",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:47.7544292-05:00",
+        "finished_at":  "2026-05-29T15:39:48.5767408-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/staleness.out.txt"
+    },
+    {
+        "name":  "pypi-agentguard47",
+        "command":  "python -m pip index versions agentguard47",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:48.5767408-05:00",
+        "finished_at":  "2026-05-29T15:39:50.7169304-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/pypi-agentguard47.out.txt"
+    },
+    {
+        "name":  "npm-mcp-version",
+        "command":  "npm view @agentguard47/mcp-server version",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:50.7174305-05:00",
+        "finished_at":  "2026-05-29T15:39:52.1146076-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/npm-mcp-version.out.txt"
+    },
+    {
+        "name":  "github-release",
+        "command":  "gh release view --json tagName,publishedAt,url,name",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:52.1151080-05:00",
+        "finished_at":  "2026-05-29T15:39:52.6246397-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/github-release.json"
+    },
+    {
+        "name":  "open-prs",
+        "command":  "gh pr list --state open --json number,title,headRefName,mergeStateStatus,reviewDecision,isDraft,updatedAt,url --limit 100",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:52.6246397-05:00",
+        "finished_at":  "2026-05-29T15:39:56.4730874-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/open-prs.json"
+    },
+    {
+        "name":  "open-issues",
+        "command":  "gh issue list --state open --json number,title,labels,updatedAt,url --limit 100",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:56.4735890-05:00",
+        "finished_at":  "2026-05-29T15:39:57.1121461-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/open-issues.json"
+    },
+    {
+        "name":  "mcp-registry-search",
+        "command":  "Invoke-WebRequest -UseBasicParsing -Uri \u0027https://registry.modelcontextprotocol.io/v0/servers?search=agentguard47\u0027 | Select-Object -ExpandProperty Content",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:57.1126456-05:00",
+        "finished_at":  "2026-05-29T15:39:57.6256871-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/mcp-registry-search.json"
+    },
+    {
+        "name":  "glama-api",
+        "command":  "Invoke-WebRequest -UseBasicParsing -Uri \u0027https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47\u0027 | Select-Object -ExpandProperty Content",
+        "exit_code":  0,
+        "started_at":  "2026-05-29T15:39:57.6256871-05:00",
+        "finished_at":  "2026-05-29T15:39:58.0892101-05:00",
+        "output":  "proof/dogfood/2026-05-29/run19/glama-api.out.txt"
+    }
+]

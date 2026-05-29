@@ -1,0 +1,40 @@
+Defaulting to user installation because normal site-packages is not writeable
+powershell.exe : WARNING: Ignoring invalid distribution ~gentguard47
+(<python-user-site>)
+At line:12 char:15
++ ...   $output = & powershell -NoProfile -ExecutionPolicy Bypass -Command  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori.../site-packages):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9938 sha256=8f0f1d4664338d45e6d396516d0a360aed1b58ee3a96f4d303202fac51c76a0e
+  Stored in directory: <temp>/pip-ephem-wheel-cache-k_s6r12l/wheels/36/7a/ee/c1747b53a422b17f57278f0ef1d0fdda1f439c616d2876b77d
+Successfully built agentguard47
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 1.2.10
+    Uninstalling agentguard47-1.2.10:
+      Successfully uninstalled agentguard47-1.2.10
+  WARNING: The script agentguard.exe is installed in '<python-user-scripts>' which
+is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+Successfully installed agentguard47-1.2.10
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<python-user-site>)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip

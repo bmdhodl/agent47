@@ -1,0 +1,138 @@
+[
+  {
+    "path": "proof/dogfood/2026-05-29/run19/artifact-files.json",
+    "bytes": 3351
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/artifact-hygiene.json",
+    "bytes": 2163
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/base_commit.txt",
+    "bytes": 9
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/coding_agent_review_loop_traces.jsonl",
+    "bytes": 5116
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/command_statuses.json",
+    "bytes": 8197
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/demo-incident.out.txt",
+    "bytes": 1769
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/demo-report.out.txt",
+    "bytes": 552
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/editable-install.out.txt",
+    "bytes": 2497
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/focused-tests.out.txt",
+    "bytes": 752
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/git-diff-check.out.txt",
+    "bytes": 2
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/github-release.json",
+    "bytes": 152
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/glama-api.out.txt",
+    "bytes": 957
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/guard_events.json",
+    "bytes": 4252
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/import-binding.out.txt",
+    "bytes": 43
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/installed-demo.out.txt",
+    "bytes": 1640
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/installed-doctor.out.txt",
+    "bytes": 1290
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/installed_demo_trace.jsonl",
+    "bytes": 12347
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/installed_doctor_trace.jsonl",
+    "bytes": 1201
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/mcp-registry-search.json",
+    "bytes": 1035
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/npm-mcp-version.out.txt",
+    "bytes": 7
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/open-issues.json",
+    "bytes": 4715
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/open-prs.json",
+    "bytes": 14219
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/pypi-agentguard47.out.txt",
+    "bytes": 973
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/release-guard.out.txt",
+    "bytes": 23
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/repo-demo.out.txt",
+    "bytes": 1615
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/repo-doctor.out.txt",
+    "bytes": 1280
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/repo_demo_trace.jsonl",
+    "bytes": 12353
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/repo_doctor_trace.jsonl",
+    "bytes": 1202
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/review-loop-incident.out.txt",
+    "bytes": 1450
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/review-loop.out.txt",
+    "bytes": 723
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/review-threads.json",
+    "bytes": 14535
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/staleness.out.txt",
+    "bytes": 26
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/summary.md",
+    "bytes": 3960
+  },
+  {
+    "path": "proof/dogfood/2026-05-29/run19/trace-inspection.json",
+    "bytes": 6727
+  }
+]
