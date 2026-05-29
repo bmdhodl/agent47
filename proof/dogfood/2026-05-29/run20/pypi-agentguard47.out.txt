@@ -1,0 +1,3 @@
+1.2.10
+agentguard47
+Zero-dependency runtime control for production Python agents - stop loops, retry storms, and budget burn
