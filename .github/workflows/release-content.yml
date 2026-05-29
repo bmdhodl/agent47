@@ -4,6 +4,12 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to announce
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -15,15 +21,19 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event.inputs.tag || github.event.release.tag_name }}
           fetch-depth: 0  # full history for changelog
 
       - name: Get release info
         id: release
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.event.release.tag_name }}
         run: |
           TAG="$RELEASE_TAG"
+          if [ -z "$TAG" ]; then
+            echo "Release tag missing" >&2
+            exit 1
+          fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
           # Find previous tag.

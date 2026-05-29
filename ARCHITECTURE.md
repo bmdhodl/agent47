@@ -97,6 +97,11 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
    - release-facing docs: regenerated [`sdk/PYPI_README.md`](sdk/PYPI_README.md) and sync tests
 6. If the change evolves the architecture, update this file in the same PR.
 
+Release tooling follows the same ordering rule: publish package artifacts first,
+then create or verify the public GitHub Release, then run announcement
+automation. Announcement jobs must be explicitly dispatchable because release
+events created by the workflow token are not a reliable trigger source.
+
 ## 8. Known Technical Debt
 
 - Architecture knowledge is still split between this root doc and [`ops/02-ARCHITECTURE.md`](ops/02-ARCHITECTURE.md). They can drift if only one gets updated; treat this root doc as the law.

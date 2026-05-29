@@ -15,7 +15,7 @@ jobs:
     env:
       PYTHONPATH: sdk
     permissions:
-      contents: write
+      contents: read
       id-token: write
       attestations: write
     steps:
@@ -69,12 +69,32 @@ jobs:
           packages-dir: sdk/dist/
           attestations: true
 
+  github-release:
+    runs-on: ubuntu-latest
+    needs: publish
+    env:
+      GH_REPO: ${{ github.repository }}
+    permissions:
+      contents: write
+      actions: write
+    steps:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
-          gh release create "$TAG" \
-            --title "$TAG" \
-            --generate-notes \
-            --verify-tag
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $TAG already exists"
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --generate-notes \
+              --verify-tag
+          fi
+
+      - name: Trigger release announcements
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          gh workflow run release-content.yml -f tag="$TAG"

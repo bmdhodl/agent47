@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Release Operations
+- Made post-PyPI GitHub Release creation a separate idempotent job and
+  dispatch release announcements explicitly, so the release-content workflow no
+  longer depends on `GITHUB_TOKEN` release events.
+
 ## 1.2.11
 
 ### Reliability
