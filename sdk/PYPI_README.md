@@ -582,6 +582,8 @@ MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.11/LICENSE).
   release queue issue with SDK, npm MCP, and Glama indexing status.
 - Added tag/version validation to the PyPI publish workflow and creates the
   GitHub Release only after PyPI publish succeeds.
+- Changed release announcement automation to run from a published GitHub Release
+  instead of a raw tag push, so failed PyPI publishes cannot announce as shipped.
 - Refreshed the MCP server lockfile so `npm audit` no longer reports the
   transitive `fast-uri` or `qs` advisories.
 

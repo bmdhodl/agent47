@@ -1,12 +1,13 @@
 # Releasing
 
-AgentGuard SDK releases are tag-triggered. Push a `vX.Y.Z` tag after the
-release-prep PR lands on `main`.
+AgentGuard SDK publishing is tag-triggered. Push a `vX.Y.Z` tag after the
+release-prep PR lands on `main`. Release announcements run only after the
+GitHub Release is published.
 
 | Workflow | What it does |
 | --- | --- |
 | [`publish.yml`](../.github/workflows/publish.yml) | Verifies the tag matches `sdk/pyproject.toml`, runs lint, Bandit, pytest, builds the wheel, publishes `agentguard47` to PyPI, then creates the GitHub Release. |
-| [`release-content.yml`](../.github/workflows/release-content.yml) | Posts optional release announcements. It skips safely when Discussions or dashboard credentials are unavailable. |
+| [`release-content.yml`](../.github/workflows/release-content.yml) | Runs from the `release.published` event and posts optional release announcements. It skips safely when Discussions or dashboard credentials are unavailable. |
 
 ## Cut A Release
 
@@ -40,8 +41,9 @@ release-prep PR lands on `main`.
    git push origin "v$VERSION"
    ```
 
-9. Watch the tag workflows. The GitHub Release is created only after PyPI
-   publish succeeds.
+9. Watch the tag workflow. The GitHub Release is created only after PyPI
+   publish succeeds. Announcement automation runs from that published release,
+   not from the raw tag.
 
 ## Verification
 
