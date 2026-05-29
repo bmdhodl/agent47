@@ -1,0 +1,16 @@
+# command: python examples/coding_agent_review_loop.py
+# cwd: <repo>\proof\dogfood\2026-05-29\run18
+# exit_code: 0
+
+AgentGuard coding-agent review loop proof
+No API keys. No dashboard. No network calls.
+Review attempt 1: 3300 tokens -> $0.0135 (running total $0.0135)
+Review attempt 2: 4100 tokens -> $0.0170 (running total $0.0305)
+BudgetGuard stopped review loop on attempt 3: 4900 tokens -> $0.0205
+Cost budget exceeded: $0.0510 > $0.0450 (this call added $0.0205)
+Retry attempt 1: apply_patch still retrying
+Retry attempt 2: apply_patch still retrying
+Retry attempt 3: apply_patch still retrying
+RetryGuard stopped retry storm on attempt 4: Retry limit exceeded: apply_patch attempted 4 times (limit: 3)
+Trace written to coding_agent_review_loop_traces.jsonl
+Next: agentguard incident coding_agent_review_loop_traces.jsonl

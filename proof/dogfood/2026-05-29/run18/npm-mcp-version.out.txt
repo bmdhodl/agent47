@@ -1,0 +1,5 @@
+# command: npm view @agentguard47/mcp-server version
+# start: 2026-05-29T14:36:52.4352219-05:00
+# exit_code: 0
+
+0.2.2

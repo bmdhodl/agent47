@@ -1,0 +1,24 @@
+# command: python urllib glama api
+# start: 2026-05-29T14:38:48.5459621-05:00
+# exit_code: 1
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import urllib.request; print(urllib.request.urlopen('https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47', timeout=20).read().decode())
+                                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\urllib\request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\urllib\request.py", line 495, in open
+    response = meth(req, response)
+  File "C:\Python313\Lib\urllib\request.py", line 604, in http_response
+    response = self.parent.error(
+        'http', request, response, code, msg, hdrs)
+  File "C:\Python313\Lib\urllib\request.py", line 533, in error
+    return self._call_chain(*args)
+           ~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Python313\Lib\urllib\request.py", line 466, in _call_chain
+    result = func(*args)
+  File "C:\Python313\Lib\urllib\request.py", line 613, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 403: Forbidden

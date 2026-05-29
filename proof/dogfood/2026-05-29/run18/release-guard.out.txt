@@ -1,0 +1,5 @@
+# command: python scripts/sdk_release_guard.py --check-mcp-npm
+# start: 2026-05-29T14:36:41.2927447-05:00
+# exit_code: 0
+
+Release guard passed.

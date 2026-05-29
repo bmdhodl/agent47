@@ -1,0 +1,134 @@
+[
+    {
+        "Name":  "artifact-files.json",
+        "Length":  2502
+    },
+    {
+        "Name":  "base_commit.txt",
+        "Length":  8
+    },
+    {
+        "Name":  "coding_agent_review_loop_traces.jsonl",
+        "Length":  5119
+    },
+    {
+        "Name":  "command_statuses.json",
+        "Length":  6644
+    },
+    {
+        "Name":  "demo-incident.out.txt",
+        "Length":  1995
+    },
+    {
+        "Name":  "demo-report.out.txt",
+        "Length":  758
+    },
+    {
+        "Name":  "editable-install.out.txt",
+        "Length":  2420
+    },
+    {
+        "Name":  "focused-tests.out.txt",
+        "Length":  1037
+    },
+    {
+        "Name":  "git-diff-check.out.txt",
+        "Length":  91
+    },
+    {
+        "Name":  "github-release.json",
+        "Length":  336
+    },
+    {
+        "Name":  "glama-api.err.txt",
+        "Length":  1359
+    },
+    {
+        "Name":  "glama-api.out.txt",
+        "Length":  1274
+    },
+    {
+        "Name":  "guard_events.json",
+        "Length":  4818
+    },
+    {
+        "Name":  "import-binding.out.txt",
+        "Length":  191
+    },
+    {
+        "Name":  "installed-demo.out.txt",
+        "Length":  2073
+    },
+    {
+        "Name":  "installed-doctor.out.txt",
+        "Length":  1621
+    },
+    {
+        "Name":  "installed_demo_trace.jsonl",
+        "Length":  12355
+    },
+    {
+        "Name":  "installed_doctor_trace.jsonl",
+        "Length":  1202
+    },
+    {
+        "Name":  "mcp-registry-search.err.txt",
+        "Length":  1359
+    },
+    {
+        "Name":  "mcp-registry-search.json",
+        "Length":  2593
+    },
+    {
+        "Name":  "npm-mcp-version.out.txt",
+        "Length":  123
+    },
+    {
+        "Name":  "open-issues.json",
+        "Length":  4868
+    },
+    {
+        "Name":  "open-prs.json",
+        "Length":  202365
+    },
+    {
+        "Name":  "pypi-agentguard47.out.txt",
+        "Length":  863
+    },
+    {
+        "Name":  "release-guard.out.txt",
+        "Length":  149
+    },
+    {
+        "Name":  "repo-demo.out.txt",
+        "Length":  2057
+    },
+    {
+        "Name":  "repo-doctor.out.txt",
+        "Length":  1620
+    },
+    {
+        "Name":  "repo_demo_trace.jsonl",
+        "Length":  12355
+    },
+    {
+        "Name":  "repo_doctor_trace.jsonl",
+        "Length":  1202
+    },
+    {
+        "Name":  "review-loop-incident.out.txt",
+        "Length":  1692
+    },
+    {
+        "Name":  "review-loop.out.txt",
+        "Length":  881
+    },
+    {
+        "Name":  "staleness.out.txt",
+        "Length":  215
+    },
+    {
+        "Name":  "trace-inspection.json",
+        "Length":  10525
+    }
+]

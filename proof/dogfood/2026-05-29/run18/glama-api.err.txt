@@ -1,0 +1,10 @@
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Microsoft.PowerShell.ConsoleHostUserInterface.PromptForChoice(String caption, String message, Collection`1 choices, Int32 defaultChoice)
+   at System.Management.Automation.Internal.Host.InternalHostUserInterface.PromptForChoice(String caption, String message, Collection`1 choices, Int32 defaultChoice)
+   at System.Management.Automation.MshCommandRuntime.InquireHelper(String inquireMessage, String inquireCaption, Boolean allowYesToAll, Boolean allowNoToAll, Boolean replaceNoWithHalt, Boolean hasSecurityImpact)
+   at System.Management.Automation.MshCommandRuntime.DoShouldContinue(String query, String caption, Boolean hasSecurityImpact, Boolean supportsToAllOptions, Boolean& yesToAll, Boolean& noToAll)
+   at System.Management.Automation.MshCommandRuntime.ShouldContinue(String query, String caption, Boolean hasSecurityImpact, Boolean& yesToAll, Boolean& noToAll)
+   at System.Management.Automation.Cmdlet.ShouldContinue(String query, String caption, Boolean hasSecurityImpact, Boolean& yesToAll, Boolean& noToAll)
+   at Microsoft.PowerShell.Commands.InvokeWebRequestCommand.ProcessResponse(WebResponse response)
+   at Microsoft.PowerShell.Commands.WebRequestPSCmdlet.ProcessRecord()
+   at System.Management.Automation.CommandProcessor.ProcessRecord()
