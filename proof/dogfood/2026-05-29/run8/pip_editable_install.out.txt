@@ -1,0 +1,40 @@
+Defaulting to user installation because normal site-packages is not writeable
+cmd : WARNING: Ignoring invalid distribution ~gentguard47
+(C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+At line:4 char:115
++ ... Value "`n## $name`n$cmd"; cmd /c $cmd *> "$run/$name.out.txt"; $code= ...
++                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Ignori...\site-packages):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Obtaining file:///<repo>/sdk
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agentguard47
+  Building editable for agentguard47 (pyproject.toml): started
+  Building editable for agentguard47 (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard47: filename=agentguard47-1.2.10-0.editable-py3-none-any.whl size=9937 sha256=79a75bc630741cf8c8504391903f6ae4b55a69d93700e23a022c3398d637a740
+  Stored in directory: C:\Users\patri\AppData\Local\Temp\pip-ephem-wheel-cache-r57jee3c\wheels\55\50\c9\d100b006bf28ea9769d7c70eb167c320bfe99eaf8be0cedbd0
+Successfully built agentguard47
+WARNING: Ignoring invalid distribution ~gentguard47 (C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+Installing collected packages: agentguard47
+  Attempting uninstall: agentguard47
+    Found existing installation: agentguard47 1.2.10
+    Uninstalling agentguard47-1.2.10:
+      Successfully uninstalled agentguard47-1.2.10
+  WARNING: The script agentguard.exe is installed in 'C:\Users\patri\AppData\Roaming\Python\Python313\Scripts' which
+is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+WARNING: Ignoring invalid distribution ~gentguard47 (C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+Successfully installed agentguard47-1.2.10
+WARNING: Ignoring invalid distribution ~gentguard47 (C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+WARNING: Ignoring invalid distribution ~gentguard47 (C:\Users\patri\AppData\Roaming\Python\Python313\site-packages)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip

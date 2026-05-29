@@ -1,0 +1,64 @@
+{
+  "agentguard_demo_traces.jsonl": {
+    "events": 36,
+    "names": [
+      "demo.budget_guard",
+      "demo.loop_guard",
+      "demo.retry_guard",
+      "guard.budget_exceeded",
+      "guard.budget_warning",
+      "guard.loop_detected",
+      "guard.retry_limit_exceeded",
+      "llm.result",
+      "reasoning.step",
+      "tool.error",
+      "tool.retry",
+      "tool.search"
+    ]
+  },
+  "agentguard_demo_traces_repo_local.jsonl": {
+    "events": 36,
+    "names": [
+      "demo.budget_guard",
+      "demo.loop_guard",
+      "demo.retry_guard",
+      "guard.budget_exceeded",
+      "guard.budget_warning",
+      "guard.loop_detected",
+      "guard.retry_limit_exceeded",
+      "llm.result",
+      "reasoning.step",
+      "tool.error",
+      "tool.retry",
+      "tool.search"
+    ]
+  },
+  "agentguard_doctor_trace.jsonl": {
+    "events": 4,
+    "names": [
+      "doctor.verify",
+      "reasoning.step",
+      "tool.check"
+    ]
+  },
+  "agentguard_doctor_trace_repo_local.jsonl": {
+    "events": 4,
+    "names": [
+      "doctor.verify",
+      "reasoning.step",
+      "tool.check"
+    ]
+  },
+  "coding_agent_review_loop_traces.jsonl": {
+    "events": 14,
+    "names": [
+      "coding_agent.review_loop.budget",
+      "coding_agent.review_loop.retry_storm",
+      "guard.budget_exceeded",
+      "guard.retry_limit_exceeded",
+      "review.iteration",
+      "tool.retry",
+      "watermark"
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+# command status
+
+## pip_editable_install
+python -m pip install -e ./sdk
+exit=0
+
+## import_binding
+python -c "import agentguard, pathlib; print(agentguard.__version__); print(pathlib.Path(agentguard.__file__).resolve())"
+exit=0
+
+## installed_doctor
+agentguard doctor --trace-file agentguard_doctor_trace.jsonl
+exit=0
+
+## installed_demo
+agentguard demo --trace-file agentguard_demo_traces.jsonl
+exit=0
+
+## repo_local_doctor
+set PYTHONPATH=./sdk&& python -m agentguard.cli doctor --trace-file agentguard_doctor_trace_repo_local.jsonl
+exit=0
+
+## repo_local_demo
+set PYTHONPATH=./sdk&& python -m agentguard.cli demo --trace-file agentguard_demo_traces_repo_local.jsonl
+exit=0
+
+## coding_agent_review_loop
+set PYTHONPATH=./sdk&& python examples/coding_agent_review_loop.py
+exit=0
+
+## agentguard_report
+set PYTHONPATH=./sdk&& python -m agentguard.cli report agentguard_demo_traces.jsonl
+exit=0
+
+## agentguard_incident
+set PYTHONPATH=./sdk&& python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl
+exit=0
