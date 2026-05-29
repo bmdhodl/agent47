@@ -1,0 +1,1 @@
+artifact hygiene passed: utf-8, no BOM, no NUL, JSON/JSONL parse clean, no local path leaks

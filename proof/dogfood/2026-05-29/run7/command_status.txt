@@ -1,0 +1,43 @@
+pip_install_editable exit=0 command=python -m pip install -e ./sdk
+
+agentguard_help exit=0 command=agentguard --help
+
+doctor_help exit=0 command=agentguard doctor --help
+
+demo_help exit=0 command=agentguard demo --help
+
+doctor_stdout exit=0 command=agentguard doctor --json --trace-file proof/dogfood/2026-05-29/run7/doctor_trace.jsonl
+
+demo_stdout exit=0 command=agentguard demo --trace-file proof/dogfood/2026-05-29/run7/demo_trace.jsonl
+
+import_binding exit=0 command=set PYTHONPATH=./sdk&& python -c "import agentguard; ..."
+
+doctor_repo_local_stdout exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli doctor --json --trace-file proof/dogfood/2026-05-29/run7/doctor_trace_repo_local.jsonl
+
+demo_repo_local_stdout exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli demo --trace-file proof/dogfood/2026-05-29/run7/demo_trace_repo_local.jsonl
+
+review_loop_stdout exit=0 command=set PYTHONPATH=./sdk&& python examples/coding_agent_review_loop.py
+
+demo_report exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli report proof/dogfood/2026-05-29/run7/demo_trace.jsonl
+
+review_loop_report exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli report proof/dogfood/2026-05-29/run7/coding_agent_review_loop_traces.jsonl
+
+review_loop_incident exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli incident proof/dogfood/2026-05-29/run7/coding_agent_review_loop_traces.jsonl
+
+pytest_focused exit=0 command=python -m pytest sdk/tests/test_demo.py sdk/tests/test_doctor.py sdk/tests/test_cli_report.py sdk/tests/test_example_starters.py sdk/tests/test_mcp_registry_metadata.py -q
+
+release_guard exit=0 command=python scripts/sdk_release_guard.py --check-mcp-npm
+
+git_diff_check exit=0 command=git diff --check
+
+github_release exit=0 command=gh release view --json tagName,name,publishedAt,url
+
+npm_mcp_version exit=0 command=npm view @agentguard47/mcp-server version --json
+
+official_mcp_registry exit=0 command=GET https://registry.modelcontextprotocol.io/v0/servers?search=agentguard47
+
+glama exit=0 command=GET https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47
+
+pypi_versions exit=0 command=python -m pip index versions agentguard47
+
+

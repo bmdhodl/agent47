@@ -1,0 +1,5 @@
+pip install editable passed on rerun after initial PowerShell stderr handling artifact.
+focused pytest passed.
+release guard passed.
+git diff --check passed before summary creation.
+artifact hygiene passed after UTF-8/BOM/path normalization.
