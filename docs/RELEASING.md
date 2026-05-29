@@ -2,12 +2,12 @@
 
 AgentGuard SDK publishing is tag-triggered. Push a `vX.Y.Z` tag after the
 release-prep PR lands on `main`. Release announcements run only after the
-GitHub Release is published.
+package publishes and the GitHub Release exists.
 
 | Workflow | What it does |
 | --- | --- |
-| [`publish.yml`](../.github/workflows/publish.yml) | Verifies the tag matches `sdk/pyproject.toml`, runs lint, Bandit, pytest, builds the wheel, publishes `agentguard47` to PyPI, then creates the GitHub Release. |
-| [`release-content.yml`](../.github/workflows/release-content.yml) | Runs from the `release.published` event and posts optional release announcements. It skips safely when Discussions or dashboard credentials are unavailable. |
+| [`publish.yml`](../.github/workflows/publish.yml) | Verifies the tag matches `sdk/pyproject.toml`, runs lint, Bandit, pytest, builds the wheel, publishes `agentguard47` to PyPI, then creates or verifies the GitHub Release in a separate post-publish job. |
+| [`release-content.yml`](../.github/workflows/release-content.yml) | Runs from explicit `workflow_dispatch` after publish, or from a manual `release.published` event, and posts optional release announcements. It skips safely when Discussions or dashboard credentials are unavailable. |
 
 ## Cut A Release
 
@@ -41,9 +41,9 @@ GitHub Release is published.
    git push origin "v$VERSION"
    ```
 
-9. Watch the tag workflow. The GitHub Release is created only after PyPI
-   publish succeeds. Announcement automation runs from that published release,
-   not from the raw tag.
+9. Watch the tag workflow. The GitHub Release job starts only after PyPI
+   publish succeeds. If the post-publish GitHub Release or announcement step
+   fails, rerun that failed job instead of republishing the package.
 
 ## Verification
 
@@ -55,6 +55,9 @@ After the workflows finish:
   `agentguard demo`, `agentguard quickstart --framework raw --write`, the
   generated file, and `agentguard report`.
 - Confirm PyPI files show Trusted Publishing provenance and attestations.
+- Confirm the `Release Content - Auto-generate announcements` workflow ran for
+  the same tag, or skipped only optional destinations because Discussions or
+  dashboard credentials were unavailable.
 
 ## Release Notes
 

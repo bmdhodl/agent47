@@ -132,9 +132,12 @@ The SDK uses deterministic local proof before hosted adoption:
 
 SDK releases are tag-triggered from `main`. The publish workflow validates that
 the pushed `vX.Y.Z` tag matches `sdk/pyproject.toml`, runs the release gates,
-publishes `agentguard47` to PyPI, then creates the GitHub Release. The GitHub
-Release is intentionally last so the public release page does not advertise a
-version that failed to publish.
+publishes `agentguard47` to PyPI, then creates or verifies the GitHub Release in
+a separate post-publish job. That job explicitly dispatches release-content
+automation after the release exists, so announcements do not depend on release
+events emitted by the workflow token. The GitHub Release remains intentionally
+after PyPI publish so the public release page does not advertise a version that
+failed to publish.
 
 These proof surfaces should stay offline by default and must not require the
 hosted dashboard.
