@@ -1,0 +1,12 @@
+agentguard_help exit=0 command=agentguard --help
+doctor_help exit=0 command=agentguard doctor --help
+demo_help exit=0 command=agentguard demo --help
+installed_doctor exit=0 command=agentguard doctor --json
+installed_demo exit=0 command=agentguard demo
+repo_import_binding exit=0 command=set PYTHONPATH=./sdk&& python -c "import agentguard; print(agentguard.__file__); print(getattr(agentguard, '__version__', 'unknown'))"
+repo_doctor exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli doctor --json
+repo_demo exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli demo
+review_loop exit=0 command=set PYTHONPATH=./sdk&& python examples/coding_agent_review_loop.py
+demo_report exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli report agentguard_demo_traces.jsonl
+review_loop_report exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli report coding_agent_review_loop_traces.jsonl
+review_loop_incident exit=0 command=set PYTHONPATH=./sdk&& python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl

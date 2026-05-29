@@ -1,0 +1,3 @@
+pytest_focused exit=0
+release_guard exit=0
+git_diff_check exit=0
