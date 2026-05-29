@@ -1,0 +1,58 @@
+[
+    {
+        "name":  "editable_install",
+        "command":  "python -m pip install -e ./sdk",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:09.7410201-05:00",
+        "completed":  "2026-05-29T05:25:16.8124222-05:00"
+    },
+    {
+        "name":  "installed_agentguard_doctor",
+        "command":  "agentguard doctor --json",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:16.8169205-05:00",
+        "completed":  "2026-05-29T05:25:18.0633381-05:00"
+    },
+    {
+        "name":  "installed_agentguard_demo",
+        "command":  "agentguard demo",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:18.0638397-05:00",
+        "completed":  "2026-05-29T05:25:19.1756647-05:00"
+    },
+    {
+        "name":  "repo_local_doctor",
+        "command":  "python -m agentguard.cli doctor --json",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:19.1761655-05:00",
+        "completed":  "2026-05-29T05:25:20.1976833-05:00"
+    },
+    {
+        "name":  "repo_local_demo",
+        "command":  "python -m agentguard.cli demo",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:20.1976833-05:00",
+        "completed":  "2026-05-29T05:25:21.2174125-05:00"
+    },
+    {
+        "name":  "repo_local_review_loop",
+        "command":  "python examples/coding_agent_review_loop.py",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:21.2179153-05:00",
+        "completed":  "2026-05-29T05:25:22.2373743-05:00"
+    },
+    {
+        "name":  "demo_report",
+        "command":  "python -m agentguard.cli report agentguard_demo_traces.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:22.2373743-05:00",
+        "completed":  "2026-05-29T05:25:23.2589775-05:00"
+    },
+    {
+        "name":  "review_loop_incident",
+        "command":  "python -m agentguard.cli incident coding_agent_review_loop_traces.jsonl",
+        "exit_code":  0,
+        "started":  "2026-05-29T05:25:23.2589775-05:00",
+        "completed":  "2026-05-29T05:25:24.2770472-05:00"
+    }
+]

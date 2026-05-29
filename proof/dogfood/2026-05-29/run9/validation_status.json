@@ -1,0 +1,6 @@
+{
+  "focused_pytest": 0,
+  "release_guard": 0,
+  "git_diff_check": 0,
+  "artifact_hygiene": 0
+}

@@ -1,0 +1,10 @@
+WARNING: Ignoring invalid distribution ~gentguard47 (<local-path>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<local-path>)
+  WARNING: The script agentguard.exe is installed in '<local-path>' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+WARNING: Ignoring invalid distribution ~gentguard47 (<local-path>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<local-path>)
+WARNING: Ignoring invalid distribution ~gentguard47 (<local-path>)
+
+[notice] A new release of pip is available: 24.3.1 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
