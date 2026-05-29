@@ -15,7 +15,7 @@ jobs:
     env:
       PYTHONPATH: sdk
     permissions:
-      contents: read
+      contents: write   # needed for the GitHub Release creation step
       id-token: write
       attestations: write
     steps:
@@ -24,6 +24,18 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           python-version: "3.12"
+
+      # Fail fast: if the pushed tag doesn't match sdk/pyproject.toml, stop
+      # before the slow lint/test/build/publish chain runs. This catches the
+      # "forgot to bump pyproject.toml before tagging" mistake in seconds.
+      - name: Verify tag matches sdk/pyproject.toml version
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          PKG_VERSION="$(python -c 'import tomllib; print(tomllib.load(open("sdk/pyproject.toml","rb"))["project"]["version"])')"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "Tag $TAG_VERSION does not match sdk/pyproject.toml version $PKG_VERSION" >&2
+            exit 1
+          fi
 
       - name: Install build and test tools
         run: python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
@@ -59,3 +71,16 @@ jobs:
         with:
           packages-dir: sdk/dist/
           attestations: true
+
+      # GH Release is created only after PyPI publish succeeds, so the
+      # Releases page can't advertise a version that isn't installable.
+      # Notes are categorized per .github/release.yml.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --generate-notes \
+            --verify-tag

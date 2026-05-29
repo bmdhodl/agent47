@@ -1,5 +1,9 @@
-# Categorization for `gh release create --generate-notes`. PRs are grouped
-# by label first, then by title prefix (when labels are missing).
+# Categorization for `gh release create --generate-notes` (called from the
+# final step of .github/workflows/publish.yml on every v* tag push).
+#
+# Categories are matched by PR label only — there is no title-prefix
+# fallback in GitHub's generator. Labels follow the existing repo scheme
+# (see ISSUE_TEMPLATE/*.yml and `gh label list`).
 #
 # See docs/RELEASING.md for the cut-a-release flow.
 changelog:
@@ -10,24 +14,27 @@ changelog:
   categories:
     - title: "🔒 Security"
       labels:
-        - security
+        - type:security
     - title: "✨ Features"
       labels:
-        - feature
+        - type:feature
         - enhancement
     - title: "🐛 Fixes"
       labels:
+        - type:bug
         - bug
-        - fix
-    - title: "🏗️ Reliability & Infra"
+    - title: "🏗️ Performance & Refactors"
       labels:
-        - infra
-        - reliability
-        - performance
+        - type:perf
+        - type:refactor
+    - title: "🧪 CI & Tests"
+      labels:
+        - type:ci
+        - type:test
     - title: "📝 Docs"
       labels:
+        - type:docs
         - documentation
-        - docs
     - title: "🧹 Other changes"
       labels:
         - "*"
