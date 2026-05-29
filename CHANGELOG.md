@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 1.2.11
+
+### Reliability
+- Hardened `agentguard.__version__` so malformed local package metadata falls
+  back to `0.0.0-dev` instead of crashing source-checkout imports.
+- Fixed the coding-agent review-loop proof to record cumulative guard spend as
+  `total_cost_usd`, preventing local reports from double-counting the stopped
+  budget event.
+
+### Public Docs
+- Corrected the README threat-model copy so AgentGuard is positioned as local
+  runtime hard stops for loops, retries, and budget burn, not as a replacement
+  for egress firewalls or tool-permission layers.
+- Added release runbook documentation for tag-triggered PyPI publish and
+  GitHub Release creation.
+
 ### Profiles
 - Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
   for unattended production agents. Tightens defaults to `loop_max=2`,
@@ -53,6 +69,10 @@
   distribution train from the monthly SDK release train.
 - Added a scheduled release cadence workflow that opens or updates one active
   release queue issue with SDK, npm MCP, and Glama indexing status.
+- Added tag/version validation to the PyPI publish workflow and creates the
+  GitHub Release only after PyPI publish succeeds.
+- Refreshed the MCP server lockfile so `npm audit` no longer reports the
+  transitive `fast-uri` or `qs` advisories.
 
 ## 1.2.10
 

@@ -1,6 +1,6 @@
 # SDK Distribution
 
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-29
 
 ## Core Message
 AgentGuard stops coding agents from looping, retrying forever, and burning

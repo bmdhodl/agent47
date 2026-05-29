@@ -439,6 +439,7 @@ assert result.passed
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md) |
 | Activation metrics design | [`docs/guides/activation-metrics-design.md`](docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](docs/examples/proof-gallery.md) |
+| Releasing | [`docs/RELEASING.md`](docs/RELEASING.md) |
 | Release cadence | [`docs/release/cadence.md`](docs/release/cadence.md) |
 | PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](docs/release/trusted-publishing.md) |
 
@@ -479,9 +480,9 @@ A recurring class of agent attack uses the agent's own write surface as an
 outbound channel. Example pattern from Microsoft Copilot Cowork (May 2026):
 the agent emails the user's own inbox with no approval, the rendered message
 fetches an external image, and the image URL encodes data the attacker wanted
-out. AgentGuard's network and URL policies are designed to catch this class
-at runtime by gating which hosts an agent may reach, regardless of which
-tool initiated the request.
+out. AgentGuard does not replace an egress firewall or tool-permission layer,
+but it gives the agent runtime hard stops for runaway loops, retries, and
+budget burn that can turn one bad tool call into a sustained incident.
 
 Citation: https://simonwillison.net/2026/May/26/copilot-cowork-exfiltrates-files/
 
