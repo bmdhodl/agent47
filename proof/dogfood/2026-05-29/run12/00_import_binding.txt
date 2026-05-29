@@ -1,0 +1,5 @@
+## 00_import_binding
+COMMAND: python -c "import agentguard; print(agentguard.__file__)"
+
+<repo>\sdk\agentguard\__init__.py
+
