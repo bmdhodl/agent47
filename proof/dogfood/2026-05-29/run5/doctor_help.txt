@@ -1,0 +1,14 @@
+usage: agentguard doctor [-h] [--trace-file TRACE_FILE] [--json]
+
+
+
+options:
+
+  -h, --help            show this help message and exit
+
+  --trace-file TRACE_FILE
+
+                        Where to write the doctor verification trace.
+
+  --json                Emit machine-readable JSON for agents and CI.
+

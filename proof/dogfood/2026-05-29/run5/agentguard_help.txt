@@ -1,0 +1,36 @@
+usage: agentguard [-h]
+
+                  {summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack} ...
+
+
+
+positional arguments:
+
+  {summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack}
+
+    summarize           Summarize a JSONL trace file
+
+    report              Human-readable summary for a JSONL trace file
+
+    eval                Run evaluation assertions on a trace
+
+    incident            Render an incident report for a JSONL trace file
+
+    decisions           Extract decision.* events from a JSONL trace file
+
+    demo                Run the offline AgentGuard demo
+
+    doctor              Verify the local AgentGuard SDK setup
+
+    quickstart          Print a starter snippet for a supported stack
+
+    skillpack           Generate repo-local instruction files for coding
+
+                        agents
+
+
+
+options:
+
+  -h, --help            show this help message and exit
+
