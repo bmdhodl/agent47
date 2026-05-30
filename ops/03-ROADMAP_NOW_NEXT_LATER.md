@@ -7,9 +7,10 @@ they directly strengthen coding-agent adoption.
 
 ## Current Focus Notes
 
-- Current SDK release candidate is `v1.2.12` from `main`; public PyPI latest
-  remains `v1.2.10` until Trusted Publishing succeeds. The stale `v1.2.11` tag
-  failed to publish and should not be reused without explicit owner approval.
+- Current SDK release candidate is `v1.2.13` from `main`; public PyPI latest
+  remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
+  tag failed before PyPI publish, and the stale `v1.2.12` tag points at a
+  `1.2.10` checkout. Do not reuse either tag without explicit owner approval.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
   but public registry search still reports MCP package version `0.2.1`; refresh
   metadata without changing SDK runtime code.

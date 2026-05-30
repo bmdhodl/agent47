@@ -1,15 +1,18 @@
 # SDK Blockers
 
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-30
 
 ## Active
-- **PyPI Trusted Publishing is not configured for `agentguard47`.** The
-  `v1.2.11` tag workflow passed release gates, build, and attestation, then
-  failed at PyPI with `invalid-publisher` for
-  `repo:bmdhodl/agent47:environment:pypi`. Configure the PyPI project Trusted
-  Publisher with owner `bmdhodl`, repo `agent47`, workflow filename
-  `publish.yml`, and environment `pypi`, then cut the next release from current
-  `main`.
+- **`v1.2.12` is a stale failed release tag.** The tag was pushed from
+  `8fd0295db19333d882bffed6002e18ea24fadec3`, a checkout whose
+  `sdk/pyproject.toml` still says `1.2.10`. The publish workflow authenticated
+  and reached PyPI, then failed because it tried to upload existing
+  `agentguard47-1.2.10` files. Do not rerun or reuse `v1.2.12`; cut the next
+  patch release from current `main`.
+- **`v1.2.11` is also stale.** The tag workflow passed release gates, build, and
+  attestation, then failed at PyPI with `invalid-publisher` for
+  `repo:bmdhodl/agent47:environment:pypi`. It has no PyPI release and no GitHub
+  Release.
 - **Glama tool catalog is not indexed yet.** Patrick published the first Glama
   release on 2026-05-08 and the listing is live. Glama renders tool and score
   pages, but `https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47` still

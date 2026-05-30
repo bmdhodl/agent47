@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 1.2.12
+## 1.2.13
 
 ### Release Operations
 - Made post-PyPI GitHub Release creation a separate idempotent job and
@@ -10,10 +10,13 @@
   longer depends on `GITHUB_TOKEN` release events.
 - Hardened generated GitHub Release notes and release-content announcements so
   they start from the last published GitHub Release instead of a stale raw tag.
-  This lets `v1.2.12` supersede the failed `v1.2.11` tag without truncating
-  public release notes.
+  This lets `v1.2.13` supersede the failed `v1.2.11` and `v1.2.12` tags without
+  truncating public release notes.
 - Includes the release candidate originally prepared under the failed
   `v1.2.11` tag. That tag did not publish to PyPI and has no GitHub Release.
+- Supersedes the stale `v1.2.12` tag, which was pushed from a checkout still
+  carrying `sdk/pyproject.toml` version `1.2.10`. That tag did not publish a new
+  PyPI version and has no GitHub Release.
 
 ### Reliability
 - Hardened `agentguard.__version__` so malformed local package metadata falls

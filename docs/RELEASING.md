@@ -31,12 +31,13 @@ package publishes and the GitHub Release exists.
    ```
 
 7. Merge the release-prep PR.
-8. Tag the merge commit:
+8. Tag the merge commit. Verify the version from `HEAD` before pushing:
 
    ```bash
    git checkout main
    git pull --ff-only
    VERSION=$(python -c "import tomllib; print(tomllib.load(open('sdk/pyproject.toml','rb'))['project']['version'])")
+   git show HEAD:sdk/pyproject.toml | grep -Fx "version = \"$VERSION\"" || exit 1
    git tag "v$VERSION"
    git push origin "v$VERSION"
    ```

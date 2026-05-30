@@ -17,7 +17,7 @@ enough to create surprise spend.
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.12/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE)
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
@@ -158,7 +158,7 @@ What you should see:
 - `report` shows local trace counts, cost, savings, and guard events.
 
 Notebook version:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.12/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.13/examples/quickstart.ipynb)
 
 ## Copy-Paste Repo Setup
 
@@ -252,12 +252,12 @@ All examples are local-first. No API key is required unless the example says so.
 
 | Example | What it proves |
 |---|---|
-| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.12/examples/try_it_now.py) | budget, loop, and retry stops |
+| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/try_it_now.py) | budget, loop, and retry stops |
 | [`examples/sticky_agent_proof.py`](https://github.com/bmdhodl/agent47/blob/main/examples/sticky_agent_proof.py) | one CrewAI-style retry storm proof with local incident and hosted NDJSON outputs |
-| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.12/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
-| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.12/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
-| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.12/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
-| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.12/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
+| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
+| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
+| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
+| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
 
 Sample incident:
 [`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
@@ -266,7 +266,7 @@ Proof gallery:
 [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md)
 
 Starter files:
-[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.12/examples/starters)
+[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.13/examples/starters)
 
 ## Framework Integrations
 
@@ -308,8 +308,8 @@ layer.
 
 Competitive notes:
 
-- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/competitive/vercel-ai-gateway.md)
-- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/competitive/manifest.md)
+- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/vercel-ai-gateway.md)
+- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md)
 
 ## Decision Traces
@@ -424,7 +424,7 @@ assert result.passed
 - Core runtime dependencies: zero
 - Trace format: JSONL
 - Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
-- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.12/mcp-server)
+- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.13/mcp-server)
 - Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/card.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
@@ -433,15 +433,15 @@ assert result.passed
 
 | Topic | Link |
 |---|---|
-| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/guides/getting-started.md) |
-| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/guides/coding-agents.md) |
-| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/guides/coding-agent-safety-pack.md) |
+| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/getting-started.md) |
+| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/coding-agents.md) |
+| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/coding-agent-safety-pack.md) |
 | Dashboard contract | [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md) |
 | Decision traces | [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md) |
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/managed-agent-sessions.md) |
-| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/guides/activation-metrics-design.md) |
+| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md) |
-| Releasing | [`docs/RELEASING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/docs/RELEASING.md) |
+| Releasing | [`docs/RELEASING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/RELEASING.md) |
 | Release cadence | [`docs/release/cadence.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/cadence.md) |
 | PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/trusted-publishing.md) |
 
@@ -506,14 +506,14 @@ python scripts/sdk_release_guard.py
 
 Useful links:
 
-- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/CONTRIBUTING.md)
-- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.12/GOLDEN_PRINCIPLES.md)
+- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/CONTRIBUTING.md)
+- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/GOLDEN_PRINCIPLES.md)
 
 ## License
 
-MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.12/LICENSE).
+MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE).
 
-## Latest Release Notes (1.2.12)
+## Latest Release Notes (1.2.13)
 
 ### Release Operations
 - Made post-PyPI GitHub Release creation a separate idempotent job and
@@ -521,10 +521,13 @@ MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.12/LICENSE).
   longer depends on `GITHUB_TOKEN` release events.
 - Hardened generated GitHub Release notes and release-content announcements so
   they start from the last published GitHub Release instead of a stale raw tag.
-  This lets `v1.2.12` supersede the failed `v1.2.11` tag without truncating
-  public release notes.
+  This lets `v1.2.13` supersede the failed `v1.2.11` and `v1.2.12` tags without
+  truncating public release notes.
 - Includes the release candidate originally prepared under the failed
   `v1.2.11` tag. That tag did not publish to PyPI and has no GitHub Release.
+- Supersedes the stale `v1.2.12` tag, which was pushed from a checkout still
+  carrying `sdk/pyproject.toml` version `1.2.10`. That tag did not publish a new
+  PyPI version and has no GitHub Release.
 
 ### Reliability
 - Hardened `agentguard.__version__` so malformed local package metadata falls
@@ -598,4 +601,4 @@ MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.12/LICENSE).
 - Refreshed the MCP server lockfile so `npm audit` no longer reports the
   transitive `fast-uri` or `qs` advisories.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.12/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.13/CHANGELOG.md)
