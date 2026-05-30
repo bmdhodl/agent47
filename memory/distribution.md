@@ -1,6 +1,6 @@
 # SDK Distribution
 
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-30
 
 ## Core Message
 AgentGuard stops coding agents from looping, retrying forever, and burning
@@ -12,6 +12,8 @@ budget.
 - teams worried about runaway spend and unsafe automation
 
 ## Channels
+- PyPI `agentguard47`: latest `1.2.13`, with GitHub Release `v1.2.13`
+  published on 2026-05-30
 - npm `@agentguard47/mcp-server`: latest `0.2.2`, modified 2026-05-04; matches
   `mcp-server/package.json` and `mcp-server/server.json`
 - Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; public API

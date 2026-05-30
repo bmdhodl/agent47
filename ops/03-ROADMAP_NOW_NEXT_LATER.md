@@ -3,14 +3,14 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-05-30
 
 ## Current Focus Notes
 
-- Current SDK release candidate is `v1.2.13` from `main`; public PyPI latest
-  remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
-  tag failed before PyPI publish, and the stale `v1.2.12` tag points at a
-  `1.2.10` checkout. Do not reuse either tag without explicit owner approval.
+- Current public SDK release is `v1.2.13`; GitHub Release `v1.2.13` and PyPI
+  `agentguard47==1.2.13` are both public. The stale `v1.2.11` tag failed
+  before PyPI publish, and the stale `v1.2.12` tag points at a `1.2.10`
+  checkout. Do not reuse either tag without explicit owner approval.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
   but public registry search still reports MCP package version `0.2.1`; refresh
   metadata without changing SDK runtime code.
