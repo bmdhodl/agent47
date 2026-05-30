@@ -4,7 +4,7 @@ import os
 import sys
 from typing import Optional, TextIO
 
-from agentguard.first_run import local_proof_commands
+from agentguard.first_run import STAR_CALL_TO_ACTION, local_proof_commands
 from agentguard.guards import (
     BudgetExceeded,
     BudgetGuard,
@@ -82,6 +82,8 @@ def run_offline_demo(
     )
     _render_module_fallback(fallback_commands, out)
     _print(out, "SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.")
+    _print(out, "")
+    _print(out, STAR_CALL_TO_ACTION)
     return 0
 
 

@@ -1,18 +1,13 @@
 # SDK Blockers
 
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-05-30 (release unblocked; `1.2.13` shipped)
 
 ## Active
-- **`v1.2.12` is a stale failed release tag.** The tag was pushed from
-  `8fd0295db19333d882bffed6002e18ea24fadec3`, a checkout whose
-  `sdk/pyproject.toml` still says `1.2.10`. The publish workflow authenticated
-  and reached PyPI, then failed because it tried to upload existing
-  `agentguard47-1.2.10` files. Do not rerun or reuse `v1.2.12`; cut the next
-  patch release from current `main`.
-- **`v1.2.11` is also stale.** The tag workflow passed release gates, build, and
-  attestation, then failed at PyPI with `invalid-publisher` for
-  `repo:bmdhodl/agent47:environment:pypi`. It has no PyPI release and no GitHub
-  Release.
+- **Stale dead tags `v1.2.11` and `v1.2.12` still exist on the remote.** Neither
+  has a PyPI or GitHub Release (`v1.2.11` failed PyPI with `invalid-publisher`;
+  `v1.2.12` pointed at a `1.2.10` checkout). `v1.2.13` shipped cleanly on
+  2026-05-30, so the release itself is no longer blocked. Do not rerun or reuse
+  the two dead tags. Deleting them from the remote needs explicit owner approval.
 - **Glama tool catalog is not indexed yet.** Patrick published the first Glama
   release on 2026-05-08 and the listing is live. Glama renders tool and score
   pages, but `https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47` still
