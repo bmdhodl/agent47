@@ -3,6 +3,18 @@
 
 ---
 
+## 2026-05-29 | Codex
+
+### What shipped
+- Merged PR `#548` to prepare SDK release candidate `v1.2.12`, update release docs/metadata, and harden release notes so failed raw tags do not truncate public GitHub Release notes.
+
+### Decisions made
+- Treat `v1.2.11` as a stale failed tag with no PyPI publish and no GitHub Release.
+- Track `v1.2.12` as a release candidate until PyPI Trusted Publishing succeeds.
+
+### Blockers
+- PyPI Trusted Publishing must be configured for `agentguard47` with owner `bmdhodl`, repo `agent47`, workflow `publish.yml`, and environment `pypi` before tagging `v1.2.12`.
+
 ## 2026-05-02 | Codex
 
 ### What shipped
@@ -220,15 +232,3 @@
 
 ### Blockers
 - None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.
-
-## 2026-05-29 | Codex
-
-### What shipped
-- Merged PR `#548` to prepare SDK release candidate `v1.2.12`, update release docs/metadata, and harden release notes so failed raw tags do not truncate public GitHub Release notes.
-
-### Decisions made
-- Treat `v1.2.11` as a stale failed tag with no PyPI publish and no GitHub Release.
-- Track `v1.2.12` as a release candidate until PyPI Trusted Publishing succeeds.
-
-### Blockers
-- PyPI Trusted Publishing must be configured for `agentguard47` with owner `bmdhodl`, repo `agent47`, workflow `publish.yml`, and environment `pypi` before tagging `v1.2.12`.
