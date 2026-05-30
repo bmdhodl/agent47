@@ -3,6 +3,20 @@
 
 ---
 
+## 2026-05-30 | Codex
+
+### What shipped
+- Merged PR `#550` and published `agentguard47==1.2.13` to PyPI.
+- GitHub Release `v1.2.13` and release-content workflow completed successfully.
+- Added release proof under `proof/release-v1.2.13/` and verified a clean PyPI install through `doctor`, `demo`, `quickstart --write`, generated quickstart run, and `report`.
+
+### Decisions made
+- Treat `v1.2.11` and `v1.2.12` as stale failed release tags; do not rerun or reuse them without explicit owner approval.
+- Tag future releases only after proving the tag target's `sdk/pyproject.toml` version matches the tag.
+
+### Blockers
+- None.
+
 ## 2026-05-29 | Codex
 
 ### What shipped
