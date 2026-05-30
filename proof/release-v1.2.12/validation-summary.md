@@ -46,7 +46,7 @@ agentguard report agentguard_demo_traces.jsonl
 - Direct `make check` equivalents: CI tools guard passed, Makefile lint target passed, full SDK test passed, MCP test passed.
 - Structural tests: 9 passed.
 - Security scan: passed.
-- Full SDK suite: 772 passed, coverage 92.84%.
+- Full SDK suite: 772 passed, coverage 92.82% after the release-candidate wording review fix.
 - TypeScript MCP server: `npm ci`, 10 tests, and `tsc` build passed.
 - Python local-budget MCP: ruff passed, 15 tests passed.
 - Clean venv wheel smoke:

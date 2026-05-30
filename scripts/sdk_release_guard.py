@@ -21,11 +21,12 @@ MCP_PACKAGE_PATH = Path("mcp-server/package.json")
 MCP_SERVER_JSON_PATH = Path("mcp-server/server.json")
 MCP_RUNTIME_INDEX_PATH = Path("mcp-server/src/index.ts")
 RELEASE_MARKERS = (
-    ("AGENTS.md", r"latest shipped release: v(?P<version>\d+\.\d+\.\d+)"),
-    ("AGENTS.md", r"latest shipped release is (?P<version>\d+\.\d+\.\d+)"),
-    ("CLAUDE.md", r"latest shipped release: v(?P<version>\d+\.\d+\.\d+)"),
-    ("CLAUDE.md", r"latest shipped release is (?P<version>\d+\.\d+\.\d+)"),
-    (".claude/agents/sdk-dev.md", r"Latest shipped SDK release: `v(?P<version>\d+\.\d+\.\d+)`"),
+    ("AGENTS.md", r"release candidate: v(?P<version>\d+\.\d+\.\d+)"),
+    ("AGENTS.md", r"current SDK release candidate is (?P<version>\d+\.\d+\.\d+)"),
+    ("AGENTS.md", r"current release candidate is (?P<version>\d+\.\d+\.\d+)"),
+    ("CLAUDE.md", r"Current release candidate: v(?P<version>\d+\.\d+\.\d+)"),
+    ("CLAUDE.md", r"release candidate is (?P<version>\d+\.\d+\.\d+)"),
+    (".claude/agents/sdk-dev.md", r"Current SDK release candidate: `v(?P<version>\d+\.\d+\.\d+)`"),
 )
 
 
