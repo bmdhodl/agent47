@@ -45,6 +45,12 @@ package publishes and the GitHub Release exists.
    publish succeeds. If the post-publish GitHub Release or announcement step
    fails, rerun that failed job instead of republishing the package.
 
+If a tag exists but PyPI publish failed before a GitHub Release was created,
+prefer cutting the next patch version from current `main`. Do not force-move or
+delete a public release tag unless the repo owner explicitly approves it. The
+release workflow generates notes from the last published GitHub Release, not
+the last raw git tag, so a stale failed tag will not truncate public notes.
+
 ## Verification
 
 After the workflows finish:

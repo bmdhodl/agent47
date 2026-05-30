@@ -7,8 +7,9 @@ they directly strengthen coding-agent adoption.
 
 ## Current Focus Notes
 
-- Latest shipped SDK release is `v1.2.11`; current work is post-release
-  hardening and activation, not a new feature push.
+- Current SDK release candidate is `v1.2.12` from `main`; public PyPI latest
+  remains `v1.2.10` until Trusted Publishing succeeds. The stale `v1.2.11` tag
+  failed to publish and should not be reused without explicit owner approval.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
   but public registry search still reports MCP package version `0.2.1`; refresh
   metadata without changing SDK runtime code.

@@ -100,7 +100,9 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
 Release tooling follows the same ordering rule: publish package artifacts first,
 then create or verify the public GitHub Release, then run announcement
 automation. Announcement jobs must be explicitly dispatchable because release
-events created by the workflow token are not a reliable trigger source.
+events created by the workflow token are not a reliable trigger source. Release
+notes and announcements must start from the last published GitHub Release, not
+the last raw git tag, because a tag can exist for a failed package publish.
 
 ## 8. Known Technical Debt
 
