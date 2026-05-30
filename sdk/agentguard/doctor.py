@@ -8,7 +8,7 @@ import sys
 from typing import Any, Dict, List, Optional, TextIO, Tuple
 
 from agentguard.evaluation import _load_events
-from agentguard.first_run import local_proof_commands
+from agentguard.first_run import STAR_CALL_TO_ACTION, local_proof_commands
 from agentguard.repo_config import load_repo_config_safely
 from agentguard.setup import get_tracer, init, shutdown
 
@@ -255,6 +255,9 @@ def _render_text(result: Dict[str, Any], out: TextIO) -> None:
         _print(out, "Integration hints:")
         for hint in hints:
             _print(out, f"  - {hint}")
+
+    _print(out, "")
+    _print(out, STAR_CALL_TO_ACTION)
 
 
 def _print(stream: TextIO, line: str) -> None:

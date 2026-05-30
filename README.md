@@ -19,6 +19,8 @@ enough to create surprise spend.
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
+> **⭐ Star this repo** if AgentGuard stops one runaway run for you. It is how other builders find it.
+
 ## Install
 
 ### As a Python package

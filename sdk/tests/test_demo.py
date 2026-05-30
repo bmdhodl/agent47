@@ -32,6 +32,7 @@ class TestOfflineDemo(unittest.TestCase):
             self.assertIn(f"python -m agentguard.cli incident {trace_path}", output)
             self.assertIn("python -m agentguard.cli quickstart --framework raw --write", output)
             self.assertIn("SDK gives you local enforcement. The dashboard adds alerts", output)
+            self.assertIn("star it so others find it: https://github.com/bmdhodl/agent47", output)
             self.assertTrue(os.path.exists(trace_path))
 
             with open(trace_path, encoding="utf-8") as handle:

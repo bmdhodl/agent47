@@ -35,6 +35,17 @@ class TestDoctor(unittest.TestCase):
             self.assertIn("python -m agentguard.cli quickstart --framework raw --write", output)
             self.assertIn("python -m agentguard.cli report .agentguard/traces.jsonl", output)
             self.assertIn(f"python -m agentguard.cli report {trace_path}", output)
+            self.assertIn("star it so others find it: https://github.com/bmdhodl/agent47", output)
+
+    def test_run_doctor_json_output_does_not_include_star_cta(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            trace_path = os.path.join(tmpdir, "doctor.jsonl")
+            buf = io.StringIO()
+
+            result = run_doctor(trace_path=trace_path, stream=buf, json_output=True)
+
+            self.assertEqual(result, 0)
+            self.assertNotIn("star it so others find it", buf.getvalue())
 
     def test_run_doctor_json_output_is_parseable(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
