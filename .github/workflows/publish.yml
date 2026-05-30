@@ -86,10 +86,19 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "GitHub Release $TAG already exists"
           else
-            gh release create "$TAG" \
-              --title "$TAG" \
-              --generate-notes \
-              --verify-tag
+            PREV_RELEASE_TAG="$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[].tagName' | awk -v current="$TAG" '$0 != current { print; exit }')"
+            if [ -n "$PREV_RELEASE_TAG" ]; then
+              gh release create "$TAG" \
+                --title "$TAG" \
+                --generate-notes \
+                --notes-start-tag "$PREV_RELEASE_TAG" \
+                --verify-tag
+            else
+              gh release create "$TAG" \
+                --title "$TAG" \
+                --generate-notes \
+                --verify-tag
+            fi
           fi
 
       - name: Trigger release announcements

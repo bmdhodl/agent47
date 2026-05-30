@@ -8,8 +8,9 @@
 - SDK stays free, MIT, and local-first.
 
 ## Public Artifacts
-- PyPI package: `agentguard47`
-- Latest shipped SDK release: `1.2.11`
+- PyPI package: `agentguard47` (public latest remains `1.2.10` until the next
+  Trusted Publishing run succeeds)
+- Current release candidate: `1.2.12`
 - npm MCP package: `@agentguard47/mcp-server@0.2.2` is published.
 - Local budget MCP package: `agentguard-mcp` exists in this repo but is not
   published to npm or PyPI; dogfood installs it from the checkout.
@@ -26,6 +27,6 @@
 - hosted dashboard remains private and separate
 
 ## Current Focus
-- post-release hardening for `1.2.11`
+- release candidate `1.2.12` from current `main`
 - distribution before new features
 - coding-agent onboarding and proof

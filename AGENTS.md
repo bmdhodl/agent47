@@ -37,7 +37,7 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (latest shipped release: v1.2.11)
+- **Package:** `agentguard47` on PyPI (release status tracked in `memory/state.md`; release candidate: v1.2.12)
 - **Landing page:** site/index.html (Vercel)
 
 ## Agent Contract (MANDATORY)
@@ -197,8 +197,8 @@ Read .Codex/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** latest shipped SDK release is v1.2.11. Read `memory/` for the
-current SDK state, blockers, decisions, and distribution priorities.
+**Current:** current SDK release candidate is 1.2.12. Read `memory/` for the
+public package state, blockers, decisions, and distribution priorities.
 
 ## Agent Navigation Guide
 
@@ -242,7 +242,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** latest shipped release is 1.2.11. Check `sdk/pyproject.toml` for the branch version under preparation.
+- **Version:** current release candidate is 1.2.12. Check `sdk/pyproject.toml` for the branch version under preparation.
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)

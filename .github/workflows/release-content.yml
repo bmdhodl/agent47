@@ -18,6 +18,8 @@ permissions:
 jobs:
   announce:
     runs-on: ubuntu-latest
+    env:
+      GH_REPO: ${{ github.repository }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
@@ -27,6 +29,7 @@ jobs:
       - name: Get release info
         id: release
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.event.inputs.tag || github.event.release.tag_name }}
         run: |
           TAG="$RELEASE_TAG"
@@ -36,8 +39,8 @@ jobs:
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-          # Find previous tag.
-          PREV_TAG=$(git tag --sort=-creatordate | awk -v current="$TAG" '$0 != current { print; exit }')
+          # Find previous published release, not merely the previous raw git tag.
+          PREV_TAG="$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[].tagName' | awk -v current="$TAG" '$0 != current { print; exit }')"
           if [ -z "$PREV_TAG" ]; then
             PREV_TAG=$(git rev-list --max-parents=0 HEAD)
           fi

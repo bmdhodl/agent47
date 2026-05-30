@@ -56,6 +56,9 @@ def test_release_content_waits_for_published_github_release() -> None:
     )
     assert all(not line.startswith("  push:") for line in lines)
     assert "github.event.inputs.tag || github.event.release.tag_name" in text
+    assert 'gh release list --exclude-drafts --exclude-pre-releases --json tagName' in text
+    assert 'PREV_TAG="$(gh release list' in text
+    assert 'git tag --sort=-creatordate' not in text
 
 
 def test_publish_workflow_release_steps_are_post_publish_rerunnable() -> None:
@@ -90,5 +93,7 @@ def test_publish_workflow_release_steps_are_post_publish_rerunnable() -> None:
     assert "Create GitHub Release" not in publish_job
     assert 'gh release view "$TAG"' in release_job
     assert 'gh release create "$TAG"' in release_job
+    assert "--notes-start-tag" in release_job
+    assert 'PREV_RELEASE_TAG="$(gh release list' in release_job
     assert "gh workflow run release-content.yml" in release_job
     assert '-f tag="$TAG"' in release_job

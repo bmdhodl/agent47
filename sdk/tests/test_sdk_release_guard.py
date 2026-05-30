@@ -46,17 +46,18 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             files = {
                 "AGENTS.md": textwrap.dedent(
                     """
-                    latest shipped release: v0.0.1
-                    latest shipped release is 0.0.1
+                    release candidate: v0.0.1
+                    current SDK release candidate is 0.0.1
+                    current release candidate is 0.0.1
                     """
                 ),
                 "CLAUDE.md": textwrap.dedent(
                     """
-                    latest shipped release: v0.0.1
-                    latest shipped release is 0.0.1
+                    Current release candidate: v0.0.1
+                    release candidate is 0.0.1
                     """
                 ),
-                ".claude/agents/sdk-dev.md": "Latest shipped SDK release: `v0.0.1`\n",
+                ".claude/agents/sdk-dev.md": "Current SDK release candidate: `v0.0.1`\n",
             }
             for relative_path, content in files.items():
                 path = repo_root / relative_path
