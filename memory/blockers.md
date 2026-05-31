@@ -10,20 +10,20 @@
 - **Glama related servers need manual submission.** `glama.json` only claims
   maintainers. Related servers are added through the Glama UI; use the
   candidates in `docs/launch/distribution-execution.md`.
-- **Official MCP Registry metadata is stale (manual publish gated).** npm serves
-  `@agentguard47/mcp-server@0.2.2` and `mcp-server/server.json` +
-  `mcp-server/package.json` are already at `0.2.2`, but the registry still
-  reports `0.2.1` (verified 2026-05-30). The only step left is the credentialed
-  publish, which needs the `mcp-publisher` CLI and a GitHub maintainer login
-  (not scriptable in CI). Run from `mcp-server/`: `npm publish` (already done
-  for 0.2.2), then `mcp-publisher login github` and `mcp-publisher publish`.
-- **`awesome-mcp-servers` PR #4012 is CLOSED, not open.** The earlier
-  AI-tagged PR (`punkpeye/awesome-mcp-servers#4012`, title "...🤖🤖🤖") was
-  closed on 2026-04-04, not merged. Re-listing requires a fresh, guideline-clean
-  PR with the Glama URL `https://glama.ai/mcp/servers/bmdhodl/agent47`. Submit
-  manually; do not auto-open low-effort PRs against this third-party list.
+- **`awesome-mcp-servers` re-list PR is open upstream and out of our hands.**
+  Fresh PR `punkpeye/awesome-mcp-servers#7164` (opened 2026-05-31) adds the
+  Monitoring entry *with* the Glama score badge that got the old #4012 closed.
+  Merge is the upstream maintainers' call. The maintainer bot also wants the
+  Glama listing to pass checks, which depends on the Glama tool-indexing item
+  above, so watch #7164 for a nudge.
 
 ## Recently Resolved
+- **MCP Registry now serves `0.2.2`** (`isLatest: true`, published
+  2026-05-31T00:08 via the new OIDC `publish-mcp-registry.yml` workflow). The
+  manual `mcp-publisher login github` device flow is no longer needed; run
+  `gh workflow run publish-mcp-registry.yml` after each npm publish. The
+  registry now caps `server.json` descriptions at 100 chars (the first publish
+  422'd on a 103-char description; trimmed to 86).
 - **`1.2.13` shipped** to PyPI on 2026-05-30 with a matching GitHub Release
   marked Latest. The release path is no longer blocked.
 - **Dead tags `v1.2.11` and `v1.2.12` deleted** from the remote and local on
