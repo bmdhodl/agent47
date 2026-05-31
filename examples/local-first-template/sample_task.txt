@@ -1,0 +1,7 @@
+Local-first agents run their model on hardware you own.
+
+No API key, no per-token bill, no data leaving the machine. The trade-off is
+that nothing external stops a runaway loop -- so the budget cap, rate limit,
+and tool allowlist have to live in your own code. That is what AgentGuard
+provides here: a token/call budget, a sliding-window rate limit, a tool
+allowlist, and a JSONL audit log of every decision the loop made.
