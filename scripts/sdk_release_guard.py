@@ -110,7 +110,10 @@ def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
     if not ref:
         return None
     if ref.startswith(RELEASE_TAG_PREFIX):
-        return ref.removeprefix(RELEASE_TAG_PREFIX)
+        tag = ref.removeprefix(RELEASE_TAG_PREFIX)
+        if re.fullmatch(r"v\d+\.\d+\.\d+", tag):
+            return tag
+        return None
     if re.fullmatch(r"v\d+\.\d+\.\d+", ref):
         return ref
     return None
