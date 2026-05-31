@@ -15,17 +15,18 @@ budget.
 - npm `@agentguard47/mcp-server`: latest `0.2.2`, modified 2026-05-04; matches
   `mcp-server/package.json` and `mcp-server/server.json`
 - Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; public API
-  still reports `0.2.1` (statusChangedAt 2026-04-02). Republish requires
-  `mcp-publisher` CLI with maintainer credentials and is NOT scripted in this
-  repo; see `docs/release/mcp-publishing.md`
+  serves `0.2.2` (`isLatest: true`, published 2026-05-31). Republish is now
+  scripted via the OIDC `publish-mcp-registry.yml` workflow
+  (`gh workflow run publish-mcp-registry.yml`); no manual `mcp-publisher` login
 - Glama: live at `https://glama.ai/mcp/servers/bmdhodl/agent47` (id
   `y6zuc6wgtu`). Environment schema present; public API `tools: []` still
   empty, so the seven expected tools (`query_traces`, `get_trace`,
   `get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`,
   `check_budget`) are not yet indexed. Requires manual Glama UI action; no
   repo automation
-- `awesome-mcp-servers`: next distribution step after Glama listing/tool
-  indexing is acceptable for badge/commenting
+- `awesome-mcp-servers`: re-list PR `punkpeye/awesome-mcp-servers#7164` is open
+  (2026-05-31) with the Glama score badge the closed #4012 lacked; merge is the
+  upstream maintainers' call and may hinge on Glama tool indexing
 - Show HN
 - LangChain / GitHub community posts
 
