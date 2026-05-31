@@ -1,0 +1,36 @@
+name: Publish MCP Registry
+
+# Manual, OIDC-authenticated publish of mcp-server/server.json to the official
+# MCP Registry. Replaces the manual `mcp-publisher login github` device flow:
+# GitHub Actions OIDC authorizes the `io.github.bmdhodl/*` namespace because the
+# workflow runs in a repository owned by `bmdhodl`. Run after the matching npm
+# package version is already published, since the registry validates the live
+# npm tarball.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/v1.7.9/mcp-publisher_linux_amd64.tar.gz" \
+            | tar -xz mcp-publisher
+          ./mcp-publisher --version
+
+      - name: Authenticate via GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server.json
+        working-directory: mcp-server
+        run: ../mcp-publisher publish

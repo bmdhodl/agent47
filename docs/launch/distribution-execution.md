@@ -24,14 +24,19 @@ Package and metadata are prepared in this repo:
 - registry name: `io.github.bmdhodl/agentguard47`
 - metadata file: [`mcp-server/server.json`](../../mcp-server/server.json)
 
-Manual steps:
+Registry publish is automated. After the npm package is published, the registry
+publish runs through GitHub Actions OIDC (no manual `mcp-publisher login github`
+device flow):
 
 ```bash
 cd mcp-server
-npm publish
-mcp-publisher login github
-mcp-publisher publish
+npm publish                                   # only when package.json changes
+gh workflow run publish-mcp-registry.yml      # OIDC-authenticated registry publish
 ```
+
+The [`publish-mcp-registry.yml`](../../.github/workflows/publish-mcp-registry.yml)
+workflow authorizes the `io.github.bmdhodl/*` namespace via OIDC because it runs
+in a `bmdhodl`-owned repo, then publishes `mcp-server/server.json`.
 
 Important:
 - publish the npm package first whenever `package.json` metadata changes

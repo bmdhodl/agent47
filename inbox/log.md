@@ -3,6 +3,20 @@
 
 ---
 
+## 2026-05-30 | Claude
+
+### What shipped
+- Merged PR `#553`: added a shared `STAR_CALL_TO_ACTION` to `doctor`/`demo` output and the README/PyPI README to convert silent installs into GitHub stars (downloads in the thousands vs 3 stars).
+- Refreshed `memory/state.md` and `memory/blockers.md` now that `1.2.13` is live on PyPI; deleted the stale dead tags `v1.2.11`/`v1.2.12` from the remote (SHAs recorded for recovery).
+- Proof under `proof/star-cta-activation/`; ruff clean, 773 tests pass, PyPI README in sync, release guard passes.
+
+### Decisions made
+- Star CTA lives only in human-readable CLI output; `doctor --json` deliberately omits it (test-enforced).
+- MCP Registry metadata is staged at `0.2.2`; the remaining publish is the credentialed `mcp-publisher` step, not a code change.
+
+### Blockers
+- Glama still returns `tools: []` (UI-gated); `awesome-mcp-servers#4012` was closed and needs a fresh guideline-clean PR.
+
 ## 2026-05-30 | Codex
 
 ### What shipped
