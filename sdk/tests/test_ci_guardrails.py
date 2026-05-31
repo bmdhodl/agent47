@@ -71,6 +71,19 @@ def test_publish_workflow_release_steps_are_post_publish_rerunnable() -> None:
     assert _contains_ordered_lines(
         lines,
         [
+            "      - name: Verify tag matches sdk/pyproject.toml version",
+            "        run: |",
+            '          TAG_VERSION="${GITHUB_REF#refs/tags/v}"',
+            '          PKG_VERSION="$(python -c \'import tomllib; print(tomllib.load(open("sdk/pyproject.toml","rb"))["project"]["version"])\')"',
+            '          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then',
+            '            echo "Tag $TAG_VERSION does not match sdk/pyproject.toml version $PKG_VERSION" >&2',
+            "            exit 1",
+            "          fi",
+        ],
+    )
+    assert _contains_ordered_lines(
+        lines,
+        [
             "  github-release:",
             "    runs-on: ubuntu-latest",
             "    needs: publish",
