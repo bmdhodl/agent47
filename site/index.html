@@ -3,538 +3,1142 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AgentGuard — Runtime Firewall for AI Agents</title>
-    <meta name="description" content="Your AI agent just burned $2,000 in tokens overnight. AgentGuard stops it at $5. Runtime firewall with loop detection, budget enforcement, and kill signals." />
+    <title>AgentGuard47 | Runtime Guardrails for Coding Agents</title>
+    <meta
+      name="description"
+      content="Local-first Python runtime guardrails that stop coding agents from looping, retrying forever, timing out, or burning through budget."
+    />
     <link rel="canonical" href="https://agentguard47.com/" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://agentguard47.com/" />
-    <meta property="og:title" content="AgentGuard — Runtime Firewall for AI Agents" />
-    <meta property="og:description" content="Your AI agent just burned $2,000 in tokens overnight. AgentGuard stops it at $5. Loop detection, budget caps, kill signals." />
-    <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+    <meta property="og:title" content="AgentGuard47 | Runtime Guardrails for Coding Agents" />
+    <meta
+      property="og:description"
+      content="Install the free SDK, run local proof in 60 seconds, and add hosted control only when a team needs retained incidents, alerts, and remote kill."
+    />
+    <meta property="og:site_name" content="AgentGuard47" />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AgentGuard — Runtime Firewall for AI Agents" />
-    <meta name="twitter:description" content="Your AI agent just burned $2,000 in tokens overnight. AgentGuard stops it at $5. Loop detection, budget caps, kill signals." />
-    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
+    <meta name="twitter:title" content="AgentGuard47 | Runtime Guardrails for Coding Agents" />
+    <meta
+      name="twitter:description"
+      content="Stop runaway coding agents before they spend. No account, API key, or dashboard required for the first proof."
+    />
 
-    <script defer src="/_vercel/insights/script.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "AgentGuard47",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
+      "description": "Local-first Python runtime guardrails for coding agents. Enforce budgets, stop repeated tool loops, cap retries, and write local trace reports before adding hosted incident control.",
+      "url": "https://agentguard47.com",
+      "downloadUrl": "https://pypi.org/project/agentguard47/",
+      "softwareVersion": "1.2.13",
+      "author": {
+        "@type": "Organization",
+        "name": "BMD PAT LLC",
+        "url": "https://agentguard47.com"
+      },
+      "featureList": [
+        "Runtime budget enforcement",
+        "Loop detection",
+        "Retry control",
+        "Timeout enforcement",
+        "Local JSONL trace reports",
+        "Optional hosted incidents, alerts, and remote kill"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do I need an account to try AgentGuard47?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The first proof is local. Install agentguard47, run doctor, run demo, generate a raw quickstart file, and inspect a local report."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does the hosted dashboard add?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The hosted control plane adds retained incidents, alerts, team visibility, and remote kill. The SDK still owns local runtime enforcement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is AgentGuard47 generic observability?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. AgentGuard47 is focused on runtime budget, loop, retry, and timeout guardrails. It is built to stop bad agent runs, not to become a general tracing platform."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
     <style>
       :root {
-        --bg: #f7f4ee;
-        --ink: #1e1b16;
-        --accent: #1b6c4a;
-        --muted: #6c645a;
-        --card: #ffffff;
+        --black: #080708;
+        --black-soft: #111012;
+        --white: #f7f3ec;
+        --paper: #e8e2d6;
+        --red: #b20f1b;
+        --red-bright: #e23a45;
+        --steel: #c8c3bb;
+        --muted: #a7a09a;
+        --muted-dark: #706861;
+        --green: #61d394;
+        --line: rgba(247, 243, 236, 0.14);
+        --line-strong: rgba(247, 243, 236, 0.28);
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
       }
-      * { box-sizing: border-box; }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
-        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
-        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
-        color: var(--ink);
+        color: var(--white);
+        background: var(--black);
+        font-family: "Sora", "Aptos", "Segoe UI", sans-serif;
+        letter-spacing: 0;
       }
-      .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px 60px; }
-      .badge { display: inline-block; padding: 6px 10px; border: 1px solid #d7d0c5; border-radius: 999px; color: var(--muted); font-size: 11px; letter-spacing: 0.04em; }
-      h1 { font-size: 28px; line-height: 1.15; margin: 16px 0; }
-      h2 { margin-top: 40px; }
-      p { font-size: 16px; line-height: 1.6; }
-      @media (min-width: 640px) {
-        .wrap { padding: 56px 24px 80px; }
-        .badge { font-size: 12px; }
-        h1 { font-size: 44px; line-height: 1.1; }
-        h2 { margin-top: 48px; }
-        p { font-size: 18px; }
+
+      a {
+        color: inherit;
       }
-      .cta {
-        display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 32px;
+
+      code,
+      pre,
+      .mono {
+        font-family: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
       }
-      .cta .btn { flex: 1; min-width: 140px; }
-      @media (min-width: 640px) {
-        .cta { margin: 24px 0 40px; }
-        .cta .btn { flex: none; min-width: auto; }
+
+      .page {
+        min-height: 100vh;
+        overflow: hidden;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.034) 1px, transparent 1px) 0 0 / 42px 42px,
+          linear-gradient(180deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px) 0 0 / 42px 42px,
+          linear-gradient(180deg, #080708 0%, #111012 52%, #080708 100%);
       }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid rgba(247, 243, 236, 0.12);
+        background: rgba(8, 7, 8, 0.9);
+        backdrop-filter: blur(14px);
+      }
+
+      .nav,
+      .section,
+      .hero,
+      .footer {
+        width: min(1160px, calc(100% - 28px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      .mark {
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(247, 243, 236, 0.34);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: var(--black);
+        font-size: 12px;
+        line-height: 1;
+        background:
+          linear-gradient(90deg, transparent 42%, var(--red) 42% 58%, transparent 58%),
+          linear-gradient(180deg, var(--white) 0 74%, var(--black) 74%);
+      }
+
+      .brand span {
+        color: var(--red-bright);
+      }
+
+      .navlinks {
+        display: none;
+        align-items: center;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .navlinks a {
+        text-decoration: none;
+      }
+
+      .navlinks a:hover {
+        color: var(--white);
+      }
+
+      .nav-cta,
       .btn {
-        display: inline-block;
-        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
-        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
-        font-size: 15px; text-align: center;
-      }
-      .btn:hover { opacity: 0.9; }
-      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-      .btn.secondary:hover { background: var(--accent); color: #fff; }
-      .btn-sm { padding: 10px 16px; font-size: 14px; }
-      .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
-      @media (min-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
-      @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
-      .card { background: var(--card); padding: 14px; border-radius: 12px; border: 1px solid #e8e2d6; }
-      .card p { font-size: 14px; }
-      @media (min-width: 640px) { .card { padding: 18px; } .card p { font-size: 16px; } }
-      .muted { color: var(--muted); }
-
-      /* Code block */
-      .code-wrap { position: relative; margin-top: 24px; }
-      .code {
-        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
-        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
-        line-height: 1.7; overflow-x: auto; white-space: pre; margin: 0;
-      }
-      @media (min-width: 640px) {
-        .code { padding: 20px 24px; font-size: 14px; }
-      }
-      .code .kw { color: #c084fc; }       /* purple — keywords */
-      .code .fn { color: #60a5fa; }       /* blue — function names */
-      .code .str { color: #4ade80; }      /* green — strings */
-      .code .comment { color: #6b7280; }  /* gray — comments */
-      .copy-btn {
-        position: absolute; top: 12px; right: 12px;
-        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-        color: #94a3b8; border-radius: 6px; padding: 6px 10px;
-        font-size: 12px; cursor: pointer; font-family: inherit;
-        display: flex; align-items: center; gap: 5px;
-        transition: all 0.15s;
-      }
-      .copy-btn:hover { background: rgba(255,255,255,0.15); color: #e2e8f0; }
-      .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
-      .copy-btn svg { width: 14px; height: 14px; }
-
-      /* Pricing */
-      .pricing-grid { display: grid; gap: 12px; grid-template-columns: 1fr; margin-top: 16px; }
-      @media (min-width: 640px) { .pricing-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; } }
-      .pricing-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #e8e2d6; display: flex; flex-direction: column; }
-      @media (min-width: 640px) { .pricing-card { padding: 24px; } }
-      .pricing-card.highlight { border-color: var(--accent); border-width: 2px; }
-      .pricing-card h3 { margin: 0 0 4px; }
-      .pricing-card .price { font-size: 28px; font-weight: 700; margin: 8px 0 16px; }
-      .pricing-card ul { padding-left: 18px; margin: 0 0 20px; flex: 1; }
-      .pricing-card li { margin: 6px 0; }
-      .pricing-card .btn { width: 100%; }
-
-      /* Steps */
-      .steps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 16px; }
-      .step { text-align: center; padding: 16px; }
-      .step .num { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; }
-
-      footer { margin-top: 40px; font-size: 14px; color: var(--muted); text-align: center; }
-
-      /* Stats bar */
-      .stats {
-        display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;
-        margin: 32px 0; padding: 20px 0; border-top: 1px solid #e8e2d6; border-bottom: 1px solid #e8e2d6;
-      }
-      .stat { text-align: center; }
-      .stat .num { font-size: 28px; font-weight: 700; color: var(--accent); display: block; }
-      .stat .label { font-size: 13px; color: var(--muted); }
-      @media (min-width: 640px) {
-        .stats { gap: 48px; }
-        .stat .num { font-size: 32px; }
+        min-height: 42px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 16px;
+        color: var(--black);
+        background: var(--white);
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 14px;
+        cursor: pointer;
       }
 
-      /* Integration badges */
-      .integrations {
-        display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px;
-      }
-      .integration-badge {
-        display: inline-block; padding: 5px 12px; border: 1px solid #d7d0c5; border-radius: 999px;
-        color: var(--muted); font-size: 13px; letter-spacing: 0.02em;
+      .btn:hover,
+      .nav-cta:hover {
+        background: #ffffff;
       }
 
-      /* Testimonials */
-      .testimonials-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 16px; }
-      @media (min-width: 640px) { .testimonials-grid { grid-template-columns: repeat(2, 1fr); } }
-      .testimonial-card {
-        background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #e8e2d6;
+      .btn-red {
+        color: var(--white);
+        background: var(--red);
       }
-      .testimonial-card blockquote {
-        margin: 0; font-style: italic; line-height: 1.6; border-left: 3px solid var(--accent); padding-left: 16px;
-      }
-      .testimonial-card .attribution { margin-top: 12px; font-size: 14px; }
 
-      /* FAQ */
-      .faq { margin-top: 16px; }
-      .faq details {
-        border: 1px solid #e8e2d6; border-radius: 12px; margin-bottom: 8px;
-        background: var(--card);
+      .btn-red:hover {
+        background: var(--red-bright);
       }
-      .faq summary {
-        cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 15px;
-        list-style: none;
-      }
-      .faq summary::-webkit-details-marker { display: none; }
-      .faq summary::before { content: "+ "; color: var(--accent); font-weight: 700; }
-      .faq details[open] summary::before { content: "− "; }
-      .faq details div { padding: 0 18px 14px; font-size: 15px; line-height: 1.6; color: var(--muted); }
 
-      /* Footer */
-      .footer-links {
-        display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px;
+      .btn-secondary {
+        color: var(--white);
+        background: transparent;
+        border-color: var(--line-strong);
       }
-      .footer-links a { color: var(--accent); text-decoration: none; }
-      .footer-links a:hover { text-decoration: underline; }
 
-      /* Email capture */
-      .email-section { margin-top: 48px; text-align: center; }
+      .btn-secondary:hover {
+        color: var(--black);
+        background: var(--steel);
+      }
+
+      .hero {
+        position: relative;
+        padding: 34px 0 24px;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0 -18px auto auto;
+        width: min(48vw, 520px);
+        height: 430px;
+        opacity: 0.14;
+        pointer-events: none;
+        transform: skewX(-10deg);
+        background:
+          repeating-linear-gradient(90deg, rgba(247, 243, 236, 0.75) 0 3px, transparent 3px 8px),
+          linear-gradient(180deg, rgba(178, 15, 27, 0.46), transparent);
+      }
+
+      .hero-grid {
+        position: relative;
+        display: grid;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(247, 243, 236, 0.2);
+        border-radius: 8px;
+        padding: 7px 10px;
+        color: var(--steel);
+        background: rgba(247, 243, 236, 0.06);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--red-bright);
+        box-shadow: 0 0 0 6px rgba(226, 58, 69, 0.14);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 880px;
+        margin: 18px 0 16px;
+        color: var(--white);
+        font-size: clamp(3rem, 8.7vw, 6.85rem);
+        line-height: 0.94;
+        font-weight: 800;
+      }
+
+      h2 {
+        margin-bottom: 14px;
+        color: var(--white);
+        font-size: clamp(1.75rem, 3vw, 3.05rem);
+        line-height: 1.04;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        color: var(--white);
+        font-size: 1.05rem;
+      }
+
+      .lead {
+        max-width: 690px;
+        color: var(--steel);
+        font-size: clamp(1.04rem, 1.5vw, 1.28rem);
+        line-height: 1.58;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 22px 0 18px;
+      }
+
+      .install-line {
+        max-width: 700px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        overflow: hidden;
+        background: rgba(247, 243, 236, 0.07);
+      }
+
+      .install-line code {
+        padding: 15px 16px;
+        color: var(--white);
+        font-size: 14px;
+        white-space: nowrap;
+        overflow-x: auto;
+      }
+
+      .copy-install {
+        min-height: 100%;
+        border: 0;
+        border-left: 1px solid var(--line);
+        border-radius: 0;
+      }
+
+      .copy-install.copied {
+        color: var(--black);
+        background: var(--green);
+      }
+
+      .proof-scene {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: linear-gradient(180deg, #111012, #0a090a);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .scene-top {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .lights {
+        display: flex;
+        gap: 6px;
+      }
+
+      .lights span {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--muted-dark);
+      }
+
+      .lights span:first-child {
+        background: var(--red-bright);
+      }
+
+      .terminal {
+        padding: 18px;
+        color: var(--steel);
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      .terminal .ok {
+        color: var(--green);
+      }
+
+      .terminal .bad {
+        color: var(--red-bright);
+      }
+
+      .terminal .white {
+        color: var(--white);
+      }
+
+      .trace-card {
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 1px;
+        background: var(--line);
+      }
+
+      .trace-row {
+        min-height: 48px;
+        display: grid;
+        grid-template-columns: 110px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: rgba(8, 7, 8, 0.94);
+        color: var(--steel);
+        font-size: 12px;
+      }
+
+      .trace-row strong {
+        color: var(--white);
+      }
+
+      .status {
+        min-width: 74px;
+        border-radius: 8px;
+        padding: 5px 7px;
+        text-align: center;
+        color: var(--black);
+        background: var(--green);
+        font-weight: 800;
+      }
+
+      .status.stop {
+        color: var(--white);
+        background: var(--red);
+      }
+
+      .proof-strip {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .metric,
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(247, 243, 236, 0.055);
+      }
+
+      .metric {
+        min-height: 86px;
+        padding: 14px;
+      }
+
+      .metric strong {
+        display: block;
+        color: var(--white);
+        font-size: 1.28rem;
+      }
+
+      .metric span,
+      .muted {
+        color: var(--muted);
+      }
+
+      .section {
+        padding: 62px 0 0;
+      }
+
+      .section-head {
+        max-width: 760px;
+        margin-bottom: 22px;
+      }
+
+      .proof-path {
+        display: grid;
+        gap: 10px;
+      }
+
+      .step {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+        align-items: start;
+        padding: 14px;
+        background: rgba(247, 243, 236, 0.055);
+      }
+
+      .step-num {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: var(--white);
+        background: var(--red);
+        font-weight: 800;
+      }
+
+      .step code {
+        display: block;
+        margin: 4px 0 0;
+        color: var(--white);
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.58;
+      }
+
+      .guard-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .guard {
+        border-left: 4px solid var(--red);
+      }
+
+      .compare {
+        display: grid;
+        gap: 12px;
+      }
+
+      .compare-row {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        gap: 1px;
+        overflow: hidden;
+        background: var(--line);
+      }
+
+      .compare-row > div {
+        padding: 14px;
+        background: rgba(8, 7, 8, 0.94);
+      }
+
+      .compare-row strong {
+        color: var(--white);
+      }
+
+      .compare-row p {
+        margin-bottom: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .final {
+        margin-top: 70px;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          linear-gradient(90deg, rgba(178, 15, 27, 0.22), transparent 52%),
+          rgba(247, 243, 236, 0.06);
+      }
+
       .email-form {
-        display: flex; gap: 8px; max-width: 420px; margin: 16px auto 0;
-        flex-wrap: wrap; justify-content: center;
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
       }
-      .email-form input[type="email"] {
-        flex: 1; min-width: 200px; padding: 12px 16px; border: 1px solid #d7d0c5;
-        border-radius: 8px; font-size: 15px; font-family: inherit;
-        background: var(--card); color: var(--ink);
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
-      .email-form input[type="email"]:focus { outline: 2px solid var(--accent); border-color: transparent; }
-      .email-form button { padding: 12px 20px; }
-      .email-msg { margin-top: 12px; font-size: 14px; }
-      .email-msg.ok { color: var(--accent); }
-      .email-msg.err { color: #c0392b; }
+
+      .email-form input {
+        min-height: 44px;
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 0 14px;
+        color: var(--white);
+        background: rgba(8, 7, 8, 0.72);
+        font: inherit;
+      }
+
+      .form-status {
+        min-height: 20px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .form-status.error {
+        color: var(--red-bright);
+      }
+
+      .form-status.success {
+        color: var(--green);
+      }
+
+      .footer {
+        padding: 42px 0 54px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .footer-links a {
+        color: var(--steel);
+        text-decoration: none;
+      }
+
+      .footer-links a:hover {
+        color: var(--white);
+      }
+
+      @media (min-width: 760px) {
+        .navlinks {
+          display: flex;
+        }
+
+        .hero {
+          padding-top: 54px;
+        }
+
+        .hero-grid {
+          grid-template-columns: minmax(0, 1.04fr) minmax(380px, 0.72fr);
+          gap: 30px;
+        }
+
+        .proof-strip {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .proof-path {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid.three {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid.two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .compare-row {
+          grid-template-columns: 0.82fr 1fr 1fr;
+        }
+
+        .email-form {
+          max-width: 560px;
+          grid-template-columns: 1fr auto;
+        }
+      }
+
+      @media (max-width: 759px) {
+        .nav {
+          min-height: 58px;
+        }
+
+        .nav-cta {
+          display: none;
+        }
+
+        .hero {
+          padding: 20px 0 16px;
+        }
+
+        h1 {
+          margin-top: 14px;
+          margin-bottom: 12px;
+          font-size: clamp(2.35rem, 11.8vw, 3.45rem);
+          line-height: 0.95;
+        }
+
+        .lead {
+          font-size: 0.96rem;
+          line-height: 1.44;
+        }
+
+        .hero-actions {
+          display: grid;
+          grid-template-columns: 1fr;
+          margin: 16px 0 12px;
+        }
+
+        .hero .hero-actions .btn-secondary {
+          display: none;
+        }
+
+        .install-line {
+          grid-template-columns: 1fr auto;
+        }
+
+        .install-line code {
+          padding: 12px 12px;
+          font-size: 12px;
+        }
+
+        .copy-install {
+          min-height: 100%;
+          border-left: 1px solid var(--line);
+          border-top: 0;
+          padding: 0 12px;
+        }
+
+        .terminal {
+          padding: 12px;
+          font-size: 11px;
+          line-height: 1.55;
+        }
+
+        .trace-row {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .status {
+          justify-self: start;
+        }
+
+        .proof-strip {
+          display: none;
+        }
+
+        .section {
+          padding-top: 46px;
+        }
+
+        .final {
+          margin-top: 52px;
+          padding: 20px;
+        }
+      }
     </style>
+    <script>
+      (function() {
+        var host = window.location.hostname;
+        var isLocalHost =
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host === '::1' ||
+          window.location.protocol === 'file:';
+        var isAllowedHost =
+          host === 'agentguard47.com' ||
+          host === 'www.agentguard47.com' ||
+          host.endsWith('.vercel.app');
+
+        if (isLocalHost || !isAllowedHost) {
+          return;
+        }
+
+        function loadInsights() {
+          var script = document.createElement('script');
+          script.async = false;
+          script.src = '/_vercel/insights/script.js';
+          document.head.appendChild(script);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadInsights, { once: true });
+        } else {
+          loadInsights();
+        }
+      })();
+    </script>
   </head>
   <body>
-    <div class="wrap">
-      <span class="badge">Runtime Firewall for AI Agents</span>
-      <h1>Your AI agent just burned $2,000 in tokens overnight.<br>AgentGuard stops it at $5.</h1>
-      <p style="font-size:18px;max-width:640px">Stop runaway AI agents before they burn your API budget or leak data.</p>
-      <ul style="list-style:none;padding:0;margin:12px 0 0;font-size:16px;line-height:2">
-        <li><strong style="color:var(--accent)">&bull;</strong> Kill infinite loops</li>
-        <li><strong style="color:var(--accent)">&bull;</strong> Enforce hard dollar caps</li>
-        <li><strong style="color:var(--accent)">&bull;</strong> Track cost per agent</li>
-        <li><strong style="color:var(--accent)">&bull;</strong> Block unsafe actions in real time</li>
-      </ul>
+    <div class="page">
+      <header class="topbar">
+        <nav class="nav" aria-label="Primary">
+          <a class="brand" href="/">
+            <span class="mark">47</span>
+            <strong>AgentGuard<span>47</span></strong>
+          </a>
+          <div class="navlinks">
+            <a href="/quickstart">Quickstart</a>
+            <a href="/trust">Trust</a>
+            <a href="/pricing">Pricing</a>
+            <a href="https://bmdpat.com/blog">Blog</a>
+            <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+          </div>
+          <a class="nav-cta" href="#local-proof">Run local proof</a>
+        </nav>
+      </header>
 
-      <div class="cta">
-        <a class="btn" href="https://pypi.org/project/agentguard47/">Install from PyPI</a>
-        <a class="btn secondary" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-      </div>
+      <main>
+        <section class="hero" id="top">
+          <div class="hero-grid">
+            <div>
+              <span class="eyebrow"><span class="pulse"></span> Local-first runtime guardrails</span>
+              <h1>Stop runaway coding agents before they spend.</h1>
+              <p class="lead">
+                AgentGuard47 is a zero-dependency Python SDK that enforces budgets,
+                loops, retries, and timeouts while your agent is still running. No
+                account, API key, or dashboard required for the first proof.
+              </p>
+              <div class="hero-actions">
+                <a class="btn btn-red" href="#local-proof">Run proof in 60 seconds</a>
+                <a class="btn btn-secondary" href="https://github.com/bmdhodl/agent47">Inspect GitHub</a>
+              </div>
+              <div class="install-line">
+                <code id="install-command">pip install agentguard47</code>
+                <button class="btn copy-install" type="button" onclick="copyText('install-command', this)">Copy install</button>
+              </div>
+            </div>
 
-      <div class="integrations">
-        <span class="muted">Built for teams running AI agents in production:</span>
-        <span class="integration-badge">LangChain</span>
-        <span class="integration-badge">LangGraph</span>
-        <span class="integration-badge">CrewAI</span>
-        <span class="integration-badge">AutoGen</span>
-        <span class="integration-badge">MCP Agents</span>
-        <span class="integration-badge">Any Python agent</span>
-      </div>
+            <aside class="proof-scene" aria-label="AgentGuard local proof terminal">
+              <div class="scene-top">
+                <div class="lights"><span></span><span></span><span></span></div>
+                <span>agentguard demo</span>
+              </div>
+              <div class="terminal">
+                <div><span class="white">$</span> agentguard doctor</div>
+                <div class="ok">OK install verified</div>
+                <div><span class="white">$</span> agentguard demo</div>
+                <div class="bad">BudgetExceeded: call budget exceeded</div>
+                <div class="bad">LoopDetected: repeated tool path stopped</div>
+                <div class="ok">traces written to .agentguard/traces.jsonl</div>
+              </div>
+              <div class="trace-card">
+                <div class="trace-row">
+                  <strong>budget</strong>
+                  <span>max_calls=2 stopped the third call</span>
+                  <span class="status stop">STOPPED</span>
+                </div>
+                <div class="trace-row">
+                  <strong>loop</strong>
+                  <span>same tool args repeated</span>
+                  <span class="status stop">STOPPED</span>
+                </div>
+                <div class="trace-row">
+                  <strong>report</strong>
+                  <span>local JSONL trace and summary</span>
+                  <span class="status">LOCAL</span>
+                </div>
+              </div>
+            </aside>
+          </div>
 
-      <div class="stats">
-        <div class="stat">
-          <span class="num">516</span>
-          <span class="label">Tests passing</span>
-        </div>
-        <div class="stat">
-          <span class="num">0</span>
-          <span class="label">Dependencies</span>
-        </div>
-        <div class="stat">
-          <span class="num">3.9+</span>
-          <span class="label">Python support</span>
-        </div>
-        <div class="stat">
-          <span class="num">MIT</span>
-          <span class="label">Licensed</span>
-        </div>
-      </div>
+          <div class="proof-strip" aria-label="Proof points">
+            <div class="metric"><strong>0</strong><span>SDK runtime dependencies</span></div>
+            <div class="metric"><strong>MIT</strong><span>free SDK license</span></div>
+            <div class="metric"><strong>1.2.13</strong><span>latest PyPI release</span></div>
+            <div class="metric"><strong>local</strong><span>first proof path</span></div>
+          </div>
+        </section>
 
-      <div class="grid">
-        <div class="card">
-          <strong>Kill infinite loops</strong>
-          <p class="muted">Detect repeated tool calls across any depth. Automatic circuit breaker fires before costs compound.</p>
-        </div>
-        <div class="card">
-          <strong>Enforce hard dollar caps</strong>
-          <p class="muted">Set a budget. Agent stops mid-run when it's hit. No more $2,000 surprise invoices.</p>
-        </div>
-        <div class="card">
-          <strong>Track cost per agent</strong>
-          <p class="muted">See exactly what each run costs, per LLM call. Dollar amounts, not token estimates.</p>
-        </div>
-        <div class="card">
-          <strong>Remote kill switch</strong>
-          <p class="muted">Stop any agent instantly from the dashboard. No redeployment needed.</p>
-        </div>
-      </div>
+        <section class="section" id="local-proof">
+          <div class="section-head">
+            <span class="eyebrow">No-signup conversion path</span>
+            <h2>Give the skeptical developer proof before asking for anything.</h2>
+            <p class="muted">
+              The homepage points non-signup users at a concrete local sequence they can
+              copy into a clean Python environment and inspect without talking to us.
+            </p>
+          </div>
+          <div class="proof-path">
+            <div class="step">
+              <span class="step-num">1</span>
+              <div>
+                <strong>Verify install</strong>
+                <code>agentguard doctor</code>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num">2</span>
+              <div>
+                <strong>Trip a guard</strong>
+                <code>agentguard demo</code>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num">3</span>
+              <div>
+                <strong>Copy into an agent loop</strong>
+                <code>agentguard quickstart --framework raw --write</code>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <!-- CI/CD analogy -->
-      <div class="card" style="margin:24px 0;padding:24px;background:linear-gradient(135deg,#f8f6f1,#f0efe9);text-align:center">
-        <p style="margin:0;font-size:18px;line-height:1.6"><strong>Docker gave you container scanning.<br>AgentGuard gives you agent scanning.</strong></p>
-        <p class="muted" style="margin:8px 0 0;font-size:15px">CI/CD gate &rarr; Runtime enforcement &rarr; Compliance trail</p>
-      </div>
+        <section class="section">
+          <div class="section-head">
+            <span class="eyebrow">What it kills</span>
+            <h2>Four failure modes, one small SDK.</h2>
+          </div>
+          <div class="grid two guard-list">
+            <div class="card guard">
+              <h3>Budget burn</h3>
+              <p>Set call, token, or dollar ceilings before a coding agent turns a bad loop into a bill.</p>
+            </div>
+            <div class="card guard">
+              <h3>Tool loops</h3>
+              <p>Stop repeated tool calls and repeated argument paths while the run is still live.</p>
+            </div>
+            <div class="card guard">
+              <h3>Retry storms</h3>
+              <p>Cap retry attempts when a tool, provider, or repo step keeps failing the same way.</p>
+            </div>
+            <div class="card guard">
+              <h3>Timeout drift</h3>
+              <p>Make long-running agent work fail clearly instead of hanging until the operator notices.</p>
+            </div>
+          </div>
+        </section>
 
-      <h2>How it works</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="num">1</div>
-          <p><strong>Create a project</strong></p>
-          <p class="muted">Sign up free. Name your project. Get an ingestion key.</p>
-        </div>
-        <div class="step">
-          <div class="num">2</div>
-          <p><strong>Connect the SDK</strong></p>
-          <p class="muted">pip install agentguard47. Add 4 lines. Costs flow automatically.</p>
-        </div>
-        <div class="step">
-          <div class="num">3</div>
-          <p><strong>Set limits, see spend</strong></p>
-          <p class="muted">Configure budget caps in the dashboard. See every dollar in real time.</p>
-        </div>
-      </div>
+        <section class="section">
+          <div class="section-head">
+            <span class="eyebrow">Positioning</span>
+            <h2>Start local. Add hosted control only when the work becomes shared.</h2>
+          </div>
+          <div class="compare">
+            <div class="compare-row">
+              <div><strong>Free SDK</strong><p>Best first action</p></div>
+              <div><p>Run `doctor`, `demo`, and a generated quickstart file locally.</p></div>
+              <div><p>No account, no dashboard, no network requirement.</p></div>
+            </div>
+            <div class="compare-row">
+              <div><strong>Hosted dashboard</strong><p>When it matters</p></div>
+              <div><p>Use retained incidents, alerts, team visibility, and remote kill.</p></div>
+              <div><p>Useful after a workflow has real runs worth operating.</p></div>
+            </div>
+            <div class="compare-row">
+              <div><strong>Not generic observability</strong><p>Boundary</p></div>
+              <div><p>AgentGuard47 focuses on runtime enforcement and incident control.</p></div>
+              <div><p>It is not prompt management, eval orchestration, or a trace warehouse.</p></div>
+            </div>
+          </div>
+        </section>
 
-      <div class="code-wrap">
-        <button class="copy-btn" onclick="copyCode(this)">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
-          Copy
-        </button>
-<pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard
-<span class="kw">from</span> agentguard.sinks.http <span class="kw">import</span> HttpSink
-<span class="kw">from</span> agentguard.instrument <span class="kw">import</span> patch_openai
+        <section class="section">
+          <div class="section-head">
+            <span class="eyebrow">Copy this shape</span>
+            <h2>The real integration is small.</h2>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <h3>Plain Python</h3>
+              <pre class="terminal">import agentguard
 
-sink = <span class="fn">HttpSink</span>(url=<span class="str">"https://app.agentguard47.com/api/ingest"</span>, api_key=<span class="str">"ag_..."</span>)
-tracer = <span class="fn">Tracer</span>(sink=sink, service=<span class="str">"my-agent"</span>)
-<span class="fn">patch_openai</span>(tracer)  <span class="comment"># auto-tracks cost per call</span>
+tracer = agentguard.init(
+    service="repo-coder",
+    budget_usd=5.00,
+    trace_file="traces.jsonl",
+    local_only=True,
+)
 
-guard = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>)  <span class="comment"># stop at $5</span>
+with tracer.trace("agent.run") as span:
+    span.event("tool.call", data={"tool": "edit"})</pre>
+            </div>
+            <div class="card">
+              <h3>After local proof</h3>
+              <p>Open the quickstart for OpenAI, Anthropic, LangChain, LangGraph, CrewAI, or raw Python. Then connect the hosted dashboard only when the trace needs to be retained or shared.</p>
+              <div class="hero-actions">
+                <a class="btn btn-red" href="/quickstart">Open quickstart</a>
+                <a class="btn btn-secondary" href="https://app.agentguard47.com/sign-up">Start hosted trial</a>
+              </div>
+            </div>
+          </div>
+        </section>
 
-<span class="kw">with</span> tracer.<span class="fn">trace</span>(<span class="str">"agent.run"</span>) <span class="kw">as</span> span:
-    span.<span class="fn">event</span>(<span class="str">"reasoning.step"</span>, data={<span class="str">"thought"</span>: <span class="str">"search docs"</span>})
-    <span class="kw">with</span> span.<span class="fn">span</span>(<span class="str">"tool.search"</span>):
-        <span class="kw">pass</span>  <span class="comment"># your tool here</span></pre>
-      </div>
+        <section class="section">
+          <div class="final">
+            <span class="eyebrow">Low-friction close</span>
+            <h2>Run the local proof. Keep the dashboard optional.</h2>
+            <p class="muted">
+              Developers who are not ready to sign up still leave with a working install
+              path, a trace file, and a guard they can copy into a real coding-agent loop.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-red" href="/quickstart">Run quickstart</a>
+              <a class="btn btn-secondary" href="https://pypi.org/project/agentguard47/">View PyPI</a>
+            </div>
+            <form class="email-form" action="/api/lead" method="post" onsubmit="return submitLeadForm(event, this)">
+              <label class="sr-only" for="homepage-email">Email for hosted updates</label>
+              <input id="homepage-email" type="email" name="email" placeholder="Email for hosted updates" autocomplete="email" required />
+              <input type="hidden" name="source" value="agentguard47_homepage" />
+              <button class="btn" type="submit">Get updates</button>
+              <p class="form-status" aria-live="polite"></p>
+            </form>
+          </div>
+        </section>
+      </main>
 
-      <!-- Interactive demo -->
-      <h2>See it in action</h2>
-      <div id="demo-container" class="card" style="padding:24px;font-family:monospace;font-size:13px;position:relative;min-height:180px;overflow:hidden">
-        <div id="demo-output" style="white-space:pre-wrap;line-height:1.8"></div>
-        <button id="demo-replay" class="btn btn-sm" style="position:absolute;top:12px;right:12px;font-size:12px;padding:6px 12px;display:none" onclick="runDemo()">Replay</button>
-      </div>
-      <script>
-        function runDemo() {
-          var out = document.getElementById('demo-output');
-          var btn = document.getElementById('demo-replay');
-          out.innerHTML = '';
-          btn.style.display = 'none';
-          var lines = [
-            { text: '> Agent started: research_task', delay: 300 },
-            { text: '  [tool.search] "latest AI papers"', delay: 600 },
-            { text: '  [tool.search] "latest AI papers"  <span style="color:#6c645a">cost: $0.12</span>', delay: 800 },
-            { text: '  [tool.search] "latest AI papers"  <span style="color:#c9a227">cost: $0.38</span>', delay: 400 },
-            { text: '  [tool.search] "latest AI papers"  <span style="color:#d97706">cost: $1.24</span>', delay: 400 },
-            { text: '  [tool.search] "latest AI papers"  <span style="color:#dc2626">cost: $2.87</span>', delay: 300 },
-            { text: '  [tool.search] "latest AI papers"  <span style="color:#dc2626">cost: $5.01</span>', delay: 300 },
-            { text: '\n  <span style="color:#dc2626;font-weight:bold">!! LOOP DETECTED: tool.search repeated 6x</span>', delay: 500 },
-            { text: '  <span style="color:#dc2626;font-weight:bold">!! KILL SIGNAL SENT &#x2014; Agent stopped</span>', delay: 400 },
-            { text: '\n  <span style="color:#1b6c4a;font-weight:bold">&#10003; $5.01 saved by AgentGuard intervention</span>', delay: 600 },
-          ];
-          var i = 0;
-          function next() {
-            if (i >= lines.length) { btn.style.display = 'block'; return; }
-            var line = lines[i++];
-            setTimeout(function() {
-              out.innerHTML += line.text + '\n';
-              next();
-            }, line.delay);
-          }
-          next();
-        }
-        var observer = new IntersectionObserver(function(entries) {
-          if (entries[0].isIntersecting) {
-            runDemo();
-            observer.disconnect();
-          }
-        }, { threshold: 0.5 });
-        observer.observe(document.getElementById('demo-container'));
-      </script>
-
-      <!-- Competitor comparison -->
-      <h2>Other tools watch your agents fail. AgentGuard stops them.</h2>
-      <div style="overflow-x:auto;margin:20px 0">
-        <table style="width:100%;border-collapse:collapse;font-size:14px;text-align:left">
-          <thead>
-            <tr style="border-bottom:2px solid #d7d0c5">
-              <th style="padding:8px 12px">Feature</th>
-              <th style="padding:8px 12px;color:var(--accent);font-weight:700">AgentGuard</th>
-              <th style="padding:8px 12px">Langfuse</th>
-              <th style="padding:8px 12px">LangSmith</th>
-              <th style="padding:8px 12px">Helicone</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Tracing</td><td style="padding:8px 12px;color:var(--accent)">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td></tr>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Cost tracking</td><td style="padding:8px 12px;color:var(--accent)">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td><td style="padding:8px 12px">&#10003;</td></tr>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Budget enforcement</td><td style="padding:8px 12px;color:var(--accent)"><strong>Hard stop mid-run</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">Soft alert</td></tr>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Loop detection</td><td style="padding:8px 12px;color:var(--accent)"><strong>Auto circuit-breaker</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td></tr>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Remote kill switch</td><td style="padding:8px 12px;color:var(--accent)"><strong>Instant, no redeploy</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td></tr>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Auto-intervention</td><td style="padding:8px 12px;color:var(--accent)"><strong>Rule engine on ingest</strong></td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td></tr>
-            <tr style="border-bottom:1px solid #e8e4dd"><td style="padding:8px 12px">Open source</td><td style="padding:8px 12px">SDK (MIT)</td><td style="padding:8px 12px">Full (MIT)</td><td style="padding:8px 12px;color:var(--muted)">&#10007;</td><td style="padding:8px 12px">Gateway</td></tr>
-            <tr><td style="padding:8px 12px">Setup</td><td style="padding:8px 12px;color:var(--accent)"><strong>3 lines</strong></td><td style="padding:8px 12px">Hours</td><td style="padding:8px 12px">30 min</td><td style="padding:8px 12px">2 min</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Why not DIY -->
-      <div class="card" style="margin:24px 0;padding:24px;background:linear-gradient(135deg,#f8f6f1,#f0efe9)">
-        <h3 style="margin:0 0 8px">"Can't I just add max_iterations myself?"</h3>
-        <p class="muted" style="margin:0">You could add a budget check. But can you also detect retry loops across 12 tool calls, auto-kill the agent remotely without redeploying, send an alert with the trace link, log the intervention for compliance, and show your team a dashboard of how much you saved &mdash; all in a weekend? That's what AgentGuard does out of the box.</p>
-      </div>
-
-      <h2>What builders say</h2>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <blockquote>"I used AgentGuard's LoopGuard to create a hard circuit-breaker for Ralph's tool-execution loop, which immediately stopped a runaway Gemini model that had been flooding Discord with over 100 duplicate error messages."</blockquote>
-        </div>
-        <div class="testimonial-card">
-          <blockquote>"I leveraged AgentGuard's structured tracing to diagnose a hidden failure in Ralph's reasoning, discovering that he was hallucinating missing tools because I had accidentally truncated the system prompt during an update."</blockquote>
-        </div>
-      </div>
-
-      <h2 id="pricing">Pricing</h2>
-      <div class="pricing-grid">
-        <div class="pricing-card">
-          <h3>Free SDK</h3>
-          <p class="muted" style="margin:0 0 4px;font-size:14px">Local-first forever</p>
-          <div class="price">$0</div>
-          <ul>
-            <li>Unlimited local guards</li>
-            <li>Doctor, demo, quickstart, and starters</li>
-            <li>Zero-dependency Python SDK</li>
-            <li>MIT licensed</li>
-          </ul>
-          <a class="btn btn-sm secondary" href="https://pypi.org/project/agentguard47/">Install from PyPI</a>
-        </div>
-        <div class="pricing-card highlight">
-          <h3>Hosted Dashboard</h3>
-          <p class="muted" style="margin:0 0 4px;font-size:14px">Operational follow-through</p>
-          <div class="price">Later</div>
-          <ul>
-            <li>Retained history</li>
-            <li>Alerts and incident follow-up</li>
-            <li>Remote controls</li>
-            <li>Team-visible operations</li>
-          </ul>
-          <a class="btn btn-sm" href="https://app.agentguard47.com/">Open Dashboard</a>
-        </div>
-        <div class="pricing-card">
-          <h3>Design Partners</h3>
-          <p class="muted" style="margin:0 0 4px;font-size:14px">Help shape the hosted path</p>
-          <div class="price">TBD</div>
-          <ul>
-            <li>Early teams only</li>
-            <li>Real production feedback</li>
-            <li>Hosted ops features shaped by demand</li>
-            <li>No public pricing yet</li>
-          </ul>
-          <a class="btn btn-sm secondary" href="https://github.com/bmdhodl/agent47">See the SDK</a>
-        </div>
-      </div>
-
-      <h2>Security &amp; Trust</h2>
-      <div class="grid">
-        <div class="card">
-          <strong>Zero dependencies</strong>
-          <p class="muted">No supply chain risk. One <code>pip install</code>, one package to audit.</p>
-        </div>
-        <div class="card">
-          <strong>Open-source SDK</strong>
-          <p class="muted">MIT-licensed. Read every line on GitHub. No vendor lock-in.</p>
-        </div>
-        <div class="card">
-          <strong>Encrypted in transit &amp; at rest</strong>
-          <p class="muted">TLS 1.3 in transit, AES-256 at rest via Supabase Postgres.</p>
-        </div>
-        <div class="card">
-          <strong>Retention you control</strong>
-          <p class="muted">30-90 day auto-cleanup by plan. No indefinite data hoarding.</p>
-        </div>
-      </div>
-
-      <h2>FAQ</h2>
-      <div class="faq">
-        <details>
-          <summary>Why zero dependencies?</summary>
-          <div>Every dependency is supply chain risk. AgentGuard uses pure Python stdlib — one audit target, no transitive vulnerabilities, no surprise breaking changes from upstream packages.</div>
-        </details>
-        <details>
-          <summary>What data do you store?</summary>
-          <div>Only what you explicitly send via the SDK. We never auto-capture prompts, responses, or any data unless you pass it in a span or event call.</div>
-        </details>
-        <details>
-          <summary>Can I self-host?</summary>
-          <div>The SDK works fully offline with the built-in JSONL sink — no network calls needed. Dashboard self-hosting is on the roadmap.</div>
-        </details>
-        <details>
-          <summary>Does it work with my framework?</summary>
-          <div>AgentGuard is model-agnostic. LangChain has a built-in callback handler. Everything else works with 3-line manual instrumentation using the Tracer.</div>
-        </details>
-        <details>
-          <summary>Do I need a credit card?</summary>
-          <div>No. The SDK is free forever. The hosted dashboard is optional and its public pricing is not currently published here.</div>
-        </details>
-      </div>
-
-      <div class="email-section">
-        <h2>Get updates</h2>
-        <p class="muted">New features, integration guides, and agent reliability tips. No spam.</p>
-        <form class="email-form" id="email-form">
-          <input type="email" name="email" placeholder="you@company.com" required />
-          <button type="submit" class="btn btn-sm">Subscribe</button>
-        </form>
-        <div class="email-msg" id="email-msg"></div>
-      </div>
-
-      <footer>
+      <footer class="footer">
         <div class="footer-links">
           <a href="https://github.com/bmdhodl/agent47">GitHub</a>
-          <a href="#pricing">Pricing</a>
-          <a href="compare.html">Compare</a>
-          <a href="trust.html">Security &amp; Trust</a>
+          <a href="https://pypi.org/project/agentguard47/">PyPI</a>
+          <a href="/quickstart">Quickstart</a>
+          <a href="/trust">Trust</a>
+          <a href="/pricing">Pricing</a>
+          <a href="https://bmdpat.com/blog">Blog</a>
+          <a href="https://app.agentguard47.com/sign-in">Sign in</a>
         </div>
-        <p class="muted">&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</p>
+        <p>AgentGuard47 by BMD PAT LLC. MIT-licensed SDK. Hosted control plane when teams need retained incidents, alerts, and remote kill.</p>
       </footer>
     </div>
 
     <script>
-      (function() {
-        var form = document.getElementById('email-form');
-        var msg = document.getElementById('email-msg');
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          var email = form.email.value.trim();
-          if (!email) return;
-          msg.textContent = 'Sending...';
-          msg.className = 'email-msg';
-          fetch('/api/lead', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, source: 'landing' })
-          }).then(function(r) {
-            if (r.ok) {
-              msg.textContent = 'You\'re in. We\'ll be in touch.';
-              msg.className = 'email-msg ok';
-              form.email.value = '';
-            } else {
-              msg.textContent = 'Something went wrong. Try again.';
-              msg.className = 'email-msg err';
-            }
-          }).catch(function() {
-            msg.textContent = 'Network error. Try again.';
-            msg.className = 'email-msg err';
-          });
-        });
-      })();
+      function setButtonState(button, label) {
+        var previous = button.getAttribute('data-label') || button.textContent;
+        button.setAttribute('data-label', previous);
+        button.classList.add('copied');
+        button.textContent = label;
+        setTimeout(function() {
+          button.classList.remove('copied');
+          button.textContent = previous;
+        }, 1600);
+      }
 
-      function copyCode(btn) {
-        var code = btn.parentElement.querySelector('.code').textContent;
-        navigator.clipboard.writeText(code).then(function() {
-          btn.classList.add('copied');
-          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:14px;height:14px"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg> Copied!';
-          setTimeout(function() {
-            btn.classList.remove('copied');
-            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:14px;height:14px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg> Copy';
-          }, 2000);
+      function fallbackCopyText(text) {
+        return new Promise(function(resolve, reject) {
+          var textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'fixed';
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          try {
+            if (document.execCommand('copy')) {
+              resolve();
+            } else {
+              reject(new Error('copy failed'));
+            }
+          } catch (error) {
+            reject(error);
+          } finally {
+            document.body.removeChild(textarea);
+          }
         });
+      }
+
+      function copyText(id, button) {
+        var text = document.getElementById(id).textContent;
+        var copy = navigator.clipboard && navigator.clipboard.writeText
+          ? navigator.clipboard.writeText(text)
+          : fallbackCopyText(text);
+        copy.then(function() {
+          setButtonState(button, 'Copied');
+        }).catch(function() {
+          setButtonState(button, 'Select text');
+        });
+      }
+
+      function submitLeadForm(event, form) {
+        if (!window.fetch || !window.FormData) {
+          return true;
+        }
+
+        event.preventDefault();
+
+        var button = form.querySelector('button[type="submit"]');
+        var status = form.querySelector('.form-status');
+        var email = form.querySelector('input[name="email"]');
+        if (!email.value.trim()) {
+          status.textContent = 'Enter an email first.';
+          status.className = 'form-status error';
+          email.focus();
+          return false;
+        }
+
+        button.disabled = true;
+        status.textContent = 'Saving...';
+        status.className = 'form-status';
+
+        fetch(form.action, {
+          method: form.method || 'post',
+          body: new FormData(form),
+          credentials: 'same-origin',
+          headers: { 'accept': 'application/json' }
+        }).then(function(response) {
+          if (!response.ok) {
+            throw new Error('Lead capture failed');
+          }
+          form.reset();
+          status.textContent = 'Updates enabled. Check your inbox.';
+          status.className = 'form-status success';
+        }).catch(function() {
+          status.textContent = 'Could not save that email. Try again.';
+          status.className = 'form-status error';
+        }).finally(function() {
+          button.disabled = false;
+        });
+
+        return false;
       }
     </script>
   </body>
