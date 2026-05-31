@@ -260,3 +260,15 @@
 
 ### Blockers
 - None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.
+
+## 2026-05-31 | Codex
+
+### What shipped
+- Merged PR `#559` to harden release publishing against stale git tags.
+- `scripts/sdk_release_guard.py` now rejects a release tag when `GITHUB_REF` does not match `sdk/pyproject.toml`.
+
+### Decisions made
+- Keep the existing workflow-level tag check, and mirror the invariant in the Python release guard so local and CI checks fail before package build/upload.
+
+### Blockers
+- None. The failed `v1.2.12` publish run was a stale tag pointing at `1.2.10`; `v1.2.13` is already published and main CI, CodeQL, and Scorecard passed after `#559`.
