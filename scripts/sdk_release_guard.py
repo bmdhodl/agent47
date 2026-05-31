@@ -28,6 +28,7 @@ RELEASE_MARKERS = (
     ("CLAUDE.md", r"release candidate is (?P<version>\d+\.\d+\.\d+)"),
     (".claude/agents/sdk-dev.md", r"Current SDK release candidate: `v(?P<version>\d+\.\d+\.\d+)`"),
 )
+RELEASE_TAG_PREFIX = "refs/tags/"
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,39 @@ def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
                 )
             )
     return findings
+
+
+def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
+    if not ref:
+        return None
+    if ref.startswith(RELEASE_TAG_PREFIX):
+        return ref.removeprefix(RELEASE_TAG_PREFIX)
+    if re.fullmatch(r"v\d+\.\d+\.\d+", ref):
+        return ref
+    return None
+
+
+def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
+    release_ref = ref if ref is not None else os.environ.get("GITHUB_REF")
+    tag = _release_tag_from_ref(release_ref)
+    if tag is None:
+        return []
+
+    expected = f"v{version}"
+    if tag == expected:
+        return []
+
+    return [
+        Finding(
+            check="release-tag",
+            path="GITHUB_REF",
+            message=(
+                f"Tag {tag} does not match sdk/pyproject.toml version {version}. "
+                f"Expected release tag {expected}; delete the stale tag and retag "
+                "the release commit before publishing."
+            ),
+        )
+    ]
 
 
 def check_mcp_metadata(repo_root: Path) -> List[Finding]:
@@ -256,6 +290,7 @@ def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) ->
 def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Finding]:
     version = load_version(repo_root)
     findings: List[Finding] = []
+    findings.extend(check_release_tag(version))
     findings.extend(check_changelog(repo_root, version))
     findings.extend(check_pypi_readme(repo_root))
     findings.extend(check_release_markers(repo_root, version))
