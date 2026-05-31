@@ -3,21 +3,25 @@
 **Last Updated:** 2026-05-30 (release unblocked; `1.2.13` shipped)
 
 ## Active
-- **Glama tool catalog is not indexed yet.** Patrick published the first Glama
-  release on 2026-05-08 and the listing is live. Glama renders tool and score
-  pages, but `https://glama.ai/api/mcp/v1/servers/bmdhodl/agent47` still
-  returns `tools: []`. Recheck before relying on the API for tool inventory.
-- **Glama related servers need manual submission.** `glama.json` only claims
-  maintainers. Related servers are added through the Glama UI; use the
-  candidates in `docs/launch/distribution-execution.md`.
 - **`awesome-mcp-servers` re-list PR is open upstream and out of our hands.**
   Fresh PR `punkpeye/awesome-mcp-servers#7164` (opened 2026-05-31) adds the
   Monitoring entry *with* the Glama score badge that got the old #4012 closed.
-  Merge is the upstream maintainers' call. The maintainer bot also wants the
-  Glama listing to pass checks, which depends on the Glama tool-indexing item
-  above, so watch #7164 for a nudge.
+  The Glama listing now passes checks (all 7 tools indexed, graded A), so the
+  bot's requirements are met; merge is the upstream maintainers' call.
+- **Glama "no recent usage" is the only open listing item (needs the read key).**
+  Glama profile completion is 92%; the lone remaining checklist warning is "no
+  recent usage". Seed it via the listing's "Try in Browser" with a real
+  `AGENTGUARD_API_KEY`, or let real traffic clear it. Do not commit the key.
 
 ## Recently Resolved
+- **Glama tool catalog is indexed and graded.** All 7 tools (`query_traces`,
+  `get_trace`, `get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`,
+  `check_budget`) show on the Schema tab, each graded A; license/quality/
+  maintenance are all A. The old `tools: []` was a stale public-API cache, not a
+  real gap. The `1.2.13` build test passes.
+- **Glama related servers added** (2026-05-31) via the UI: `getsentry/sentry-mcp`,
+  `therealsachin/langfuse-mcp-server`, `agarwalvivek29/opentelemetry-mcp`. The
+  "no related servers" checklist item is cleared.
 - **MCP Registry now serves `0.2.2`** (`isLatest: true`, published
   2026-05-31T00:08 via the new OIDC `publish-mcp-registry.yml` workflow). The
   manual `mcp-publisher login github` device flow is no longer needed; run
