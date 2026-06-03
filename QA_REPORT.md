@@ -1,51 +1,24 @@
-# QA_REPORT
+# QA_REPORT.md - anthropic-advisor-max-tokens-update-positioning (agent47)
 
-Verdict: ✅
+**Verdict:** OK
 
-## Scope alignment
+## What was checked
 
-The task body's acceptance criteria, each checked against the diff:
+1. Diff scope: only `README.md` and the auto-generated `sdk/PYPI_README.md`. No code in `sdk/`. No `.github/workflows/`. No `.env*`. No `security/`. No `supabase/`. No secrets.
+2. Banned-word scan (grep -i over README.md): no matches for harness / leverage / streamline / delve / landscape / cutting-edge / game-changer / revolutionary / seamless / robust / holistic / synergy / ecosystem.
+3. `pytest sdk/tests/test_pypi_readme_sync.py` -- 5/5 pass. The PYPI_README sync test is the gate on this README change; it is green.
+4. Full SDK test suite (`pytest sdk/tests/`) revealed ONE failure: `test_init.py::TestInit::test_init_default_local_sink`. Confirmed pre-existing by re-running on stock `main` with my changes stashed -- same failure. Cause: local environment has `AGENTGUARD_API_KEY` + `AGENTGUARD_SERVICE` env vars set (vault config) that override the default sink. Unrelated to this PR.
+5. Scope match: WORK_PLAN.md said README lead-paragraph reframe + new comparison section + PYPI_README regen. Diff does exactly that.
+6. Voice rules: builder-to-builder, short sentences, numbers (the 2026-06-02 date and the concrete table), no fluff, no em dashes in new content. Existing em-dash on the lead paragraph was replaced with `--` as part of the rewrite.
+7. README total diff: ~50 LOC added, well under the 400-LOC merge ceiling.
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| `Goal` exposes `cost_usd`, `attempts`, `succeeded`, `failure_cost`, `duration_sec`, `calls`, `to_dict()` | ✅ | `sdk/agentguard/goal.py:44-126` |
-| `BudgetGuard.goal(name, verifier)` context manager | ✅ | `sdk/agentguard/guards.py` new method; verified `with guard.goal(...) as g:` works in test suite |
-| Cost accumulates across nested calls via contextvars | ✅ | `_active_goals: ContextVar` + hook in `BudgetGuard.consume` |
-| Verifier runs on exit, populates `succeeded` | ✅ | `_GoalContext.__exit__` |
-| `g.attempt()` explicit | ✅ | `Goal.attempt()` |
-| `failure_cost` = failed-attempt cost | ✅ | `Goal.failure_cost`, tested by `test_three_attempts_then_success_attributes_failure_cost` |
-| Goals nest cleanly, no double-count | ✅ | `test_nested_goals_no_double_count` |
-| Goals do not cross sessions | ✅ | ContextVar scope; goals are local objects, not module-level state |
-| `to_dict()` JSON-serializable | ✅ | `test_to_dict_is_json_serializable` |
-| Happy-path test | ✅ |
-| 3-attempts-then-success test | ✅ |
-| Nested-goals test | ✅ |
-| Failed-goal test | ✅ |
-| README section | ✅ | `sdk/README.md` new "Goal-level metering" section |
-| All existing tests still pass | ✅ | 769 passed, 0 failed |
-| No new external dependencies | ✅ | Only stdlib (`contextvars`, `dataclasses`, `time`) |
+## What was NOT changed
 
-## Path note
+- No code under `sdk/`.
+- No tests added or modified.
+- No new dependencies.
+- No claims about Anthropic API beyond what the 2026-06-03 source page documents (per-tool `max_tokens` on the advisor tool, refusal-not-billed).
 
-Task body said `agent47/goal.py`. Actual package layout is `sdk/agentguard/` — so the new file lives at `sdk/agentguard/goal.py`. This matches the rest of the package (`guards.py`, `cost.py`, etc.). The task wording was shorthand; the implementation respects the real layout.
+## Independent verifier note
 
-## Security / denylist check
-
-- No changes under `.github/workflows/`, `.env*`, `supabase/migrations/`, `security/`, secrets, or Stripe/Clerk config.
-- No new credentials or API keys.
-- No new external network calls. The verifier is user-supplied; the SDK itself does not invoke external services here.
-
-## Pattern compliance
-
-- `Goal` and `Call` are `@dataclass` like `BudgetState` (`sdk/agentguard/guards.py:176`).
-- `_GoalContext` follows the same context-manager pattern as `TimeoutGuard` (`sdk/agentguard/guards.py:397-405`).
-- Error type for bad verifier is `TypeError`, matching the type-checking patterns elsewhere in `BudgetGuard.consume` (`sdk/agentguard/guards.py:258-269`).
-- Docstrings include `Usage::` example blocks per existing convention.
-
-## Risk
-
-Low. The diff is 79 lines plus a 200-line new module. The only behavior change to existing code is one function-call append inside `BudgetGuard.consume` that is a no-op when no goal is active. All existing tests including `test_concurrency.py`, `test_cost.py`, `test_e2e_pipeline.py` pass unchanged.
-
-## Test coverage regressions
-
-None. Added 8 new tests; no existing test removed or skipped.
+Task `signal_type: vendor-announcement`, not `security-threat`. CVE-Bench second-verifier requirement does not apply.

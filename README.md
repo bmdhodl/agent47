@@ -47,10 +47,14 @@ Most agent tooling tells you what happened after the run. AgentGuard stops the
 bad run while it is happening.
 
 AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
-runs inside the agent's process, sees the call graph, and raises exceptions
-that kill the run before the next bad call lands. Routers and gateways like
-Manifest or Vercel AI Gateway sit at the network layer and shape egress
-traffic. The layers are complementary — see the
+runs inside the agent's process, sees the call graph **across calls, retries,
+and providers**, and raises exceptions that kill the run before the next bad
+call lands. Single-call limits (Anthropic's per-tool `max_tokens`, OpenAI's
+`max_tokens`, model-side stop sequences) cap one response on one provider.
+AgentGuard caps the multi-call envelope the agent is running inside, no matter
+which provider answers the next call. Routers and gateways like Manifest or
+Vercel AI Gateway sit at the network layer and shape egress traffic. The
+layers are complementary -- see the
 [competitive notes](#runtime-control-vs-observability) for when each fits.
 
 | Problem | What AgentGuard does |
@@ -311,6 +315,44 @@ Competitive notes:
 - [AgentGuard vs Vercel AI Gateway](docs/competitive/vercel-ai-gateway.md)
 - [AgentGuard vs Manifest (LLM router)](docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md)
+
+## Anthropic per-tool `max_tokens` vs AgentGuard cross-call budget
+
+On 2026-06-02 Anthropic shipped a per-tool `max_tokens` parameter on the
+advisor tool. That is a useful single-call output cap. It is not a substitute
+for the multi-call, multi-provider budget envelope an agent loop actually
+spends inside of.
+
+| Concern | Anthropic per-tool `max_tokens` | AgentGuard `BudgetGuard` |
+|---|---|---|
+| Scope | one tool call, one response | the whole run: every call, every retry, every nested goal |
+| Providers | Anthropic API only | Anthropic, OpenAI, local LLMs, anything you call from Python |
+| Counts | output tokens on that response | calls + USD across the run (input + output + retries) |
+| Failure mode | response truncates at the cap | `BudgetExceeded` raised in-process; the run stops |
+| Retry storms | not handled (each retry caps independently) | `RetryGuard` and `LoopGuard` stop the storm before it accumulates |
+| Cross-provider migration | re-cap per provider | one ceiling, regardless of which provider the next call hits |
+
+```python
+from agentguard import BudgetGuard, LoopGuard, RetryGuard, Tracer
+
+# One ceiling for the whole run, regardless of provider or retry count.
+budget = BudgetGuard(max_cost_usd=2.00, max_calls=20)
+loop = LoopGuard(max_repeats=3)
+retry = RetryGuard(max_retries=3)
+tracer = Tracer(service="multi-provider-agent", guards=[loop, retry])
+
+with tracer.trace("agent.run"):
+    budget.consume(calls=1, cost_usd=0.02)   # anthropic call
+    budget.consume(calls=1, cost_usd=0.01)   # openai fallback
+    budget.consume(calls=1, cost_usd=0.00)   # local llama.cpp
+    # If the cumulative cost or call count crosses the ceiling,
+    # BudgetExceeded is raised here. The provider-side max_tokens
+    # of any single call would not have stopped this.
+```
+
+Use both. Set per-call output caps where the provider supports them. Wrap the
+agent loop in `BudgetGuard` for the run-level ceiling. The two layers protect
+different failure modes.
 
 ## Decision Traces
 

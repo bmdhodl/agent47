@@ -1,41 +1,34 @@
-# WORK_PLAN: goal-level metering API prototype
+# WORK_PLAN.md - anthropic-advisor-max-tokens-update-positioning (agent47)
 
-## Problem
-AgentGuard today only meters per-session via `BudgetGuard`. Operators care about cost-per-completed-goal (per the arXiv:2605.22883 framing). Ship v1 of a `guard.goal(name, verifier=...)` context manager that buckets nested call costs against a named goal, runs a verifier on exit, and exposes a structured ledger.
+## Problem statement
+
+On 2026-06-02 Anthropic shipped per-tool `max_tokens` caps on the advisor tool. That narrows the bare "you need a third-party library to cap tokens" pitch for callers already on the first-party Claude API. AgentGuard's actual moat is cross-call and cross-provider budget enforcement, runtime loop/retry/rate guards, and language-agnostic enforcement that survives provider migrations. The README needs to make that explicit so a reader who heard about the Anthropic change does not conclude AgentGuard is now redundant.
 
 ## Approach
-- New module `sdk/agentguard/goal.py`:
-  - `Call` dataclass — single accounted call (tokens, calls, cost_usd, attempt_idx, ts).
-  - `Goal` dataclass holding name, verifier, calls, sub-goals, attempts counter, start/end ts. Methods: `attempt()`, `_record(call)`, `to_dict()`. Properties: `cost_usd`, `failure_cost`, `duration_sec`, `succeeded` (set on exit).
-  - `_active_goal_stack: ContextVar[tuple[Goal, ...]]` so nested calls inside async/threadpool see the right goal. The stack holds parent + descendants so we can implement nesting cleanly.
-- `BudgetGuard.goal(name, verifier)` returns a context manager. On `__enter__` pushes a new Goal onto the contextvar stack and records start. On `__exit__` pops, runs verifier, sets succeeded, attaches goal to parent (if any) as a sub-goal.
-- Hook into `BudgetGuard.consume(...)` so that, when a goal is active, we also append a `Call` to the innermost goal. This keeps all existing call accounting intact (no breaking change) and adds goal-bucketing as a side effect.
-- `cost_usd` = own calls + sub-goal totals (no double-count: own calls only contain direct `consume` calls; sub-goals' calls live on the sub-goal objects).
-- `failure_cost` = cost of all calls in failed attempts. An attempt is failed if it is not the final attempt of a successful goal. If `not succeeded`, all calls are failure cost.
-- Verifier MUST be a callable returning bool. We do not catch verifier exceptions — they propagate (fail loudly per global instructions).
+
+Surgical README edit:
+1. Lightly reframe the "Why AgentGuard" lead paragraph to say in one line that the guard sits across calls, retries, and providers, not just inside a single call.
+2. Add a new section "Anthropic per-tool max_tokens vs AgentGuard cross-call/cross-provider budget" just after the existing "Runtime Control vs Observability" section. Short comparison table + one paragraph that says: single-call output cap (Anthropic) and multi-call/multi-provider envelope (AgentGuard) are complementary, not substitutes.
+3. Run `scripts/generate_pypi_readme.py` so `sdk/PYPI_README.md` stays in sync (enforced by `test_committed_pypi_readme_is_in_sync`).
+
+No core feature changes. No new dependencies. No code under `sdk/`. No `.github/workflows/` edits. Comparison framing is factual and only describes what each tool does today.
 
 ## Files likely to touch
-- `sdk/agentguard/goal.py` (new)
-- `sdk/agentguard/guards.py` (BudgetGuard.goal method + hook into consume)
-- `sdk/agentguard/__init__.py` (export Goal)
-- `sdk/tests/test_goal.py` (new)
-- `sdk/README.md` (new section)
-- `README.md` at repo root if it mirrors
 
-## Done checklist
-- [ ] `Goal` exposes `cost_usd`, `attempts`, `succeeded`, `failure_cost`, `duration_sec`, `calls`, `to_dict()`.
-- [ ] `BudgetGuard.goal(name, verifier)` works as a context manager.
-- [ ] Nested goals: parent total = own + sub totals, no double count.
-- [ ] Happy path test (1 attempt, succeeds).
-- [ ] 3-attempts-then-success test (failure_cost > 0).
-- [ ] Nested goals test.
-- [ ] Failed goal test (succeeded=False, full cost = failure cost).
-- [ ] README section "Goal-level metering".
-- [ ] All existing tests still pass.
-- [ ] No new external deps.
+- `README.md` (the lead-paragraph reframe + new comparison section)
+- `sdk/PYPI_README.md` (regenerated, not hand-edited)
+
+## What "done" looks like
+
+- [ ] `README.md` lead-paragraph reframed to mention cross-call / cross-provider envelope.
+- [ ] `README.md` has a new section comparing Anthropic per-tool `max_tokens` and AgentGuard's multi-call/multi-provider budget.
+- [ ] `sdk/PYPI_README.md` regenerated and matches generator output.
+- [ ] `pytest sdk/tests/test_pypi_readme_sync.py` passes.
+- [ ] PR opened against `bmdhodl/agent47`.
 
 ## Risks / assumptions
-- Hooking into `BudgetGuard.consume` is the right integration point. Alternative would be a separate `record_call` API, but consume is already where every cost lands. The hook is one append; zero behavior change when no goal is active.
-- Contextvars are the right propagation mechanism (async + threadpool safe, as the paper assumes). The standard lib provides this — no new deps.
-- Verifier contract is binary bool in v1 (per task scope). Fuzzy verifiers are v2.
-- Per the concept page sketch, the `guard` in `with guard.goal(...)` is a `BudgetGuard` instance (the only "guard" with cost state). The concept page's reference to `AgentGuard(budget_usd=5.00)` is aspirational naming — current package uses `BudgetGuard(max_cost_usd=...)`. We stay consistent with the existing API.
+
+- Risk: `test_pypi_readme_sync.py` fails if I forget to regenerate. Mitigation: run the regenerate script as the last step before commit.
+- Risk: Banned words leak in (harness, leverage, etc.). Mitigation: grep the diff before commit.
+- Risk: New section grows past 400 LOC budget. Mitigation: keep section ~30 lines.
+- Assumption: the linked Knowledge source page (2026-06-03-anthropic-advisor-max-tokens-cost-cap) accurately summarizes the Anthropic announcement. Verified by reading the source page.
