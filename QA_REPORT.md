@@ -1,51 +1,52 @@
-# QA_REPORT
+# QA_REPORT — README positioning vs Anthropic per-tool max_tokens
 
 Verdict: ✅
 
 ## Scope alignment
 
-The task body's acceptance criteria, each checked against the diff:
+- Task: reframe README positioning to lead with cross-call / cross-provider envelope, contrast against Anthropic per-tool `max_tokens`.
+- Diff: one file (`README.md`), +32 / -2 lines.
+- All claims in `WORK_PLAN.md` checked against the actual diff:
+  - "Add subsection under Why AgentGuard with explicit contrast" → done at `README.md:56-64`.
+  - "Add comparison row to Runtime Control vs Observability table" → done at `README.md:323` (`Cross-call, cross-provider budget envelope | Yes`) plus a follow-up paragraph at `README.md:332-335`.
+  - "No code change, no API change" → confirmed, only README touched.
+  - "Diff under ~60 LOC" → 32 README insertions, well under.
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| `Goal` exposes `cost_usd`, `attempts`, `succeeded`, `failure_cost`, `duration_sec`, `calls`, `to_dict()` | ✅ | `sdk/agentguard/goal.py:44-126` |
-| `BudgetGuard.goal(name, verifier)` context manager | ✅ | `sdk/agentguard/guards.py` new method; verified `with guard.goal(...) as g:` works in test suite |
-| Cost accumulates across nested calls via contextvars | ✅ | `_active_goals: ContextVar` + hook in `BudgetGuard.consume` |
-| Verifier runs on exit, populates `succeeded` | ✅ | `_GoalContext.__exit__` |
-| `g.attempt()` explicit | ✅ | `Goal.attempt()` |
-| `failure_cost` = failed-attempt cost | ✅ | `Goal.failure_cost`, tested by `test_three_attempts_then_success_attributes_failure_cost` |
-| Goals nest cleanly, no double-count | ✅ | `test_nested_goals_no_double_count` |
-| Goals do not cross sessions | ✅ | ContextVar scope; goals are local objects, not module-level state |
-| `to_dict()` JSON-serializable | ✅ | `test_to_dict_is_json_serializable` |
-| Happy-path test | ✅ |
-| 3-attempts-then-success test | ✅ |
-| Nested-goals test | ✅ |
-| Failed-goal test | ✅ |
-| README section | ✅ | `sdk/README.md` new "Goal-level metering" section |
-| All existing tests still pass | ✅ | 769 passed, 0 failed |
-| No new external dependencies | ✅ | Only stdlib (`contextvars`, `dataclasses`, `time`) |
+## Pattern check
 
-## Path note
+- Markdown tables follow the same `| col | col |` style as the rest of the README.
+- Wikilinks / footnotes match existing format.
+- Bolding uses `**...**` consistent with the doc.
 
-Task body said `agent47/goal.py`. Actual package layout is `sdk/agentguard/` — so the new file lives at `sdk/agentguard/goal.py`. This matches the rest of the package (`guards.py`, `cost.py`, etc.). The task wording was shorthand; the implementation respects the real layout.
+## Voice / brand check (per vault `AGENTS.md`)
 
-## Security / denylist check
+- Forbidden words grep: zero matches in `README.md` for `harness|leverage|streamline|delve|landscape|cutting-edge|game-changer|revolutionary|seamless|robust|holistic|synergy|ecosystem|engagement|retainer`.
+- Em-dash check: I removed one em-dash on line 53 (replaced with comma) and added zero new em-dashes. Net em-dash count in the file went down by one. (Pre-existing em-dashes in code-block comments and other sections are unchanged.)
+- First-person / builder voice preserved. No marketing fluff added.
 
-- No changes under `.github/workflows/`, `.env*`, `supabase/migrations/`, `security/`, secrets, or Stripe/Clerk config.
-- No new credentials or API keys.
-- No new external network calls. The verifier is user-supplied; the SDK itself does not invoke external services here.
+## Denylist / safety
 
-## Pattern compliance
+- No files touched in `.github/workflows/`, `.env*`, `supabase/migrations/`, `security/`, Stripe/Clerk config, or secrets.
+- No new dependencies.
+- No tests removed or skipped (no test files touched).
+- No new external network calls in code (the new release-notes URL is in markdown only).
 
-- `Goal` and `Call` are `@dataclass` like `BudgetState` (`sdk/agentguard/guards.py:176`).
-- `_GoalContext` follows the same context-manager pattern as `TimeoutGuard` (`sdk/agentguard/guards.py:397-405`).
-- Error type for bad verifier is `TypeError`, matching the type-checking patterns elsewhere in `BudgetGuard.consume` (`sdk/agentguard/guards.py:258-269`).
-- Docstrings include `Usage::` example blocks per existing convention.
+## Honest scope of claim
 
-## Risk
+- The contrast against Anthropic is bounded to what they actually shipped: per-tool `max_tokens` on the advisor tool, output tokens only, single call. The README does not over-claim that AgentGuard is "better at single-call caps" — it explicitly says single-call caps are table stakes and the moat is the cross-call envelope.
+- The release-notes URL is taken from the queue task frontmatter, which references the same source card.
 
-Low. The diff is 79 lines plus a 200-line new module. The only behavior change to existing code is one function-call append inside `BudgetGuard.consume` that is a no-op when no goal is active. All existing tests including `test_concurrency.py`, `test_cost.py`, `test_e2e_pipeline.py` pass unchanged.
+## Independent verifier
 
-## Test coverage regressions
+Not security-flagged in the task frontmatter (`signal_type: vendor-announcement`, not `security-threat`). Standard self-QA applies; CVE-Bench independent verifier requirement does not.
 
-None. Added 8 new tests; no existing test removed or skipped.
+## Files inspected
+
+- `README.md` — modified, re-read in place after edit.
+- `WORK_PLAN.md`, `RESEARCH.md` — refreshed for this task.
+- `Knowledge/sources/2026-06-03-anthropic-advisor-max-tokens-cost-cap.md` (vault) — source of truth for the Anthropic change.
+- `Queue/agent47/anthropic-advisor-max-tokens-update-positioning.md` (vault) — task spec.
+
+## Confirmation
+
+No secrets added. No denylist paths touched. No test coverage regressions (no tests changed).

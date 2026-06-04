@@ -52,17 +52,39 @@ AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
 runs inside the agent's process, sees the call graph, and raises exceptions
 that kill the run before the next bad call lands. Routers and gateways like
 Manifest or Vercel AI Gateway sit at the network layer and shape egress
-traffic. The layers are complementary — see the
+traffic. The layers are complementary, see the
 [competitive notes](#runtime-control-vs-observability) for when each fits.
+
+The headline value is the **cross-call, cross-provider budget envelope**: one
+ceiling that holds across every tool call, every retry, and every provider in
+the run. Single-call output caps are table stakes (Anthropic now ships
+per-tool `max_tokens` on the advisor tool, on 2026-06-02, see
+[release notes](https://platform.claude.com/docs/en/release-notes/overview#june-2-2026)).
+A single-call cap stops one oversized response. It does not stop a loop that
+makes 200 small calls, a retry storm across providers, or a run that mixes
+OpenAI and Anthropic and blows the combined budget. AgentGuard handles that
+envelope in-process and raises the exception that ends the run.
 
 | Problem | What AgentGuard does |
 |---|---|
 | Agent loops on the same tool | Raises `LoopDetected` |
 | Flaky tool retries forever | Raises `RetryLimitExceeded` |
-| Run spends too much | Raises `BudgetExceeded` |
+| Run spends too much across many calls | Raises `BudgetExceeded` |
+| Run mixes OpenAI and Anthropic and blows the combined cap | Raises `BudgetExceeded` |
 | Run hangs | Raises `TimeoutExceeded` |
 | Team needs proof | Writes local JSONL traces and incident reports |
 | Dashboard comes later | `HttpSink` mirrors events only when you opt in |
+
+| Scope of cap | Anthropic per-tool `max_tokens` | AgentGuard `BudgetGuard` + `RateLimitGuard` + `TimeoutGuard` |
+|---|---|---|
+| One tool call, output tokens only | Yes | Yes |
+| Many calls in one run | No | Yes |
+| Mixed providers (OpenAI + Anthropic) in one run | No | Yes |
+| Loop detection across repeated calls | No | Yes |
+| Retry storm cap | No | Yes |
+| Calls per minute | No | Yes |
+| Wall-clock timeout | No | Yes |
+| In-process exception that ends the run | No | Yes |
 
 Design constraints:
 
@@ -300,6 +322,7 @@ layer.
 | Capability | AgentGuard |
 |---|---|
 | In-process hard budget caps | Yes |
+| Cross-call, cross-provider budget envelope | Yes |
 | Kill a bad run by raising an exception | Yes |
 | Loop and retry-storm detection | Yes |
 | Local JSONL traces | Yes |
@@ -307,6 +330,11 @@ layer.
 | Hosted ingest | Optional |
 | Required dashboard | No |
 | Runtime dependencies | None |
+
+Provider-native caps such as Anthropic's per-tool `max_tokens` cover one call
+on one provider. AgentGuard covers the whole run across every provider and
+every call. Use both: set the per-call cap at the provider, set the
+run-envelope cap in AgentGuard.
 
 Competitive notes:
 
