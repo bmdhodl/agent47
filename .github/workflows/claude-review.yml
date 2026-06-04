@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   claude-review:
+    # Forked PRs don't receive repo secrets, so the OAuth token would be empty.
+    # Only run for same-repo PRs (agent47 is public and takes external forks).
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
