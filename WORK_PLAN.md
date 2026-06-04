@@ -1,41 +1,40 @@
-# WORK_PLAN: goal-level metering API prototype
+# WORK_PLAN — README positioning vs Anthropic per-tool max_tokens
 
-## Problem
-AgentGuard today only meters per-session via `BudgetGuard`. Operators care about cost-per-completed-goal (per the arXiv:2605.22883 framing). Ship v1 of a `guard.goal(name, verifier=...)` context manager that buckets nested call costs against a named goal, runs a verifier on exit, and exposes a structured ledger.
+## Problem statement
+
+On 2026-06-02 Anthropic shipped per-tool `max_tokens` caps on the advisor tool, so first-party Claude API users can now cap output tokens per tool call natively. The current `README.md` positioning still leads with a bare "stop runaway agents before they burn money" pitch and frames `BudgetGuard` primarily as a per-run dollar/call cap. That framing now overlaps with what Anthropic ships out of the box for one-call workloads. AgentGuard's actual moat — cross-provider abstraction, multi-call budget envelopes, rate limits, time windows, and in-process loop/retry/timeout stops — needs to be the headline.
 
 ## Approach
-- New module `sdk/agentguard/goal.py`:
-  - `Call` dataclass — single accounted call (tokens, calls, cost_usd, attempt_idx, ts).
-  - `Goal` dataclass holding name, verifier, calls, sub-goals, attempts counter, start/end ts. Methods: `attempt()`, `_record(call)`, `to_dict()`. Properties: `cost_usd`, `failure_cost`, `duration_sec`, `succeeded` (set on exit).
-  - `_active_goal_stack: ContextVar[tuple[Goal, ...]]` so nested calls inside async/threadpool see the right goal. The stack holds parent + descendants so we can implement nesting cleanly.
-- `BudgetGuard.goal(name, verifier)` returns a context manager. On `__enter__` pushes a new Goal onto the contextvar stack and records start. On `__exit__` pops, runs verifier, sets succeeded, attaches goal to parent (if any) as a sub-goal.
-- Hook into `BudgetGuard.consume(...)` so that, when a goal is active, we also append a `Call` to the innermost goal. This keeps all existing call accounting intact (no breaking change) and adds goal-bucketing as a side effect.
-- `cost_usd` = own calls + sub-goal totals (no double-count: own calls only contain direct `consume` calls; sub-goals' calls live on the sub-goal objects).
-- `failure_cost` = cost of all calls in failed attempts. An attempt is failed if it is not the final attempt of a successful goal. If `not succeeded`, all calls are failure cost.
-- Verifier MUST be a callable returning bool. We do not catch verifier exceptions — they propagate (fail loudly per global instructions).
+
+Surgical README edit. No code change, no API change. Two narrow inserts plus minimal copy tweaks:
+
+1. Add a short subsection under `## Why AgentGuard` that names the contrast explicitly: "Anthropic per-tool `max_tokens` (single-call output cap)" vs "AgentGuard cross-call / cross-provider budget envelope". One paragraph + one comparison row. This is the headline answer to "why this still exists in June 2026."
+2. Add one row to the existing `## Runtime Control vs Observability` table covering per-tool / per-call provider caps, so the comparison is durable next to the other competitive notes.
+
+No other docs touched. PYPI_README, AGENTS.md, ARCHITECTURE.md, landing page (bmdpat) are explicitly out of scope for this PR per queue-worker invocation (bmdpat half held for Patrick).
 
 ## Files likely to touch
-- `sdk/agentguard/goal.py` (new)
-- `sdk/agentguard/guards.py` (BudgetGuard.goal method + hook into consume)
-- `sdk/agentguard/__init__.py` (export Goal)
-- `sdk/tests/test_goal.py` (new)
-- `sdk/README.md` (new section)
-- `README.md` at repo root if it mirrors
 
-## Done checklist
-- [ ] `Goal` exposes `cost_usd`, `attempts`, `succeeded`, `failure_cost`, `duration_sec`, `calls`, `to_dict()`.
-- [ ] `BudgetGuard.goal(name, verifier)` works as a context manager.
-- [ ] Nested goals: parent total = own + sub totals, no double count.
-- [ ] Happy path test (1 attempt, succeeds).
-- [ ] 3-attempts-then-success test (failure_cost > 0).
-- [ ] Nested goals test.
-- [ ] Failed goal test (succeeded=False, full cost = failure cost).
-- [ ] README section "Goal-level metering".
-- [ ] All existing tests still pass.
-- [ ] No new external deps.
+- `README.md` — the only file changing.
 
-## Risks / assumptions
-- Hooking into `BudgetGuard.consume` is the right integration point. Alternative would be a separate `record_call` API, but consume is already where every cost lands. The hook is one append; zero behavior change when no goal is active.
-- Contextvars are the right propagation mechanism (async + threadpool safe, as the paper assumes). The standard lib provides this — no new deps.
-- Verifier contract is binary bool in v1 (per task scope). Fuzzy verifiers are v2.
-- Per the concept page sketch, the `guard` in `with guard.goal(...)` is a `BudgetGuard` instance (the only "guard" with cost state). The concept page's reference to `AgentGuard(budget_usd=5.00)` is aspirational naming — current package uses `BudgetGuard(max_cost_usd=...)`. We stay consistent with the existing API.
+## What "done" looks like
+
+- [ ] README has an explicit "Anthropic per-tool max_tokens" vs "AgentGuard cross-call / cross-provider envelope" comparison.
+- [ ] Single-call token cap is described as table-stakes, not the headline.
+- [ ] No new dependencies, no API change, no example code changes.
+- [ ] Forbidden words from `AGENTS.md` voice rules are not introduced (harness, leverage, streamline, seamless, robust, holistic, synergy, ecosystem, etc.).
+- [ ] No em dashes added.
+- [ ] Diff under ~60 LOC.
+
+## Risks / assumptions / things that might break
+
+- **Assumption:** Anthropic shipped this on 2026-06-02 per the source card. Verified against the Knowledge source page `2026-06-03-anthropic-advisor-max-tokens-cost-cap.md`. The source card says: per-tool `max_tokens` parameter on the advisor tool definition, output cap per call, plus refusal responses no longer billed when no output generated.
+- **Risk:** Over-claim. AgentGuard does not currently claim to wrap every provider's per-tool cap; the contrast must be honest. We position cross-call + cross-provider envelope as the moat, not "we are better at per-call caps than Anthropic."
+- **Risk:** Voice drift. Source card uses "narrows the wedge"-style framing; the README must stay builder-to-builder and avoid marketing fluff.
+- **Risk:** Markdown table render breakage. Keep new rows inside existing tables; do not introduce a new top-level table format.
+
+## Karpathy-guidelines pass
+
+- Surgical scope: one file, two inserts.
+- Verifiable success: explicit text strings ("max_tokens", "per-tool", "cross-call", "cross-provider") will be greppable in the diff.
+- Surface assumption: Anthropic's cap is **output-token only, per single call**. If they later ship a multi-call envelope, this positioning has to be revisited.
