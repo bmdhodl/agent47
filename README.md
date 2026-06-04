@@ -93,6 +93,20 @@ Design constraints:
 - no network calls unless you configure `HttpSink`
 - guards raise exceptions inside the running process
 
+## Scope
+
+AgentGuard's scope is the **in-process runtime envelope**: budget, token,
+rate, retry, loop, and timeout caps that fire inside the agent's Python
+process and raise exceptions that end the run.
+
+OS-level containment is **out of scope**: process sandboxes, VMs, filesystem
+boundaries, and egress controls live one layer down from AgentGuard. For
+that layer, see Anthropic's
+["How we contain Claude across products" (2026-05-30)](https://www.anthropic.com/news/how-we-contain-claude)
+as the canonical reference. The layers are complementary: containment
+bounds what the process can touch; AgentGuard bounds what the agent loop
+inside that process can spend.
+
 ## Real Incidents AgentGuard Prevents
 
 ### PocketOS — agent deleted prod DB and backups in 9 seconds (May 2026)
