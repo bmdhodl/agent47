@@ -124,13 +124,24 @@ def _sum_by_category(rows: list[dict[str, Any]]) -> Counter:
     return counter
 
 
-def collect_pypi() -> dict[str, Any]:
-    """Primary PyPI numbers (recent + overall).
+def collect_pypi_recent() -> dict[str, Any]:
+    """Recent PyPI download counts (day/week/month).
 
-    Kept separate from the OS/Python breakdown so a rate-limit on the
-    supplementary calls cannot discard the headline download figures.
+    Each pypistats endpoint is its own source so an independent rate-limit on
+    one cannot discard another's already-fetched data.
     """
     recent = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/recent")
+    return {
+        # /recent is mirror-excluded per pypistats convention, matching the
+        # without_mirrors total in collect_pypi_overall.
+        "last_day": recent["data"]["last_day"],
+        "last_week": recent["data"]["last_week"],
+        "last_month": recent["data"]["last_month"],
+    }
+
+
+def collect_pypi_overall() -> dict[str, Any]:
+    """All-time PyPI total and date range (mirror-excluded)."""
     overall = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/overall")
     # /overall returns one row per (date, category) where category is
     # with_mirrors / without_mirrors. Summing every row double-counts and folds
@@ -156,23 +167,14 @@ def collect_pypi() -> dict[str, Any]:
         total_recorded = sum(r["downloads"] for r in real_rows)
         dates = sorted(r["date"] for r in real_rows if r.get("date"))
         date_range = [dates[0], dates[-1]] if dates else None
-    return {
-        # last_* come from /recent (mirror-excluded, per pypistats convention);
-        # total_recorded comes from /overall filtered to without_mirrors above.
-        # Both bases exclude mirrors, so the side-by-side display is comparable.
-        "last_day": recent["data"]["last_day"],
-        "last_week": recent["data"]["last_week"],
-        "last_month": recent["data"]["last_month"],
-        "total_recorded": total_recorded,
-        "range": date_range,
-    }
+    return {"total_recorded": total_recorded, "range": date_range}
 
 
 def collect_pypi_breakdown() -> dict[str, Any]:
     """Supplementary PyPI breakdown (OS share + Python versions).
 
     Separate source so a failure here degrades only the breakdown, not the
-    primary download numbers from collect_pypi.
+    primary numbers from collect_pypi_recent / collect_pypi_overall.
     """
     by_system = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/system")
     by_python = _get_json(
@@ -279,7 +281,8 @@ def collect_all() -> dict[str, Any]:
         "errors": {},
     }
     for key, fn in (
-        ("pypi", collect_pypi),
+        ("pypi_recent", collect_pypi_recent),
+        ("pypi_overall", collect_pypi_overall),
         ("pypi_breakdown", collect_pypi_breakdown),
         ("pypi_latest", collect_pypi_latest),
         ("npm", collect_npm),
@@ -320,7 +323,6 @@ def render(snapshot: dict[str, Any]) -> str:
     issues = snapshot.get("issues") or {}
     out("HUMAN SIGNAL  (the metric that matters)")
     out(f"  GitHub stars            : {_fmt(gh.get('stars'))}")
-    out(f"  Forks                   : {_fmt(gh.get('forks'))}")
     out(f"  External open issues    : {_fmt(issues.get('external_open_issues'))}")
     if issues.get("external_authors"):
         out(f"    authors               : {', '.join(issues['external_authors'])}")
@@ -335,20 +337,24 @@ def render(snapshot: dict[str, Any]) -> str:
         out("  Referrers               : none recorded")
     out("")
 
-    pypi = snapshot.get("pypi") or {}
+    recent = snapshot.get("pypi_recent") or {}
+    overall = snapshot.get("pypi_overall") or {}
     pypi_breakdown = snapshot.get("pypi_breakdown") or {}
     npm = snapshot.get("npm") or {}
     out("MACHINE VOLUME  (mostly CI / mirrors - caveat heavily)")
+    # Forks live here, not under HUMAN SIGNAL: on a low-star repo forks are
+    # dominated by scrapers/auto-forkers, not human contributors.
+    out(f"  GitHub forks            : {_fmt(gh.get('forks'))}")
     out(
         "  PyPI downloads          : "
-        f"day {_fmt(pypi.get('last_day'))} | "
-        f"week {_fmt(pypi.get('last_week'))} | "
-        f"month {_fmt(pypi.get('last_month'))}"
+        f"day {_fmt(recent.get('last_day'))} | "
+        f"week {_fmt(recent.get('last_week'))} | "
+        f"month {_fmt(recent.get('last_month'))}"
     )
-    if pypi.get("range"):
+    if overall.get("range"):
         out(
-            f"  PyPI total recorded     : {_fmt(pypi.get('total_recorded'))} "
-            f"({pypi['range'][0]} -> {pypi['range'][1]})"
+            f"  PyPI total recorded     : {_fmt(overall.get('total_recorded'))} "
+            f"({overall['range'][0]} -> {overall['range'][1]})"
         )
     if pypi_breakdown.get("linux_share") is not None:
         out(
