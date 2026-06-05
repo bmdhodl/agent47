@@ -130,7 +130,15 @@ def collect_pypi() -> dict[str, Any]:
     by_python = _get_json(
         f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/python_minor"
     )
+    # /overall returns one row per (date, category) where category is
+    # with_mirrors / without_mirrors. Summing every row double-counts and folds
+    # mirror traffic into a figure we report as mirror-excluded, so keep only
+    # the without_mirrors rows (fall back to all rows if the shape changes).
     overall_rows = overall["data"]
+    real_rows = [
+        r for r in overall_rows if r.get("category") == "without_mirrors"
+    ] or overall_rows
+    dates = sorted(r["date"] for r in real_rows if r.get("date"))
     systems = _sum_by_category(by_system["data"])
     linux = systems.get("Linux", 0)
     total_with_os = sum(v for k, v in systems.items() if k != "null")
@@ -138,12 +146,8 @@ def collect_pypi() -> dict[str, Any]:
         "last_day": recent["data"]["last_day"],
         "last_week": recent["data"]["last_week"],
         "last_month": recent["data"]["last_month"],
-        "total_recorded": sum(r["downloads"] for r in overall_rows),
-        "range": (
-            [overall_rows[0]["date"], overall_rows[-1]["date"]]
-            if overall_rows
-            else None
-        ),
+        "total_recorded": sum(r["downloads"] for r in real_rows),
+        "range": [dates[0], dates[-1]] if dates else None,
         "by_system": dict(systems.most_common()),
         "by_python": dict(_sum_by_category(by_python["data"]).most_common()),
         "linux_share": round(linux / total_with_os, 3) if total_with_os else None,
