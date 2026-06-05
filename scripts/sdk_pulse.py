@@ -133,12 +133,17 @@ def collect_pypi() -> dict[str, Any]:
     )
     # /overall returns one row per (date, category) where category is
     # with_mirrors / without_mirrors. Summing every row double-counts and folds
-    # mirror traffic into a figure we report as mirror-excluded, so keep only
-    # the without_mirrors rows (fall back to all rows if the shape changes).
+    # mirror traffic into a figure we report as mirror-excluded. Keep only the
+    # without_mirrors rows. Fall back to all rows ONLY when the response has no
+    # mirror split at all (shape change); never fall back when a split exists,
+    # or we would re-introduce the double-count.
     overall_rows = overall["data"]
-    real_rows = [
-        r for r in overall_rows if r.get("category") == "without_mirrors"
-    ] or overall_rows
+    categories = {r.get("category") for r in overall_rows}
+    has_mirror_split = "without_mirrors" in categories or "with_mirrors" in categories
+    if has_mirror_split:
+        real_rows = [r for r in overall_rows if r.get("category") == "without_mirrors"]
+    else:
+        real_rows = overall_rows
     dates = sorted(r["date"] for r in real_rows if r.get("date"))
     systems = _sum_by_category(by_system["data"])
     linux = systems.get("Linux", 0)
@@ -178,7 +183,9 @@ def collect_npm_latest() -> str:
 
 
 def collect_github_public() -> dict[str, Any]:
-    data = _get_json(f"https://api.github.com/repos/{REPO}")
+    # Use gh api (authenticated, 5000 req/hr) rather than unauthenticated
+    # urllib (60 req/hr per IP), which trips silently on shared CI egress IPs.
+    data = _gh_api(f"repos/{REPO}")
     return {
         "stars": data["stargazers_count"],
         "forks": data["forks_count"],
@@ -230,7 +237,7 @@ def collect_external_issues() -> dict[str, Any]:
     }
 
 
-def _safe(label: str, fn) -> tuple[Any, str | None]:
+def _safe(fn) -> tuple[Any, str | None]:
     # Catch shape errors (KeyError/IndexError/TypeError/ValueError) too, not
     # just SourceError: an unexpected API response must degrade that one source,
     # never abort the whole report.
@@ -255,7 +262,7 @@ def collect_all() -> dict[str, Any]:
         ("github_traffic", collect_github_traffic),
         ("issues", collect_external_issues),
     ):
-        value, error = _safe(key, fn)
+        value, error = _safe(fn)
         if error is None:
             snapshot[key] = value
         else:
