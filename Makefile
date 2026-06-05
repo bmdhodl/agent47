@@ -1,4 +1,4 @@
-.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp mcp-budget ci-tools-guard
+.PHONY: test lint check structural security clean install fix lines preflight release-guard mcp mcp-budget ci-tools-guard stats
 
 # Install SDK in editable mode with dev tools
 install:
@@ -18,7 +18,7 @@ structural:
 
 # Lint SDK source
 lint:
-	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py
+	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/sdk_pulse.py
 
 # Lint + auto-fix
 fix:
@@ -58,6 +58,10 @@ clean:
 	rm -rf sdk/dist/ sdk/build/ sdk/*.egg-info sdk/agentguard/*.egg-info
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name .pytest_cache -exec rm -rf {} + 2>/dev/null || true
+
+# Weekly distribution pulse: human signal vs machine volume
+stats:
+	python scripts/sdk_pulse.py --append-history proof/pulse/history.jsonl
 
 # Show line counts per module (entropy check)
 lines:
