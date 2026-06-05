@@ -23,7 +23,7 @@ enough to create surprise spend.
 
 ## Why runtime control, not just memory
 
-The Mem0 2026 agent memory survey found a 57-71% cross-user contamination rate across eight major agent runtimes. The root cause is keyword retrieval with weak staleness handling: memory written by one user gets recalled into another user's context, which leaks PII and bleeds decisions across sessions. The memory layer is where state goes wrong, but the runtime is where you can still stop it. AgentGuard sits at the call site and enforces hard budget, loop, retry, and timeout limits in-process, so a contaminated recall cannot turn into a runaway loop or a sustained spend incident before the run ends.
+The 2026 paper [No Attacker Needed: Unintentional Cross-User Contamination in Shared-State LLM Agents](https://arxiv.org/abs/2604.01350) measured a 57-71% contamination rate under raw shared state, with no attacker involved. Scope-bound artifacts from one user persist in shared memory and get misapplied to another user's context, which can leak data and bleed decisions across sessions. The memory layer is where state goes wrong, but the runtime is where you can still stop it. AgentGuard sits at the call site and enforces hard budget, loop, retry, and timeout limits in-process, so a contaminated recall cannot turn into a runaway loop or a sustained spend incident before the run ends.
 
 ## Install
 
