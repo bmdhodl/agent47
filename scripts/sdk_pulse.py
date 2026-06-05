@@ -124,7 +124,11 @@ def _gh_api(path: str, paginate: bool = False) -> Any:
 def _sum_by_category(rows: list[dict[str, Any]]) -> Counter:
     counter: Counter = Counter()
     for row in rows:
-        counter[row["category"]] += row["downloads"]
+        # Coerce a JSON null category to the string "null" so the snapshot stays
+        # JSON-serializable (a None dict key crashes json.dumps(sort_keys=True),
+        # which runs outside _safe in the --json / --append-history paths).
+        category = row["category"] if row["category"] is not None else "null"
+        counter[category] += row["downloads"]
     return counter
 
 
@@ -414,8 +418,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     snapshot = collect_all()
+    data_keys = [k for k in snapshot if k not in ("repo", "collected_at", "errors")]
 
-    if args.append_history:
+    # Append only when at least one source returned data, so a fully-failed run
+    # (e.g. no network) does not pollute the history file with empty rows.
+    if args.append_history and data_keys:
         append_history(args.append_history, snapshot)
 
     if args.json:
@@ -425,7 +432,6 @@ def main(argv: list[str] | None = None) -> int:
 
     # Fail loudly only if every source failed (likely no network), so the
     # report is still useful when a single endpoint is down.
-    data_keys = [k for k in snapshot if k not in ("repo", "collected_at", "errors")]
     if not data_keys:
         print("\nERROR: no data sources reachable", file=sys.stderr)
         return 1
