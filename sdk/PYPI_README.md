@@ -109,6 +109,18 @@ as the canonical reference. The layers are complementary: containment
 bounds what the process can touch; AgentGuard bounds what the agent loop
 inside that process can spend.
 
+## Identity vs Runtime: AgentGuard and scoped agent credentials
+
+Scoped agent credential products, such as the per-agent identity, RBAC, and
+audit logs that WorkOS productized in mid-2026, answer an identity-time
+question: who is this agent, what scopes does it hold, and what did it touch.
+AgentGuard answers a run-time question: what is the agent doing right now, and
+should this run be stopped before it spends more. One sets the envelope. The
+other enforces the envelope at execution with a budget cap, token cap, rate
+cap, and an in-process kill-switch. They compose rather than compete. Issue a
+scoped credential per agent for identity and audit, then wrap that agent's loop
+with AgentGuard so a runaway run cannot burn the budget the credential allows.
+
 ## Real Incidents AgentGuard Prevents
 
 ### PocketOS — agent deleted prod DB and backups in 9 seconds (May 2026)
