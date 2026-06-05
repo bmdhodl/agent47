@@ -32,6 +32,7 @@ import sys
 import urllib.error
 import urllib.request
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -180,6 +181,7 @@ def collect_external_issues() -> dict[str, Any]:
         i
         for i in issues
         if "pull_request" not in i
+        and i.get("user") is not None  # GitHub sends null for deleted accounts
         and i["user"]["login"] != REPO_OWNER
         and i["user"].get("type") != "Bot"
         and not i["user"]["login"].endswith("[bot]")
@@ -201,7 +203,11 @@ def _safe(label: str, fn) -> tuple[Any, str | None]:
 
 
 def collect_all() -> dict[str, Any]:
-    snapshot: dict[str, Any] = {"repo": REPO, "errors": {}}
+    snapshot: dict[str, Any] = {
+        "repo": REPO,
+        "collected_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "errors": {},
+    }
     for key, fn in (
         ("pypi", collect_pypi),
         ("pypi_latest", collect_pypi_latest),
@@ -229,6 +235,8 @@ def render(snapshot: dict[str, Any]) -> str:
 
     out("AgentGuard distribution pulse")
     out(f"  repo: {snapshot['repo']}")
+    if snapshot.get("collected_at"):
+        out(f"  collected: {snapshot['collected_at']}")
     out(
         "  latest published: "
         f"PyPI {_fmt(snapshot.get('pypi_latest'))} | "
@@ -281,14 +289,17 @@ def render(snapshot: dict[str, Any]) -> str:
     )
     if traffic.get("clones_14d") is not None:
         clones = traffic["clones_14d"]
-        uniques = traffic["clones_uniques_14d"] or 1
-        ratio = clones / uniques
-        out(
-            f"  Clones (14d)            : {clones} total / "
-            f"{traffic['clones_uniques_14d']} unique = {ratio:.1f}x per cloner"
-        )
-        if ratio >= 5:
-            out("    ^ ratio >= 5x strongly indicates automated CI, not humans")
+        uniques = traffic["clones_uniques_14d"]
+        if uniques:
+            ratio = clones / uniques
+            out(
+                f"  Clones (14d)            : {clones} total / "
+                f"{uniques} unique = {ratio:.1f}x per cloner"
+            )
+            if ratio >= 5:
+                out("    ^ ratio >= 5x strongly indicates automated CI, not humans")
+        else:
+            out(f"  Clones (14d)            : {clones} total / 0 unique")
     out("")
 
     if snapshot.get("errors"):
@@ -332,7 +343,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # Fail loudly only if every source failed (likely no network), so the
     # report is still useful when a single endpoint is down.
-    data_keys = [k for k in snapshot if k not in ("repo", "errors")]
+    data_keys = [k for k in snapshot if k not in ("repo", "collected_at", "errors")]
     if not data_keys:
         print("\nERROR: no data sources reachable", file=sys.stderr)
         return 1
