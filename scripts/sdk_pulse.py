@@ -190,9 +190,9 @@ def collect_pypi_breakdown() -> dict[str, Any]:
     )
     systems = _sum_by_category(by_system["data"])
     linux = systems.get("Linux", 0)
-    # Exclude the unknown-OS bucket whether pypistats sends it as the string
-    # "null" or JSON null (-> Python None).
-    total_with_os = sum(v for k, v in systems.items() if k not in ("null", None))
+    # Exclude the unknown-OS bucket. _sum_by_category already normalises a JSON
+    # null category to the string "null", so that is the only sentinel here.
+    total_with_os = sum(v for k, v in systems.items() if k != "null")
     return {
         "by_system": dict(systems.most_common()),
         "by_python": dict(_sum_by_category(by_python["data"]).most_common()),
