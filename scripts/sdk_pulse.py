@@ -125,12 +125,13 @@ def _sum_by_category(rows: list[dict[str, Any]]) -> Counter:
 
 
 def collect_pypi() -> dict[str, Any]:
+    """Primary PyPI numbers (recent + overall).
+
+    Kept separate from the OS/Python breakdown so a rate-limit on the
+    supplementary calls cannot discard the headline download figures.
+    """
     recent = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/recent")
     overall = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/overall")
-    by_system = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/system")
-    by_python = _get_json(
-        f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/python_minor"
-    )
     # /overall returns one row per (date, category) where category is
     # with_mirrors / without_mirrors. Summing every row double-counts and folds
     # mirror traffic into a figure we report as mirror-excluded. Three cases:
@@ -155,11 +156,6 @@ def collect_pypi() -> dict[str, Any]:
         total_recorded = sum(r["downloads"] for r in real_rows)
         dates = sorted(r["date"] for r in real_rows if r.get("date"))
         date_range = [dates[0], dates[-1]] if dates else None
-    systems = _sum_by_category(by_system["data"])
-    linux = systems.get("Linux", 0)
-    # Exclude the unknown-OS bucket whether pypistats sends it as the string
-    # "null" or JSON null (-> Python None).
-    total_with_os = sum(v for k, v in systems.items() if k not in ("null", None))
     return {
         # last_* come from /recent (mirror-excluded, per pypistats convention);
         # total_recorded comes from /overall filtered to without_mirrors above.
@@ -169,6 +165,25 @@ def collect_pypi() -> dict[str, Any]:
         "last_month": recent["data"]["last_month"],
         "total_recorded": total_recorded,
         "range": date_range,
+    }
+
+
+def collect_pypi_breakdown() -> dict[str, Any]:
+    """Supplementary PyPI breakdown (OS share + Python versions).
+
+    Separate source so a failure here degrades only the breakdown, not the
+    primary download numbers from collect_pypi.
+    """
+    by_system = _get_json(f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/system")
+    by_python = _get_json(
+        f"https://pypistats.org/api/packages/{PYPI_PACKAGE}/python_minor"
+    )
+    systems = _sum_by_category(by_system["data"])
+    linux = systems.get("Linux", 0)
+    # Exclude the unknown-OS bucket whether pypistats sends it as the string
+    # "null" or JSON null (-> Python None).
+    total_with_os = sum(v for k, v in systems.items() if k not in ("null", None))
+    return {
         "by_system": dict(systems.most_common()),
         "by_python": dict(_sum_by_category(by_python["data"]).most_common()),
         "linux_share": round(linux / total_with_os, 3) if total_with_os else None,
@@ -265,6 +280,7 @@ def collect_all() -> dict[str, Any]:
     }
     for key, fn in (
         ("pypi", collect_pypi),
+        ("pypi_breakdown", collect_pypi_breakdown),
         ("pypi_latest", collect_pypi_latest),
         ("npm", collect_npm),
         ("npm_latest", collect_npm_latest),
@@ -320,6 +336,7 @@ def render(snapshot: dict[str, Any]) -> str:
     out("")
 
     pypi = snapshot.get("pypi") or {}
+    pypi_breakdown = snapshot.get("pypi_breakdown") or {}
     npm = snapshot.get("npm") or {}
     out("MACHINE VOLUME  (mostly CI / mirrors - caveat heavily)")
     out(
@@ -333,9 +350,9 @@ def render(snapshot: dict[str, Any]) -> str:
             f"  PyPI total recorded     : {_fmt(pypi.get('total_recorded'))} "
             f"({pypi['range'][0]} -> {pypi['range'][1]})"
         )
-    if pypi.get("linux_share") is not None:
+    if pypi_breakdown.get("linux_share") is not None:
         out(
-            f"  PyPI Linux share        : {pypi['linux_share']:.0%} "
+            f"  PyPI Linux share        : {pypi_breakdown['linux_share']:.0%} "
             "(high = CI-dominated)"
         )
     out(
