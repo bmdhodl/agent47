@@ -43,6 +43,7 @@ PYPI_PACKAGE = "agentguard47"
 NPM_PACKAGE = "@agentguard47/mcp-server"
 
 HTTP_TIMEOUT = 15  # seconds; one slow source must not hang the report
+GH_TIMEOUT = 60  # gh api --paginate can span several requests; allow more room
 USER_AGENT = "agentguard-pulse/1.0 (+https://github.com/bmdhodl/agent47)"
 
 
@@ -102,7 +103,7 @@ def _gh_api(path: str, paginate: bool = False) -> Any:
             capture_output=True,
             text=True,
             encoding="utf-8",
-            timeout=HTTP_TIMEOUT,
+            timeout=GH_TIMEOUT,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise SourceError(f"gh api {path}: {exc}") from exc
@@ -141,8 +142,13 @@ def collect_pypi() -> dict[str, Any]:
     dates = sorted(r["date"] for r in real_rows if r.get("date"))
     systems = _sum_by_category(by_system["data"])
     linux = systems.get("Linux", 0)
-    total_with_os = sum(v for k, v in systems.items() if k != "null")
+    # Exclude the unknown-OS bucket whether pypistats sends it as the string
+    # "null" or JSON null (-> Python None).
+    total_with_os = sum(v for k, v in systems.items() if k not in ("null", None))
     return {
+        # last_* come from /recent (mirror-excluded, per pypistats convention);
+        # total_recorded comes from /overall filtered to without_mirrors above.
+        # Both bases exclude mirrors, so the side-by-side display is comparable.
         "last_day": recent["data"]["last_day"],
         "last_week": recent["data"]["last_week"],
         "last_month": recent["data"]["last_month"],
