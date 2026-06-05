@@ -23,6 +23,10 @@ enough to create surprise spend.
 
 > **⭐ Star this repo** if AgentGuard stops one runaway run for you. It is how other builders find it.
 
+## Why runtime control, not just memory
+
+The Mem0 2026 agent memory survey found a 57-71% cross-user contamination rate across eight major agent runtimes. The root cause is keyword retrieval with weak staleness handling: memory written by one user gets recalled into another user's context, which leaks PII and bleeds decisions across sessions. The memory layer is where state goes wrong, but the runtime is where you can still stop it. AgentGuard sits at the call site and enforces hard budget, loop, retry, and timeout limits in-process, so a contaminated recall cannot turn into a runaway loop or a sustained spend incident before the run ends.
+
 ## Install
 
 ### As a Python package
