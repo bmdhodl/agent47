@@ -32,6 +32,7 @@ import sys
 import urllib.error
 import urllib.request
 from collections import Counter
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -61,12 +62,16 @@ def _get_json(url: str) -> Any:
 
 
 def _merge_json_values(text: str) -> list[Any]:
-    """Parse one-or-more concatenated JSON values into a single list.
+    """Parse one-or-more concatenated JSON arrays into a single list.
 
     `gh api --paginate` emits each page's array back to back (`[...][...]`),
     which is not a single valid JSON document. A streaming decoder reads each
-    value in turn; array values are flattened so the caller gets one combined
-    list regardless of page count.
+    page in turn and flattens them into one list regardless of page count.
+
+    Only used for array endpoints. A top-level non-array value means an error
+    object (e.g. `{"message": "Not Found"}`) slipped through with a zero exit
+    code; raise so the caller surfaces it rather than silently returning a list
+    that filters down to empty.
     """
     decoder = json.JSONDecoder()
     items: list[Any] = []
@@ -77,10 +82,9 @@ def _merge_json_values(text: str) -> list[Any]:
         if index >= length:
             break
         value, index = decoder.raw_decode(text, index)
-        if isinstance(value, list):
-            items.extend(value)
-        else:
-            items.append(value)
+        if not isinstance(value, list):
+            raise ValueError(f"expected JSON array page, got {type(value).__name__}")
+        items.extend(value)
     return items
 
 
@@ -264,7 +268,7 @@ def collect_external_issues() -> dict[str, Any]:
     }
 
 
-def _safe(fn) -> tuple[Any, str | None]:
+def _safe(fn: Callable[[], Any]) -> tuple[Any, str | None]:
     # Catch shape errors (KeyError/IndexError/TypeError/ValueError) too, not
     # just SourceError: an unexpected API response must degrade that one source,
     # never abort the whole report.
