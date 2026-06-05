@@ -133,18 +133,28 @@ def collect_pypi() -> dict[str, Any]:
     )
     # /overall returns one row per (date, category) where category is
     # with_mirrors / without_mirrors. Summing every row double-counts and folds
-    # mirror traffic into a figure we report as mirror-excluded. Keep only the
-    # without_mirrors rows. Fall back to all rows ONLY when the response has no
-    # mirror split at all (shape change); never fall back when a split exists,
-    # or we would re-introduce the double-count.
+    # mirror traffic into a figure we report as mirror-excluded. Three cases:
+    #   - without_mirrors present -> use exactly those rows
+    #   - only with_mirrors present -> we cannot produce a mirror-excluded
+    #     total, so report it unknown (None) rather than 0 or a mirror sum
+    #   - no mirror split at all (old shape) -> sum all rows
     overall_rows = overall["data"]
     categories = {r.get("category") for r in overall_rows}
-    has_mirror_split = "without_mirrors" in categories or "with_mirrors" in categories
-    if has_mirror_split:
-        real_rows = [r for r in overall_rows if r.get("category") == "without_mirrors"]
+    if "without_mirrors" in categories:
+        real_rows: list[dict[str, Any]] | None = [
+            r for r in overall_rows if r.get("category") == "without_mirrors"
+        ]
+    elif "with_mirrors" in categories:
+        real_rows = None
     else:
         real_rows = overall_rows
-    dates = sorted(r["date"] for r in real_rows if r.get("date"))
+    if real_rows is None:
+        total_recorded: int | None = None
+        date_range: list[str] | None = None
+    else:
+        total_recorded = sum(r["downloads"] for r in real_rows)
+        dates = sorted(r["date"] for r in real_rows if r.get("date"))
+        date_range = [dates[0], dates[-1]] if dates else None
     systems = _sum_by_category(by_system["data"])
     linux = systems.get("Linux", 0)
     # Exclude the unknown-OS bucket whether pypistats sends it as the string
@@ -157,8 +167,8 @@ def collect_pypi() -> dict[str, Any]:
         "last_day": recent["data"]["last_day"],
         "last_week": recent["data"]["last_week"],
         "last_month": recent["data"]["last_month"],
-        "total_recorded": sum(r["downloads"] for r in real_rows),
-        "range": [dates[0], dates[-1]] if dates else None,
+        "total_recorded": total_recorded,
+        "range": date_range,
         "by_system": dict(systems.most_common()),
         "by_python": dict(_sum_by_category(by_python["data"]).most_common()),
         "linux_share": round(linux / total_with_os, 3) if total_with_os else None,
@@ -344,7 +354,7 @@ def render(snapshot: dict[str, Any]) -> str:
             if ratio >= 5:
                 out("    ^ ratio >= 5x strongly indicates automated CI, not humans")
         else:
-            out(f"  Clones (14d)            : {clones} total / 0 unique")
+            out(f"  Clones (14d)            : {clones} total / {_fmt(uniques)} unique")
     out("")
 
     if snapshot.get("errors"):
