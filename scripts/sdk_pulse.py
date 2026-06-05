@@ -20,6 +20,9 @@ Usage:
     python scripts/sdk_pulse.py            # human-readable report
     python scripts/sdk_pulse.py --json     # machine-readable snapshot
     python scripts/sdk_pulse.py --append-history proof/pulse/history.jsonl
+
+--json and --append-history compose: with both, the snapshot is appended to the
+history file and also printed as JSON.
 """
 
 from __future__ import annotations
@@ -376,7 +379,7 @@ def render(snapshot: dict[str, Any]) -> str:
     if traffic.get("clones_14d") is not None:
         clones = traffic["clones_14d"]
         uniques = traffic.get("clones_uniques_14d")
-        if uniques:
+        if uniques is not None and uniques > 0:
             ratio = clones / uniques
             out(
                 f"  Clones (14d)            : {clones} total / "
