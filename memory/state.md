@@ -1,6 +1,6 @@
 # SDK State
 
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-06-05
 
 ## Product
 - AgentGuard = zero-dependency Python SDK for runtime guardrails.
@@ -28,6 +28,19 @@
 
 ## Current Focus
 - `1.2.13` is shipped; next push is converting installs into visible proof
-  (GitHub stars sit at 3 against thousands of PyPI downloads)
 - distribution before new features
 - coding-agent onboarding and proof
+
+## Adoption Reality (verified 2026-06-05)
+Do not treat download/clone counts as traction. They are dominated by machines:
+- PyPI is ~97% Linux and pypistats already excludes mirrors; **no workflow
+  installs the published package** (CI uses `pip install -e ./sdk`), so the
+  ~950/month is the external automation ecosystem (cloud CI, Docker, dependency/
+  security scanners), not us and not humans.
+- GitHub clones (19.3k/14d, 945 unique cloners, ~20x per cloner) are partly our
+  own push-heavy CI (>=500 workflow runs/14d) and mostly external scraper bots.
+  A 3-star repo does not have 945 human cloners.
+- **True human baseline:** 3 stars, 0 external issues/PRs, ~72 unique viewers
+  /14d, ~11 referral visits/14d. This is the number to grow.
+- Pulse instrument: `make stats` / `scripts/sdk_pulse.py` splits HUMAN SIGNAL
+  from MACHINE VOLUME and appends `proof/pulse/history.jsonl` for trend.

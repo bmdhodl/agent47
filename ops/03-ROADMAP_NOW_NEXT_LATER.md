@@ -3,20 +3,30 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-06-05
+
+## Success Metric & Gate
+
+- **The metric is human signal, not volume.** Track GitHub stars, external
+  issues/PRs, unique viewers, and referral sources. Download/clone counts are
+  reported but labelled machine volume and are not a goal (see
+  `memory/state.md` Adoption Reality). Baseline on 2026-06-05: 3 stars, 0
+  external issues, ~72 unique viewers/14d.
+- **Gate for any `Now` item:** it must move a tracked human signal or create a
+  distribution event with a referrer we can watch lift on `make stats`.
+  Pure feature work without an adoption tie does not enter `Now`.
 
 ## Current Focus Notes
 
-- Current SDK release candidate is `v1.2.13` from `main`; public PyPI latest
-  remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
-  tag failed before PyPI publish, and the stale `v1.2.12` tag points at a
-  `1.2.10` checkout. Do not reuse either tag without explicit owner approval.
-- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
-  but public registry search still reports MCP package version `0.2.1`; refresh
-  metadata without changing SDK runtime code.
-- Glama first release is live at `https://glama.ai/mcp/servers/bmdhodl/agent47`;
-  the public API has indexed env vars but still returns an empty `tools` array
-  as of 2026-05-08.
+- `v1.2.13` is the shipped public PyPI latest (published 2026-05-30 with a
+  matching GitHub Release marked Latest). The dead `v1.2.11` and `v1.2.12` tags
+  were deleted on 2026-05-30; do not recreate them without owner approval.
+- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47` and
+  the public API now serves `0.2.2` (`isLatest: true`). Republish is scripted
+  via `gh workflow run publish-mcp-registry.yml` after each npm publish.
+- Glama is live at `https://glama.ai/mcp/servers/bmdhodl/agent47`; all seven
+  MCP tools are indexed and graded A. Only "no recent usage" remains (seed via
+  "Try in Browser" with the read key or let real traffic clear it).
 - Dashboard alignment is current for hosted ingest and decision traces. The
   remote-kill boundary is documented: the SDK emits events and enforces local
   guards, while the dashboard owns retained history, alerts, and team
