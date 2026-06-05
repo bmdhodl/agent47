@@ -58,17 +58,22 @@ def _get_json(url: str) -> Any:
         raise SourceError(f"{url}: {exc}") from exc
 
 
-def _gh_api(path: str) -> Any:
+def _gh_api(path: str, paginate: bool = False) -> Any:
     """Call an authenticated GitHub API endpoint via the gh CLI.
 
     Returns parsed JSON, or raises SourceError if gh is unavailable, the user
-    is not authenticated, or the call fails.
+    is not authenticated, or the call fails. With paginate=True, gh follows
+    Link headers and concatenates array responses so counts are not silently
+    capped at one page.
     """
     if shutil.which("gh") is None:
         raise SourceError("gh CLI not found on PATH")
+    command = ["gh", "api", path]
+    if paginate:
+        command.append("--paginate")
     try:
         result = subprocess.run(
-            ["gh", "api", path],
+            command,
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -107,7 +112,11 @@ def collect_pypi() -> dict[str, Any]:
         "last_week": recent["data"]["last_week"],
         "last_month": recent["data"]["last_month"],
         "total_recorded": sum(r["downloads"] for r in overall_rows),
-        "range": [overall_rows[0]["date"], overall_rows[-1]["date"]],
+        "range": (
+            [overall_rows[0]["date"], overall_rows[-1]["date"]]
+            if overall_rows
+            else None
+        ),
         "by_system": dict(systems.most_common()),
         "by_python": dict(_sum_by_category(by_python["data"]).most_common()),
         "linux_share": round(linux / total_with_os, 3) if total_with_os else None,
@@ -164,7 +173,8 @@ def collect_external_issues() -> dict[str, Any]:
     they get pulled out separately from the owner's own tracking issues.
     """
     issues = _gh_api(
-        f"repos/{REPO}/issues?state=open&per_page=100&filter=all"
+        f"repos/{REPO}/issues?state=open&per_page=100&filter=all",
+        paginate=True,
     )
     external = [
         i
@@ -181,10 +191,13 @@ def collect_external_issues() -> dict[str, Any]:
 
 
 def _safe(label: str, fn) -> tuple[Any, str | None]:
+    # Catch shape errors (KeyError/IndexError/TypeError/ValueError) too, not
+    # just SourceError: an unexpected API response must degrade that one source,
+    # never abort the whole report.
     try:
         return fn(), None
-    except SourceError as exc:
-        return None, str(exc)
+    except (SourceError, KeyError, IndexError, TypeError, ValueError) as exc:
+        return None, f"{type(exc).__name__}: {exc}"
 
 
 def collect_all() -> dict[str, Any]:
