@@ -59,13 +59,37 @@ def _get_json(url: str) -> Any:
         raise SourceError(f"{url}: {exc}") from exc
 
 
+def _merge_json_values(text: str) -> list[Any]:
+    """Parse one-or-more concatenated JSON values into a single list.
+
+    `gh api --paginate` emits each page's array back to back (`[...][...]`),
+    which is not a single valid JSON document. A streaming decoder reads each
+    value in turn; array values are flattened so the caller gets one combined
+    list regardless of page count.
+    """
+    decoder = json.JSONDecoder()
+    items: list[Any] = []
+    index, length = 0, len(text)
+    while index < length:
+        while index < length and text[index].isspace():
+            index += 1
+        if index >= length:
+            break
+        value, index = decoder.raw_decode(text, index)
+        if isinstance(value, list):
+            items.extend(value)
+        else:
+            items.append(value)
+    return items
+
+
 def _gh_api(path: str, paginate: bool = False) -> Any:
     """Call an authenticated GitHub API endpoint via the gh CLI.
 
     Returns parsed JSON, or raises SourceError if gh is unavailable, the user
     is not authenticated, or the call fails. With paginate=True, gh follows
-    Link headers and concatenates array responses so counts are not silently
-    capped at one page.
+    Link headers across pages; the concatenated per-page arrays are reassembled
+    into one list so counts are not silently capped at the first page.
     """
     if shutil.which("gh") is None:
         raise SourceError("gh CLI not found on PATH")
@@ -85,9 +109,11 @@ def _gh_api(path: str, paginate: bool = False) -> Any:
     if result.returncode != 0:
         raise SourceError(f"gh api {path}: {result.stderr.strip() or 'failed'}")
     try:
+        if paginate:
+            return _merge_json_values(result.stdout)
         return json.loads(result.stdout)
     except ValueError as exc:
-        raise SourceError(f"gh api {path}: invalid JSON") from exc
+        raise SourceError(f"gh api {path}: invalid JSON ({exc})") from exc
 
 
 def _sum_by_category(rows: list[dict[str, Any]]) -> Counter:
@@ -289,7 +315,7 @@ def render(snapshot: dict[str, Any]) -> str:
     )
     if traffic.get("clones_14d") is not None:
         clones = traffic["clones_14d"]
-        uniques = traffic["clones_uniques_14d"]
+        uniques = traffic.get("clones_uniques_14d")
         if uniques:
             ratio = clones / uniques
             out(
