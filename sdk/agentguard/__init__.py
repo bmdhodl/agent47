@@ -57,6 +57,7 @@ from .schemas import (
 )
 from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
+from .state import JsonFileStateStore, StateStore, StateStoreError
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
 
@@ -96,6 +97,7 @@ __all__ = [
     "Goal",
     "HttpSink",
     "InitConfig",
+    "JsonFileStateStore",
     "JsonlFileSink",
     "LoopDetected",
     "LoopGuard",
@@ -104,6 +106,8 @@ __all__ = [
     "RepoConfig",
     "RetryGuard",
     "RetryLimitExceeded",
+    "StateStore",
+    "StateStoreError",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",
