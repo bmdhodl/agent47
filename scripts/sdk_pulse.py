@@ -173,7 +173,9 @@ def collect_github_public() -> dict[str, Any]:
         "stars": data["stargazers_count"],
         "forks": data["forks_count"],
         "watchers": data["subscribers_count"],
-        "open_issues": data["open_issues_count"],
+        # GitHub's open_issues_count includes open PRs; named honestly so it is
+        # not confused with the PR-stripped external_open_issues metric.
+        "open_issues_and_prs": data["open_issues_count"],
     }
 
 
@@ -200,7 +202,7 @@ def collect_external_issues() -> dict[str, Any]:
     they get pulled out separately from the owner's own tracking issues.
     """
     issues = _gh_api(
-        f"repos/{REPO}/issues?state=open&per_page=100&filter=all",
+        f"repos/{REPO}/issues?state=open&per_page=100",
         paginate=True,
     )
     external = [
