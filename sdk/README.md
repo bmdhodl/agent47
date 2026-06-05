@@ -141,6 +141,30 @@ rate = RateLimitGuard(max_calls_per_minute=60)
 rate.check()
 ```
 
+## Persistent budgets (cross-process)
+
+By default a guard's counters live in memory and reset when the process exits. For
+agents that run as repeated short-lived invocations (cron jobs, serverless functions,
+CI steps, scheduled tasks), give `BudgetGuard` a `store` so the ceiling holds across
+separate processes. The store is atomic and cross-process locked, so concurrent
+invocations never lose an update.
+
+```python
+from agentguard import BudgetGuard, JsonFileStateStore
+
+# Enforce 400 calls/day across every separate subprocess invocation.
+guard = BudgetGuard(
+    max_calls=400,
+    store=JsonFileStateStore("agent-budget.json"),
+    key="fleet",
+    period="day",   # bucket resets at the UTC day boundary; omit for a lifetime total
+)
+guard.consume(calls=1)  # raises BudgetExceeded once the shared count passes 400
+```
+
+Without `store=`, behavior is unchanged (in-memory, zero-config). A corrupt store
+raises `StateStoreError` rather than silently resetting to zero.
+
 ## Goal-level metering
 
 Measuring cost per completed goal, not per call.
