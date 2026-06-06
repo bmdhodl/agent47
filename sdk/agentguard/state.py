@@ -163,7 +163,7 @@ class _CrossProcessLock:
             f"could not remove lock file {self._path} after release; "
             "a stale lock will be broken by the next acquirer",
             RuntimeWarning,
-            stacklevel=2,
+            stacklevel=3,
         )
 
     def __enter__(self) -> "_CrossProcessLock":

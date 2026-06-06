@@ -154,7 +154,9 @@ def test_two_processes_share_one_ceiling_no_lost_updates(tmp_path):
     outs = [p.communicate(timeout=60)[0] for p in procs]
     assert all(p.returncode == 0 for p in procs), outs
 
-    successes = sum(int(o.strip().splitlines()[-1]) for o in outs)
+    lines = [o.strip().splitlines()[-1] for o in outs if o.strip()]
+    assert len(lines) == 2, f"{2 - len(lines)} worker(s) produced no output"
+    successes = sum(int(line) for line in lines)
     assert successes == ceiling, f"expected exactly {ceiling} successful consumes, got {successes}"
 
     final = JsonFileStateStore(path).read("fleet")
@@ -195,5 +197,7 @@ def test_high_contention_no_crashes_or_lost_updates(tmp_path):
     crashed = [(i, procs[i].returncode, results[i][1]) for i in range(workers) if procs[i].returncode != 0]
     assert not crashed, f"workers crashed (lock not contention-safe): {crashed}"
 
-    successes = sum(int(out.strip().splitlines()[-1]) for out, _ in results)
+    lines = [out.strip().splitlines()[-1] for out, _ in results if out.strip()]
+    assert len(lines) == workers, f"{workers - len(lines)} worker(s) produced no output"
+    successes = sum(int(line) for line in lines)
     assert successes == ceiling, f"expected exactly {ceiling} successful consumes, got {successes}"
