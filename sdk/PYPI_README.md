@@ -48,6 +48,9 @@ gh skill install bmdhodl/agent47 agentguard
 Most agent tooling tells you what happened after the run. AgentGuard stops the
 bad run while it is happening.
 
+Used to prevent surprise bills like Uber's $1,500/developer Claude Code cap,
+but enforced at the call site, where a per-tool org policy can't reach.
+
 AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
 runs inside the agent's process, sees the call graph, and raises exceptions
 that kill the run before the next bad call lands. Routers and gateways like
@@ -171,6 +174,20 @@ BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
 
 The guard raises `BudgetExceeded` before the run blows the cap. Same
 conversation, one config line instead of a memo.
+
+### Uber — $1,500/developer cap on Claude Code (June 2026)
+
+Uber set a $1,500 per-developer monthly cap on Claude Code after its AI
+budget ran hot. That cap is a per-tool org policy: it bounds spend per seat,
+per tool, from the outside. It cannot see a single run that loops, retries
+across providers, or chains 200 small calls inside one agent process.
+
+Source: [Simon Willison](https://simonwillison.net/2026/Jun/3/uber-caps-usage/)
+
+This is the enterprise pattern AgentGuard targets: the same dollar ceiling,
+enforced at the call site with `BudgetGuard`, where the run actually spends
+the money. Org caps and in-process caps are complementary: keep the seat
+budget, add the run-level stop.
 
 ## Local Proof in 60 Seconds
 
