@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import tempfile
 import time
 import warnings
@@ -100,12 +101,16 @@ class _CrossProcessLock:
                 # Another process holds the lock (the normal contended case).
                 self._wait_or_break_stale(deadline)
             except PermissionError:
-                # Windows-only: an exclusive create can fail with ERROR_ACCESS_DENIED
+                # Windows only: an exclusive create can fail with ERROR_ACCESS_DENIED
                 # (PermissionError) instead of FileExistsError when another process is
                 # concurrently releasing the lock. The unlinked file lingers in a
                 # "delete pending" state until the last handle closes, and a create on it
                 # fails with access-denied rather than file-exists. Treat it like a held
-                # lock and retry; a genuinely unwritable path just times out below.
+                # lock and retry. On POSIX a PermissionError here means a genuinely
+                # unwritable directory (EACCES), so fail fast instead of hanging until the
+                # lock timeout with a misleading message.
+                if sys.platform != "win32":
+                    raise
                 self._wait_or_break_stale(deadline)
 
     def _wait_or_break_stale(self, deadline: float) -> None:
@@ -230,6 +235,10 @@ class JsonFileStateStore:
         still holds a handle on the source or destination written moments earlier by the
         previous lock holder. The write is already serialized by the cross-process lock,
         so retrying just waits out the scanner; a genuine failure still raises.
+
+        The retry budget here is intentionally independent of the lock's ``poll``/timeout:
+        it waits out a scanner holding the *data* file, not lock contention, so it uses a
+        fixed local default rather than the lock's configurable interval.
         """
         for attempt in range(attempts):
             try:

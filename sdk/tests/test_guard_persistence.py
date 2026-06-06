@@ -183,7 +183,13 @@ def test_high_contention_no_crashes_or_lost_updates(tmp_path):
         )
         for _ in range(workers)
     ]
-    results = [p.communicate(timeout=60) for p in procs]
+    try:
+        results = [p.communicate(timeout=60) for p in procs]
+    finally:
+        # If any communicate() timed out, don't leak the remaining workers.
+        for p in procs:
+            if p.poll() is None:
+                p.kill()
     crashed = [(i, procs[i].returncode, results[i][1]) for i in range(workers) if procs[i].returncode != 0]
     assert not crashed, f"workers crashed (lock not contention-safe): {crashed}"
 
