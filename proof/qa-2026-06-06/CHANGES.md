@@ -37,6 +37,23 @@ new runtime dependency, no dashboard work — fully inside the SDK/site boundary
   path, framework grid, syntax-highlighted snippet, live shields.io badge, and
   Star-on-GitHub CTA all display; badge image `complete = true`; 0 console errors.
 
+## Review round 2 — Vercel routing fix (Codex P2)
+
+The first pass used clean URLs (`/compare`, `/quickstart`). But `vercel.json`
+rewrites `/(.*)` → `/site/$1` with `cleanUrls` **unset (defaults false)**, so a
+clean path resolves to `/site/compare` — and the file is `site/compare.html`, so
+it 404s. Enabling `cleanUrls` was rejected: it would 308-redirect the existing
+`.html` links (compare/blog footers) to clean paths, which the catch-all rewrite
+then turns into `/site/site/...` → 404.
+
+Fix: every internal page link now uses the explicit `.html` form
+(`/compare.html#pricing`, `/quickstart.html`, `/trust.html`). `/x.html` →
+`/site/x.html` exists unconditionally. Also updated `quickstart.html` canonical +
+`og:url` and the sitemap `quickstart` entry to `.html`.
+
+Proof: `07-link-integrity-vercel-accurate.txt` re-checks all 53 links against the
+**exact** `vercel.json` routing model (no `.html` guessing) → all resolve.
+
 ## Deferred (noted, not changed)
 
 - #6 `security.html` is a redirect to `trust.html` (intentional); left as-is.
