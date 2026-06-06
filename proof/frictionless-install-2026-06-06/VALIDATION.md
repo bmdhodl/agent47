@@ -48,4 +48,13 @@ against thousands of PyPI downloads.
 - release-guard: passed
 - full suite: 794 passed, total coverage 92.5% (>= 80 gate)
 - `first_run.py` coverage: 100%
+- `__main__.py` coverage: 100% (import-level test + end-to-end subprocess test)
 - `python -m agentguard` end-to-end subprocess test: passing
+
+## Automated review follow-ups (PR #584, claude-review: no blocking issues)
+
+Applied the three minor nits the automated review raised:
+- Closed the `__main__.py` import-coverage gap with a wiring test (now 100%).
+- Refreshed the stale `test_first_run.py` module docstring.
+- Strengthened the badge assertions to match the full linked-image markdown
+  (`[![Guarded by AgentGuard](`) instead of an incidental substring.

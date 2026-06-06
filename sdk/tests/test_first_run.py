@@ -1,4 +1,5 @@
-"""Tests that importing agentguard has no user-visible side effects."""
+"""First-run surface tests: import side effects, the welcome, the badge, CLI
+dispatch for the bare command, and the ``python -m agentguard`` entry point."""
 
 import importlib
 import io
@@ -100,7 +101,9 @@ class TestBadge:
     def test_render_badge_unknown_format_falls_back_to_markdown(self):
         buf = io.StringIO()
         render_badge(stream=buf, fmt="bogus")
-        assert "![Guarded by AgentGuard]" in buf.getvalue()
+        # Assert the full markdown structure (linked image), not an incidental
+        # substring that would also match a badge missing its outer link wrapper.
+        assert "[![Guarded by AgentGuard](" in buf.getvalue()
 
 
 class TestCliDispatch:
@@ -122,7 +125,7 @@ class TestCliDispatch:
 
     def test_badge_subcommand_defaults_to_markdown(self):
         out = self._run_cli(["agentguard", "badge"])
-        assert "![Guarded by AgentGuard]" in out
+        assert "[![Guarded by AgentGuard](" in out
 
     def test_badge_subcommand_html_format(self):
         out = self._run_cli(["agentguard", "badge", "--format", "html"])
@@ -130,6 +133,18 @@ class TestCliDispatch:
 
 
 class TestModuleEntryPoint:
+    def test_main_module_imports_cli_main(self):
+        """Cover the module-level import in __main__.py and pin the wiring.
+
+        Identity (``is``) is avoided because the autouse module-reload fixture
+        gives the freshly imported entry point a distinct function object.
+        """
+        import agentguard.__main__ as entry
+
+        assert callable(entry.main)
+        assert entry.main.__module__ == "agentguard.cli"
+        assert entry.main.__name__ == "main"
+
     def test_python_dash_m_agentguard_runs_cli(self):
         """`python -m agentguard` must work end-to-end (no PATH dependency)."""
         sdk_root = os.path.dirname(os.path.dirname(os.path.abspath(agentguard.__file__)))
