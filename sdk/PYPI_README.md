@@ -23,6 +23,16 @@ enough to create surprise spend.
 
 > **⭐ Star this repo** if AgentGuard stops one runaway run for you. It is how other builders find it.
 
+## Why runtime control
+
+The Mem0 2026 agent memory survey found 57 to 71 percent cross-user memory
+contamination across eight major agent frameworks. The failure mode is
+consistent: keyword retrieval pulls memory written by one user into another
+user's context, with weak staleness handling and no user-scoped isolation. The
+memory layer does not enforce the boundary. AgentGuard is the runtime control
+layer that does, sitting inside the agent process and stopping the bad run
+while it happens.
+
 ## Install
 
 ### As a Python package
