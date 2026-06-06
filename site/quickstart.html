@@ -159,7 +159,7 @@
         if (isLocalHost || !isAllowedHost) return;
         function loadInsights() {
           var s = document.createElement('script');
-          s.async = false; s.src = '/_vercel/insights/script.js';
+          s.async = true; s.src = '/_vercel/insights/script.js';
           document.head.appendChild(s);
         }
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadInsights, { once: true });
