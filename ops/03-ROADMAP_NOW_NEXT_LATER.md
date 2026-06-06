@@ -3,7 +3,7 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-06-06
 
 ## Current Focus Notes
 
@@ -11,12 +11,16 @@ they directly strengthen coding-agent adoption.
   remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
   tag failed before PyPI publish, and the stale `v1.2.12` tag points at a
   `1.2.10` checkout. Do not reuse either tag without explicit owner approval.
-- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
-  but public registry search still reports MCP package version `0.2.1`; refresh
-  metadata without changing SDK runtime code.
-- Glama first release is live at `https://glama.ai/mcp/servers/bmdhodl/agent47`;
-  the public API has indexed env vars but still returns an empty `tools` array
-  as of 2026-05-08.
+- Distribution-signal baseline: read PyPI published-package downloads and human
+  GitHub signals (stars, referrers), not raw clone counts. CI never installs the
+  published `agentguard47` wheel (it tests the local checkout), so published-
+  download counts are real signal. Clone counts are partly self-inflicted by
+  scheduled checkout workflows, so discount them as a popularity metric.
+- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47` at
+  package version `0.2.2`. The `awesome-mcp-servers` listing PR is open. Refresh
+  registry metadata only; do not touch SDK runtime code for distribution work.
+- Glama release is live at `https://glama.ai/mcp/servers/bmdhodl/agent47` with
+  the MCP tools now indexed (profile completeness ~92%).
 - Dashboard alignment is current for hosted ingest and decision traces. The
   remote-kill boundary is documented: the SDK emits events and enforces local
   guards, while the dashboard owns retained history, alerts, and team
@@ -50,14 +54,18 @@ they directly strengthen coding-agent adoption.
 | Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
 | Follow-up handoff | Done - `ops/FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
 | Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed questions, consent boundaries, forbidden fields, and local-first non-goals without adding telemetry |
+| Release tag version guard | Done - the publish path now verifies the git tag matches `sdk/pyproject.toml` and gates announcements on a published release, closing the `v1.2.11`/`v1.2.12` mismatch class |
+| MCP Registry refresh to 0.2.2 | Done - official registry listing now reports `0.2.2` and Glama indexes the MCP tools; OIDC automates the registry publish |
+| BudgetGuard persistent cross-process state | Done - `BudgetGuard` can persist spend across processes so disposable workers and multi-process runs share one budget ceiling |
+| Positioning vs WorkOS and Manifest | Done - README and docs clarify the runtime budget plus kill-switch wedge against identity-time (WorkOS) and LLM-router (Manifest) tools |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
 | Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
-| Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
-| MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features |
+| Distribution-signal hygiene | Distribution reporting reads PyPI published-package downloads and human GitHub signals, not raw clone counts; clone-count spikes are discounted as self-inflicted scheduled-CI checkouts |
+| Next tag publish | The next tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release, so public PyPI moves past `v1.2.10` cleanly |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
 | Ops/doc freshness | `ops/02-ARCHITECTURE.md`, this roadmap, `ops/FOLLOWUP.md`, and memory files stay concise and current enough that agents do not start from stale assumptions |
 
@@ -68,7 +76,7 @@ they directly strengthen coding-agent adoption.
 | Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
-| Release announcement reliability | Release-content automation handles missing GitHub Discussions categories without failing the package release path |
+| Persistent budget guard docs | The new cross-process `BudgetGuard` state has a short guide and example so multi-process and disposable-worker runs adopt a shared budget ceiling without guessing |
 
 ## Later (ideas bucket)
 
