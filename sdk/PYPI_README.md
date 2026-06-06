@@ -350,6 +350,17 @@ on one provider. AgentGuard covers the whole run across every provider and
 every call. Use both: set the per-call cap at the provider, set the
 run-envelope cap in AgentGuard.
 
+Scoped agent identity is a different layer again. WorkOS shipped productized
+scoped agent credentials on 2026-06-04: per-agent identity, RBAC scopes, and an
+audit trail of what each agent did. That is identity-time control. It decides
+who the agent is and what it is allowed to touch before the run starts.
+AgentGuard is run-time control. It caps budget, tokens, and rate, and trips the
+kill-switch on what the agent is doing right now. The two compose: WorkOS bounds
+the envelope, AgentGuard enforces that envelope at execution. A scoped
+credential does not stop a loop, a retry storm, or a budget overrun once the run
+is live. See [where AgentGuard fits in the agent security
+stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md) for the full layer map.
+
 Competitive notes:
 
 - [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/vercel-ai-gateway.md)
