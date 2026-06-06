@@ -133,6 +133,7 @@
       pre.code .kw { color: #e23a45; }
       pre.code .fn { color: #61d394; }
       pre.code .str { color: #d8c98a; }
+      pre.code .num { color: #c8a2e0; }
       pre.code .cm { color: var(--muted-dark); }
       .badge-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 8px 0 0; }
       .badge-img { height: 20px; }
@@ -268,7 +269,7 @@
 
 tracer = agentguard.<span class="fn">init</span>(
     service=<span class="str">"repo-coder"</span>,
-    budget_usd=<span class="str">5.00</span>,
+    budget_usd=<span class="num">5.00</span>,
     trace_file=<span class="str">"traces.jsonl"</span>,
     local_only=<span class="kw">True</span>,
 )
