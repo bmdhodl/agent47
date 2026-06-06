@@ -33,7 +33,7 @@ agentguard
 The bare `agentguard` command prints a 60-second local tour. If the script is
 not on PATH, use `python -m agentguard` instead. Both run the same CLI.
 
-### As a skill (Claude Code, Cursor, Cline, and more)
+### As a skill (Codex, Claude Code, Cursor, Cline, and more)
 
 ```bash
 npx skills add bmdhodl/agent47
