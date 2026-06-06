@@ -21,7 +21,7 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
   - `guards.py`: the guard family and their exceptions.
   - `setup.py`: `init()` / `get_tracer()` / `get_budget_guard()` / `shutdown()` convenience entrypoints.
   - `instrument.py`, `decision.py`, `evaluation.py`, `cost.py`, `usage.py`, `savings.py`, `escalation.py`, `schemas.py`, `profiles.py`, `repo_config.py`, `reporting.py`, `export.py`: instrumentation, decision tracing, eval, cost/usage accounting, and report surfaces.
-  - `cli.py`, `doctor.py`, `demo.py`, `quickstart.py`, `skillpack.py`: the CLI and local proof surfaces.
+  - `cli.py`, `__main__.py`, `doctor.py`, `demo.py`, `quickstart.py`, `skillpack.py`, `first_run.py`: the CLI and local proof surfaces. `__main__.py` makes `python -m agentguard` mirror the console script; `first_run.py` holds the bare-command welcome and the paste-able "Guarded by AgentGuard" badge used by `agentguard welcome` / `agentguard badge`.
   - [`sdk/agentguard/integrations/`](sdk/agentguard/integrations/): optional, guarded-import framework adapters (`crewai.py`, `langchain.py`, `langgraph.py`).
   - [`sdk/agentguard/sinks/`](sdk/agentguard/sinks/): non-core sinks (`http.py` -> `HttpSink`, `otel.py` -> `OtelTraceSink`).
 - [`sdk/tests/`](sdk/tests/): behavioral, structural, hardening, DX, and integration-style tests for the SDK.
@@ -117,3 +117,4 @@ the last raw git tag, because a tag can exist for a failed package publish.
 
 - 2026-04-09: Created root `ARCHITECTURE.md` as the repo-level architecture law for future nightshift and PR work.
 - 2026-05-17: Refreshed directory map, data flow, and abstractions to match the repo as of 2026-05-17 — added the Python `agentguard-mcp/` local-budget server and `skills/`; documented the two distinct MCP surfaces and the current `sdk/agentguard/` module layout.
+- 2026-06-06: Documented the install-activation surfaces — `__main__.py` (`python -m agentguard`), the bare-command welcome, and the `agentguard badge` network-effect surface in `first_run.py`.

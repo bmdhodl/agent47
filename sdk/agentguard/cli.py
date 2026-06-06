@@ -9,10 +9,28 @@ from agentguard.decision import extract_decision_events
 from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
+from agentguard.first_run import render_badge, render_welcome
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
 from agentguard.reporting import render_incident_report
 from agentguard.savings import summarize_savings
 from agentguard.skillpack import TARGET_CHOICES, run_skillpack
+
+
+def _package_version() -> Optional[str]:
+    try:
+        from importlib.metadata import version
+
+        return version("agentguard47")
+    except Exception:
+        return None
+
+
+def _welcome() -> None:
+    render_welcome(version=_package_version())
+
+
+def _badge(fmt: str = "markdown") -> None:
+    render_badge(fmt=fmt)
 
 
 def _summarize(path: str) -> None:
@@ -246,6 +264,16 @@ def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(prog="agentguard")
     sub = parser.add_subparsers(dest="cmd")
 
+    sub.add_parser("welcome", help="Show the first-run welcome and 60-second local path")
+
+    badge = sub.add_parser("badge", help="Print a paste-able 'Guarded by AgentGuard' README badge")
+    badge.add_argument(
+        "--format",
+        choices=["markdown", "rst", "html"],
+        default="markdown",
+        help="Badge snippet format. Defaults to markdown.",
+    )
+
     summarize = sub.add_parser("summarize", help="Summarize a JSONL trace file")
     summarize.add_argument("path")
 
@@ -396,7 +424,11 @@ def main() -> None:  # pragma: no cover
     )
 
     args = parser.parse_args()
-    if args.cmd == "summarize":
+    if args.cmd == "welcome":
+        _welcome()
+    elif args.cmd == "badge":
+        _badge(fmt=args.format)
+    elif args.cmd == "summarize":
         _summarize(args.path)
     elif args.cmd == "report":
         _report(args.path, as_json=args.json_output)
@@ -439,7 +471,7 @@ def main() -> None:  # pragma: no cover
             force=args.force,
         )
     else:
-        parser.print_help()
+        _welcome()
 
 
 if __name__ == "__main__":  # pragma: no cover

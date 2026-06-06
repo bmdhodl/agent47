@@ -1,6 +1,6 @@
 # SDK State
 
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-06-06
 
 ## Product
 - AgentGuard = zero-dependency Python SDK for runtime guardrails.
@@ -31,3 +31,14 @@
   (GitHub stars sit at 3 against thousands of PyPI downloads)
 - distribution before new features
 - coding-agent onboarding and proof
+
+## Install / Activation Surface (unreleased, on `main`)
+- Bare `agentguard` prints a guided first-run welcome (60-second local path +
+  star CTA), not an argparse help dump. Logic in `first_run.render_welcome`.
+- `python -m agentguard` now works (`sdk/agentguard/__main__.py`) so the CLI
+  runs without the console script on PATH. The older `python -m agentguard.cli`
+  fallback still works and stays in doctor/demo/quickstart hints.
+- `agentguard badge` prints a paste-able "Guarded by AgentGuard" README badge
+  (markdown/rst/html) — the cheapest install→backlink network-effect surface,
+  aimed directly at the stars-vs-downloads gap. Surfaced in the welcome, the
+  demo close, and the README.
