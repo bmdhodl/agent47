@@ -1,3 +1,3 @@
 Model: vercel.json rewrite /(.*)->/site/$1, cleanUrls=false
-Pages: 8  internal links checked: 53
+Pages: 8  internal links checked: 51
 [PASS] all internal links resolve + anchors exist

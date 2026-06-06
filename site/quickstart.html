@@ -79,6 +79,7 @@
       .navlinks { display: none; align-items: center; gap: 18px; color: var(--muted); font-size: 14px; }
       .navlinks a { text-decoration: none; }
       .navlinks a:hover { color: var(--white); }
+      .navlinks span[aria-current="page"] { color: var(--white); }
       .btn {
         min-height: 42px; border: 1px solid transparent; border-radius: 8px;
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -177,7 +178,7 @@
             <strong>AgentGuard<span>47</span></strong>
           </a>
           <div class="navlinks">
-            <a href="/quickstart.html">Quickstart</a>
+            <span aria-current="page">Quickstart</span>
             <a href="/compare.html">Compare</a>
             <a href="/trust.html">Trust</a>
             <a href="/compare.html#pricing">Pricing</a>
