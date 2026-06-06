@@ -8,6 +8,7 @@ and that the in-memory default is unchanged.
 """
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import textwrap
@@ -139,10 +140,7 @@ def test_two_processes_share_one_ceiling_no_lost_updates(tmp_path):
     ceiling = 20
     attempts = 15  # 2 * 15 = 30 attempts against a ceiling of 20
 
-    env = {"PYTHONPATH": str(_SDK_DIR)}
-    import os
-
-    env = {**os.environ, **env}
+    env = {**os.environ, "PYTHONPATH": str(_SDK_DIR)}
 
     procs = [
         subprocess.Popen(
@@ -173,8 +171,6 @@ def test_high_contention_no_crashes_or_lost_updates(tmp_path):
     ceiling = 30
     workers = 6
     attempts = 10  # 6 * 10 = 60 attempts against a ceiling of 30
-
-    import os
 
     env = {**os.environ, "PYTHONPATH": str(_SDK_DIR)}
     procs = [

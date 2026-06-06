@@ -1,2 +1,12 @@
-Clean SDK-only venv (python -m venv; pip install ./sdk), pip freeze:
-agentguard47 @ file:///K:/agent47/.claude/worktrees/bold-taussig-0cb39b/sdk
+Clean SDK-only venv reproduction:
+
+  python -m venv .venv
+  .venv/bin/python -m pip install ./sdk      # core, no extras
+  .venv/bin/python -m pip freeze
+
+Result (only the SDK itself, zero third-party runtime dependencies):
+
+  agentguard47 @ file:///<repo>/sdk
+
+The freeze contains exactly one entry - agentguard47 - confirming the SDK
+runtime is zero-dependency, so it has no runtime-dependency vulnerabilities.

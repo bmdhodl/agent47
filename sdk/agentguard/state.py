@@ -27,8 +27,9 @@ import json
 import os
 import tempfile
 import time
+import warnings
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Protocol, runtime_checkable
+from typing import Any, Callable, Dict, Optional, Protocol, Union, runtime_checkable
 
 from .guards import AgentGuardError
 
@@ -142,6 +143,15 @@ class _CrossProcessLock:
                 return
             except OSError:
                 time.sleep(self._poll)
+        # Still here: the file is genuinely stuck. Don't raise (the lock work itself
+        # succeeded), but surface it - the next acquirer will wait out its timeout
+        # before the stale-lock break kicks in.
+        warnings.warn(
+            f"could not remove lock file {self._path} after release; "
+            "a stale lock will be broken by the next acquirer",
+            RuntimeWarning,
+            stacklevel=2,
+        )
 
     def __enter__(self) -> "_CrossProcessLock":
         self.acquire()
@@ -210,7 +220,9 @@ class JsonFileStateStore:
             raise
 
     @staticmethod
-    def _atomic_replace(src: str, dst: Path, *, attempts: int = 100, poll: float = 0.01) -> None:
+    def _atomic_replace(
+        src: Union[str, Path], dst: Union[str, Path], *, attempts: int = 100, poll: float = 0.01
+    ) -> None:
         """``os.replace`` with a bounded Windows retry.
 
         The replace is atomic, but on Windows it can transiently fail with
