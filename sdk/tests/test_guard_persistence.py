@@ -161,3 +161,35 @@ def test_two_processes_share_one_ceiling_no_lost_updates(tmp_path):
 
     final = JsonFileStateStore(path).read("fleet")
     assert final["calls_used"] >= ceiling
+
+
+def test_high_contention_no_crashes_or_lost_updates(tmp_path):
+    # Heavier contention than the two-process case. This is the regression guard for the
+    # Windows "delete pending" race: a concurrent release made an exclusive lock create
+    # fail with PermissionError (not FileExistsError), crashing the acquirer. With the
+    # lock hardened, every worker exits 0 and the combined successes still equal the
+    # ceiling exactly (the lock never loses or double-counts an increment).
+    path = tmp_path / "budget.json"
+    ceiling = 30
+    workers = 6
+    attempts = 10  # 6 * 10 = 60 attempts against a ceiling of 30
+
+    import os
+
+    env = {**os.environ, "PYTHONPATH": str(_SDK_DIR)}
+    procs = [
+        subprocess.Popen(
+            [sys.executable, "-c", _WORKER, str(path), str(ceiling), str(attempts)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env,
+        )
+        for _ in range(workers)
+    ]
+    results = [p.communicate(timeout=60) for p in procs]
+    crashed = [(i, procs[i].returncode, results[i][1]) for i in range(workers) if procs[i].returncode != 0]
+    assert not crashed, f"workers crashed (lock not contention-safe): {crashed}"
+
+    successes = sum(int(out.strip().splitlines()[-1]) for out, _ in results)
+    assert successes == ceiling, f"expected exactly {ceiling} successful consumes, got {successes}"

@@ -69,7 +69,9 @@ class _CrossProcessLock:
 
     Acquired by creating a lock file with ``O_CREAT | O_EXCL``. A stale lock left by a
     crashed holder (older than ``stale_after`` seconds) is broken so the system cannot
-    deadlock forever. Works on both POSIX and Windows.
+    deadlock forever. Works on both POSIX and Windows, including the Windows
+    "delete pending" race where a concurrent release makes an exclusive create fail with
+    ``PermissionError`` instead of ``FileExistsError``.
     """
 
     def __init__(
@@ -94,20 +96,33 @@ class _CrossProcessLock:
                 os.write(self._fd, str(os.getpid()).encode("ascii"))
                 return
             except FileExistsError:
-                # Break a stale lock whose holder likely died. On Windows the held lock
-                # file is open and unlink raises, so a live holder keeps the lock.
-                try:
-                    age = time.time() - self._path.stat().st_mtime
-                    if age > self._stale_after:
-                        os.unlink(self._path)
-                        continue
-                except OSError:
-                    pass
-                if time.monotonic() >= deadline:
-                    raise StateStoreError(
-                        f"timed out acquiring lock {self._path} after {self._timeout}s"
-                    ) from None
-                time.sleep(self._poll)
+                # Another process holds the lock (the normal contended case).
+                self._wait_or_break_stale(deadline)
+            except PermissionError:
+                # Windows-only: an exclusive create can fail with ERROR_ACCESS_DENIED
+                # (PermissionError) instead of FileExistsError when another process is
+                # concurrently releasing the lock. The unlinked file lingers in a
+                # "delete pending" state until the last handle closes, and a create on it
+                # fails with access-denied rather than file-exists. Treat it like a held
+                # lock and retry; a genuinely unwritable path just times out below.
+                self._wait_or_break_stale(deadline)
+
+    def _wait_or_break_stale(self, deadline: float) -> None:
+        """Break a stale lock or back off, raising on timeout. Shared by both retry paths."""
+        # Break a stale lock whose holder likely died. On Windows a live holder keeps the
+        # file open, so stat/unlink raise and a live lock is preserved.
+        try:
+            age = time.time() - self._path.stat().st_mtime
+            if age > self._stale_after:
+                os.unlink(self._path)
+                return
+        except OSError:
+            pass
+        if time.monotonic() >= deadline:
+            raise StateStoreError(
+                f"timed out acquiring lock {self._path} after {self._timeout}s"
+            ) from None
+        time.sleep(self._poll)
 
     def release(self) -> None:
         if self._fd is not None:
@@ -115,10 +130,18 @@ class _CrossProcessLock:
                 os.close(self._fd)
             finally:
                 self._fd = None
-        try:
-            os.unlink(self._path)
-        except OSError:
-            pass
+        # Retry the unlink briefly. On Windows an antivirus or indexer can hold the
+        # just-closed file open for a moment; a lingering lock file would otherwise make
+        # the next acquirer wait out its whole timeout. A truly stuck file is still
+        # recovered by the stale-lock break in acquire().
+        for _ in range(50):
+            try:
+                os.unlink(self._path)
+                return
+            except FileNotFoundError:
+                return
+            except OSError:
+                time.sleep(self._poll)
 
     def __enter__(self) -> "_CrossProcessLock":
         self.acquire()
@@ -178,13 +201,32 @@ class JsonFileStateStore:
                 json.dump(data, fh)
                 fh.flush()
                 os.fsync(fh.fileno())
-            os.replace(tmp, self._path)
+            self._atomic_replace(tmp, self._path)
         except BaseException:
             try:
                 os.unlink(tmp)
             except OSError:
                 pass
             raise
+
+    @staticmethod
+    def _atomic_replace(src: str, dst: Path, *, attempts: int = 100, poll: float = 0.01) -> None:
+        """``os.replace`` with a bounded Windows retry.
+
+        The replace is atomic, but on Windows it can transiently fail with
+        ``PermissionError`` (ERROR_ACCESS_DENIED) when an antivirus or the search indexer
+        still holds a handle on the source or destination written moments earlier by the
+        previous lock holder. The write is already serialized by the cross-process lock,
+        so retrying just waits out the scanner; a genuine failure still raises.
+        """
+        for attempt in range(attempts):
+            try:
+                os.replace(src, dst)
+                return
+            except PermissionError:
+                if attempt == attempts - 1:
+                    raise
+                time.sleep(poll)
 
     def read(self, key: str) -> Optional[Dict[str, Any]]:
         with self._lock:

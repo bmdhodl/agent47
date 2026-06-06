@@ -1,0 +1,2 @@
+Clean SDK-only venv (python -m venv; pip install ./sdk), pip freeze:
+agentguard47 @ file:///K:/agent47/.claude/worktrees/bold-taussig-0cb39b/sdk
