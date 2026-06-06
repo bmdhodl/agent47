@@ -46,6 +46,10 @@ gh skill install bmdhodl/agent47 agentguard
 Most agent tooling tells you what happened after the run. AgentGuard stops the
 bad run while it is happening.
 
+> The enterprise pattern AgentGuard prevents: surprise bills like Uber's
+> $1,500/developer Claude Code cap, but enforced at the call site where a
+> per-tool org policy cannot reach.
+
 AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
 runs inside the agent's process, sees the call graph, and raises exceptions
 that kill the run before the next bad call lands. Routers and gateways like
