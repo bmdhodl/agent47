@@ -34,6 +34,12 @@ from typing import Any, Callable, Dict, Optional, Protocol, Union, runtime_check
 
 from .guards import AgentGuardError
 
+# Transient "file is busy / delete pending" errors on exclusive create and replace are a
+# Windows-only artifact (antivirus/indexer handles, delete-pending state). On POSIX the
+# same exceptions mean a real, non-transient failure, so retrying only delays surfacing
+# it. Gate every such retry on this flag.
+_WINDOWS = sys.platform == "win32"
+
 
 class StateStoreError(AgentGuardError):
     """Raised when a StateStore cannot read or persist state.
@@ -109,7 +115,7 @@ class _CrossProcessLock:
                 # lock and retry. On POSIX a PermissionError here means a genuinely
                 # unwritable directory (EACCES), so fail fast instead of hanging until the
                 # lock timeout with a misleading message.
-                if sys.platform != "win32":
+                if not _WINDOWS:
                     raise
                 self._wait_or_break_stale(deadline)
 
@@ -136,18 +142,20 @@ class _CrossProcessLock:
                 os.close(self._fd)
             finally:
                 self._fd = None
-        # Retry the unlink briefly. On Windows an antivirus or indexer can hold the
+        # Retry the unlink only on Windows, where an antivirus or indexer can hold the
         # just-closed file open for a moment; a lingering lock file would otherwise make
-        # the next acquirer wait out its whole timeout. A truly stuck file is still
-        # recovered by the stale-lock break in acquire().
-        for _ in range(50):
+        # the next acquirer wait out its whole timeout. On POSIX an unlink error is a real,
+        # non-transient failure, so try once. A truly stuck file is still recovered by the
+        # stale-lock break in acquire().
+        for _ in range(50 if _WINDOWS else 1):
             try:
                 os.unlink(self._path)
                 return
             except FileNotFoundError:
                 return
             except OSError:
-                time.sleep(self._poll)
+                if _WINDOWS:
+                    time.sleep(self._poll)
         # Still here: the file is genuinely stuck. Don't raise (the lock work itself
         # succeeded), but surface it - the next acquirer will wait out its timeout
         # before the stale-lock break kicks in.
@@ -245,7 +253,9 @@ class JsonFileStateStore:
                 os.replace(src, dst)
                 return
             except PermissionError:
-                if attempt == attempts - 1:
+                # POSIX: a real, non-transient error (unwritable dir) - fail fast, like
+                # acquire(). Windows: a scanner holding the file - retry until the budget.
+                if not _WINDOWS or attempt == attempts - 1:
                     raise
                 time.sleep(poll)
 

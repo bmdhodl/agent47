@@ -185,6 +185,8 @@ def test_high_contention_no_crashes_or_lost_updates(tmp_path):
     ]
     try:
         results = [p.communicate(timeout=60) for p in procs]
+    except subprocess.TimeoutExpired as exc:
+        pytest.fail(f"worker did not finish within 60s (possible lock deadlock): {exc}")
     finally:
         # If any communicate() timed out, don't leak the remaining workers.
         for p in procs:
