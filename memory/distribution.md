@@ -1,6 +1,6 @@
 # SDK Distribution
 
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-06-06
 
 ## Core Message
 AgentGuard stops coding agents from looping, retrying forever, and burning
@@ -31,6 +31,13 @@ budget.
   listing now passes checks, so merge is the upstream maintainers' call
 - Show HN
 - LangChain / GitHub community posts
+
+## Network-Effect Surfaces
+- "Guarded by AgentGuard" README badge via `agentguard badge` (markdown/rst/
+  html). Every adopting repo becomes a backlink + social proof. This is the
+  direct lever on the stars-vs-downloads gap; promote it wherever a user has
+  just seen a guard fire (demo close, report, README).
+- Star CTA stays in `doctor`, `demo`, and the bare-command welcome.
 
 ## Keep Repeating
 - zero dependency

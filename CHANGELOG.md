@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Onboarding
+- Bare `agentguard` now prints a friendly first-run welcome with the 60-second
+  local path and the star call to action instead of an argparse help dump.
+- Added `python -m agentguard` as an entry point so the CLI works even when the
+  `agentguard` script is not on PATH.
+- Added `agentguard welcome` and `agentguard badge`. `badge` prints a
+  paste-able "Guarded by AgentGuard" README badge (markdown, rST, or HTML) so
+  adopters can advertise the SDK and drive new installs.
+
 ## 1.2.13
 
 ### Release Operations

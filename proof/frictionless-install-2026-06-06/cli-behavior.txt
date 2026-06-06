@@ -1,0 +1,43 @@
+### python -m agentguard (bare welcome) ###
+AgentGuard
+Stop agents from looping, retrying forever, and burning budget.
+Zero dependencies. Local-first. No API key needed.
+
+Try it in 60 seconds (all local, no network):
+  agentguard doctor      verify the install and write a local trace
+  agentguard demo        watch budget, loop, and retry guards stop a run
+  agentguard quickstart --framework raw --write   drop a starter into your repo
+
+More:
+  agentguard --help      list every command
+  agentguard badge       copy a README badge for your repo
+
+If 'agentguard' is not on PATH, prefix any command with 'python -m agentguard'.
+
+If AgentGuard saved you a runaway run, star it so others find it: https://github.com/bmdhodl/agent47
+
+### agentguard badge (markdown, default) ###
+Guarded by AgentGuard badge:
+
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+
+Renders a blue badge that links back to https://github.com/bmdhodl/agent47
+Add it to your README so other builders find AgentGuard.
+
+### agentguard badge --format rst ###
+Guarded by AgentGuard badge:
+
+.. image:: https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6
+   :target: https://github.com/bmdhodl/agent47
+   :alt: Guarded by AgentGuard
+
+Renders a blue badge that links back to https://github.com/bmdhodl/agent47
+Add it to your README so other builders find AgentGuard.
+
+### agentguard badge --format html ###
+Guarded by AgentGuard badge:
+
+<a href="https://github.com/bmdhodl/agent47"><img src="https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6" alt="Guarded by AgentGuard"></a>
+
+Renders a blue badge that links back to https://github.com/bmdhodl/agent47
+Add it to your README so other builders find AgentGuard.

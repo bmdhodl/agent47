@@ -27,7 +27,11 @@ enough to create surprise spend.
 
 ```bash
 pip install agentguard47
+agentguard
 ```
+
+The bare `agentguard` command prints a 60-second local tour. If the script is
+not on PATH, use `python -m agentguard` instead. Both run the same CLI.
 
 ### As a skill (Claude Code, Cursor, Cline, and more)
 
@@ -195,6 +199,24 @@ What you should see:
 
 Notebook version:
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
+
+## Show Your Repo Is Guarded
+
+Once AgentGuard stops a runaway run for you, add the badge to your README so
+other builders find it:
+
+```bash
+agentguard badge
+```
+
+```markdown
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+```
+
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+
+`agentguard badge --format rst` and `--format html` print the same badge for
+other doc formats.
 
 ## Copy-Paste Repo Setup
 
@@ -465,7 +487,7 @@ assert result.passed
 - License: MIT
 - Core runtime dependencies: zero
 - Trace format: JSONL
-- Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
+- Local commands: `welcome`, `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`, `badge`
 - MCP package: [`@agentguard47/mcp-server`](mcp-server/)
 - Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
 

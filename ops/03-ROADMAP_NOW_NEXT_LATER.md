@@ -3,7 +3,7 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-06-06
 
 ## Current Focus Notes
 
@@ -50,6 +50,7 @@ they directly strengthen coding-agent adoption.
 | Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
 | Follow-up handoff | Done - `ops/FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
 | Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed questions, consent boundaries, forbidden fields, and local-first non-goals without adding telemetry |
+| Frictionless first-run + badge network effect | Done - bare `agentguard` prints a guided welcome instead of argparse help, `python -m agentguard` works without PATH setup, and `agentguard badge` prints a paste-able "Guarded by AgentGuard" README badge (the lowest-friction install→backlink surface) |
 
 ## Now (next 2 weeks)
 
