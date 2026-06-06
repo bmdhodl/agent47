@@ -6,6 +6,7 @@ Derives the SDK path from this file's location (repo_root/sdk) so it stays
 reproducible on any checkout - no machine-specific paths.
 """
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -35,18 +36,21 @@ CEIL = 150
 fails = 0
 for trial in range(20):
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "budget.json")
-    procs = [
-        subprocess.Popen(
-            [sys.executable, "-c", WORKER, path, str(CEIL), str(ATT)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            env=env,
-        )
-        for _ in range(NPROC)
-    ]
-    outs = [p.communicate(timeout=120) for p in procs]
+    try:
+        path = os.path.join(d, "budget.json")
+        procs = [
+            subprocess.Popen(
+                [sys.executable, "-c", WORKER, path, str(CEIL), str(ATT)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=env,
+            )
+            for _ in range(NPROC)
+        ]
+        outs = [p.communicate(timeout=120) for p in procs]
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
     rcs = [p.returncode for p in procs]
     succ = sum(int(o[0].strip().splitlines()[-1]) for o in outs if o[0].strip())
     bad = [(i, rcs[i], outs[i][1][-300:]) for i in range(NPROC) if rcs[i] != 0]
