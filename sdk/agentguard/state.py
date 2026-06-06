@@ -40,6 +40,11 @@ from .guards import AgentGuardError
 # it. Gate every such retry on this flag.
 _WINDOWS = sys.platform == "win32"
 
+# Fixed back-off for transient "file busy" retries (lock-file unlink, data-file replace).
+# Intentionally independent of the lock's configurable contention poll: these waits ride
+# out an antivirus/indexer holding a file handle, not lock contention.
+_FILE_BUSY_POLL = 0.01
+
 
 class StateStoreError(AgentGuardError):
     """Raised when a StateStore cannot read or persist state.
@@ -146,7 +151,9 @@ class _CrossProcessLock:
         # just-closed file open for a moment; a lingering lock file would otherwise make
         # the next acquirer wait out its whole timeout. On POSIX an unlink error is a real,
         # non-transient failure, so try once. A truly stuck file is still recovered by the
-        # stale-lock break in acquire().
+        # stale-lock break in acquire(). Like _atomic_replace, this uses a fixed budget
+        # independent of the lock's configurable poll: it waits out a scanner on the lock
+        # file, not lock contention.
         for _ in range(50 if _WINDOWS else 1):
             try:
                 os.unlink(self._path)
@@ -155,7 +162,7 @@ class _CrossProcessLock:
                 return
             except OSError:
                 if _WINDOWS:
-                    time.sleep(self._poll)
+                    time.sleep(_FILE_BUSY_POLL)
         # Still here: the file is genuinely stuck. Don't raise (the lock work itself
         # succeeded), but surface it - the next acquirer will wait out its timeout
         # before the stale-lock break kicks in.
@@ -234,7 +241,11 @@ class JsonFileStateStore:
 
     @staticmethod
     def _atomic_replace(
-        src: Union[str, Path], dst: Union[str, Path], *, attempts: int = 100, poll: float = 0.01
+        src: Union[str, Path],
+        dst: Union[str, Path],
+        *,
+        attempts: int = 100,
+        poll: float = _FILE_BUSY_POLL,
     ) -> None:
         """``os.replace`` with a bounded Windows retry.
 

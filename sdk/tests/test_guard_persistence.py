@@ -190,10 +190,15 @@ def test_high_contention_no_crashes_or_lost_updates(tmp_path):
     except subprocess.TimeoutExpired as exc:
         pytest.fail(f"worker did not finish within 60s (possible lock deadlock): {exc}")
     finally:
-        # If any communicate() timed out, don't leak the remaining workers.
+        # If any communicate() timed out, don't leak the remaining workers: kill them and
+        # drain their pipes so FDs close and any crash output is reaped, not lost.
         for p in procs:
             if p.poll() is None:
                 p.kill()
+                try:
+                    p.communicate(timeout=10)
+                except subprocess.TimeoutExpired:
+                    pass
     crashed = [(i, procs[i].returncode, results[i][1]) for i in range(workers) if procs[i].returncode != 0]
     assert not crashed, f"workers crashed (lock not contention-safe): {crashed}"
 
