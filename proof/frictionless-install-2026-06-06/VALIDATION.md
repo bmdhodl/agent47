@@ -74,3 +74,9 @@ Third review raised two real items, both applied:
   routing regressions are caught. `cli.py` main() is now measured (99% overall).
 - Cleaned `BADGE_RST`'s redundant `f`-prefixes on placeholder-free lines.
 - Confirmed `Optional` is already imported in `cli.py` (no change needed).
+
+Fourth review: "LGTM - no blocking issues." Two minor polish items applied:
+- Tightened the `python -m agentguard` subprocess test timeout from 60s to 15s
+  (catches real hangs fast; still leaves margin for cold interpreter start).
+- Regenerated `cli-behavior.txt` to capture all badge formats, including the
+  previously missing `--format rst`.

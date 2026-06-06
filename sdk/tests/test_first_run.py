@@ -188,7 +188,9 @@ class TestModuleEntryPoint:
             capture_output=True,
             text=True,
             env=env,
-            timeout=60,
+            # Printing a welcome string is near-instant; a tight timeout still
+            # leaves margin for cold interpreter start but catches real hangs fast.
+            timeout=15,
         )
 
         assert result.returncode == 0, result.stderr

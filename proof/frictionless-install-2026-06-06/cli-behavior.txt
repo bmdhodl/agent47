@@ -16,10 +16,20 @@ If 'agentguard' is not on PATH, prefix any command with 'python -m agentguard'.
 
 If AgentGuard saved you a runaway run, star it so others find it: https://github.com/bmdhodl/agent47
 
-### agentguard badge ###
+### agentguard badge (markdown, default) ###
 Guarded by AgentGuard badge:
 
 [![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+
+Renders a blue badge that links back to https://github.com/bmdhodl/agent47
+Add it to your README so other builders find AgentGuard.
+
+### agentguard badge --format rst ###
+Guarded by AgentGuard badge:
+
+.. image:: https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6
+   :target: https://github.com/bmdhodl/agent47
+   :alt: Guarded by AgentGuard
 
 Renders a blue badge that links back to https://github.com/bmdhodl/agent47
 Add it to your README so other builders find AgentGuard.
