@@ -46,15 +46,23 @@ against thousands of PyPI downloads.
 - bandit: clean (exit 0)
 - structural (test_architecture.py): 9 passed
 - release-guard: passed
-- full suite: 794 passed, total coverage 92.5% (>= 80 gate)
+- full suite: 795 passed, total coverage ~92.5% (>= 80 gate)
 - `first_run.py` coverage: 100%
-- `__main__.py` coverage: 100% (import-level test + end-to-end subprocess test)
+- `__main__.py` coverage: 100% (import-level wiring test + end-to-end subprocess test)
 - `python -m agentguard` end-to-end subprocess test: passing
+
+Note: `checks.txt` was regenerated after the review-fix commit (8baa888). The
+first capture predated the fix and showed `__main__.py` at 0% / 794 passed; the
+current `checks.txt` is the source of truth and shows 100% / 795 passed.
 
 ## Automated review follow-ups (PR #584, claude-review: no blocking issues)
 
-Applied the three minor nits the automated review raised:
+Applied the three minor nits the first review raised:
 - Closed the `__main__.py` import-coverage gap with a wiring test (now 100%).
 - Refreshed the stale `test_first_run.py` module docstring.
 - Strengthened the badge assertions to match the full linked-image markdown
   (`[![Guarded by AgentGuard](`) instead of an incidental substring.
+
+Second review raised one item — the proof artifacts contradicted each other
+because `checks.txt` predated the fix. Resolved by regenerating `checks.txt`
+above; it now shows `__main__.py` at 100% and 795 passing, matching this file.

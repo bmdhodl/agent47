@@ -1,3 +1,4 @@
+# Regenerated 2026-06-06T08:25:34Z after review-fix commit (8baa888). Supersedes the pre-fix capture.
 === ruff ===
 All checks passed!
 === bandit (security) ===
@@ -12,16 +13,16 @@ collected 9 items
 
 sdk\tests\test_architecture.py .........                                 [100%]
 
-============================== 9 passed in 0.20s ==============================
+============================== 9 passed in 0.55s ==============================
 === release-guard ===
 Release guard passed.
-=== full suite + coverage ===
+=== full suite + coverage (--cov=agentguard) ===
 ============================= test session starts =============================
 platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
 rootdir: K:\agent47\.claude\worktrees\upbeat-thompson-79aa7b\sdk
 configfile: pyproject.toml
 plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
-collected 794 items
+collected 795 items
 
 sdk\tests\test_architecture.py .........                                 [  1%]
 sdk\tests\test_async_patches.py ..........                               [  2%]
@@ -45,12 +46,12 @@ sdk\tests\test_evaluation.py ............................                [ 36%]
 sdk\tests\test_example_starters.py .........                             [ 37%]
 sdk\tests\test_export.py ...........                                     [ 38%]
 sdk\tests\test_exports.py ...............                                [ 40%]
-sdk\tests\test_first_run.py ............                                 [ 42%]
+sdk\tests\test_first_run.py .............                                [ 42%]
 sdk\tests\test_goal.py ........                                          [ 43%]
 sdk\tests\test_guard_persistence.py .........                            [ 44%]
 sdk\tests\test_guards.py ............................................... [ 50%]
 ..........................................                               [ 55%]
-sdk\tests\test_hardening.py ...........................................  [ 60%]
+sdk\tests\test_hardening.py ...........................................  [ 61%]
 sdk\tests\test_hosted_ingest_contract.py ....                            [ 61%]
 sdk\tests\test_http_sink.py .......................                      [ 64%]
 sdk\tests\test_init.py ...............................................   [ 70%]
@@ -81,43 +82,43 @@ sdk\tests\test_v1_coverage.py .............                              [100%]
 =============================== tests coverage ================================
 _______________ coverage: platform win32, python 3.13.2-final-0 _______________
 
-Name                                       Stmts   Miss  Cover
---------------------------------------------------------------
+Name                                       Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------
 sdk\agentguard\__init__.py                    22      0   100%
-sdk\agentguard\__main__.py                     1      1     0%
+sdk\agentguard\__main__.py                     1      0   100%
 sdk\agentguard\_trace_naming.py               16      0   100%
 sdk\agentguard\atracing.py                    72      0   100%
-sdk\agentguard\cli.py                        129      1    99%
-sdk\agentguard\cost.py                        51      1    98%
-sdk\agentguard\decision.py                   214     30    86%
-sdk\agentguard\demo.py                        98      2    98%
-sdk\agentguard\doctor.py                     138     11    92%
-sdk\agentguard\escalation.py                 225     23    90%
+sdk\agentguard\cli.py                        129      1    99%   167
+sdk\agentguard\cost.py                        51      1    98%   109
+sdk\agentguard\decision.py                   214     30    86%   91, 97, 100-101, 110, 112, 116-117, 125, 149, 156-161, 167, 169, 181, 184, 203, 205, 209, 234, 540-542, 549, 551, 773, 780
+sdk\agentguard\demo.py                        98      2    98%   46, 180
+sdk\agentguard\doctor.py                     138     11    92%   57, 121, 159, 223-230, 234
+sdk\agentguard\escalation.py                 225     23    90%   51, 57, 69, 81, 94, 105, 152, 154, 161-164, 166, 168, 181, 186, 244, 307, 362, 390-392, 398, 411, 414
 sdk\agentguard\evaluation.py                 264      0   100%
 sdk\agentguard\export.py                      31      0   100%
 sdk\agentguard\first_run.py                   48      0   100%
-sdk\agentguard\goal.py                        79      1    99%
-sdk\agentguard\guards.py                     327      5    98%
-sdk\agentguard\instrument.py                 280     40    86%
+sdk\agentguard\goal.py                        79      1    99%   111
+sdk\agentguard\guards.py                     327      5    98%   167, 234, 252, 257, 337
+sdk\agentguard\instrument.py                 280     40    86%   62, 185-186, 205-219, 226, 229, 256-257, 271-272, 276, 297, 342-349, 366, 420, 453-454, 479, 482, 514-515, 519, 540
 sdk\agentguard\integrations\__init__.py        4      0   100%
 sdk\agentguard\integrations\crewai.py         79      0   100%
-sdk\agentguard\integrations\langchain.py     226     58    74%
+sdk\agentguard\integrations\langchain.py     226     59    74%   16-18, 80, 91-95, 110-111, 150-161, 173-177, 191, 208-219, 223-224, 239-240, 249-253, 281-285, 306, 313-318, 325-329, 342-343, 360-361
 sdk\agentguard\integrations\langgraph.py      43      0   100%
 sdk\agentguard\profiles.py                    15      0   100%
-sdk\agentguard\quickstart.py                 169      5    97%
-sdk\agentguard\repo_config.py                 80      8    90%
-sdk\agentguard\reporting.py                  129      7    95%
-sdk\agentguard\savings.py                    138      7    95%
-sdk\agentguard\schemas.py                     96     11    89%
-sdk\agentguard\setup.py                      101      4    96%
+sdk\agentguard\quickstart.py                 169      5    97%   50-52, 70, 214
+sdk\agentguard\repo_config.py                 80      8    90%   18, 31, 38-39, 56, 71, 82, 88
+sdk\agentguard\reporting.py                  129      7    95%   21, 46, 131, 253-258
+sdk\agentguard\savings.py                    138      7    95%   29, 91, 136, 152, 156, 170, 178
+sdk\agentguard\schemas.py                     96     11    89%   75, 78, 102, 109, 194-200
+sdk\agentguard\setup.py                      101      4    96%   255-256, 265-266
 sdk\agentguard\sinks\__init__.py               3      0   100%
-sdk\agentguard\sinks\http.py                 175     12    93%
-sdk\agentguard\sinks\otel.py                  98      8    92%
-sdk\agentguard\skillpack.py                  127      4    97%
-sdk\agentguard\state.py                      110     25    77%
-sdk\agentguard\tracing.py                    228     12    95%
-sdk\agentguard\usage.py                       91     17    81%
---------------------------------------------------------------
+sdk\agentguard\sinks\http.py                 175     12    93%   146-147, 344-350, 357-368
+sdk\agentguard\sinks\otel.py                  98      8    92%   38-39, 64, 152-153, 179, 198-199
+sdk\agentguard\skillpack.py                  127      4    97%   63-65, 82
+sdk\agentguard\state.py                      110     25    77%   96-110, 120-121, 155-156, 158, 167, 182-187, 200, 215
+sdk\agentguard\tracing.py                    228     12    95%   104, 142, 164-170, 237-238, 264, 271
+sdk\agentguard\usage.py                       91     17    81%   15, 17, 19, 58, 78, 87, 99-113
+------------------------------------------------------------------------
 TOTAL                                       3907    293    93%
 Required test coverage of 80% reached. Total coverage: 92.50%
-============================ 794 passed in 19.79s =============================
+============================ 795 passed in 24.29s =============================
