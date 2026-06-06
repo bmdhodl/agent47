@@ -3,7 +3,7 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-06-05
 
 ## Current Focus Notes
 
@@ -24,6 +24,16 @@ they directly strengthen coding-agent adoption.
 - The strongest package-installed proof path is `doctor` -> `demo` ->
   `quickstart`; repo checkouts also have starters and the coding-agent
   review-loop proof.
+- Distribution baseline (2026-06-05): read adoption off the human-signal side of
+  the `sdk_pulse.py` human-signal-vs-machine-volume split, not raw volume. PyPI
+  published-package downloads are real signal - CI installs the SDK from the
+  local checkout (`pip install -e ./agentguard-mcp`, `--cov=agentguard`), never
+  `pip install agentguard47`, so CI does not inflate published-wheel downloads.
+  Clone counts, by contrast, are partly self-inflicted: scheduled checkout
+  workflows (`codeql`, `entropy`, `ops-cadence`, `release-cadence`, `scorecard`)
+  plus the push/PR matrix each `actions/checkout` the repo on a cron, so the high
+  clones-per-unique ratio is mostly our own CI. Discount clone count; anchor on
+  PyPI published-package downloads and human GitHub signals (stars, referrers).
 
 ## Recently Completed
 
@@ -57,7 +67,7 @@ they directly strengthen coding-agent adoption.
 |------|---------------|
 | Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
-| MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features |
+| MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features. Measure progress on human-signal proxies (PyPI published-package downloads, GitHub stars, named referrers), not clone counts or raw machine volume |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
 | Ops/doc freshness | `ops/02-ARCHITECTURE.md`, this roadmap, `ops/FOLLOWUP.md`, and memory files stay concise and current enough that agents do not start from stale assumptions |
 
