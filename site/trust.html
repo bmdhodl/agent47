@@ -161,18 +161,18 @@
       </tr>
       <tr>
         <td>Gzip compression</td>
-        <td><span class="status planned">Planned</span></td>
-        <td>Client-side gzip for batches (v0.8.0)</td>
+        <td><span class="status current">Current</span></td>
+        <td>Client-side gzip on every batch (HttpSink, on by default)</td>
       </tr>
       <tr>
         <td>Retry with backoff</td>
-        <td><span class="status planned">Planned</span></td>
-        <td>Exponential backoff on transient failures, idempotency keys (v0.8.0)</td>
+        <td><span class="status current">Current</span></td>
+        <td>Exponential backoff (3 attempts) with per-batch idempotency keys</td>
       </tr>
       <tr>
         <td>Backpressure</td>
-        <td><span class="status planned">Planned</span></td>
-        <td>429 with Retry-After header, client-side backoff (v0.8.0)</td>
+        <td><span class="status current">Current</span></td>
+        <td>Respects 429 Retry-After; bounded buffer drops oldest before OOM</td>
       </tr>
     </table>
 
@@ -219,12 +219,14 @@
     <h2>Questions?</h2>
     <p>For security inquiries: <strong>pat@bmdpat.com</strong></p>
     <p>For general questions: <a href="https://github.com/bmdhodl/agent47/issues">GitHub Issues</a></p>
-    <p class="muted" style="margin-top: 24px; font-size: 13px;">Last updated: February 2026 (v1.2.0)</p>
+    <p class="muted" style="margin-top: 24px; font-size: 13px;">Last updated: June 2026 (SDK v1.2.13)</p>
 
     <footer>
       <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/quickstart">Quickstart</a>
         <a href="https://github.com/bmdhodl/agent47">GitHub</a>
-        <a href="/index.html#pricing">Pricing</a>
+        <a href="/compare#pricing">Pricing</a>
         <a href="/trust.html">Security &amp; Trust</a>
       </div>
       <span>&copy; 2026 BMD PAT LLC &middot; MIT-licensed SDK &middot; Zero dependencies</span>

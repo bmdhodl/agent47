@@ -1,0 +1,87 @@
+usage: agentguard [-h]
+                  {summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack} ...
+agentguard: error: unrecognized arguments: --agent claude-code
+AgentGuard skillpack
+Target: all
+
+Repo-local instruction pack for coding agents. Keep the first AgentGuard integration local, auditable, and free of hosted settings.
+
+Repo-local defaults
+Suggested path: .agentguard.json
+
+{
+  "profile": "coding-agent",
+  "service": "my-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+
+Codex / AGENTS
+Suggested path: AGENTS.md
+
+Use AgentGuard in local-only mode first.
+
+- Respect the repo's `.agentguard.json`
+- Keep traces in `.agentguard/traces.jsonl`
+- Prefer `agentguard.init(local_only=True)` for the first integration
+- Do not add API keys or hosted dashboard settings in the first PR
+- Verify with:
+  1. `agentguard doctor`
+  2. `agentguard quickstart --framework raw --write`
+  3. `python agentguard_raw_quickstart.py`
+  4. `agentguard report .agentguard/traces.jsonl`
+
+Claude Code / CLAUDE
+Suggested path: CLAUDE.md
+
+When integrating AgentGuard:
+
+- start local-only
+- respect the repo's `.agentguard.json`
+- keep traces in `.agentguard/traces.jsonl`
+- prefer `agentguard.init(local_only=True)` on the first pass
+- do not add API keys or dashboard settings in the first PR
+- prove the wiring with:
+  1. `agentguard doctor`
+  2. `agentguard quickstart --framework raw --write`
+  3. `python agentguard_raw_quickstart.py`
+  4. `agentguard report .agentguard/traces.jsonl`
+
+GitHub Copilot / copilot-instructions
+Suggested path: .github/copilot-instructions.md
+
+If you touch AI-agent code, keep AgentGuard local-first:
+
+- use the repo's `.agentguard.json` if present
+- keep traces in `.agentguard/traces.jsonl`
+- prefer `agentguard.init(local_only=True)` during first integration
+- avoid adding secrets, API keys, or hosted settings in the first PR
+- verify with `agentguard doctor`, `agentguard quickstart --framework raw --write`, and `agentguard report .agentguard/traces.jsonl`
+
+Cursor rule
+Suggested path: .cursor/rules/agentguard.mdc
+
+---
+description: AgentGuard local-first safety
+globs:
+  - "**/*.py"
+alwaysApply: false
+---
+
+When integrating AgentGuard:
+- keep the first run local
+- honor the repo's `.agentguard.json`
+- keep traces in `.agentguard/traces.jsonl`
+- prefer `agentguard.init(local_only=True)`
+- do not add API keys or hosted settings in the first PR
+- verify with:
+  1. `agentguard doctor`
+  2. `agentguard quickstart --framework raw --write`
+  3. `python agentguard_raw_quickstart.py`
+  4. `agentguard report .agentguard/traces.jsonl`
+
+Next commands:
+  agentguard doctor
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl

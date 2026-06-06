@@ -2,17 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://agentguard47.com/</loc>
-    <lastmod>2026-02-14</lastmod>
+    <lastmod>2026-06-06</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://agentguard47.com/quickstart</loc>
+    <lastmod>2026-06-06</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://agentguard47.com/trust.html</loc>
-    <lastmod>2026-02-14</lastmod>
+    <lastmod>2026-06-06</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://agentguard47.com/compare.html</loc>
-    <lastmod>2026-02-20</lastmod>
+    <lastmod>2026-06-06</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
