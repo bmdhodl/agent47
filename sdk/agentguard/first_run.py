@@ -20,9 +20,9 @@ BADGE_MARKDOWN = (
     f"({GITHUB_REPO_URL})"
 )
 BADGE_RST = (
-    f".. image:: https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6\n"
+    ".. image:: https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6\n"
     f"   :target: {GITHUB_REPO_URL}\n"
-    f"   :alt: Guarded by AgentGuard"
+    "   :alt: Guarded by AgentGuard"
 )
 BADGE_HTML = (
     f'<a href="{GITHUB_REPO_URL}">'

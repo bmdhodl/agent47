@@ -1,5 +1,5 @@
-# Regenerated 2026-06-06T08:25:34Z after review-fix commit (8baa888). Supersedes the pre-fix capture.
-=== ruff ===
+# Regenerated after review-fix commits (pragma removal + routing tests + BADGE_RST cleanup). Source of truth.
+=== ruff (gated paths: sdk/agentguard + scripts) ===
 All checks passed!
 === bandit (security) ===
 bandit exit: 0
@@ -13,7 +13,7 @@ collected 9 items
 
 sdk\tests\test_architecture.py .........                                 [100%]
 
-============================== 9 passed in 0.55s ==============================
+============================== 9 passed in 0.18s ==============================
 === release-guard ===
 Release guard passed.
 === full suite + coverage (--cov=agentguard) ===
@@ -22,7 +22,7 @@ platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
 rootdir: K:\agent47\.claude\worktrees\upbeat-thompson-79aa7b\sdk
 configfile: pyproject.toml
 plugins: anyio-4.9.0, langsmith-0.3.45, cov-7.1.0
-collected 795 items
+collected 807 items
 
 sdk\tests\test_architecture.py .........                                 [  1%]
 sdk\tests\test_async_patches.py ..........                               [  2%]
@@ -33,38 +33,38 @@ sdk\tests\test_cli_report.py .........                                   [  7%]
 sdk\tests\test_concurrency.py ........                                   [  8%]
 sdk\tests\test_cost.py .......................                           [ 11%]
 sdk\tests\test_cost_guardrail.py ...................................     [ 15%]
-sdk\tests\test_coverage_gaps.py ........................................ [ 21%]
+sdk\tests\test_coverage_gaps.py ........................................ [ 20%]
 ......                                                                   [ 21%]
-sdk\tests\test_crewai_integration.py ..........                          [ 23%]
-sdk\tests\test_dashboard_handoff_docs.py ..                              [ 23%]
+sdk\tests\test_crewai_integration.py ..........                          [ 22%]
+sdk\tests\test_dashboard_handoff_docs.py ..                              [ 22%]
 sdk\tests\test_decision_trace.py .............                           [ 24%]
-sdk\tests\test_demo.py ...                                               [ 25%]
+sdk\tests\test_demo.py ...                                               [ 24%]
 sdk\tests\test_doctor.py ..........                                      [ 26%]
-sdk\tests\test_dx.py .............................................       [ 32%]
+sdk\tests\test_dx.py .............................................       [ 31%]
 sdk\tests\test_e2e_pipeline.py ....                                      [ 32%]
-sdk\tests\test_evaluation.py ............................                [ 36%]
-sdk\tests\test_example_starters.py .........                             [ 37%]
+sdk\tests\test_evaluation.py ............................                [ 35%]
+sdk\tests\test_example_starters.py .........                             [ 36%]
 sdk\tests\test_export.py ...........                                     [ 38%]
 sdk\tests\test_exports.py ...............                                [ 40%]
-sdk\tests\test_first_run.py .............                                [ 42%]
-sdk\tests\test_goal.py ........                                          [ 43%]
-sdk\tests\test_guard_persistence.py .........                            [ 44%]
-sdk\tests\test_guards.py ............................................... [ 50%]
-..........................................                               [ 55%]
+sdk\tests\test_first_run.py .........................                    [ 43%]
+sdk\tests\test_goal.py ........                                          [ 44%]
+sdk\tests\test_guard_persistence.py .........                            [ 45%]
+sdk\tests\test_guards.py ............................................... [ 51%]
+..........................................                               [ 56%]
 sdk\tests\test_hardening.py ...........................................  [ 61%]
-sdk\tests\test_hosted_ingest_contract.py ....                            [ 61%]
+sdk\tests\test_hosted_ingest_contract.py ....                            [ 62%]
 sdk\tests\test_http_sink.py .......................                      [ 64%]
 sdk\tests\test_init.py ...............................................   [ 70%]
-sdk\tests\test_instrument.py ...........                                 [ 71%]
-sdk\tests\test_instrument_patch.py ..........                            [ 72%]
+sdk\tests\test_instrument.py ...........                                 [ 72%]
+sdk\tests\test_instrument_patch.py ..........                            [ 73%]
 sdk\tests\test_integration_cost_guardrail.py .                           [ 73%]
 sdk\tests\test_integration_dashboard_script.py ...........               [ 74%]
-sdk\tests\test_langchain_integration.py ..................               [ 76%]
+sdk\tests\test_langchain_integration.py ..................               [ 77%]
 sdk\tests\test_langgraph_integration.py ............                     [ 78%]
-sdk\tests\test_mcp_registry_metadata.py .....                            [ 78%]
+sdk\tests\test_mcp_registry_metadata.py .....                            [ 79%]
 sdk\tests\test_otel_sink.py ...........                                  [ 80%]
 sdk\tests\test_production.py ................                            [ 82%]
-sdk\tests\test_pypi_readme_sync.py .....                                 [ 82%]
+sdk\tests\test_pypi_readme_sync.py .....                                 [ 83%]
 sdk\tests\test_quickstart.py ..............                              [ 84%]
 sdk\tests\test_release_discussion_category.py .....                      [ 85%]
 sdk\tests\test_repo_config.py ............                               [ 86%]
@@ -72,7 +72,7 @@ sdk\tests\test_reporting.py ........                                     [ 87%]
 sdk\tests\test_savings.py ............                                   [ 89%]
 sdk\tests\test_schemas.py ........................                       [ 92%]
 sdk\tests\test_sdk_preflight.py .........                                [ 93%]
-sdk\tests\test_sdk_release_guard.py ............                         [ 94%]
+sdk\tests\test_sdk_release_guard.py ............                         [ 95%]
 sdk\tests\test_skillpack.py ..........                                   [ 96%]
 sdk\tests\test_smoke.py .                                                [ 96%]
 sdk\tests\test_sticky_agent_proof.py ..                                  [ 96%]
@@ -88,7 +88,7 @@ sdk\agentguard\__init__.py                    22      0   100%
 sdk\agentguard\__main__.py                     1      0   100%
 sdk\agentguard\_trace_naming.py               16      0   100%
 sdk\agentguard\atracing.py                    72      0   100%
-sdk\agentguard\cli.py                        129      1    99%   167
+sdk\agentguard\cli.py                        199      1    99%   167
 sdk\agentguard\cost.py                        51      1    98%   109
 sdk\agentguard\decision.py                   214     30    86%   91, 97, 100-101, 110, 112, 116-117, 125, 149, 156-161, 167, 169, 181, 184, 203, 205, 209, 234, 540-542, 549, 551, 773, 780
 sdk\agentguard\demo.py                        98      2    98%   46, 180
@@ -119,6 +119,6 @@ sdk\agentguard\state.py                      110     25    77%   96-110, 120-121
 sdk\agentguard\tracing.py                    228     12    95%   104, 142, 164-170, 237-238, 264, 271
 sdk\agentguard\usage.py                       91     17    81%   15, 17, 19, 58, 78, 87, 99-113
 ------------------------------------------------------------------------
-TOTAL                                       3907    293    93%
-Required test coverage of 80% reached. Total coverage: 92.50%
-============================ 795 passed in 24.29s =============================
+TOTAL                                       3977    293    93%
+Required test coverage of 80% reached. Total coverage: 92.63%
+============================ 807 passed in 17.27s =============================

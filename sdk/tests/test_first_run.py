@@ -132,6 +132,37 @@ class TestCliDispatch:
         assert "<img" in out
 
 
+_CLI_ROUTES = [
+    (["agentguard"], "_welcome"),  # bare command -> welcome
+    (["agentguard", "welcome"], "_welcome"),
+    (["agentguard", "badge"], "_badge"),
+    (["agentguard", "summarize", "t.jsonl"], "_summarize"),
+    (["agentguard", "report", "t.jsonl"], "_report"),
+    (["agentguard", "eval", "t.jsonl"], "_eval"),
+    (["agentguard", "incident", "t.jsonl"], "_incident"),
+    (["agentguard", "decisions", "t.jsonl"], "_decisions"),
+    (["agentguard", "demo"], "_demo"),
+    (["agentguard", "doctor"], "_doctor"),
+    (["agentguard", "quickstart"], "_quickstart"),
+    (["agentguard", "skillpack"], "_skillpack"),
+]
+
+
+class TestCliRouting:
+    """Pin every dispatch branch in cli.main() so routing regressions are caught.
+
+    main() no longer carries `# pragma: no cover`, so each subcommand must be
+    exercised. Handlers are patched to keep the test fast and side-effect-free
+    (several real handlers raise SystemExit and write files).
+    """
+
+    @pytest.mark.parametrize("argv,handler", _CLI_ROUTES)
+    def test_main_routes_to_handler(self, argv, handler):
+        with mock.patch.object(cli, handler) as patched, mock.patch.object(sys, "argv", argv):
+            cli.main()
+        assert patched.called, f"{argv} should route to cli.{handler}"
+
+
 class TestModuleEntryPoint:
     def test_main_module_imports_cli_main(self):
         """Cover the module-level import in __main__.py and pin the wiring.

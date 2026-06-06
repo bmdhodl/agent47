@@ -260,7 +260,7 @@ def _eval(path: str, ci: bool = False) -> None:
         raise SystemExit(1)
 
 
-def main() -> None:  # pragma: no cover
+def main() -> None:
     parser = argparse.ArgumentParser(prog="agentguard")
     sub = parser.add_subparsers(dest="cmd")
 

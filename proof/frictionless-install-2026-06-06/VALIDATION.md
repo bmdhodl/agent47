@@ -46,14 +46,15 @@ against thousands of PyPI downloads.
 - bandit: clean (exit 0)
 - structural (test_architecture.py): 9 passed
 - release-guard: passed
-- full suite: 795 passed, total coverage ~92.5% (>= 80 gate)
+- full suite: 807 passed, total coverage ~92.6% (>= 80 gate)
 - `first_run.py` coverage: 100%
 - `__main__.py` coverage: 100% (import-level wiring test + end-to-end subprocess test)
+- `cli.py` coverage: 99% (`main()` is now measured, not pragma-excluded; the one
+  remaining miss is a pre-existing early `return` in `_decisions`, unrelated)
 - `python -m agentguard` end-to-end subprocess test: passing
 
-Note: `checks.txt` was regenerated after the review-fix commit (8baa888). The
-first capture predated the fix and showed `__main__.py` at 0% / 794 passed; the
-current `checks.txt` is the source of truth and shows 100% / 795 passed.
+Note: `checks.txt` is the source of truth and is regenerated after every fix
+commit. Earlier captures that predated a fix have been superseded.
 
 ## Automated review follow-ups (PR #584, claude-review: no blocking issues)
 
@@ -64,5 +65,12 @@ Applied the three minor nits the first review raised:
   (`[![Guarded by AgentGuard](`) instead of an incidental substring.
 
 Second review raised one item — the proof artifacts contradicted each other
-because `checks.txt` predated the fix. Resolved by regenerating `checks.txt`
-above; it now shows `__main__.py` at 100% and 795 passing, matching this file.
+because `checks.txt` predated the fix. Resolved by regenerating `checks.txt`,
+which now matches this file.
+
+Third review raised two real items, both applied:
+- Removed `# pragma: no cover` from `cli.main()` and added `TestCliRouting`, a
+  parametrized test that pins every dispatch branch (bare + 11 subcommands) so
+  routing regressions are caught. `cli.py` main() is now measured (99% overall).
+- Cleaned `BADGE_RST`'s redundant `f`-prefixes on placeholder-free lines.
+- Confirmed `Optional` is already imported in `cli.py` (no change needed).
