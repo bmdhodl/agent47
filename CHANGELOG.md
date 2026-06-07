@@ -11,6 +11,13 @@
   access-denied when an antivirus/indexer holds the destination. Both now retry
   safely, so cross-process budget enforcement holds on Windows scheduled tasks.
 
+### Public Docs
+- Made the reader-facing surface fully model-agnostic to match the
+  already-vendor-neutral code path: the README/PyPI "As a skill" heading now
+  leads with Codex alongside Claude Code, and the budget-aware escalation
+  example notes the escalate target can be any provider's model, not just
+  Claude.
+
 ### Onboarding
 - Bare `agentguard` now prints a friendly first-run welcome with the 60-second
   local path and the star call to action instead of an argparse help dump.
