@@ -8,6 +8,7 @@ and that the in-memory default is unchanged.
 """
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import textwrap
@@ -139,10 +140,7 @@ def test_two_processes_share_one_ceiling_no_lost_updates(tmp_path):
     ceiling = 20
     attempts = 15  # 2 * 15 = 30 attempts against a ceiling of 20
 
-    env = {"PYTHONPATH": str(_SDK_DIR)}
-    import os
-
-    env = {**os.environ, **env}
+    env = {**os.environ, "PYTHONPATH": str(_SDK_DIR)}
 
     procs = [
         subprocess.Popen(
@@ -156,8 +154,55 @@ def test_two_processes_share_one_ceiling_no_lost_updates(tmp_path):
     outs = [p.communicate(timeout=60)[0] for p in procs]
     assert all(p.returncode == 0 for p in procs), outs
 
-    successes = sum(int(o.strip().splitlines()[-1]) for o in outs)
+    lines = [o.strip().splitlines()[-1] for o in outs if o.strip()]
+    assert len(lines) == 2, f"{2 - len(lines)} worker(s) produced no output"
+    successes = sum(int(line) for line in lines)
     assert successes == ceiling, f"expected exactly {ceiling} successful consumes, got {successes}"
 
     final = JsonFileStateStore(path).read("fleet")
     assert final["calls_used"] >= ceiling
+
+
+def test_high_contention_no_crashes_or_lost_updates(tmp_path):
+    # Heavier contention than the two-process case. This is the regression guard for the
+    # Windows "delete pending" race: a concurrent release made an exclusive lock create
+    # fail with PermissionError (not FileExistsError), crashing the acquirer. With the
+    # lock hardened, every worker exits 0 and the combined successes still equal the
+    # ceiling exactly (the lock never loses or double-counts an increment).
+    path = tmp_path / "budget.json"
+    ceiling = 30
+    workers = 6
+    attempts = 10  # 6 * 10 = 60 attempts against a ceiling of 30
+
+    env = {**os.environ, "PYTHONPATH": str(_SDK_DIR)}
+    procs = [
+        subprocess.Popen(
+            [sys.executable, "-c", _WORKER, str(path), str(ceiling), str(attempts)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env,
+        )
+        for _ in range(workers)
+    ]
+    try:
+        results = [p.communicate(timeout=60) for p in procs]
+    except subprocess.TimeoutExpired as exc:
+        pytest.fail(f"worker did not finish within 60s (possible lock deadlock): {exc}")
+    finally:
+        # If any communicate() timed out, don't leak the remaining workers: kill them and
+        # drain their pipes so FDs close and any crash output is reaped, not lost.
+        for p in procs:
+            if p.poll() is None:
+                p.kill()
+                try:
+                    p.communicate(timeout=10)
+                except subprocess.TimeoutExpired:
+                    pass
+    crashed = [(i, procs[i].returncode, results[i][1]) for i in range(workers) if procs[i].returncode != 0]
+    assert not crashed, f"workers crashed (lock not contention-safe): {crashed}"
+
+    lines = [out.strip().splitlines()[-1] for out, _ in results if out.strip()]
+    assert len(lines) == workers, f"{workers - len(lines)} worker(s) produced no output"
+    successes = sum(int(line) for line in lines)
+    assert successes == ceiling, f"expected exactly {ceiling} successful consumes, got {successes}"
