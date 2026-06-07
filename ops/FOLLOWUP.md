@@ -10,3 +10,9 @@
 - Comment `https://glama.ai/mcp/servers/bmdhodl/agent47` on
   `punkpeye/awesome-mcp-servers#4012` once the Glama listing is acceptable for
   the badge requirement.
+- Harden `agentguard-mcp/agentguard_mcp/sync.py`: `SyncHook` POSTs to
+  `AGENTGUARD_SYNC_URL` with no scheme/host validation, unlike `HttpSink`
+  (which blocks private/reserved IPs and non-http(s) schemes). It is an opt-in
+  operator env var, so low risk, but add minimal scheme validation
+  (reject non-http(s)) + a test so the consistency gap does not reappear.
+  Found during the 2026-06-06 QA pass (see `proof/qa-2026-06-06/REPORT.md`).
