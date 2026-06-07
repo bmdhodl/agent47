@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Reliability
+- Hardened the cross-process state lock (`JsonFileStateStore`, used by
+  `BudgetGuard(store=...)`) against two Windows races that crashed concurrent
+  processes under contention: an exclusive lock create that fails with
+  `PermissionError` instead of `FileExistsError` during a concurrent release
+  ("delete pending"), and an `os.replace` that transiently fails with
+  access-denied when an antivirus/indexer holds the destination. Both now retry
+  safely, so cross-process budget enforcement holds on Windows scheduled tasks.
+
 ### Public Docs
 - Made the reader-facing surface fully model-agnostic to match the
   already-vendor-neutral code path: the README/PyPI "As a skill" heading now
