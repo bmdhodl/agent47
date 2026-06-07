@@ -64,6 +64,41 @@ def _get_json(url: str) -> Any:
         raise SourceError(f"{url}: {exc}") from exc
 
 
+def _github_public_array(path: str) -> list[dict[str, Any]]:
+    """Fetch public GitHub array endpoints without requiring gh auth.
+
+    Public repo metadata should stay available in unauthenticated environments.
+    Only GitHub traffic endpoints need `gh api`.
+    """
+    url = f"https://api.github.com/{path.lstrip('/')}"
+    items: list[dict[str, Any]] = []
+    while url:
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        try:
+            with urllib.request.urlopen(request, timeout=HTTP_TIMEOUT) as response:
+                page = json.loads(response.read().decode("utf-8"))
+                link = response.headers.get("Link", "")
+        except (urllib.error.URLError, TimeoutError, ValueError) as exc:
+            raise SourceError(f"{url}: {exc}") from exc
+        if not isinstance(page, list):
+            raise SourceError(f"{url}: expected JSON array")
+        items.extend(page)
+        url = _next_link(link)
+    return items
+
+
+def _next_link(link_header: str) -> str | None:
+    """Return the GitHub pagination URL for rel=next, if present."""
+    for part in link_header.split(","):
+        part = part.strip()
+        if not part.startswith("<") or ">;" not in part:
+            continue
+        url, params = part[1:].split(">;", 1)
+        if any(param.strip() == 'rel="next"' for param in params.split(";")):
+            return url
+    return None
+
+
 def _merge_json_values(text: str) -> list[Any]:
     """Parse one-or-more concatenated JSON arrays into a single list.
 
@@ -256,10 +291,7 @@ def collect_external_issues() -> dict[str, Any]:
     External issues are the clearest free-text signal of real human use, so
     they get pulled out separately from the owner's own tracking issues.
     """
-    issues = _gh_api(
-        f"repos/{REPO}/issues?state=open&per_page=100",
-        paginate=True,
-    )
+    issues = _github_public_array(f"repos/{REPO}/issues?state=open&per_page=100")
     external = [
         i
         for i in issues

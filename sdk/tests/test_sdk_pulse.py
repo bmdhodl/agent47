@@ -112,6 +112,14 @@ def test_overall_no_split_sums_all(monkeypatch) -> None:
 
 # --- collect_external_issues (bot / PR / deleted-account filtering) --------
 
+def test_next_link_extracts_github_pagination_url() -> None:
+    link = (
+        '<https://api.github.com/repositories/1/issues?page=2>; rel="next", '
+        '<https://api.github.com/repositories/1/issues?page=4>; rel="last"'
+    )
+    assert pulse._next_link(link) == "https://api.github.com/repositories/1/issues?page=2"
+
+
 def test_external_issues_filters_owner_bots_prs_and_null_users(monkeypatch) -> None:
     issues = [
         {"user": {"login": "alice", "type": "User"}},
@@ -120,7 +128,12 @@ def test_external_issues_filters_owner_bots_prs_and_null_users(monkeypatch) -> N
         {"user": {"login": "dependabot[bot]", "type": "Bot"}},
         {"pull_request": {}, "user": {"login": "bob", "type": "User"}},
     ]
-    monkeypatch.setattr(pulse, "_gh_api", lambda path, paginate=False: issues)
+    monkeypatch.setattr(pulse, "_github_public_array", lambda path: issues)
+    monkeypatch.setattr(
+        pulse,
+        "_gh_api",
+        lambda path, paginate=False: (_ for _ in ()).throw(AssertionError("gh not used")),
+    )
     result = pulse.collect_external_issues()
     assert result["external_open_issues"] == 1
     assert result["external_authors"] == ["alice"]
