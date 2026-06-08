@@ -376,6 +376,33 @@ Competitive notes:
 - [AgentGuard vs Manifest (LLM router)](docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md)
 
+## How AgentGuard Differs From Adjacent Tools
+
+Other tools touch the same problem from a different layer. AgentGuard's wedge
+is the runtime envelope: budget, token, rate, and kill caps on what the agent
+is doing right now, at the call site. Here is where each adjacent tool stops
+and AgentGuard starts.
+
+- **Identity-time vs run-time.** Scoped agent credentials (for example WorkOS)
+  answer who the agent is, what scopes it holds, and what it did, with an audit
+  trail. That is identity-time. AgentGuard answers what the agent is spending
+  right now and stops it mid-run. That is run-time. They compose: scoped
+  credentials bound the envelope, AgentGuard enforces it at execution.
+- **Enterprise budget caps that reach the call site.** Used to prevent surprise
+  bills like Uber's $1,500/developer Claude Code cap, but enforced at the call
+  site, where a per-tool org policy can't reach. A seat or org policy caps the
+  bill after the fact. AgentGuard raises the exception that ends the run before
+  the spend lands.
+- **Per-tool token caps are not an org budget.** A single per-tool `max_tokens`
+  setting in one vendor's API caps one call's output on one provider. It does
+  not give you an org-wide runtime budget across every tool and every agent.
+  AgentGuard holds one ceiling across the whole run, including thinking-token
+  accounting, every retry, and every provider.
+
+**Who needs this:** teams running coding agents at scale (Uber, Microsoft),
+solo founders watching a retry storm eat a month of budget, anyone whose agent
+mixes providers in one run.
+
 ## Decision Traces
 
 Capture proposal, human edit, approval, override, and binding events through the
