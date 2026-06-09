@@ -376,6 +376,36 @@ Competitive notes:
 - [AgentGuard vs Manifest (LLM router)](docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md)
 
+## How AgentGuard Differs From Adjacent Tools
+
+AgentGuard's wedge is the runtime envelope. It enforces budget, token, rate,
+and kill caps on what an agent is doing right now, at the call site. Other
+tools sit on different axes. Here is where each one lines up.
+
+**Identity-time vs run-time (scoped agent credentials).** Tools like WorkOS
+answer who the agent is, what scopes it holds, and what it did. AgentGuard
+answers what the agent is spending right now and stops it when it goes over.
+These compose: identity bounds the envelope, AgentGuard enforces it at
+execution.
+
+**Org budget caps vs call-site caps.** Some teams cap spend at the org or
+seat level. Uber set a $1,500-per-developer cap on Claude Code to prevent
+surprise bills. That kind of policy stops a seat from overspending across a
+month. It cannot reach inside a single agent run to kill a retry storm before
+it burns the budget. AgentGuard enforces the cap at the call site, where a
+per-seat org policy does not reach. Use both: the org cap for the monthly
+ceiling, AgentGuard for the per-run stop.
+
+**Per-tool token caps vs cross-tool envelope.** Provider APIs let you set a
+per-tool `max_tokens` on one call to one provider. That bounds one request.
+It does not give you a budget across every tool, every agent, and every
+provider in a run. AgentGuard does, and it also accounts for thinking-token
+spend separately from answer tokens so the breakdown is visible.
+
+**Who needs this:** teams shipping autonomous agents where one bad loop can
+spend real money before anyone notices. Uber, and anyone capping AI coding
+spend, are in this group.
+
 ## Decision Traces
 
 Capture proposal, human edit, approval, override, and binding events through the
