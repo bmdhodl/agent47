@@ -3,7 +3,7 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-06-06
+**Last reviewed:** 2026-06-09
 
 ## Current Focus Notes
 
@@ -24,6 +24,15 @@ they directly strengthen coding-agent adoption.
 - The strongest package-installed proof path is `doctor` -> `demo` ->
   `quickstart`; repo checkouts also have starters and the coding-agent
   review-loop proof.
+- Distribution baseline = human signal, not raw counts (audit 2026-06-05).
+  PyPI published-package downloads are real signal (CI installs the SDK from the
+  local checkout, never `pip install agentguard47`, so CI runs do not inflate
+  published-wheel downloads). Raw GitHub clone counts are partly self-inflicted
+  by scheduled checkout workflows (codeql, entropy, ops/release cadence,
+  scorecard, the push/PR matrix) and are discounted as a popularity metric.
+  Anchor every roadmap decision on published-package downloads plus human GitHub
+  signals (stars, named referrers/backlinks, paid conversions), not on clone
+  counts or volume aggregates.
 
 ## Recently Completed
 
@@ -56,7 +65,7 @@ they directly strengthen coding-agent adoption.
 
 | Item | Success Signal |
 |------|---------------|
-| Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
+| Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos. Progress is judged on human-signal adoption (published-package downloads, stars, named referrers), not raw clone counts |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
