@@ -1,68 +1,26 @@
-# QA_REPORT — README containment scope positioning
+# QA_REPORT — competitor wedge map README batch (2026-06-12)
 
-**Verdict: PASS**
+**Verdict: WARN** (one unsupported fact claim in public README copy; everything else passes)
 
-## Checks
+## Checklist
 
-### Scope match with WORK_PLAN
-- [x] Added a "Scope" block after "Design constraints" list — matches plan.
-- [x] One block, 14 LOC added. Under the planned ~30 LOC ceiling.
-- [x] Sentence 1 names AgentGuard's scope (runtime budget/token/rate/retry/
-      loop/timeout caps, in-process).
-- [x] Sentence 2 names OS-level containment as out of scope and lists
-      Anthropic's four primitives (process sandboxes, VMs, filesystem
-      boundaries, egress controls).
-- [x] Anthropic URL present: https://www.anthropic.com/news/how-we-contain-claude
+| Check | Result |
+|---|---|
+| Single wedge-map section covering WorkOS / Uber / per-tool-token-cap axes | PASS — `## How AgentGuard Differs From Adjacent Tools` at README.md:379, one axis table + 4 compose bullets. Routers/gateways row is additive, consistent with WORK_PLAN. |
+| mem0 excluded (`grep -i mem0 README.md` empty) | PASS — 0 hits in README.md and sdk/PYPI_README.md. mem0 appears only in internal artifacts (RESEARCH.md/WORK_PLAN.md) documenting the exclusion. |
+| Thinking-tokens feature excluded | PASS — no code changes; no README claim of thinking-token accounting. RESEARCH.md "Decisions" deliberately omits even the prose mention (defensible: unshipped capability). |
+| Positioning copy only, no feature commits | PASS — diff is README.md, sdk/PYPI_README.md (regenerated), WORK_PLAN.md, RESEARCH.md. One commit, docs only. |
+| Voice: no em dashes in added lines | PASS for README/PYPI added lines. Three em dashes in added lines of internal artifacts only (WORK_PLAN.md:1, RESEARCH.md:1, RESEARCH.md:50 quoting repo CLAUDE.md). Not user-facing; noted, not blocking. |
+| Voice: banned words in added lines | PASS — only "hit" is WORK_PLAN.md:63 quoting the banned-word grep pattern itself. No banned words in README/PYPI copy. Tone is builder-first, short sentences. |
+| Uber fact check vs RESEARCH.md | PASS on the headline claim — README.md:400-402 says "$1,500 per month in token spend on each AI coding tool" (per employee, per tool), matching the source of record. Task card's imprecise "per developer Claude Code cap" was correctly NOT used. |
+| **Unsupported claim** | **WARN — README.md:406 "Fortune 50 finance team". Uber is not Fortune 50 (Fortune 500 rank ~#58-#74 in recent lists) and RESEARCH.md cites no rank. Suggest "Fortune 100" or "a $40B company".** |
+| sdk/PYPI_README.md regenerated | PASS — `python scripts/generate_pypi_readme.py --check` exit 0. |
+| Sync test | PASS — `python -m pytest sdk/tests/test_pypi_readme_sync.py -q` -> 5 passed. |
+| Secrets | None added. |
+| Denylist paths (.github/workflows/, .env*, supabase/migrations/, security/) | Untouched. |
+| Test coverage | No regression — no test files modified or removed. |
+| Scope vs WORK_PLAN | Matches — 4 files, 193 insertions / 87 deletions, well under 400 LOC cap. |
 
-### Done criteria from queue task frontmatter
-- [x] `verifier: "agent47 README updated with scope statement that cites
-      Anthropic's containment doc as the canonical map for the adjacent gap"`
-      — satisfied by the new Scope section.
-- [x] `done_artifact: "agent47 README.md PR with positioning paragraph"` —
-      this PR.
+## Required fix before merge
 
-### Voice / style
-- [x] No banned words (harness, leverage, streamline, delve, landscape,
-      cutting-edge, game-changer, revolutionary, seamless, robust, holistic,
-      synergy, ecosystem) in the new block. Grepped.
-- [x] No em-dashes added by this change. Pre-existing em-dashes in
-      unrelated section headings are untouched.
-- [x] Builder-to-builder tone matches surrounding text (compare to PocketOS
-      section: "does not replace least-privilege creds").
-
-### Integration with PR #568
-- [x] No duplication with the new cross-call envelope vs. `max_tokens`
-      comparison table (lines 76-85). The Scope block is a different
-      axis: in-process vs. OS-level. PR #568 contrasts AgentGuard with
-      Anthropic's single-call cap; this contrasts AgentGuard with
-      Anthropic's process-level containment.
-- [x] The "layers are complementary" framing echoes the existing
-      "complementary" framing in the "Why AgentGuard" section (line 54),
-      which is consistent house style.
-
-### Denylist + safety
-- [x] No files in `.github/workflows/`, `.env*`, `supabase/migrations/`,
-      `security/`, Stripe/Clerk config, or secrets touched.
-- [x] No new dependencies.
-- [x] No test coverage regression (docs-only change, no test files
-      touched).
-- [x] No secrets, credentials, or API keys added.
-
-### Coverage of the queue task requirement
-The queue task asks for:
-1. "one sentence naming AgentGuard's scope (runtime budget/token/rate caps)"
-   — covered in sentence 1.
-2. "one sentence noting that OS-level containment (process sandboxes, VMs,
-   filesystem boundaries, egress controls) is out of scope, with a link to
-   Anthropic's 'How we contain Claude' post"
-   — covered in sentence 2 + the markdown link.
-
-### Triple-check stranger-read
-Read the new block cold. First sentence names what AgentGuard does.
-Second names what it doesn't do and where to look for the adjacent layer.
-A closing sentence ties it back to the existing "complementary" framing so
-the section doesn't read as defensive disclaimer.
-
-## Issues found
-
-None blocking.
+1. README.md:406 (and the mirrored line in sdk/PYPI_README.md): replace "Fortune 50" with a supported framing, then regenerate the PyPI README.

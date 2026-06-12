@@ -405,8 +405,8 @@ How they compose:
   That policy fires at the billing layer, after the spend, and a per-tool cap
   cannot see one dev burning across three tools in the same week. A
   `BudgetGuard` fires inside the process, on the run that is misbehaving,
-  before the bill exists. If a Fortune 50 finance team needs this primitive,
-  so does your two-person agent project.
+  before the bill exists. If Uber's finance team needs this primitive, so
+  does your two-person agent project.
 - **Per-call caps are table stakes.** Anthropic's per-tool `max_tokens` stops
   one oversized response. It does not stop 200 small calls in a loop, a retry
   storm, or a run that mixes providers. Set the per-call cap at the provider
