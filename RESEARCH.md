@@ -1,44 +1,64 @@
-# RESEARCH — Anthropic per-tool max_tokens positioning update
+# RESEARCH — competitor wedge map README batch (2026-06-12)
 
 ## Sources
 
-- Vault source card: `Knowledge/sources/2026-06-03-anthropic-advisor-max-tokens-cost-cap.md`
-  - Claim: "The advisor tool now supports a max_tokens parameter to cap the advisor model's output per call, reducing latency and output token cost for workloads that don't need full-length advisor responses. Set tools[].max_tokens on the advisor tool definition."
-  - Claim: "On the Claude API, you are no longer billed for a request when it returns stop_reason: 'refusal' without Claude having generated any output."
-- Anthropic release notes URL of record (in queue task frontmatter): https://platform.claude.com/docs/en/release-notes/overview#june-2-2026
-- Queue task: `Queue/agent47/anthropic-advisor-max-tokens-update-positioning.md`
+- Vault batch card: `Queue/agent47/competitor-wedge-map-readme-batch.md`
+  (supersedes workos-positioning-update, agentguard-uber-validation-readme,
+  thinking-tokens-breakdown-agentguard; holds mem0-contamination-positioning).
+- Batching rule: `Queue/agent47/_README.md` § Competitor-positioning batching
+  rule (2026-06-07), incl. fact-gating clause.
+- WorkOS: vault `Knowledge/sources/2026-06-04-workos-scoped-agent-credentials.md`.
+  Claim used: WorkOS productizes scoped agent credentials (agent-specific
+  identity, per-agent RBAC, audit logs). Identity-time vs run-time framing;
+  "different wedges, same buyer"; composable, not adversarial. Confidence
+  marked medium in the source (marketing-layer copy), so README copy describes
+  the category axis, not WorkOS internals.
+- Uber: vault `Knowledge/sources/2026-06-03-uber-caps-claude-code-1500.md`,
+  confidence high, verified 2026-06-04. URL of record:
+  https://simonwillison.net/2026/Jun/3/uber-caps-usage/ (Bloomberg report).
+  Exact claim: Uber limits all employees to $1,500/month in token spending on
+  EACH AI coding tool. Per-tool, per-employee. The task card's shorthand
+  "$1,500/developer Claude Code cap" is imprecise; README uses the accurate
+  per-employee-per-tool form. The per-tool blindspot (one dev across Claude
+  Code + Cursor + Copilot can spend 3x before policy fires) is itself the
+  wedge argument for a cross-tool runtime envelope.
+- Anthropic per-tool `max_tokens`: already cited in README.md:62-64 with the
+  2026-06-02 release-notes URL. Wedge map reuses the existing fact; adds no
+  new claim.
+- Routers/gateways: existing README.md:53-58 (Manifest, Vercel AI Gateway) and
+  docs/competitive/manifest.md, docs/competitive/vercel-ai-gateway.md. Reused.
 
 ## Verified current README state (before edit)
 
-`README.md:1-13` — Headline is "Stop runaway Python agents before they burn money." `AgentGuard47 is a zero-dependency runtime control SDK for Python agents.` Lead value prop is in-process safety, not specifically per-call vs cross-call distinction.
+- README.md:48-98 "Why AgentGuard": in-process vs router framing (Manifest,
+  Vercel AI Gateway), cross-call cross-provider envelope, per-tool
+  `max_tokens` comparison table. No WorkOS, no Uber, no unified wedge section.
+- README.md:351-377 "Runtime Control vs Observability": capability table +
+  competitive notes links. Insertion point: new section goes directly after
+  this one (before "Decision Traces", README.md:379).
+- `grep -i mem0 README.md` -> no match (must stay that way).
+- `grep -i "WorkOS|Uber|1,500" README.md` -> no match before edit.
 
-`README.md:44-72` — `## Why AgentGuard` section has the "Problem -> What AgentGuard does" table. Includes "Run spends too much | Raises BudgetExceeded". The framing does not contrast against provider-native caps.
+## Build/CI constraints verified
 
-`README.md:293-313` — `## Runtime Control vs Observability` table has 8 rows comparing AgentGuard to "generic tracing platforms." It does NOT yet have a row about provider-native per-call token caps.
+- `sdk/PYPI_README.md` is GENERATED from README.md by
+  `scripts/generate_pypi_readme.py` (README_PATH = Path("README.md"), line 11).
+  `sdk/tests/test_pypi_readme_sync.py::test_committed_pypi_readme_is_in_sync`
+  diffs the committed file against the generator output. Any README edit
+  requires `python scripts/generate_pypi_readme.py --write` + committing
+  sdk/PYPI_README.md.
+- Repo CLAUDE.md: "do not add one-off reports ... to the repo root" — WORK_PLAN,
+  RESEARCH, QA_REPORT already exist at root on main from prior worker runs;
+  this run refreshes them in place, adds no new root files.
+- Anchor-style internal links (`#runtime-control-vs-observability`) are already
+  used at README.md:58, so an anchor link in the new section is safe for the
+  PyPI link rewriter.
 
-`README.md:218-219` — Auto-patch section mentions Anthropic by name in passing ("If you already call OpenAI or Anthropic directly"). No discussion of per-tool max_tokens.
+## Decisions
 
-## Verified competitive notes in repo
-
-- `docs/competitive/vercel-ai-gateway.md` — referenced from README
-- `docs/competitive/manifest.md` — referenced from README
-- `docs/competitive/agent-security-stack.md` — referenced from README
-
-None of these cover per-tool / per-call provider caps. The new contrast belongs in the README itself (as a row + short paragraph), not as a fourth competitive-notes file, since the task is positioning-paragraph reframing.
-
-## What is in scope for this PR
-
-Per queue task and queue-worker invocation:
-
-- agent47 README positioning update (this PR).
-- NOT in scope: bmdpat landing-page edit, PYPI_README, ARCHITECTURE, AGENTS, docs/competitive/*. The bmdpat half is held for Patrick per the queue-sweep instructions.
-
-## Voice constraints from vault AGENTS.md
-
-Forbidden: harness, leverage, streamline, delve, landscape, cutting-edge, game-changer, revolutionary, seamless, robust, holistic, synergy, ecosystem, engagement, retainer, governance audit, book a call, schedule a call, discovery call, SOW, compliance package. No em dashes. Use periods, commas, parens.
-
-## Honest scope of Anthropic's change
-
-- Per-tool `max_tokens` is an **output-token cap per single tool call** on the advisor tool definition.
-- It does NOT cover: cross-tool budgets, cross-call accumulation, multi-provider abstraction (OpenAI + Anthropic in one app), retry storms, loop detection, in-process exception-based kill, rate limits per minute, time-window caps, or anything OpenAI-native.
-- These are exactly the layers AgentGuard already covers. The positioning update simply states this contrast plainly.
+- Thinking-token accounting NOT mentioned even in prose: the parsing of
+  `usage.output_tokens_details.thinking_tokens` is a deferred feature
+  (cannon-paused). A README differentiator claim for an unshipped capability
+  would be false. The card's "may mention" is permissive, not required.
+- mem0 excluded entirely per fact-gating (false 57-71% stat, open Request
+  2026-06-04-2330). No memory-layer bullet ships in this batch.

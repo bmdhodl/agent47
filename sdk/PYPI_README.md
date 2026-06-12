@@ -378,6 +378,45 @@ Competitive notes:
 - [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md)
 
+## How AgentGuard Differs From Adjacent Tools
+
+The wedge map. AgentGuard is the runtime envelope: budget, token, rate, and
+kill caps enforced in-process, at the call site, on what the agent is doing
+right now. Adjacent tools work on different axes. Most of them compose with
+AgentGuard instead of competing with it.
+
+| Adjacent tool | Its axis | AgentGuard's axis |
+|---|---|---|
+| Scoped agent credentials (WorkOS) | Identity-time: who the agent is, what scopes it holds, audit trail of what it did | Run-time: budget, token, rate, and kill enforcement on what it is doing right now |
+| Org-level per-tool spend caps (the Uber pattern) | Policy-time: a monthly dollar ceiling per employee per tool, enforced at the billing layer | Call-site: stops the single runaway run minutes in, not at month end |
+| Provider per-tool token caps (Anthropic per-tool `max_tokens`) | One call, one tool, one provider | Cross-call, cross-provider budget envelope for the whole run |
+| LLM routers and gateways (Manifest, Vercel AI Gateway) | Network layer: route and shape egress traffic | In-process: sees the call graph, raises the exception that ends the run |
+
+How they compose:
+
+- **Scoped credentials and AgentGuard stack.** WorkOS-style agent identity
+  gives each agent its own credential, scoped permissions, and an audit log.
+  That bounds what the agent may touch. AgentGuard enforces what it spends
+  while touching it. Identity-time and run-time are different layers of the
+  same control plane. Use both.
+- **Org caps need a call-site enforcer.** Uber now limits employees to $1,500
+  per month in token spend on each AI coding tool
+  ([Bloomberg via Simon Willison, June 2026](https://simonwillison.net/2026/Jun/3/uber-caps-usage/)).
+  That policy fires at the billing layer, after the spend, and a per-tool cap
+  cannot see one dev burning across three tools in the same week. A
+  `BudgetGuard` fires inside the process, on the run that is misbehaving,
+  before the bill exists. If a Fortune 50 finance team needs this primitive,
+  so does your two-person agent project.
+- **Per-call caps are table stakes.** Anthropic's per-tool `max_tokens` stops
+  one oversized response. It does not stop 200 small calls in a loop, a retry
+  storm, or a run that mixes providers. Set the per-call cap at the provider
+  and the run-envelope cap in AgentGuard.
+- **Gateways shape traffic, guards end runs.** Routers sit at the network
+  layer and never see the agent's call graph. AgentGuard runs inside the
+  process and raises `BudgetExceeded`, `LoopDetected`, or
+  `RetryLimitExceeded` where the loop lives. Details in the
+  [competitive notes](#runtime-control-vs-observability) above.
+
 ## Decision Traces
 
 Capture proposal, human edit, approval, override, and binding events through the
