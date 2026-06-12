@@ -10,6 +10,17 @@
 
 <!-- Paste validation commands and results. Link proof artifacts when useful. -->
 
+## Review Readiness
+
+Use these only when the PR touches the matching risk area. Leave a short note or
+`N/A` so reviewers know it was considered.
+
+- [ ] Public positioning claims have a source/fact ledger.
+- [ ] State, lock, file, or process-concurrency changes include cross-platform failure proof.
+- [ ] External API collectors include response-shape, pagination, null, and partial-failure tests.
+- [ ] Proof artifacts include command, exit code, platform, and regenerated-after-review status.
+- [ ] Workflow changes explain trigger scope, timeouts, concurrency, artifacts, and spend impact.
+
 ## Risk And Rollback
 
 <!-- What could break? How would we revert or disable it? -->
