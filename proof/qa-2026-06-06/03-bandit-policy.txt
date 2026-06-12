@@ -1,0 +1,24 @@
+$ bandit -r sdk/agentguard/ -s B101,B110,B112,B311   (repo policy from Makefile; non-quiet for proof)
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 7790
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+
+exit_code=0

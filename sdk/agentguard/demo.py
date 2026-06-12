@@ -83,6 +83,7 @@ def run_offline_demo(
     _render_module_fallback(fallback_commands, out)
     _print(out, "SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.")
     _print(out, "")
+    _print(out, "Show your repo is guarded (and help others find it): agentguard badge")
     _print(out, STAR_CALL_TO_ACTION)
     return 0
 
