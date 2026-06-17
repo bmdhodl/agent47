@@ -3,9 +3,18 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-06-06
+**Last reviewed:** 2026-06-16
 
 ## Current Focus Notes
+
+- Read adoption from human signal, not raw volume. PyPI published-package
+  downloads are real signal: CI installs the SDK from the local checkout, not
+  from the published `agentguard47` wheel, so CI runs do not register as
+  published-package downloads. GitHub clone counts are discounted: several
+  scheduled checkout workflows inflate them, so the high clones-per-unique
+  ratio is substantially our own CI. Anchor NOW/NEXT/LATER on published-package
+  downloads plus human GitHub signals (stars, referrers), per the `sdk_pulse.py`
+  human-signal-vs-machine-volume split (2026-06-05).
 
 - Current SDK release candidate is `v1.2.13` from `main`; public PyPI latest
   remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
