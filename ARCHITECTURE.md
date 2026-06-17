@@ -118,3 +118,4 @@ the last raw git tag, because a tag can exist for a failed package publish.
 - 2026-04-09: Created root `ARCHITECTURE.md` as the repo-level architecture law for future nightshift and PR work.
 - 2026-05-17: Refreshed directory map, data flow, and abstractions to match the repo as of 2026-05-17 — added the Python `agentguard-mcp/` local-budget server and `skills/`; documented the two distinct MCP surfaces and the current `sdk/agentguard/` module layout.
 - 2026-06-06: Documented the install-activation surfaces — `__main__.py` (`python -m agentguard`), the bare-command welcome, and the `agentguard badge` network-effect surface in `first_run.py`.
+- 2026-06-17: Consolidated fragmented competitive positioning into a canonical "wedge map" in the README, contrasting AgentGuard's runtime envelope with identity-time (WorkOS), enterprise policy (Uber), and per-tool vendor caps (Anthropic).
