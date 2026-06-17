@@ -88,6 +88,16 @@ envelope in-process and raises the exception that ends the run.
 | Wall-clock timeout | No | Yes |
 | In-process exception that ends the run | No | Yes |
 
+## How AgentGuard Differs (Wedge Map)
+
+AgentGuard's wedge is the **runtime envelope**: budget, token, rate, retry, and loop caps enforced at the call site while the agent is running.
+
+| Adjacent Tool | The Axis | AgentGuard's Runtime Wedge |
+|---|---|---|
+| **WorkOS Scoped Credentials** | **Identity vs. Execution** | WorkOS bounds what an agent is allowed to do (identity, scopes, audit). AgentGuard enforces what the agent is doing right now (budget, tokens, loops). They compose: WorkOS defines the envelope; AgentGuard enforces it at runtime. |
+| **Enterprise Budget Caps (e.g., Uber)** | **Policy vs. Call Site** | Org-wide caps prevent surprise bills (like Uber's $1,500 per developer Claude Code limit) but often rely on management memos or monthly billing alerts. AgentGuard brings that cap to the call site, stopping the runaway run in seconds instead of at the end of the month. |
+| **Vendor Per-Tool Caps** | **Single Call vs. Cross-Tool** | Anthropic's `max_tokens` on a tool call stops one oversized response. It does not stop a loop of 200 small calls, a retry storm, or a run that mixes providers. AgentGuard handles the budget envelope across every call, tool, and provider in the run. |
+
 Design constraints:
 
 - zero runtime dependencies
