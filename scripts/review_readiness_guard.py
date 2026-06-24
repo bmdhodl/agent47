@@ -20,7 +20,7 @@ REQUIRED_TEMPLATE_PHRASES = {
 }
 
 REQUIRED_CLAUDE_REVIEW_PHRASES = {
-    "pinned-checkout": "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6",
+    "pinned-checkout": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0",
     "shallow-checkout": "fetch-depth: 1",
     "pinned-claude-cli": "@anthropic-ai/claude-code@2.1.175",
     "no-head-pipe": "python -c",
