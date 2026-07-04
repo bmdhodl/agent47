@@ -25,7 +25,7 @@ def test_actionlint_workflow_is_wired() -> None:
     assert "push:" in text
     assert "github.com/rhysd/actionlint/cmd/actionlint@v1.7.12" in text
     assert "actionlint -shellcheck=" in text
-    assert "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6" in text
+    assert "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0" in text
     assert "actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0" in text
 
 
