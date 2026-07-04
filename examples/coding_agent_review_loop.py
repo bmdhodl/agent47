@@ -10,6 +10,8 @@ No API keys, dashboard, or network calls are required.
 """
 from __future__ import annotations
 
+import os
+
 from agentguard import (
     BudgetExceeded,
     BudgetGuard,
@@ -122,6 +124,9 @@ def _run_retry_storm(tracer: Tracer) -> None:
 
 
 def main() -> int:
+    if os.path.exists(TRACE_FILE):
+        os.remove(TRACE_FILE)
+
     tracer = Tracer(
         sink=JsonlFileSink(TRACE_FILE),
         service="coding-agent-review-loop",

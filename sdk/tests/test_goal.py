@@ -1,6 +1,9 @@
 """Tests for goal-level metering (BudgetGuard.goal)."""
 from __future__ import annotations
 
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
 import pytest
 
 from agentguard import BudgetGuard, Goal
@@ -135,6 +138,90 @@ def test_consume_outside_goal_is_unaffected() -> None:
     guard.consume(tokens=100, calls=1, cost_usd=0.05)
     assert guard.state.cost_used == pytest.approx(0.05)
     assert guard.state.calls_used == 1
+
+
+def test_threadpool_consume_records_active_goal() -> None:
+    """Worker-thread consume calls are attributed to the active goal."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+
+    with guard.goal("threadpool-goal", verifier=lambda: True) as g:
+        g.attempt()
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(
+                lambda: guard.consume(tokens=10, calls=1, cost_usd=0.03)
+            ).result()
+
+    assert g.succeeded is True
+    assert g.cost_usd == pytest.approx(0.03)
+    assert len(g.calls) == 1
+    assert guard.state.cost_used == pytest.approx(0.03)
+
+
+def test_concurrent_threadpool_consumes_record_active_goal() -> None:
+    """Concurrent worker-thread consume calls keep the goal ledger complete."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+
+    with guard.goal("concurrent-threadpool-goal", verifier=lambda: True) as g:
+        g.attempt()
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [
+                executor.submit(
+                    lambda: guard.consume(tokens=10, calls=1, cost_usd=0.01)
+                )
+                for _ in range(20)
+            ]
+            for future in futures:
+                future.result()
+
+    assert g.succeeded is True
+    assert g.cost_usd == pytest.approx(0.20)
+    assert len(g.calls) == 20
+    assert guard.state.cost_used == pytest.approx(0.20)
+
+
+def test_plain_thread_without_submitted_context_is_not_attributed() -> None:
+    """Unrelated threads do not inherit the active goal by guard-wide fallback."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+
+    with guard.goal("main-thread-goal", verifier=lambda: True) as g:
+        g.attempt()
+        worker = threading.Thread(
+            target=lambda: guard.consume(tokens=10, calls=1, cost_usd=0.04)
+        )
+        worker.start()
+        worker.join()
+
+    assert g.succeeded is True
+    assert g.cost_usd == pytest.approx(0.0)
+    assert len(g.calls) == 0
+    assert guard.state.cost_used == pytest.approx(0.04)
+
+
+def test_concurrent_goal_blocks_keep_threadpool_attribution_separate() -> None:
+    """Concurrent goals on one guard propagate their own submitted context."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+    barrier = threading.Barrier(2)
+    costs = {}
+
+    def run_goal(name: str, cost_usd: float) -> None:
+        with guard.goal(name, verifier=lambda: True) as g:
+            g.attempt()
+            barrier.wait()
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                executor.submit(
+                    lambda: guard.consume(tokens=10, calls=1, cost_usd=cost_usd)
+                ).result()
+        costs[name] = g.cost_usd
+
+    thread_a = threading.Thread(target=run_goal, args=("goal-a", 0.03))
+    thread_b = threading.Thread(target=run_goal, args=("goal-b", 0.07))
+    thread_a.start()
+    thread_b.start()
+    thread_a.join()
+    thread_b.join()
+
+    assert costs == {"goal-a": pytest.approx(0.03), "goal-b": pytest.approx(0.07)}
+    assert guard.state.cost_used == pytest.approx(0.10)
 
 
 def test_to_dict_is_json_serializable() -> None:

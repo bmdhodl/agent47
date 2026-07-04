@@ -1,47 +1,44 @@
-# RESEARCH
+# RESEARCH — Anthropic per-tool max_tokens positioning update
 
-## API surface assumption verified
+## Sources
 
-The task body said `guard.goal(name, verifier=...)`. The intel concept page (`Knowledge/concepts/cost-per-completed-goal.md`) sketches `from agentguard47 import AgentGuard; guard = AgentGuard(...)`. The actual package exposes `BudgetGuard` (no class named `AgentGuard`). Source: `sdk/agentguard/__init__.py:18-37` lists every public guard class — `AgentGuard` is not there; only `AgentGuardError`.
+- Vault source card: `Knowledge/sources/2026-06-03-anthropic-advisor-max-tokens-cost-cap.md`
+  - Claim: "The advisor tool now supports a max_tokens parameter to cap the advisor model's output per call, reducing latency and output token cost for workloads that don't need full-length advisor responses. Set tools[].max_tokens on the advisor tool definition."
+  - Claim: "On the Claude API, you are no longer billed for a request when it returns stop_reason: 'refusal' without Claude having generated any output."
+- Anthropic release notes URL of record (in queue task frontmatter): https://platform.claude.com/docs/en/release-notes/overview#june-2-2026
+- Queue task: `Queue/agent47/anthropic-advisor-max-tokens-update-positioning.md`
 
-Decision: add `goal()` as a method on `BudgetGuard`. The "guard" in the concept page sketch is the budget guard — that is where cost state lives, so it is the natural integration point. Adding a `goal()` method is additive (zero breaking change per the task scope rule).
+## Verified current README state (before edit)
 
-## Cost accumulation hook
+`README.md:1-13` — Headline is "Stop runaway Python agents before they burn money." `AgentGuard47 is a zero-dependency runtime control SDK for Python agents.` Lead value prop is in-process safety, not specifically per-call vs cross-call distinction.
 
-`BudgetGuard.consume(...)` is the single place every dollar gets recorded (`sdk/agentguard/guards.py:244-291`). Hooking goal-attribution there means any caller that uses the standard cost path — including auto-patched OpenAI / Anthropic clients, manual `consume` calls, and integration callbacks — gets goal attribution for free, with no other code changes.
+`README.md:44-72` — `## Why AgentGuard` section has the "Problem -> What AgentGuard does" table. Includes "Run spends too much | Raises BudgetExceeded". The framing does not contrast against provider-native caps.
 
-The hook calls `agentguard.goal._record_consume(...)` which reads the innermost active goal via a `ContextVar` and appends a `Call`. No-op when no goal is open.
+`README.md:293-313` — `## Runtime Control vs Observability` table has 8 rows comparing AgentGuard to "generic tracing platforms." It does NOT yet have a row about provider-native per-call token caps.
 
-## ContextVar for nesting + async
+`README.md:218-219` — Auto-patch section mentions Anthropic by name in passing ("If you already call OpenAI or Anthropic directly"). No discussion of per-tool max_tokens.
 
-`contextvars.ContextVar` is the standard library tool the paper (and Python docs) recommend for per-task state that needs to propagate through `asyncio` and `concurrent.futures` worker callsites. No new dependency required. The active-goal stack is a tuple so nested `with` blocks are unambiguous; pop on exit uses `ContextVar.reset(token)`.
+## Verified competitive notes in repo
 
-## Failure-cost rule
+- `docs/competitive/vercel-ai-gateway.md` — referenced from README
+- `docs/competitive/manifest.md` — referenced from README
+- `docs/competitive/agent-security-stack.md` — referenced from README
 
-From the concept page: "failure_cost = portion of cost spent on attempts that failed." Implementation:
+None of these cover per-tool / per-call provider caps. The new contrast belongs in the README itself (as a row + short paragraph), not as a fourth competitive-notes file, since the task is positioning-paragraph reframing.
 
-- If `succeeded is True` and `attempts >= 1`: every call with `attempt_idx < attempts` is failure cost (the final attempt is the winning one).
-- If `succeeded is False`: every direct call is failure cost.
-- Sub-goal failure cost rolls up.
+## What is in scope for this PR
 
-This requires the caller to call `g.attempt()` at the top of each retry so we can stamp each call's `attempt_idx`. The task body explicitly says v1 keeps `attempt()` explicit (no auto-detection).
+Per queue task and queue-worker invocation:
 
-## Verifier exception semantics
+- agent47 README positioning update (this PR).
+- NOT in scope: bmdpat landing-page edit, PYPI_README, ARCHITECTURE, AGENTS, docs/competitive/*. The bmdpat half is held for Patrick per the queue-sweep instructions.
 
-If the `with` block exits via exception, we do NOT call the verifier — succeeded is forced to False. Rationale: the verifier is a success oracle, not an exception handler. Calling it on an in-flight exception risks masking the real error. Verifier exceptions on clean exit propagate (fail loudly per global instructions).
+## Voice constraints from vault AGENTS.md
 
-## Files inspected before writing code
+Forbidden: harness, leverage, streamline, delve, landscape, cutting-edge, game-changer, revolutionary, seamless, robust, holistic, synergy, ecosystem, engagement, retainer, governance audit, book a call, schedule a call, discovery call, SOW, compliance package. No em dashes. Use periods, commas, parens.
 
-- `sdk/agentguard/__init__.py` — public surface
-- `sdk/agentguard/guards.py` — BudgetGuard, BaseGuard
-- `sdk/agentguard/setup.py` — module-level init pattern (not used for this feature)
-- `sdk/tests/test_cost.py`, `tests/test_concurrency.py` — confirmed no test currently asserts that `consume` does NOT call into any other module (so the hook is safe)
-- `Knowledge/concepts/cost-per-completed-goal.md` — design rationale
-- `Queue/agent47/Complete/energy-per-successful-goal-metric.md` — parent task context
+## Honest scope of Anthropic's change
 
-## What did NOT make the cut (v1)
-
-- LLM-as-judge verifiers (explicitly deferred per task scope).
-- Persistence / sink wiring (operators serialize and ship).
-- Dashboard wiring (separate follow-up in agent47-dashboard).
-- Module-level `init()` integration. The setup-pattern path could later expose `agentguard.goal(...)` as a convenience that grabs the configured BudgetGuard, but that is additive on top of the v1 method API.
+- Per-tool `max_tokens` is an **output-token cap per single tool call** on the advisor tool definition.
+- It does NOT cover: cross-tool budgets, cross-call accumulation, multi-provider abstraction (OpenAI + Anthropic in one app), retry storms, loop detection, in-process exception-based kill, rate limits per minute, time-window caps, or anything OpenAI-native.
+- These are exactly the layers AgentGuard already covers. The positioning update simply states this contrast plainly.

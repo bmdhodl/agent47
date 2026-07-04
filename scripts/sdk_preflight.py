@@ -17,6 +17,11 @@ README_SYNC_INPUTS = {
     "sdk/PYPI_README.md",
     "scripts/generate_pypi_readme.py",
 }
+REVIEW_READINESS_INPUTS = {
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/workflows/claude-review.yml",
+    "scripts/review_readiness_guard.py",
+}
 MCP_SERVER_PREFIX = "mcp-server/"
 SDK_CODE_PREFIXES = (
     "sdk/agentguard/",
@@ -102,6 +107,9 @@ TEST_MAP = {
     ],
     "scripts/sdk_preflight.py": [
         "sdk/tests/test_sdk_preflight.py",
+    ],
+    "scripts/review_readiness_guard.py": [
+        "sdk/tests/test_review_readiness_guard.py",
     ],
     "sdk/tests/conftest.py": [
         "sdk/tests/test_hosted_ingest_contract.py",
@@ -260,6 +268,15 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
                 label="pypi-readme-test",
                 reason="the committed PyPI README snapshot should still match the generator output",
                 command=[sys.executable, "-m", "pytest", "sdk/tests/test_pypi_readme_sync.py", "-v"],
+            )
+        )
+
+    if normalized & REVIEW_READINESS_INPUTS:
+        steps.append(
+            Step(
+                label="review-readiness",
+                reason="validate PR template and automated review hardening guardrails",
+                command=[sys.executable, "scripts/review_readiness_guard.py"],
             )
         )
 

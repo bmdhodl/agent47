@@ -1,51 +1,68 @@
-# QA_REPORT
+# QA_REPORT — README containment scope positioning
 
-Verdict: ✅
+**Verdict: PASS**
 
-## Scope alignment
+## Checks
 
-The task body's acceptance criteria, each checked against the diff:
+### Scope match with WORK_PLAN
+- [x] Added a "Scope" block after "Design constraints" list — matches plan.
+- [x] One block, 14 LOC added. Under the planned ~30 LOC ceiling.
+- [x] Sentence 1 names AgentGuard's scope (runtime budget/token/rate/retry/
+      loop/timeout caps, in-process).
+- [x] Sentence 2 names OS-level containment as out of scope and lists
+      Anthropic's four primitives (process sandboxes, VMs, filesystem
+      boundaries, egress controls).
+- [x] Anthropic URL present: https://www.anthropic.com/news/how-we-contain-claude
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| `Goal` exposes `cost_usd`, `attempts`, `succeeded`, `failure_cost`, `duration_sec`, `calls`, `to_dict()` | ✅ | `sdk/agentguard/goal.py:44-126` |
-| `BudgetGuard.goal(name, verifier)` context manager | ✅ | `sdk/agentguard/guards.py` new method; verified `with guard.goal(...) as g:` works in test suite |
-| Cost accumulates across nested calls via contextvars | ✅ | `_active_goals: ContextVar` + hook in `BudgetGuard.consume` |
-| Verifier runs on exit, populates `succeeded` | ✅ | `_GoalContext.__exit__` |
-| `g.attempt()` explicit | ✅ | `Goal.attempt()` |
-| `failure_cost` = failed-attempt cost | ✅ | `Goal.failure_cost`, tested by `test_three_attempts_then_success_attributes_failure_cost` |
-| Goals nest cleanly, no double-count | ✅ | `test_nested_goals_no_double_count` |
-| Goals do not cross sessions | ✅ | ContextVar scope; goals are local objects, not module-level state |
-| `to_dict()` JSON-serializable | ✅ | `test_to_dict_is_json_serializable` |
-| Happy-path test | ✅ |
-| 3-attempts-then-success test | ✅ |
-| Nested-goals test | ✅ |
-| Failed-goal test | ✅ |
-| README section | ✅ | `sdk/README.md` new "Goal-level metering" section |
-| All existing tests still pass | ✅ | 769 passed, 0 failed |
-| No new external dependencies | ✅ | Only stdlib (`contextvars`, `dataclasses`, `time`) |
+### Done criteria from queue task frontmatter
+- [x] `verifier: "agent47 README updated with scope statement that cites
+      Anthropic's containment doc as the canonical map for the adjacent gap"`
+      — satisfied by the new Scope section.
+- [x] `done_artifact: "agent47 README.md PR with positioning paragraph"` —
+      this PR.
 
-## Path note
+### Voice / style
+- [x] No banned words (harness, leverage, streamline, delve, landscape,
+      cutting-edge, game-changer, revolutionary, seamless, robust, holistic,
+      synergy, ecosystem) in the new block. Grepped.
+- [x] No em-dashes added by this change. Pre-existing em-dashes in
+      unrelated section headings are untouched.
+- [x] Builder-to-builder tone matches surrounding text (compare to PocketOS
+      section: "does not replace least-privilege creds").
 
-Task body said `agent47/goal.py`. Actual package layout is `sdk/agentguard/` — so the new file lives at `sdk/agentguard/goal.py`. This matches the rest of the package (`guards.py`, `cost.py`, etc.). The task wording was shorthand; the implementation respects the real layout.
+### Integration with PR #568
+- [x] No duplication with the new cross-call envelope vs. `max_tokens`
+      comparison table (lines 76-85). The Scope block is a different
+      axis: in-process vs. OS-level. PR #568 contrasts AgentGuard with
+      Anthropic's single-call cap; this contrasts AgentGuard with
+      Anthropic's process-level containment.
+- [x] The "layers are complementary" framing echoes the existing
+      "complementary" framing in the "Why AgentGuard" section (line 54),
+      which is consistent house style.
 
-## Security / denylist check
+### Denylist + safety
+- [x] No files in `.github/workflows/`, `.env*`, `supabase/migrations/`,
+      `security/`, Stripe/Clerk config, or secrets touched.
+- [x] No new dependencies.
+- [x] No test coverage regression (docs-only change, no test files
+      touched).
+- [x] No secrets, credentials, or API keys added.
 
-- No changes under `.github/workflows/`, `.env*`, `supabase/migrations/`, `security/`, secrets, or Stripe/Clerk config.
-- No new credentials or API keys.
-- No new external network calls. The verifier is user-supplied; the SDK itself does not invoke external services here.
+### Coverage of the queue task requirement
+The queue task asks for:
+1. "one sentence naming AgentGuard's scope (runtime budget/token/rate caps)"
+   — covered in sentence 1.
+2. "one sentence noting that OS-level containment (process sandboxes, VMs,
+   filesystem boundaries, egress controls) is out of scope, with a link to
+   Anthropic's 'How we contain Claude' post"
+   — covered in sentence 2 + the markdown link.
 
-## Pattern compliance
+### Triple-check stranger-read
+Read the new block cold. First sentence names what AgentGuard does.
+Second names what it doesn't do and where to look for the adjacent layer.
+A closing sentence ties it back to the existing "complementary" framing so
+the section doesn't read as defensive disclaimer.
 
-- `Goal` and `Call` are `@dataclass` like `BudgetState` (`sdk/agentguard/guards.py:176`).
-- `_GoalContext` follows the same context-manager pattern as `TimeoutGuard` (`sdk/agentguard/guards.py:397-405`).
-- Error type for bad verifier is `TypeError`, matching the type-checking patterns elsewhere in `BudgetGuard.consume` (`sdk/agentguard/guards.py:258-269`).
-- Docstrings include `Usage::` example blocks per existing convention.
+## Issues found
 
-## Risk
-
-Low. The diff is 79 lines plus a 200-line new module. The only behavior change to existing code is one function-call append inside `BudgetGuard.consume` that is a no-op when no goal is active. All existing tests including `test_concurrency.py`, `test_cost.py`, `test_e2e_pipeline.py` pass unchanged.
-
-## Test coverage regressions
-
-None. Added 8 new tests; no existing test removed or skipped.
+None blocking.

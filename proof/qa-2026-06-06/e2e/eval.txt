@@ -1,0 +1,12 @@
+EvalResult: 2/3 passed, 1 failed
+  [FAIL] no_loops: Found 1 loop detection event(s)
+  [PASS] no_errors: No errors found
+  [PASS] completes_within:30.0s: Completed in 0.080s
+usage: agentguard eval [-h] [--ci] path
+
+positional arguments:
+  path
+
+options:
+  -h, --help  show this help message and exit
+  --ci        CI mode: also assert no budget warnings

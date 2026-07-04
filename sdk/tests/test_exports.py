@@ -140,6 +140,7 @@ class TestTopLevelExports(unittest.TestCase):
             "unpatch_openai_async", "unpatch_anthropic_async",
             "InitConfig", "RepoConfig", "ProfileDefaults", "SUPPORTED_PROFILES",
             "Goal", "Call",
+            "StateStore", "StateStoreError", "JsonFileStateStore",
         }
         self.assertEqual(set(agentguard.__all__), expected)
 

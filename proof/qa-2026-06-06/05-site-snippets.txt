@@ -1,0 +1,4 @@
+[index.html] agentguard.init(...) + tracer.trace(...).event(...) -> OK
+[compare.html] Tracer(guards=[BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)]) -> OK
+[compare.html] patch_openai(tracer) -> OK (openai present)
+ALL SITE SNIPPETS VALID

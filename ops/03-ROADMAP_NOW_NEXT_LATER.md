@@ -3,10 +3,11 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-06-17
 
 ## Current Focus Notes
 
+- **Human-signal baseline for distribution metrics.** As of 2026-06-05, the distribution baseline (shipped in `sdk_pulse.py`) distinguishes human activation (PyPI package downloads) from machine volume (scheduled checkout clones). Clone counts are discounted as partly self-inflicted by internal CI workflows; human-likely download counts are the primary signal for coding-agent adoption.
 - Current SDK release candidate is `v1.2.13` from `main`; public PyPI latest
   remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
   tag failed before PyPI publish, and the stale `v1.2.12` tag points at a
@@ -29,6 +30,7 @@ they directly strengthen coding-agent adoption.
 
 | Item | Status |
 |------|--------|
+| Competitor Wedge Map consolidation | Done - README wedge map (WorkOS, Uber, Anthropic) refreshed on 2026-06-17 |
 | Eval assertion expansion | Done - `EvalSuite` now has >=12 built-in assertions |
 | `estimate_cost` pricing refresh | Done - Anthropic and Google pricing refreshed on 2026-03-26; OpenAI entries retained pending direct re-verification from this environment |
 | `RetryGuard` - cap retry attempts per tool | Done - configurable per-tool retry ceilings now raise `RetryLimitExceeded` |
@@ -50,6 +52,7 @@ they directly strengthen coding-agent adoption.
 | Coding-agent review-loop proof | Done - `examples/coding_agent_review_loop.py` demonstrates local budget and retry stops for review/refinement loops without API keys or network calls |
 | Follow-up handoff | Done - `ops/FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
 | Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed questions, consent boundaries, forbidden fields, and local-first non-goals without adding telemetry |
+| Frictionless first-run + badge network effect | Done - bare `agentguard` prints a guided welcome instead of argparse help, `python -m agentguard` works without PATH setup, and `agentguard badge` prints a paste-able "Guarded by AgentGuard" README badge (the lowest-friction install→backlink surface) |
 
 ## Now (next 2 weeks)
 

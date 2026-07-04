@@ -21,7 +21,10 @@ import threading
 import time
 from collections import Counter, deque
 from dataclasses import dataclass
-from typing import Any, Callable, Deque, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Deque, Dict, Optional, Tuple
+
+if TYPE_CHECKING:
+    from .state import StateStore
 
 
 class AgentGuardError(Exception):
@@ -214,9 +217,21 @@ class BudgetGuard(BaseGuard):
         max_cost_usd: Optional[float] = None,
         warn_at_pct: Optional[float] = None,
         on_warning: Optional[Callable[[str], None]] = None,
+        *,
+        store: Optional["StateStore"] = None,
+        key: Optional[str] = None,
+        period: Optional[str] = None,
+        now: Optional[Callable[[], float]] = None,
     ) -> None:
         if max_tokens is None and max_calls is None and max_cost_usd is None:
             raise ValueError("Provide max_tokens, max_calls, or max_cost_usd")
+        if store is not None and not key:
+            raise ValueError("key is required when store is set")
+        if period is not None:
+            if store is None:
+                raise ValueError("period requires a store")
+            if period != "day":
+                raise ValueError("period must be 'day' or None")
         self._max_tokens = max_tokens
         self._max_calls = max_calls
         self._max_cost_usd = max_cost_usd
@@ -225,6 +240,11 @@ class BudgetGuard(BaseGuard):
         self._warned = False
         self._lock = threading.Lock()
         self.state = BudgetState()
+        # Persistence (optional). store=None keeps the in-memory behavior unchanged.
+        self._store = store
+        self._key = key
+        self._period = period
+        self._now = now if now is not None else time.time
 
     @property
     def max_tokens(self) -> Optional[int]:
@@ -272,28 +292,84 @@ class BudgetGuard(BaseGuard):
         # that trips BudgetExceeded.
         from .goal import _record_consume
         _record_consume(tokens=tokens, calls=calls, cost_usd=cost_usd)
+        if self._store is None:
+            self._consume_in_memory(tokens, calls, cost_usd)
+        else:
+            self._consume_persistent(tokens, calls, cost_usd)
+
+    def _consume_in_memory(self, tokens: float, calls: float, cost_usd: float) -> None:
         with self._lock:
             self.state.tokens_used += tokens
             self.state.calls_used += calls
             self.state.cost_used += cost_usd
-            if self._max_tokens is not None and self.state.tokens_used > self._max_tokens:
-                raise BudgetExceeded(
-                    f"Token budget exceeded: {self.state.tokens_used} > {self._max_tokens} "
-                    f"(this call added {tokens} tokens)"
-                )
-            if self._max_calls is not None and self.state.calls_used > self._max_calls:
-                raise BudgetExceeded(
-                    f"Call budget exceeded: {self.state.calls_used} > {self._max_calls} "
-                    f"(this call added {calls} calls)"
-                )
-            if self._max_cost_usd is not None and self.state.cost_used > self._max_cost_usd:
-                raise BudgetExceeded(
-                    f"Cost budget exceeded: ${self.state.cost_used:.4f} > ${self._max_cost_usd:.4f} "
-                    f"(this call added ${cost_usd:.4f})"
-                )
-            # Check warning threshold
+            self._enforce_limits(
+                self.state.tokens_used, self.state.calls_used, self.state.cost_used,
+                tokens, calls, cost_usd,
+            )
             if self._warn_at_pct is not None and not self._warned:
                 self._check_warning()
+
+    def _consume_persistent(self, tokens: float, calls: float, cost_usd: float) -> None:
+        bucket = self._period_bucket()
+
+        def mutator(current: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+            st = dict(current) if current else {}
+            st["tokens_used"] = st.get("tokens_used", 0) + tokens
+            st["calls_used"] = st.get("calls_used", 0) + calls
+            st["cost_used"] = st.get("cost_used", 0.0) + cost_usd
+            return st
+
+        # The store's update() is atomic and cross-process locked, so the increment is
+        # durable even when this same call is the one that trips the limit. self._lock
+        # additionally serializes threads within this process.
+        with self._lock:
+            new = self._store.update(bucket, mutator)  # type: ignore[union-attr]
+            self.state = BudgetState(
+                tokens_used=int(new["tokens_used"]),
+                calls_used=int(new["calls_used"]),
+                cost_used=float(new["cost_used"]),
+            )
+            self._enforce_limits(
+                new["tokens_used"], new["calls_used"], new["cost_used"],
+                tokens, calls, cost_usd,
+            )
+            if self._warn_at_pct is not None and not self._warned:
+                self._check_warning()
+
+    def _period_bucket(self) -> str:
+        """Storage key for the current period. With period='day' the key rolls over at
+        the UTC day boundary, giving a deterministic per-day reset."""
+        if self._period is None:
+            return self._key  # type: ignore[return-value]
+        day = time.strftime("%Y-%m-%d", time.gmtime(self._now()))
+        return f"{self._key}:{day}"
+
+    def _enforce_limits(
+        self,
+        tokens_used: float,
+        calls_used: float,
+        cost_used: float,
+        added_tokens: float,
+        added_calls: float,
+        added_cost: float,
+    ) -> None:
+        """Raise BudgetExceeded if any configured limit is exceeded. Shared by the
+        in-memory and persistent paths so both produce identical messages."""
+        if self._max_tokens is not None and tokens_used > self._max_tokens:
+            raise BudgetExceeded(
+                f"Token budget exceeded: {tokens_used} > {self._max_tokens} "
+                f"(this call added {added_tokens} tokens)"
+            )
+        if self._max_calls is not None and calls_used > self._max_calls:
+            raise BudgetExceeded(
+                f"Call budget exceeded: {calls_used} > {self._max_calls} "
+                f"(this call added {added_calls} calls)"
+            )
+        if self._max_cost_usd is not None and cost_used > self._max_cost_usd:
+            raise BudgetExceeded(
+                f"Cost budget exceeded: ${cost_used:.4f} > ${self._max_cost_usd:.4f} "
+                f"(this call added ${added_cost:.4f})"
+            )
 
     def _check_warning(self) -> None:
         """Emit a warning if usage crosses the warn_at_pct threshold.
@@ -327,10 +403,16 @@ class BudgetGuard(BaseGuard):
                 self._on_warning(msg)
 
     def reset(self) -> None:
-        """Reset all usage counters to zero."""
+        """Reset all usage counters to zero.
+
+        With a persistent store, this also clears the current period's stored state so
+        the ceiling restarts for every process sharing the store.
+        """
         with self._lock:
             self.state = BudgetState()
             self._warned = False
+            if self._store is not None:
+                self._store.clear(self._period_bucket())
 
     def __repr__(self) -> str:
         parts = []
