@@ -77,6 +77,7 @@ class TestVersion:
         def broken_version(_: str) -> str:
             raise TypeError("'NoneType' object is not subscriptable")
 
+        monkeypatch.setattr(agentguard, "_read_source_version", lambda: None)
         monkeypatch.setattr(agentguard, "version", broken_version)
 
         assert agentguard._package_version() == "0.0.0-dev"

@@ -1,5 +1,8 @@
 import logging
+import re
 from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+from typing import Optional
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
@@ -61,7 +64,45 @@ from .state import JsonFileStateStore, StateStore, StateStoreError
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
 
+def _read_source_version() -> Optional[str]:
+    pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    if not pyproject_path.exists():
+        return None
+
+    content = pyproject_path.read_text(encoding="utf-8")
+    in_project_table = False
+    project_name = None
+    project_version = None
+
+    for raw_line in content.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            in_project_table = line == "[project]"
+            continue
+        if not in_project_table:
+            continue
+
+        name_match = re.match(r'^name\s*=\s*"([^"]+)"', line)
+        if name_match is not None:
+            project_name = name_match.group(1)
+            continue
+
+        version_match = re.match(r'^version\s*=\s*"([^"]+)"', line)
+        if version_match is not None:
+            project_version = version_match.group(1)
+
+    if project_name != "agentguard47" or project_version is None:
+        return None
+    return project_version
+
+
 def _package_version(package_name: str = "agentguard47") -> str:
+    source_version = _read_source_version()
+    if source_version:
+        return source_version
+
     try:
         return version(package_name)
     except (PackageNotFoundError, TypeError):  # pragma: no cover
