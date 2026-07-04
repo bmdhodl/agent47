@@ -63,7 +63,7 @@ Use the sticky proof example when you need one local artifact that can also be
 validated by the dashboard ingest contract:
 
 ```bash
-PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
 ```
 
 It writes:

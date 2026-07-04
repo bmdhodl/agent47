@@ -17,9 +17,11 @@ enough to create surprise spend.
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.10/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE)
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
+
+> **⭐ Star this repo** if AgentGuard stops one runaway run for you. It is how other builders find it.
 
 ## Install
 
@@ -27,9 +29,13 @@ enough to create surprise spend.
 
 ```bash
 pip install agentguard47
+agentguard
 ```
 
-### As a skill (Claude Code, Cursor, Cline, and more)
+The bare `agentguard` command prints a 60-second local tour. If the script is
+not on PATH, use `python -m agentguard` instead. Both run the same CLI.
+
+### As a skill (Codex, Claude Code, Cursor, Cline, and more)
 
 ```bash
 npx skills add bmdhodl/agent47
@@ -46,14 +52,53 @@ gh skill install bmdhodl/agent47 agentguard
 Most agent tooling tells you what happened after the run. AgentGuard stops the
 bad run while it is happening.
 
+AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
+runs inside the agent's process, sees the call graph, and raises exceptions
+that kill the run before the next bad call lands. Routers and gateways like
+Manifest or Vercel AI Gateway sit at the network layer and shape egress
+traffic. The layers are complementary, see the
+[competitive notes](#runtime-control-vs-observability) for when each fits.
+
+The headline value is the **cross-call, cross-provider budget envelope**: one
+ceiling that holds across every tool call, every retry, and every provider in
+the run. Single-call output caps are table stakes (Anthropic now ships
+per-tool `max_tokens` on the advisor tool, on 2026-06-02, see
+[release notes](https://platform.claude.com/docs/en/release-notes/overview#june-2-2026)).
+A single-call cap stops one oversized response. It does not stop a loop that
+makes 200 small calls, a retry storm across providers, or a run that mixes
+OpenAI and Anthropic and blows the combined budget. AgentGuard handles that
+envelope in-process and raises the exception that ends the run.
+
 | Problem | What AgentGuard does |
 |---|---|
 | Agent loops on the same tool | Raises `LoopDetected` |
 | Flaky tool retries forever | Raises `RetryLimitExceeded` |
-| Run spends too much | Raises `BudgetExceeded` |
+| Run spends too much across many calls | Raises `BudgetExceeded` |
+| Run mixes OpenAI and Anthropic and blows the combined cap | Raises `BudgetExceeded` |
 | Run hangs | Raises `TimeoutExceeded` |
 | Team needs proof | Writes local JSONL traces and incident reports |
 | Dashboard comes later | `HttpSink` mirrors events only when you opt in |
+
+| Scope of cap | Anthropic per-tool `max_tokens` | AgentGuard `BudgetGuard` + `RateLimitGuard` + `TimeoutGuard` |
+|---|---|---|
+| One tool call, output tokens only | Yes | Yes |
+| Many calls in one run | No | Yes |
+| Mixed providers (OpenAI + Anthropic) in one run | No | Yes |
+| Loop detection across repeated calls | No | Yes |
+| Retry storm cap | No | Yes |
+| Calls per minute | No | Yes |
+| Wall-clock timeout | No | Yes |
+| In-process exception that ends the run | No | Yes |
+
+## How AgentGuard Differs (Wedge Map)
+
+AgentGuard's wedge is the **runtime envelope**: budget, token, rate, retry, and loop caps enforced at the call site while the agent is running.
+
+| Adjacent Tool | The Axis | AgentGuard's Runtime Wedge |
+|---|---|---|
+| **WorkOS Scoped Credentials** | **Identity vs. Execution** | WorkOS bounds what an agent is allowed to do (identity, scopes, audit). AgentGuard enforces what the agent is doing right now (budget, tokens, loops). They compose: WorkOS defines the envelope; AgentGuard enforces it at runtime. |
+| **Enterprise Budget Caps (e.g., Uber)** | **Policy vs. Call Site** | Org-wide caps prevent surprise bills (like Uber's $1,500 per developer Claude Code limit) but often rely on management memos or monthly billing alerts. AgentGuard brings that cap to the call site, stopping the runaway run in seconds instead of at the end of the month. |
+| **Vendor Per-Tool Caps** | **Single Call vs. Cross-Tool** | Anthropic's `max_tokens` on a tool call stops one oversized response. It does not stop a loop of 200 small calls, a retry storm, or a run that mixes providers. AgentGuard handles the budget envelope across every call, tool, and provider in the run. |
 
 Design constraints:
 
@@ -63,6 +108,20 @@ Design constraints:
 - no API key required for local proof
 - no network calls unless you configure `HttpSink`
 - guards raise exceptions inside the running process
+
+## Scope
+
+AgentGuard's scope is the **in-process runtime envelope**: budget, token,
+rate, retry, loop, and timeout caps that fire inside the agent's Python
+process and raise exceptions that end the run.
+
+OS-level containment is **out of scope**: process sandboxes, VMs, filesystem
+boundaries, and egress controls live one layer down from AgentGuard. For
+that layer, see Anthropic's
+["How we contain Claude across products" (2026-05-30)](https://www.anthropic.com/news/how-we-contain-claude)
+as the canonical reference. The layers are complementary: containment
+bounds what the process can touch; AgentGuard bounds what the agent loop
+inside that process can spend.
 
 ## Real Incidents AgentGuard Prevents
 
@@ -106,6 +165,27 @@ A 9-second sequence of destructive calls trips `LoopGuard` or
 in-process. Pair this with scoped credentials and out-of-environment
 backups for the rest of the blast radius.
 
+### Microsoft — engineers told to ease off Claude Code over inference cost (May 2026)
+
+Microsoft engineering management reportedly asked teams to reduce Claude
+Code usage after monthly inference bills exceeded budget. If Microsoft
+cannot absorb coding-agent inference cost without a memo, runaway agent
+spend is no longer a solo-founder problem.
+
+Source: [TheNextWeb](https://thenextweb.com/news/microsoft-claude-code-retreat-ai-cost)
+
+A memo asks engineers to self-throttle. A `BudgetGuard` makes the cap a
+config value enforced inside the process:
+
+```python
+from agentguard import BudgetGuard
+
+BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
+```
+
+The guard raises `BudgetExceeded` before the run blows the cap. Same
+conversation, one config line instead of a memo.
+
 ## Local Proof in 60 Seconds
 
 ```bash
@@ -130,7 +210,25 @@ What you should see:
 - `report` shows local trace counts, cost, savings, and guard events.
 
 Notebook version:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.10/examples/quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.13/examples/quickstart.ipynb)
+
+## Show Your Repo Is Guarded
+
+Once AgentGuard stops a runaway run for you, add the badge to your README so
+other builders find it:
+
+```bash
+agentguard badge
+```
+
+```markdown
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+```
+
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+
+`agentguard badge --format rst` and `--format html` print the same badge for
+other doc formats.
 
 ## Copy-Paste Repo Setup
 
@@ -224,12 +322,12 @@ All examples are local-first. No API key is required unless the example says so.
 
 | Example | What it proves |
 |---|---|
-| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/try_it_now.py) | budget, loop, and retry stops |
+| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/try_it_now.py) | budget, loop, and retry stops |
 | [`examples/sticky_agent_proof.py`](https://github.com/bmdhodl/agent47/blob/main/examples/sticky_agent_proof.py) | one CrewAI-style retry storm proof with local incident and hosted NDJSON outputs |
-| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
-| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
-| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
-| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.10/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
+| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
+| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
+| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
+| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
 
 Sample incident:
 [`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
@@ -238,7 +336,7 @@ Proof gallery:
 [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md)
 
 Starter files:
-[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.10/examples/starters)
+[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.13/examples/starters)
 
 ## Framework Integrations
 
@@ -270,6 +368,7 @@ layer.
 | Capability | AgentGuard |
 |---|---|
 | In-process hard budget caps | Yes |
+| Cross-call, cross-provider budget envelope | Yes |
 | Kill a bad run by raising an exception | Yes |
 | Loop and retry-storm detection | Yes |
 | Local JSONL traces | Yes |
@@ -278,9 +377,15 @@ layer.
 | Required dashboard | No |
 | Runtime dependencies | None |
 
+Provider-native caps such as Anthropic's per-tool `max_tokens` cover one call
+on one provider. AgentGuard covers the whole run across every provider and
+every call. Use both: set the per-call cap at the provider, set the
+run-envelope cap in AgentGuard.
+
 Competitive notes:
 
-- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/competitive/vercel-ai-gateway.md)
+- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/vercel-ai-gateway.md)
+- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md)
 
 ## Decision Traces
@@ -394,8 +499,8 @@ assert result.passed
 - License: MIT
 - Core runtime dependencies: zero
 - Trace format: JSONL
-- Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
-- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.10/mcp-server)
+- Local commands: `welcome`, `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`, `badge`
+- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.13/mcp-server)
 - Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/card.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
@@ -404,14 +509,15 @@ assert result.passed
 
 | Topic | Link |
 |---|---|
-| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/getting-started.md) |
-| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/coding-agents.md) |
-| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/coding-agent-safety-pack.md) |
+| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/getting-started.md) |
+| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/coding-agents.md) |
+| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/coding-agent-safety-pack.md) |
 | Dashboard contract | [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md) |
 | Decision traces | [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md) |
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/managed-agent-sessions.md) |
-| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/docs/guides/activation-metrics-design.md) |
+| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md) |
+| Releasing | [`docs/RELEASING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/RELEASING.md) |
 | Release cadence | [`docs/release/cadence.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/cadence.md) |
 | PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/trusted-publishing.md) |
 
@@ -446,6 +552,18 @@ memory/       SDK-only state and decisions
 - Hosted ingest API keys should be stored in environment variables.
 - Local guards remain authoritative even when hosted ingest is configured.
 
+### Threat model: agent data exfiltration
+
+A recurring class of agent attack uses the agent's own write surface as an
+outbound channel. Example pattern from Microsoft Copilot Cowork (May 2026):
+the agent emails the user's own inbox with no approval, the rendered message
+fetches an external image, and the image URL encodes data the attacker wanted
+out. AgentGuard does not replace an egress firewall or tool-permission layer,
+but it gives the agent runtime hard stops for runaway loops, retries, and
+budget burn that can turn one bad tool call into a sustained incident.
+
+Citation: https://simonwillison.net/2026/May/26/copilot-cowork-exfiltrates-files/
+
 Report security issues through GitHub Security Advisories or by email:
 `pat@bmdpat.com`.
 
@@ -464,25 +582,99 @@ python scripts/sdk_release_guard.py
 
 Useful links:
 
-- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/CONTRIBUTING.md)
-- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.10/GOLDEN_PRINCIPLES.md)
-- [good first issues](https://github.com/bmdhodl/agent47/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
+- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/CONTRIBUTING.md)
+- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/GOLDEN_PRINCIPLES.md)
 
 ## License
 
-MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.10/LICENSE).
+MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE).
 
-## Latest Release Notes (1.2.10)
+## Latest Release Notes (1.2.13)
 
-### Activation Proof Path
-- Tightened the README and getting-started path around `doctor`, `demo`, and `quickstart` so first-time SDK users can reach local guard proof faster.
-- Added a coding-agent review-loop proof artifact that shows budget and retry guards stopping a simulated review/refinement loop without API keys or network calls.
-- Added sync coverage for the public sample incident and generated PyPI README so release-facing activation assets do not silently drift.
+### Release Operations
+- Made post-PyPI GitHub Release creation a separate idempotent job and
+  dispatch release announcements explicitly, so the release-content workflow no
+  longer depends on `GITHUB_TOKEN` release events.
+- Hardened generated GitHub Release notes and release-content announcements so
+  they start from the last published GitHub Release instead of a stale raw tag.
+  This lets `v1.2.13` supersede the failed `v1.2.11` and `v1.2.12` tags without
+  truncating public release notes.
+- Includes the release candidate originally prepared under the failed
+  `v1.2.11` tag. That tag did not publish to PyPI and has no GitHub Release.
+- Supersedes the stale `v1.2.12` tag, which was pushed from a checkout still
+  carrying `sdk/pyproject.toml` version `1.2.10`. That tag did not publish a new
+  PyPI version and has no GitHub Release.
 
-### Release And Distribution Hygiene
-- Added an opt-in activation metrics design doc that defines allowed activation questions and local-first consent boundaries without adding telemetry.
-- Hardened release discussion category handling so missing GitHub Discussion categories do not block the package release path.
-- Updated the package build timestamp seed to the ZIP-safe reproducible epoch so local and CI release builds do not fail on pre-1980 metadata.
-- Clarified hosted ingest language in incident reporting so `HttpSink` is described as event mirroring for retained alerts and follow-up, not a remote kill switch by itself.
+### Reliability
+- Hardened `agentguard.__version__` so malformed local package metadata falls
+  back to `0.0.0-dev` instead of crashing source-checkout imports.
+- Fixed the coding-agent review-loop proof to record cumulative guard spend as
+  `total_cost_usd`, preventing local reports from double-counting the stopped
+  budget event.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.10/CHANGELOG.md)
+### Public Docs
+- Corrected the README threat-model copy so AgentGuard is positioned as local
+  runtime hard stops for loops, retries, and budget burn, not as a replacement
+  for egress firewalls or tool-permission layers.
+- Added release runbook documentation for tag-triggered PyPI publish and
+  GitHub Release creation.
+
+### Profiles
+- Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
+  for unattended production agents. Tightens defaults to `loop_max=2`,
+  `retry_max=1`, `warn_pct=0.5`. Motivated by the arxiv:2605.00055
+  ambient-persuasion incident where a deployed agent installed 107
+  unauthorized components and overrode its own oversight gate.
+
+### Release Proof
+- Added a deterministic sticky agent proof example that simulates a
+  CrewAI-style retry storm, repeated tool loop, budget burn, local incident
+  output, and dashboard-compatible hosted NDJSON without adding dependencies.
+- Added contract tests that post the sticky proof NDJSON to the local hosted
+  ingest harness so SDK proof events stay aligned with dashboard expectations.
+
+### Activation
+- Added `python -m agentguard.cli ...` fallback guidance to `doctor`, `demo`,
+  and `quickstart` so first-run users are not blocked when console scripts
+  install outside `PATH`.
+- Added a post-demo next-step block so `agentguard demo` points directly to
+  `agentguard quickstart --framework raw --write`, the generated starter, and
+  the follow-up local report command.
+- Added an MCP read-path proof to the proof gallery and test coverage that
+  catches stale local example and sample-doc references.
+- Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
+  `TestModel`, so users can try the pattern without API keys or network calls
+  after installing the optional framework package.
+- Clarified incident-report dashboard handoff copy so hosted ingest is framed as
+  useful when incidents need retained history, alerts, spend trends, or
+  team-visible follow-up, not as a requirement for local safety.
+- Added a concise local-vs-hosted adoption table to the README and dashboard
+  contract docs so the dashboard CTA is explicit without making local SDK use
+  feel limited.
+
+### Release Security
+- Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
+  to OIDC Trusted Publishing for the `pypi` GitHub environment, with PyPI
+  attestations enabled for release artifacts.
+- Added release documentation for the required PyPI trusted-publisher tuple and
+  post-release verification steps.
+- Added an MCP package publishing checklist and normalized npm package metadata
+  so the `@agentguard47/mcp-server` release path does not rely on npm publish
+  autocorrections.
+- Added an optional release-guard npm check so release operators can verify the
+  repo MCP package version is actually published as npm latest without making
+  normal CI depend on the network.
+
+### Release Operations
+- Added a release cadence document that separates the weekly MCP / Glama
+  distribution train from the monthly SDK release train.
+- Added a scheduled release cadence workflow that opens or updates one active
+  release queue issue with SDK, npm MCP, and Glama indexing status.
+- Added tag/version validation to the PyPI publish workflow and creates the
+  GitHub Release only after PyPI publish succeeds.
+- Changed release announcement automation to run from a published GitHub Release
+  instead of a raw tag push, so failed PyPI publishes cannot announce as shipped.
+- Refreshed the MCP server lockfile so `npm audit` no longer reports the
+  transitive `fast-uri` or `qs` advisories.
+
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.13/CHANGELOG.md)

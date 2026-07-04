@@ -19,15 +19,21 @@ enough to create surprise spend.
 [![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 [![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
 
+> **⭐ Star this repo** if AgentGuard stops one runaway run for you. It is how other builders find it.
+
 ## Install
 
 ### As a Python package
 
 ```bash
 pip install agentguard47
+agentguard
 ```
 
-### As a skill (Claude Code, Cursor, Cline, and more)
+The bare `agentguard` command prints a 60-second local tour. If the script is
+not on PATH, use `python -m agentguard` instead. Both run the same CLI.
+
+### As a skill (Codex, Claude Code, Cursor, Cline, and more)
 
 ```bash
 npx skills add bmdhodl/agent47
@@ -44,14 +50,53 @@ gh skill install bmdhodl/agent47 agentguard
 Most agent tooling tells you what happened after the run. AgentGuard stops the
 bad run while it is happening.
 
+AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
+runs inside the agent's process, sees the call graph, and raises exceptions
+that kill the run before the next bad call lands. Routers and gateways like
+Manifest or Vercel AI Gateway sit at the network layer and shape egress
+traffic. The layers are complementary, see the
+[competitive notes](#runtime-control-vs-observability) for when each fits.
+
+The headline value is the **cross-call, cross-provider budget envelope**: one
+ceiling that holds across every tool call, every retry, and every provider in
+the run. Single-call output caps are table stakes (Anthropic now ships
+per-tool `max_tokens` on the advisor tool, on 2026-06-02, see
+[release notes](https://platform.claude.com/docs/en/release-notes/overview#june-2-2026)).
+A single-call cap stops one oversized response. It does not stop a loop that
+makes 200 small calls, a retry storm across providers, or a run that mixes
+OpenAI and Anthropic and blows the combined budget. AgentGuard handles that
+envelope in-process and raises the exception that ends the run.
+
 | Problem | What AgentGuard does |
 |---|---|
 | Agent loops on the same tool | Raises `LoopDetected` |
 | Flaky tool retries forever | Raises `RetryLimitExceeded` |
-| Run spends too much | Raises `BudgetExceeded` |
+| Run spends too much across many calls | Raises `BudgetExceeded` |
+| Run mixes OpenAI and Anthropic and blows the combined cap | Raises `BudgetExceeded` |
 | Run hangs | Raises `TimeoutExceeded` |
 | Team needs proof | Writes local JSONL traces and incident reports |
 | Dashboard comes later | `HttpSink` mirrors events only when you opt in |
+
+| Scope of cap | Anthropic per-tool `max_tokens` | AgentGuard `BudgetGuard` + `RateLimitGuard` + `TimeoutGuard` |
+|---|---|---|
+| One tool call, output tokens only | Yes | Yes |
+| Many calls in one run | No | Yes |
+| Mixed providers (OpenAI + Anthropic) in one run | No | Yes |
+| Loop detection across repeated calls | No | Yes |
+| Retry storm cap | No | Yes |
+| Calls per minute | No | Yes |
+| Wall-clock timeout | No | Yes |
+| In-process exception that ends the run | No | Yes |
+
+## How AgentGuard Differs (Wedge Map)
+
+AgentGuard's wedge is the **runtime envelope**: budget, token, rate, retry, and loop caps enforced at the call site while the agent is running.
+
+| Adjacent Tool | The Axis | AgentGuard's Runtime Wedge |
+|---|---|---|
+| **WorkOS Scoped Credentials** | **Identity vs. Execution** | WorkOS bounds what an agent is allowed to do (identity, scopes, audit). AgentGuard enforces what the agent is doing right now (budget, tokens, loops). They compose: WorkOS defines the envelope; AgentGuard enforces it at runtime. |
+| **Enterprise Budget Caps (e.g., Uber)** | **Policy vs. Call Site** | Org-wide caps prevent surprise bills (like Uber's $1,500 per developer Claude Code limit) but often rely on management memos or monthly billing alerts. AgentGuard brings that cap to the call site, stopping the runaway run in seconds instead of at the end of the month. |
+| **Vendor Per-Tool Caps** | **Single Call vs. Cross-Tool** | Anthropic's `max_tokens` on a tool call stops one oversized response. It does not stop a loop of 200 small calls, a retry storm, or a run that mixes providers. AgentGuard handles the budget envelope across every call, tool, and provider in the run. |
 
 Design constraints:
 
@@ -61,6 +106,20 @@ Design constraints:
 - no API key required for local proof
 - no network calls unless you configure `HttpSink`
 - guards raise exceptions inside the running process
+
+## Scope
+
+AgentGuard's scope is the **in-process runtime envelope**: budget, token,
+rate, retry, loop, and timeout caps that fire inside the agent's Python
+process and raise exceptions that end the run.
+
+OS-level containment is **out of scope**: process sandboxes, VMs, filesystem
+boundaries, and egress controls live one layer down from AgentGuard. For
+that layer, see Anthropic's
+["How we contain Claude across products" (2026-05-30)](https://www.anthropic.com/news/how-we-contain-claude)
+as the canonical reference. The layers are complementary: containment
+bounds what the process can touch; AgentGuard bounds what the agent loop
+inside that process can spend.
 
 ## Real Incidents AgentGuard Prevents
 
@@ -104,6 +163,27 @@ A 9-second sequence of destructive calls trips `LoopGuard` or
 in-process. Pair this with scoped credentials and out-of-environment
 backups for the rest of the blast radius.
 
+### Microsoft — engineers told to ease off Claude Code over inference cost (May 2026)
+
+Microsoft engineering management reportedly asked teams to reduce Claude
+Code usage after monthly inference bills exceeded budget. If Microsoft
+cannot absorb coding-agent inference cost without a memo, runaway agent
+spend is no longer a solo-founder problem.
+
+Source: [TheNextWeb](https://thenextweb.com/news/microsoft-claude-code-retreat-ai-cost)
+
+A memo asks engineers to self-throttle. A `BudgetGuard` makes the cap a
+config value enforced inside the process:
+
+```python
+from agentguard import BudgetGuard
+
+BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
+```
+
+The guard raises `BudgetExceeded` before the run blows the cap. Same
+conversation, one config line instead of a memo.
+
 ## Local Proof in 60 Seconds
 
 ```bash
@@ -129,6 +209,24 @@ What you should see:
 
 Notebook version:
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/main/examples/quickstart.ipynb)
+
+## Show Your Repo Is Guarded
+
+Once AgentGuard stops a runaway run for you, add the badge to your README so
+other builders find it:
+
+```bash
+agentguard badge
+```
+
+```markdown
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+```
+
+[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
+
+`agentguard badge --format rst` and `--format html` print the same badge for
+other doc formats.
 
 ## Copy-Paste Repo Setup
 
@@ -268,6 +366,7 @@ layer.
 | Capability | AgentGuard |
 |---|---|
 | In-process hard budget caps | Yes |
+| Cross-call, cross-provider budget envelope | Yes |
 | Kill a bad run by raising an exception | Yes |
 | Loop and retry-storm detection | Yes |
 | Local JSONL traces | Yes |
@@ -276,9 +375,15 @@ layer.
 | Required dashboard | No |
 | Runtime dependencies | None |
 
+Provider-native caps such as Anthropic's per-tool `max_tokens` cover one call
+on one provider. AgentGuard covers the whole run across every provider and
+every call. Use both: set the per-call cap at the provider, set the
+run-envelope cap in AgentGuard.
+
 Competitive notes:
 
 - [AgentGuard vs Vercel AI Gateway](docs/competitive/vercel-ai-gateway.md)
+- [AgentGuard vs Manifest (LLM router)](docs/competitive/manifest.md)
 - [Where AgentGuard fits in the agent security stack](docs/competitive/agent-security-stack.md)
 
 ## Decision Traces
@@ -392,7 +497,7 @@ assert result.passed
 - License: MIT
 - Core runtime dependencies: zero
 - Trace format: JSONL
-- Local commands: `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`
+- Local commands: `welcome`, `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`, `badge`
 - MCP package: [`@agentguard47/mcp-server`](mcp-server/)
 - Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
@@ -410,6 +515,7 @@ assert result.passed
 | Managed sessions | [`docs/guides/managed-agent-sessions.md`](docs/guides/managed-agent-sessions.md) |
 | Activation metrics design | [`docs/guides/activation-metrics-design.md`](docs/guides/activation-metrics-design.md) |
 | Proof gallery | [`docs/examples/proof-gallery.md`](docs/examples/proof-gallery.md) |
+| Releasing | [`docs/RELEASING.md`](docs/RELEASING.md) |
 | Release cadence | [`docs/release/cadence.md`](docs/release/cadence.md) |
 | PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](docs/release/trusted-publishing.md) |
 
@@ -444,6 +550,18 @@ memory/       SDK-only state and decisions
 - Hosted ingest API keys should be stored in environment variables.
 - Local guards remain authoritative even when hosted ingest is configured.
 
+### Threat model: agent data exfiltration
+
+A recurring class of agent attack uses the agent's own write surface as an
+outbound channel. Example pattern from Microsoft Copilot Cowork (May 2026):
+the agent emails the user's own inbox with no approval, the rendered message
+fetches an external image, and the image URL encodes data the attacker wanted
+out. AgentGuard does not replace an egress firewall or tool-permission layer,
+but it gives the agent runtime hard stops for runaway loops, retries, and
+budget burn that can turn one bad tool call into a sustained incident.
+
+Citation: https://simonwillison.net/2026/May/26/copilot-cowork-exfiltrates-files/
+
 Report security issues through GitHub Security Advisories or by email:
 `pat@bmdpat.com`.
 
@@ -464,7 +582,6 @@ Useful links:
 
 - [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - [`GOLDEN_PRINCIPLES.md`](GOLDEN_PRINCIPLES.md)
-- [good first issues](https://github.com/bmdhodl/agent47/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
 
 ## License
 

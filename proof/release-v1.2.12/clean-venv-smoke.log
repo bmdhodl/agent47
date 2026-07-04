@@ -1,0 +1,49 @@
+AgentGuard v1.2.12 clean venv smoke
+Date: 2026-05-29
+
+Built wheel:
+  agentguard47-1.2.12-py3-none-any.whl
+
+Installed into isolated venv:
+  Successfully installed agentguard47-1.2.12
+  agentguard.__version__=1.2.12
+  metadata=1.2.12
+  import path=<temp-venv>\Lib\site-packages\agentguard\__init__.py
+
+agentguard doctor:
+  [ok] Python: 3.13.2
+  [ok] agentguard47: 1.2.12
+  [ok] init(local_only=True): wrote 4 events to agentguard_doctor_trace.jsonl
+  [ok] Optional integrations detected: none
+
+agentguard demo:
+  BudgetGuard warning fired at $0.84
+  BudgetGuard stopped on call 9: cost $1.08 exceeded $1.00
+  LoopGuard stopped repeated tool.search calls
+  RetryGuard stopped fetch_docs retry storm
+  Trace written to: agentguard_demo_traces.jsonl
+
+agentguard quickstart --framework raw --write:
+  Wrote starter: agentguard_raw_quickstart.py
+  No dashboard and no provider API keys required.
+
+python agentguard_raw_quickstart.py:
+  BudgetGuard stopped simulated spend: cost budget exceeded $5.02 > $5.00
+  LoopGuard stopped repeated tool.search calls
+  Traces saved to .agentguard/traces.jsonl
+
+agentguard report .agentguard/traces.jsonl:
+  Total events: 14
+  Estimated cost: $5.0200
+  Guard events:
+    guard.budget_exceeded: 1
+    guard.loop_detected: 1
+
+agentguard report agentguard_demo_traces.jsonl:
+  Total events: 36
+  Estimated cost: $1.0800
+  Guard events:
+    guard.budget_warning: 1
+    guard.budget_exceeded: 1
+    guard.loop_detected: 1
+    guard.retry_limit_exceeded: 1

@@ -67,6 +67,53 @@ class TestNormalizeUsage(unittest.TestCase):
             },
         )
 
+    def test_normalizes_anthropic_thinking_tokens_when_present(self):
+        # Messages API now reports usage.output_tokens_details.thinking_tokens,
+        # breaking out billed extended-thinking tokens. The final streaming
+        # message_delta carries the same shape.
+        normalized = normalize_usage(
+            {
+                "input_tokens": 300,
+                "output_tokens": 120,
+                "output_tokens_details": {"thinking_tokens": 80},
+            },
+            provider="anthropic",
+        )
+
+        self.assertEqual(
+            normalized,
+            {
+                "input_tokens": 300,
+                "output_tokens": 120,
+                "total_tokens": 420,
+                "reasoning_tokens": 80,
+                "thinking_tokens": 80,
+                "answer_tokens": 40,
+            },
+        )
+
+    def test_anthropic_thinking_tokens_absent_does_not_break_parsing(self):
+        # Older responses omit output_tokens_details entirely. Parsing must
+        # succeed and must not invent thinking/answer keys.
+        normalized = normalize_usage(
+            {
+                "input_tokens": 300,
+                "output_tokens": 120,
+            },
+            provider="anthropic",
+        )
+
+        self.assertEqual(
+            normalized,
+            {
+                "input_tokens": 300,
+                "output_tokens": 120,
+                "total_tokens": 420,
+            },
+        )
+        self.assertNotIn("thinking_tokens", normalized)
+        self.assertNotIn("answer_tokens", normalized)
+
     def test_returns_none_for_missing_usage_shape(self):
         self.assertIsNone(normalize_usage({"foo": "bar"}))
 

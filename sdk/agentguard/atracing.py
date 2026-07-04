@@ -24,7 +24,7 @@ import time
 import uuid
 
 from agentguard._trace_naming import normalize_session_id, truncate_name
-from agentguard.tracing import StdoutSink, TraceSink
+from agentguard.tracing import StdoutSink, TraceSink, _build_trace_event, _check_guard
 
 
 @dataclass
@@ -217,39 +217,27 @@ class AsyncTracer:
         cost_usd: Optional[float] = None,
     ) -> None:
         """Internal: build and emit a trace event (sync)."""
-        event: Dict[str, Any] = {
-            "service": self._service,
-            "kind": kind,
-            "phase": phase,
-            "trace_id": trace_id,
-            "span_id": span_id,
-            "parent_id": parent_id,
-            "name": name,
-            "ts": time.time(),
-            "duration_ms": duration_ms,
-            "data": data or {},
-            "error": error,
-        }
-        if self._session_id is not None:
-            event["session_id"] = self._session_id
-        if cost_usd is not None:
-            event["cost_usd"] = cost_usd
+        event, safe_data = _build_trace_event(
+            service=self._service,
+            session_id=self._session_id,
+            kind=kind,
+            phase=phase,
+            trace_id=trace_id,
+            span_id=span_id,
+            parent_id=parent_id,
+            name=name,
+            data=data,
+            duration_ms=duration_ms,
+            error=error,
+            cost_usd=cost_usd,
+        )
         self._sink.emit(event)
 
         # Auto-check guards
         for guard in self._guards:
             if kind != "event":
                 continue
-            if hasattr(guard, "auto_check"):
-                guard.auto_check(name, data)
-            elif hasattr(guard, "check"):
-                try:
-                    guard.check(name, data)
-                except TypeError:
-                    try:
-                        guard.check()
-                    except TypeError:
-                        pass
+            _check_guard(guard, name, safe_data)
 
     def __repr__(self) -> str:
         session_part = ""

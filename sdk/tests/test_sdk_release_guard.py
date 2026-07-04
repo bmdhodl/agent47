@@ -46,17 +46,18 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             files = {
                 "AGENTS.md": textwrap.dedent(
                     """
-                    latest shipped release: v0.0.1
-                    latest shipped release is 0.0.1
+                    release candidate: v0.0.1
+                    current SDK release candidate is 0.0.1
+                    current release candidate is 0.0.1
                     """
                 ),
                 "CLAUDE.md": textwrap.dedent(
                     """
-                    latest shipped release: v0.0.1
-                    latest shipped release is 0.0.1
+                    Current release candidate: v0.0.1
+                    release candidate is 0.0.1
                     """
                 ),
-                ".claude/agents/sdk-dev.md": "Latest shipped SDK release: `v0.0.1`\n",
+                ".claude/agents/sdk-dev.md": "Current SDK release candidate: `v0.0.1`\n",
             }
             for relative_path, content in files.items():
                 path = repo_root / relative_path
@@ -66,6 +67,27 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             findings = sdk_release_guard.check_release_markers(repo_root, "9.9.9")
             self.assertEqual(len(findings), len(sdk_release_guard.RELEASE_MARKERS))
             self.assertTrue(all("Expected release marker 9.9.9" in finding.message for finding in findings))
+
+    def test_check_release_tag_reports_mismatched_publish_tag(self):
+        findings = sdk_release_guard.check_release_tag(
+            "1.2.10",
+            ref="refs/tags/v1.2.12",
+        )
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].check, "release-tag")
+        self.assertEqual(findings[0].path, "GITHUB_REF")
+        self.assertIn(
+            "Tag v1.2.12 does not match sdk/pyproject.toml version 1.2.10",
+            findings[0].message,
+        )
+
+    def test_collect_findings_checks_github_release_tag(self):
+        with patch.dict(sdk_release_guard.os.environ, {"GITHUB_REF": "refs/tags/v9.9.9"}):
+            findings = sdk_release_guard.collect_findings(sdk_release_guard.REPO_ROOT)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].check, "release-tag")
 
     def test_check_pypi_readme_reports_generation_errors(self):
         with tempfile.TemporaryDirectory() as tmp:

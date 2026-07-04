@@ -1,0 +1,15 @@
+Provenance of pip-audit false-positive packages (pip show Required-by) — none are AgentGuard deps:
+Name: pypdf
+Required-by: embedchain
+Name: python-dotenv
+Required-by: crewai, embedchain, litellm, magika, numerscope, pydantic-settings, stagehand
+Name: python-multipart
+Required-by: mcp, streamlit
+Name: starlette
+Required-by: fastapi, mcp, sse-starlette, streamlit
+Name: requests
+Required-by: alpaca-py, CacheControl, ccxt, cohere, crewai-tools, csvw, discord-webhook, docker, google-api-core, gptcache, huggingface-hub, instructor, krakenex, kubernetes, langchain, langchain-community, langsmith, markitdown, numerapi, opentelemetry-exporter-otlp-proto-http, pip_audit, posthog, requests-oauthlib, requests-toolbelt, resend, stagehand, streamlit, tiktoken, twilio, twine, yfinance, youtube-transcript-api
+Name: urllib3
+Required-by: botocore, docker, id, kubernetes, lance-namespace-urllib3-client, oci, qdrant-client, requests, twine, types-requests
+Name: uv
+Required-by: crewai

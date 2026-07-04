@@ -2,6 +2,61 @@
 
 ## Unreleased
 
+### Reliability
+- Hardened the cross-process state lock (`JsonFileStateStore`, used by
+  `BudgetGuard(store=...)`) against two Windows races that crashed concurrent
+  processes under contention: an exclusive lock create that fails with
+  `PermissionError` instead of `FileExistsError` during a concurrent release
+  ("delete pending"), and an `os.replace` that transiently fails with
+  access-denied when an antivirus/indexer holds the destination. Both now retry
+  safely, so cross-process budget enforcement holds on Windows scheduled tasks.
+
+### Public Docs
+- Made the reader-facing surface fully model-agnostic to match the
+  already-vendor-neutral code path: the README/PyPI "As a skill" heading now
+  leads with Codex alongside Claude Code, and the budget-aware escalation
+  example notes the escalate target can be any provider's model, not just
+  Claude.
+
+### Onboarding
+- Bare `agentguard` now prints a friendly first-run welcome with the 60-second
+  local path and the star call to action instead of an argparse help dump.
+- Added `python -m agentguard` as an entry point so the CLI works even when the
+  `agentguard` script is not on PATH.
+- Added `agentguard welcome` and `agentguard badge`. `badge` prints a
+  paste-able "Guarded by AgentGuard" README badge (markdown, rST, or HTML) so
+  adopters can advertise the SDK and drive new installs.
+
+## 1.2.13
+
+### Release Operations
+- Made post-PyPI GitHub Release creation a separate idempotent job and
+  dispatch release announcements explicitly, so the release-content workflow no
+  longer depends on `GITHUB_TOKEN` release events.
+- Hardened generated GitHub Release notes and release-content announcements so
+  they start from the last published GitHub Release instead of a stale raw tag.
+  This lets `v1.2.13` supersede the failed `v1.2.11` and `v1.2.12` tags without
+  truncating public release notes.
+- Includes the release candidate originally prepared under the failed
+  `v1.2.11` tag. That tag did not publish to PyPI and has no GitHub Release.
+- Supersedes the stale `v1.2.12` tag, which was pushed from a checkout still
+  carrying `sdk/pyproject.toml` version `1.2.10`. That tag did not publish a new
+  PyPI version and has no GitHub Release.
+
+### Reliability
+- Hardened `agentguard.__version__` so malformed local package metadata falls
+  back to `0.0.0-dev` instead of crashing source-checkout imports.
+- Fixed the coding-agent review-loop proof to record cumulative guard spend as
+  `total_cost_usd`, preventing local reports from double-counting the stopped
+  budget event.
+
+### Public Docs
+- Corrected the README threat-model copy so AgentGuard is positioned as local
+  runtime hard stops for loops, retries, and budget burn, not as a replacement
+  for egress firewalls or tool-permission layers.
+- Added release runbook documentation for tag-triggered PyPI publish and
+  GitHub Release creation.
+
 ### Profiles
 - Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
   for unattended production agents. Tightens defaults to `loop_max=2`,
@@ -53,6 +108,12 @@
   distribution train from the monthly SDK release train.
 - Added a scheduled release cadence workflow that opens or updates one active
   release queue issue with SDK, npm MCP, and Glama indexing status.
+- Added tag/version validation to the PyPI publish workflow and creates the
+  GitHub Release only after PyPI publish succeeds.
+- Changed release announcement automation to run from a published GitHub Release
+  instead of a raw tag push, so failed PyPI publishes cannot announce as shipped.
+- Refreshed the MCP server lockfile so `npm audit` no longer reports the
+  transitive `fast-uri` or `qs` advisories.
 
 ## 1.2.10
 

@@ -1,0 +1,3 @@
+Cross-process lock stress AFTER fix — 10 concurrent processes x 20 trials, ceiling 150:
+Result: 20/20 trials OK, exactly 150 successes each (no lost updates, no crashes).
+Before fix: ~50% of trials failed with PermissionError on os.open (lock) / os.replace (write).

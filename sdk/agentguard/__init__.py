@@ -19,6 +19,7 @@ from .decision import (
     log_decision_proposed,
 )
 from .evaluation import AssertionResult, EvalResult, EvalSuite, summarize_trace
+from .goal import Call, Goal
 from .guards import (
     AgentGuardError,
     BaseGuard,
@@ -59,6 +60,7 @@ from .schemas import (
 )
 from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
+from .state import JsonFileStateStore, StateStore, StateStoreError
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
 
 
@@ -96,18 +98,18 @@ def _read_source_version() -> Optional[str]:
     return project_version
 
 
-def _discover_version() -> str:
+def _package_version(package_name: str = "agentguard47") -> str:
     source_version = _read_source_version()
     if source_version:
         return source_version
 
     try:
-        return version("agentguard47")
-    except PackageNotFoundError:  # pragma: no cover
+        return version(package_name)
+    except (PackageNotFoundError, TypeError):  # pragma: no cover
         return "0.0.0-dev"
 
 
-__version__ = _discover_version()
+__version__ = _package_version()
 
 # Libraries should not configure logging; only add a NullHandler so
 # consumers do not see "No handler found" warnings.
@@ -126,14 +128,17 @@ __all__ = [
     "BudgetExceeded",
     "BudgetGuard",
     "BudgetWarning",
+    "Call",
     "DecisionTrace",
     "EscalationRequired",
     "EscalationSignal",
     "EvalResult",
     "EvalSuite",
     "FuzzyLoopGuard",
+    "Goal",
     "HttpSink",
     "InitConfig",
+    "JsonFileStateStore",
     "JsonlFileSink",
     "LoopDetected",
     "LoopGuard",
@@ -142,6 +147,8 @@ __all__ = [
     "RepoConfig",
     "RetryGuard",
     "RetryLimitExceeded",
+    "StateStore",
+    "StateStoreError",
     "StdoutSink",
     "TimeoutExceeded",
     "TimeoutGuard",

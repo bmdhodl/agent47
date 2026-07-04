@@ -2,7 +2,7 @@
 
 Run:
 
-    PYTHONPATH=sdk python examples/budget_aware_escalation.py
+    python examples/budget_aware_escalation.py
 """
 from __future__ import annotations
 
@@ -37,6 +37,9 @@ def _simulated_model_call(model: str, prompt: str) -> dict:
 
 def main() -> int:
     guard = BudgetAwareEscalation(
+        # primary_model / escalate_model are plain strings - any provider works.
+        # This example escalates a cheap local model to a stronger one; the
+        # escalate target could just as easily be an OpenAI or other-provider model.
         primary_model="ollama/llama3.1:8b",
         escalate_model="claude-opus-4-6",
         escalate_on=(

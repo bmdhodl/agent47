@@ -4,6 +4,7 @@ import os
 import sys
 from typing import Optional, TextIO
 
+from agentguard.first_run import STAR_CALL_TO_ACTION, local_proof_commands
 from agentguard.guards import (
     BudgetExceeded,
     BudgetGuard,
@@ -68,11 +69,7 @@ def run_offline_demo(
     _print(out, f"View incident report: agentguard incident {rendered_trace_path}")
     _print(out, "")
     _print(out, "Next: add AgentGuard to a repo")
-    next_commands = [
-        "agentguard quickstart --framework raw --write",
-        "python agentguard_raw_quickstart.py",
-        "agentguard report .agentguard/traces.jsonl",
-    ]
+    next_commands = local_proof_commands()
     for command in next_commands:
         _print(out, f"  {command}")
     _print(out, "")
@@ -85,6 +82,9 @@ def run_offline_demo(
     )
     _render_module_fallback(fallback_commands, out)
     _print(out, "SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.")
+    _print(out, "")
+    _print(out, "Show your repo is guarded (and help others find it): agentguard badge")
+    _print(out, STAR_CALL_TO_ACTION)
     return 0
 
 

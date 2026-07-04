@@ -2,13 +2,15 @@
 
 Run:
 
-    PYTHONPATH=sdk python examples/coding_agent_review_loop.py
+    python examples/coding_agent_review_loop.py
     agentguard report coding_agent_review_loop_traces.jsonl
     agentguard incident coding_agent_review_loop_traces.jsonl
 
 No API keys, dashboard, or network calls are required.
 """
 from __future__ import annotations
+
+import os
 
 from agentguard import (
     BudgetExceeded,
@@ -81,7 +83,7 @@ def _run_review_budget_loop(tracer: Tracer) -> None:
                     data={
                         "attempt": turn["attempt"],
                         "reason": str(exc),
-                        "cost_usd": round(budget.state.cost_used, 6),
+                        "total_cost_usd": round(budget.state.cost_used, 6),
                         "tokens_used": budget.state.tokens_used,
                     },
                 )
@@ -122,6 +124,9 @@ def _run_retry_storm(tracer: Tracer) -> None:
 
 
 def main() -> int:
+    if os.path.exists(TRACE_FILE):
+        os.remove(TRACE_FILE)
+
     tracer = Tracer(
         sink=JsonlFileSink(TRACE_FILE),
         service="coding-agent-review-loop",

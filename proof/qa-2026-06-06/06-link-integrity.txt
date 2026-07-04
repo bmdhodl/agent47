@@ -1,0 +1,2 @@
+Pages: 8  Links checked: 53
+[PASS] all internal links resolve + anchors exist

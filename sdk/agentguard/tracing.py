@@ -14,19 +14,20 @@ Usage::
 """
 from __future__ import annotations
 
-import logging
-from contextlib import contextmanager
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
-
-if TYPE_CHECKING:
-    from agentguard.cost import CostTracker
+import inspect
 import json
+import logging
 import os
 import random
 import threading
 import time
 import uuid
+from contextlib import contextmanager
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+
+if TYPE_CHECKING:
+    from agentguard.cost import CostTracker
 
 from agentguard._trace_naming import normalize_session_id, truncate_name
 
@@ -188,6 +189,89 @@ def _sanitize_data(data: Optional[Any]) -> Optional[Dict[str, Any]]:
         )
         return _fit_mapping_data(safe_data, _MAX_EVENT_DATA_BYTES)
     return safe_data
+
+
+def _build_trace_event(
+    *,
+    service: str,
+    session_id: Optional[str],
+    kind: str,
+    phase: str,
+    trace_id: str,
+    span_id: str,
+    parent_id: Optional[str],
+    name: str,
+    data: Optional[Dict[str, Any]] = None,
+    duration_ms: Optional[float] = None,
+    error: Optional[Dict[str, Any]] = None,
+    cost_usd: Optional[float] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
+    """Build one JSON-safe trace event for sync and async tracers."""
+    safe_data = _sanitize_data(data)
+    event: Dict[str, Any] = {
+        "service": service,
+        "kind": kind,
+        "phase": phase,
+        "trace_id": trace_id,
+        "span_id": span_id,
+        "parent_id": parent_id,
+        "name": name,
+        "ts": time.time(),
+        "duration_ms": duration_ms,
+        "data": safe_data or {},
+        "error": error,
+    }
+    if session_id is not None:
+        event["session_id"] = session_id
+    if cost_usd is not None:
+        event["cost_usd"] = cost_usd
+    if metadata:
+        event["metadata"] = metadata
+    return event, safe_data
+
+
+def _callable_accepts_n_positional_args(fn: Any, count: int) -> bool:
+    try:
+        signature = inspect.signature(fn)
+    except (TypeError, ValueError):
+        return count == 2
+
+    required = 0
+    positional = 0
+    for parameter in signature.parameters.values():
+        if parameter.kind == inspect.Parameter.VAR_POSITIONAL:
+            return required <= count
+        if parameter.kind in {
+            inspect.Parameter.POSITIONAL_ONLY,
+            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+        }:
+            positional += 1
+            if parameter.default is inspect.Parameter.empty:
+                required += 1
+    return required <= count <= positional
+
+
+def _check_guard(guard: Any, name: str, data: Optional[Dict[str, Any]] = None) -> None:
+    """Dispatch one guard without swallowing implementation errors."""
+    auto_check = getattr(guard, "auto_check", None)
+    if callable(auto_check):
+        auto_check(name, data)
+        return
+
+    check = getattr(guard, "check", None)
+    if not callable(check):
+        return
+    if _callable_accepts_n_positional_args(check, 2):
+        check(name, data)
+        return
+    if _callable_accepts_n_positional_args(check, 0):
+        check()
+        return
+    raise TypeError(
+        f"Guard {type(guard).__name__}.check must accept either "
+        "(event_name, event_data) or no positional arguments"
+    )
 
 
 @dataclass
@@ -423,26 +507,21 @@ class Tracer:
         Note: sampling is handled by TraceContext — if this method is
         called, the event should be emitted.
         """
-        safe_data = _sanitize_data(data)
-        event: Dict[str, Any] = {
-            "service": self._service,
-            "kind": kind,
-            "phase": phase,
-            "trace_id": trace_id,
-            "span_id": span_id,
-            "parent_id": parent_id,
-            "name": name,
-            "ts": time.time(),
-            "duration_ms": duration_ms,
-            "data": safe_data or {},
-            "error": error,
-        }
-        if self._session_id is not None:
-            event["session_id"] = self._session_id
-        if cost_usd is not None:
-            event["cost_usd"] = cost_usd
-        if self._metadata:
-            event["metadata"] = self._metadata
+        event, safe_data = _build_trace_event(
+            service=self._service,
+            session_id=self._session_id,
+            kind=kind,
+            phase=phase,
+            trace_id=trace_id,
+            span_id=span_id,
+            parent_id=parent_id,
+            name=name,
+            data=data,
+            duration_ms=duration_ms,
+            error=error,
+            cost_usd=cost_usd,
+            metadata=self._metadata,
+        )
         if self._watermark and not self._watermark_emitted:
             self._watermark_emitted = True
             wm: Dict[str, Any] = {
@@ -464,17 +543,7 @@ class Tracer:
     def _check_guards(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
         """Run all attached guards. Called on every event, even sampled-out ones."""
         for guard in self._guards:
-            if hasattr(guard, "auto_check"):
-                guard.auto_check(name, data)
-            elif hasattr(guard, "check"):
-                # Backward compat: try check(name, data), then check()
-                try:
-                    guard.check(name, data)
-                except TypeError:
-                    try:
-                        guard.check()
-                    except TypeError:
-                        pass
+            _check_guard(guard, name, data)
 
     def __repr__(self) -> str:
         session_part = ""

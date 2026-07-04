@@ -2,7 +2,7 @@
 
 Run:
 
-    PYTHONPATH=sdk python examples/per_token_budget_spike.py
+    python examples/per_token_budget_spike.py
 """
 from __future__ import annotations
 

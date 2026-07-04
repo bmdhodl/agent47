@@ -36,6 +36,9 @@ def normalize_usage(usage: Any, provider: Optional[str] = None) -> Optional[Dict
     )
     cache_read_input_tokens = _as_int(_nested_get(usage, "cache_read_input_tokens"))
     cache_creation_input_tokens = _as_int(_nested_get(usage, "cache_creation_input_tokens"))
+    thinking_tokens = _as_int(
+        _nested_get(usage, "output_tokens_details", "thinking_tokens")
+    )
 
     looks_openai = bool(
         prompt_tokens
@@ -72,6 +75,7 @@ def normalize_usage(usage: Any, provider: Optional[str] = None) -> Optional[Dict
             output_tokens=output_tokens,
             cache_read_input_tokens=cache_read_input_tokens,
             cache_creation_input_tokens=cache_creation_input_tokens,
+            thinking_tokens=thinking_tokens,
         )
 
     if looks_openai:
@@ -89,6 +93,7 @@ def normalize_usage(usage: Any, provider: Optional[str] = None) -> Optional[Dict
             output_tokens=output_tokens,
             cache_read_input_tokens=cache_read_input_tokens,
             cache_creation_input_tokens=cache_creation_input_tokens,
+            thinking_tokens=thinking_tokens,
         )
 
     if isinstance(usage, dict):
@@ -162,6 +167,7 @@ def _normalize_anthropic_usage(
     output_tokens: int,
     cache_read_input_tokens: int,
     cache_creation_input_tokens: int,
+    thinking_tokens: int = 0,
 ) -> Dict[str, int]:
     normalized = {
         "input_tokens": input_tokens,
@@ -176,4 +182,13 @@ def _normalize_anthropic_usage(
     if cache_creation_input_tokens:
         normalized["cache_write_input_tokens"] = cache_creation_input_tokens
         normalized["cache_creation_input_tokens"] = cache_creation_input_tokens
+    if thinking_tokens:
+        # Anthropic now breaks out billed extended-thinking tokens via
+        # usage.output_tokens_details.thinking_tokens. Surface thinking spend
+        # separately from the answer tokens so callers can attribute cost.
+        # Older responses omit the field; we add these keys only when present,
+        # keeping the normalized shape backward-compatible.
+        normalized["reasoning_tokens"] = thinking_tokens
+        normalized["thinking_tokens"] = thinking_tokens
+        normalized["answer_tokens"] = max(output_tokens - thinking_tokens, 0)
     return normalized

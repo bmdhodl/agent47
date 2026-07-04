@@ -2,7 +2,7 @@
 
 Run:
 
-    PYTHONPATH=sdk python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
+    python examples/sticky_agent_proof.py --out-dir proof/sticky-agent-proof
     agentguard incident proof/sticky-agent-proof/sticky_agent_proof_traces.jsonl
 
 No API keys, dashboard, framework installs, or network calls are required.

@@ -201,19 +201,31 @@ class BudgetStore:
 
         current = now or utc_now()
         scopes = matching_scopes(server, tool, session_id)
-        configured = [budget for budget in self._get_budgets(scopes) if budget is not None]
-        kill_reasons = [
-            f"{budget.scope} is blocked by kill_switch" for budget in configured if budget.kill_switch
-        ]
-        if kill_reasons:
-            return {"allowed": False, "reasons": kill_reasons, "scopes_checked": scopes}
-
-        reasons = self._budget_exceeded_reasons(configured, tokens_in + tokens_out, cost_usd, current)
-        if reasons:
-            return {"allowed": False, "reasons": reasons, "scopes_checked": scopes}
-
         timestamp = format_utc(current)
+
         with self._lock, self._connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            configured = [
+                budget for budget in self._get_budgets_for_conn(conn, scopes) if budget is not None
+            ]
+            kill_reasons = [
+                f"{budget.scope} is blocked by kill_switch"
+                for budget in configured
+                if budget.kill_switch
+            ]
+            if kill_reasons:
+                return {"allowed": False, "reasons": kill_reasons, "scopes_checked": scopes}
+
+            reasons = self._budget_exceeded_reasons(
+                conn,
+                configured,
+                tokens_in + tokens_out,
+                cost_usd,
+                current,
+            )
+            if reasons:
+                return {"allowed": False, "reasons": reasons, "scopes_checked": scopes}
+
             conn.executemany(
                 """
                     INSERT INTO usage_events (
@@ -231,6 +243,7 @@ class BudgetStore:
 
     def _budget_exceeded_reasons(
         self,
+        conn: sqlite3.Connection,
         budgets: list[Budget],
         added_tokens: int,
         added_cost_usd: float,
@@ -238,7 +251,7 @@ class BudgetStore:
     ) -> list[str]:
         reasons: list[str] = []
         for budget in budgets:
-            snapshot = self.check_remaining(budget.scope, now)
+            snapshot = self._snapshot_for_conn(conn, budget.scope, budget, now)
             projected_tokens = snapshot["tokens_used"] + added_tokens
             projected_usd = snapshot["usd_used"] + added_cost_usd
             if snapshot["tokens_limit"] is not None and projected_tokens > snapshot["tokens_limit"]:
@@ -290,8 +303,10 @@ class BudgetStore:
             )
 
     def _connect(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_path, timeout=5.0)
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=5000")
         return conn
 
     @contextmanager
@@ -305,10 +320,13 @@ class BudgetStore:
 
     def _get_budget(self, scope: str) -> Budget | None:
         with self._connection() as conn:
-            row = conn.execute(
-                "SELECT scope, limit_tokens, limit_usd, period, kill_switch FROM budgets WHERE scope = ?",
-                (scope,),
-            ).fetchone()
+            return self._get_budget_for_conn(conn, scope)
+
+    def _get_budget_for_conn(self, conn: sqlite3.Connection, scope: str) -> Budget | None:
+        row = conn.execute(
+            "SELECT scope, limit_tokens, limit_usd, period, kill_switch FROM budgets WHERE scope = ?",
+            (scope,),
+        ).fetchone()
         if row is None:
             return None
         return Budget(
@@ -322,20 +340,56 @@ class BudgetStore:
     def _get_budgets(self, scopes: list[str]) -> list[Budget | None]:
         return [self._get_budget(scope) for scope in scopes]
 
+    def _get_budgets_for_conn(
+        self,
+        conn: sqlite3.Connection,
+        scopes: list[str],
+    ) -> list[Budget | None]:
+        return [self._get_budget_for_conn(conn, scope) for scope in scopes]
+
     def _usage_for(self, scope: str, period: Period, now: datetime) -> tuple[int, float]:
-        since = format_utc(period_start(period, now))
         with self._connection() as conn:
-            row = conn.execute(
-                """
-                SELECT
-                    COALESCE(SUM(tokens_in + tokens_out), 0) AS tokens_used,
-                    COALESCE(SUM(cost_usd), 0.0) AS usd_used
-                FROM usage_events
-                WHERE scope = ? AND ts >= ?
-                """,
-                (scope, since),
-            ).fetchone()
+            return self._usage_for_conn(conn, scope, period, now)
+
+    def _usage_for_conn(
+        self,
+        conn: sqlite3.Connection,
+        scope: str,
+        period: Period,
+        now: datetime,
+    ) -> tuple[int, float]:
+        since = format_utc(period_start(period, now))
+        row = conn.execute(
+            """
+            SELECT
+                COALESCE(SUM(tokens_in + tokens_out), 0) AS tokens_used,
+                COALESCE(SUM(cost_usd), 0.0) AS usd_used
+            FROM usage_events
+            WHERE scope = ? AND ts >= ?
+            """,
+            (scope, since),
+        ).fetchone()
         return int(row["tokens_used"]), float(row["usd_used"])
+
+    def _snapshot_for_conn(
+        self,
+        conn: sqlite3.Connection,
+        scope: str,
+        budget: Budget,
+        now: datetime,
+    ) -> BudgetSnapshot:
+        tokens_used, usd_used = self._usage_for_conn(conn, scope, budget.period, now)
+        reset = period_reset(budget.period, now)
+        return {
+            "scope": scope,
+            "tokens_used": tokens_used,
+            "tokens_limit": budget.limit_tokens,
+            "usd_used": usd_used,
+            "usd_limit": budget.limit_usd,
+            "period": budget.period,
+            "period_resets_at": format_utc(reset) if reset is not None else None,
+            "kill_switch": budget.kill_switch,
+        }
 
 
 def normalize_scope(scope: str) -> str:

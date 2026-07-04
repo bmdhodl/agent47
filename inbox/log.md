@@ -3,6 +3,46 @@
 
 ---
 
+## 2026-05-30 | Claude
+
+### What shipped
+- Merged PR `#553`: added a shared `STAR_CALL_TO_ACTION` to `doctor`/`demo` output and the README/PyPI README to convert silent installs into GitHub stars (downloads in the thousands vs 3 stars).
+- Refreshed `memory/state.md` and `memory/blockers.md` now that `1.2.13` is live on PyPI; deleted the stale dead tags `v1.2.11`/`v1.2.12` from the remote (SHAs recorded for recovery).
+- Proof under `proof/star-cta-activation/`; ruff clean, 773 tests pass, PyPI README in sync, release guard passes.
+
+### Decisions made
+- Star CTA lives only in human-readable CLI output; `doctor --json` deliberately omits it (test-enforced).
+- MCP Registry metadata is staged at `0.2.2`; the remaining publish is the credentialed `mcp-publisher` step, not a code change.
+
+### Blockers
+- Glama still returns `tools: []` (UI-gated); `awesome-mcp-servers#4012` was closed and needs a fresh guideline-clean PR.
+
+## 2026-05-30 | Codex
+
+### What shipped
+- Merged PR `#550` and published `agentguard47==1.2.13` to PyPI.
+- GitHub Release `v1.2.13` and release-content workflow completed successfully.
+- Added release proof under `proof/release-v1.2.13/` and verified a clean PyPI install through `doctor`, `demo`, `quickstart --write`, generated quickstart run, and `report`.
+
+### Decisions made
+- Treat `v1.2.11` and `v1.2.12` as stale failed release tags; do not rerun or reuse them without explicit owner approval.
+- Tag future releases only after proving the tag target's `sdk/pyproject.toml` version matches the tag.
+
+### Blockers
+- None.
+
+## 2026-05-29 | Codex
+
+### What shipped
+- Merged PR `#548` to prepare SDK release candidate `v1.2.12`, update release docs/metadata, and harden release notes so failed raw tags do not truncate public GitHub Release notes.
+
+### Decisions made
+- Treat `v1.2.11` as a stale failed tag with no PyPI publish and no GitHub Release.
+- Track `v1.2.12` as a release candidate until PyPI Trusted Publishing succeeds.
+
+### Blockers
+- PyPI Trusted Publishing must be configured for `agentguard47` with owner `bmdhodl`, repo `agent47`, workflow `publish.yml`, and environment `pypi` before tagging `v1.2.12`.
+
 ## 2026-05-02 | Codex
 
 ### What shipped
@@ -220,3 +260,15 @@
 
 ### Blockers
 - None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.
+
+## 2026-05-31 | Codex
+
+### What shipped
+- Merged PR `#559` to harden release publishing against stale git tags.
+- `scripts/sdk_release_guard.py` now rejects a release tag when `GITHUB_REF` does not match `sdk/pyproject.toml`.
+
+### Decisions made
+- Keep the existing workflow-level tag check, and mirror the invariant in the Python release guard so local and CI checks fail before package build/upload.
+
+### Blockers
+- None. The failed `v1.2.12` publish run was a stale tag pointing at `1.2.10`; `v1.2.13` is already published and main CI, CodeQL, and Scorecard passed after `#559`.
