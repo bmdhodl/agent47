@@ -82,6 +82,14 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             findings[0].message,
         )
 
+    def test_check_release_tag_ignores_non_sdk_tag_ref(self):
+        findings = sdk_release_guard.check_release_tag(
+            "1.2.13",
+            ref="refs/tags/docs-refresh",
+        )
+
+        self.assertEqual(findings, [])
+
     def test_collect_findings_checks_github_release_tag(self):
         with patch.dict(sdk_release_guard.os.environ, {"GITHUB_REF": "refs/tags/v9.9.9"}):
             findings = sdk_release_guard.collect_findings(sdk_release_guard.REPO_ROOT)
