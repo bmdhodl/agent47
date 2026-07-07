@@ -836,5 +836,46 @@ class TestEvalNoBudgetWarnings(unittest.TestCase):
         self.assertFalse(result.passed)
 
 
+
+class TestNonFiniteAndSerializationHardening(unittest.TestCase):
+    """Regression tests for two red-team findings (2026-07).
+
+    1. LoopGuard.check() previously raised TypeError from json.dumps on any
+       non-JSON-serializable tool_args (datetime, set, custom object) before any
+       loop logic ran, crashing the caller's agent.
+    2. A single NaN cost_usd permanently disabled BudgetGuard, because NaN poisons
+       the running total and ``NaN > max`` is always False.
+    """
+
+    def test_loopguard_tolerates_non_serializable_args(self):
+        from datetime import datetime
+
+        guard = LoopGuard(max_repeats=3)
+        args = {"when": datetime(2026, 7, 7, 12, 0, 0)}
+        guard.check("search", args)   # must not raise TypeError
+        guard.check("search", args)
+        with self.assertRaises(LoopDetected):  # loop still detected on the 3rd
+            guard.check("search", args)
+
+    def test_budgetguard_rejects_nan_cost(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        with self.assertRaises(ValueError):
+            guard.consume(cost_usd=float("nan"))
+        # NaN was rejected before mutating state, so enforcement still works:
+        with self.assertRaises(BudgetExceeded):
+            guard.consume(cost_usd=10.0)
+
+    def test_budgetguard_rejects_inf_cost(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        with self.assertRaises(ValueError):
+            guard.consume(cost_usd=float("inf"))
+
+    def test_budgetguard_still_enforces_normal_over_budget(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        guard.consume(cost_usd=3.0)
+        with self.assertRaises(BudgetExceeded):
+            guard.consume(cost_usd=3.0)
+
+
 if __name__ == "__main__":
     unittest.main()
