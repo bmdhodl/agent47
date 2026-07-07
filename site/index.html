@@ -1027,13 +1027,14 @@ with tracer.trace("agent.run") as span:
               <a class="btn btn-red" href="/quickstart.html">Run quickstart</a>
               <a class="btn btn-secondary" href="https://pypi.org/project/agentguard47/">View PyPI</a>
             </div>
-            <form class="email-form" action="/api/lead" method="post" onsubmit="return submitLeadForm(event, this)">
-              <label class="sr-only" for="homepage-email">Email for hosted updates</label>
-              <input id="homepage-email" type="email" name="email" placeholder="Email for hosted updates" autocomplete="email" required />
-              <input type="hidden" name="source" value="agentguard47_homepage" />
-              <button class="btn" type="submit">Get updates</button>
-              <p class="form-status" aria-live="polite"></p>
-            </form>
+            <div class="email-cta">
+              <p class="muted">
+                Field notes on running agents in production: what breaks, what it
+                costs, and what actually stops a runaway agent. Only when there is
+                something worth sending.
+              </p>
+              <a class="btn" href="https://bmdpat.com/tools/agentguard?utm_source=agentguard47&amp;utm_medium=site&amp;utm_campaign=field-notes">Get the field notes</a>
+            </div>
           </div>
         </section>
       </main>
@@ -1098,49 +1099,6 @@ with tracer.trace("agent.run") as span:
         }).catch(function() {
           setButtonState(button, 'Select text');
         });
-      }
-
-      function submitLeadForm(event, form) {
-        if (!window.fetch || !window.FormData) {
-          return true;
-        }
-
-        event.preventDefault();
-
-        var button = form.querySelector('button[type="submit"]');
-        var status = form.querySelector('.form-status');
-        var email = form.querySelector('input[name="email"]');
-        if (!email.value.trim()) {
-          status.textContent = 'Enter an email first.';
-          status.className = 'form-status error';
-          email.focus();
-          return false;
-        }
-
-        button.disabled = true;
-        status.textContent = 'Saving...';
-        status.className = 'form-status';
-
-        fetch(form.action, {
-          method: form.method || 'post',
-          body: new FormData(form),
-          credentials: 'same-origin',
-          headers: { 'accept': 'application/json' }
-        }).then(function(response) {
-          if (!response.ok) {
-            throw new Error('Lead capture failed');
-          }
-          form.reset();
-          status.textContent = 'Updates enabled. Check your inbox.';
-          status.className = 'form-status success';
-        }).catch(function() {
-          status.textContent = 'Could not save that email. Try again.';
-          status.className = 'form-status error';
-        }).finally(function() {
-          button.disabled = false;
-        });
-
-        return false;
       }
     </script>
   </body>
