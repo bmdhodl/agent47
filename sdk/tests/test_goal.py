@@ -241,3 +241,138 @@ def test_to_dict_is_json_serializable() -> None:
     assert parsed["attempts"] == 1
     assert parsed["cost_usd"] == pytest.approx(0.01)
     assert len(parsed["calls"]) == 1
+
+
+def test_goal_max_cost_usd_raises() -> None:
+    """Per-goal hard cap raises even when session budget still has headroom."""
+    from agentguard import BudgetExceeded
+
+    guard = BudgetGuard(max_cost_usd=50.0)
+    with pytest.raises(BudgetExceeded, match="Goal 'tiny-task' cost budget exceeded"):
+        with guard.goal("tiny-task", verifier=lambda: True, max_cost_usd=0.50) as g:
+            g.attempt()
+            guard.consume(cost_usd=0.40)
+            guard.consume(cost_usd=0.20)  # 0.60 > 0.50 goal; session still under 50
+    # Attribution-before-raise: ledger includes the tripping call.
+    assert g.cost_usd == pytest.approx(0.60)
+    # Session state also advanced (same consume path).
+    assert guard.state.cost_used == pytest.approx(0.60)
+
+
+def test_goal_under_cap_completes() -> None:
+    guard = BudgetGuard(max_cost_usd=10.0)
+    with guard.goal("ok", verifier=lambda: True, max_cost_usd=1.0) as g:
+        g.attempt()
+        guard.consume(cost_usd=0.25, tokens=10, calls=1)
+    assert g.succeeded is True
+    assert g.cost_usd == pytest.approx(0.25)
+
+
+def test_session_cap_lower_than_goal_cap() -> None:
+    """Whichever limit trips first wins — session can still stop first."""
+    from agentguard import BudgetExceeded
+
+    guard = BudgetGuard(max_cost_usd=0.30)
+    with pytest.raises(BudgetExceeded) as ei:
+        with guard.goal("roomy", verifier=lambda: True, max_cost_usd=5.0) as g:
+            g.attempt()
+            guard.consume(cost_usd=0.20)
+            guard.consume(cost_usd=0.20)
+    # Session message does not use Goal prefix.
+    assert "Goal " not in str(ei.value)
+    assert "Cost budget exceeded" in str(ei.value)
+
+
+def test_nested_goal_child_cap_independent() -> None:
+    from agentguard import BudgetExceeded
+
+    guard = BudgetGuard(max_cost_usd=100.0)
+    with guard.goal("parent", verifier=lambda: True, max_cost_usd=10.0) as parent:
+        parent.attempt()
+        guard.consume(cost_usd=0.10)
+        with pytest.raises(BudgetExceeded, match="Goal 'child-a'"):
+            with guard.goal("child-a", verifier=lambda: True, max_cost_usd=0.20) as child:
+                child.attempt()
+                guard.consume(cost_usd=0.15)
+                guard.consume(cost_usd=0.15)
+        # Sibling can still run under its own cap after child exceeded.
+        with guard.goal("child-b", verifier=lambda: True, max_cost_usd=1.0) as child_b:
+            child_b.attempt()
+            guard.consume(cost_usd=0.05)
+        assert child_b.cost_usd == pytest.approx(0.05)
+    # Parent rollup includes child-a tripping call + child-b + own.
+    assert parent.cost_usd == pytest.approx(0.10 + 0.30 + 0.05)
+
+
+def test_goal_token_and_call_caps() -> None:
+    from agentguard import BudgetExceeded
+
+    guard = BudgetGuard(max_tokens=10_000, max_calls=100)
+    with pytest.raises(BudgetExceeded, match="token budget exceeded"):
+        with guard.goal("tok", verifier=lambda: True, max_tokens=50) as g:
+            g.attempt()
+            guard.consume(tokens=40, calls=1, cost_usd=0.0)
+            guard.consume(tokens=20, calls=1, cost_usd=0.0)
+    with pytest.raises(BudgetExceeded, match="call budget exceeded"):
+        with guard.goal("calls", verifier=lambda: True, max_calls=2) as g:
+            g.attempt()
+            guard.consume(calls=1, cost_usd=0.0)
+            guard.consume(calls=1, cost_usd=0.0)
+            guard.consume(calls=1, cost_usd=0.0)
+
+
+def test_goal_failure_cost_with_cap() -> None:
+    """Multi-attempt success still attributes failure_cost when under cap."""
+    guard = BudgetGuard(max_cost_usd=10.0)
+    ok = {"v": False}
+    with guard.goal("retry", verifier=lambda: ok["v"], max_cost_usd=5.0) as g:
+        g.attempt()
+        guard.consume(cost_usd=0.10)
+        g.attempt()
+        guard.consume(cost_usd=0.10)
+        g.attempt()
+        guard.consume(cost_usd=0.05)
+        ok["v"] = True
+    assert g.succeeded is True
+    assert g.failure_cost == pytest.approx(0.20)
+    assert g.cost_usd == pytest.approx(0.25)
+
+
+def test_goal_negative_limit_rejected() -> None:
+    guard = BudgetGuard(max_cost_usd=1.0)
+    with pytest.raises(ValueError, match="max_cost_usd"):
+        guard.goal("bad", verifier=lambda: True, max_cost_usd=-1.0)
+
+
+def test_goal_limit_fuzz_under_never_raises() -> None:
+    """Random sequences under both caps never raise BudgetExceeded."""
+    import random
+
+    rng = random.Random(42)
+    for _ in range(30):
+        # Fresh session budget each trial so session total does not accumulate.
+        guard = BudgetGuard(max_cost_usd=10.0)
+        with guard.goal("fuzz", verifier=lambda: True, max_cost_usd=1.0) as g:
+            g.attempt()
+            spent = 0.0
+            for _step in range(20):
+                c = rng.random() * 0.05
+                if spent + c > 0.95:
+                    break
+                guard.consume(cost_usd=c)
+                spent += c
+        assert g.succeeded is True
+
+
+def test_goal_limit_fuzz_over_always_raises() -> None:
+    import random
+    from agentguard import BudgetExceeded
+
+    rng = random.Random(7)
+    guard = BudgetGuard(max_cost_usd=100.0)
+    for _ in range(20):
+        with pytest.raises(BudgetExceeded, match="Goal "):
+            with guard.goal("blow", verifier=lambda: True, max_cost_usd=0.10) as g:
+                g.attempt()
+                while True:
+                    guard.consume(cost_usd=rng.uniform(0.03, 0.08))

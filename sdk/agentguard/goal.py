@@ -4,11 +4,13 @@ A ``Goal`` is a user-meaningful outcome (e.g. "refund this charge"). One goal
 may span many model calls, tool calls, retries, and dead ends. Per-call cost
 metering hides that structure; goal-level metering exposes it.
 
-Use ``BudgetGuard.goal(name, verifier=...)`` to open a goal block. Any cost
-consumed via ``BudgetGuard.consume(...)`` inside that block accumulates against
-the goal. On exit, the verifier runs and ``g.succeeded`` is populated. Failed
-attempts (anything before the final attempt of a successful goal, or every
-attempt of a failed goal) accrue ``g.failure_cost``.
+Use ``BudgetGuard.goal(name, verifier=..., max_cost_usd=...)`` to open a goal
+block. Any cost consumed via ``BudgetGuard.consume(...)`` inside that block
+accumulates against the goal. Optional per-goal limits raise ``BudgetExceeded``
+when the goal ledger (including nested sub-goals) crosses the cap. On exit, the
+verifier runs and ``g.succeeded`` is populated. Failed attempts (anything before
+the final attempt of a successful goal, or every attempt of a failed goal)
+accrue ``g.failure_cost``.
 
 See ``concepts/cost-per-completed-goal`` in the knowledge wiki for the design
 rationale.
@@ -53,6 +55,7 @@ class Goal:
     Attributes:
         name: Caller-supplied label for the goal.
         verifier: Zero-arg callable returning bool. Runs on block exit.
+        max_tokens / max_calls / max_cost_usd: Optional hard caps for this goal.
         calls: Direct calls recorded inside this goal (not sub-goals).
         sub_goals: Child goals opened inside this goal's block.
         attempts: Number of attempts (incremented by ``attempt()`` from agent code).
@@ -63,6 +66,9 @@ class Goal:
 
     name: str
     verifier: Callable[[], bool]
+    max_tokens: Optional[int] = None
+    max_calls: Optional[int] = None
+    max_cost_usd: Optional[float] = None
     calls: List[Call] = field(default_factory=list)
     sub_goals: List["Goal"] = field(default_factory=list)
     attempts: int = 0
@@ -95,6 +101,59 @@ class Goal:
         return self.own_cost_usd + sum(g.cost_usd for g in self.sub_goals)
 
     @property
+    def own_tokens(self) -> int:
+        """Tokens of direct calls, excluding sub-goals."""
+        return sum(int(c.tokens) for c in self.calls)
+
+    @property
+    def tokens_used(self) -> int:
+        """Total tokens: direct calls + sub-goal totals."""
+        return self.own_tokens + sum(g.tokens_used for g in self.sub_goals)
+
+    @property
+    def own_calls(self) -> int:
+        """Call count of direct records, excluding sub-goals."""
+        return sum(int(c.calls) for c in self.calls)
+
+    @property
+    def calls_used(self) -> int:
+        """Total calls: direct records + sub-goal totals."""
+        return self.own_calls + sum(g.calls_used for g in self.sub_goals)
+
+    def _enforce_limits(
+        self,
+        added_tokens: float,
+        added_calls: float,
+        added_cost: float,
+    ) -> None:
+        """Raise BudgetExceeded if this goal's ledger exceeds a configured cap.
+
+        Includes nested sub-goal spend. Message names the goal so operators can
+        tell session-limit failures from task-limit failures.
+        """
+        # Local import avoids a circular import at module load (guards -> goal).
+        from .guards import BudgetExceeded
+
+        if self.max_tokens is not None and self.tokens_used > self.max_tokens:
+            raise BudgetExceeded(
+                f"Goal {self.name!r} token budget exceeded: "
+                f"{self.tokens_used} > {self.max_tokens} "
+                f"(this call added {added_tokens} tokens)"
+            )
+        if self.max_calls is not None and self.calls_used > self.max_calls:
+            raise BudgetExceeded(
+                f"Goal {self.name!r} call budget exceeded: "
+                f"{self.calls_used} > {self.max_calls} "
+                f"(this call added {added_calls} calls)"
+            )
+        if self.max_cost_usd is not None and self.cost_usd > self.max_cost_usd:
+            raise BudgetExceeded(
+                f"Goal {self.name!r} cost budget exceeded: "
+                f"${self.cost_usd:.4f} > ${self.max_cost_usd:.4f} "
+                f"(this call added ${added_cost:.4f})"
+            )
+
+    @property
     def failure_cost(self) -> float:
         """Cost of calls in failed attempts.
 
@@ -124,10 +183,15 @@ class Goal:
             "name": self.name,
             "cost_usd": self.cost_usd,
             "own_cost_usd": self.own_cost_usd,
+            "tokens_used": self.tokens_used,
+            "calls_used": self.calls_used,
             "failure_cost": self.failure_cost,
             "attempts": self.attempts,
             "succeeded": self.succeeded,
             "duration_sec": self.duration_sec,
+            "max_tokens": self.max_tokens,
+            "max_calls": self.max_calls,
+            "max_cost_usd": self.max_cost_usd,
             "calls": [c.to_dict() for c in self.calls],
             "sub_goals": [g.to_dict() for g in self.sub_goals],
         }
@@ -188,12 +252,35 @@ class _GoalContext:
     Verifier exceptions propagate (fail loudly).
     """
 
-    def __init__(self, name: str, verifier: Callable[[], bool]) -> None:
+    def __init__(
+        self,
+        name: str,
+        verifier: Callable[[], bool],
+        *,
+        max_tokens: Optional[int] = None,
+        max_calls: Optional[int] = None,
+        max_cost_usd: Optional[float] = None,
+    ) -> None:
         if not callable(verifier):
             raise TypeError(
                 f"verifier must be callable, got {type(verifier).__name__}"
             )
-        self._goal = Goal(name=name, verifier=verifier)
+        for limit_name, limit_val in (
+            ("max_tokens", max_tokens),
+            ("max_calls", max_calls),
+            ("max_cost_usd", max_cost_usd),
+        ):
+            if limit_val is not None and limit_val < 0:
+                raise ValueError(
+                    f"{limit_name} must be non-negative, got {limit_val!r}"
+                )
+        self._goal = Goal(
+            name=name,
+            verifier=verifier,
+            max_tokens=max_tokens,
+            max_calls=max_calls,
+            max_cost_usd=max_cost_usd,
+        )
         self._token = None  # type: ignore[assignment]
 
     def __enter__(self) -> Goal:
@@ -220,13 +307,26 @@ class _GoalContext:
 
 
 def _record_consume(tokens: int, calls: int, cost_usd: float) -> None:
-    """Hook called from ``BudgetGuard.consume`` to attribute the call to the
-    innermost active goal, if any. No-op when no goal is active.
+    """Attribute a consume call to the innermost active goal, if any.
+
+    Does not enforce per-goal limits; call ``_enforce_active_goal_limits`` after
+    session state is updated so both ledgers include the tripping call.
     """
     goal = _current_goal()
     if goal is None:
         return
     goal._record(_build_call(goal, tokens, calls, cost_usd))
+
+
+def _enforce_active_goal_limits(
+    tokens: float, calls: float, cost_usd: float
+) -> None:
+    """Enforce hard caps on the full active goal stack (innermost first)."""
+    stack = _active_goals.get()
+    if not stack:
+        return
+    for active in reversed(stack):
+        active._enforce_limits(tokens, calls, cost_usd)
 
 
 def _build_call(goal: Goal, tokens: int, calls: int, cost_usd: float) -> Call:
