@@ -73,6 +73,7 @@ class Goal:
     warn_at_pct: Optional[float] = None
     on_warning: Optional[Callable[["Goal", str], None]] = None
     _warned: bool = False
+    _warn_lock: threading.Lock = field(default_factory=threading.Lock, repr=False, compare=False)
     calls: List[Call] = field(default_factory=list)
     sub_goals: List["Goal"] = field(default_factory=list)
     attempts: int = 0
@@ -125,32 +126,45 @@ class Goal:
         return self.own_calls + sum(g.calls_used for g in self.sub_goals)
 
     def _check_warning(self) -> None:
-        """Fire on_warning once when this goal crosses warn_at_pct of a cap."""
-        if self._warned or self.warn_at_pct is None:
+        """Fire on_warning once when this goal crosses warn_at_pct of a cap.
+
+        Thread-safe: concurrent ``consume`` paths (including ThreadPoolExecutor
+        workers that inherit the goal ContextVar) must not double-fire.
+        The callback runs outside the lock so a re-entrant consume cannot deadlock.
+        """
+        if self.warn_at_pct is None:
+            return
+        # Fast path without lock when already warned.
+        if self._warned:
             return
         pct = self.warn_at_pct
-        parts: List[str] = []
-        if self.max_tokens is not None and self.max_tokens > 0:
-            ratio = self.tokens_used / self.max_tokens
-            if ratio >= pct:
-                parts.append(f"tokens {ratio:.0%}")
-        if self.max_calls is not None and self.max_calls > 0:
-            ratio = self.calls_used / self.max_calls
-            if ratio >= pct:
-                parts.append(f"calls {ratio:.0%}")
-        if self.max_cost_usd is not None and self.max_cost_usd > 0:
-            ratio = self.cost_usd / self.max_cost_usd
-            if ratio >= pct:
-                parts.append(f"cost {ratio:.0%}")
-        if not parts:
-            return
-        self._warned = True
-        msg = (
-            f"Goal {self.name!r} budget warning: {', '.join(parts)} "
-            f"of limit reached (threshold: {pct:.0%})"
-        )
-        if self.on_warning is not None:
-            self.on_warning(self, msg)
+        with self._warn_lock:
+            if self._warned:
+                return
+            parts: List[str] = []
+            if self.max_tokens is not None and self.max_tokens > 0:
+                ratio = self.tokens_used / self.max_tokens
+                if ratio >= pct:
+                    parts.append(f"tokens {ratio:.0%}")
+            if self.max_calls is not None and self.max_calls > 0:
+                ratio = self.calls_used / self.max_calls
+                if ratio >= pct:
+                    parts.append(f"calls {ratio:.0%}")
+            if self.max_cost_usd is not None and self.max_cost_usd > 0:
+                ratio = self.cost_usd / self.max_cost_usd
+                if ratio >= pct:
+                    parts.append(f"cost {ratio:.0%}")
+            if not parts:
+                return
+            # Claim the once-flag before releasing the lock / invoking callback.
+            self._warned = True
+            msg = (
+                f"Goal {self.name!r} budget warning: {', '.join(parts)} "
+                f"of limit reached (threshold: {pct:.0%})"
+            )
+            cb = self.on_warning
+        if cb is not None:
+            cb(self, msg)
 
     def _enforce_limits(
         self,

@@ -438,24 +438,35 @@ def test_goal_warning_does_not_raise() -> None:
 
 
 def test_goal_and_session_warnings_independent() -> None:
+    """Both session and goal soft warnings fire once, with distinct prefixes."""
     session_msgs = []
     goal_msgs = []
+    # Session warns at 20% of $10 (= $2). Goal warns at 20% of $5 (= $1).
+    # Hard caps stay above total spend so only soft warnings fire.
     guard = BudgetGuard(
         max_cost_usd=10.0,
-        warn_at_pct=0.9,
+        warn_at_pct=0.2,
         on_warning=lambda m: session_msgs.append(m),
     )
     with guard.goal(
         "g2",
         verifier=lambda: True,
-        max_cost_usd=1.0,
-        warn_at_pct=0.5,
+        max_cost_usd=5.0,
+        warn_at_pct=0.2,
         on_warning=lambda g, m: goal_msgs.append(m),
     ) as g:
         g.attempt()
-        guard.consume(cost_usd=0.55)
+        guard.consume(cost_usd=1.10)  # goal 22% -> goal warn; session 11%
         assert len(goal_msgs) == 1
+        assert "Goal 'g2'" in goal_msgs[0]
         assert session_msgs == []
+        guard.consume(cost_usd=1.00)  # total $2.10 -> session 21% warn
+        assert len(session_msgs) == 1
+        assert session_msgs[0].startswith("Budget warning:")
+        assert "Goal " not in session_msgs[0]
+        guard.consume(cost_usd=0.10)
+        assert len(goal_msgs) == 1
+        assert len(session_msgs) == 1
 
 
 def test_nested_goal_child_warning_isolated() -> None:
@@ -529,3 +540,37 @@ def test_goal_warn_fuzz_under_threshold_no_callback() -> None:
                 guard.consume(cost_usd=c)
                 spent += c
         assert msgs == []
+
+
+def test_goal_warning_once_under_threadpool() -> None:
+    """Concurrent consume via ThreadPoolExecutor must not double-fire on_warning."""
+    import time
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    msgs = []
+
+    def on_warn(g, msg: str) -> None:
+        # Slow callback widens the race window if _warned is not locked.
+        time.sleep(0.05)
+        msgs.append(msg)
+
+    # High hard cap so 16 concurrent consumes only trip soft warn, not BudgetExceeded.
+    guard = BudgetGuard(max_cost_usd=200.0)
+
+    def worker() -> None:
+        guard.consume(cost_usd=1.0)
+
+    with guard.goal(
+        "race",
+        verifier=lambda: True,
+        max_cost_usd=100.0,
+        warn_at_pct=0.05,  # warn at $5
+        on_warning=on_warn,
+    ) as g:
+        g.attempt()
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            futs = [pool.submit(worker) for _ in range(16)]
+            for f in as_completed(futs):
+                f.result()
+    assert len(msgs) == 1, f"expected once-per-goal warn, got {len(msgs)}: {msgs!r}"
+    assert "Goal 'race'" in msgs[0]
