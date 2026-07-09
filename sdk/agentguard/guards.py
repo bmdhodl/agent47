@@ -446,23 +446,18 @@ class BudgetGuard(BaseGuard):
         max_tokens: Optional[int] = None,
         max_calls: Optional[int] = None,
         max_cost_usd: Optional[float] = None,
+        warn_at_pct: Optional[float] = None,
+        on_warning: Optional[Callable[..., None]] = None,
     ) -> Any:
-        """Open a goal metering block with optional per-goal hard caps.
+        """Goal metering; optional caps and once-per-goal ``on_warning(goal, msg)``.
 
-        Every ``consume`` inside attributes to the goal. Optional
-        ``max_cost_usd`` / ``max_tokens`` / ``max_calls`` raise
-        ``BudgetExceeded`` when that goal's rollup (incl. sub-goals)
-        crosses the cap. Session limits on this guard still apply.
-
-        See ``agentguard.goal.Goal`` for the ledger shape.
+        Caps raise ``BudgetExceeded``. ``warn_at_pct`` needs a max_* and does not raise.
         """
         from .goal import _GoalContext
         return _GoalContext(
-            name,
-            verifier,
-            max_tokens=max_tokens,
-            max_calls=max_calls,
-            max_cost_usd=max_cost_usd,
+            name, verifier,
+            max_tokens=max_tokens, max_calls=max_calls, max_cost_usd=max_cost_usd,
+            warn_at_pct=warn_at_pct, on_warning=on_warning,
         )
 
 

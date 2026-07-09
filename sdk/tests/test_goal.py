@@ -387,3 +387,145 @@ def test_goal_rejects_nonfinite_max_cost() -> None:
     guard = BudgetGuard(max_cost_usd=1.0)
     with pytest.raises(ValueError, match="finite"):
         guard.goal("x", verifier=lambda: True, max_cost_usd=float("nan"))
+
+
+def test_goal_warning_fires_once() -> None:
+    msgs = []
+    goals = []
+
+    def on_warn(g, msg: str) -> None:
+        goals.append(g.name)
+        msgs.append(msg)
+
+    guard = BudgetGuard(max_cost_usd=50.0)
+    with guard.goal(
+        "warn-me",
+        verifier=lambda: True,
+        max_cost_usd=1.0,
+        warn_at_pct=0.8,
+        on_warning=on_warn,
+    ) as g:
+        g.attempt()
+        guard.consume(cost_usd=0.70)
+        assert msgs == []
+        guard.consume(cost_usd=0.15)
+        assert len(msgs) == 1
+        assert "Goal 'warn-me'" in msgs[0]
+        assert goals == ["warn-me"]
+        guard.consume(cost_usd=0.04)
+        assert len(msgs) == 1
+    assert g.succeeded is True
+
+
+def test_goal_warning_does_not_raise() -> None:
+    from agentguard import BudgetExceeded
+
+    msgs = []
+    guard = BudgetGuard(max_cost_usd=50.0)
+    with pytest.raises(BudgetExceeded, match="Goal 'hard'"):
+        with guard.goal(
+            "hard",
+            verifier=lambda: True,
+            max_cost_usd=0.50,
+            warn_at_pct=0.5,
+            on_warning=lambda g, m: msgs.append(m),
+        ) as g:
+            g.attempt()
+            guard.consume(cost_usd=0.30)
+            guard.consume(cost_usd=0.30)
+    assert len(msgs) == 1
+    assert abs(g.cost_usd - 0.60) < 1e-9
+
+
+def test_goal_and_session_warnings_independent() -> None:
+    session_msgs = []
+    goal_msgs = []
+    guard = BudgetGuard(
+        max_cost_usd=10.0,
+        warn_at_pct=0.9,
+        on_warning=lambda m: session_msgs.append(m),
+    )
+    with guard.goal(
+        "g2",
+        verifier=lambda: True,
+        max_cost_usd=1.0,
+        warn_at_pct=0.5,
+        on_warning=lambda g, m: goal_msgs.append(m),
+    ) as g:
+        g.attempt()
+        guard.consume(cost_usd=0.55)
+        assert len(goal_msgs) == 1
+        assert session_msgs == []
+
+
+def test_nested_goal_child_warning_isolated() -> None:
+    parent_msgs = []
+    child_msgs = []
+    guard = BudgetGuard(max_cost_usd=50.0)
+    with guard.goal(
+        "parent",
+        verifier=lambda: True,
+        max_cost_usd=10.0,
+        warn_at_pct=0.8,
+        on_warning=lambda g, m: parent_msgs.append(m),
+    ) as parent:
+        parent.attempt()
+        with guard.goal(
+            "child",
+            verifier=lambda: True,
+            max_cost_usd=1.0,
+            warn_at_pct=0.5,
+            on_warning=lambda g, m: child_msgs.append(m),
+        ) as child:
+            child.attempt()
+            guard.consume(cost_usd=0.60)
+            assert len(child_msgs) == 1
+            assert parent_msgs == []
+
+
+def test_goal_warn_requires_max() -> None:
+    guard = BudgetGuard(max_cost_usd=5.0)
+    with pytest.raises(ValueError, match="warn_at_pct requires"):
+        guard.goal("x", verifier=lambda: True, warn_at_pct=0.8)
+
+
+def test_goal_on_warning_exception_propagates() -> None:
+    def boom(g, msg: str) -> None:
+        raise RuntimeError("callback failed")
+
+    guard = BudgetGuard(max_cost_usd=50.0)
+    with pytest.raises(RuntimeError, match="callback failed"):
+        with guard.goal(
+            "x",
+            verifier=lambda: True,
+            max_cost_usd=1.0,
+            warn_at_pct=0.5,
+            on_warning=boom,
+        ) as g:
+            g.attempt()
+            guard.consume(cost_usd=0.60)
+
+
+def test_goal_warn_fuzz_under_threshold_no_callback() -> None:
+    import random
+
+    rng = random.Random(1)
+    for _ in range(25):
+        msgs = []
+        guard = BudgetGuard(max_cost_usd=20.0)
+        with guard.goal(
+            "f",
+            verifier=lambda: True,
+            max_cost_usd=1.0,
+            warn_at_pct=0.8,
+            on_warning=lambda g, m: msgs.append(m),
+        ) as g:
+            g.attempt()
+            spent = 0.0
+            for _s in range(30):
+                c = rng.random() * 0.05
+                if spent + c >= 0.79:
+                    break
+                guard.consume(cost_usd=c)
+                spent += c
+        assert msgs == []

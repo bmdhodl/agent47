@@ -70,6 +70,9 @@ class Goal:
     max_tokens: Optional[int] = None
     max_calls: Optional[int] = None
     max_cost_usd: Optional[float] = None
+    warn_at_pct: Optional[float] = None
+    on_warning: Optional[Callable[["Goal", str], None]] = None
+    _warned: bool = False
     calls: List[Call] = field(default_factory=list)
     sub_goals: List["Goal"] = field(default_factory=list)
     attempts: int = 0
@@ -120,6 +123,34 @@ class Goal:
     def calls_used(self) -> int:
         """Total calls: direct records + sub-goal totals."""
         return self.own_calls + sum(g.calls_used for g in self.sub_goals)
+
+    def _check_warning(self) -> None:
+        """Fire on_warning once when this goal crosses warn_at_pct of a cap."""
+        if self._warned or self.warn_at_pct is None:
+            return
+        pct = self.warn_at_pct
+        parts: List[str] = []
+        if self.max_tokens is not None and self.max_tokens > 0:
+            ratio = self.tokens_used / self.max_tokens
+            if ratio >= pct:
+                parts.append(f"tokens {ratio:.0%}")
+        if self.max_calls is not None and self.max_calls > 0:
+            ratio = self.calls_used / self.max_calls
+            if ratio >= pct:
+                parts.append(f"calls {ratio:.0%}")
+        if self.max_cost_usd is not None and self.max_cost_usd > 0:
+            ratio = self.cost_usd / self.max_cost_usd
+            if ratio >= pct:
+                parts.append(f"cost {ratio:.0%}")
+        if not parts:
+            return
+        self._warned = True
+        msg = (
+            f"Goal {self.name!r} budget warning: {', '.join(parts)} "
+            f"of limit reached (threshold: {pct:.0%})"
+        )
+        if self.on_warning is not None:
+            self.on_warning(self, msg)
 
     def _enforce_limits(
         self,
@@ -261,6 +292,8 @@ class _GoalContext:
         max_tokens: Optional[int] = None,
         max_calls: Optional[int] = None,
         max_cost_usd: Optional[float] = None,
+        warn_at_pct: Optional[float] = None,
+        on_warning: Optional[Callable[["Goal", str], None]] = None,
     ) -> None:
         if not callable(verifier):
             raise TypeError(
@@ -281,12 +314,35 @@ class _GoalContext:
                 raise ValueError(
                     f"{limit_name} must be non-negative, got {limit_val!r}"
                 )
+        if warn_at_pct is not None:
+            if not isinstance(warn_at_pct, (int, float)) or isinstance(
+                warn_at_pct, bool
+            ):
+                raise TypeError(
+                    f"warn_at_pct must be a number, got {type(warn_at_pct).__name__}"
+                )
+            if isinstance(warn_at_pct, float) and not math.isfinite(warn_at_pct):
+                raise ValueError(f"warn_at_pct must be finite, got {warn_at_pct!r}")
+            if not (0.0 < float(warn_at_pct) <= 1.0):
+                raise ValueError(
+                    f"warn_at_pct must be in (0, 1], got {warn_at_pct!r}"
+                )
+            if max_tokens is None and max_calls is None and max_cost_usd is None:
+                raise ValueError(
+                    "warn_at_pct requires max_tokens, max_calls, or max_cost_usd"
+                )
+        if on_warning is not None and not callable(on_warning):
+            raise TypeError(
+                f"on_warning must be callable, got {type(on_warning).__name__}"
+            )
         self._goal = Goal(
             name=name,
             verifier=verifier,
             max_tokens=max_tokens,
             max_calls=max_calls,
             max_cost_usd=max_cost_usd,
+            warn_at_pct=float(warn_at_pct) if warn_at_pct is not None else None,
+            on_warning=on_warning,
         )
         self._token = None  # type: ignore[assignment]
 
@@ -333,6 +389,7 @@ def _enforce_active_goal_limits(
     if not stack:
         return
     for active in reversed(stack):
+        active._check_warning()
         active._enforce_limits(tokens, calls, cost_usd)
 
 
