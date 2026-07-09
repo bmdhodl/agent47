@@ -274,7 +274,7 @@ class BudgetGuard(BaseGuard):
 
         Raises:
             TypeError: If any argument is not a number.
-            ValueError: If any argument is not finite (NaN or inf).
+            ValueError: If any argument is not finite (NaN or inf) or is negative.
             BudgetExceeded: If any configured limit is exceeded.
         """
         if not isinstance(tokens, (int, float)):
@@ -291,10 +291,14 @@ class BudgetGuard(BaseGuard):
             )
         # A non-finite value (NaN/inf) would silently defeat budget enforcement:
         # NaN poisons the running total and `NaN > max` is always False, so the
-        # guard would never fire again. Reject it loudly instead.
+        # guard would never fire again. Negative values reduce running totals and
+        # can similarly bypass enforcement (e.g. consume(cost_usd=-100) after spend).
+        # Reject both classes loudly before any state mutation.
         for _name, _val in (("tokens", tokens), ("calls", calls), ("cost_usd", cost_usd)):
             if isinstance(_val, float) and not math.isfinite(_val):
                 raise ValueError(f"{_name} must be finite, got {_val!r}")
+            if _val < 0:
+                raise ValueError(f"{_name} must be non-negative, got {_val!r}")
         # Attribute the call to any active goal BEFORE budget checks so the
         # goal ledger includes the call even when this consume call is the one
         # that trips BudgetExceeded.

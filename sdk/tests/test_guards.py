@@ -876,6 +876,32 @@ class TestNonFiniteAndSerializationHardening(unittest.TestCase):
         with self.assertRaises(BudgetExceeded):
             guard.consume(cost_usd=3.0)
 
+    def test_budgetguard_rejects_negative_cost(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        guard.consume(cost_usd=2.0)
+        with self.assertRaises(ValueError):
+            guard.consume(cost_usd=-1.0)
+        # Negative rejected before mutate: spend stays at 2.0 (no refund).
+        self.assertAlmostEqual(guard.state.cost_used, 2.0)
+        # Enforcement still works after the bad call.
+        with self.assertRaises(BudgetExceeded):
+            guard.consume(cost_usd=4.0)
+
+    def test_budgetguard_rejects_negative_tokens_and_calls(self):
+        guard = BudgetGuard(max_tokens=100, max_calls=10)
+        with self.assertRaises(ValueError):
+            guard.consume(tokens=-1)
+        with self.assertRaises(ValueError):
+            guard.consume(calls=-1)
+        guard.consume(tokens=10, calls=1)
+        self.assertEqual(guard.state.tokens_used, 10)
+        self.assertEqual(guard.state.calls_used, 1)
+
+    def test_budgetguard_allows_zero_consume(self):
+        guard = BudgetGuard(max_cost_usd=1.0)
+        guard.consume(cost_usd=0.0, tokens=0, calls=0)
+        self.assertEqual(guard.state.cost_used, 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()
