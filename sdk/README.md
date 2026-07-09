@@ -202,6 +202,14 @@ print(g.duration_sec)  # 47.2
 print(g.to_dict())     # JSON-serializable ledger
 ```
 
+Optional hard caps stop a single task even when the session budget still has headroom:
+
+```python
+with guard.goal("refund ch_abc123", verifier=refund_verified, max_cost_usd=0.50) as g:
+    g.attempt()
+    # ... consume until the goal (not the session) trips BudgetExceeded
+```
+
 Goals nest. A parent goal that spawns sub-goals reports `cost_usd` as own
 direct calls plus sub-goal totals (no double-counting). Goals do not cross
 sessions; serialize and ship the ledger to your dashboard or analytics
