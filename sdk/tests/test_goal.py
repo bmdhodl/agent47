@@ -371,8 +371,19 @@ def test_goal_limit_fuzz_over_always_raises() -> None:
     rng = random.Random(7)
     guard = BudgetGuard(max_cost_usd=100.0)
     for _ in range(20):
-        with pytest.raises(BudgetExceeded, match="Goal "):
+        raised = False
+        try:
             with guard.goal("blow", verifier=lambda: True, max_cost_usd=0.10) as g:
                 g.attempt()
-                while True:
+                for _step in range(50):
                     guard.consume(cost_usd=rng.uniform(0.03, 0.08))
+        except BudgetExceeded as e:
+            raised = True
+            assert "Goal " in str(e)
+        assert raised, "expected BudgetExceeded within 50 consumes"
+
+
+def test_goal_rejects_nonfinite_max_cost() -> None:
+    guard = BudgetGuard(max_cost_usd=1.0)
+    with pytest.raises(ValueError, match="finite"):
+        guard.goal("x", verifier=lambda: True, max_cost_usd=float("nan"))

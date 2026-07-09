@@ -17,6 +17,7 @@ rationale.
 """
 from __future__ import annotations
 
+import math
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -270,7 +271,13 @@ class _GoalContext:
             ("max_calls", max_calls),
             ("max_cost_usd", max_cost_usd),
         ):
-            if limit_val is not None and limit_val < 0:
+            if limit_val is None:
+                continue
+            if isinstance(limit_val, float) and not math.isfinite(limit_val):
+                raise ValueError(
+                    f"{limit_name} must be finite, got {limit_val!r}"
+                )
+            if limit_val < 0:
                 raise ValueError(
                     f"{limit_name} must be non-negative, got {limit_val!r}"
                 )

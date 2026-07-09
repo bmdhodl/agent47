@@ -447,38 +447,14 @@ class BudgetGuard(BaseGuard):
         max_calls: Optional[int] = None,
         max_cost_usd: Optional[float] = None,
     ) -> Any:
-        """Open a goal-level metering (and optional hard-cap) block.
+        """Open a goal metering block with optional per-goal hard caps.
 
-        Returns a context manager. Inside the block, every ``consume(...)`` call
-        is also recorded against the goal's ledger. Optional per-goal limits
-        raise ``BudgetExceeded`` when that goal's rollup (including nested
-        sub-goals) crosses the cap — independent of the session budget on this
-        ``BudgetGuard``. On block exit, ``verifier`` runs and ``g.succeeded``
-        is populated.
+        Every ``consume`` inside attributes to the goal. Optional
+        ``max_cost_usd`` / ``max_tokens`` / ``max_calls`` raise
+        ``BudgetExceeded`` when that goal's rollup (incl. sub-goals)
+        crosses the cap. Session limits on this guard still apply.
 
-        Example::
-
-            guard = BudgetGuard(max_cost_usd=50.00)
-            with guard.goal(
-                "refund ch_abc123",
-                verifier=refund_ok,
-                max_cost_usd=0.50,
-            ) as g:
-                g.attempt()
-                agent.run_until_done()
-            print(g.cost_usd, g.attempts, g.succeeded, g.failure_cost)
-
-        See ``agentguard.goal.Goal`` for the full ledger shape.
-
-        Args:
-            name: Caller-supplied label for the goal.
-            verifier: Zero-arg callable returning bool.
-            max_tokens: Optional hard cap on tokens for this goal.
-            max_calls: Optional hard cap on call count for this goal.
-            max_cost_usd: Optional hard cap on USD cost for this goal.
-
-        Returns:
-            A context manager that yields a ``Goal`` instance.
+        See ``agentguard.goal.Goal`` for the ledger shape.
         """
         from .goal import _GoalContext
         return _GoalContext(
