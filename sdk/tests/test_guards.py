@@ -836,5 +836,72 @@ class TestEvalNoBudgetWarnings(unittest.TestCase):
         self.assertFalse(result.passed)
 
 
+
+class TestNonFiniteAndSerializationHardening(unittest.TestCase):
+    """Regression tests for two red-team findings (2026-07).
+
+    1. LoopGuard.check() previously raised TypeError from json.dumps on any
+       non-JSON-serializable tool_args (datetime, set, custom object) before any
+       loop logic ran, crashing the caller's agent.
+    2. A single NaN cost_usd permanently disabled BudgetGuard, because NaN poisons
+       the running total and ``NaN > max`` is always False.
+    """
+
+    def test_loopguard_tolerates_non_serializable_args(self):
+        from datetime import datetime
+
+        guard = LoopGuard(max_repeats=3)
+        args = {"when": datetime(2026, 7, 7, 12, 0, 0)}
+        guard.check("search", args)   # must not raise TypeError
+        guard.check("search", args)
+        with self.assertRaises(LoopDetected):  # loop still detected on the 3rd
+            guard.check("search", args)
+
+    def test_budgetguard_rejects_nan_cost(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        with self.assertRaises(ValueError):
+            guard.consume(cost_usd=float("nan"))
+        # NaN was rejected before mutating state, so enforcement still works:
+        with self.assertRaises(BudgetExceeded):
+            guard.consume(cost_usd=10.0)
+
+    def test_budgetguard_rejects_inf_cost(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        with self.assertRaises(ValueError):
+            guard.consume(cost_usd=float("inf"))
+
+    def test_budgetguard_still_enforces_normal_over_budget(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        guard.consume(cost_usd=3.0)
+        with self.assertRaises(BudgetExceeded):
+            guard.consume(cost_usd=3.0)
+
+    def test_budgetguard_rejects_negative_cost(self):
+        guard = BudgetGuard(max_cost_usd=5.0)
+        guard.consume(cost_usd=2.0)
+        with self.assertRaises(ValueError):
+            guard.consume(cost_usd=-1.0)
+        # Negative rejected before mutate: spend stays at 2.0 (no refund).
+        self.assertAlmostEqual(guard.state.cost_used, 2.0)
+        # Enforcement still works after the bad call.
+        with self.assertRaises(BudgetExceeded):
+            guard.consume(cost_usd=4.0)
+
+    def test_budgetguard_rejects_negative_tokens_and_calls(self):
+        guard = BudgetGuard(max_tokens=100, max_calls=10)
+        with self.assertRaises(ValueError):
+            guard.consume(tokens=-1)
+        with self.assertRaises(ValueError):
+            guard.consume(calls=-1)
+        guard.consume(tokens=10, calls=1)
+        self.assertEqual(guard.state.tokens_used, 10)
+        self.assertEqual(guard.state.calls_used, 1)
+
+    def test_budgetguard_allows_zero_consume(self):
+        guard = BudgetGuard(max_cost_usd=1.0)
+        guard.consume(cost_usd=0.0, tokens=0, calls=0)
+        self.assertEqual(guard.state.cost_used, 0.0)
+
+
 if __name__ == "__main__":
     unittest.main()
