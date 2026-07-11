@@ -1,0 +1,3 @@
+{"event": "session.start", "session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:21", "agent": "claude-code"}
+{"event": "session.finish", "session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:22", "status": "ok", "claims_verdict": "GREEN"}
+{"event": "session.finish", "session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:22", "status": "ok", "observed_by": "stop-hook", "claims_verdict": "GREEN", "claims_unverified": []}

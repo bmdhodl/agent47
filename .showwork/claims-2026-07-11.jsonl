@@ -1,0 +1,3 @@
+{"session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:21", "claim": "Stop-hook adapter installed in .claude/settings.json", "severity": "RED", "check": {"type": "file_contains", "path": ".claude/settings.json", "pattern": "showwork.cli stop-hook"}}
+{"session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:21", "claim": "agent prompt block added to AGENTS.md", "severity": "RED", "check": {"type": "file_contains", "path": "AGENTS.md", "pattern": "Outcome Verification \\(showwork\\)"}}
+{"session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:22", "claim": "agent prompt block added to CLAUDE.md", "severity": "RED", "check": {"type": "file_contains", "path": "CLAUDE.md", "pattern": "Outcome Verification \\(showwork\\)"}}
