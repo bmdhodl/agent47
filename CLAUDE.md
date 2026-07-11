@@ -137,3 +137,16 @@ Core message to preserve:
 
 AgentGuard stops coding agents from looping, retrying forever, and burning
 budget.
+
+
+## Outcome Verification (showwork)
+
+Every agent session that changes this repo records falsifiable claims and closes through the showwork exit gate (github.com/bmdhodl/showwork). Receipts live in `.showwork/` and ship with the PR.
+
+1. Start material work: `python -m showwork.cli start --session <task-slug> --agent <claude-code|codex|gemini>`
+2. After each completed change, record a claim with a check that can fail (types: `file_exists`, `file_contains`, `path_moved`, `frontmatter`, `glob_count`, `command`):
+   `python -m showwork.cli claim --session <task-slug> --claim "<what changed>" --type file_contains --path <file> --pattern "<regex>"`
+3. Before reporting success: `python -m showwork.cli finish --session <task-slug> --status ok`
+   - REFUSED (exit 2) means a claimed "done" is not backed by reality. Fix the gap or retract the claim truthfully (`retract`), then finish again. NEVER pass `--no-verify` to manufacture a clean close; if genuinely stuck, `finish --status blocked`.
+4. `git add .showwork/` and commit the ledger with your change - the receipt is part of the PR. Do not gitignore it. The ledger is append-only; never rewrite history in it.
+5. The Stop hook in `.claude/settings.json` records a claims verdict when a session stops. It observes; it never blocks. The explicit `finish` is the gate.
