@@ -2,592 +2,122 @@
 
 # AgentGuard
 
-**Stop runaway Python agents before they burn money.**
+**Stop runaway agents before they burn money.**
 
-AgentGuard47 is a zero-dependency runtime control SDK for Python agents. Add
-hard budget caps, loop detection, retry limits, timeouts, local traces, and
-incident reports without changing agent frameworks or sending data anywhere by
-default.
-
-Use it when an agent can call tools, retry work, review code, or run long
-enough to create surprise spend.
+Zero-dependency Python kill switch for AI agents. Hard budget caps. Loop detection. Local traces. MIT.
 
 [![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/bmdhodl/agent47)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE)
-[![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/score.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
-[![GitHub stars](https://img.shields.io/github/stars/bmdhodl/agent47?style=social)](https://github.com/bmdhodl/agent47)
-
-> **⭐ Star this repo** if AgentGuard stops one runaway run for you. It is how other builders find it.
-
-## Install
-
-### As a Python package
 
 ```bash
 pip install agentguard47
-agentguard
 ```
 
-The bare `agentguard` command prints a 60-second local tour. If the script is
-not on PATH, use `python -m agentguard` instead. Both run the same CLI.
+## Getting started
 
-### As a skill (Codex, Claude Code, Cursor, Cline, and more)
-
-```bash
-npx skills add bmdhodl/agent47
-```
-
-Or with GitHub CLI:
-
-```bash
-gh skill install bmdhodl/agent47 agentguard
-```
-
-## Why AgentGuard
-
-Most agent tooling tells you what happened after the run. AgentGuard stops the
-bad run while it is happening.
-
-AgentGuard is an **in-process agentic-loop guard**, not an LLM cost router. It
-runs inside the agent's process, sees the call graph, and raises exceptions
-that kill the run before the next bad call lands. Routers and gateways like
-Manifest or Vercel AI Gateway sit at the network layer and shape egress
-traffic. The layers are complementary, see the
-[competitive notes](#runtime-control-vs-observability) for when each fits.
-
-The headline value is the **cross-call, cross-provider budget envelope**: one
-ceiling that holds across every tool call, every retry, and every provider in
-the run. Single-call output caps are table stakes (Anthropic now ships
-per-tool `max_tokens` on the advisor tool, on 2026-06-02, see
-[release notes](https://platform.claude.com/docs/en/release-notes/overview#june-2-2026)).
-A single-call cap stops one oversized response. It does not stop a loop that
-makes 200 small calls, a retry storm across providers, or a run that mixes
-OpenAI and Anthropic and blows the combined budget. AgentGuard handles that
-envelope in-process and raises the exception that ends the run.
-
-| Problem | What AgentGuard does |
-|---|---|
-| Agent loops on the same tool | Raises `LoopDetected` |
-| Flaky tool retries forever | Raises `RetryLimitExceeded` |
-| Run spends too much across many calls | Raises `BudgetExceeded` |
-| Run mixes OpenAI and Anthropic and blows the combined cap | Raises `BudgetExceeded` |
-| Run hangs | Raises `TimeoutExceeded` |
-| Team needs proof | Writes local JSONL traces and incident reports |
-| Dashboard comes later | `HttpSink` mirrors events only when you opt in |
-
-| Scope of cap | Anthropic per-tool `max_tokens` | AgentGuard `BudgetGuard` + `RateLimitGuard` + `TimeoutGuard` |
-|---|---|---|
-| One tool call, output tokens only | Yes | Yes |
-| Many calls in one run | No | Yes |
-| Mixed providers (OpenAI + Anthropic) in one run | No | Yes |
-| Loop detection across repeated calls | No | Yes |
-| Retry storm cap | No | Yes |
-| Calls per minute | No | Yes |
-| Wall-clock timeout | No | Yes |
-| In-process exception that ends the run | No | Yes |
-
-## How AgentGuard Differs (Wedge Map)
-
-AgentGuard's wedge is the **runtime envelope**: budget, token, rate, retry, and loop caps enforced at the call site while the agent is running.
-
-| Adjacent Tool | The Axis | AgentGuard's Runtime Wedge |
-|---|---|---|
-| **WorkOS Scoped Credentials** | **Identity vs. Execution** | WorkOS bounds what an agent is allowed to do (identity, scopes, audit). AgentGuard enforces what the agent is doing right now (budget, tokens, loops). They compose: WorkOS defines the envelope; AgentGuard enforces it at runtime. |
-| **Enterprise Budget Caps (e.g., Uber)** | **Policy vs. Call Site** | Org-wide caps prevent surprise bills (like Uber's $1,500 per developer Claude Code limit) but often rely on management memos or monthly billing alerts. AgentGuard brings that cap to the call site, stopping the runaway run in seconds instead of at the end of the month. |
-| **Vendor Per-Tool Caps** | **Single Call vs. Cross-Tool** | Anthropic's `max_tokens` on a tool call stops one oversized response. It does not stop a loop of 200 small calls, a retry storm, or a run that mixes providers. AgentGuard handles the budget envelope across every call, tool, and provider in the run. |
-
-Design constraints:
-
-- zero runtime dependencies
-- MIT licensed
-- local-first by default
-- no API key required for local proof
-- no network calls unless you configure `HttpSink`
-- guards raise exceptions inside the running process
-
-## Scope
-
-AgentGuard's scope is the **in-process runtime envelope**: budget, token,
-rate, retry, loop, and timeout caps that fire inside the agent's Python
-process and raise exceptions that end the run.
-
-OS-level containment is **out of scope**: process sandboxes, VMs, filesystem
-boundaries, and egress controls live one layer down from AgentGuard. For
-that layer, see Anthropic's
-["How we contain Claude across products" (2026-05-30)](https://www.anthropic.com/news/how-we-contain-claude)
-as the canonical reference. The layers are complementary: containment
-bounds what the process can touch; AgentGuard bounds what the agent loop
-inside that process can spend.
-
-## Real Incidents AgentGuard Prevents
-
-### PocketOS — agent deleted prod DB and backups in 9 seconds (May 2026)
-
-A Cursor agent ran a destructive sequence against PocketOS production and
-wiped the live database. Backups went with it.
-
-Reported root cause from the team's postmortem:
-
-- one API key had write + delete on both prod and backups
-- backups lived in the same Railway environment as prod
-- no confirmation step before destructive actions
-- the agent was given enough rope to chain the calls in one turn
-
-Source: [r/devops thread](https://www.reddit.com/r/devops/comments/1t4au5h/pocketos_lost_their_prod_db_backups_to_a_cursor/)
-
-The "AI did it" framing buries the actual lesson: the blast radius was
-infra, not the model. AgentGuard does not replace least-privilege creds or
-isolated backups. It does kill the run before a loop, retry storm, or
-runaway turn finishes the job.
-
-A `BudgetGuard` plus `LoopGuard` wired around the agent loop caps how much
-it can do in one session:
-
-```python
-from agentguard import BudgetGuard, LoopGuard, RateLimitGuard, Tracer
-
-budget = BudgetGuard(max_calls=20, max_cost_usd=1.00)
-loop = LoopGuard(max_repeats=2)
-rate = RateLimitGuard(max_calls_per_minute=10)
-tracer = Tracer(service="cursor-agent", guards=[loop, rate])
-
-with tracer.trace("agent.run"):
-    budget.consume(calls=1)
-    # tool call here — guards raise on overrun
-```
-
-A 9-second sequence of destructive calls trips `LoopGuard` or
-`RateLimitGuard` long before it finishes. The exception kills the run
-in-process. Pair this with scoped credentials and out-of-environment
-backups for the rest of the blast radius.
-
-### Microsoft — engineers told to ease off Claude Code over inference cost (May 2026)
-
-Microsoft engineering management reportedly asked teams to reduce Claude
-Code usage after monthly inference bills exceeded budget. If Microsoft
-cannot absorb coding-agent inference cost without a memo, runaway agent
-spend is no longer a solo-founder problem.
-
-Source: [TheNextWeb](https://thenextweb.com/news/microsoft-claude-code-retreat-ai-cost)
-
-A memo asks engineers to self-throttle. A `BudgetGuard` makes the cap a
-config value enforced inside the process:
-
-```python
-from agentguard import BudgetGuard
-
-BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
-```
-
-The guard raises `BudgetExceeded` before the run blows the cap. Same
-conversation, one config line instead of a memo.
-
-## Local Proof in 60 Seconds
+### 1. Install and verify
 
 ```bash
 pip install agentguard47
-agentguard doctor
-agentguard demo
-agentguard quickstart --framework raw --write
-python agentguard_raw_quickstart.py
-agentguard report .agentguard/traces.jsonl
+agentguard doctor   # package ok?
+agentguard demo     # offline proof (no API keys)
 ```
 
-This stays fully local. No API key, dashboard, or network call is required
-after installation.
-
-What you should see:
-
-- `doctor` verifies the installed package and writes a local trace.
-- `demo` visibly trips budget, loop, and retry guards offline.
-- `quickstart --write` creates `agentguard_raw_quickstart.py`.
-- The generated file exits cleanly after catching simulated budget and loop
-  stops.
-- `report` shows local trace counts, cost, savings, and guard events.
-
-Notebook version:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bmdhodl/agent47/blob/v1.2.13/examples/quickstart.ipynb)
-
-## Show Your Repo Is Guarded
-
-Once AgentGuard stops a runaway run for you, add the badge to your README so
-other builders find it:
-
-```bash
-agentguard badge
-```
-
-```markdown
-[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
-```
-
-[![Guarded by AgentGuard](https://img.shields.io/badge/guarded%20by-AgentGuard-3b82f6)](https://github.com/bmdhodl/agent47)
-
-`agentguard badge --format rst` and `--format html` print the same badge for
-other doc formats.
-
-## Copy-Paste Repo Setup
-
-Use this when you want a coding agent or teammate to add AgentGuard safely:
-
-```bash
-pip install agentguard47
-agentguard doctor
-agentguard quickstart --framework raw --write
-python agentguard_raw_quickstart.py
-agentguard report .agentguard/traces.jsonl
-```
-
-Optional shared local defaults, saved as `.agentguard.json` in the repo root:
-
-```json
-{
-  "profile": "coding-agent",
-  "service": "my-agent",
-  "trace_file": ".agentguard/traces.jsonl",
-  "budget_usd": 5.0
-}
-```
-
-Keep the first PR local-only. Add hosted ingest later only when retained
-incidents, alerts, or team visibility matter.
-
-## Quickstart: Guard One Agent Run
+### 2. Guard an OpenAI client
 
 ```python
-from agentguard import BudgetGuard, JsonlFileSink, LoopGuard, Tracer
+from agentguard import BudgetGuard, LoopGuard, Tracer, patch_openai
 
-budget = BudgetGuard(max_cost_usd=5.00, max_calls=50, warn_at_pct=0.8)
+budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 loop = LoopGuard(max_repeats=3)
-tracer = Tracer(
-    sink=JsonlFileSink(".agentguard/traces.jsonl"),
-    service="support-agent",
-    guards=[loop],
-)
+tracer = Tracer(service="my-agent", guards=[loop])
 
-with tracer.trace("agent.run") as span:
-    budget.consume(calls=1, cost_usd=0.02)
-    loop.check("search", {"query": "refund policy"})
-    span.event("tool.call", data={"tool": "search", "query": "refund policy"})
-    # Call your agent or tool here.
+patch_openai(tracer, budget_guard=budget)
+# every OpenAI call is now traced + budget-enforced
 ```
 
-Inspect the local proof:
+When spend crosses the hard limit, `BudgetExceeded` is raised and the run stops.
+
+### 3. Cap a single task
+
+Session budget can still have headroom. One goal can still be killed:
+
+```python
+with budget.goal("refund", max_cost_usd=0.50, warn_at_pct=0.8) as g:
+    g.attempt()
+    budget.consume(cost_usd=0.12)
+    # BudgetExceeded names the goal when it crosses
+```
+
+### 4. Read the local proof
 
 ```bash
 agentguard report .agentguard/traces.jsonl
 agentguard incident .agentguard/traces.jsonl
 ```
 
-## Auto-Patch Provider SDKs
-
-If you already call OpenAI or Anthropic directly, patch once and keep using the
-provider normally:
-
-```python
-from agentguard import BudgetGuard, Tracer, patch_openai
-
-budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
-tracer = Tracer(service="support-agent")
-patch_openai(tracer, budget_guard=budget)
-
-# OpenAI chat completions are now traced and budget-enforced.
-```
-
-When accumulated cost crosses the hard limit, `BudgetExceeded` is raised and
-the agent stops.
-
-## Guards
-
-| Guard | Stops | Example |
-|---|---|---|
-| `BudgetGuard` | dollar, token, or call overruns | `BudgetGuard(max_cost_usd=5.00)` |
-| `LoopGuard` | exact repeated tool calls | `LoopGuard(max_repeats=3)` |
-| `FuzzyLoopGuard` | similar calls and A-B-A-B loops | `FuzzyLoopGuard(max_tool_repeats=5)` |
-| `RetryGuard` | retry storms on the same tool | `RetryGuard(max_retries=3)` |
-| `TimeoutGuard` | long-running jobs | `TimeoutGuard(max_seconds=300)` |
-| `RateLimitGuard` | calls per minute | `RateLimitGuard(max_calls_per_minute=60)` |
-| `BudgetAwareEscalation` | hard turns that need a stronger model | `BudgetAwareEscalation(...)` |
-
-Guards are static runtime checks. They do not ask another model whether a run is
-safe. They raise exceptions.
-
-## Examples
-
-All examples are local-first. No API key is required unless the example says so.
-
-| Example | What it proves |
-|---|---|
-| [`examples/try_it_now.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/try_it_now.py) | budget, loop, and retry stops |
-| [`examples/sticky_agent_proof.py`](https://github.com/bmdhodl/agent47/blob/main/examples/sticky_agent_proof.py) | one CrewAI-style retry storm proof with local incident and hosted NDJSON outputs |
-| [`examples/coding_agent_review_loop.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/coding_agent_review_loop.py) | review/refinement loop stopped by budget and retry guards |
-| [`examples/per_token_budget_spike.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/per_token_budget_spike.py) | one oversized token-heavy turn can blow a run budget |
-| [`examples/budget_aware_escalation.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/budget_aware_escalation.py) | when to escalate from a cheap model to a stronger one |
-| [`examples/decision_trace_workflow.py`](https://github.com/bmdhodl/agent47/blob/v1.2.13/examples/decision_trace_workflow.py) | proposal, edit, approval, and binding decision events |
-
-Sample incident:
-[`docs/examples/coding-agent-review-loop-incident.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md)
-
-Proof gallery:
-[`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md)
-
-Starter files:
-[`examples/starters/`](https://github.com/bmdhodl/agent47/tree/v1.2.13/examples/starters)
-
-## Framework Integrations
-
-AgentGuard can wrap raw Python code or integrate with common agent stacks.
+Or scaffold a starter file:
 
 ```bash
-agentguard quickstart --framework raw
-agentguard quickstart --framework openai
-agentguard quickstart --framework anthropic
-agentguard quickstart --framework langchain
-agentguard quickstart --framework langgraph
-agentguard quickstart --framework crewai
+agentguard quickstart --framework raw --write
+python agentguard_raw_quickstart.py
 ```
 
-Optional integration extras are opt-in. The core SDK stays stdlib-only.
+## What it stops
+
+| Problem | Guard | Exception |
+|---------|-------|-----------|
+| Spend blowup | `BudgetGuard` | `BudgetExceeded` |
+| Same tool forever | `LoopGuard` | `LoopDetected` |
+| Fuzzy / A-B-A-B loops | `FuzzyLoopGuard` | `LoopDetected` |
+| Retry storms | `RetryGuard` | `RetryLimitExceeded` |
+| Hung runs | `TimeoutGuard` | `TimeoutExceeded` |
+| Spam calls | `RateLimitGuard` | — |
+
+Not a dashboard. Not a model router. An **in-process exception** that kills the bad run mid-flight.
+
+## Features
+
+- **Hard stops** — exceptions inside your process, not after-the-fact alerts
+- **Task-level budgets** — `BudgetGuard.goal(...)` for sub-task caps + warn hooks
+- **Local traces** — JSONL by default; no network unless you opt in
+- **Zero deps** — stdlib only; Python 3.9+
+- **Provider patches** — `patch_openai` / `patch_anthropic`
+- **Framework hooks** — LangChain, LangGraph, CrewAI (optional extras)
+
+## Local by default
+
+- No API key required for local proof
+- No network unless you configure `HttpSink`
+- MIT licensed
+
+The SDK is the free local proof path. Start local. Add hosted ingest later only if you want retained history, alerts, team visibility, spend trends, hosted decision history, or dashboard-managed remote kill signals. Local guards remain authoritative. `HttpSink` mirrors trace and decision events; it does not execute remote kill signals by itself.
+
+## Integrations
+
+OpenAI · Anthropic · LangChain · LangGraph · CrewAI · raw agent loops
 
 ```bash
-pip install "agentguard47[langchain]"
-pip install "agentguard47[langgraph]"
-pip install "agentguard47[crewai]"
-pip install "agentguard47[otel]"
+pip install "agentguard47[langchain]"   # optional extras as needed
 ```
-
-## Runtime Control vs Observability
-
-AgentGuard is not a generic tracing platform. It is the local runtime stop
-layer.
-
-| Capability | AgentGuard |
-|---|---|
-| In-process hard budget caps | Yes |
-| Cross-call, cross-provider budget envelope | Yes |
-| Kill a bad run by raising an exception | Yes |
-| Loop and retry-storm detection | Yes |
-| Local JSONL traces | Yes |
-| Local incident reports | Yes |
-| Hosted ingest | Optional |
-| Required dashboard | No |
-| Runtime dependencies | None |
-
-Provider-native caps such as Anthropic's per-tool `max_tokens` cover one call
-on one provider. AgentGuard covers the whole run across every provider and
-every call. Use both: set the per-call cap at the provider, set the
-run-envelope cap in AgentGuard.
-
-Competitive notes:
-
-- [AgentGuard vs Vercel AI Gateway](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/vercel-ai-gateway.md)
-- [AgentGuard vs Manifest (LLM router)](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/competitive/manifest.md)
-- [Where AgentGuard fits in the agent security stack](https://github.com/bmdhodl/agent47/blob/main/docs/competitive/agent-security-stack.md)
-
-## Decision Traces
-
-Capture proposal, human edit, approval, override, and binding events through the
-same event pipeline:
-
-```python
-from agentguard import JsonlFileSink, Tracer, decision_flow
-
-tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"))
-
-with tracer.trace("agent.run") as run:
-    with decision_flow(
-        run,
-        workflow_id="deploy-review",
-        object_type="pull_request",
-        object_id="123",
-        actor_type="human",
-        actor_id="pat",
-    ) as decision:
-        decision.proposed({"action": "merge"})
-        decision.approved(comment="Looks safe")
-        decision.bound(binding_state="merged", outcome="success")
-```
-
-Supported event types:
-
-- `decision.proposed`
-- `decision.edited`
-- `decision.overridden`
-- `decision.approved`
-- `decision.bound`
-
-Guide: [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md)
-
-## MCP Server
-
-AgentGuard also ships a read-only MCP server for coding-agent workflows:
-
-```bash
-npx -y @agentguard47/mcp-server
-```
-
-Use the SDK to enforce local safety where the agent runs. Use MCP when a client
-like Codex, Claude Code, or Cursor needs read access to traces, decisions,
-costs, usage, and budget health.
-
-## Hosted Dashboard Boundary
-
-The SDK is the free local proof path. The hosted dashboard is for retained
-history, alerts, team visibility, spend trends, hosted decision history, and
-dashboard-managed remote kill signals.
-
-| Use local SDK when | Use hosted dashboard when |
-| --- | --- |
-| You are proving AgentGuard in one repo | Multiple people need the same incident history |
-| You need hard stops for loops, retries, timeouts, or budget burn | Runs need retained alerts and follow-up outside the terminal |
-| You want JSONL traces and reports without an API key | You need spend trends across traces, services, or teammates |
-| You are testing an agent before production | Operators need dashboard-managed remote kill signals |
-
-Start local. Add hosted ingest when the work becomes shared, expensive, or
-risky enough that local files are no longer enough.
-
-```python
-from agentguard import HttpSink, Tracer
-
-tracer = Tracer(
-    sink=HttpSink(
-        url="https://app.agentguard47.com/api/ingest",
-        api_key="ag_...",
-    )
-)
-```
-
-`HttpSink` mirrors trace and decision events to the dashboard. It does not
-execute remote kill signals by itself.
-
-Dashboard contract:
-[`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md)
-
-## Reports And CI Gates
-
-Generate a local incident report:
-
-```bash
-agentguard incident .agentguard/traces.jsonl --format markdown
-agentguard incident .agentguard/traces.jsonl --format html
-```
-
-Fail CI when a trace violates safety expectations:
-
-```python
-from agentguard import EvalSuite
-
-result = (
-    EvalSuite(".agentguard/traces.jsonl")
-    .assert_no_loops()
-    .assert_budget_under(tokens=50_000)
-    .assert_no_errors()
-    .run()
-)
-
-assert result.passed
-```
-
-## Package Facts
-
-- Package: [`agentguard47`](https://pypi.org/project/agentguard47/)
-- Python: 3.9+
-- License: MIT
-- Core runtime dependencies: zero
-- Trace format: JSONL
-- Local commands: `welcome`, `doctor`, `demo`, `quickstart`, `report`, `incident`, `eval`, `badge`
-- MCP package: [`@agentguard47/mcp-server`](https://github.com/bmdhodl/agent47/tree/v1.2.13/mcp-server)
-- Glama listing: [`AgentGuard47`](https://glama.ai/mcp/servers/bmdhodl/agent47)
-
-[![agent47 MCP server](https://glama.ai/mcp/servers/bmdhodl/agent47/badges/card.svg)](https://glama.ai/mcp/servers/bmdhodl/agent47)
 
 ## Docs
 
-| Topic | Link |
-|---|---|
-| Getting started | [`docs/guides/getting-started.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/getting-started.md) |
-| Coding-agent setup | [`docs/guides/coding-agents.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/coding-agents.md) |
-| Safety pack | [`docs/guides/coding-agent-safety-pack.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/coding-agent-safety-pack.md) |
-| Dashboard contract | [`docs/guides/dashboard-contract.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/dashboard-contract.md) |
-| Decision traces | [`docs/guides/decision-tracing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md) |
-| Managed sessions | [`docs/guides/managed-agent-sessions.md`](https://github.com/bmdhodl/agent47/blob/main/docs/guides/managed-agent-sessions.md) |
-| Activation metrics design | [`docs/guides/activation-metrics-design.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/activation-metrics-design.md) |
-| Proof gallery | [`docs/examples/proof-gallery.md`](https://github.com/bmdhodl/agent47/blob/main/docs/examples/proof-gallery.md) |
-| Releasing | [`docs/RELEASING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/RELEASING.md) |
-| Release cadence | [`docs/release/cadence.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/cadence.md) |
-| PyPI Trusted Publishing | [`docs/release/trusted-publishing.md`](https://github.com/bmdhodl/agent47/blob/main/docs/release/trusted-publishing.md) |
+- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/getting-started.md)
+- [Examples](https://github.com/bmdhodl/agent47/tree/v1.2.13/examples)
+- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.2.13/mcp-server) — `npx -y @agentguard47/mcp-server`
 
-## Architecture
+## Links
 
-```text
-agent code
-   |
-   v
-Tracer
-   |
-   +-- guards raise exceptions locally
-   |
-   +-- sinks write traces locally or mirror to hosted ingest
-```
+- PyPI: https://pypi.org/project/agentguard47/
+- Issues: https://github.com/bmdhodl/agent47/issues
 
-Repository layout:
+---
 
-```text
-sdk/          Python SDK package
-mcp-server/   read-only MCP server
-docs/         guides and competitive notes
-examples/     runnable local examples
-ops/          repo operating docs
-memory/       SDK-only state and decisions
-```
-
-## Security
-
-- No secrets are required for local mode.
-- Do not put API keys in `.agentguard.json`.
-- Hosted ingest API keys should be stored in environment variables.
-- Local guards remain authoritative even when hosted ingest is configured.
-
-### Threat model: agent data exfiltration
-
-A recurring class of agent attack uses the agent's own write surface as an
-outbound channel. Example pattern from Microsoft Copilot Cowork (May 2026):
-the agent emails the user's own inbox with no approval, the rendered message
-fetches an external image, and the image URL encodes data the attacker wanted
-out. AgentGuard does not replace an egress firewall or tool-permission layer,
-but it gives the agent runtime hard stops for runaway loops, retries, and
-budget burn that can turn one bad tool call into a sustained incident.
-
-Citation: https://simonwillison.net/2026/May/26/copilot-cowork-exfiltrates-files/
-
-Report security issues through GitHub Security Advisories or by email:
-`pat@bmdpat.com`.
-
-## Contributing
-
-Contributions are welcome when they keep the SDK small, local-first, and
-zero-dependency.
-
-Before opening a PR:
-
-```bash
-python -m pytest sdk/tests/ -v
-python -m ruff check sdk/agentguard/
-python scripts/sdk_release_guard.py
-```
-
-Useful links:
-
-- [`CONTRIBUTING.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/CONTRIBUTING.md)
-- [`GOLDEN_PRINCIPLES.md`](https://github.com/bmdhodl/agent47/blob/v1.2.13/GOLDEN_PRINCIPLES.md)
-
-## License
-
-MIT. See [`LICENSE`](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE).
+MIT · Built for people who ship agents and hate surprise bills.
 
 ## Latest Release Notes (1.2.13)
 
