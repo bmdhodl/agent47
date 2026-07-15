@@ -94,6 +94,8 @@ Not a dashboard. Not a model router. An **in-process exception** that kills the 
 - No network unless you configure `HttpSink`
 - MIT licensed
 
+The SDK is the free local proof path. Start local. Add hosted ingest later only if you want retained history, alerts, team visibility, spend trends, hosted decision history, or dashboard-managed remote kill signals. Local guards remain authoritative. `HttpSink` mirrors trace and decision events; it does not execute remote kill signals by itself.
+
 ## Integrations
 
 OpenAI · Anthropic · LangChain · LangGraph · CrewAI · raw agent loops
