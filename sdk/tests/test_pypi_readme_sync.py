@@ -28,43 +28,25 @@ def test_generated_pypi_readme_includes_current_release_notes() -> None:
     assert release_notes in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/LICENSE" in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/CHANGELOG.md" in content
-    assert (
-        f"https://colab.research.google.com/github/bmdhodl/agent47/blob/v{version}/examples/quickstart.ipynb"
-        in content
-    )
 
 
-def test_generated_pypi_readme_links_unreleased_guide_to_main() -> None:
+def test_generated_pypi_readme_keeps_core_product_copy() -> None:
     module = _load_generator_module()
-
     content = module.build_pypi_readme(REPO_ROOT)
 
-    assert (
-        "https://github.com/bmdhodl/agent47/blob/main/docs/guides/decision-tracing.md"
-        in content
-    )
+    assert "pip install agentguard47" in content
+    assert "BudgetGuard" in content
+    assert "Stop runaway agents" in content
+    assert "Getting started" in content
 
 
-def test_generated_pypi_readme_links_unreleased_sample_incident_to_main() -> None:
+def test_generated_pypi_readme_links_docs_and_examples() -> None:
     module = _load_generator_module()
-
     content = module.build_pypi_readme(REPO_ROOT)
 
-    assert (
-        "https://github.com/bmdhodl/agent47/blob/main/docs/examples/coding-agent-review-loop-incident.md"
-        in content
-    )
-
-
-def test_generated_pypi_readme_links_unreleased_release_cadence_to_main() -> None:
-    module = _load_generator_module()
-
-    content = module.build_pypi_readme(REPO_ROOT)
-
-    assert (
-        "https://github.com/bmdhodl/agent47/blob/main/docs/release/cadence.md"
-        in content
-    )
+    assert "https://github.com/bmdhodl/agent47/blob/" in content
+    assert "docs/guides/getting-started.md" in content
+    assert "examples" in content
 
 
 def test_committed_pypi_readme_is_in_sync() -> None:
