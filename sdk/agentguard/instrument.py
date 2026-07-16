@@ -61,7 +61,11 @@ def _emit_llm_result(
     so streaming chunks are not double-counted. Do not also call
     ``consume_billable`` for the same event — that would double-consume.
     """
-    from agentguard.precision_cost import resolve_billable_cost, log_consume_event
+    from agentguard.precision_cost import (
+        CostResolutionError,
+        log_consume_event,
+        resolve_billable_cost,
+    )
 
     # Prefer full response when available so provider cost fields are visible.
     billable_payload = response if response is not None else usage
@@ -70,28 +74,49 @@ def _emit_llm_result(
         return
 
     try:
+        # strict=False still honors STRICT_PRECISION=1 via resolve_billable_cost.
         resolved = resolve_billable_cost(
             billable_payload if billable_payload is not None else {"usage": usage_data},
             model=model,
             provider=provider,
             strict=False,
         )
+    except CostResolutionError:
+        # Fail-loud under STRICT_PRECISION: never silently under-count as $0.
+        raise
     except Exception:
-        # Never break instrumentation on cost math; fall back to zero-cost
-        # token tracking only when resolution explodes unexpectedly.
+        # Unexpected resolver bugs must not under-count. Prefer a conservative
+        # overestimate (via non-strict re-resolve on usage-only) over $0.
         if usage_data is None:
-            return
-        resolved = {
-            "cost_usd": 0.0,
-            "tokens": {
-                "input": usage_data.get("input_tokens", 0),
-                "output": usage_data.get("output_tokens", 0),
-                "cached": usage_data.get("cached_input_tokens", 0),
-                "total": usage_data.get("total_tokens", 0),
-            },
-            "source": "overestimate",
-            "breakdown": {"reason": "resolver_exception_fallback"},
-        }
+            raise
+        try:
+            resolved = resolve_billable_cost(
+                {"usage": usage_data},
+                model=model,
+                provider=provider,
+                strict=False,
+            )
+        except CostResolutionError:
+            raise
+        except Exception:
+            # Last resort: force overestimate source with high-water charge.
+            from agentguard.precision_cost import (
+                DEFAULT_PRICE_TABLE,
+                SOURCE_OVERESTIMATE,
+                _overestimate_cost,
+                extract_tokens,
+            )
+
+            tokens_fb = extract_tokens(
+                {"usage": usage_data}, provider=provider
+            )
+            over = _overestimate_cost(tokens_fb, DEFAULT_PRICE_TABLE)
+            resolved = {
+                "cost_usd": float(over),
+                "tokens": tokens_fb,
+                "source": SOURCE_OVERESTIMATE,
+                "breakdown": {"reason": "resolver_exception_overestimate"},
+            }
 
     tokens = resolved.get("tokens") or {}
     total_tokens = int(tokens.get("total", 0) or (usage_data or {}).get("total_tokens", 0) or 0)

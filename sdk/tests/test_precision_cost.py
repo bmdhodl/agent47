@@ -349,17 +349,50 @@ class TestGoldenFixtures(unittest.TestCase):
         )
         self.assertEqual(r["source"], SOURCE_COMPUTED)
         self.assertGreater(r["cost_usd"], 0.0)
+        # Inclusive cache: (1000-200)*2.5 + 500*10 + 200*1.25 all / 1e6
+        expected = _gpt4o_table_cost(1000, 500, cached=200)
+        self.assertAlmostEqual(r["cost_usd"], expected, places=10)
+        self.assertEqual(r["breakdown"].get("input_cache_mode"), "inclusive")
 
-    def test_anthropic_fixture_computed(self) -> None:
+    def test_anthropic_fixture_computed_exact_exclusive_cache(self) -> None:
+        """Anthropic input_tokens exclude cache reads — do not subtract cache.
+
+        Fixture: input=800, output=400, cache_read=200, cache_write=50
+        Rates for claude-3-5-sonnet-20241022:
+          in=3.0, out=15.0, cached=0.30, cache_write=3.75 (per 1M)
+        cost = (800*3 + 400*15 + 200*0.30 + 50*3.75) / 1e6
+             = (2400 + 6000 + 60 + 187.5) / 1e6
+             = 8647.5 / 1e6
+             = 0.0086475
+        """
         r = resolve_billable_cost(
             ANTHROPIC_SONNET_USAGE,
             model="claude-3-5-sonnet-20241022",
             provider="anthropic",
         )
         self.assertEqual(r["source"], SOURCE_COMPUTED)
-        self.assertGreater(r["cost_usd"], 0.0)
         self.assertEqual(r["tokens"]["cached"], 200)
         self.assertEqual(r["tokens"]["cache_write"], 50)
+        self.assertEqual(r["tokens"]["input"], 800)
+        self.assertEqual(r["breakdown"].get("input_cache_mode"), "exclusive")
+        rates = DEFAULT_PRICE_TABLE["rates"][("anthropic", "claude-3-5-sonnet-20241022")]
+        expected = (
+            800 * rates["input_per_1m"]
+            + 400 * rates["output_per_1m"]
+            + 200 * rates["cached_input_per_1m"]
+            + 50 * rates["cache_write_per_1m"]
+        ) / 1_000_000
+        self.assertAlmostEqual(expected, 0.0086475, places=10)
+        self.assertAlmostEqual(r["cost_usd"], expected, places=10)
+        # Under-count bug would have billed (800-200)*in instead of 800*in
+        undercount = (
+            600 * rates["input_per_1m"]
+            + 400 * rates["output_per_1m"]
+            + 200 * rates["cached_input_per_1m"]
+            + 50 * rates["cache_write_per_1m"]
+        ) / 1_000_000
+        self.assertAlmostEqual(undercount, 0.0080475, places=10)
+        self.assertGreater(r["cost_usd"], undercount)
 
     def test_gateway_fixture_provider_billed(self) -> None:
         r = resolve_billable_cost(
@@ -423,6 +456,37 @@ class TestNoDoubleConsumePatchPath(unittest.TestCase):
         llm_events = [e for e in ctx.events if e["name"] == "llm.result"]
         self.assertEqual(len(llm_events), 1)
         self.assertEqual(llm_events[0]["data"]["source_of_cost"], SOURCE_COMPUTED)
+
+    def test_strict_precision_unknown_model_does_not_consume_zero(self) -> None:
+        """STRICT_PRECISION=1 on patch path must raise, not silent $0 consume."""
+        from agentguard.instrument import _emit_llm_result
+
+        class _Ctx:
+            def event(self, name: str, data=None, cost_usd=None) -> None:
+                return None
+
+        budget = BudgetGuard(max_cost_usd=10.0, max_calls=10)
+        payload = {
+            "id": "chatcmpl-unknown-strict",
+            "usage": {
+                "prompt_tokens": 100,
+                "completion_tokens": 50,
+                "total_tokens": 150,
+            },
+        }
+        with mock.patch.dict(os.environ, {"STRICT_PRECISION": "1"}):
+            with self.assertRaises(CostResolutionError):
+                _emit_llm_result(
+                    _Ctx(),
+                    budget,
+                    "totally-unknown-model-xyz",
+                    "openai",
+                    payload["usage"],
+                    response=payload,
+                )
+        # Must not have attributed silent $0 spend
+        self.assertEqual(budget.state.cost_used, 0.0)
+        self.assertEqual(budget.state.calls_used, 0)
 
 
 if __name__ == "__main__":

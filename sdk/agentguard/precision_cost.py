@@ -478,14 +478,39 @@ def _lookup_rate(
     return None
 
 
+# Providers whose input_tokens already exclude cache-read tokens (bill input +
+# cache_read separately). OpenAI-family includes cached tokens inside
+# prompt_tokens and must subtract to avoid double-billing the cached slice.
+_CACHE_EXCLUSIVE_INPUT_PROVIDERS = frozenset(
+    {
+        "anthropic",
+        "google",
+    }
+)
+
+
+def _input_includes_cached(provider: str) -> bool:
+    """True when prompt/input token count already includes cached tokens."""
+    return (provider or "").strip().lower() not in _CACHE_EXCLUSIVE_INPUT_PROVIDERS
+
+
 def _compute_from_table(
     tokens: Mapping[str, int],
     rate: PriceRate,
     *,
+    provider: str = "",
     batch: bool = False,
     image_units: int = 0,
-) -> Tuple[float, Dict[str, float]]:
-    """Compute USD from usage and a rate dict (prices per 1M tokens)."""
+) -> Tuple[float, Dict[str, Any]]:
+    """Compute USD from usage and a rate dict (prices per 1M tokens).
+
+    Provider-aware cache handling:
+    - OpenAI / Azure / most gateways: ``prompt_tokens`` *includes* cached
+      tokens → bill ``(input - cached) * in + cached * cached_in``.
+    - Anthropic / Google: ``input_tokens`` *excludes* cache reads → bill
+      ``input * in + cache_read * cached_in + cache_write * write`` with no
+      subtraction (subtracting would silently under-count).
+    """
     if rate.get("free"):
         return 0.0, {"free": 0.0}
 
@@ -495,15 +520,17 @@ def _compute_from_table(
     cache_write_t = int(tokens.get("cache_write", 0) or 0)
     reasoning_t = int(tokens.get("reasoning", 0) or 0)
 
-    # Non-cached billable input: when cached tokens are a subset of input, bill
-    # the uncached portion at full input rate. If provider reports input
-    # excluding cache reads (Anthropic style), input_t is already uncached.
-    # Heuristic: if cached <= input, treat input as including cached (OpenAI);
-    # else treat input as exclusive of cache reads (Anthropic).
-    if cached_t > 0 and cached_t <= input_t:
+    if cached_t > 0 and _input_includes_cached(provider) and cached_t <= input_t:
         uncached_input = input_t - cached_t
+        input_cache_mode = "inclusive"
     else:
+        # Exclusive (Anthropic/Google) or no cache / cache > input edge case
         uncached_input = input_t
+        input_cache_mode = (
+            "exclusive"
+            if not _input_includes_cached(provider)
+            else "inclusive_no_subtract"
+        )
 
     in_price = float(rate.get("input_per_1m", 0.0))
     out_price = float(rate.get("output_per_1m", 0.0))
@@ -512,15 +539,24 @@ def _compute_from_table(
     reasoning_price = float(rate.get("reasoning_per_1m", out_price))
     image_price = float(rate.get("image_per_unit", 0.0))
 
-    breakdown = {
+    breakdown: Dict[str, Any] = {
         "input_usd": uncached_input * in_price / 1_000_000,
         "output_usd": output_t * out_price / 1_000_000,
         "cached_input_usd": cached_t * cached_price / 1_000_000,
         "cache_write_usd": cache_write_t * cache_write_price / 1_000_000,
         "reasoning_usd": reasoning_t * reasoning_price / 1_000_000,
         "image_usd": image_units * image_price,
+        "input_cache_mode": input_cache_mode,
+        "uncached_input_tokens": uncached_input,
     }
-    total = sum(breakdown.values())
+    total = (
+        float(breakdown["input_usd"])
+        + float(breakdown["output_usd"])
+        + float(breakdown["cached_input_usd"])
+        + float(breakdown["cache_write_usd"])
+        + float(breakdown["reasoning_usd"])
+        + float(breakdown["image_usd"])
+    )
     if batch:
         discount = float(rate.get("batch_discount", 0.5))
         total *= discount
@@ -648,7 +684,11 @@ def resolve_billable_cost(
     # C: compute from owned price table
     if rate is not None and has_usage:
         computed, parts = _compute_from_table(
-            tokens, rate, batch=batch, image_units=image_units
+            tokens,
+            rate,
+            provider=provider,
+            batch=batch,
+            image_units=image_units,
         )
         result = {
             "cost_usd": float(computed),
