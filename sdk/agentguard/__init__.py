@@ -52,6 +52,14 @@ from .instrument import (
     unpatch_openai,
     unpatch_openai_async,
 )
+from .precision_cost import (
+    ALLOWED_SOURCES,
+    DEFAULT_PRICE_TABLE,
+    CostResolutionError,
+    consume_billable,
+    get_default_prices,
+    resolve_billable_cost,
+)
 from .schemas import (
     SUPPORTED_PROFILES,
     InitConfig,
@@ -118,6 +126,8 @@ if not any(isinstance(handler, logging.NullHandler) for handler in _logger.handl
     _logger.addHandler(logging.NullHandler())
 
 __all__ = [
+    "ALLOWED_SOURCES",
+    "DEFAULT_PRICE_TABLE",
     "SUPPORTED_PROFILES",
     "AgentGuardError",
     "AssertionResult",
@@ -129,6 +139,7 @@ __all__ = [
     "BudgetGuard",
     "BudgetWarning",
     "Call",
+    "CostResolutionError",
     "DecisionTrace",
     "EscalationRequired",
     "EscalationSignal",
@@ -157,11 +168,13 @@ __all__ = [
     "__version__",
     "async_trace_agent",
     "async_trace_tool",
+    "consume_billable",
     "decision_flow",
     "estimate_cost",
     "extract_decision_events",
     "extract_decision_payload",
     "get_budget_guard",
+    "get_default_prices",
     "get_tracer",
     "init",
     "is_decision_event",
@@ -174,6 +187,7 @@ __all__ = [
     "patch_anthropic_async",
     "patch_openai",
     "patch_openai_async",
+    "resolve_billable_cost",
     "shutdown",
     "summarize_trace",
     "trace_agent",
