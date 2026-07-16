@@ -6,6 +6,14 @@ from typing import Optional
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
+from .precision_cost import (
+    ALLOWED_SOURCES,
+    DEFAULT_PRICE_TABLE,
+    CostResolutionError,
+    consume_billable,
+    get_default_prices,
+    resolve_billable_cost,
+)
 from .decision import (
     DecisionTrace,
     decision_flow,
@@ -128,7 +136,10 @@ __all__ = [
     "BudgetExceeded",
     "BudgetGuard",
     "BudgetWarning",
+    "ALLOWED_SOURCES",
     "Call",
+    "CostResolutionError",
+    "DEFAULT_PRICE_TABLE",
     "DecisionTrace",
     "EscalationRequired",
     "EscalationSignal",
@@ -157,11 +168,13 @@ __all__ = [
     "__version__",
     "async_trace_agent",
     "async_trace_tool",
+    "consume_billable",
     "decision_flow",
     "estimate_cost",
     "extract_decision_events",
     "extract_decision_payload",
     "get_budget_guard",
+    "get_default_prices",
     "get_tracer",
     "init",
     "is_decision_event",
@@ -174,6 +187,7 @@ __all__ = [
     "patch_anthropic_async",
     "patch_openai",
     "patch_openai_async",
+    "resolve_billable_cost",
     "shutdown",
     "summarize_trace",
     "trace_agent",

@@ -50,25 +50,80 @@ def _emit_llm_result(
     model: str,
     provider: str,
     usage: Any,
+    response: Any = None,
 ) -> None:
     """Extract usage from an LLM response and emit llm.result event + budget consume.
 
     Shared by all 4 patch variants (OpenAI sync/async, Anthropic sync/async).
-    """
-    from agentguard.cost import estimate_cost
 
+    Cost uses ``resolve_billable_cost`` (provider fields → owned table → estimate
+    → overestimate). Call once per provider hit with the *final* usage/response
+    so streaming chunks are not double-counted. Do not also call
+    ``consume_billable`` for the same event — that would double-consume.
+    """
+    from agentguard.precision_cost import resolve_billable_cost, log_consume_event
+
+    # Prefer full response when available so provider cost fields are visible.
+    billable_payload = response if response is not None else usage
     usage_data = normalize_usage(usage, provider=provider)
-    if usage_data is None:
+    if usage_data is None and billable_payload is None:
         return
 
-    input_tokens = usage_data.get("input_tokens", 0)
-    output_tokens = usage_data.get("output_tokens", 0)
-    total_tokens = usage_data.get("total_tokens", 0)
+    try:
+        resolved = resolve_billable_cost(
+            billable_payload if billable_payload is not None else {"usage": usage_data},
+            model=model,
+            provider=provider,
+            strict=False,
+        )
+    except Exception:
+        # Never break instrumentation on cost math; fall back to zero-cost
+        # token tracking only when resolution explodes unexpectedly.
+        if usage_data is None:
+            return
+        resolved = {
+            "cost_usd": 0.0,
+            "tokens": {
+                "input": usage_data.get("input_tokens", 0),
+                "output": usage_data.get("output_tokens", 0),
+                "cached": usage_data.get("cached_input_tokens", 0),
+                "total": usage_data.get("total_tokens", 0),
+            },
+            "source": "overestimate",
+            "breakdown": {"reason": "resolver_exception_fallback"},
+        }
 
-    cost = estimate_cost(model, input_tokens, output_tokens, provider=provider)
+    tokens = resolved.get("tokens") or {}
+    total_tokens = int(tokens.get("total", 0) or (usage_data or {}).get("total_tokens", 0) or 0)
+    cost = float(resolved.get("cost_usd", 0.0) or 0.0)
+    source = str(resolved.get("source", "estimate"))
+    request_id = resolved.get("request_id")
+
+    log_consume_event(
+        model=model,
+        provider=provider,
+        tokens=tokens if tokens else {
+            "input": (usage_data or {}).get("input_tokens", 0),
+            "output": (usage_data or {}).get("output_tokens", 0),
+            "cached": (usage_data or {}).get("cached_input_tokens", 0),
+            "total": total_tokens,
+        },
+        cost_usd=cost,
+        source_of_cost=source,
+        request_id=request_id if isinstance(request_id, str) else None,
+    )
+
+    event_data: Dict[str, Any] = {
+        "model": model,
+        "provider": provider,
+        "usage": usage_data,
+        "source_of_cost": source,
+    }
+    if request_id:
+        event_data["request_id"] = request_id
     ctx.event(
         "llm.result",
-        data={"model": model, "provider": provider, "usage": usage_data},
+        data=event_data,
         cost_usd=cost if cost > 0 else None,
     )
     if budget_guard is not None:
@@ -243,7 +298,9 @@ def _traced_openai_create(
     model = str(kwargs.get("model", "unknown"))
     with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
         result = original(*args, **kwargs)
-        _emit_llm_result(ctx, budget_guard, model, "openai", getattr(result, "usage", None))
+        _emit_llm_result(
+            ctx, budget_guard, model, "openai", getattr(result, "usage", None), response=result
+        )
         return result
 
 
@@ -302,7 +359,9 @@ def _patch_anthropic_instance(client: Any, tracer: Any, budget_guard: Any = None
         model = str(kwargs.get("model", "unknown"))
         with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
             result = original_create(*args, **kwargs)
-            _emit_llm_result(ctx, budget_guard, model, "anthropic", getattr(result, "usage", None))
+            _emit_llm_result(
+                ctx, budget_guard, model, "anthropic", getattr(result, "usage", None), response=result
+            )
             return result
 
     messages.create = traced_create  # type: ignore[attr-defined]
@@ -487,7 +546,9 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
         model = str(kwargs.get("model", "unknown"))
         async with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
             result = await original_create(*args, **kwargs)
-            _emit_llm_result(ctx, budget_guard, model, "openai", getattr(result, "usage", None))
+            _emit_llm_result(
+                ctx, budget_guard, model, "openai", getattr(result, "usage", None), response=result
+            )
             return result
 
     completions.create = traced_create  # type: ignore[attr-defined]
@@ -545,7 +606,9 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any 
         model = str(kwargs.get("model", "unknown"))
         async with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
             result = await original_create(*args, **kwargs)
-            _emit_llm_result(ctx, budget_guard, model, "anthropic", getattr(result, "usage", None))
+            _emit_llm_result(
+                ctx, budget_guard, model, "anthropic", getattr(result, "usage", None), response=result
+            )
             return result
 
     messages.create = traced_create  # type: ignore[attr-defined]
