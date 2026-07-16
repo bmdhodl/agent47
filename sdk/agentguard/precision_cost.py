@@ -11,7 +11,7 @@ Cost resolution order (per LLM response / billable event)
     A. Provider-reported numeric cost on response or usage
        (``cost`` / ``cost_usd`` / ``total_cost`` / ``total_cost_usd``)
     B. Documented provider-specific billed fields (gateway markup included)
-    C. Compute from usage × caller-owned price table (in/out/cached/special/units)
+    C. Compute from usage x caller-owned price table (in/out/cached/special/units)
     D. ``agentguard.estimate_cost`` only when the model is known and returns > 0
     E. Conservative overestimate, or fail-loud when ``strict=True``
 
@@ -19,21 +19,22 @@ Never silently treat an unknown/uncomputable successful LLM call as $0 under a
 dollar budget. Tool-only steps and intentional free/local models may use
 ``source=zero`` with ``cost_usd=0``.
 """
+
 from __future__ import annotations
 
 import logging
 import os
 import warnings
-from typing import Any, Dict, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 from agentguard.cost import LAST_UPDATED as _ESTIMATE_LAST_UPDATED
 from agentguard.cost import UnknownModelWarning, estimate_cost
 from agentguard.price_table import (
+    _DEFAULT_HIGH_WATER_PER_TOKEN,
+    _DEFAULT_MIN_CHARGE_USD,
     DEFAULT_PRICE_TABLE,
     PriceRate,
     PriceTable,
-    _DEFAULT_HIGH_WATER_PER_TOKEN,
-    _DEFAULT_MIN_CHARGE_USD,
     get_default_prices,
 )
 from agentguard.usage import normalize_usage
@@ -43,15 +44,15 @@ logger = logging.getLogger("agentguard.precision_cost")
 # Re-export price table symbols for public import path via precision_cost.
 __all__ = [
     "ALLOWED_SOURCES",
-    "CostResolutionError",
     "DEFAULT_PRICE_TABLE",
-    "PriceRate",
-    "PriceTable",
     "SOURCE_COMPUTED",
     "SOURCE_ESTIMATE",
     "SOURCE_OVERESTIMATE",
     "SOURCE_PROVIDER",
     "SOURCE_ZERO",
+    "CostResolutionError",
+    "PriceRate",
+    "PriceTable",
     "consume_billable",
     "extract_tokens",
     "get_default_prices",
@@ -216,8 +217,7 @@ def _extract_usage_object(response: Any) -> Any:
             "total_tokens": _get_attr_or_key(usage_meta, "total_token_count")
             or _get_attr_or_key(usage_meta, "total_tokens")
             or 0,
-            "cached_input_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count")
-            or 0,
+            "cached_input_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count") or 0,
         }
     # Bare usage payload passed as response
     if isinstance(response, Mapping):
@@ -400,9 +400,7 @@ def _compute_from_table(
         # Exclusive (Anthropic/Google) or no cache / cache > input edge case
         uncached_input = input_t
         input_cache_mode = (
-            "exclusive"
-            if not _input_includes_cached(provider)
-            else "inclusive_no_subtract"
+            "exclusive" if not _input_includes_cached(provider) else "inclusive_no_subtract"
         )
 
     in_price = float(rate.get("input_per_1m", 0.0))

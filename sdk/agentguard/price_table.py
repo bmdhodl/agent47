@@ -4,6 +4,7 @@ Rates are approximate public list prices (USD per 1_000_000 tokens unless noted)
 AgentGuard does NOT fetch live prices or invoices — this table is an explicit
 caller-owned default you can replace via `prices=` on resolve_billable_cost.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Tuple
@@ -161,5 +162,3 @@ def get_default_prices() -> PriceTable:
     table["aliases"] = dict(DEFAULT_PRICE_TABLE["aliases"])
     table["overestimate"] = dict(DEFAULT_PRICE_TABLE["overestimate"])
     return table
-
-

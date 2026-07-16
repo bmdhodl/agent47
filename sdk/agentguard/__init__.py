@@ -6,14 +6,6 @@ from typing import Optional
 
 from .atracing import AsyncTraceContext, AsyncTracer
 from .cost import estimate_cost
-from .precision_cost import (
-    ALLOWED_SOURCES,
-    DEFAULT_PRICE_TABLE,
-    CostResolutionError,
-    consume_billable,
-    get_default_prices,
-    resolve_billable_cost,
-)
 from .decision import (
     DecisionTrace,
     decision_flow,
@@ -59,6 +51,14 @@ from .instrument import (
     unpatch_anthropic_async,
     unpatch_openai,
     unpatch_openai_async,
+)
+from .precision_cost import (
+    ALLOWED_SOURCES,
+    DEFAULT_PRICE_TABLE,
+    CostResolutionError,
+    consume_billable,
+    get_default_prices,
+    resolve_billable_cost,
 )
 from .schemas import (
     SUPPORTED_PROFILES,
@@ -126,6 +126,8 @@ if not any(isinstance(handler, logging.NullHandler) for handler in _logger.handl
     _logger.addHandler(logging.NullHandler())
 
 __all__ = [
+    "ALLOWED_SOURCES",
+    "DEFAULT_PRICE_TABLE",
     "SUPPORTED_PROFILES",
     "AgentGuardError",
     "AssertionResult",
@@ -136,10 +138,8 @@ __all__ = [
     "BudgetExceeded",
     "BudgetGuard",
     "BudgetWarning",
-    "ALLOWED_SOURCES",
     "Call",
     "CostResolutionError",
-    "DEFAULT_PRICE_TABLE",
     "DecisionTrace",
     "EscalationRequired",
     "EscalationSignal",
