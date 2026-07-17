@@ -12,6 +12,25 @@ STAR_CALL_TO_ACTION = (
     f"If AgentGuard saved you a runaway run, star it so others find it: {GITHUB_REPO_URL}"
 )
 
+# Opt-in bridge to the hosted AgentGuard page. This is a static string only:
+# the SDK never requests this URL and nothing in the package phones home. The
+# UTM tag lets the site measure which surface drove a click; no identifier
+# leaves the user's machine.
+SITE_URL = "https://bmdpat.com/tools/agentguard"
+
+
+def hosted_url(medium: str) -> str:
+    """Return the opt-in hosted-page link tagged with the calling surface.
+
+    ``medium`` names the surface (e.g. ``"cli-help"``, ``"cli-welcome"``) so
+    click-through can be attributed. The returned string is never fetched by
+    the SDK; it is only printed for the user to open if they choose to.
+    """
+    return (
+        f"{SITE_URL}"
+        f"?utm_source=agentguard47&utm_medium={medium}&utm_campaign=touchpoints"
+    )
+
 # Paste-able proof badge. Every repo that adds it is a backlink and social proof,
 # which is the cheapest network-effect surface the SDK has.
 BADGE_MARKDOWN = (
@@ -71,6 +90,10 @@ def render_welcome(stream: Optional[TextIO] = None, *, version: Optional[str] = 
     _print(out, "If 'agentguard' is not on PATH, prefix any command with 'python -m agentguard'.")
     _print(out, "")
     _print(out, STAR_CALL_TO_ACTION)
+    _print(out, "")
+    _print(out, "Optional hosted layer (history, alerts, MCP visibility for Claude Code, Cursor, and Codex):")
+    _print(out, f"  {hosted_url('cli-welcome')}")
+    _print(out, "That link is static; nothing here phones home.")
 
 
 def render_badge(stream: Optional[TextIO] = None, *, fmt: str = "markdown") -> None:

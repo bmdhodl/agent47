@@ -9,7 +9,7 @@ from agentguard.decision import extract_decision_events
 from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
-from agentguard.first_run import render_badge, render_welcome
+from agentguard.first_run import hosted_url, render_badge, render_welcome
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
 from agentguard.reporting import render_incident_report
 from agentguard.savings import summarize_savings
@@ -261,7 +261,21 @@ def _eval(path: str, ci: bool = False) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="agentguard")
+    parser = argparse.ArgumentParser(
+        prog="agentguard",
+        description=(
+            "Stop runaway agents before they burn money. "
+            "Zero-dependency, local-first guardrails for AI agents."
+        ),
+        epilog=(
+            "Optional hosted layer (history, alerts, MCP visibility for "
+            "Claude Code, Cursor, and Codex):\n"
+            f"  {hosted_url('cli-help')}\n"
+            "The SDK stays free, local, and MIT. That link is static; "
+            "nothing here phones home."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     sub = parser.add_subparsers(dest="cmd")
 
     sub.add_parser("welcome", help="Show the first-run welcome and 60-second local path")

@@ -114,6 +114,9 @@ pip install "agentguard47[langchain]"   # optional extras as needed
 
 - PyPI: https://pypi.org/project/agentguard47/
 - Issues: https://github.com/bmdhodl/agent47/issues
+- AgentGuard on the web (hosted history, alerts, and MCP visibility for Claude Code, Cursor, and Codex): https://bmdpat.com/tools/agentguard?utm_source=agentguard47&utm_medium=readme&utm_campaign=touchpoints
+
+The hosted page is an optional next step, not a requirement. The SDK stays free, local, and MIT, and the local guards stay authoritative. Nothing in this package phones home. The only network egress is a sink or exporter you configure yourself, such as `HttpSink` or an OpenTelemetry exporter.
 
 ---
 

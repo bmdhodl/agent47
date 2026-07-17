@@ -27,6 +27,14 @@
   paste-able "Guarded by AgentGuard" README badge (markdown, rST, or HTML) so
   adopters can advertise the SDK and drive new installs.
 
+### Distribution
+- Added an opt-in bridge to the hosted AgentGuard page
+  (`bmdpat.com/tools/agentguard`) from the README/PyPI page, the `agentguard
+  --help` footer, and the first-run welcome. These are static links only: the
+  SDK still makes no network calls unless you configure `HttpSink`, and nothing
+  in the package phones home. The links carry UTM parameters so the site can
+  measure click-through; no identifier is sent from your machine.
+
 ## 1.2.13
 
 ### Release Operations
