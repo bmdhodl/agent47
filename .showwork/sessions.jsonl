@@ -1,3 +1,5 @@
 {"event": "session.start", "session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:21", "agent": "claude-code"}
 {"event": "session.finish", "session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:22", "status": "ok", "claims_verdict": "GREEN"}
 {"event": "session.finish", "session": "showwork-fleet-adoption", "ts": "2026-07-11T12:05:22", "status": "ok", "observed_by": "stop-hook", "claims_verdict": "GREEN", "claims_unverified": []}
+{"event": "session.start", "session": "qw-20260718-5090-eval-harness", "ts": "2026-07-18T02:50:07", "agent": "queue-worker", "prev": "40b27d42845ce7e36093840968701c387a451ff33e83814f81a5b61fe7613c6d"}
+{"event": "session.finish", "session": "qw-20260718-5090-eval-harness", "ts": "2026-07-18T02:53:10", "status": "ok", "claims_verdict": "GREEN", "prev": "7268c805959e763576a8143264cd98ecb1adedd0b362e1901dc491b620ab3d17"}
