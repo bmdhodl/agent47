@@ -149,6 +149,13 @@ class X402SpendGuard(BaseGuard):
             self._on_warning(warning)  # outside the lock: callbacks may re-enter
         return result
 
+    def __repr__(self) -> str:
+        return (
+            f"X402SpendGuard(max_total_usd={self._max_total_usd}, "
+            f"max_per_endpoint_usd={self._max_per_endpoint_usd}, "
+            f"max_per_call_usd={self._max_per_call_usd})"
+        )
+
     def reset(self) -> None:
         """Clear all recorded spend and the warning latch."""
         with self._lock:
