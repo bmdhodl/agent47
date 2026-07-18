@@ -74,8 +74,28 @@ python agentguard_raw_quickstart.py
 | Retry storms | `RetryGuard` | `RetryLimitExceeded` |
 | Hung runs | `TimeoutGuard` | `TimeoutExceeded` |
 | Spam calls | `RateLimitGuard` | — |
+| Wallet drain (x402/USDC) | `X402SpendGuard` | `BudgetExceeded` |
 
 Not a dashboard. Not a model router. An **in-process exception** that kills the bad run mid-flight.
+
+### Cap your agent's x402 wallet spend
+
+Agents that pay per-call via x402 (USDC micropayments) can drain a wallet in a
+silent loop. `X402SpendGuard` wraps the payment step and refuses before paying:
+
+```python
+from agentguard import X402SpendGuard
+
+guard = X402SpendGuard(
+    max_total_usd=5.00,        # wallet cap, add period="day" for a daily reset
+    max_per_endpoint_usd=1.00, # cap per resource URL
+    max_per_call_usd=0.10,     # refuse any single payment above this
+)
+guard.charge(0.001, "https://api.example.com/search", my_x402_pay_step)
+```
+
+AgentGuard meters and refuses; it never signs or settles. Amounts come from
+your x402 client. No crypto dependencies.
 
 ## Features
 

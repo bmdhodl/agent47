@@ -70,6 +70,7 @@ from .setup import get_budget_guard, get_tracer, init, shutdown
 from .sinks import HttpSink
 from .state import JsonFileStateStore, StateStore, StateStoreError
 from .tracing import JsonlFileSink, StdoutSink, Tracer, TraceSink
+from .x402 import X402SpendGuard
 
 
 def _read_source_version() -> Optional[str]:
@@ -165,6 +166,7 @@ __all__ = [
     "TimeoutGuard",
     "TraceSink",
     "Tracer",
+    "X402SpendGuard",
     "__version__",
     "async_trace_agent",
     "async_trace_tool",
