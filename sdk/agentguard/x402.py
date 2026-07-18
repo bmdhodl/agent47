@@ -149,27 +149,6 @@ class X402SpendGuard(BaseGuard):
             self._on_warning(warning)  # outside the lock: callbacks may re-enter
         return result
 
-    def record(self, amount_usd: float, endpoint: str) -> None:
-        """Record an already-settled payment, then enforce caps.
-
-        For clients that pay internally and report after the fact. Matches
-        ``BudgetGuard.consume``: record first, then raise if a cap is breached.
-        """
-        amount = _validate_amount(amount_usd)
-        with self._lock:
-            self._roll_period()
-            warning = self._record_locked(amount, endpoint)
-            over = self._breach_message(0.0, endpoint)
-            if over is None and self._max_per_call_usd is not None and amount > self._max_per_call_usd:
-                over = (
-                    f"x402 per-call ceiling exceeded: ${amount:.6f} > "
-                    f"${self._max_per_call_usd:.6f} for {endpoint}"
-                )
-        if over is not None:
-            raise BudgetExceeded(over)
-        if warning is not None and self._on_warning is not None:
-            self._on_warning(warning)
-
     def reset(self) -> None:
         """Clear all recorded spend and the warning latch."""
         with self._lock:
