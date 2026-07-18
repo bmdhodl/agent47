@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as _dt
+import io
 import json
 import shutil
 import subprocess
@@ -174,10 +175,18 @@ def build_row(
     }
 
 
+def format_csv_line(values: list) -> str:
+    """Render one properly quoted CSV line (no trailing newline)."""
+    buf = io.StringIO()
+    csv.writer(buf).writerow(values)
+    return buf.getvalue().rstrip("\r\n")
+
+
 def append_row(csv_path: str, row: dict) -> None:
     """Append one row, writing the header only when the file is new/empty."""
     try:
-        needs_header = open(csv_path, "r", encoding="utf-8").read(1) == ""
+        with open(csv_path, "r", encoding="utf-8") as fh:
+            needs_header = fh.read(1) == ""
     except FileNotFoundError:
         needs_header = True
     with open(csv_path, "a", newline="", encoding="utf-8") as fh:
@@ -211,13 +220,13 @@ def selftest() -> int:
     assert list(row) == CSV_FIELDS, "row keys must match CSV_FIELDS order"
     assert row["input_tokens"] == 69
     assert row["output_tokens"] == 128
-    assert row["tokens_per_second"] == 216.95, row["tokens_per_second"]
+    assert row["tokens_per_second"] == 216.95, row["tokens_per_second"]  # 128 / 0.59 s
     assert row["total_duration_s"] == 3.899
     assert row["eval_duration_s"] == 0.59
-    writer_check = ",".join(str(row[f]) for f in CSV_FIELDS)
+    assert format_csv_line(["a", "b,c"]) == 'a,"b,c"', "CSV quoting must survive commas"
     print("selftest OK")
-    print(",".join(CSV_FIELDS))
-    print(writer_check)
+    print(format_csv_line(CSV_FIELDS))
+    print(format_csv_line([row[f] for f in CSV_FIELDS]))
     return 0
 
 
@@ -253,6 +262,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if not response.get("done", False):
         print("warning: response reports done=false; timings may be partial", file=sys.stderr)
+    if not response.get("eval_count"):
+        print("warning: eval_count missing from response; throughput will read 0", file=sys.stderr)
 
     row = build_row(
         response,
@@ -265,8 +276,8 @@ def main(argv: list[str] | None = None) -> int:
         notes=args.notes,
         date=_dt.date.today().isoformat(),
     )
-    print(",".join(CSV_FIELDS))
-    print(",".join(str(row[f]) for f in CSV_FIELDS))
+    print(format_csv_line(CSV_FIELDS))
+    print(format_csv_line([row[f] for f in CSV_FIELDS]))
     if args.csv:
         append_row(args.csv, row)
         print(f"appended to {args.csv}", file=sys.stderr)

@@ -22,7 +22,7 @@ date,model,quant,engine,workload,input_tokens,output_tokens,tokens_per_second,to
 Sample row (RTX-class GPU, 8B model, Q4_K_M):
 
 ```
-2026-06-14,llama3.1:8b,Q4_K_M,Ollama,single-shot-generate,69,128,216.89,3.899,0.59,0.017,3.231,87.93,247.63,8539,9204,num_ctx=2048 num_predict=128 temp=0
+2026-06-14,llama3.1:8b,Q4_K_M,Ollama,single-shot-generate,69,128,216.95,3.899,0.59,0.017,3.231,87.93,247.63,8539,9204,num_ctx=2048 num_predict=128 temp=0
 ```
 
 ## Hardware assumptions
