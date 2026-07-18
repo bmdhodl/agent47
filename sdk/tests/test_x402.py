@@ -90,6 +90,13 @@ def test_record_matches_budget_guard_semantics():
     assert guard.total_spent_usd == 1.25
 
 
+def test_record_enforces_per_call_ceiling():
+    guard = X402SpendGuard(max_per_call_usd=0.10)
+    with pytest.raises(BudgetExceeded, match="per-call"):
+        guard.record(5.00, "https://a.example/x")
+    assert guard.total_spent_usd == 5.00  # settled spend stays on the books
+
+
 def test_warning_fires_once_at_threshold():
     warnings = []
     guard = X402SpendGuard(max_total_usd=1.00, warn_at_pct=0.8, on_warning=warnings.append)

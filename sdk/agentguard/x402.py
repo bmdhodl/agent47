@@ -52,7 +52,7 @@ class X402SpendGuard(BaseGuard):
         max_total_usd: Cap on total spend. None = unlimited.
         max_per_endpoint_usd: Cap on spend per endpoint (resource URL). None = unlimited.
         max_per_call_usd: Refuse any single payment above this. None = unlimited.
-        warn_at_pct: Fraction (0.0-1.0) of ``max_total_usd`` at which to warn once.
+        warn_at_pct: Fraction of ``max_total_usd`` to warn at, once. No-op without a total cap.
         on_warning: Callback invoked with a message when ``warn_at_pct`` is crossed.
         period: ``"day"`` resets totals at the UTC day boundary. None = never.
         now: Clock override for tests (returns epoch seconds).
@@ -134,16 +134,20 @@ class X402SpendGuard(BaseGuard):
         with self._lock:
             self._roll_period()
             self._refuse_if_breach(amount, endpoint)
-            self._record_locked(amount, endpoint)
+            warning = self._record_locked(amount, endpoint)
         try:
-            return pay(*args, **kwargs)
+            result = pay(*args, **kwargs)
         except BaseException:
             with self._lock:
-                self._total_spent -= amount
+                self._total_spent = max(self._total_spent - amount, 0.0)
                 spent = self._spent_by_endpoint.get(endpoint, 0.0) - amount
                 self._spent_by_endpoint[endpoint] = max(spent, 0.0)
-                self._total_spent = max(self._total_spent, 0.0)
+                if warning is not None:
+                    self._warned = False  # the crossing spend never settled
             raise
+        if warning is not None and self._on_warning is not None:
+            self._on_warning(warning)  # outside the lock: callbacks may re-enter
+        return result
 
     def record(self, amount_usd: float, endpoint: str) -> None:
         """Record an already-settled payment, then enforce caps.
@@ -154,10 +158,17 @@ class X402SpendGuard(BaseGuard):
         amount = _validate_amount(amount_usd)
         with self._lock:
             self._roll_period()
-            self._record_locked(amount, endpoint)
+            warning = self._record_locked(amount, endpoint)
             over = self._breach_message(0.0, endpoint)
-            if over is not None:
-                raise BudgetExceeded(over)
+            if over is None and self._max_per_call_usd is not None and amount > self._max_per_call_usd:
+                over = (
+                    f"x402 per-call ceiling exceeded: ${amount:.6f} > "
+                    f"${self._max_per_call_usd:.6f} for {endpoint}"
+                )
+        if over is not None:
+            raise BudgetExceeded(over)
+        if warning is not None and self._on_warning is not None:
+            self._on_warning(warning)
 
     def reset(self) -> None:
         """Clear all recorded spend and the warning latch."""
@@ -210,21 +221,22 @@ class X402SpendGuard(BaseGuard):
             )
         return None
 
-    def _record_locked(self, amount: float, endpoint: str) -> None:
+    def _record_locked(self, amount: float, endpoint: str) -> Optional[str]:
+        """Add spend. Returns a warning message to fire after lock release, or None."""
         self._total_spent += amount
         self._spent_by_endpoint[endpoint] = (
             self._spent_by_endpoint.get(endpoint, 0.0) + amount
         )
+        cap = self._max_total_usd
         if (
-            self._warn_at_pct is not None
-            and self._max_total_usd is not None
-            and not self._warned
-            and self._total_spent >= self._warn_at_pct * self._max_total_usd
+            self._warn_at_pct is None
+            or cap is None
+            or self._warned
+            or self._total_spent < self._warn_at_pct * cap
         ):
-            self._warned = True
-            if self._on_warning is not None:
-                self._on_warning(
-                    f"x402 spend at ${self._total_spent:.6f} of "
-                    f"${self._max_total_usd:.6f} cap "
-                    f"({self._total_spent / self._max_total_usd:.0%})"
-                )
+            return None
+        self._warned = True
+        return (
+            f"x402 spend at ${self._total_spent:.6f} of ${cap:.6f} cap "
+            f"({self._total_spent / cap:.0%})"
+        )
