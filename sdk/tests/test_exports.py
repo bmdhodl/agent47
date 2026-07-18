@@ -143,6 +143,7 @@ class TestTopLevelExports(unittest.TestCase):
             "InitConfig", "RepoConfig", "ProfileDefaults", "SUPPORTED_PROFILES",
             "Goal", "Call",
             "StateStore", "StateStoreError", "JsonFileStateStore",
+            "X402SpendGuard",
         }
         self.assertEqual(set(agentguard.__all__), expected)
 
