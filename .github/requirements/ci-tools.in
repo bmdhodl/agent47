@@ -1,5 +1,10 @@
 build==1.4.4
+# Dependabot resolves this manifest with Python 3.10, but CI installs the
+# compiled lockfile on Python 3.9. Keep build's Python 3.9-only metadata
+# dependency explicit so a 3.10 lock refresh cannot drop it.
+importlib-metadata==8.7.1
 pytest==8.4.2
 pytest-cov==7.1.0
 ruff==0.15.13
 bandit==1.8.6
+zipp==3.23.1
