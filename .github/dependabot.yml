@@ -13,13 +13,17 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
+      # Dependabot no longer supports Python 3.9 for pip update jobs. This
+      # manifest declares Python 3.10 for Dependabot, while CI still installs
+      # the compiled lockfile on Python 3.9 and ci_tools_requirements_guard.py
+      # rejects direct pins that drop the SDK's Python 3.9 support floor.
       # pytest 9.x requires Python >=3.10. The SDK still promises and tests
       # Python 3.9 support, so keep pytest on the latest compatible 8.x line
-      # until Python 3.9 support is intentionally retired.
+      # until the SDK Python 3.9 support floor is intentionally retired.
       - dependency-name: "pytest"
         update-types: ["version-update:semver-major"]
       # build 1.5.x requires Python >=3.10. The SDK CI floor is still 3.9,
-      # and Dependabot runs pip-compile for this directory with Python 3.9.
+      # so keep build on the latest compatible 1.4.x line.
       - dependency-name: "build"
         update-types: ["version-update:semver-minor", "version-update:semver-major"]
       # bandit 1.9.x also requires Python >=3.10.
