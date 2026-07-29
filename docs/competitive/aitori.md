@@ -97,7 +97,8 @@ plaintext. No gateway can be unavailable either, so the guarded path has no
 fail-open mode: when a guard raises, the run stops unless your own code
 swallows the exception.
 
-The timing matters, so here is what "stops" means:
+The timing matters, so here is what "stops" means when the caller places the
+guard check before dispatch:
 
 - `LoopGuard.check(tool_name, tool_args)` and `TimeoutGuard.check()` run before
   dispatch. They raise `LoopDetected` or `TimeoutExceeded` and the call is
@@ -106,11 +107,10 @@ The timing matters, so here is what "stops" means:
   `BudgetExceeded` at the moment the limit is crossed. The call that crossed
   the line already happened; the run halts before the next one.
 
-A gateway is not positioned to make either decision. It sees requests, not the
-agent's call graph, so it cannot tell the eightieth identical
-`search_docs("refund policy")` from the first, and it cannot stop a retry storm
-where every individual request looks correct. aitori's README does not document
-loop or retry detection.
+An egress gateway can retain request history and block repeated outbound
+traffic, but aitori's README does not document loop or retry detection.
+AgentGuard's comparison point is narrower: those stops are explicit SDK runtime
+guards, not inferred gateway behavior.
 
 AgentGuard's own limit is just as real: **it only enforces on code paths that
 run through its tracers and guards.** A closed desktop app, a browser tab, a
