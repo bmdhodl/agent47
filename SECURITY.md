@@ -59,6 +59,17 @@ blast radius:
   limits on code paths that run through its tracers and guards. Provider
   console limits and billing alerts remain required for provider-managed
   background phases until explicit integration support exists.
+- **Device egress interception as a governance layer.** On-device interceptors
+  install a per-device CA, decrypt a listed set of provider hosts, and route
+  model and MCP calls through a gateway that logs and enforces policy. They
+  reach apps AgentGuard cannot instrument. Check the interceptor's failure
+  mode before you rely on its cap: [aitori](https://github.com/truefoundry/aitori)
+  fails open, so with no gateway configured, or with the gateway unavailable,
+  the request still reaches the provider. Treat a cap enforced only there as
+  advisory during an outage, and keep an in-process guard on the code you own.
+  AgentGuard neither replaces nor depends on such a layer, and it never
+  terminates TLS or adds a trust anchor. See
+  [docs/competitive/aitori.md](docs/competitive/aitori.md).
 
 ## Security Design
 
