@@ -5,3 +5,5 @@
 {"event": "session.finish", "session": "qw-20260718-5090-eval-harness", "ts": "2026-07-18T02:53:10", "status": "ok", "claims_verdict": "GREEN", "prev": "7268c805959e763576a8143264cd98ecb1adedd0b362e1901dc491b620ab3d17"}
 {"event": "session.start", "session": "qw-20260718-x402-spend-cap", "ts": "2026-07-18T03:02:46", "agent": "queue-worker", "prev": "9a189c8eaa312ea55c56c5399d4d772a240cfe7352f0a322876e31ebe81f9fd0"}
 {"event": "session.finish", "session": "qw-20260718-x402-spend-cap", "ts": "2026-07-18T03:07:27", "status": "ok", "claims_verdict": "GREEN", "prev": "c6bb21cfda361666369de8102a30393f4d97bc143d83e0c696b05e072ee6cd68"}
+{"event": "session.start", "session": "qw-20260718-arch-refresh", "ts": "2026-07-18T03:14:41", "agent": "queue-worker", "prev": "8f972bee7a66715c74e3ea91233d1110e3669724ff00d2690d6998258aa0adc3"}
+{"event": "session.finish", "session": "qw-20260718-arch-refresh", "ts": "2026-07-18T03:15:29", "status": "ok", "claims_verdict": "GREEN", "prev": "44a77428bc2c71540a16bc9cc01c1046172b311438da47773e787aabbd297222"}

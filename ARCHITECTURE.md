@@ -18,9 +18,11 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 - [`sdk/`](sdk/): Python package source, tests, packaging metadata (`pyproject.toml`), the generated PyPI README snapshot ([`sdk/PYPI_README.md`](sdk/PYPI_README.md)), and `sdk/examples/`.
 - [`sdk/agentguard/`](sdk/agentguard/): core SDK modules. Highlights:
   - `tracing.py` / `atracing.py`: `Tracer` / `AsyncTracer`, `TraceContext` / `AsyncTraceContext`, plus the core `JsonlFileSink`, `StdoutSink`, and `TraceSink` base.
-  - `guards.py`: the guard family and their exceptions.
+  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`).
+  - `x402.py`: `X402SpendGuard`, spend caps for x402/USDC agent micropayments (total/per-endpoint/per-call, refuse-before-pay, reuses `BudgetExceeded`).
   - `setup.py`: `init()` / `get_tracer()` / `get_budget_guard()` / `shutdown()` convenience entrypoints.
   - `instrument.py`, `decision.py`, `evaluation.py`, `cost.py`, `usage.py`, `savings.py`, `escalation.py`, `schemas.py`, `profiles.py`, `repo_config.py`, `reporting.py`, `export.py`: instrumentation, decision tracing, eval, cost/usage accounting, and report surfaces.
+  - `precision_cost.py` / `price_table.py`: maximum-precision billable cost resolution (`resolve_billable_cost`, `consume_billable`) over a versioned price table; STRICT mode fails loudly on the provider patch path instead of guessing prices. Usage accounting breaks out Anthropic thinking tokens.
   - `cli.py`, `__main__.py`, `doctor.py`, `demo.py`, `quickstart.py`, `skillpack.py`, `first_run.py`: the CLI and local proof surfaces. `__main__.py` makes `python -m agentguard` mirror the console script; `first_run.py` holds the bare-command welcome and the paste-able "Guarded by AgentGuard" badge used by `agentguard welcome` / `agentguard badge`.
   - [`sdk/agentguard/integrations/`](sdk/agentguard/integrations/): optional, guarded-import framework adapters (`crewai.py`, `langchain.py`, `langgraph.py`).
   - [`sdk/agentguard/sinks/`](sdk/agentguard/sinks/): non-core sinks (`http.py` -> `HttpSink`, `otel.py` -> `OtelTraceSink`).
@@ -40,6 +42,8 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 - [`scripts/`](scripts/): release guards, preflight logic, generated-readme tooling, and maintenance automation.
 - [`proof/`](proof/): saved artifacts that demonstrate local proof for specific PRs or flows.
 - [`inbox/`](inbox/): short SDK-only cofounder handoff log appended after merged PRs.
+- [`benchmarks/`](benchmarks/): reproducible local-LLM benchmark script (`bench_ollama.py`, stdlib only) + README; produces one CSV row per run in the published report schema on any consumer NVIDIA GPU.
+- `.showwork/`: outcome-verification receipts. Every agent session that changes this repo records falsifiable claims and closes through the showwork exit gate (see `AGENTS.md` § Outcome Verification); receipts ship with the PR.
 
 ## 4. Data Flow
 
@@ -72,7 +76,7 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
 
 - `Tracer` / `AsyncTracer`: the runtime event spine. They create traces, propagate span context, run guards on events, and emit records into sinks.
 - `TraceContext` / `AsyncTraceContext`: the scoped unit of work inside a trace. Most runtime instrumentation, decision tracing, and examples build on these.
-- Guards (`guards.py`): `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard`. Guards raise exceptions (`LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded`, all under `AgentGuardError`) instead of returning booleans.
+- Guards (`guards.py`, `x402.py`): `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard`, `X402SpendGuard`. Guards raise exceptions (`LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded`, all under `AgentGuardError`) instead of returning booleans. `BudgetGuard.goal(...)` scopes hard caps and warning hooks to a named sub-task, with cost attribution that survives worker threads.
 - Sinks: `JsonlFileSink` and `StdoutSink` (core, in `tracing.py`); `HttpSink` and `OtelTraceSink` (non-core, in `sinks/`). The `TraceSink` base is the boundary between runtime evidence and its destination.
 - Local proof surfaces: the `agentguard` CLI subcommands `doctor`, `demo`, `quickstart`, `report`, `incident`, `decisions`, `eval`, `summarize`, and `skillpack`, plus `EvalSuite` and checked-in starters. These are part of the product, not just internal tooling.
 - MCP surfaces: the read-only TypeScript `mcp-server/` and the local-budget Python `agentguard-mcp/` are first-class adoption surfaces alongside the SDK.
@@ -95,6 +99,7 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
    - SDK code: targeted tests plus `sdk_preflight.py`
    - public behavior: runnable example, saved proof artifact, or command output
    - release-facing docs: regenerated [`sdk/PYPI_README.md`](sdk/PYPI_README.md) and sync tests
+   - agent sessions: a showwork receipt in `.showwork/` (claims recorded, gated close) committed with the PR
 6. If the change evolves the architecture, update this file in the same PR.
 
 Release tooling follows the same ordering rule: publish package artifacts first,
@@ -119,3 +124,4 @@ the last raw git tag, because a tag can exist for a failed package publish.
 - 2026-05-17: Refreshed directory map, data flow, and abstractions to match the repo as of 2026-05-17 — added the Python `agentguard-mcp/` local-budget server and `skills/`; documented the two distinct MCP surfaces and the current `sdk/agentguard/` module layout.
 - 2026-06-06: Documented the install-activation surfaces — `__main__.py` (`python -m agentguard`), the bare-command welcome, and the `agentguard badge` network-effect surface in `first_run.py`.
 - 2026-06-17: Consolidated fragmented competitive positioning into a canonical "wedge map" in the README, contrasting AgentGuard's runtime envelope with identity-time (WorkOS), enterprise policy (Uber), and per-tool vendor caps (Anthropic).
+- 2026-07-18: Reconciled with the 2026-06-17 -> 2026-07-17 cluster. Cost/usage precision: `precision_cost.py` / `price_table.py` billable-cost resolution with STRICT fail-loud patch path (#652), Anthropic thinking-token breakout in usage accounting (#579), goal cost attribution from worker threads (#530). Task-level budgets: per-goal hard caps + `warn_at_pct` hooks (#638, #639). Outcome verification: showwork receipts in `.showwork/` with a gated session close (#648). Distribution: opt-in bmdpat.com touchpoints on install surfaces, no network calls (#653, #651). CI/deps hygiene: reduced Actions spend (#598), CodeQL action pins (#650). New surfaces: `benchmarks/` reproducible local-LLM benchmark (#654) and `X402SpendGuard` x402/USDC spend caps (#655). SDK public guard/tracer/MCP surface otherwise unchanged.
