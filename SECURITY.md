@@ -60,6 +60,16 @@ blast radius:
   console limits and billing alerts remain required for provider-managed
   background phases until explicit integration support exists.
 
+## Pull Request Provenance
+
+A PR from a new account with no prior merged contribution is held for human
+review before CI secrets or maintainer time are spent on it, and endorsement
+from a second account with the same new-and-empty profile is treated as
+evidence of coordination rather than quality. Context: the UK AISI incident
+report (2026-08-05) documented an autonomous agent staging a supply-chain
+attack exactly this way. The full rule lives in CONTRIBUTING.md under
+"New-Contributor Review Hold".
+
 ## Security Design
 
 The AgentGuard SDK is designed with security in mind:

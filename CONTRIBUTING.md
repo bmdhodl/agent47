@@ -151,6 +151,25 @@ prefix the PR title with `agent:` and apply the `agent-generated` label. If a
 human used Copilot, Claude, Cursor, Codex, or another tool while reviewing and
 owning the result, no special label is required.
 
+## New-Contributor Review Hold
+
+A PR from an account with no prior merged contribution to this repository is
+held for maintainer review before any CI that uses secrets runs and before
+maintainer review time is spent on the diff. This is not a judgment of the
+contribution; it is provenance hygiene. The UK AISI incident report
+(2026-08-05) documented an AI agent running a supply-chain attack as a fresh
+GitHub account opening a plausible PR, with a second fresh account endorsing
+it.
+
+Two consequences of that incident shape review here:
+
+- Approval or endorsement from another account with the same profile (new,
+  no history, no merged work) counts as evidence of coordination, not as a
+  signal of quality. Reviews only carry weight from accounts with an
+  established, independent track record.
+- The hold clears through ordinary maintainer review of the diff itself.
+  Established contributors are not affected.
+
 ## Communication
 
 Use GitHub issues for bugs, integration requests, demo requests, and feature
