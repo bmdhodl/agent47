@@ -46,6 +46,12 @@ def test_accepts_direct_pin_matching_ci_python_floor(tmp_path: Path) -> None:
     assert incompatible == []
 
 
+def test_ci_tool_manifest_pins_python_floor_transitives() -> None:
+    pin_names = {pin.name for pin in guard.read_direct_pins(guard.DEFAULT_REQUIREMENTS)}
+
+    assert {"importlib-metadata", "zipp"}.issubset(pin_names)
+
+
 def test_rejects_non_exact_direct_pins(tmp_path: Path) -> None:
     requirements = tmp_path / "ci-tools.in"
     requirements.write_text("build>=1.4\n", encoding="utf-8")
