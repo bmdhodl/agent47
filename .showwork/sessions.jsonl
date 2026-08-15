@@ -19,3 +19,6 @@
 {"event": "session.start", "session": "agent47-release-prep-v1-2-14-20260815", "ts": "2026-08-15T13:05:43", "agent": "codex", "prev": "664a98e49c1c8f6b99bd44e813e99daaeb14139630aa2a87ac0f335d68819889"}
 {"event": "session.finish.refused", "session": "agent47-release-prep-v1-2-14-20260815", "ts": "2026-08-15T13:09:54", "status": "ok", "claims_verdict": "RED", "prev": "fb4fcebab4671bf32264a3c09c3ae2df26f4c7136909ef8535427f690b9adb56"}
 {"event": "session.finish", "session": "agent47-release-prep-v1-2-14-20260815", "ts": "2026-08-15T13:10:47", "status": "ok", "claims_verdict": "GREEN", "prev": "623dd758db29e7d6b1c93847a9f998f00c9f1b8d96d28131199f8d026a040905"}
+{"event": "session.start", "session": "agent47-dogfood-receipt-health-20260815", "ts": "2026-08-15T13:17:49", "agent": "codex", "prev": "67196e84afa742d97e68f39c9bb84cafc3265f95c57ba96e526a8695ab9cc82c"}
+{"event": "session.finish.refused", "session": "agent47-dogfood-receipt-health-20260815", "ts": "2026-08-15T13:18:36", "status": "ok", "claims_verdict": "RED", "prev": "c8c90abcb4a4f2b88bb6fd0b6aadfd1960c5d7878ba2c493716cf9ab1a0e1219"}
+{"event": "session.finish", "session": "agent47-dogfood-receipt-health-20260815", "ts": "2026-08-15T13:24:32", "status": "ok", "claims_verdict": "GREEN", "prev": "598453bf43e24609a17a828069f68ea8e87ba1fb11b7c0e32b228ecbc97d1a06"}
