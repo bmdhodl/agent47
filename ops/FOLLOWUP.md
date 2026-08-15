@@ -9,6 +9,11 @@
 - Record explicit external adoption evidence from three repeat users or design
   partners before broadening the SDK feature surface. Use issues, PRs, or
   user-provided proof; do not add telemetry to manufacture this signal.
+- Done 2026-08-15: built the current SDK candidate wheel and installed it into
+  an isolated venv. `python -m agentguard`, `doctor`, `demo`, raw
+  `quickstart --write`, generated-starter execution, `report`, and `badge` all
+  completed without API keys or network. This is release-prep evidence only;
+  the onboarding bundle remains unreleased until a new SDK tag is published.
 - Done 2026-08-15: `agentguard-mcp/agentguard_mcp/sync.py` validates opt-in
   `AGENTGUARD_SYNC_URL` values for an `http`/`https` scheme and hostname before
   starting the background executor. Private destinations remain allowed because

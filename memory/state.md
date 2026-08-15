@@ -28,9 +28,13 @@
 - hosted dashboard remains private and separate
 
 ## Current Focus
-- `1.2.13` is shipped; next push is converting installs into visible proof.
-  The 2026-08-15 baseline is 4 GitHub stars and 5/18/106 PyPI downloads for
-  the last day/week/month. Downloads are not distinct-user or production proof.
+- `1.2.13` is shipped; the unreleased onboarding bundle on `main` now has a
+  clean-wheel activation proof from an isolated venv: module entry point,
+  welcome, doctor, demo, raw quickstart generation/execution, report, and badge
+  all completed without API keys or network. This is local candidate evidence,
+  not public v1.2.13 behavior. The 2026-08-15 baseline is 4 GitHub stars and
+  5/18/106 PyPI downloads for the last day/week/month. Downloads are not
+  distinct-user or production proof.
 - `main` is ahead of `v1.2.13` with unreleased onboarding improvements; the
   next SDK tag must pass the full release gates before those are called public.
 - distribution before new features

@@ -36,6 +36,7 @@ they directly strengthen coding-agent adoption.
 
 | Item | Status |
 |------|--------|
+| Clean-wheel activation proof | Done - 2026-08-15; an isolated venv installed the locally built candidate wheel and completed `python -m agentguard`, `doctor`, `demo`, raw `quickstart --write`, generated-starter execution, `report`, and `badge` without API keys or network |
 | Competitor Wedge Map consolidation | Done - README wedge map (WorkOS, Uber, Anthropic) refreshed on 2026-06-17 |
 | Eval assertion expansion | Done - `EvalSuite` now has >=12 built-in assertions |
 | `estimate_cost` pricing refresh | Done - Anthropic and Google pricing refreshed on 2026-03-26; OpenAI entries retained pending direct re-verification from this environment |
@@ -65,7 +66,6 @@ they directly strengthen coding-agent adoption.
 
 | Item | Success Signal |
 |------|---------------|
-| Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
 | External adoption proof | Obtain explicit evidence from at least three external repeat users or design partners before adding another broad SDK feature; do not add telemetry to satisfy this gate |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
