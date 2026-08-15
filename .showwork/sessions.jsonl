@@ -17,3 +17,5 @@
 {"event": "session.start", "session": "agent47-oaa-triage-20260815", "ts": "2026-08-15T13:04:59", "agent": "codex", "prev": "28657d76c09f734fd407a18187ad436f2935cacfe1418e6b43c05863b218bc90"}
 {"event": "session.finish", "session": "agent47-oaa-triage-20260815", "ts": "2026-08-15T13:05:17", "status": "ok", "claims_verdict": "GREEN", "prev": "dcd9367b0da884ebea56adb7bcab23c8bdf95372cae85947046afc1c972e2571"}
 {"event": "session.start", "session": "agent47-release-prep-v1-2-14-20260815", "ts": "2026-08-15T13:05:43", "agent": "codex", "prev": "664a98e49c1c8f6b99bd44e813e99daaeb14139630aa2a87ac0f335d68819889"}
+{"event": "session.finish.refused", "session": "agent47-release-prep-v1-2-14-20260815", "ts": "2026-08-15T13:09:54", "status": "ok", "claims_verdict": "RED", "prev": "fb4fcebab4671bf32264a3c09c3ae2df26f4c7136909ef8535427f690b9adb56"}
+{"event": "session.finish", "session": "agent47-release-prep-v1-2-14-20260815", "ts": "2026-08-15T13:10:47", "status": "ok", "claims_verdict": "GREEN", "prev": "623dd758db29e7d6b1c93847a9f998f00c9f1b8d96d28131199f8d026a040905"}
