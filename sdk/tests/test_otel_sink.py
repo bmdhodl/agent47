@@ -5,12 +5,10 @@ interfaces to verify our mapping logic without requiring the actual SDK.
 """
 from __future__ import annotations
 
-import unittest
-from typing import Any, Dict, List, Optional
-from unittest.mock import MagicMock, patch, call
 import sys
 import types
-
+import unittest
+from typing import Any, Dict, List, Optional
 
 # Create mock OTel modules so we can test without opentelemetry installed
 _mock_trace = types.ModuleType("opentelemetry.trace")
@@ -174,6 +172,35 @@ class TestOtelTraceSink(unittest.TestCase):
         self.assertEqual(len(span.events), 1)
         self.assertEqual(span.events[0]["name"], "reasoning.step")
         self.assertEqual(span.events[0]["attributes"]["thought"], "search docs")
+
+    def test_llm_result_preserves_provider_model_and_usage(self):
+        """Normalized GenAI identity and usage survive the OTel event bridge."""
+        sink = self.OtelTraceSink(self.provider)
+
+        sink.emit({
+            "kind": "span", "phase": "start",
+            "trace_id": "t1", "span_id": "s1", "name": "agent.run",
+            "ts": 100.0, "service": "test",
+        })
+        sink.emit({
+            "kind": "event", "phase": "emit",
+            "trace_id": "t1", "span_id": "evt1", "parent_id": "s1",
+            "name": "llm.result", "ts": 100.5,
+            "data": {
+                "provider": "anthropic",
+                "model": "claude-sonnet-4-20250514",
+                "usage": {
+                    "input_tokens": 300,
+                    "output_tokens": 40,
+                    "total_tokens": 340,
+                },
+            },
+        })
+
+        attributes = self.provider._tracer.spans[0].events[0]["attributes"]
+        self.assertEqual(attributes["provider"], "anthropic")
+        self.assertEqual(attributes["model"], "claude-sonnet-4-20250514")
+        self.assertIn("'total_tokens': 340", attributes["usage"])
 
     def test_cost_attribute(self):
         """Cost USD is set as span attribute on end."""
