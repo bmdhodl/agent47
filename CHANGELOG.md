@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.14
 
 ### Reliability
 - Hardened the cross-process state lock (`JsonFileStateStore`, used by

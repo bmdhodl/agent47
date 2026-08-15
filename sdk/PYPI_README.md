@@ -10,7 +10,7 @@ Zero-dependency Python kill switch for AI agents. Hard budget caps. Loop detecti
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.13/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.14/LICENSE)
 
 ```bash
 pip install agentguard47
@@ -126,9 +126,9 @@ pip install "agentguard47[langchain]"   # optional extras as needed
 
 ## Docs
 
-- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.2.13/docs/guides/getting-started.md)
-- [Examples](https://github.com/bmdhodl/agent47/tree/v1.2.13/examples)
-- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.2.13/mcp-server) — `npx -y @agentguard47/mcp-server`
+- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.2.14/docs/guides/getting-started.md)
+- [Examples](https://github.com/bmdhodl/agent47/tree/v1.2.14/examples)
+- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.2.14/mcp-server) — `npx -y @agentguard47/mcp-server`
 
 ## Links
 
@@ -142,92 +142,39 @@ The hosted page is an optional next step, not a requirement. The SDK stays free,
 
 MIT · Built for people who ship agents and hate surprise bills.
 
-## Latest Release Notes (1.2.13)
-
-### Release Operations
-- Made post-PyPI GitHub Release creation a separate idempotent job and
-  dispatch release announcements explicitly, so the release-content workflow no
-  longer depends on `GITHUB_TOKEN` release events.
-- Hardened generated GitHub Release notes and release-content announcements so
-  they start from the last published GitHub Release instead of a stale raw tag.
-  This lets `v1.2.13` supersede the failed `v1.2.11` and `v1.2.12` tags without
-  truncating public release notes.
-- Includes the release candidate originally prepared under the failed
-  `v1.2.11` tag. That tag did not publish to PyPI and has no GitHub Release.
-- Supersedes the stale `v1.2.12` tag, which was pushed from a checkout still
-  carrying `sdk/pyproject.toml` version `1.2.10`. That tag did not publish a new
-  PyPI version and has no GitHub Release.
+## Latest Release Notes (1.2.14)
 
 ### Reliability
-- Hardened `agentguard.__version__` so malformed local package metadata falls
-  back to `0.0.0-dev` instead of crashing source-checkout imports.
-- Fixed the coding-agent review-loop proof to record cumulative guard spend as
-  `total_cost_usd`, preventing local reports from double-counting the stopped
-  budget event.
+- Hardened the cross-process state lock (`JsonFileStateStore`, used by
+  `BudgetGuard(store=...)`) against two Windows races that crashed concurrent
+  processes under contention: an exclusive lock create that fails with
+  `PermissionError` instead of `FileExistsError` during a concurrent release
+  ("delete pending"), and an `os.replace` that transiently fails with
+  access-denied when an antivirus/indexer holds the destination. Both now retry
+  safely, so cross-process budget enforcement holds on Windows scheduled tasks.
 
 ### Public Docs
-- Corrected the README threat-model copy so AgentGuard is positioned as local
-  runtime hard stops for loops, retries, and budget burn, not as a replacement
-  for egress firewalls or tool-permission layers.
-- Added release runbook documentation for tag-triggered PyPI publish and
-  GitHub Release creation.
+- Made the reader-facing surface fully model-agnostic to match the
+  already-vendor-neutral code path: the README/PyPI "As a skill" heading now
+  leads with Codex alongside Claude Code, and the budget-aware escalation
+  example notes the escalate target can be any provider's model, not just
+  Claude.
 
-### Profiles
-- Added a `deployed-agent` guard profile (`agentguard.init(profile="deployed-agent")`)
-  for unattended production agents. Tightens defaults to `loop_max=2`,
-  `retry_max=1`, `warn_pct=0.5`. Motivated by the arxiv:2605.00055
-  ambient-persuasion incident where a deployed agent installed 107
-  unauthorized components and overrode its own oversight gate.
+### Onboarding
+- Bare `agentguard` now prints a friendly first-run welcome with the 60-second
+  local path and the star call to action instead of an argparse help dump.
+- Added `python -m agentguard` as an entry point so the CLI works even when the
+  `agentguard` script is not on PATH.
+- Added `agentguard welcome` and `agentguard badge`. `badge` prints a
+  paste-able "Guarded by AgentGuard" README badge (markdown, rST, or HTML) so
+  adopters can advertise the SDK and drive new installs.
 
-### Release Proof
-- Added a deterministic sticky agent proof example that simulates a
-  CrewAI-style retry storm, repeated tool loop, budget burn, local incident
-  output, and dashboard-compatible hosted NDJSON without adding dependencies.
-- Added contract tests that post the sticky proof NDJSON to the local hosted
-  ingest harness so SDK proof events stay aligned with dashboard expectations.
+### Distribution
+- Added an opt-in bridge to the hosted AgentGuard page
+  (`bmdpat.com/tools/agentguard`) from the README/PyPI page, the `agentguard
+  --help` footer, and the first-run welcome. These are static links only: the
+  SDK still makes no network calls unless you configure `HttpSink`, and nothing
+  in the package phones home. The links carry UTM parameters so the site can
+  measure click-through; no identifier is sent from your machine.
 
-### Activation
-- Added `python -m agentguard.cli ...` fallback guidance to `doctor`, `demo`,
-  and `quickstart` so first-run users are not blocked when console scripts
-  install outside `PATH`.
-- Added a post-demo next-step block so `agentguard demo` points directly to
-  `agentguard quickstart --framework raw --write`, the generated starter, and
-  the follow-up local report command.
-- Added an MCP read-path proof to the proof gallery and test coverage that
-  catches stale local example and sample-doc references.
-- Added an optional local-first Pydantic AI starter recipe using Pydantic AI's
-  `TestModel`, so users can try the pattern without API keys or network calls
-  after installing the optional framework package.
-- Clarified incident-report dashboard handoff copy so hosted ingest is framed as
-  useful when incidents need retained history, alerts, spend trends, or
-  team-visible follow-up, not as a requirement for local safety.
-- Added a concise local-vs-hosted adoption table to the README and dashboard
-  contract docs so the dashboard CTA is explicit without making local SDK use
-  feel limited.
-
-### Release Security
-- Switched the PyPI publish workflow from long-lived `PYPI_TOKEN` authentication
-  to OIDC Trusted Publishing for the `pypi` GitHub environment, with PyPI
-  attestations enabled for release artifacts.
-- Added release documentation for the required PyPI trusted-publisher tuple and
-  post-release verification steps.
-- Added an MCP package publishing checklist and normalized npm package metadata
-  so the `@agentguard47/mcp-server` release path does not rely on npm publish
-  autocorrections.
-- Added an optional release-guard npm check so release operators can verify the
-  repo MCP package version is actually published as npm latest without making
-  normal CI depend on the network.
-
-### Release Operations
-- Added a release cadence document that separates the weekly MCP / Glama
-  distribution train from the monthly SDK release train.
-- Added a scheduled release cadence workflow that opens or updates one active
-  release queue issue with SDK, npm MCP, and Glama indexing status.
-- Added tag/version validation to the PyPI publish workflow and creates the
-  GitHub Release only after PyPI publish succeeds.
-- Changed release announcement automation to run from a published GitHub Release
-  instead of a raw tag push, so failed PyPI publishes cannot announce as shipped.
-- Refreshed the MCP server lockfile so `npm audit` no longer reports the
-  transitive `fast-uri` or `qs` advisories.
-
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.13/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.14/CHANGELOG.md)
