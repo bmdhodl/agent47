@@ -9,6 +9,11 @@
 - Record explicit external adoption evidence from three repeat users or design
   partners before broadening the SDK feature surface. Use issues, PRs, or
   user-provided proof; do not add telemetry to manufacture this signal.
+- Reviewed 2026-08-15: deferred issue `#686`'s optional OAA-signed local trace
+  proposal. The external draft is not adopted yet, and its reference path uses
+  `PyJWT` plus `cryptography`; adding it would require an explicit optional
+  dependency and key-management contract. Revisit after spec adoption or an
+  interoperability PR, not as a speculative core feature.
 - Done 2026-08-15: built the current SDK candidate wheel and installed it into
   an isolated venv. `python -m agentguard`, `doctor`, `demo`, raw
   `quickstart --write`, generated-starter execution, `report`, and `badge` all

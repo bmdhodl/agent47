@@ -37,6 +37,10 @@
   distinct-user or production proof.
 - `main` is ahead of `v1.2.13` with unreleased onboarding improvements; the
   next SDK tag must pass the full release gates before those are called public.
+- External adoption signal: issue `#686` proposes optional OAA-signed local
+  traces. It is one substantive user request, not repeat adoption proof; the
+  referenced OAA project is still a draft with no adopters, so implementation
+  remains deferred pending spec maturity or an interoperability PR.
 - distribution before new features
 - coding-agent onboarding and proof
 
