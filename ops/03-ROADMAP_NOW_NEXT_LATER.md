@@ -3,21 +3,27 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-06-17
+**Last reviewed:** 2026-08-15
 
 ## Current Focus Notes
 
-- **Human-signal baseline for distribution metrics.** As of 2026-06-05, the distribution baseline (shipped in `sdk_pulse.py`) distinguishes human activation (PyPI package downloads) from machine volume (scheduled checkout clones). Clone counts are discounted as partly self-inflicted by internal CI workflows; human-likely download counts are the primary signal for coding-agent adoption.
-- Current SDK release candidate is `v1.2.13` from `main`; public PyPI latest
-  remains `v1.2.10` until the next tag publish succeeds. The stale `v1.2.11`
-  tag failed before PyPI publish, and the stale `v1.2.12` tag points at a
-  `1.2.10` checkout. Do not reuse either tag without explicit owner approval.
-- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47`,
-  but public registry search still reports MCP package version `0.2.1`; refresh
-  metadata without changing SDK runtime code.
-- Glama first release is live at `https://glama.ai/mcp/servers/bmdhodl/agent47`;
-  the public API has indexed env vars but still returns an empty `tools` array
-  as of 2026-05-08.
+- **Human-signal baseline for distribution metrics.** Separate PyPI package
+  downloads from scheduled checkout clones. Clone counts can be self-inflicted
+  by internal CI workflows; downloads are a directional activation signal, not
+  proof of distinct users or production adoption.
+- Current public SDK release is `v1.2.13`, published to PyPI on 2026-05-30.
+  `main` is ahead of that tag and contains unreleased onboarding improvements;
+  do not describe those improvements as shipped until a new SDK tag passes the
+  release gates.
+- Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47` at
+  `0.2.2` with `isLatest: true`; the older `0.2.1` result is historical
+  metadata, not a current release blocker.
+- Glama is live at `https://glama.ai/mcp/servers/bmdhodl/agent47`, but its
+  public API returned an empty `tools` array on 2026-08-15. Treat that as an
+  external directory indexing issue until the rendered listing and API agree.
+- The live adoption baseline on 2026-08-15 was 4 GitHub stars and 5/18/106
+  PyPI downloads for the last day/week/month. Downloads are a directional
+  activation signal, not evidence of distinct users or production adoption.
 - Dashboard alignment is current for hosted ingest and decision traces. The
   remote-kill boundary is documented: the SDK emits events and enforces local
   guards, while the dashboard owns retained history, alerts, and team
@@ -53,16 +59,18 @@ they directly strengthen coding-agent adoption.
 | Follow-up handoff | Done - `ops/FOLLOWUP.md` records next hygiene and activation-metrics work without burying it in PR notes |
 | Opt-in activation metrics design | Done - `docs/guides/activation-metrics-design.md` defines allowed questions, consent boundaries, forbidden fields, and local-first non-goals without adding telemetry |
 | Frictionless first-run + badge network effect | Done - bare `agentguard` prints a guided welcome instead of argparse help, `python -m agentguard` works without PATH setup, and `agentguard badge` prints a paste-able "Guarded by AgentGuard" README badge (the lowest-friction install→backlink surface) |
+| Ops and release-state freshness | Done - architecture, roadmap, follow-up, and affected SDK memory files were reconciled against the 2026-08-15 mainline and public artifact checks |
 
 ## Now (next 2 weeks)
 
 | Item | Success Signal |
 |------|---------------|
 | Activation proof polish | A fresh local flow from `pip install` to `agentguard doctor`, `agentguard demo`, and `agentguard quickstart` stays deterministic; repo-only examples and starters remain offline and easy to copy into real repos |
+| External adoption proof | Obtain explicit evidence from at least three external repeat users or design partners before adding another broad SDK feature; do not add telemetry to satisfy this gate |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
-| MCP distribution hygiene | Official MCP Registry metadata is refreshed to `0.2.2`; Glama tool catalog indexes the seven MCP tools; `awesome-mcp-servers` receives the Glama URL without building unrelated features |
+| MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
-| Ops/doc freshness | `ops/02-ARCHITECTURE.md`, this roadmap, `ops/FOLLOWUP.md`, and memory files stay concise and current enough that agents do not start from stale assumptions |
+| Ops/doc freshness | Done on 2026-08-15; the freshness commands are now under the AGENTS.md thresholds and stale release claims are removed |
 
 ## Next (next month)
 

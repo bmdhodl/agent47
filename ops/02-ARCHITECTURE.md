@@ -1,6 +1,6 @@
 # Architecture
 
-**Last reviewed:** 2026-05-29
+**Last reviewed:** 2026-08-15
 
 ## High-level shape
 
@@ -14,6 +14,21 @@ The hosted dashboard is a separate private product surface. The SDK reaches it
 only through explicit hosted integration points such as `HttpSink`.
 
 The SDK must stand on its own. It should be usable offline, auditable from source, and credible in production even when the hosted dashboard is not configured.
+
+## Current release state
+
+This review found no public architecture drift on `main` at `4009798`. The
+current public artifacts are:
+
+- Python SDK `agentguard47` `1.2.13` on PyPI, published 2026-05-30.
+- Read-only MCP package `@agentguard47/mcp-server` `0.2.2` on npm.
+- Official MCP Registry entry `io.github.bmdhodl/agentguard47` at `0.2.2`,
+  marked `isLatest: true`; the older `0.2.1` entry is historical metadata.
+
+The Glama public API returned an empty `tools` array on 2026-08-15. That is a
+directory/API indexing signal, not evidence that the source MCP server has no
+tools. It must be checked separately from the rendered listing and does not
+justify changing the SDK architecture.
 
 ## Runtime flow
 

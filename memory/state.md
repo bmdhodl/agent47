@@ -1,6 +1,6 @@
 # SDK State
 
-**Last Updated:** 2026-06-06
+**Last Updated:** 2026-08-15
 
 ## Product
 - AgentGuard = zero-dependency Python SDK for runtime guardrails.
@@ -15,11 +15,12 @@
 - Local budget MCP package: `agentguard-mcp` exists in this repo but is not
   published to npm or PyPI; dogfood installs it from the checkout.
 - Official MCP Registry listing: live as `io.github.bmdhodl/agentguard47`;
-  public registry search still reports package version `0.2.1` and needs a
-  metadata refresh / republish check.
+  public search returns both historical `0.2.1` and current `0.2.2`, with
+  `0.2.2` marked `isLatest: true`.
 - Glama listing: live at `https://glama.ai/mcp/servers/bmdhodl/agent47`.
-  First Glama release is published; Glama API shows the environment schema, but
-  still returns an empty `tools` array as of 2026-05-08.
+  The public API still returns the environment schema but an empty `tools`
+  array as of 2026-08-15. Treat rendered-listing evidence separately from API
+  indexing and do not infer source tool absence from the API response.
 
 ## Repo Scope
 - `sdk/` = public runtime guardrails SDK
@@ -27,8 +28,11 @@
 - hosted dashboard remains private and separate
 
 ## Current Focus
-- `1.2.13` is shipped; next push is converting installs into visible proof
-  (GitHub stars sit at 3 against thousands of PyPI downloads)
+- `1.2.13` is shipped; next push is converting installs into visible proof.
+  The 2026-08-15 baseline is 4 GitHub stars and 5/18/106 PyPI downloads for
+  the last day/week/month. Downloads are not distinct-user or production proof.
+- `main` is ahead of `v1.2.13` with unreleased onboarding improvements; the
+  next SDK tag must pass the full release gates before those are called public.
 - distribution before new features
 - coding-agent onboarding and proof
 

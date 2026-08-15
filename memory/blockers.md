@@ -1,27 +1,28 @@
 # SDK Blockers
 
-**Last Updated:** 2026-05-30 (release unblocked; `1.2.13` shipped)
+**Last Updated:** 2026-08-15 (release unblocked; `1.2.13` shipped)
 
 ## Active
-- **`awesome-mcp-servers` re-list PR is open upstream and out of our hands.**
-  Fresh PR `punkpeye/awesome-mcp-servers#7164` (opened 2026-05-31) adds the
-  Monitoring entry *with* the Glama score badge that got the old #4012 closed.
-  The Glama listing now passes checks (all 7 tools indexed, graded A), so the
-  bot's requirements are met; merge is the upstream maintainers' call.
-- **Glama "no recent usage" is the only open listing item (needs the read key).**
-  Glama profile completion is 92%; the lone remaining checklist warning is "no
-  recent usage". Seed it via the listing's "Try in Browser" with a real
-  `AGENTGUARD_API_KEY`, or let real traffic clear it. Do not commit the key.
+- **Glama listing/API reconciliation remains open (needs the read key).**
+  The rendered listing had previously reported the seven tools and a 92%
+  profile, but the public API returned an empty `tools` array on 2026-08-15.
+  The remaining profile checklist item is "no recent usage". Seed usage via
+  the listing's "Try in Browser" with a real `AGENTGUARD_API_KEY`, or let real
+  traffic clear it. Do not commit the key.
 
 ## Recently Resolved
-- **Glama tool catalog is indexed and graded.** All 7 tools (`query_traces`,
+- **Glama rendered tool catalog was indexed and graded on 2026-05-31.** All 7
+  tools (`query_traces`,
   `get_trace`, `get_trace_decisions`, `get_alerts`, `get_usage`, `get_costs`,
   `check_budget`) show on the Schema tab, each graded A; license/quality/
-  maintenance are all A. The old `tools: []` was a stale public-API cache, not a
-  real gap. The `1.2.13` build test passes.
+  maintenance are all A. The current public API disagrees and is tracked above;
+  the `1.2.13` build test passes.
 - **Glama related servers added** (2026-05-31) via the UI: `getsentry/sentry-mcp`,
   `therealsachin/langfuse-mcp-server`, `agarwalvivek29/opentelemetry-mcp`. The
   "no related servers" checklist item is cleared.
+- **`awesome-mcp-servers` re-list merged.** Upstream PR
+  `punkpeye/awesome-mcp-servers#7164` merged on 2026-06-06 with the Monitoring
+  entry and Glama URL.
 - **MCP Registry now serves `0.2.2`** (`isLatest: true`, published
   2026-05-31T00:08 via the new OIDC `publish-mcp-registry.yml` workflow). The
   manual `mcp-publisher login github` device flow is no longer needed; run
