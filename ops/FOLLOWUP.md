@@ -9,9 +9,9 @@
 - Record explicit external adoption evidence from three repeat users or design
   partners before broadening the SDK feature surface. Use issues, PRs, or
   user-provided proof; do not add telemetry to manufacture this signal.
-- Harden `agentguard-mcp/agentguard_mcp/sync.py`: `SyncHook` POSTs to
-  `AGENTGUARD_SYNC_URL` with no scheme/host validation, unlike `HttpSink`
-  (which blocks private/reserved IPs and non-http(s) schemes). It is an opt-in
-  operator env var, so low risk, but add minimal scheme validation
-  (reject non-http(s)) + a test so the consistency gap does not reappear.
-  Found during the 2026-06-06 QA pass (see `proof/qa-2026-06-06/REPORT.md`).
+- Done 2026-08-15: `agentguard-mcp/agentguard_mcp/sync.py` validates opt-in
+  `AGENTGUARD_SYNC_URL` values for an `http`/`https` scheme and hostname before
+  starting the background executor. Private destinations remain allowed because
+  this is an explicitly configured local hook; broad SSRF blocking remains a
+  separate compatibility decision. Tests cover rejected schemes, missing hosts,
+  and valid local HTTP URLs.

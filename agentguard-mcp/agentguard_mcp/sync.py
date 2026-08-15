@@ -10,6 +10,24 @@ from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
 from threading import BoundedSemaphore
 from typing import Any
+from urllib.parse import urlparse
+
+
+def _validate_sync_url(url: str) -> None:
+    """Reject URL schemes that do not use the HTTP transport."""
+
+    try:
+        parsed = urlparse(url)
+        hostname = parsed.hostname
+    except ValueError as exc:
+        raise ValueError(f"Invalid AGENTGUARD_SYNC_URL: {url!r}") from exc
+
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError(
+            f"AGENTGUARD_SYNC_URL must use http or https, got {parsed.scheme!r}"
+        )
+    if not hostname:
+        raise ValueError("AGENTGUARD_SYNC_URL must include a hostname")
 
 
 class SyncHook:
@@ -25,6 +43,8 @@ class SyncHook:
     ) -> None:
         self.url = url if url is not None else os.environ.get("AGENTGUARD_SYNC_URL")
         self.token = token if token is not None else os.environ.get("AGENTGUARD_SYNC_TOKEN")
+        if self.url:
+            _validate_sync_url(self.url)
         self.timeout_seconds = timeout_seconds
         self._executor = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="agentguard-sync")
         self._pending = BoundedSemaphore(max_pending)
