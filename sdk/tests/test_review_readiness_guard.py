@@ -259,6 +259,13 @@ __CHECKOUT_PATH__
                 ),
                 "claude-review:workflow-local-cli",
             ),
+            "native-placeholder-cli": (
+                lambda workflow: workflow.replace(
+                    review_readiness_guard.CLAUDE_REVIEW_CLI_PATH,
+                    ".github/claude-review/node_modules/.bin/claude",
+                ),
+                "claude-review:workflow-local-cli",
+            ),
             "comment-only-cli": (
                 lambda workflow: workflow.replace(
                     "timeout 300s " + review_readiness_guard.CLAUDE_REVIEW_CLI_PATH,
@@ -352,18 +359,10 @@ __CHECKOUT_PATH__
         self.assertIn("claude-review:token-bearing-scope", checks)
 
     def test_timeout_must_anchor_local_cli_immediately_after_duration(self):
-        valid = (
-            "timeout 300s "
-            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
-        )
-        pipeline_valid = (
-            "} | timeout 300s "
-            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
-        )
-        false_positive = (
-            "timeout 300s true && "
-            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
-        )
+        cli = review_readiness_guard.CLAUDE_REVIEW_CLI_PATH
+        valid = f"timeout 300s {cli} -p --output-format text"
+        pipeline_valid = f"}} | timeout 300s {cli} -p --output-format text"
+        false_positive = f"timeout 300s true && {cli} -p --output-format text"
 
         self.assertIsNotNone(review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(valid))
         self.assertIsNotNone(
@@ -373,8 +372,8 @@ __CHECKOUT_PATH__
 
     def test_timeout_rejects_inert_prefixes(self):
         cli_command = (
-            "timeout 300s "
-            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
+            f"timeout 300s {review_readiness_guard.CLAUDE_REVIEW_CLI_PATH} "
+            "-p --output-format text"
         )
 
         for inert_prefix in ("echo ", "false && ", "diagnostic "):
