@@ -246,6 +246,13 @@ __CHECKOUT_PATH__
                 ),
                 "claude-review:workflow-local-cli",
             ),
+            "token-step-git-checkout": (
+                lambda workflow: workflow.replace(
+                    "set -euo pipefail",
+                    "set -euo pipefail\n                      git checkout ${{ github.event.pull_request.head.sha }}",
+                ),
+                "claude-review:untrusted-git-tree-mutation",
+            ),
         }
 
         for name, (mutate, expected_check) in mutations.items():
@@ -282,7 +289,9 @@ __CHECKOUT_PATH__
       - name: Secondary token-bearing Claude
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: timeout 300s /tmp/claude -p --output-format text
+        run: |
+          git checkout ${{ github.event.pull_request.head.sha }}
+          timeout 300s /tmp/claude -p --output-format text
 """
 
         cases = {

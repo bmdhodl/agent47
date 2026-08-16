@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (21/24 verified)
+**Verdict: GREEN**  (23/26 verified)
 
 - .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
     - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
@@ -50,3 +50,7 @@
     - /test_single_token_bearing_sequence_rejects_safe_decoy_and_malicious_secondary/ found in sdk/tests/test_review_readiness_guard.py
 - OK **Documented make install includes the non-runtime YAML parser used by the readiness guard** (`file_contains`, RED)
     - /pip install pytest pytest-cov ruff pyyaml/ found in Makefile
+- OK **Readiness guard rejects executable PR tree mutations in the token-bearing path** (`file_contains`, RED)
+    - /untrusted-git-tree-mutation/ found in scripts/review_readiness_guard.py
+- OK **Regression covers token-step git checkout and malicious secondary review path** (`file_contains`, RED)
+    - /token-step-git-checkout/ found in sdk/tests/test_review_readiness_guard.py

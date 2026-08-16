@@ -47,6 +47,9 @@ CLAUDE_TIMEOUT_PATTERN = re.compile(
 )
 CLAUDE_CLI_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])claude(?:\.exe)?(?=\s|$)")
 NPM_INSTALL_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])npm\s+(?:ci|install)(?=\s|$)")
+GIT_TREE_MUTATION_PATTERN = re.compile(
+    r"(?<![A-Za-z0-9_-])git\s+(?:checkout|switch|reset)(?=\s|$)"
+)
 SECRET_REFERENCE_PATTERN = re.compile(r"\$\{\{\s*secrets\.")
 
 
@@ -176,6 +179,7 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
     checkout_commands: List[Dict[str, Any]] = []
     npm_commands: List[Dict[str, Any]] = []
     cli_commands: List[Dict[str, Any]] = []
+    git_tree_mutations: List[Dict[str, Any]] = []
     token_steps: List[Dict[str, Any]] = []
     alternate_working_directories: List[Dict[str, Any]] = []
 
@@ -214,6 +218,10 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
                     cli_commands.append(
                         {"job": job_name, "index": index, "step": step, "line": line}
                     )
+                if GIT_TREE_MUTATION_PATTERN.search(line):
+                    git_tree_mutations.append(
+                        {"job": job_name, "index": index, "step": step, "line": line}
+                    )
             if _contains_secret_reference(step.get("env")):
                 token_steps.append({"job": job_name, "index": index, "step": step})
 
@@ -245,6 +253,13 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
             _workflow_finding(
                 "secondary-cli",
                 "The privileged review workflow must contain exactly one Claude CLI invocation.",
+            )
+        )
+    if git_tree_mutations:
+        findings.append(
+            _workflow_finding(
+                "untrusted-git-tree-mutation",
+                "The privileged review workflow must not checkout or reset a PR-controlled Git tree.",
             )
         )
     if any(command["job"] != "claude-review" for command in checkout_commands + npm_commands + cli_commands):
