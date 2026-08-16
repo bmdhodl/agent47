@@ -1,0 +1,1 @@
+Non-secret activation probe for the merged Claude review workflow.
