@@ -1,12 +1,12 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: RED**  (1/2 verified)
+**Verdict: GREEN**  (4/4 verified)
 
-- XX **Claude review workflow uses the checked-in npm lockfile** (`file_contains`, RED)
-    - /npm ci --no-audit --no-fund/ NOT in .github/workflows/claude-review.yml
+- OK **Claude review workflow uses the checked-in npm lockfile** (`file_contains`, RED)
+    - /npm ci --no-audit --no-fund/ found in .github/workflows/claude-review.yml
 - OK **Claude review dependency lockfile exists** (`file_exists`, RED)
     - .github/claude-review/package-lock.json exists
-
-## 1 gap(s) - a claimed 'done' is not real
-
-- [RED/fail] Claude review workflow uses the checked-in npm lockfile - /npm ci --no-audit --no-fund/ NOT in .github/workflows/claude-review.yml
+- OK **Review-readiness guard requires the lockfile-backed local npm ci and local Claude CLI path** (`file_contains`, RED)
+    - /npm ci --no-audit --no-fund/ found in scripts/review_readiness_guard.py
+- OK **Review-readiness tests cover semantic 300-second timeout and package-lock contract** (`file_contains`, RED)
+    - /test_workflow_requires_semantic_three_hundred_second_timeout/ found in sdk/tests/test_review_readiness_guard.py
