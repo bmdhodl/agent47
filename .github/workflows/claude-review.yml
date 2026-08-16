@@ -20,7 +20,8 @@ jobs:
           fetch-depth: 1
 
       - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code@2.1.175
+        working-directory: .github/claude-review
+        run: npm ci --no-audit --no-fund
 
       - name: Review PR
         env:
@@ -48,7 +49,7 @@ jobs:
             printf '%s\n' 'UNTRUSTED PR DIFF START'
             cat /tmp/pr.diff
             printf '%s\n' 'UNTRUSTED PR DIFF END'
-          } | timeout 300s claude -p --output-format text > /tmp/review.md
+          } | timeout 300s .github/claude-review/node_modules/.bin/claude -p --output-format text > /tmp/review.md
 
           if [ ! -s /tmp/review.md ]; then
             echo "Empty review output, skipping comment."
