@@ -36,7 +36,7 @@ REQUIRED_CLAUDE_REVIEW_PHRASES = {
 }
 
 CLAUDE_TIMEOUT_PATTERN = re.compile(
-    r"(?m)^(?!\s*#)[^\r\n]*\btimeout\s+300s\s+"
+    r"(?m)^[ \t]*(?:\}[ \t]*\|[ \t]*)?timeout\s+300s\s+"
     + re.escape(CLAUDE_REVIEW_CLI_PATH)
     + r"\s+-p\s+--output-format\s+text\b"
 )

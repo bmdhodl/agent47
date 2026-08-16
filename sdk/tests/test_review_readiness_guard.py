@@ -105,13 +105,34 @@ class TestReviewReadinessGuard(unittest.TestCase):
             "timeout 300s "
             ".github/claude-review/node_modules/.bin/claude -p --output-format text"
         )
+        pipeline_valid = (
+            "} | timeout 300s "
+            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
+        )
         false_positive = (
             "timeout 300s true && "
             ".github/claude-review/node_modules/.bin/claude -p --output-format text"
         )
 
         self.assertIsNotNone(review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(valid))
+        self.assertIsNotNone(
+            review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(pipeline_valid)
+        )
         self.assertIsNone(review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(false_positive))
+
+    def test_timeout_rejects_inert_prefixes(self):
+        cli_command = (
+            "timeout 300s "
+            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
+        )
+
+        for inert_prefix in ("echo ", "false && ", "diagnostic "):
+            with self.subTest(inert_prefix=inert_prefix):
+                self.assertIsNone(
+                    review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(
+                        inert_prefix + cli_command
+                    )
+                )
 
     def test_lockfile_backed_cli_contract_is_required(self):
         with tempfile.TemporaryDirectory() as tmp:

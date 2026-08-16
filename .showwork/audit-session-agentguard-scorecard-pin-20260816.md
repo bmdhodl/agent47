@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (6/7 verified)
+**Verdict: GREEN**  (11/12 verified)
 
 - OK **Claude review workflow uses the checked-in npm lockfile** (`file_contains`, RED)
     - /npm ci --no-audit --no-fund/ found in .github/workflows/claude-review.yml
@@ -16,3 +16,13 @@
     - /test_timeout_must_anchor_local_cli_immediately_after_duration/ found in sdk/tests/test_review_readiness_guard.py
 - OK **Timeout guard anchors the 300-second deadline to the local Claude CLI path** (`file_contains`, RED)
     - /CLAUDE_REVIEW_CLI_PATH/ found in scripts/review_readiness_guard.py
+- OK **Preflight registers the Claude review package manifest as review-readiness input** (`file_contains`, RED)
+    - /.github/claude-review/package.json/ found in scripts/sdk_preflight.py
+- OK **Preflight registers the Claude review lockfile as review-readiness input** (`file_contains`, RED)
+    - /.github/claude-review/package-lock.json/ found in scripts/sdk_preflight.py
+- OK **Preflight preserves .github paths during normalization** (`file_contains`, RED)
+    - /while normalized.startswith/ found in scripts/sdk_preflight.py
+- OK **Timeout guard accepts the real pipeline invocation and rejects inert prefixes** (`file_contains`, RED)
+    - /test_timeout_rejects_inert_prefixes/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Preflight regression covers both Claude review dependency files** (`file_contains`, RED)
+    - /test_review_readiness_dependency_files_run_guard/ found in sdk/tests/test_sdk_preflight.py
