@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (26/29 verified)
+**Verdict: GREEN**  (29/33 verified)
 
 - .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
     - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
@@ -60,3 +60,11 @@
     - /GIT_COMMAND_PATTERN/ found in scripts/review_readiness_guard.py
 - OK **Regression uses github.token and git global-option reset mutations** (`file_contains`, RED)
     - /GITHUB_WORKSPACE/ found in sdk/tests/test_review_readiness_guard.py
+- .. **Readiness guard scans every parsed workflow step field for secret references** (`None`, RED)
+    - retracted: The source claim is true but the original receipt pattern was not accepted by the verifier; replace it with a stable source-token check.
+- OK **Readiness guard rejects git restore tree mutations** (`file_contains`, RED)
+    - /checkout|switch|reset|restore/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard pins approved Claude tarball and integrity** (`file_contains`, RED)
+    - /CLAUDE_REVIEW_INTEGRITY/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard scans every parsed workflow step field for secret references** (`file_contains`, RED)
+    - /Scan the parsed step mapping/ found in scripts/review_readiness_guard.py

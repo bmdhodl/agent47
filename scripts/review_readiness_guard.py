@@ -17,6 +17,12 @@ CLAUDE_REVIEW_PACKAGE_PATH = Path(".github/claude-review/package.json")
 CLAUDE_REVIEW_LOCK_PATH = Path(".github/claude-review/package-lock.json")
 CLAUDE_REVIEW_DEPENDENCY = "@anthropic-ai/claude-code"
 CLAUDE_REVIEW_VERSION = "2.1.175"
+CLAUDE_REVIEW_RESOLVED = (
+    "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.175.tgz"
+)
+CLAUDE_REVIEW_INTEGRITY = (
+    "sha512-x37KEw7T1vz/CLkpLYqa8d6eyS/R1777+HMYJRqYf4e5+OhZwF/+d1LoTs5vFXTrFCWFjZTbWGZksW/gKpvCTQ=="
+)
 CLAUDE_REVIEW_CLI_PATH = ".github/claude-review/node_modules/.bin/claude"
 
 REQUIRED_TEMPLATE_PHRASES = {
@@ -50,7 +56,7 @@ NPM_INSTALL_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])npm\s+(?:ci|install)(?=\s|$
 SECRET_REFERENCE_PATTERN = re.compile(r"\$\{\{\s*(?:secrets\.|github\.token\b)")
 GIT_COMMAND_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])git(?=\s|$)")
 GIT_TREE_TARGET_PATTERN = re.compile(
-    r"(?<![A-Za-z0-9_-])(?:checkout|switch|reset)(?=\s|$)"
+    r"(?<![A-Za-z0-9_-])(?:checkout|switch|reset|restore)(?=\s|$)"
 )
 
 
@@ -223,7 +229,10 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
                     git_tree_mutations.append(
                         {"job": job_name, "index": index, "step": step, "line": line}
                     )
-            if _contains_secret_reference(step.get("env")):
+            # GitHub expressions can be evaluated in fields beyond env, such
+            # as with and run. Scan the parsed step mapping so a second
+            # token-bearing action or command cannot hide outside env.
+            if _contains_secret_reference(step):
                 token_steps.append({"job": job_name, "index": index, "step": step})
 
     review_checkouts = [
@@ -260,7 +269,7 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
         findings.append(
             _workflow_finding(
                 "untrusted-git-tree-mutation",
-                "The privileged review workflow must not checkout or reset a PR-controlled Git tree.",
+                "The privileged review workflow must not checkout, reset, switch, or restore a PR-controlled Git tree.",
             )
         )
     if any(command["job"] != "claude-review" for command in checkout_commands + npm_commands + cli_commands):
@@ -593,6 +602,28 @@ def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
                         message=(
                             f"package-lock.json must resolve {CLAUDE_REVIEW_DEPENDENCY} "
                             f"to {CLAUDE_REVIEW_VERSION}."
+                        ),
+                    )
+                )
+            if locked_package.get("resolved") != CLAUDE_REVIEW_RESOLVED:
+                findings.append(
+                    Finding(
+                        check="claude-review:lockfile-artifact",
+                        path=str(CLAUDE_REVIEW_LOCK_PATH),
+                        message=(
+                            "package-lock.json must resolve the reviewed Claude CLI "
+                            "from the approved registry tarball."
+                        ),
+                    )
+                )
+            if locked_package.get("integrity") != CLAUDE_REVIEW_INTEGRITY:
+                findings.append(
+                    Finding(
+                        check="claude-review:lockfile-artifact",
+                        path=str(CLAUDE_REVIEW_LOCK_PATH),
+                        message=(
+                            "package-lock.json must retain the reviewed Claude CLI "
+                            "integrity hash."
                         ),
                     )
                 )

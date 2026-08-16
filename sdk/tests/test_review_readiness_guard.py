@@ -102,7 +102,11 @@ __CHECKOUT_PATH__
             lock = {
                 "packages": {
                     "": {"dependencies": {"@anthropic-ai/claude-code": "2.1.175"}},
-                    "node_modules/@anthropic-ai/claude-code": {"version": "2.1.175"},
+                    "node_modules/@anthropic-ai/claude-code": {
+                        "version": "2.1.175",
+                        "resolved": review_readiness_guard.CLAUDE_REVIEW_RESOLVED,
+                        "integrity": review_readiness_guard.CLAUDE_REVIEW_INTEGRITY,
+                    },
                 }
             }
             (package_dir / "package.json").write_text(
@@ -249,7 +253,7 @@ __CHECKOUT_PATH__
             "token-step-git-checkout": (
                 lambda workflow: workflow.replace(
                     "set -euo pipefail",
-                    "set -euo pipefail\n                      git -C \"$GITHUB_WORKSPACE\" reset --hard ${{ github.event.pull_request.head.sha }}",
+                    "set -euo pipefail\n                      git -C \"$GITHUB_WORKSPACE\" restore --source ${{ github.event.pull_request.head.sha }} -- .",
                 ),
                 "claude-review:untrusted-git-tree-mutation",
             ),
@@ -313,6 +317,23 @@ __CHECKOUT_PATH__
                     {finding.check for finding in findings},
                 )
 
+    def test_secret_reference_scan_covers_step_fields_beyond_env(self):
+        extra_steps = """
+      - name: Token-bearing action input
+        uses: example/review@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Token-bearing command expression
+        run: echo ${{ github.token }}
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            self._write_repo_fixture(repo_root, self._valid_workflow() + extra_steps)
+            findings = review_readiness_guard.collect_findings(repo_root)
+
+        checks = {finding.check for finding in findings}
+        self.assertIn("claude-review:token-bearing-scope", checks)
+
     def test_timeout_must_anchor_local_cli_immediately_after_duration(self):
         valid = (
             "timeout 300s "
@@ -361,6 +382,23 @@ __CHECKOUT_PATH__
         checks = {finding.check for finding in findings}
         self.assertIn("claude-review:package-manifest", checks)
         self.assertIn("claude-review:lockfile", checks)
+
+    def test_lockfile_contract_rejects_unapproved_tarball_or_integrity(self):
+        for field in ("resolved", "integrity"):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as tmp:
+                repo_root = pathlib.Path(tmp)
+                self._write_repo_fixture(repo_root, self._valid_workflow())
+                lock_path = repo_root / ".github" / "claude-review" / "package-lock.json"
+                lock = json.loads(lock_path.read_text(encoding="utf-8"))
+                lock["packages"]["node_modules/@anthropic-ai/claude-code"][field] = "tampered"
+                lock_path.write_text(json.dumps(lock), encoding="utf-8")
+
+                findings = review_readiness_guard.collect_findings(repo_root)
+
+            self.assertIn(
+                "claude-review:lockfile-artifact",
+                {finding.check for finding in findings},
+            )
 
     def test_json_output_is_parseable(self):
         result = run(
