@@ -45,6 +45,9 @@ CLAUDE_TIMEOUT_PATTERN = re.compile(
     + re.escape(CLAUDE_REVIEW_CLI_PATH)
     + r"\s+-p\s+--output-format\s+text\b"
 )
+CLAUDE_CLI_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])claude(?:\.exe)?(?=\s|$)")
+NPM_INSTALL_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])npm\s+(?:ci|install)(?=\s|$)")
+SECRET_REFERENCE_PATTERN = re.compile(r"\$\{\{\s*secrets\.")
 
 
 def _executable_shell_lines(run_value: Any) -> List[str]:
@@ -72,6 +75,14 @@ def _workflow_finding(check: str, message: str) -> Finding:
         path=str(CLAUDE_REVIEW_PATH),
         message=message,
     )
+
+
+def _contains_secret_reference(value: Any) -> bool:
+    if isinstance(value, dict):
+        return any(_contains_secret_reference(item) for item in value.values())
+    if isinstance(value, list):
+        return any(_contains_secret_reference(item) for item in value)
+    return isinstance(value, str) and SECRET_REFERENCE_PATTERN.search(value) is not None
 
 
 @dataclass(frozen=True)
@@ -159,27 +170,145 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
         )
 
     jobs = document.get("jobs")
-    review_job: Optional[Dict[str, Any]] = None
-    if isinstance(jobs, dict) and isinstance(jobs.get("claude-review"), dict):
-        review_job = jobs["claude-review"]
-    steps = review_job.get("steps") if review_job is not None else None
-    if not isinstance(steps, list):
-        steps = []
+    if not isinstance(jobs, dict):
+        jobs = {}
 
-    checkout_step: Optional[Dict[str, Any]] = None
-    install_step: Optional[Dict[str, Any]] = None
-    review_run_lines: List[str] = []
-    for step in steps:
-        if not isinstance(step, dict):
+    checkout_commands: List[Dict[str, Any]] = []
+    npm_commands: List[Dict[str, Any]] = []
+    cli_commands: List[Dict[str, Any]] = []
+    token_steps: List[Dict[str, Any]] = []
+    alternate_working_directories: List[Dict[str, Any]] = []
+
+    for job_name, job in jobs.items():
+        if not isinstance(job, dict):
             continue
-        uses = step.get("uses")
-        if isinstance(uses, str) and uses.startswith("actions/checkout@"):
-            checkout_step = step
-        if step.get("working-directory") == ".github/claude-review":
-            install_step = step
-        run_lines = _executable_shell_lines(step.get("run"))
-        if any(CLAUDE_REVIEW_CLI_PATH in line for line in run_lines):
-            review_run_lines.extend(run_lines)
+        if _contains_secret_reference(job.get("env")):
+            token_steps.append({"job": job_name, "index": None, "job_level": True})
+        steps = job.get("steps")
+        if not isinstance(steps, list):
+            continue
+        for index, step in enumerate(steps):
+            if not isinstance(step, dict):
+                continue
+            uses = step.get("uses")
+            if isinstance(uses, str) and uses.startswith("actions/checkout@"):
+                checkout_commands.append(
+                    {"job": job_name, "index": index, "step": step}
+                )
+            working_directory = step.get("working-directory")
+            if working_directory not in (None, ".github/claude-review"):
+                alternate_working_directories.append(
+                    {
+                        "job": job_name,
+                        "index": index,
+                        "working_directory": working_directory,
+                    }
+                )
+            run_lines = _executable_shell_lines(step.get("run"))
+            for line in run_lines:
+                if NPM_INSTALL_PATTERN.search(line):
+                    npm_commands.append(
+                        {"job": job_name, "index": index, "step": step, "line": line}
+                    )
+                if CLAUDE_CLI_PATTERN.search(line):
+                    cli_commands.append(
+                        {"job": job_name, "index": index, "step": step, "line": line}
+                    )
+            if _contains_secret_reference(step.get("env")):
+                token_steps.append({"job": job_name, "index": index, "step": step})
+
+    review_checkouts = [
+        command for command in checkout_commands if command["job"] == "claude-review"
+    ]
+    review_npm_commands = [
+        command for command in npm_commands if command["job"] == "claude-review"
+    ]
+    review_cli_commands = [
+        command for command in cli_commands if command["job"] == "claude-review"
+    ]
+    if len(checkout_commands) > 1:
+        findings.append(
+            _workflow_finding(
+                "secondary-checkout",
+                "The privileged review workflow must contain exactly one checkout step.",
+            )
+        )
+    if len(npm_commands) > 1:
+        findings.append(
+            _workflow_finding(
+                "secondary-install",
+                "The privileged review workflow must contain exactly one npm install or npm ci command.",
+            )
+        )
+    if len(cli_commands) > 1:
+        findings.append(
+            _workflow_finding(
+                "secondary-cli",
+                "The privileged review workflow must contain exactly one Claude CLI invocation.",
+            )
+        )
+    if any(command["job"] != "claude-review" for command in checkout_commands + npm_commands + cli_commands):
+        findings.append(
+            _workflow_finding(
+                "secondary-review-job",
+                "Checkout, installation, and Claude CLI commands must stay in the token-bearing review job.",
+            )
+        )
+    if alternate_working_directories:
+        findings.append(
+            _workflow_finding(
+                "alternate-working-directory",
+                "The privileged review path must not run from a PR-controlled working directory.",
+            )
+        )
+
+    checkout_step: Optional[Dict[str, Any]] = (
+        review_checkouts[0]["step"] if review_checkouts else None
+    )
+    install_step: Optional[Dict[str, Any]] = (
+        review_npm_commands[0]["step"] if review_npm_commands else None
+    )
+    local_cli_commands = [
+        command
+        for command in review_cli_commands
+        if CLAUDE_REVIEW_CLI_PATH in command["line"]
+    ]
+    review_run_lines: List[str] = []
+    if len(local_cli_commands) == 1:
+        review_run_lines = _executable_shell_lines(local_cli_commands[0]["step"].get("run"))
+
+    if len(review_checkouts) != 1:
+        if not review_checkouts:
+            findings.append(
+                _workflow_finding(
+                    "pinned-checkout",
+                    "Claude review must use the pinned trusted-base checkout action.",
+                )
+            )
+    if len(review_npm_commands) != 1:
+        if not review_npm_commands:
+            findings.append(
+                _workflow_finding(
+                    "trusted-runtime-directory",
+                    "Claude review must install from .github/claude-review.",
+                )
+            )
+            findings.append(
+                _workflow_finding(
+                    "workflow-local-install",
+                    "Claude review must use the lockfile-backed local npm ci command.",
+                )
+            )
+    if len(review_cli_commands) != 1:
+        if not review_cli_commands:
+            review_run_lines = []
+        if not local_cli_commands:
+            findings.append(
+                _workflow_finding(
+                    "workflow-local-cli",
+                    "Claude review must invoke the pinned local CLI from an executable run block.",
+                )
+            )
 
     if checkout_step is None:
         findings.append(
@@ -247,6 +376,13 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
             )
         )
     else:
+        if install_step.get("working-directory") != ".github/claude-review":
+            findings.append(
+                _workflow_finding(
+                    "trusted-runtime-directory",
+                    "Claude review must install from .github/claude-review.",
+                )
+            )
         install_lines = _executable_shell_lines(install_step.get("run"))
         if not any(
             line == REQUIRED_CLAUDE_REVIEW_PHRASES["workflow-local-install"]
@@ -256,6 +392,42 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
                 _workflow_finding(
                     "workflow-local-install",
                     "Claude review must use the lockfile-backed local npm ci command.",
+                )
+            )
+
+    if len(review_checkouts) == 1 and len(review_npm_commands) == 1 and len(review_cli_commands) == 1:
+        checkout_index = review_checkouts[0]["index"]
+        npm_index = review_npm_commands[0]["index"]
+        cli_index = review_cli_commands[0]["index"]
+        if not checkout_index < npm_index < cli_index:
+            findings.append(
+                _workflow_finding(
+                    "workflow-sequence",
+                    "The trusted checkout, install, and Claude CLI must run in that order.",
+                )
+            )
+
+    if len(token_steps) != 1:
+        findings.append(
+            _workflow_finding(
+                "token-bearing-scope",
+                "Exactly one step in the review workflow may receive secret references.",
+            )
+        )
+    else:
+        token_step = token_steps[0]
+        if token_step.get("job_level") or token_step.get("job") != "claude-review":
+            findings.append(
+                _workflow_finding(
+                    "token-bearing-job",
+                    "Secret references must be step-local to the trusted claude-review job.",
+                )
+            )
+        elif len(local_cli_commands) != 1 or token_step["index"] != local_cli_commands[0]["index"]:
+            findings.append(
+                _workflow_finding(
+                    "token-bearing-sequence",
+                    "The sole secret-bearing step must be the single trusted local Claude CLI step.",
                 )
             )
 

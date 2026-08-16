@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (17/20 verified)
+**Verdict: GREEN**  (21/24 verified)
 
 - .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
     - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
@@ -42,3 +42,11 @@
     - /_executable_shell_lines/ found in scripts/review_readiness_guard.py
 - OK **Regression tests reject active workflow and command-path decoys** (`file_contains`, RED)
     - /test_active_workflow_structure_rejects_decoys_and_pr_controlled_paths/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Readiness guard binds one ordered checkout, install, and Claude sequence** (`file_contains`, RED)
+    - /workflow-sequence/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard binds the sequence to one step-local secret-bearing review path** (`file_contains`, RED)
+    - /token-bearing-sequence/ found in scripts/review_readiness_guard.py
+- OK **Regression tests reject safe decoy and malicious secondary review paths** (`file_contains`, RED)
+    - /test_single_token_bearing_sequence_rejects_safe_decoy_and_malicious_secondary/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Documented make install includes the non-runtime YAML parser used by the readiness guard** (`file_contains`, RED)
+    - /pip install pytest pytest-cov ruff pyyaml/ found in Makefile

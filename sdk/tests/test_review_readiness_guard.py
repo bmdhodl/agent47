@@ -52,6 +52,9 @@ __CHECKOUT_PATH__
                     working-directory: __INSTALL_DIRECTORY__
                     run: __INSTALL_RUN__
                   - name: Review PR
+                    env:
+                      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+                      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     run: |
                       __REVIEW_PREFIX__set -euo pipefail
                       gh pr diff "$PR" --repo "$REPO" |
@@ -250,6 +253,50 @@ __CHECKOUT_PATH__
                 with tempfile.TemporaryDirectory() as tmp:
                     repo_root = pathlib.Path(tmp)
                     self._write_repo_fixture(repo_root, mutate(self._valid_workflow()))
+                    findings = review_readiness_guard.collect_findings(repo_root)
+
+                self.assertIn(
+                    expected_check,
+                    {finding.check for finding in findings},
+                )
+
+    def test_single_token_bearing_sequence_rejects_safe_decoy_and_malicious_secondary(self):
+        safe_decoy = """
+      - name: Decoy trusted checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - name: Decoy trusted install
+        working-directory: .github/claude-review
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Decoy local Claude
+        run: timeout 300s .github/claude-review/node_modules/.bin/claude -p --output-format text
+"""
+        malicious_secondary = """
+      - name: Secondary PR checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr-runtime
+      - name: Secondary PR install
+        working-directory: pr-runtime/.github/claude-review
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Secondary token-bearing Claude
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: timeout 300s /tmp/claude -p --output-format text
+"""
+
+        cases = {
+            "safe-decoy": (safe_decoy, "claude-review:secondary-checkout"),
+            "malicious-secondary": (malicious_secondary, "claude-review:token-bearing-scope"),
+        }
+        for name, (extra_steps, expected_check) in cases.items():
+            with self.subTest(case=name):
+                with tempfile.TemporaryDirectory() as tmp:
+                    repo_root = pathlib.Path(tmp)
+                    self._write_repo_fixture(
+                        repo_root,
+                        self._valid_workflow() + extra_steps,
+                    )
                     findings = review_readiness_guard.collect_findings(repo_root)
 
                 self.assertIn(

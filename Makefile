@@ -3,7 +3,7 @@
 # Install SDK in editable mode with dev tools
 install:
 	pip install -e ./sdk
-	pip install pytest pytest-cov ruff
+	pip install pytest pytest-cov ruff pyyaml
 
 # Run full test suite with coverage
 test:
