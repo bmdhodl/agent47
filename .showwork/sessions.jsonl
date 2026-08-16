@@ -61,3 +61,5 @@
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T05:15:12", "status": "ok", "claims_verdict": "GREEN", "prev": "c4e1541b144dcaa1a543060f11caa3e647614f8947eb9c832ceed323430ddc3a"}
 {"event": "session.start", "session": "agentguard-claude-review-native-wrapper-20260816", "ts": "2026-08-16T05:24:28", "agent": "codex", "prev": "9d9885d270c4efb6b7a45a5ad687b3e2477d406646896e9628a8c5ae938ff6c7"}
 {"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-20260816", "ts": "2026-08-16T05:28:02", "status": "ok", "claims_verdict": "GREEN", "prev": "619be8768bc070050cb6584ae8ca1217b5edefbaa005a820951bc579adf37cbd"}
+{"event": "session.start", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:44:29", "agent": "codex", "prev": "54b030220c188c34e11615d6107f0044fd09104ce42559885112d1ba0c1fa0d3"}
+{"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:46:04", "status": "ok", "claims_verdict": "GREEN", "prev": "16447845ef167602e36e751781276134d98ac6c738e18120dfcfccbb75720a65"}

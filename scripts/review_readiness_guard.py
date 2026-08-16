@@ -65,7 +65,9 @@ CLAUDE_REVIEW_PLATFORM_ARTIFACTS = {
         "integrity": "sha512-YuMBtAWUG/A7WpUKJ9YVIy7H4vuOCAQymlc2N6nzc6cQeFjnqAb7tNhz10+QY0QgXlJAHmYD2npIdaCsqR2o2A==",
     },
 }
-CLAUDE_REVIEW_CLI_PATH = "node node_modules/@anthropic-ai/claude-code/cli-wrapper.cjs"
+CLAUDE_REVIEW_CLI_PATH = (
+    "node .github/claude-review/node_modules/@anthropic-ai/claude-code/cli-wrapper.cjs"
+)
 
 REQUIRED_TEMPLATE_PHRASES = {
     "fact-ledger": "Public positioning claims have a source/fact ledger",
@@ -94,7 +96,8 @@ CLAUDE_TIMEOUT_PATTERN = re.compile(
     + r"\s+-p\s+--output-format\s+text\b"
 )
 CLAUDE_CLI_PATTERN = re.compile(
-    r"(?<![A-Za-z0-9_-])(?:claude(?:\.exe)?|node\s+node_modules/@anthropic-ai/claude-code/cli-wrapper\.cjs)(?=\s|$)"
+    r"(?<![A-Za-z0-9_-])(?:claude(?:\.exe)?|node\s+\.github/claude-review/"
+    r"node_modules/@anthropic-ai/claude-code/cli-wrapper\.cjs)(?=\s|$)"
 )
 NPM_INSTALL_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])npm\s+(?:ci|install)(?=\s|$)")
 SECRET_REFERENCE_PATTERN = re.compile(r"\$\{\{\s*(?:secrets\.|github\.token\b)")

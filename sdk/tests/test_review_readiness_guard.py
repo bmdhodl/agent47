@@ -266,6 +266,13 @@ __CHECKOUT_PATH__
                 ),
                 "claude-review:workflow-local-cli",
             ),
+            "wrong-wrapper-relative-path": (
+                lambda workflow: workflow.replace(
+                    review_readiness_guard.CLAUDE_REVIEW_CLI_PATH,
+                    "node node_modules/@anthropic-ai/claude-code/cli-wrapper.cjs",
+                ),
+                "claude-review:workflow-local-cli",
+            ),
             "comment-only-cli": (
                 lambda workflow: workflow.replace(
                     "timeout 300s " + review_readiness_guard.CLAUDE_REVIEW_CLI_PATH,
