@@ -1,1 +1,2 @@
 Non-secret activation probe for the merged Claude review workflow.
+Synchronize-only trigger; no secret or workflow input.
