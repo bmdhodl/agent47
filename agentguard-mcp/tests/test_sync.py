@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import time
 
+import pytest
+
 from agentguard_mcp.sync import SyncHook
 
 
@@ -45,3 +47,19 @@ def test_sync_hook_drops_when_pending_queue_is_full(monkeypatch):
             break
         time.sleep(0.02)
     assert calls == [{"event": 1}]
+
+
+@pytest.mark.parametrize("url", ["ftp://example.invalid/sync", "file:///tmp/sync"])
+def test_sync_hook_rejects_non_http_urls(url):
+    with pytest.raises(ValueError, match="must use http or https"):
+        SyncHook(url=url)
+
+
+def test_sync_hook_rejects_url_without_hostname():
+    with pytest.raises(ValueError, match="must include a hostname"):
+        SyncHook(url="https://")
+
+
+def test_sync_hook_accepts_http_url():
+    hook = SyncHook(url="http://127.0.0.1:8080/sync")
+    hook._executor.shutdown(wait=True)

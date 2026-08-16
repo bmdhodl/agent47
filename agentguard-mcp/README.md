@@ -118,6 +118,6 @@ The `record_call` tool returns:
 
 ## Optional sync
 
-Set `AGENTGUARD_SYNC_URL` to POST every `record_call` event to another system. Set `AGENTGUARD_SYNC_TOKEN` to send `Authorization: Bearer <token>`. Sync runs in a background thread with a 2 second timeout and never blocks the MCP response.
+Set `AGENTGUARD_SYNC_URL` to an `http://` or `https://` endpoint to POST every `record_call` event to another system. The URL must include a hostname. Set `AGENTGUARD_SYNC_TOKEN` to send `Authorization: Bearer <token>`. Sync runs in a background thread with a 2 second timeout and never blocks the MCP response.
 
 Hosted history, alerts, and team controls are available at [bmdpat.com/tools/agentguard](https://bmdpat.com/tools/agentguard).
