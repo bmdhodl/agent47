@@ -47,6 +47,7 @@ class TestReviewReadinessGuard(unittest.TestCase):
                     with:
                       ref: __CHECKOUT_REF__
                       fetch-depth: __FETCH_DEPTH__
+                      persist-credentials: false
 __CHECKOUT_PATH__
                   - name: Install Claude Code CLI
                     working-directory: __INSTALL_DIRECTORY__
@@ -109,6 +110,8 @@ __CHECKOUT_PATH__
                     },
                 }
             }
+            for package_path, expected in review_readiness_guard.CLAUDE_REVIEW_PLATFORM_ARTIFACTS.items():
+                lock["packages"][package_path] = dict(expected)
             (package_dir / "package.json").write_text(
                 json.dumps(package), encoding="utf-8"
             )
@@ -213,6 +216,20 @@ __CHECKOUT_PATH__
                     "fetch-depth: 1\n          path: pr-runtime",
                 ),
                 "claude-review:trusted-checkout-path",
+            ),
+            "persisted-checkout-credentials": (
+                lambda workflow: workflow.replace(
+                    "persist-credentials: false",
+                    "persist-credentials: true",
+                ),
+                "claude-review:trusted-checkout-credentials",
+            ),
+            "missing-checkout-credentials": (
+                lambda workflow: workflow.replace(
+                    "persist-credentials: false\n",
+                    "",
+                ),
+                "claude-review:trusted-checkout-credentials",
             ),
             "pr-controlled-install-directory": (
                 lambda workflow: workflow.replace(
@@ -399,6 +416,24 @@ __CHECKOUT_PATH__
                 "claude-review:lockfile-artifact",
                 {finding.check for finding in findings},
             )
+
+    def test_lockfile_contract_rejects_unapproved_linux_platform_artifact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            self._write_repo_fixture(repo_root, self._valid_workflow())
+            lock_path = repo_root / ".github" / "claude-review" / "package-lock.json"
+            lock = json.loads(lock_path.read_text(encoding="utf-8"))
+            linux_path = "node_modules/@anthropic-ai/claude-code-linux-x64"
+            lock["packages"][linux_path]["resolved"] = "https://evil.example/claude.tgz"
+            lock["packages"][linux_path]["integrity"] = "sha512-tampered"
+            lock_path.write_text(json.dumps(lock), encoding="utf-8")
+
+            findings = review_readiness_guard.collect_findings(repo_root)
+
+        self.assertIn(
+            "claude-review:lockfile-platform-artifact",
+            {finding.check for finding in findings},
+        )
 
     def test_json_output_is_parseable(self):
         result = run(

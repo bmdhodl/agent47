@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (29/33 verified)
+**Verdict: GREEN**  (33/37 verified)
 
 - .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
     - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
@@ -68,3 +68,11 @@
     - /CLAUDE_REVIEW_INTEGRITY/ found in scripts/review_readiness_guard.py
 - OK **Readiness guard scans every parsed workflow step field for secret references** (`file_contains`, RED)
     - /Scan the parsed step mapping/ found in scripts/review_readiness_guard.py
+- OK **Trusted checkout disables credential persistence** (`file_contains`, RED)
+    - /persist-credentials: false/ found in .github/workflows/claude-review.yml
+- OK **Readiness guard rejects persisted checkout credentials** (`file_contains`, RED)
+    - /trusted-checkout-credentials/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard pins every Claude platform artifact** (`file_contains`, RED)
+    - /CLAUDE_REVIEW_PLATFORM_ARTIFACTS/ found in scripts/review_readiness_guard.py
+- OK **Regression rejects Linux platform artifact substitution** (`file_contains`, RED)
+    - /test_lockfile_contract_rejects_unapproved_linux_platform_artifact/ found in sdk/tests/test_review_readiness_guard.py

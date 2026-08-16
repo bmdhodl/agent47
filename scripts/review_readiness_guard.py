@@ -23,6 +23,48 @@ CLAUDE_REVIEW_RESOLVED = (
 CLAUDE_REVIEW_INTEGRITY = (
     "sha512-x37KEw7T1vz/CLkpLYqa8d6eyS/R1777+HMYJRqYf4e5+OhZwF/+d1LoTs5vFXTrFCWFjZTbWGZksW/gKpvCTQ=="
 )
+CLAUDE_REVIEW_PLATFORM_ARTIFACTS = {
+    "node_modules/@anthropic-ai/claude-code-darwin-arm64": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-darwin-arm64/-/claude-code-darwin-arm64-2.1.175.tgz",
+        "integrity": "sha512-IHaWNzREnQ8QSxlUC5aYemKzmr+OnDhY7DDO/cQVSu7bCFbXwEel306eT1Xga4Nlr9GxIicLbaWaFc3OeTiYQA==",
+    },
+    "node_modules/@anthropic-ai/claude-code-darwin-x64": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-darwin-x64/-/claude-code-darwin-x64-2.1.175.tgz",
+        "integrity": "sha512-Og9B+d/o/eefb7pPDZ/o5kvlsapDBuGPbr01CiPiGpAQu2wAb0xNCPJFu+s82detnpXVT6HoO29V5HWzue5vMA==",
+    },
+    "node_modules/@anthropic-ai/claude-code-linux-arm64": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-linux-arm64/-/claude-code-linux-arm64-2.1.175.tgz",
+        "integrity": "sha512-epI+k0kRRaNJXN3WtRGHveR7uJshyOYIGH4CcU8cXn595fqkw8y9Unrcn10kewFzn7814IWcQNFM8K14NjqaiA==",
+    },
+    "node_modules/@anthropic-ai/claude-code-linux-arm64-musl": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-linux-arm64-musl/-/claude-code-linux-arm64-musl-2.1.175.tgz",
+        "integrity": "sha512-9l75IeDCocZrvnazCOapQT8N9M26EVZi8PNpbOytyr74ur1R91VkClZYmUv2NpKb0MQLz8wEoFTE+1uqxFGQJQ==",
+    },
+    "node_modules/@anthropic-ai/claude-code-linux-x64": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-linux-x64/-/claude-code-linux-x64-2.1.175.tgz",
+        "integrity": "sha512-RegEK8Cdj5tM2ZiePk887o+OwwfibR5jxI2yh3z0aKtelFH63kM2TZEGvroj5iCsKP33LMK3kFKwBD4gJ3d1LQ==",
+    },
+    "node_modules/@anthropic-ai/claude-code-linux-x64-musl": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-linux-x64-musl/-/claude-code-linux-x64-musl-2.1.175.tgz",
+        "integrity": "sha512-I2zGSfFUc2kfdYwxuG7FqCeY5yn1pRcjWD9JroiIMrHq9628XNKhEcGVfgqtHkMx8SB049RCKbd00OoNiimmqQ==",
+    },
+    "node_modules/@anthropic-ai/claude-code-win32-arm64": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-win32-arm64/-/claude-code-win32-arm64-2.1.175.tgz",
+        "integrity": "sha512-pqv/cN6ntggJXnKcevBpd9540Aamm69h2DN2nvzjs5gkWsAMKQA1s0EvmnynPNnOj66Q6l9XK8a8aID08C4N7g==",
+    },
+    "node_modules/@anthropic-ai/claude-code-win32-x64": {
+        "version": "2.1.175",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-code-win32-x64/-/claude-code-win32-x64-2.1.175.tgz",
+        "integrity": "sha512-YuMBtAWUG/A7WpUKJ9YVIy7H4vuOCAQymlc2N6nzc6cQeFjnqAb7tNhz10+QY0QgXlJAHmYD2npIdaCsqR2o2A==",
+    },
+}
 CLAUDE_REVIEW_CLI_PATH = ".github/claude-review/node_modules/.bin/claude"
 
 REQUIRED_TEMPLATE_PHRASES = {
@@ -371,6 +413,18 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
                     "The trusted review runtime must be checked out at the workflow workspace root.",
                 )
             )
+        persist_credentials = (
+            checkout_with.get("persist-credentials")
+            if isinstance(checkout_with, dict)
+            else None
+        )
+        if persist_credentials not in (False, "false"):
+            findings.append(
+                _workflow_finding(
+                    "trusted-checkout-credentials",
+                    "The trusted checkout must not persist the job token in local Git configuration.",
+                )
+            )
         fetch_depth = checkout_with.get("fetch-depth") if isinstance(checkout_with, dict) else None
         if fetch_depth == 0 or fetch_depth == "0":
             findings.append(
@@ -627,6 +681,22 @@ def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
                         ),
                     )
                 )
+            for package_path, expected in CLAUDE_REVIEW_PLATFORM_ARTIFACTS.items():
+                platform_package = packages.get(package_path)
+                if not isinstance(platform_package, dict) or any(
+                    platform_package.get(field) != value
+                    for field, value in expected.items()
+                ):
+                    findings.append(
+                        Finding(
+                            check="claude-review:lockfile-platform-artifact",
+                            path=str(CLAUDE_REVIEW_LOCK_PATH),
+                            message=(
+                                "package-lock.json must pin the reviewed source, "
+                                f"integrity, and version for {package_path}."
+                            ),
+                        )
+                    )
 
     return findings
 
