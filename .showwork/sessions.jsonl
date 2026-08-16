@@ -47,3 +47,4 @@
 {"event": "session.start", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:10:16", "agent": "codex", "prev": "2ebc3783d685f0c74987a383652e34e53fff88d463ed0cec0bb0a5d89cde0f83"}
 {"event": "session.finish.refused", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:10:20", "status": "ok", "claims_verdict": "RED", "prev": "87a6357c59837c666840ceedbd2e24cbaa651f86f125cd212973eab8fbb37c47"}
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:10:56", "status": "ok", "claims_verdict": "GREEN", "prev": "203a042a706d2eafe2e2e3a31d6ade45646a90eeca550c4bba2e9b2d82e62123"}
+{"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:28:39", "status": "ok", "claims_verdict": "GREEN", "prev": "6a3e556dc672a42720e9ae7b51aeba2b96801d9d593f76aabc08b44a61bff664"}
