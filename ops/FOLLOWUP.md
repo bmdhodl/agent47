@@ -19,6 +19,10 @@
   `quickstart --write`, generated-starter execution, `report`, and `badge` all
   completed without API keys or network. This is release-prep evidence only;
   the onboarding bundle remains unreleased until a new SDK tag is published.
+- Done 2026-08-15: repeated the clean-wheel proof against candidate `1.2.14`.
+  The isolated install reported `agentguard47==1.2.14` and completed the same
+  local activation path without API keys or network. This remains a candidate
+  proof until the release-prep PR lands and the tag workflow publishes it.
 - Done 2026-08-15: `agentguard-mcp/agentguard_mcp/sync.py` validates opt-in
   `AGENTGUARD_SYNC_URL` values for an `http`/`https` scheme and hostname before
   starting the background executor. Private destinations remain allowed because

@@ -175,6 +175,7 @@ class TestEmitLlmResult(unittest.TestCase):
         self.assertEqual(len(llm_events), 1)
         event = llm_events[0]
         self.assertEqual(event["data"]["provider"], "openai")
+        self.assertEqual(event["data"]["model"], "gpt-4o")
         self.assertEqual(event["data"]["usage"]["input_tokens"], 1000)
         self.assertEqual(event["data"]["usage"]["output_tokens"], 500)
         self.assertEqual(event["data"]["usage"]["total_tokens"], 1500)
@@ -199,11 +200,27 @@ class TestEmitLlmResult(unittest.TestCase):
         self.assertEqual(len(llm_events), 1)
         event = llm_events[0]
         self.assertEqual(event["data"]["provider"], "anthropic")
+        self.assertEqual(event["data"]["model"], "claude-sonnet-4-20250514")
         self.assertEqual(event["data"]["usage"]["input_tokens"], 300)
         self.assertEqual(event["data"]["usage"]["output_tokens"], 40)
         self.assertEqual(event["data"]["usage"]["cached_input_tokens"], 200)
         self.assertEqual(event["data"]["usage"]["total_tokens"], 540)
         self.assertGreater(event["cost_usd"], 0)
+
+    def test_missing_usage_does_not_emit_llm_result_or_cost(self):
+        with self.tracer.trace("llm.openai.unknown-model") as ctx:
+            _emit_llm_result(
+                ctx,
+                budget_guard=None,
+                model="unknown-model",
+                provider="openai",
+                usage=None,
+                response=None,
+            )
+
+        events = self._read_events()
+        self.assertFalse(any(e["name"] == "llm.result" for e in events))
+        self.assertFalse(any("cost_usd" in e for e in events))
 
 
 if __name__ == "__main__":

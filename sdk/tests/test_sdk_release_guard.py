@@ -68,6 +68,23 @@ class TestReleaseGuardHelpers(unittest.TestCase):
             self.assertEqual(len(findings), len(sdk_release_guard.RELEASE_MARKERS))
             self.assertTrue(all("Expected release marker 9.9.9" in finding.message for finding in findings))
 
+    def test_check_skill_metadata_reports_version_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = pathlib.Path(tmp)
+            skill_path = repo_root / "skills" / "agentguard" / "SKILL.md"
+            skill_path.parent.mkdir(parents=True)
+            skill_path.write_text(
+                '---\nmetadata:\n  version: "1.2.13"\n---\n',
+                encoding="utf-8",
+            )
+
+            findings = sdk_release_guard.check_skill_metadata(repo_root, "1.2.14")
+
+            self.assertEqual(len(findings), 1)
+            self.assertEqual(findings[0].check, "skill-metadata")
+            self.assertEqual(pathlib.Path(findings[0].path), sdk_release_guard.SKILL_METADATA_PATH)
+            self.assertIn("Expected skill metadata version 1.2.14, found 1.2.13", findings[0].message)
+
     def test_check_release_tag_reports_mismatched_publish_tag(self):
         findings = sdk_release_guard.check_release_tag(
             "1.2.10",

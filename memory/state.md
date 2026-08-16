@@ -11,6 +11,8 @@
 - PyPI package: `agentguard47` (public latest is `1.2.13`, published
   2026-05-30 with a matching GitHub Release marked Latest)
 - Current shipped release: `1.2.13`
+- Release candidate under preparation: `1.2.14`; it is not public until the
+  release-prep change lands on `main` and the tag workflow publishes it.
 - npm MCP package: `@agentguard47/mcp-server@0.2.2` is published.
 - Local budget MCP package: `agentguard-mcp` exists in this repo but is not
   published to npm or PyPI; dogfood installs it from the checkout.

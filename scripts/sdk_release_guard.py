@@ -20,6 +20,7 @@ CHANGELOG_PATH = Path("CHANGELOG.md")
 MCP_PACKAGE_PATH = Path("mcp-server/package.json")
 MCP_SERVER_JSON_PATH = Path("mcp-server/server.json")
 MCP_RUNTIME_INDEX_PATH = Path("mcp-server/src/index.ts")
+SKILL_METADATA_PATH = Path("skills/agentguard/SKILL.md")
 RELEASE_MARKERS = (
     ("AGENTS.md", r"release candidate: v(?P<version>\d+\.\d+\.\d+)"),
     ("AGENTS.md", r"current SDK release candidate is (?P<version>\d+\.\d+\.\d+)"),
@@ -104,6 +105,46 @@ def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
                 )
             )
     return findings
+
+
+def check_skill_metadata(repo_root: Path, version: str) -> List[Finding]:
+    """Verify the public AgentGuard skill advertises the SDK candidate version."""
+    skill_path = repo_root / SKILL_METADATA_PATH
+    if not skill_path.exists():
+        return [
+            Finding(
+                check="skill-metadata",
+                path=str(SKILL_METADATA_PATH),
+                message="Required AgentGuard skill metadata file is missing.",
+            )
+        ]
+
+    text = skill_path.read_text(encoding="utf-8")
+    match = re.search(
+        r'^[ \t]+version:[ \t]*["\'](?P<version>\d+\.\d+\.\d+)["\'][ \t]*$',
+        text,
+        flags=re.MULTILINE,
+    )
+    if match is None:
+        return [
+            Finding(
+                check="skill-metadata",
+                path=str(SKILL_METADATA_PATH),
+                message="Could not find a quoted SDK version in AgentGuard skill metadata.",
+            )
+        ]
+
+    actual = match.group("version")
+    if actual == version:
+        return []
+
+    return [
+        Finding(
+            check="skill-metadata",
+            path=str(SKILL_METADATA_PATH),
+            message=f"Expected skill metadata version {version}, found {actual}.",
+        )
+    ]
 
 
 def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
@@ -297,6 +338,7 @@ def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Findi
     findings.extend(check_changelog(repo_root, version))
     findings.extend(check_pypi_readme(repo_root))
     findings.extend(check_release_markers(repo_root, version))
+    findings.extend(check_skill_metadata(repo_root, version))
     findings.extend(check_mcp_metadata(repo_root))
     if check_mcp_npm:
         findings.extend(check_mcp_npm_package(repo_root))

@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
+## 1.2.14
 
 ### Reliability
+- Added the file-backed `JsonFileStateStore` integration for
+  `BudgetGuard(store=...)`, so configured budget usage can persist across
+  processes and scheduled tasks. This is local persistence, not distributed
+  coordination or a fairness guarantee.
 - Hardened the cross-process state lock (`JsonFileStateStore`, used by
   `BudgetGuard(store=...)`) against two Windows races that crashed concurrent
   processes under contention: an exclusive lock create that fails with
@@ -10,6 +14,35 @@
   ("delete pending"), and an `os.replace` that transiently fails with
   access-denied when an antivirus/indexer holds the destination. Both now retry
   safely, so cross-process budget enforcement holds on Windows scheduled tasks.
+
+### Budget Goals
+- Added `BudgetGuard.goal(...)` for scoped per-goal caps on tokens, calls, and
+  cost, with an optional `warn_at_pct` threshold and `on_warning` callback.
+  Goal warnings are emitted once per goal while hard caps still refuse excess
+  spend.
+
+### Payment Guardrails
+- Added `X402SpendGuard` for local caps on total, per-endpoint, and per-call
+  x402/USDC spend. It checks and reserves configured spend before payment and
+  rolls the reservation back if the payment callback raises. It does not settle
+  x402 payments or add a crypto dependency.
+
+### Cost Accounting
+- Added maximum-precision billable-cost resolution with explicit source labels
+  for provider-reported values, caller prices, estimates, zero-cost tool/local
+  work, and unknown cost. Unknown usage stays conservative or fails in strict
+  mode; the result is not a provider invoice.
+
+### Usage Accounting
+- Anthropic usage normalization now preserves thinking/reasoning tokens and
+  separates them from answer tokens when the provider payload exposes that
+  detail, alongside cache-read and cache-write fields.
+
+### Hardening
+- Rejected NaN, infinite, and negative budget inputs before state mutation so
+  non-finite values cannot bypass a cost ceiling.
+- Made LoopGuard argument fingerprinting tolerate non-JSON-serializable tool
+  arguments instead of crashing the guard while it checks for repeats.
 
 ### Public Docs
 - Made the reader-facing surface fully model-agnostic to match the

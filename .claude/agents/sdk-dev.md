@@ -18,7 +18,7 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
 
 ## Current Focus
 
-Current SDK release candidate: `v1.2.13`.
+Current SDK release candidate: `v1.2.14`.
 
 Source of truth for priorities:
 - `ops/00-NORTHSTAR.md`
