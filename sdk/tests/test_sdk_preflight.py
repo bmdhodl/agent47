@@ -14,6 +14,12 @@ _SPEC.loader.exec_module(sdk_preflight)
 
 
 class TestBuildPlan(unittest.TestCase):
+    def test_normalize_path_preserves_dot_directories(self):
+        self.assertEqual(
+            sdk_preflight._normalize_path("./.github/claude-review/package.json"),
+            ".github/claude-review/package.json",
+        )
+
     def test_sdk_code_change_adds_targeted_checks(self):
         steps = sdk_preflight.build_plan(
             [
@@ -58,6 +64,20 @@ class TestBuildPlan(unittest.TestCase):
             targeted.command,
             [sys.executable, "-m", "pytest", "sdk/tests/test_sdk_preflight.py", "-v"],
         )
+
+    def test_review_readiness_dependency_files_run_guard(self):
+        for changed_file in (
+            ".github/claude-review/package.json",
+            ".github/claude-review/package-lock.json",
+        ):
+            with self.subTest(changed_file=changed_file):
+                steps = sdk_preflight.build_plan([changed_file])
+
+                self.assertEqual([step.label for step in steps], ["review-readiness"])
+                self.assertEqual(
+                    steps[0].command,
+                    [sys.executable, "scripts/review_readiness_guard.py"],
+                )
 
     def test_conftest_change_runs_hosted_ingest_regressions(self):
         steps = sdk_preflight.build_plan(["sdk/tests/conftest.py"])

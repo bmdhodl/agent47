@@ -19,6 +19,8 @@ README_SYNC_INPUTS = {
 }
 REVIEW_READINESS_INPUTS = {
     ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/claude-review/package-lock.json",
+    ".github/claude-review/package.json",
     ".github/workflows/claude-review.yml",
     "scripts/review_readiness_guard.py",
 }
@@ -147,7 +149,10 @@ class Step:
 
 
 def _normalize_path(path: str) -> str:
-    return path.replace("\\", "/").lstrip("./")
+    normalized = path.replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized
 
 
 def _existing(paths: Iterable[str]) -> List[str]:

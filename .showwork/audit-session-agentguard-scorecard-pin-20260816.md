@@ -1,0 +1,78 @@
+# Claims audit - session agentguard-scorecard-pin-20260816
+
+**Verdict: GREEN**  (33/37 verified)
+
+- .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
+    - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
+- OK **Claude review dependency lockfile exists** (`file_exists`, RED)
+    - .github/claude-review/package-lock.json exists
+- .. **Review-readiness guard requires the lockfile-backed local npm ci and local Claude CLI path** (`None`, RED)
+    - retracted: The readiness contract now requires --ignore-scripts and the trusted-base workflow; replace the stale pre-hardening command claim with the exact safe invocation.
+- OK **Review-readiness tests cover semantic 300-second timeout and package-lock contract** (`file_contains`, RED)
+    - /test_workflow_requires_semantic_three_hundred_second_timeout/ found in sdk/tests/test_review_readiness_guard.py
+- .. **Timeout guard anchors the 300-second deadline directly to the local Claude CLI path** (`None`, RED)
+    - retracted: The original file_contains pattern used regex metacharacters and could not represent the literal source token; the code and test are valid, so replace the receipt with a literal stable-token check.
+- OK **Regression test rejects an unbounded timeout wrapper before the Claude command** (`file_contains`, RED)
+    - /test_timeout_must_anchor_local_cli_immediately_after_duration/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Timeout guard anchors the 300-second deadline to the local Claude CLI path** (`file_contains`, RED)
+    - /CLAUDE_REVIEW_CLI_PATH/ found in scripts/review_readiness_guard.py
+- OK **Preflight registers the Claude review package manifest as review-readiness input** (`file_contains`, RED)
+    - /.github/claude-review/package.json/ found in scripts/sdk_preflight.py
+- OK **Preflight registers the Claude review lockfile as review-readiness input** (`file_contains`, RED)
+    - /.github/claude-review/package-lock.json/ found in scripts/sdk_preflight.py
+- OK **Preflight preserves .github paths during normalization** (`file_contains`, RED)
+    - /while normalized.startswith/ found in scripts/sdk_preflight.py
+- OK **Timeout guard accepts the real pipeline invocation and rejects inert prefixes** (`file_contains`, RED)
+    - /test_timeout_rejects_inert_prefixes/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Preflight regression covers both Claude review dependency files** (`file_contains`, RED)
+    - /test_review_readiness_dependency_files_run_guard/ found in sdk/tests/test_sdk_preflight.py
+- OK **Claude review runs from the trusted pull_request_target workflow** (`file_contains`, RED)
+    - /pull_request_target:/ found in .github/workflows/claude-review.yml
+- OK **Claude review checks out the pull request base revision** (`file_contains`, RED)
+    - /github.event.pull_request.base.sha/ found in .github/workflows/claude-review.yml
+- OK **Trusted Claude install disables lifecycle scripts before secrets are used** (`file_contains`, RED)
+    - /npm ci --ignore-scripts --no-audit --no-fund/ found in .github/workflows/claude-review.yml
+- OK **Review readiness rejects PR-controlled lifecycle and Claude-bin replacement paths** (`file_contains`, RED)
+    - /test_workflow_requires_trusted_base_for_runtime_install/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Review-readiness guard requires the lockfile-backed install with scripts disabled and the local Claude CLI path** (`file_contains`, RED)
+    - /npm ci --ignore-scripts --no-audit --no-fund/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard parses active Claude workflow YAML before validating trust boundaries** (`file_contains`, RED)
+    - /yaml.safe_load/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard ignores full-line and inline shell comments when validating executable commands** (`file_contains`, RED)
+    - /_executable_shell_lines/ found in scripts/review_readiness_guard.py
+- OK **Regression tests reject active workflow and command-path decoys** (`file_contains`, RED)
+    - /test_active_workflow_structure_rejects_decoys_and_pr_controlled_paths/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Readiness guard binds one ordered checkout, install, and Claude sequence** (`file_contains`, RED)
+    - /workflow-sequence/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard binds the sequence to one step-local secret-bearing review path** (`file_contains`, RED)
+    - /token-bearing-sequence/ found in scripts/review_readiness_guard.py
+- OK **Regression tests reject safe decoy and malicious secondary review paths** (`file_contains`, RED)
+    - /test_single_token_bearing_sequence_rejects_safe_decoy_and_malicious_secondary/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Documented make install includes the non-runtime YAML parser used by the readiness guard** (`file_contains`, RED)
+    - /pip install pytest pytest-cov ruff pyyaml/ found in Makefile
+- OK **Readiness guard rejects executable PR tree mutations in the token-bearing path** (`file_contains`, RED)
+    - /untrusted-git-tree-mutation/ found in scripts/review_readiness_guard.py
+- OK **Regression covers token-step git checkout and malicious secondary review path** (`file_contains`, RED)
+    - /token-step-git-checkout/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Readiness guard treats github.token as secret-bearing** (`file_contains`, RED)
+    - /github\\.token/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard rejects Git tree mutations even with global options** (`file_contains`, RED)
+    - /GIT_COMMAND_PATTERN/ found in scripts/review_readiness_guard.py
+- OK **Regression uses github.token and git global-option reset mutations** (`file_contains`, RED)
+    - /GITHUB_WORKSPACE/ found in sdk/tests/test_review_readiness_guard.py
+- .. **Readiness guard scans every parsed workflow step field for secret references** (`None`, RED)
+    - retracted: The source claim is true but the original receipt pattern was not accepted by the verifier; replace it with a stable source-token check.
+- OK **Readiness guard rejects git restore tree mutations** (`file_contains`, RED)
+    - /checkout|switch|reset|restore/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard pins approved Claude tarball and integrity** (`file_contains`, RED)
+    - /CLAUDE_REVIEW_INTEGRITY/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard scans every parsed workflow step field for secret references** (`file_contains`, RED)
+    - /Scan the parsed step mapping/ found in scripts/review_readiness_guard.py
+- OK **Trusted checkout disables credential persistence** (`file_contains`, RED)
+    - /persist-credentials: false/ found in .github/workflows/claude-review.yml
+- OK **Readiness guard rejects persisted checkout credentials** (`file_contains`, RED)
+    - /trusted-checkout-credentials/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard pins every Claude platform artifact** (`file_contains`, RED)
+    - /CLAUDE_REVIEW_PLATFORM_ARTIFACTS/ found in scripts/review_readiness_guard.py
+- OK **Regression rejects Linux platform artifact substitution** (`file_contains`, RED)
+    - /test_lockfile_contract_rejects_unapproved_linux_platform_artifact/ found in sdk/tests/test_review_readiness_guard.py
