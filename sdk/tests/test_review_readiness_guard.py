@@ -249,7 +249,7 @@ __CHECKOUT_PATH__
             "token-step-git-checkout": (
                 lambda workflow: workflow.replace(
                     "set -euo pipefail",
-                    "set -euo pipefail\n                      git checkout ${{ github.event.pull_request.head.sha }}",
+                    "set -euo pipefail\n                      git -C \"$GITHUB_WORKSPACE\" reset --hard ${{ github.event.pull_request.head.sha }}",
                 ),
                 "claude-review:untrusted-git-tree-mutation",
             ),
@@ -288,9 +288,9 @@ __CHECKOUT_PATH__
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Secondary token-bearing Claude
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git checkout ${{ github.event.pull_request.head.sha }}
+          git -C "$GITHUB_WORKSPACE" reset --hard ${{ github.event.pull_request.head.sha }}
           timeout 300s /tmp/claude -p --output-format text
 """
 

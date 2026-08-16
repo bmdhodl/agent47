@@ -47,10 +47,11 @@ CLAUDE_TIMEOUT_PATTERN = re.compile(
 )
 CLAUDE_CLI_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])claude(?:\.exe)?(?=\s|$)")
 NPM_INSTALL_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])npm\s+(?:ci|install)(?=\s|$)")
-GIT_TREE_MUTATION_PATTERN = re.compile(
-    r"(?<![A-Za-z0-9_-])git\s+(?:checkout|switch|reset)(?=\s|$)"
+SECRET_REFERENCE_PATTERN = re.compile(r"\$\{\{\s*(?:secrets\.|github\.token\b)")
+GIT_COMMAND_PATTERN = re.compile(r"(?<![A-Za-z0-9_-])git(?=\s|$)")
+GIT_TREE_TARGET_PATTERN = re.compile(
+    r"(?<![A-Za-z0-9_-])(?:checkout|switch|reset)(?=\s|$)"
 )
-SECRET_REFERENCE_PATTERN = re.compile(r"\$\{\{\s*secrets\.")
 
 
 def _executable_shell_lines(run_value: Any) -> List[str]:
@@ -218,7 +219,7 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
                     cli_commands.append(
                         {"job": job_name, "index": index, "step": step, "line": line}
                     )
-                if GIT_TREE_MUTATION_PATTERN.search(line):
+                if GIT_COMMAND_PATTERN.search(line) and GIT_TREE_TARGET_PATTERN.search(line):
                     git_tree_mutations.append(
                         {"job": job_name, "index": index, "step": step, "line": line}
                     )

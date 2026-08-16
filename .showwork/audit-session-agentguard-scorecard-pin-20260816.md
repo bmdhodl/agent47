@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (23/26 verified)
+**Verdict: GREEN**  (26/29 verified)
 
 - .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
     - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
@@ -54,3 +54,9 @@
     - /untrusted-git-tree-mutation/ found in scripts/review_readiness_guard.py
 - OK **Regression covers token-step git checkout and malicious secondary review path** (`file_contains`, RED)
     - /token-step-git-checkout/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Readiness guard treats github.token as secret-bearing** (`file_contains`, RED)
+    - /github\\.token/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard rejects Git tree mutations even with global options** (`file_contains`, RED)
+    - /GIT_COMMAND_PATTERN/ found in scripts/review_readiness_guard.py
+- OK **Regression uses github.token and git global-option reset mutations** (`file_contains`, RED)
+    - /GITHUB_WORKSPACE/ found in sdk/tests/test_review_readiness_guard.py

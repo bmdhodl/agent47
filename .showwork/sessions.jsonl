@@ -56,3 +56,4 @@
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T04:27:25", "status": "ok", "claims_verdict": "GREEN", "prev": "3ef045b6edf3fb195e796f60c416c4d2e75b7baec4d055a7cf06173323cfea22"}
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T04:38:18", "status": "ok", "claims_verdict": "GREEN", "prev": "c016a5ddd72ba76a878e37db2d52e0af284c23eca0e5b58c2e94d5a60658718e"}
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T04:40:53", "status": "ok", "claims_verdict": "GREEN", "prev": "d9c7f7a1df564da9d440e1ea710d34f9f6624cdb603ff8a9dd9fce5d45a4b892"}
+{"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T04:51:36", "status": "ok", "claims_verdict": "GREEN", "prev": "bb0d2a0b3ec0dad4cd6a4bc67637fad9f8b8645f27e23f76d9ddba5b0d942f21"}
