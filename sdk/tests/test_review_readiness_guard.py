@@ -100,6 +100,19 @@ class TestReviewReadinessGuard(unittest.TestCase):
 
         self.assertIn("claude-review:claude-timeout", {finding.check for finding in findings})
 
+    def test_timeout_must_anchor_local_cli_immediately_after_duration(self):
+        valid = (
+            "timeout 300s "
+            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
+        )
+        false_positive = (
+            "timeout 300s true && "
+            ".github/claude-review/node_modules/.bin/claude -p --output-format text"
+        )
+
+        self.assertIsNotNone(review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(valid))
+        self.assertIsNone(review_readiness_guard.CLAUDE_TIMEOUT_PATTERN.search(false_positive))
+
     def test_lockfile_backed_cli_contract_is_required(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = pathlib.Path(tmp)

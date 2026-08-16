@@ -48,3 +48,5 @@
 {"event": "session.finish.refused", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:10:20", "status": "ok", "claims_verdict": "RED", "prev": "87a6357c59837c666840ceedbd2e24cbaa651f86f125cd212973eab8fbb37c47"}
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:10:56", "status": "ok", "claims_verdict": "GREEN", "prev": "203a042a706d2eafe2e2e3a31d6ade45646a90eeca550c4bba2e9b2d82e62123"}
 {"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:28:39", "status": "ok", "claims_verdict": "GREEN", "prev": "6a3e556dc672a42720e9ae7b51aeba2b96801d9d593f76aabc08b44a61bff664"}
+{"event": "session.finish.refused", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:44:46", "status": "ok", "claims_verdict": "RED", "prev": "bc08cbfdf6b9db90e4ea92b1b9bcac13d45486f3aa38fc2f03a0e737ed50b934"}
+{"event": "session.finish", "session": "agentguard-scorecard-pin-20260816", "ts": "2026-08-16T03:45:13", "status": "ok", "claims_verdict": "GREEN", "prev": "389ac4c4c899904b862f81276663f857e63a7b1767d3b7c68cfb80686bad4ced"}
