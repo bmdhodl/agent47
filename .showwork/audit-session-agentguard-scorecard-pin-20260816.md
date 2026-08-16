@@ -1,6 +1,6 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (14/17 verified)
+**Verdict: GREEN**  (17/20 verified)
 
 - .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
     - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
@@ -36,3 +36,9 @@
     - /test_workflow_requires_trusted_base_for_runtime_install/ found in sdk/tests/test_review_readiness_guard.py
 - OK **Review-readiness guard requires the lockfile-backed install with scripts disabled and the local Claude CLI path** (`file_contains`, RED)
     - /npm ci --ignore-scripts --no-audit --no-fund/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard parses active Claude workflow YAML before validating trust boundaries** (`file_contains`, RED)
+    - /yaml.safe_load/ found in scripts/review_readiness_guard.py
+- OK **Readiness guard ignores full-line and inline shell comments when validating executable commands** (`file_contains`, RED)
+    - /_executable_shell_lines/ found in scripts/review_readiness_guard.py
+- OK **Regression tests reject active workflow and command-path decoys** (`file_contains`, RED)
+    - /test_active_workflow_structure_rejects_decoys_and_pr_controlled_paths/ found in sdk/tests/test_review_readiness_guard.py
