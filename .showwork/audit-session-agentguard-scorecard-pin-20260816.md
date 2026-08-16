@@ -1,13 +1,13 @@
 # Claims audit - session agentguard-scorecard-pin-20260816
 
-**Verdict: GREEN**  (11/12 verified)
+**Verdict: GREEN**  (14/17 verified)
 
-- OK **Claude review workflow uses the checked-in npm lockfile** (`file_contains`, RED)
-    - /npm ci --no-audit --no-fund/ found in .github/workflows/claude-review.yml
+- .. **Claude review workflow uses the checked-in npm lockfile** (`None`, RED)
+    - retracted: The workflow was hardened to install from the trusted base revision with --ignore-scripts; replace the stale pre-hardening command claim with the exact safe invocation.
 - OK **Claude review dependency lockfile exists** (`file_exists`, RED)
     - .github/claude-review/package-lock.json exists
-- OK **Review-readiness guard requires the lockfile-backed local npm ci and local Claude CLI path** (`file_contains`, RED)
-    - /npm ci --no-audit --no-fund/ found in scripts/review_readiness_guard.py
+- .. **Review-readiness guard requires the lockfile-backed local npm ci and local Claude CLI path** (`None`, RED)
+    - retracted: The readiness contract now requires --ignore-scripts and the trusted-base workflow; replace the stale pre-hardening command claim with the exact safe invocation.
 - OK **Review-readiness tests cover semantic 300-second timeout and package-lock contract** (`file_contains`, RED)
     - /test_workflow_requires_semantic_three_hundred_second_timeout/ found in sdk/tests/test_review_readiness_guard.py
 - .. **Timeout guard anchors the 300-second deadline directly to the local Claude CLI path** (`None`, RED)
@@ -26,3 +26,13 @@
     - /test_timeout_rejects_inert_prefixes/ found in sdk/tests/test_review_readiness_guard.py
 - OK **Preflight regression covers both Claude review dependency files** (`file_contains`, RED)
     - /test_review_readiness_dependency_files_run_guard/ found in sdk/tests/test_sdk_preflight.py
+- OK **Claude review runs from the trusted pull_request_target workflow** (`file_contains`, RED)
+    - /pull_request_target:/ found in .github/workflows/claude-review.yml
+- OK **Claude review checks out the pull request base revision** (`file_contains`, RED)
+    - /github.event.pull_request.base.sha/ found in .github/workflows/claude-review.yml
+- OK **Trusted Claude install disables lifecycle scripts before secrets are used** (`file_contains`, RED)
+    - /npm ci --ignore-scripts --no-audit --no-fund/ found in .github/workflows/claude-review.yml
+- OK **Review readiness rejects PR-controlled lifecycle and Claude-bin replacement paths** (`file_contains`, RED)
+    - /test_workflow_requires_trusted_base_for_runtime_install/ found in sdk/tests/test_review_readiness_guard.py
+- OK **Review-readiness guard requires the lockfile-backed install with scripts disabled and the local Claude CLI path** (`file_contains`, RED)
+    - /npm ci --ignore-scripts --no-audit --no-fund/ found in scripts/review_readiness_guard.py

@@ -27,8 +27,11 @@ REQUIRED_TEMPLATE_PHRASES = {
 
 REQUIRED_CLAUDE_REVIEW_PHRASES = {
     "pinned-checkout": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0",
+    "trusted-trigger": "pull_request_target:",
+    "trusted-base-ref": "ref: ${{ github.event.pull_request.base.sha }}",
     "shallow-checkout": "fetch-depth: 1",
-    "workflow-local-install": "npm ci --no-audit --no-fund",
+    "trusted-runtime-directory": "working-directory: .github/claude-review",
+    "workflow-local-install": "npm ci --ignore-scripts --no-audit --no-fund",
     "workflow-local-cli": CLAUDE_REVIEW_CLI_PATH,
     "no-head-pipe": "python -c",
     "untrusted-boundary": "UNTRUSTED PR DIFF START",

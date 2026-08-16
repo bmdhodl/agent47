@@ -1,7 +1,9 @@
 name: Claude PR Review
 
 on:
-  pull_request:
+  # This workflow must come from the trusted base branch. Never execute the
+  # PR merge tree before secrets enter the process; the PR diff is data only.
+  pull_request_target:
     types: [opened, synchronize]
 
 permissions:
@@ -14,14 +16,18 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout trusted base review runtime
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 1
+
+      # The checkout above is the base revision, not the PR merge tree. Do not
+      # checkout or execute files from the PR; only feed its diff to Claude.
 
       - name: Install Claude Code CLI
         working-directory: .github/claude-review
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Review PR
         env:
