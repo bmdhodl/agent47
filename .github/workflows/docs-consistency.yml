@@ -15,6 +15,12 @@ on:
       - "CHANGELOG.md"
       - "sdk/PYPI_README.md"
       - "sdk/pyproject.toml"
+      # Release-marker + skill-metadata Markdown inputs that
+      # sdk_release_guard.py validates but ci.yml skips via **/*.md
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - ".claude/agents/sdk-dev.md"
+      - "skills/agentguard/SKILL.md"
       - "scripts/generate_pypi_readme.py"
       - "scripts/sdk_release_guard.py"
       - ".github/requirements/ci-tools.txt"
@@ -26,6 +32,12 @@ on:
       - "CHANGELOG.md"
       - "sdk/PYPI_README.md"
       - "sdk/pyproject.toml"
+      # Release-marker + skill-metadata Markdown inputs that
+      # sdk_release_guard.py validates but ci.yml skips via **/*.md
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - ".claude/agents/sdk-dev.md"
+      - "skills/agentguard/SKILL.md"
       - "scripts/generate_pypi_readme.py"
       - "scripts/sdk_release_guard.py"
       - ".github/requirements/ci-tools.txt"
