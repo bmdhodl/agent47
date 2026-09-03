@@ -124,6 +124,12 @@ OpenAI · Anthropic · LangChain · LangGraph · CrewAI · raw agent loops
 pip install "agentguard47[langchain]"   # optional extras as needed
 ```
 
+## Security
+
+The base install declares zero runtime dependencies. `pip install agentguard47` pulls nothing, so a default install adds no third-party exposure.
+
+Extras pull real dependency trees. The `[crewai]` extra pulls `chromadb`, which carries [PYSEC-2026-311](https://osv.dev/vulnerability/PYSEC-2026-311): a pre-authentication remote code execution advisory with **no fixed release available**. Nothing in AgentGuard calls the affected endpoint, and installing the extra does not start a ChromaDB server. You are exposed only if you run a ChromaDB server reachable by untrusted callers. A 2026-08-28 `pip-audit` run also flags CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833 against the same `chromadb` release, none with a fixed version. The `[langchain]`, `[langgraph]`, and `[otel]` extras resolve clean under `pip-audit`. See [#702](https://github.com/bmdhodl/agent47/issues/702) for the full finding.
+
 ## Docs
 
 - [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.2.14/docs/guides/getting-started.md)
