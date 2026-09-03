@@ -1,0 +1,2 @@
+{"event": "session.start", "session": "address-review-710-r4", "ts": "2026-09-03T22:29:05", "agent": "claude-code", "tree_snapshot": {"count": 513, "sha256": "3a14eb0ac3d75521f84364286bf2e48a9d7769e01b12d7f0c18215f355b6754e"}, "prev": "c2f74458da8fc7be63965c63bdd0ff8efbe8d7beb4e7971e2bba70bf37c68171"}
+{"event": "session.finish", "session": "address-review-710-r4", "ts": "2026-09-03T22:29:05", "status": "ok", "claims_verdict": "GREEN", "prev": "dd4b359104564aa43c5a153486cdc5193b5f9166240c9b75f84e36c08d3b7d77"}
