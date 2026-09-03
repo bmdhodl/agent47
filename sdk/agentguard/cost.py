@@ -18,7 +18,7 @@ class UnknownModelWarning(UserWarning):
 
 
 # Prices per 1K tokens: (input_price, output_price)
-# Last updated: 2026-05-19
+# Last updated: 2026-09-03
 # Verified against official OpenAI, Anthropic, and Google pricing pages.
 _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     # OpenAI
@@ -64,7 +64,7 @@ _PRICES: Dict[Tuple[str, str], Tuple[float, float]] = {
     ("meta", "llama-3.1-70b"): (0.00035, 0.0004),
 }
 
-LAST_UPDATED = "2026-05-19"
+LAST_UPDATED = "2026-09-03"
 
 
 def _resolve_prices(provider: str, model: str, input_tokens: int) -> Optional[Tuple[float, float]]:
