@@ -26,11 +26,14 @@ jobs:
           arch_age=$(( (now - $(git log -1 --format=%ct -- ops/02-ARCHITECTURE.md)) / 86400 ))
           north_age=$(( (now - $(git log -1 --format=%ct -- ops/00-NORTHSTAR.md)) / 86400 ))
           price_date=$(sed -n 's/^LAST_UPDATED = "\(.*\)"/\1/p' sdk/agentguard/cost.py)
-          if [ -n "$price_date" ]; then
-            price_age=$(( (now - $(date -d "$price_date" +%s)) / 86400 ))
+          # date -d "" returns "now" (exit 0), so guard on the extracted string
+          # too; a non-empty but unparseable value fails and yields empty epoch.
+          price_epoch=$(date -d "$price_date" +%s 2>/dev/null || true)
+          if [ -n "$price_date" ] && [ -n "$price_epoch" ]; then
+            price_age=$(( (now - price_epoch) / 86400 ))
           else
             price_age=-1
-            echo "::warning::Could not extract LAST_UPDATED from sdk/agentguard/cost.py; skipping price-age check"
+            echo "::warning::Could not parse LAST_UPDATED ('${price_date}') from sdk/agentguard/cost.py; skipping price-age check"
           fi
           DOW=$(date +%u)
 
