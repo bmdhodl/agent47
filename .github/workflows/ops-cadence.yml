@@ -26,7 +26,12 @@ jobs:
           arch_age=$(( (now - $(git log -1 --format=%ct -- ops/02-ARCHITECTURE.md)) / 86400 ))
           north_age=$(( (now - $(git log -1 --format=%ct -- ops/00-NORTHSTAR.md)) / 86400 ))
           price_date=$(sed -n 's/^LAST_UPDATED = "\(.*\)"/\1/p' sdk/agentguard/cost.py)
-          price_age=$(( (now - $(date -d "$price_date" +%s)) / 86400 ))
+          if [ -n "$price_date" ]; then
+            price_age=$(( (now - $(date -d "$price_date" +%s)) / 86400 ))
+          else
+            price_age=-1
+            echo "::warning::Could not extract LAST_UPDATED from sdk/agentguard/cost.py; skipping price-age check"
+          fi
           DOW=$(date +%u)
 
           body=""
