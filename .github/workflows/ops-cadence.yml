@@ -26,14 +26,20 @@ jobs:
           arch_age=$(( (now - $(git log -1 --format=%ct -- ops/02-ARCHITECTURE.md)) / 86400 ))
           north_age=$(( (now - $(git log -1 --format=%ct -- ops/00-NORTHSTAR.md)) / 86400 ))
           price_date=$(sed -n 's/^LAST_UPDATED = "\(.*\)"/\1/p' sdk/agentguard/cost.py)
-          # date -d "" returns "now" (exit 0), so guard on the extracted string
-          # too; a non-empty but unparseable value fails and yields empty epoch.
-          price_epoch=$(date -d "$price_date" +%s 2>/dev/null || true)
-          if [ -n "$price_date" ] && [ -n "$price_epoch" ]; then
+          # Validate the exact YYYY-MM-DD shape before passing it to date(1).
+          # This rejects an empty/renamed marker and any unexpected content up
+          # front (note: date -d "" would otherwise return "now"). A shaped-but-
+          # invalid calendar date like 2026-13-45 still fails date -d and is
+          # caught by the empty-epoch check below.
+          price_epoch=""
+          if [[ "$price_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            price_epoch=$(date -d "$price_date" +%s 2>/dev/null || true)
+          fi
+          if [ -n "$price_epoch" ]; then
             price_age=$(( (now - price_epoch) / 86400 ))
           else
             price_age=-1
-            echo "::warning::Could not parse LAST_UPDATED ('${price_date}') from sdk/agentguard/cost.py; skipping price-age check"
+            echo "::warning::Could not parse LAST_UPDATED ('${price_date}') as a YYYY-MM-DD date in sdk/agentguard/cost.py; skipping price-age check"
           fi
           DOW=$(date +%u)
 
