@@ -1,0 +1,59 @@
+name: Docs Consistency
+
+# ci.yml intentionally skips Markdown-only changes (paths-ignore: **/*.md) to
+# keep the test/lint/mcp matrix off doc edits. That left a permanent gap: a
+# Markdown-only PR could change README.md or CHANGELOG.md without regenerating
+# sdk/PYPI_README.md and never trip a check. This workflow closes that gap by
+# running only the cheap consistency guards whenever the generated PyPI README,
+# its sources, or the release metadata scripts change.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "CHANGELOG.md"
+      - "sdk/PYPI_README.md"
+      - "sdk/pyproject.toml"
+      - "scripts/generate_pypi_readme.py"
+      - "scripts/sdk_release_guard.py"
+      - ".github/requirements/ci-tools.txt"
+      - ".github/workflows/docs-consistency.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "CHANGELOG.md"
+      - "sdk/PYPI_README.md"
+      - "sdk/pyproject.toml"
+      - "scripts/generate_pypi_readme.py"
+      - "scripts/sdk_release_guard.py"
+      - ".github/requirements/ci-tools.txt"
+      - ".github/workflows/docs-consistency.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  docs-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: sdk
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Install tools
+        run: python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
+      - name: Check PyPI README sync
+        run: python scripts/generate_pypi_readme.py --check
+      - name: Check release metadata sync
+        run: python scripts/sdk_release_guard.py
