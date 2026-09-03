@@ -58,7 +58,9 @@ jobs:
           if [ -z "$price_epoch" ]; then
             body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` missing or unparseable in \`sdk/agentguard/cost.py\`\n"
             body+="- [ ] Restore a valid ISO \`LAST_UPDATED\` marker so price staleness can be tracked again\n\n"
-          elif [ "$price_age" -lt 0 ]; then
+          elif [ "$price_epoch" -gt "$now" ]; then
+            # Compare epochs directly, not the day-truncated price_age: a date
+            # of "tomorrow" divides to 0 days and would otherwise slip through.
             body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` (${price_date}) is in the future; likely a typo\n"
             body+="- [ ] Correct \`LAST_UPDATED\` in \`sdk/agentguard/cost.py\` to the true last-verified date\n\n"
           elif [ "$price_age" -gt 90 ]; then
