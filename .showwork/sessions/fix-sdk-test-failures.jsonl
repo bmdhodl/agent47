@@ -1,0 +1,2 @@
+{"event": "session.start", "session": "fix-sdk-test-failures", "ts": "2026-09-03T21:42:07", "agent": "claude-code", "tree_snapshot": {"count": 512, "sha256": "f7be1cfc5cc9da78d423c66910997029a487e93f69f22668398d2fff09798069"}, "prev": "17c7776a1dc049462b0e707e8dc37b6934218bd2a32a38a5c629903f148189b7"}
+{"event": "session.finish", "session": "fix-sdk-test-failures", "ts": "2026-09-03T21:42:17", "status": "ok", "claims_verdict": "GREEN", "prev": "99108c13499cb4adef0ba3f5977bfd8eb427569c4f73b3abeeb2842f3e3321af"}

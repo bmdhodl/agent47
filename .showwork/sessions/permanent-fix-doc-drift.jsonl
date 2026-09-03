@@ -1,0 +1,2 @@
+{"event": "session.start", "session": "permanent-fix-doc-drift", "ts": "2026-09-03T22:07:21", "agent": "claude-code", "tree_snapshot": {"count": 513, "sha256": "da05f8cd59feaffc1f8deff38a59035d2e056bb41a53a4a8992b8b3c3e912efa"}, "prev": "429d083ee84d9c9ebfaf25c8283b8a93242484d3e9b387e3117fb7224abc92aa"}
+{"event": "session.finish", "session": "permanent-fix-doc-drift", "ts": "2026-09-03T22:07:21", "status": "ok", "claims_verdict": "GREEN", "prev": "2cc43c12ed5dc6b8ede88edbbc95cde230a625361f66101de21997c521589ef2"}
