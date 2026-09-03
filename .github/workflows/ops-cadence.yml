@@ -51,13 +51,20 @@ jobs:
             body+="- [ ] Add 1–3 current focus notes\n\n"
           fi
 
-          if [ "$price_age" -gt 90 ]; then
+          # Distinguish three failure modes explicitly. Missing/unparseable is
+          # keyed off an empty price_epoch (unambiguous) rather than a numeric
+          # sentinel — a date one day in the future would itself yield
+          # price_age=-1 and collide with a sentinel.
+          if [ -z "$price_epoch" ]; then
+            body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` missing or unparseable in \`sdk/agentguard/cost.py\`\n"
+            body+="- [ ] Restore a valid ISO \`LAST_UPDATED\` marker so price staleness can be tracked again\n\n"
+          elif [ "$price_age" -lt 0 ]; then
+            body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` (${price_date}) is in the future; likely a typo\n"
+            body+="- [ ] Correct \`LAST_UPDATED\` in \`sdk/agentguard/cost.py\` to the true last-verified date\n\n"
+          elif [ "$price_age" -gt 90 ]; then
             body+="### PRICE TABLE — ${price_age} days since last hand-verify\n"
             body+="- [ ] Re-verify \`sdk/agentguard/cost.py\` + \`sdk/agentguard/price_table.py\` against public list prices\n"
             body+="- [ ] Bump \`LAST_UPDATED\` (and the price_table \`last_updated\`/\`version\` markers)\n\n"
-          elif [ "$price_age" -lt 0 ]; then
-            body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` missing or unparseable in \`sdk/agentguard/cost.py\`\n"
-            body+="- [ ] Restore a valid ISO \`LAST_UPDATED\` marker so price staleness can be tracked again\n\n"
           fi
 
           if [ "$DOW" = "1" ]; then
