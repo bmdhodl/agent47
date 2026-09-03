@@ -49,6 +49,9 @@ jobs:
             body+="### PRICE TABLE — ${price_age} days since last hand-verify\n"
             body+="- [ ] Re-verify \`sdk/agentguard/cost.py\` + \`sdk/agentguard/price_table.py\` against public list prices\n"
             body+="- [ ] Bump \`LAST_UPDATED\` (and the price_table \`last_updated\`/\`version\` markers)\n\n"
+          elif [ "$price_age" -lt 0 ]; then
+            body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` missing or unparseable in \`sdk/agentguard/cost.py\`\n"
+            body+="- [ ] Restore a valid ISO \`LAST_UPDATED\` marker so price staleness can be tracked again\n\n"
           fi
 
           if [ "$DOW" = "1" ]; then
