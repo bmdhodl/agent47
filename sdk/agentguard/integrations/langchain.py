@@ -24,10 +24,14 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
     Tracks nested chains/tool calls as a span stack, optionally wiring
     LoopGuard and BudgetGuard checks into tool invocations.
 
-    Works with ``langchain-core >= 0.1``. Install via::
+    Tested with ``langchain-core >= 1.6.3``. Install via::
 
         pip install agentguard47[langchain]
     """
+
+    # LangChain otherwise logs guard exceptions and continues the tool call.
+    raise_error = True
+    run_inline = True
 
     def __init__(
         self,

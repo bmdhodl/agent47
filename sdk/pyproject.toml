@@ -57,10 +57,10 @@ Issues = "https://github.com/bmdhodl/agent47/issues"
 Changelog = "https://github.com/bmdhodl/agent47/releases"
 
 [project.optional-dependencies]
-langchain = ["langchain-core>=0.3.84"]
-langgraph = ["langgraph>=0.6.11"]
-crewai = ["crewai>=0.28"]
-otel = ["opentelemetry-api>=1.41.0", "opentelemetry-sdk>=1.41.0"]
+langchain = ["langchain-core>=1.6.3"]
+langgraph = ["langgraph>=1.2.11", "langgraph-checkpoint>=4.2.0", "langgraph-sdk>=0.4.4"]
+crewai = ["crewai>=1.15.21"]
+otel = ["opentelemetry-api>=1.44.0", "opentelemetry-sdk>=1.44.0"]
 
 [project.scripts]
 agentguard = "agentguard.cli:main"
