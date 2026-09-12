@@ -31,6 +31,48 @@ This is a documented gap, not a hidden feature. AgentGuard can enforce the
 runtime paths it instruments. It does not yet enforce provider-managed
 pre-call, between-call, or post-call work.
 
+## OpenAI Agents API (public beta)
+
+The OpenAI Agents API is the sharpest case of that gap, so it gets named
+fields. A client creates a session with `POST /v1/agents/sessions` and the
+header `OpenAI-Beta: agents=v1`, then reads streamed events. The loop itself
+runs on OpenAI's servers.
+
+What AgentGuard can do:
+
+- Meter. `BudgetGuard.consume(tokens=..., calls=..., cost_usd=...)` takes plain
+  numbers, so any figure you pull off the stream feeds it. `normalize_usage()`
+  already reads `input_tokens`, `output_tokens`, `total_tokens`,
+  `prompt_tokens`, and `completion_tokens`.
+- Trip. `BudgetExceeded` and `TimeoutExceeded` still raise on schedule, and
+  `session_id` still correlates the traces you write locally.
+
+What AgentGuard cannot do:
+
+- Attach by patch. `patch_openai()` patches `chat.completions.create`. An
+  Agents API session never calls that method, so the patch gives zero coverage.
+- Cancel. Every guard raises an exception inside your process. No SDK primitive
+  sends anything back to OpenAI. You stop a run yourself, by sending
+  `agent.session.input.cancel` through
+  `client.beta.agents.sessions.events.create(...)` or by calling
+  `DELETE /v1/agents/sessions/{session_id}` from your own `except` handler.
+- Price the whole bill. `estimate_cost()` models per-1K model token rates only.
+  OpenAI tools and hosted sandboxes (`environment.type: "openai_hosted"`) bill
+  at container rates that the table does not carry.
+
+One caveat on metering, checked on 2026-09-11: the published guides (overview,
+quickstart, sessions, multi-agent, configuration) name the session event types
+`agent.session.turn.completed`, `agent.session.turn.failed`,
+`agent.session.turn.cancelled`, `agent.session.input.message`,
+`agent.session.input.cancel`, and `agent.session.subagent.created`, and they
+name no token or cost field on any of them. Confirm against the current
+reference before you rely on a usage payload in the stream. The
+`max_concurrent_subagents` parameter (default `6`) caps fan-out, not spend.
+
+The safe pattern today: cap what you can with `BudgetGuard`, keep an
+OpenAI-side spend limit on the account, and write the cancel call in the
+handler.
+
 ## When to use it
 
 Use `session_id` when:

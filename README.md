@@ -97,6 +97,26 @@ guard.charge(0.001, "https://api.example.com/search", my_x402_pay_step)
 AgentGuard meters and refuses; it never signs or settles. Amounts come from
 your x402 client. No crypto dependencies.
 
+## Boundary: server-side agent loops
+
+AgentGuard guards a loop that runs in your process. The OpenAI Agents API
+(public beta, `POST /v1/agents/sessions`, header `OpenAI-Beta: agents=v1`) runs
+the loop on OpenAI's servers, and `patch_openai` covers none of it: it patches
+`chat.completions.create`, which an Agents API session never calls.
+`BudgetGuard.consume(...)` still meters, because it takes plain numbers you pass
+it, but two gaps stay open. The published guides name the session events
+(`agent.session.turn.completed`, `agent.session.turn.failed`,
+`agent.session.turn.cancelled`, `agent.session.subagent.created`) and name no
+token or cost field on any of them, so real-time metering may have nothing to
+read. And `BudgetExceeded` is an exception in your process; it never reaches
+OpenAI. To stop a running session you send `agent.session.input.cancel` through
+`client.beta.agents.sessions.events.create(...)`, or
+`DELETE /v1/agents/sessions/{session_id}`, from your own `except` handler. Model
+tokens are also only part of that bill, because OpenAI tools and hosted
+sandboxes bill at container rates that `estimate_cost()` does not model. Use
+AgentGuard as the meter and the tripwire here, and write the cancel call
+yourself. Detail: [managed-agent sessions](docs/guides/managed-agent-sessions.md).
+
 ## Features
 
 - **Hard stops** — exceptions inside your process, not after-the-fact alerts
