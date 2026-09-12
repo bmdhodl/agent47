@@ -1,0 +1,6 @@
+{
+  "version": "1.2.13",
+  "budget_calls": 0,
+  "tool_executions": 1,
+  "result": "Tool ran despite zero-call budget"
+}

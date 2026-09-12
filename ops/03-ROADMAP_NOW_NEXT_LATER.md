@@ -13,13 +13,10 @@ they directly strengthen coding-agent adoption.
   downloads from scheduled checkout clones. Clone counts can be self-inflicted
   by internal CI workflows; downloads are a directional activation signal, not
   proof of distinct users or production adoption.
-- Current public SDK release is `v1.2.13`, published to PyPI on 2026-05-30.
-  `main` is ahead of that tag and contains unreleased onboarding improvements;
-  do not describe those improvements as shipped until a new SDK tag passes the
-  release gates.
-- The release-prep branch targets `v1.3.0`, including the unpublished 1.2.14
-  work. The audit fixes are on `main`; the candidate becomes a public release
-  only after the tag workflow publishes the package and PyPI smoke passes.
+- Current public SDK release is `v1.3.0`, published to PyPI on 2026-09-12.
+  A fresh public install passed the offline CLI checks and live hosted trace
+  readback. The release includes the previously unpublished 1.2.14 work.
+  Evidence: `proof/v1.3.0/`. The optional CrewAI advisory remains tracked in #644.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47` at
   `0.2.2` with `isLatest: true`; the older `0.2.1` result is historical
   metadata, not a current release blocker.

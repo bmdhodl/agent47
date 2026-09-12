@@ -1,0 +1,36 @@
+{
+  "version": "1.3.0",
+  "files": [
+    {
+      "filename": "agentguard47-1.3.0-py3-none-any.whl",
+      "digests": {
+        "blake2b_256": "4eae24810941e684a43161b6936850832a1d7d864135c1f02644e1e403f31536",
+        "md5": "c496b935ef56d78c3734e910eabd76cd",
+        "sha256": "ee791ed4ff92faca056766314b489dbe981fdee432d54dd5b64aa8d1438a8bc9"
+      },
+      "upload_time_iso_8601": "2026-09-12T18:51:26.839624Z",
+      "url": "https://files.pythonhosted.org/packages/4e/ae/24810941e684a43161b6936850832a1d7d864135c1f02644e1e403f31536/agentguard47-1.3.0-py3-none-any.whl"
+    },
+    {
+      "filename": "agentguard47-1.3.0.tar.gz",
+      "digests": {
+        "blake2b_256": "ddec0a2b59dcd755945e419427b3e68ec03fe559b775679977120cf977c62d78",
+        "md5": "557c8d758dd5d468d93307e63d377ab4",
+        "sha256": "b32192ecd5c85272ff4a60065fe294873192af55f34f09a68aee4f015a653b90"
+      },
+      "upload_time_iso_8601": "2026-09-12T18:51:28.282896Z",
+      "url": "https://files.pythonhosted.org/packages/dd/ec/0a2b59dcd755945e419427b3e68ec03fe559b775679977120cf977c62d78/agentguard47-1.3.0.tar.gz"
+    }
+  ],
+  "release": "https://github.com/bmdhodl/agent47/releases/tag/v1.3.0",
+  "workflow": "https://github.com/bmdhodl/agent47/actions/runs/34712412922",
+  "linkedin": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7504283081680297985/",
+  "x": "https://x.com/phughes9000/status/2098847583556845686",
+  "quillbot": {
+    "model": "7.1.0",
+    "likely_ai_percent": 0,
+    "scope": "Exact LinkedIn text. Detector score, not proof of authorship."
+  },
+  "demo_sha256": "97900bddff3fcaddf9688d07b812d6c6b91ea3d5632eec048b4348179fc6c417",
+  "signoff": "OpenAI | GPT-6 | auto"
+}
