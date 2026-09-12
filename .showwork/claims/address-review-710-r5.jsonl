@@ -1,0 +1,1 @@
+{"session": "address-review-710-r5", "ts": "2026-09-03T22:32:26", "claim": "ops-cadence distinguishes a future LAST_UPDATED (typo) from a missing/unparseable marker", "severity": "RED", "check": {"type": "file_contains", "path": ".github/workflows/ops-cadence.yml", "pattern": "is in the future"}, "prev": "26c9af835bc7b794a2a43b53dd2593558eb74da2560e232130b5043ed04ac234"}

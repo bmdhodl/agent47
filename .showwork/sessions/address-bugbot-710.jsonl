@@ -1,0 +1,2 @@
+{"event": "session.start", "session": "address-bugbot-710", "ts": "2026-09-03T22:38:18", "agent": "claude-code", "tree_snapshot": {"count": 513, "sha256": "d0c6c4f9ad9473ac982f5d656f5a904327f30b07f4c182c0d3ad287b2873a0f8"}, "prev": "bffcfb09f2e772312de07145f910088b9c07af3091ecd6c9fcfc5cfaa544fbda"}
+{"event": "session.finish", "session": "address-bugbot-710", "ts": "2026-09-03T22:38:18", "status": "ok", "claims_verdict": "GREEN", "prev": "00cfc1b5b57cc7cbbe3197676258d180bef4610be4d94eb89b403380c3749f7b"}

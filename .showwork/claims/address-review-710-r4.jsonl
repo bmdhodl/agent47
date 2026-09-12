@@ -1,0 +1,1 @@
+{"session": "address-review-710-r4", "ts": "2026-09-03T22:29:05", "claim": "ops-cadence validates the LAST_UPDATED marker against a strict YYYY-MM-DD shape before calling date(1)", "severity": "RED", "check": {"type": "file_contains", "path": ".github/workflows/ops-cadence.yml", "pattern": "YYYY-MM-DD"}, "prev": "c2f74458da8fc7be63965c63bdd0ff8efbe8d7beb4e7971e2bba70bf37c68171"}

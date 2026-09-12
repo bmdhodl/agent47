@@ -25,6 +25,22 @@ jobs:
           roadmap_age=$(( (now - $(git log -1 --format=%ct -- ops/03-ROADMAP_NOW_NEXT_LATER.md)) / 86400 ))
           arch_age=$(( (now - $(git log -1 --format=%ct -- ops/02-ARCHITECTURE.md)) / 86400 ))
           north_age=$(( (now - $(git log -1 --format=%ct -- ops/00-NORTHSTAR.md)) / 86400 ))
+          price_date=$(sed -n 's/^LAST_UPDATED = "\(.*\)"/\1/p' sdk/agentguard/cost.py)
+          # Validate the exact YYYY-MM-DD shape before passing it to date(1).
+          # This rejects an empty/renamed marker and any unexpected content up
+          # front (note: date -d "" would otherwise return "now"). A shaped-but-
+          # invalid calendar date like 2026-13-45 still fails date -d and is
+          # caught by the empty-epoch check below.
+          price_epoch=""
+          if [[ "$price_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            price_epoch=$(date -d "$price_date" +%s 2>/dev/null || true)
+          fi
+          if [ -n "$price_epoch" ]; then
+            price_age=$(( (now - price_epoch) / 86400 ))
+          else
+            price_age=-1
+            echo "::warning::Could not parse LAST_UPDATED ('${price_date}') as a YYYY-MM-DD date in sdk/agentguard/cost.py; skipping price-age check"
+          fi
           DOW=$(date +%u)
 
           body=""
@@ -33,6 +49,24 @@ jobs:
             body+="### ROADMAP — ${roadmap_age} days since last update\n"
             body+="- [ ] Update Now/Next items in \`ops/03-ROADMAP_NOW_NEXT_LATER.md\`\n"
             body+="- [ ] Add 1–3 current focus notes\n\n"
+          fi
+
+          # Distinguish three failure modes explicitly. Missing/unparseable is
+          # keyed off an empty price_epoch (unambiguous) rather than a numeric
+          # sentinel — a date one day in the future would itself yield
+          # price_age=-1 and collide with a sentinel.
+          if [ -z "$price_epoch" ]; then
+            body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` missing or unparseable in \`sdk/agentguard/cost.py\`\n"
+            body+="- [ ] Restore a valid ISO \`LAST_UPDATED\` marker so price staleness can be tracked again\n\n"
+          elif [ "$price_epoch" -gt "$now" ]; then
+            # Compare epochs directly, not the day-truncated price_age: a date
+            # of "tomorrow" divides to 0 days and would otherwise slip through.
+            body+="### PRICE TABLE — ⚠️ \`LAST_UPDATED\` (${price_date}) is in the future; likely a typo\n"
+            body+="- [ ] Correct \`LAST_UPDATED\` in \`sdk/agentguard/cost.py\` to the true last-verified date\n\n"
+          elif [ "$price_age" -gt 90 ]; then
+            body+="### PRICE TABLE — ${price_age} days since last hand-verify\n"
+            body+="- [ ] Re-verify \`sdk/agentguard/cost.py\` + \`sdk/agentguard/price_table.py\` against public list prices\n"
+            body+="- [ ] Bump \`LAST_UPDATED\` (and the price_table \`last_updated\`/\`version\` markers)\n\n"
           fi
 
           if [ "$DOW" = "1" ]; then
