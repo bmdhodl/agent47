@@ -1,0 +1,6 @@
+{
+  "version": "1.3.0",
+  "budget_calls": 0,
+  "tool_executions": 0,
+  "result": "BudgetExceeded: tool stopped before execution"
+}

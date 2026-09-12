@@ -1,0 +1,23 @@
+AgentGuard quickstart
+Framework: raw
+Wrote starter: agentguard_raw_quickstart.py
+
+Install:
+  pip install agentguard47
+
+Offline starter that proves local tracing plus budget and loop stops without any API keys.
+
+Notes:
+  - This path is fully local. No dashboard and no provider API keys are required.
+  - The generated file catches simulated guard exceptions so the script exits cleanly.
+  - Copy the call_model and tool-event pattern into the loop that drives your coding agent.
+  - Commit a .agentguard.json file if you want coding agents to reuse the same local defaults.
+
+Next commands:
+  agentguard doctor
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli doctor
+  python -m agentguard.cli report .agentguard/traces.jsonl

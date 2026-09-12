@@ -143,6 +143,13 @@ budget.
 
 Every agent session that changes this repo records falsifiable claims and closes through the showwork exit gate (github.com/bmdhodl/showwork). Receipts live in `.showwork/` and ship with the PR.
 
+Keep additional test environments under `.venv/` and temporary test data under
+`.pytest_cache/`. The installed showwork snapshotter skips those directory
+names; it does not read a `.showworkignore` file or Git ignore rules. Do not
+create sibling `.extras-venv/` or `.audit-tmp/` directories for new runs.
+Preserve existing session snapshots unchanged so their recorded hashes remain
+verifiable; changing future directory placement must not rewrite old evidence.
+
 1. Start material work: `python -m showwork.cli start --session <task-slug> --agent <claude-code|codex|gemini>`
 2. After each completed change, record a claim with a check that can fail (types: `file_exists`, `file_contains`, `path_moved`, `frontmatter`, `glob_count`, `command`):
    `python -m showwork.cli claim --session <task-slug> --claim "<what changed>" --type file_contains --path <file> --pattern "<regex>"`
