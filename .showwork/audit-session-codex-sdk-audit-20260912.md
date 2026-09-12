@@ -1,39 +1,50 @@
 # Claims audit - session codex-sdk-audit-20260912
 
-**Verdict: RED**  (1/11 verified)
+**Verdict: GREEN**  (12/12 verified)
 
 - OK **Budget audit rejects corrupt stored counters before mutation** (`file_contains`)
     - /stored budget/ found in sdk/agentguard/_budget_validation.py
-- XX **undeclared change: .github/workflows/codeql.yml** (`undeclared_change`, RED)
-    - .github/workflows/codeql.yml changed since session.start; no active claim named that path
-- XX **undeclared change: .github/workflows/scorecard.yml** (`undeclared_change`, RED)
-    - .github/workflows/scorecard.yml changed since session.start; no active claim named that path
-- XX **undeclared change: ARCHITECTURE.md** (`undeclared_change`, RED)
-    - ARCHITECTURE.md changed since session.start; no active claim named that path
-- XX **undeclared change: README.md** (`undeclared_change`, RED)
-    - README.md changed since session.start; no active claim named that path
-- XX **undeclared change: inbox/log.md** (`undeclared_change`, RED)
-    - inbox/log.md changed since session.start; no active claim named that path
-- XX **undeclared change: memory/state.md** (`undeclared_change`, RED)
-    - memory/state.md changed since session.start; no active claim named that path
-- XX **undeclared change: ops/02-ARCHITECTURE.md** (`undeclared_change`, RED)
-    - ops/02-ARCHITECTURE.md changed since session.start; no active claim named that path
-- XX **undeclared change: proof/audit-20260912/pytest-full.txt** (`undeclared_change`, RED)
-    - proof/audit-20260912/pytest-full.txt changed since session.start; no active claim named that path
-- XX **undeclared change: sdk/PYPI_README.md** (`undeclared_change`, RED)
-    - sdk/PYPI_README.md changed since session.start; no active claim named that path
-- XX **undeclared change: traces.jsonl** (`undeclared_change`, RED)
-    - traces.jsonl changed since session.start; no active claim named that path
-
-## 10 gap(s) - a claimed 'done' is not real
-
-- [RED/fail] undeclared change: .github/workflows/codeql.yml - .github/workflows/codeql.yml changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: .github/workflows/scorecard.yml - .github/workflows/scorecard.yml changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: ARCHITECTURE.md - ARCHITECTURE.md changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: README.md - README.md changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: inbox/log.md - inbox/log.md changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: memory/state.md - memory/state.md changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: ops/02-ARCHITECTURE.md - ops/02-ARCHITECTURE.md changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: proof/audit-20260912/pytest-full.txt - proof/audit-20260912/pytest-full.txt changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: sdk/PYPI_README.md - sdk/PYPI_README.md changed since session.start; no active claim named that path
-- [RED/fail] undeclared change: traces.jsonl - traces.jsonl changed since session.start; no active claim named that path
+- .. **Audited artifact exists: .github/workflows/codeql.yml** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: .github/workflows/scorecard.yml** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: ARCHITECTURE.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: README.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: inbox/log.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: memory/state.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: ops/02-ARCHITECTURE.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: ops/03-ROADMAP_NOW_NEXT_LATER.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: proof/audit-20260912/pytest-full.txt** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: sdk/PYPI_README.md** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- .. **Audited artifact exists: traces.jsonl** (`None`)
+    - retracted: Existence did not verify the change; superseded with content-specific evidence.
+- OK **CodeQL workflow pins the updated action revision** (`file_contains`)
+    - /b96794f0/ found in .github/workflows/codeql.yml
+- OK **Scorecard workflow pins the updated CodeQL action revision** (`file_contains`)
+    - /b96794f0/ found in .github/workflows/scorecard.yml
+- OK **Architecture records the changed budget callback boundary** (`file_contains`)
+    - /Budget callbacks run outside locks/ found in ARCHITECTURE.md
+- OK **README explicitly records unresolved CrewAI upstream security exposure** (`file_contains`)
+    - /four distinct unresolved advisories/ found in README.md
+- OK **Generated package description retains the unresolved upstream warning** (`file_contains`)
+    - /four distinct unresolved advisories/ found in sdk/PYPI_README.md
+- OK **Inbox log records the merged documentation and deterministic test repair** (`file_contains`)
+    - /Merged #710/ found in inbox/log.md
+- OK **Repository state distinguishes the unpublished source version from PyPI** (`file_contains`)
+    - /never published/ found in memory/state.md
+- OK **Operating architecture describes real callback exception propagation** (`file_contains`)
+    - /LangChain callback dispatch propagates guard exceptions/ found in ops/02-ARCHITECTURE.md
+- OK **Roadmap records this audit review date** (`file_contains`)
+    - /2026-09-12/ found in ops/03-ROADMAP_NOW_NEXT_LATER.md
+- OK **Saved full-suite output records 969 passing tests and one optional skip** (`file_contains`)
+    - /969 passed, 1 skipped/ found in proof/audit-20260912/pytest-full.txt
+- OK **Local test trace log contains the mocked OpenAI span; this is not provider delivery evidence** (`file_contains`)
+    - /"name": "llm.openai.gpt-4o-mini"/ found in traces.jsonl
