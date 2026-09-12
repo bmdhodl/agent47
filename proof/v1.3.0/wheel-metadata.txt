@@ -1,0 +1,3 @@
+1.3.0
+C:\Users\patri\.codex\worktrees\agent47-release-20260912\output\wheel-smoke-venv\Lib\site-packages\agentguard\__init__.py
+['langchain-core>=1.6.3; extra == "langchain"', 'langgraph>=1.2.11; extra == "langgraph"', 'langgraph-checkpoint>=4.2.0; extra == "langgraph"', 'langgraph-sdk>=0.4.4; extra == "langgraph"', 'crewai>=1.15.21; extra == "crewai"', 'opentelemetry-api>=1.44.0; extra == "otel"', 'opentelemetry-sdk>=1.44.0; extra == "otel"']

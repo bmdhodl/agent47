@@ -1,6 +1,37 @@
 # Changelog
 
-## 1.2.14
+## 1.3.0 (2026-09-12)
+
+This release includes the accumulated, unpublished 1.2.14 candidate work below.
+
+### Security and enforcement fixes
+- LangChain now propagates guard exceptions through its real callback manager.
+  A zero-call budget stops the tool before its body runs; previously LangChain
+  could log the exception and continue. Sync and async dispatch run inline.
+- Budget and timeout caps reject invalid, negative, boolean, and non-finite
+  values. Corrupt stored budget counters fail closed without rewriting state.
+  Warning callbacks run outside budget locks and zero limits do not divide by zero.
+- Failed x402 payment callbacks refund only their original budget generation,
+  so a reset or day rollover cannot reduce a later period's spending.
+- HTTP trace delivery rejects credential-bearing URLs, cross-origin redirects,
+  mapped private IPv6 addresses, and private/reserved DNS answers at connection
+  time. Connections use the validated address while TLS retains hostname checks.
+  This transport deliberately does not use environment proxies.
+- Retry-After delays are finite, non-negative, and capped at 30 seconds.
+- MCP dependency updates resolve the npm audit findings in the committed lockfile.
+
+### Optional dependency compatibility
+- LangChain requires 1.6.3+, LangGraph 1.2.11+ with checkpoint 4.2.0+ and SDK
+  0.4.4+, OpenTelemetry 1.44.0+, and CrewAI 1.15.21+.
+- LangChain and LangGraph extras require Python 3.10+. The dependency-free base
+  package remains compatible with Python 3.9+.
+- The optional CrewAI tree still installs ChromaDB with four distinct unresolved
+  advisories (CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, CVE-2026-45833).
+  No fixed upstream version was available in the audit. Avoid this extra unless
+  its exposure has been reviewed. Base installs do not include ChromaDB.
+- Audit scope, regression results, dependency resolutions, and limitations:
+  [September audit](proof/audit-20260912/README.md).
+
 
 ### Reliability
 - Added the file-backed `JsonFileStateStore` integration for

@@ -10,7 +10,7 @@ Zero-dependency Python kill switch for AI agents. Hard budget caps. Loop detecti
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.2.14/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.3.0/LICENSE)
 
 ```bash
 pip install agentguard47
@@ -130,15 +130,15 @@ The base install declares zero runtime dependencies. `pip install agentguard47` 
 
 Extras install third-party packages and need a separate audit. The LangChain and LangGraph extras now require Python 3.10+ and raise their minimum versions to the tested September 2026 releases. OpenTelemetry requires 1.44.0 or newer. The base SDK remains compatible with Python 3.9+.
 
-The optional `[crewai]` extra requires CrewAI 1.15.21 or newer. Its current dependency tree still installs ChromaDB 1.1.1, with four distinct unresolved advisories: CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833. The audit database provides no fixed version. Avoid this extra unless you have reviewed that upstream exposure. Installing AgentGuard alone does not install ChromaDB or start a server. See [the upstream advisory](https://osv.dev/vulnerability/PYSEC-2026-311) and [the release audit](https://github.com/bmdhodl/agent47/blob/v1.2.14/proof/audit-20260912/README.md).
+The optional `[crewai]` extra requires CrewAI 1.15.21 or newer. Its current dependency tree still installs ChromaDB 1.1.1, with four distinct unresolved advisories: CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833. The audit database provides no fixed version. Avoid this extra unless you have reviewed that upstream exposure. Installing AgentGuard alone does not install ChromaDB or start a server. See [the upstream advisory](https://osv.dev/vulnerability/PYSEC-2026-311) and [the release audit](https://github.com/bmdhodl/agent47/blob/v1.3.0/proof/audit-20260912/README.md).
 
 `HttpSink` validates the address it actually connects to, retains TLS hostname verification, and refuses cross-origin redirects. It connects directly and does not use environment proxy settings. A local guard stops instrumented work in your Python process; it does not cancel an agent loop running on a provider's server. Cost estimates are not invoices; supply provider-reported cost or use strict cost resolution when an estimate is insufficient.
 
 ## Docs
 
-- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.2.14/docs/guides/getting-started.md)
-- [Examples](https://github.com/bmdhodl/agent47/tree/v1.2.14/examples)
-- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.2.14/mcp-server) — `npx -y @agentguard47/mcp-server`
+- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.3.0/docs/guides/getting-started.md)
+- [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.0/examples)
+- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.0/mcp-server) — `npx -y @agentguard47/mcp-server`
 
 ## Links
 
@@ -152,7 +152,40 @@ The hosted page is an optional next step, not a requirement. The SDK stays free,
 
 MIT · Built for people who ship agents and hate surprise bills.
 
-## Latest Release Notes (1.2.14)
+## Latest Release Notes (1.3.0)
+
+(2026-09-12)
+
+This release includes the accumulated, unpublished 1.2.14 candidate work below.
+
+### Security and enforcement fixes
+- LangChain now propagates guard exceptions through its real callback manager.
+  A zero-call budget stops the tool before its body runs; previously LangChain
+  could log the exception and continue. Sync and async dispatch run inline.
+- Budget and timeout caps reject invalid, negative, boolean, and non-finite
+  values. Corrupt stored budget counters fail closed without rewriting state.
+  Warning callbacks run outside budget locks and zero limits do not divide by zero.
+- Failed x402 payment callbacks refund only their original budget generation,
+  so a reset or day rollover cannot reduce a later period's spending.
+- HTTP trace delivery rejects credential-bearing URLs, cross-origin redirects,
+  mapped private IPv6 addresses, and private/reserved DNS answers at connection
+  time. Connections use the validated address while TLS retains hostname checks.
+  This transport deliberately does not use environment proxies.
+- Retry-After delays are finite, non-negative, and capped at 30 seconds.
+- MCP dependency updates resolve the npm audit findings in the committed lockfile.
+
+### Optional dependency compatibility
+- LangChain requires 1.6.3+, LangGraph 1.2.11+ with checkpoint 4.2.0+ and SDK
+  0.4.4+, OpenTelemetry 1.44.0+, and CrewAI 1.15.21+.
+- LangChain and LangGraph extras require Python 3.10+. The dependency-free base
+  package remains compatible with Python 3.9+.
+- The optional CrewAI tree still installs ChromaDB with four distinct unresolved
+  advisories (CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, CVE-2026-45833).
+  No fixed upstream version was available in the audit. Avoid this extra unless
+  its exposure has been reviewed. Base installs do not include ChromaDB.
+- Audit scope, regression results, dependency resolutions, and limitations:
+  [September audit](proof/audit-20260912/README.md).
+
 
 ### Reliability
 - Added the file-backed `JsonFileStateStore` integration for
@@ -220,4 +253,4 @@ MIT · Built for people who ship agents and hate surprise bills.
   in the package phones home. The links carry UTM parameters so the site can
   measure click-through; no identifier is sent from your machine.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.2.14/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.3.0/CHANGELOG.md)

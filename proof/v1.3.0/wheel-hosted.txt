@@ -1,0 +1,24 @@
+
+=== Dashboard Integration Test ===
+  Dashboard: https://app.agentguard47.com
+  OpenAI:    mock
+  Service:   integration-dashboard-test-1789238623
+
+Phase 0: Writing direct probe trace...
+  Probe trace ID: ef3120e3375e4c63b7f31743c1aeeb85
+Phase 1: Running agent loop until BudgetExceeded...
+  [PASS] BudgetExceeded raised
+  [PASS] At least 1 call succeeded
+  [PASS] Budget warning fired
+
+Phase 2: Flushing events to dashboard...
+
+Phase 3: Querying dashboard /api/v1/traces...
+  [PASS] Traces endpoint reachable
+  [PASS] Probe trace returned
+  [PASS] Probe trace_id matches
+  [PASS] probe event_count > 0
+
+==================================================
+RESULTS: 7/7 passed, 0 failed
+ALL CHECKS PASSED!
