@@ -226,6 +226,20 @@ class BudgetGuard(BaseGuard):
     ) -> None:
         if max_tokens is None and max_calls is None and max_cost_usd is None:
             raise ValueError("Provide max_tokens, max_calls, or max_cost_usd")
+        for name, value in (("max_tokens", max_tokens), ("max_calls", max_calls),
+                            ("max_cost_usd", max_cost_usd)):
+            if value is not None:
+                if isinstance(value, bool) or not isinstance(value, (int, float)):
+                    raise TypeError(f"{name} must be a number")
+                if value < 0 or (isinstance(value, float) and not math.isfinite(value)):
+                    raise ValueError(f"{name} must be finite and non-negative")
+        if warn_at_pct is not None:
+            if isinstance(warn_at_pct, bool) or not isinstance(warn_at_pct, (int, float)):
+                raise TypeError("warn_at_pct must be a number")
+            if not 0 <= warn_at_pct <= 1:
+                raise ValueError("warn_at_pct must be between 0 and 1")
+        if on_warning is not None and not callable(on_warning):
+            raise TypeError("on_warning must be callable")
         if store is not None and not key:
             raise ValueError("key is required when store is set")
         if period is not None:
@@ -321,7 +335,11 @@ class BudgetGuard(BaseGuard):
                 tokens, calls, cost_usd,
             )
             if self._warn_at_pct is not None and not self._warned:
-                self._check_warning()
+                warning = self._check_warning()
+            else:
+                warning = None
+        if warning is not None and self._on_warning is not None:
+            self._on_warning(warning)
 
     def _consume_persistent(self, tokens: float, calls: float, cost_usd: float) -> None:
         bucket = self._period_bucket()
@@ -348,7 +366,11 @@ class BudgetGuard(BaseGuard):
                 tokens, calls, cost_usd,
             )
             if self._warn_at_pct is not None and not self._warned:
-                self._check_warning()
+                warning = self._check_warning()
+            else:
+                warning = None
+        if warning is not None and self._on_warning is not None:
+            self._on_warning(warning)
 
     def _period_bucket(self) -> str:
         """Storage key for the current period. With period='day' the key rolls over at
@@ -385,27 +407,27 @@ class BudgetGuard(BaseGuard):
                 f"(this call added ${added_cost:.4f})"
             )
 
-    def _check_warning(self) -> None:
-        """Emit a warning if usage crosses the warn_at_pct threshold.
+    def _check_warning(self) -> Optional[str]:
+        """Claim a warning if usage crosses the warn_at_pct threshold.
 
-        Must be called while holding self._lock.
+        Called with self._lock held; the caller invokes callbacks after release.
         """
         pct = self._warn_at_pct
         if pct is None:  # pragma: no cover — defensive; caller checks first
             return
         triggered = False
         parts = []
-        if self._max_tokens is not None:
+        if self._max_tokens is not None and self._max_tokens > 0:
             ratio = self.state.tokens_used / self._max_tokens
             if ratio >= pct:
                 triggered = True
                 parts.append(f"tokens {ratio:.0%}")
-        if self._max_calls is not None:
+        if self._max_calls is not None and self._max_calls > 0:
             ratio = self.state.calls_used / self._max_calls
             if ratio >= pct:
                 triggered = True
                 parts.append(f"calls {ratio:.0%}")
-        if self._max_cost_usd is not None:
+        if self._max_cost_usd is not None and self._max_cost_usd > 0:
             ratio = self.state.cost_used / self._max_cost_usd
             if ratio >= pct:
                 triggered = True
@@ -413,8 +435,8 @@ class BudgetGuard(BaseGuard):
         if triggered:
             self._warned = True
             msg = f"Budget warning: {', '.join(parts)} of limit reached (threshold: {pct:.0%})"
-            if self._on_warning:
-                self._on_warning(msg)
+            return msg
+        return None
 
     def reset(self) -> None:
         """Reset all usage counters to zero.
@@ -482,7 +504,9 @@ class TimeoutGuard(BaseGuard):
     """
 
     def __init__(self, max_seconds: float) -> None:
-        if max_seconds <= 0:
+        if isinstance(max_seconds, bool) or not isinstance(max_seconds, (int, float)):
+            raise TypeError("max_seconds must be a number")
+        if not math.isfinite(max_seconds) or max_seconds <= 0:
             raise ValueError("max_seconds must be > 0")
         self._max_seconds = max_seconds
         self._start: Optional[float] = None

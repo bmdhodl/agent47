@@ -93,6 +93,8 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
             # Can't resolve — allow it (may be valid later)
             return
         for addr in addrs:
+            if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
+                addr = addr.ipv4_mapped
             for network in _BLOCKED_NETWORKS:
                 if addr in network:
                     raise ValueError(
@@ -102,6 +104,8 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
         return
 
     # Direct IP address in URL
+    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
+        addr = addr.ipv4_mapped
     for network in _BLOCKED_NETWORKS:
         if addr in network:
             raise ValueError(
@@ -143,6 +147,12 @@ class _SsrfSafeRedirectHandler(urllib.request.HTTPRedirectHandler):
         headers: Any,
         newurl: str,
     ) -> Optional[urllib.request.Request]:
+        old, new = urlparse(req.full_url), urlparse(newurl)
+        def origin(parsed: Any) -> Any:
+            return (parsed.scheme, parsed.hostname, parsed.port or
+                    (443 if parsed.scheme == "https" else 80))
+        if origin(old) != origin(new):
+            raise ValueError("HttpSink refuses cross-origin redirects to protect credentials")
         _validate_url(newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 

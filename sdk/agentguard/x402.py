@@ -75,6 +75,9 @@ class X402SpendGuard(BaseGuard):
             )
         if period not in (None, "day"):
             raise ValueError("period must be 'day' or None")
+        for value in (max_total_usd, max_per_endpoint_usd, max_per_call_usd):
+            if value is not None:
+                _validate_amount(value)
         if warn_at_pct is not None and not 0.0 < warn_at_pct <= 1.0:
             raise ValueError(f"warn_at_pct must be in (0.0, 1.0], got {warn_at_pct!r}")
         self._max_total_usd = max_total_usd
@@ -89,6 +92,7 @@ class X402SpendGuard(BaseGuard):
         self._spent_by_endpoint: Dict[str, float] = {}
         self._warned = False
         self._bucket = self._current_bucket()
+        self._generation = 0
 
     @property
     def total_spent_usd(self) -> float:
@@ -135,15 +139,18 @@ class X402SpendGuard(BaseGuard):
             self._roll_period()
             self._refuse_if_breach(amount, endpoint)
             warning = self._record_locked(amount, endpoint)
+            generation = self._generation
         try:
             result = pay(*args, **kwargs)
         except BaseException:
             with self._lock:
-                self._total_spent = max(self._total_spent - amount, 0.0)
-                spent = self._spent_by_endpoint.get(endpoint, 0.0) - amount
-                self._spent_by_endpoint[endpoint] = max(spent, 0.0)
-                if warning is not None:
-                    self._warned = False  # the crossing spend never settled
+                self._roll_period()
+                if generation == self._generation:
+                    self._total_spent = max(self._total_spent - amount, 0.0)
+                    spent = self._spent_by_endpoint.get(endpoint, 0.0) - amount
+                    self._spent_by_endpoint[endpoint] = max(spent, 0.0)
+                    if warning is not None:
+                        self._warned = False  # the crossing spend never settled
             raise
         if warning is not None and self._on_warning is not None:
             self._on_warning(warning)  # outside the lock: callbacks may re-enter
@@ -159,6 +166,7 @@ class X402SpendGuard(BaseGuard):
     def reset(self) -> None:
         """Clear all recorded spend and the warning latch."""
         with self._lock:
+            self._generation += 1
             self._total_spent = 0.0
             self._spent_by_endpoint.clear()
             self._warned = False
@@ -174,6 +182,7 @@ class X402SpendGuard(BaseGuard):
             return
         bucket = self._current_bucket()
         if bucket != self._bucket:
+            self._generation += 1
             self._bucket = bucket
             self._total_spent = 0.0
             self._spent_by_endpoint.clear()
@@ -217,6 +226,7 @@ class X402SpendGuard(BaseGuard):
         if (
             self._warn_at_pct is None
             or cap is None
+            or cap == 0
             or self._warned
             or self._total_spent < self._warn_at_pct * cap
         ):
