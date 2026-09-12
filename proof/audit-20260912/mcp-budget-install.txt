@@ -1,0 +1,106 @@
+Obtaining file:///C:/Users/patri/.codex/worktrees/agent47-release-20260912/agentguard-mcp
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting mcp<2,>=1.23 (from agentguard-mcp==0.1.0)
+  Using cached mcp-1.30.0-py3-none-any.whl.metadata (9.3 kB)
+Collecting anyio>=4.5 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting httpx-sse>=0.4 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached httpx_sse-0.4.3-py3-none-any.whl.metadata (9.7 kB)
+Collecting httpx<1.0.0,>=0.27.1 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting jsonschema>=4.20.0 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting pydantic-settings>=2.5.2 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+Collecting pydantic<3.0.0,>=2.11.0 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+Collecting pyjwt>=2.10.1 (from pyjwt[crypto]>=2.10.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached pyjwt-2.14.0-py3-none-any.whl.metadata (3.4 kB)
+Collecting python-multipart>=0.0.9 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached python_multipart-0.0.32-py3-none-any.whl.metadata (2.1 kB)
+Collecting pywin32>=310 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached pywin32-312-cp313-cp313-win_amd64.whl.metadata (11 kB)
+Collecting sse-starlette>=1.6.1 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached sse_starlette-3.4.11-py3-none-any.whl.metadata (15 kB)
+Collecting starlette>=0.27 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached starlette-1.6.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting typing-extensions>=4.9.0 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting typing-inspection>=0.4.1 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting uvicorn>=0.31.1 (from mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached uvicorn-0.52.4-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: idna>=2.8 in c:\users\patri\.codex\worktrees\agent47-release-20260912\.venv\lib\site-packages (from anyio>=4.5->mcp<2,>=1.23->agentguard-mcp==0.1.0) (3.19)
+Requirement already satisfied: certifi in c:\users\patri\.codex\worktrees\agent47-release-20260912\.venv\lib\site-packages (from httpx<1.0.0,>=0.27.1->mcp<2,>=1.23->agentguard-mcp==0.1.0) (2026.7.22)
+Collecting httpcore==1.* (from httpx<1.0.0,>=0.27.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting h11>=0.16 (from httpcore==1.*->httpx<1.0.0,>=0.27.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting attrs>=22.2.0 (from jsonschema>=4.20.0->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=4.20.0->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema>=4.20.0->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema>=4.20.0->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached rpds_py-2026.6.3-cp313-cp313-win_amd64.whl.metadata (4.2 kB)
+Collecting annotated-types>=0.6.0 (from pydantic<3.0.0,>=2.11.0->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.5 (from pydantic<3.0.0,>=2.11.0->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached pydantic_core-2.46.5-cp313-cp313-win_amd64.whl.metadata (6.7 kB)
+Collecting python-dotenv>=0.21.0 (from pydantic-settings>=2.5.2->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached python_dotenv-1.2.3-py3-none-any.whl.metadata (29 kB)
+Collecting cryptography>=3.4.0 (from pyjwt[crypto]>=2.10.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached cryptography-50.0.1-cp311-abi3-win_amd64.whl.metadata (4.3 kB)
+Collecting click>=7.0 (from uvicorn>=0.31.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting cffi>=2.0.0 (from cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached cffi-2.1.1-cp313-cp313-win_amd64.whl.metadata (2.6 kB)
+Collecting pycparser (from cffi>=2.0.0->cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp<2,>=1.23->agentguard-mcp==0.1.0)
+  Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Downloading mcp-1.30.0-py3-none-any.whl (234 kB)
+Using cached anyio-4.15.1-py3-none-any.whl (132 kB)
+Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+Downloading httpx_sse-0.4.3-py3-none-any.whl (9.0 kB)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Using cached pydantic-2.13.5-py3-none-any.whl (472 kB)
+Using cached pydantic_core-2.46.5-cp313-cp313-win_amd64.whl (2.0 MB)
+Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+Downloading pyjwt-2.14.0-py3-none-any.whl (32 kB)
+Using cached python_multipart-0.0.32-py3-none-any.whl (30 kB)
+Using cached pywin32-312-cp313-cp313-win_amd64.whl (6.9 MB)
+Downloading sse_starlette-3.4.11-py3-none-any.whl (17 kB)
+Using cached starlette-1.6.0-py3-none-any.whl (75 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Using cached uvicorn-0.52.4-py3-none-any.whl (79 kB)
+Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Using cached attrs-26.1.0-py3-none-any.whl (67 kB)
+Using cached click-8.5.0-py3-none-any.whl (125 kB)
+Using cached cryptography-50.0.1-cp311-abi3-win_amd64.whl (3.8 MB)
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Using cached python_dotenv-1.2.3-py3-none-any.whl (22 kB)
+Using cached referencing-0.37.0-py3-none-any.whl (26 kB)
+Using cached rpds_py-2026.6.3-cp313-cp313-win_amd64.whl (219 kB)
+Using cached cffi-2.1.1-cp313-cp313-win_amd64.whl (185 kB)
+Using cached pycparser-3.0-py3-none-any.whl (48 kB)
+Building wheels for collected packages: agentguard-mcp
+  Building editable for agentguard-mcp (pyproject.toml): started
+  Building editable for agentguard-mcp (pyproject.toml): finished with status 'done'
+  Created wheel for agentguard-mcp: filename=agentguard_mcp-0.1.0-0.editable-py3-none-any.whl size=3356 sha256=8e60ab74f715ce6095ec6f4023d92f50c347792809f74ae3f522509069b3ec61
+  Stored in directory: C:\Users\patri\AppData\Local\Temp\pip-ephem-wheel-cache-yaxemcge\wheels\5a\ed\af\f7f750dda373a70ad300ef4618dfadfd847c30d105b383b23e
+Successfully built agentguard-mcp
+Installing collected packages: typing-extensions, rpds-py, pywin32, python-multipart, python-dotenv, pyjwt, pycparser, httpx-sse, h11, click, attrs, annotated-types, uvicorn, typing-inspection, referencing, pydantic-core, httpcore, cffi, anyio, starlette, pydantic, jsonschema-specifications, httpx, cryptography, sse-starlette, pydantic-settings, jsonschema, mcp, agentguard-mcp
+Successfully installed agentguard-mcp-0.1.0 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 cffi-2.1.1 click-8.5.0 cryptography-50.0.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 httpx-sse-0.4.3 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 mcp-1.30.0 pycparser-3.0 pydantic-2.13.5 pydantic-core-2.46.5 pydantic-settings-2.15.0 pyjwt-2.14.0 python-dotenv-1.2.3 python-multipart-0.0.32 pywin32-312 referencing-0.37.0 rpds-py-2026.6.3 sse-starlette-3.4.11 starlette-1.6.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.52.4
+
+[notice] A new release of pip is available: 24.3.1 -> 26.2.1
+[notice] To update, run: C:\Users\patri\.codex\worktrees\agent47-release-20260912\.venv\Scripts\python.exe -m pip install --upgrade pip

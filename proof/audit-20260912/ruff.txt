@@ -1,0 +1,1043 @@
+UP035 [*] Import from `collections.abc` instead: `Callable`, `Iterable`
+  --> scripts\ci_tools_requirements_guard.py:14:1
+   |
+12 | import urllib.request
+13 | from pathlib import Path
+14 | from typing import Callable, Iterable, Optional
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+15 |
+16 | try:
+   |
+help: Import from `collections.abc`
+   |
+13 | from pathlib import Path
+   - from typing import Callable, Iterable, Optional
+14 + from typing import Optional
+15 + from collections.abc import Callable, Iterable
+16 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts\ci_tools_requirements_guard.py:20:8
+   |
+18 |     from packaging.specifiers import SpecifierSet
+19 |     from packaging.version import Version
+20 | except Exception:  # pragma: no cover - fallback keeps the script stdlib-runnable.
+   |        ^^^^^^^^^
+21 |     InvalidMarker = None
+22 |     Marker = None
+   |
+
+UP045 [*] Use `X | None` for type annotations
+  --> scripts\ci_tools_requirements_guard.py:38:13
+   |
+36 |     version: str
+37 |     line_number: int
+38 |     marker: Optional[str] = None
+   |             ^^^^^^^^^^^^^
+help: Convert to `X | None`
+   |
+37 |     line_number: int
+   -     marker: Optional[str] = None
+38 +     marker: str | None = None
+39 |
+   |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\ci_tools_requirements_guard.py:155:28
+    |
+155 | def marker_applies(marker: Optional[str], python_version: tuple[int, int]) -> bool:
+    |                            ^^^^^^^^^^^^^
+156 |     if not marker:
+157 |         return True
+    |
+help: Convert to `X | None`
+    |
+154 |
+    - def marker_applies(marker: Optional[str], python_version: tuple[int, int]) -> bool:
+155 + def marker_applies(marker: str | None, python_version: tuple[int, int]) -> bool:
+156 |     if not marker:
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\ci_tools_requirements_guard.py:169:32
+    |
+169 | def supports_python(specifier: Optional[str], python_version: tuple[int, int]) -> bool:
+    |                                ^^^^^^^^^^^^^
+170 |     if not specifier:
+171 |         return True
+    |
+help: Convert to `X | None`
+    |
+168 |
+    - def supports_python(specifier: Optional[str], python_version: tuple[int, int]) -> bool:
+169 + def supports_python(specifier: str | None, python_version: tuple[int, int]) -> bool:
+170 |     if not specifier:
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\ci_tools_requirements_guard.py:229:16
+    |
+229 | def main(argv: Optional[list[str]] = None) -> int:
+    |                ^^^^^^^^^^^^^^^^^^^
+230 |     parser = argparse.ArgumentParser(description=__doc__)
+231 |     parser.add_argument("--requirements", type=Path, default=DEFAULT_REQUIREMENTS)
+    |
+help: Convert to `X | None`
+    |
+228 |
+    - def main(argv: Optional[list[str]] = None) -> int:
+229 + def main(argv: list[str] | None = None) -> int:
+230 |     parser = argparse.ArgumentParser(description=__doc__)
+    |
+
+UP035 `typing.Dict` is deprecated, use `dict` instead
+  --> scripts\review_readiness_guard.py:9:1
+   |
+ 7 | from dataclasses import asdict, dataclass
+ 8 | from pathlib import Path
+ 9 | from typing import Any, Dict, List, Optional
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+10 |
+11 | import yaml
+   |
+
+UP035 `typing.List` is deprecated, use `list` instead
+  --> scripts\review_readiness_guard.py:9:1
+   |
+ 7 | from dataclasses import asdict, dataclass
+ 8 | from pathlib import Path
+ 9 | from typing import Any, Dict, List, Optional
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+10 |
+11 | import yaml
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:110:48
+    |
+110 | def _executable_shell_lines(run_value: Any) -> List[str]:
+    |                                                ^^^^
+111 |     """Return non-empty shell lines, excluding full-line comments."""
+112 |     if not isinstance(run_value, str):
+    |
+help: Replace with `list`
+    |
+109 |
+    - def _executable_shell_lines(run_value: Any) -> List[str]:
+110 + def _executable_shell_lines(run_value: Any) -> list[str]:
+111 |     """Return non-empty shell lines, excluding full-line comments."""
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:114:12
+    |
+112 |     if not isinstance(run_value, str):
+113 |         return []
+114 |     lines: List[str] = []
+    |            ^^^^
+115 |     for line in run_value.splitlines():
+116 |         stripped = line.strip()
+    |
+help: Replace with `list`
+    |
+113 |         return []
+    -     lines: List[str] = []
+114 +     lines: list[str] = []
+115 |     for line in run_value.splitlines():
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:152:43
+    |
+152 | def check_pr_template(repo_root: Path) -> List[Finding]:
+    |                                           ^^^^
+153 |     path = repo_root / PR_TEMPLATE_PATH
+154 |     if not path.exists():
+    |
+help: Replace with `list`
+    |
+151 |
+    - def check_pr_template(repo_root: Path) -> List[Finding]:
+152 + def check_pr_template(repo_root: Path) -> list[Finding]:
+153 |     path = repo_root / PR_TEMPLATE_PATH
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:164:15
+    |
+163 |     text = path.read_text(encoding="utf-8")
+164 |     findings: List[Finding] = []
+    |               ^^^^
+165 |     for check, phrase in REQUIRED_TEMPLATE_PHRASES.items():
+166 |         if phrase not in text:
+    |
+help: Replace with `list`
+    |
+163 |     text = path.read_text(encoding="utf-8")
+    -     findings: List[Finding] = []
+164 +     findings: list[Finding] = []
+165 |     for check, phrase in REQUIRED_TEMPLATE_PHRASES.items():
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:177:54
+    |
+177 | def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
+    |                                                      ^^^^
+178 |     path = repo_root / CLAUDE_REVIEW_PATH
+179 |     if not path.exists():
+    |
+help: Replace with `list`
+    |
+176 |
+    - def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
+177 + def check_claude_review_workflow(repo_root: Path) -> list[Finding]:
+178 |     path = repo_root / CLAUDE_REVIEW_PATH
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:189:15
+    |
+188 |     text = path.read_text(encoding="utf-8")
+189 |     findings: List[Finding] = []
+    |               ^^^^
+190 |     try:
+191 |         document = yaml.safe_load(text)
+    |
+help: Replace with `list`
+    |
+188 |     text = path.read_text(encoding="utf-8")
+    -     findings: List[Finding] = []
+189 +     findings: list[Finding] = []
+190 |     try:
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:233:24
+    |
+231 |         jobs = {}
+232 |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+    |                        ^^^^
+234 |     npm_commands: List[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+    |
+help: Replace with `list`
+    |
+232 |
+    -     checkout_commands: List[Dict[str, Any]] = []
+233 +     checkout_commands: list[Dict[str, Any]] = []
+234 |     npm_commands: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:233:29
+    |
+231 |         jobs = {}
+232 |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+    |                             ^^^^
+234 |     npm_commands: List[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+    |
+help: Replace with `dict`
+    |
+232 |
+    -     checkout_commands: List[Dict[str, Any]] = []
+233 +     checkout_commands: List[dict[str, Any]] = []
+234 |     npm_commands: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:234:19
+    |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+234 |     npm_commands: List[Dict[str, Any]] = []
+    |                   ^^^^
+235 |     cli_commands: List[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    |
+help: Replace with `list`
+    |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+    -     npm_commands: List[Dict[str, Any]] = []
+234 +     npm_commands: list[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:234:24
+    |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+234 |     npm_commands: List[Dict[str, Any]] = []
+    |                        ^^^^
+235 |     cli_commands: List[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    |
+help: Replace with `dict`
+    |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+    -     npm_commands: List[Dict[str, Any]] = []
+234 +     npm_commands: List[dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:235:19
+    |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+234 |     npm_commands: List[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+    |                   ^^^^
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+    |
+help: Replace with `list`
+    |
+234 |     npm_commands: List[Dict[str, Any]] = []
+    -     cli_commands: List[Dict[str, Any]] = []
+235 +     cli_commands: list[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:235:24
+    |
+233 |     checkout_commands: List[Dict[str, Any]] = []
+234 |     npm_commands: List[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+    |                        ^^^^
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+    |
+help: Replace with `dict`
+    |
+234 |     npm_commands: List[Dict[str, Any]] = []
+    -     cli_commands: List[Dict[str, Any]] = []
+235 +     cli_commands: List[dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:236:25
+    |
+234 |     npm_commands: List[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    |                         ^^^^
+237 |     token_steps: List[Dict[str, Any]] = []
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |
+help: Replace with `list`
+    |
+235 |     cli_commands: List[Dict[str, Any]] = []
+    -     git_tree_mutations: List[Dict[str, Any]] = []
+236 +     git_tree_mutations: list[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:236:30
+    |
+234 |     npm_commands: List[Dict[str, Any]] = []
+235 |     cli_commands: List[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    |                              ^^^^
+237 |     token_steps: List[Dict[str, Any]] = []
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |
+help: Replace with `dict`
+    |
+235 |     cli_commands: List[Dict[str, Any]] = []
+    -     git_tree_mutations: List[Dict[str, Any]] = []
+236 +     git_tree_mutations: List[dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:237:18
+    |
+235 |     cli_commands: List[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+    |                  ^^^^
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |
+help: Replace with `list`
+    |
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    -     token_steps: List[Dict[str, Any]] = []
+237 +     token_steps: list[Dict[str, Any]] = []
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:237:23
+    |
+235 |     cli_commands: List[Dict[str, Any]] = []
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+    |                       ^^^^
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |
+help: Replace with `dict`
+    |
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+    -     token_steps: List[Dict[str, Any]] = []
+237 +     token_steps: List[dict[str, Any]] = []
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:238:36
+    |
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |                                    ^^^^
+239 |
+240 |     for job_name, job in jobs.items():
+    |
+help: Replace with `list`
+    |
+237 |     token_steps: List[Dict[str, Any]] = []
+    -     alternate_working_directories: List[Dict[str, Any]] = []
+238 +     alternate_working_directories: list[Dict[str, Any]] = []
+239 |
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:238:41
+    |
+236 |     git_tree_mutations: List[Dict[str, Any]] = []
+237 |     token_steps: List[Dict[str, Any]] = []
+238 |     alternate_working_directories: List[Dict[str, Any]] = []
+    |                                         ^^^^
+239 |
+240 |     for job_name, job in jobs.items():
+    |
+help: Replace with `dict`
+    |
+237 |     token_steps: List[Dict[str, Any]] = []
+    -     alternate_working_directories: List[Dict[str, Any]] = []
+238 +     alternate_working_directories: List[dict[str, Any]] = []
+239 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\review_readiness_guard.py:337:20
+    |
+335 |         )
+336 |
+337 |     checkout_step: Optional[Dict[str, Any]] = (
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^
+338 |         review_checkouts[0]["step"] if review_checkouts else None
+339 |     )
+    |
+help: Convert to `X | None`
+    |
+336 |
+    -     checkout_step: Optional[Dict[str, Any]] = (
+337 +     checkout_step: Dict[str, Any] | None = (
+338 |         review_checkouts[0]["step"] if review_checkouts else None
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:337:29
+    |
+335 |         )
+336 |
+337 |     checkout_step: Optional[Dict[str, Any]] = (
+    |                             ^^^^
+338 |         review_checkouts[0]["step"] if review_checkouts else None
+339 |     )
+    |
+help: Replace with `dict`
+    |
+336 |
+    -     checkout_step: Optional[Dict[str, Any]] = (
+337 +     checkout_step: Optional[dict[str, Any]] = (
+338 |         review_checkouts[0]["step"] if review_checkouts else None
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\review_readiness_guard.py:340:19
+    |
+338 |         review_checkouts[0]["step"] if review_checkouts else None
+339 |     )
+340 |     install_step: Optional[Dict[str, Any]] = (
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^
+341 |         review_npm_commands[0]["step"] if review_npm_commands else None
+342 |     )
+    |
+help: Convert to `X | None`
+    |
+339 |     )
+    -     install_step: Optional[Dict[str, Any]] = (
+340 +     install_step: Dict[str, Any] | None = (
+341 |         review_npm_commands[0]["step"] if review_npm_commands else None
+    |
+
+UP006 [*] Use `dict` instead of `Dict` for type annotation
+   --> scripts\review_readiness_guard.py:340:28
+    |
+338 |         review_checkouts[0]["step"] if review_checkouts else None
+339 |     )
+340 |     install_step: Optional[Dict[str, Any]] = (
+    |                            ^^^^
+341 |         review_npm_commands[0]["step"] if review_npm_commands else None
+342 |     )
+    |
+help: Replace with `dict`
+    |
+339 |     )
+    -     install_step: Optional[Dict[str, Any]] = (
+340 +     install_step: Optional[dict[str, Any]] = (
+341 |         review_npm_commands[0]["step"] if review_npm_commands else None
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:348:23
+    |
+346 |         if CLAUDE_REVIEW_CLI_PATH in command["line"]
+347 |     ]
+348 |     review_run_lines: List[str] = []
+    |                       ^^^^
+349 |     if len(local_cli_commands) == 1:
+350 |         review_run_lines = _executable_shell_lines(local_cli_commands[0]["step"].get("run"))
+    |
+help: Replace with `list`
+    |
+347 |     ]
+    -     review_run_lines: List[str] = []
+348 +     review_run_lines: list[str] = []
+349 |     if len(local_cli_commands) == 1:
+    |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> scripts\review_readiness_guard.py:352:5
+    |
+350 |           review_run_lines = _executable_shell_lines(local_cli_commands[0]["step"].get("run"))
+351 |
+352 | /     if len(review_checkouts) != 1:
+353 | |         if not review_checkouts:
+    | |________________________________^
+354 |               findings.append(
+355 |                   _workflow_finding(
+    |
+help: Combine `if` statements using `and`
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> scripts\review_readiness_guard.py:360:5
+    |
+358 |                   )
+359 |               )
+360 | /     if len(review_npm_commands) != 1:
+361 | |         if not review_npm_commands:
+    | |___________________________________^
+362 |               findings.append(
+363 |                   _workflow_finding(
+    |
+help: Combine `if` statements using `and`
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:587:65
+    |
+587 | def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
+    |                                                                 ^^^^
+588 |     findings: List[Finding] = []
+589 |     package_path = repo_root / CLAUDE_REVIEW_PACKAGE_PATH
+    |
+help: Replace with `list`
+    |
+586 |
+    - def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
+587 + def check_claude_review_dependency_contract(repo_root: Path) -> list[Finding]:
+588 |     findings: List[Finding] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:588:15
+    |
+587 | def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
+588 |     findings: List[Finding] = []
+    |               ^^^^
+589 |     package_path = repo_root / CLAUDE_REVIEW_PACKAGE_PATH
+590 |     lock_path = repo_root / CLAUDE_REVIEW_LOCK_PATH
+    |
+help: Replace with `list`
+    |
+587 | def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
+    -     findings: List[Finding] = []
+588 +     findings: list[Finding] = []
+589 |     package_path = repo_root / CLAUDE_REVIEW_PACKAGE_PATH
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:709:54
+    |
+709 | def collect_findings(repo_root: Path = REPO_ROOT) -> List[Finding]:
+    |                                                      ^^^^
+710 |     findings: List[Finding] = []
+711 |     findings.extend(check_pr_template(repo_root))
+    |
+help: Replace with `list`
+    |
+708 |
+    - def collect_findings(repo_root: Path = REPO_ROOT) -> List[Finding]:
+709 + def collect_findings(repo_root: Path = REPO_ROOT) -> list[Finding]:
+710 |     findings: List[Finding] = []
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\review_readiness_guard.py:710:15
+    |
+709 | def collect_findings(repo_root: Path = REPO_ROOT) -> List[Finding]:
+710 |     findings: List[Finding] = []
+    |               ^^^^
+711 |     findings.extend(check_pr_template(repo_root))
+712 |     findings.extend(check_claude_review_workflow(repo_root))
+    |
+help: Replace with `list`
+    |
+709 | def collect_findings(repo_root: Path = REPO_ROOT) -> List[Finding]:
+    -     findings: List[Finding] = []
+710 +     findings: list[Finding] = []
+711 |     findings.extend(check_pr_template(repo_root))
+    |
+
+UP035 [*] Import from `collections.abc` instead: `Iterable`, `Sequence`
+  --> scripts\sdk_preflight.py:10:1
+   |
+ 8 | from dataclasses import asdict, dataclass
+ 9 | from pathlib import Path
+10 | from typing import Iterable, List, Sequence, Set
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+11 |
+12 | REPO_ROOT = Path(__file__).resolve().parents[1]
+   |
+help: Import from `collections.abc`
+   |
+9  | from pathlib import Path
+   - from typing import Iterable, List, Sequence, Set
+10 + from typing import List, Set
+11 + from collections.abc import Iterable, Sequence
+12 |
+   |
+
+UP035 `typing.List` is deprecated, use `list` instead
+  --> scripts\sdk_preflight.py:10:1
+   |
+ 8 | from dataclasses import asdict, dataclass
+ 9 | from pathlib import Path
+10 | from typing import Iterable, List, Sequence, Set
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+11 |
+12 | REPO_ROOT = Path(__file__).resolve().parents[1]
+   |
+
+UP035 `typing.Set` is deprecated, use `set` instead
+  --> scripts\sdk_preflight.py:10:1
+   |
+ 8 | from dataclasses import asdict, dataclass
+ 9 | from pathlib import Path
+10 | from typing import Iterable, List, Sequence, Set
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+11 |
+12 | REPO_ROOT = Path(__file__).resolve().parents[1]
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_preflight.py:148:14
+    |
+146 |     label: str
+147 |     reason: str
+148 |     command: List[str]
+    |              ^^^^
+help: Replace with `list`
+    |
+147 |     reason: str
+    -     command: List[str]
+148 +     command: list[str]
+149 |
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_preflight.py:158:40
+    |
+158 | def _existing(paths: Iterable[str]) -> List[str]:
+    |                                        ^^^^
+159 |     return sorted(path for path in {_normalize_path(value) for value in paths} if (REPO_ROOT / path).exists())
+    |
+help: Replace with `list`
+    |
+157 |
+    - def _existing(paths: Iterable[str]) -> List[str]:
+158 + def _existing(paths: Iterable[str]) -> list[str]:
+159 |     return sorted(path for path in {_normalize_path(value) for value in paths} if (REPO_ROOT / path).exists())
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_preflight.py:162:33
+    |
+162 | def discover_changed_files() -> List[str]:
+    |                                 ^^^^
+163 |     """Discover tracked and untracked local changes."""
+164 |     git_commands = (
+    |
+help: Replace with `list`
+    |
+161 |
+    - def discover_changed_files() -> List[str]:
+162 + def discover_changed_files() -> list[str]:
+163 |     """Discover tracked and untracked local changes."""
+    |
+
+UP006 [*] Use `set` instead of `Set` for type annotation
+   --> scripts\sdk_preflight.py:169:14
+    |
+167 |         ["git", "ls-files", "--others", "--exclude-standard"],
+168 |     )
+169 |     changed: Set[str] = set()
+    |              ^^^
+170 |     for command in git_commands:
+171 |         result = subprocess.run(
+    |
+help: Replace with `set`
+    |
+168 |     )
+    -     changed: Set[str] = set()
+169 +     changed: set[str] = set()
+170 |     for command in git_commands:
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_preflight.py:187:49
+    |
+187 | def build_plan(changed_files: Sequence[str]) -> List[Step]:
+    |                                                 ^^^^
+188 |     """Build a fast preflight plan from a set of changed files."""
+189 |     normalized = {_normalize_path(path) for path in changed_files if _normalize_path(path)}
+    |
+help: Replace with `list`
+    |
+186 |
+    - def build_plan(changed_files: Sequence[str]) -> List[Step]:
+187 + def build_plan(changed_files: Sequence[str]) -> list[Step]:
+188 |     """Build a fast preflight plan from a set of changed files."""
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_preflight.py:190:12
+    |
+188 |     """Build a fast preflight plan from a set of changed files."""
+189 |     normalized = {_normalize_path(path) for path in changed_files if _normalize_path(path)}
+190 |     steps: List[Step] = []
+    |            ^^^^
+191 |
+192 |     lint_targets = _existing(
+    |
+help: Replace with `list`
+    |
+189 |     normalized = {_normalize_path(path) for path in changed_files if _normalize_path(path)}
+    -     steps: List[Step] = []
+190 +     steps: list[Step] = []
+191 |
+    |
+
+UP006 [*] Use `set` instead of `Set` for type annotation
+   --> scripts\sdk_preflight.py:222:21
+    |
+220 |         )
+221 |
+222 |     pytest_targets: Set[str] = set()
+    |                     ^^^
+223 |     for path in normalized:
+224 |         if (
+    |
+help: Replace with `set`
+    |
+221 |
+    -     pytest_targets: Set[str] = set()
+222 +     pytest_targets: set[str] = set()
+223 |     for path in normalized:
+    |
+
+UP035 [*] Import from `collections.abc` instead: `Sequence`
+  --> scripts\sdk_release_guard.py:12:1
+   |
+10 | from dataclasses import asdict, dataclass
+11 | from pathlib import Path
+12 | from typing import List, Optional, Sequence
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13 |
+14 | import generate_pypi_readme
+   |
+help: Import from `collections.abc`
+   |
+11 | from pathlib import Path
+   - from typing import List, Optional, Sequence
+12 + from typing import List, Optional
+13 + from collections.abc import Sequence
+14 |
+   |
+
+UP035 `typing.List` is deprecated, use `list` instead
+  --> scripts\sdk_release_guard.py:12:1
+   |
+10 | from dataclasses import asdict, dataclass
+11 | from pathlib import Path
+12 | from typing import List, Optional, Sequence
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13 |
+14 | import generate_pypi_readme
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+  --> scripts\sdk_release_guard.py:46:55
+   |
+46 | def check_changelog(repo_root: Path, version: str) -> List[Finding]:
+   |                                                       ^^^^
+47 |     changelog = (repo_root / CHANGELOG_PATH).read_text(encoding="utf-8")
+48 |     try:
+   |
+help: Replace with `list`
+   |
+45 |
+   - def check_changelog(repo_root: Path, version: str) -> List[Finding]:
+46 + def check_changelog(repo_root: Path, version: str) -> list[Finding]:
+47 |     changelog = (repo_root / CHANGELOG_PATH).read_text(encoding="utf-8")
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+  --> scripts\sdk_release_guard.py:61:43
+   |
+61 | def check_pypi_readme(repo_root: Path) -> List[Finding]:
+   |                                           ^^^^
+62 |     try:
+63 |         exit_code = generate_pypi_readme.check_output(repo_root, generate_pypi_readme.OUTPUT_PATH)
+   |
+help: Replace with `list`
+   |
+60 |
+   - def check_pypi_readme(repo_root: Path) -> List[Finding]:
+61 + def check_pypi_readme(repo_root: Path) -> list[Finding]:
+62 |     try:
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+  --> scripts\sdk_release_guard.py:83:61
+   |
+83 | def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
+   |                                                             ^^^^
+84 |     findings: List[Finding] = []
+85 |     expected = version
+   |
+help: Replace with `list`
+   |
+82 |
+   - def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
+83 + def check_release_markers(repo_root: Path, version: str) -> list[Finding]:
+84 |     findings: List[Finding] = []
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+  --> scripts\sdk_release_guard.py:84:15
+   |
+83 | def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
+84 |     findings: List[Finding] = []
+   |               ^^^^
+85 |     expected = version
+86 |     for relative_path, pattern in RELEASE_MARKERS:
+   |
+help: Replace with `list`
+   |
+83 | def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
+   -     findings: List[Finding] = []
+84 +     findings: list[Finding] = []
+85 |     expected = version
+   |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:110:60
+    |
+110 | def check_skill_metadata(repo_root: Path, version: str) -> List[Finding]:
+    |                                                            ^^^^
+111 |     """Verify the public AgentGuard skill advertises the SDK candidate version."""
+112 |     skill_path = repo_root / SKILL_METADATA_PATH
+    |
+help: Replace with `list`
+    |
+109 |
+    - def check_skill_metadata(repo_root: Path, version: str) -> List[Finding]:
+110 + def check_skill_metadata(repo_root: Path, version: str) -> list[Finding]:
+111 |     """Verify the public AgentGuard skill advertises the SDK candidate version."""
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\sdk_release_guard.py:150:32
+    |
+150 | def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
+    |                                ^^^^^^^^^^^^^
+151 |     if not ref:
+152 |         return None
+    |
+help: Convert to `X | None`
+    |
+149 |
+    - def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
+150 + def _release_tag_from_ref(ref: str | None) -> Optional[str]:
+151 |     if not ref:
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\sdk_release_guard.py:150:50
+    |
+150 | def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
+    |                                                  ^^^^^^^^^^^^^
+151 |     if not ref:
+152 |         return None
+    |
+help: Convert to `X | None`
+    |
+149 |
+    - def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
+150 + def _release_tag_from_ref(ref: Optional[str]) -> str | None:
+151 |     if not ref:
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\sdk_release_guard.py:163:42
+    |
+163 | def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
+    |                                          ^^^^^^^^^^^^^
+164 |     release_ref = ref if ref is not None else os.environ.get("GITHUB_REF")
+165 |     tag = _release_tag_from_ref(release_ref)
+    |
+help: Convert to `X | None`
+    |
+162 |
+    - def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
+163 + def check_release_tag(version: str, ref: str | None = None) -> List[Finding]:
+164 |     release_ref = ref if ref is not None else os.environ.get("GITHUB_REF")
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:163:67
+    |
+163 | def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
+    |                                                                   ^^^^
+164 |     release_ref = ref if ref is not None else os.environ.get("GITHUB_REF")
+165 |     tag = _release_tag_from_ref(release_ref)
+    |
+help: Replace with `list`
+    |
+162 |
+    - def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
+163 + def check_release_tag(version: str, ref: Optional[str] = None) -> list[Finding]:
+164 |     release_ref = ref if ref is not None else os.environ.get("GITHUB_REF")
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:186:44
+    |
+186 | def check_mcp_metadata(repo_root: Path) -> List[Finding]:
+    |                                            ^^^^
+187 |     package_path = repo_root / MCP_PACKAGE_PATH
+188 |     server_json_path = repo_root / MCP_SERVER_JSON_PATH
+    |
+help: Replace with `list`
+    |
+185 |
+    - def check_mcp_metadata(repo_root: Path) -> List[Finding]:
+186 + def check_mcp_metadata(repo_root: Path) -> list[Finding]:
+187 |     package_path = repo_root / MCP_PACKAGE_PATH
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:201:15
+    |
+199 |     published_version = package_entries[0].get("version") if package_entries else None
+200 |
+201 |     findings: List[Finding] = []
+    |               ^^^^
+202 |     if package_version != server_version:
+203 |         findings.append(
+    |
+help: Replace with `list`
+    |
+200 |
+    -     findings: List[Finding] = []
+201 +     findings: list[Finding] = []
+202 |     if package_version != server_version:
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> scripts\sdk_release_guard.py:245:57
+    |
+245 | def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> List[Finding]:
+    |                                                         ^^^^^^^^^^^^^
+246 |     """Optionally verify the repo MCP package version is published on npm."""
+247 |     command = npm_command or get_npm_command()
+    |
+help: Convert to `X | None`
+    |
+244 |
+    - def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> List[Finding]:
+245 + def check_mcp_npm_package(repo_root: Path, npm_command: str | None = None) -> List[Finding]:
+246 |     """Optionally verify the repo MCP package version is published on npm."""
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:245:82
+    |
+245 | def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> List[Finding]:
+    |                                                                                  ^^^^
+246 |     """Optionally verify the repo MCP package version is published on npm."""
+247 |     command = npm_command or get_npm_command()
+    |
+help: Replace with `list`
+    |
+244 |
+    - def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> List[Finding]:
+245 + def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> list[Finding]:
+246 |     """Optionally verify the repo MCP package version is published on npm."""
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:334:71
+    |
+334 | def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Finding]:
+    |                                                                       ^^^^
+335 |     version = load_version(repo_root)
+336 |     findings: List[Finding] = []
+    |
+help: Replace with `list`
+    |
+333 |
+    - def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Finding]:
+334 + def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> list[Finding]:
+335 |     version = load_version(repo_root)
+    |
+
+UP006 [*] Use `list` instead of `List` for type annotation
+   --> scripts\sdk_release_guard.py:336:15
+    |
+334 | def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Finding]:
+335 |     version = load_version(repo_root)
+336 |     findings: List[Finding] = []
+    |               ^^^^
+337 |     findings.extend(check_release_tag(version))
+338 |     findings.extend(check_changelog(repo_root, version))
+    |
+help: Replace with `list`
+    |
+335 |     version = load_version(repo_root)
+    -     findings: List[Finding] = []
+336 +     findings: list[Finding] = []
+337 |     findings.extend(check_release_tag(version))
+    |
+
+Found 64 errors.
+[*] 56 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).

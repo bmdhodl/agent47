@@ -14,6 +14,7 @@ import gzip
 import ipaddress
 import json
 import logging
+import math
 import socket
 import threading
 import time
@@ -23,6 +24,7 @@ from typing import Any, Dict, List, Optional
 from urllib.error import HTTPError
 from urllib.parse import urlparse
 
+from agentguard.sinks._transport import PublicHTTPHandler, PublicHTTPSHandler
 from agentguard.tracing import TraceSink
 
 logger = logging.getLogger("agentguard.sinks.http")
@@ -61,6 +63,8 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
         )
     if not parsed.hostname:
         raise ValueError("URL must include a hostname")
+    if parsed.username is not None or parsed.password is not None:
+        raise ValueError("URL must not contain credentials; use api_key instead")
 
     if allow_private:
         return
@@ -93,6 +97,8 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
             # Can't resolve — allow it (may be valid later)
             return
         for addr in addrs:
+            if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
+                addr = addr.ipv4_mapped
             for network in _BLOCKED_NETWORKS:
                 if addr in network:
                     raise ValueError(
@@ -102,6 +108,8 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
         return
 
     # Direct IP address in URL
+    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
+        addr = addr.ipv4_mapped
     for network in _BLOCKED_NETWORKS:
         if addr in network:
             raise ValueError(
@@ -143,12 +151,21 @@ class _SsrfSafeRedirectHandler(urllib.request.HTTPRedirectHandler):
         headers: Any,
         newurl: str,
     ) -> Optional[urllib.request.Request]:
+        old, new = urlparse(req.full_url), urlparse(newurl)
+        def origin(parsed: Any) -> Any:
+            return (parsed.scheme, parsed.hostname, parsed.port or
+                    (443 if parsed.scheme == "https" else 80))
+        if origin(old) != origin(new):
+            raise ValueError("HttpSink refuses cross-origin redirects to protect credentials")
         _validate_url(newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 # Build an opener that uses our SSRF-safe redirect handler
-_opener = urllib.request.build_opener(_SsrfSafeRedirectHandler)
+_opener = urllib.request.build_opener(
+    urllib.request.ProxyHandler({}), PublicHTTPHandler, PublicHTTPSHandler,
+    _SsrfSafeRedirectHandler,
+)
 
 
 def _normalize_event_for_ingest(event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -239,6 +256,7 @@ class HttpSink(TraceSink):
                         f"Use the api_key parameter instead."
                     )
         self._url = url
+        self._allow_private = _allow_private
         self._api_key = api_key
         self._batch_size = batch_size
         self._flush_interval = flush_interval
@@ -320,6 +338,7 @@ class HttpSink(TraceSink):
                 req = urllib.request.Request(
                     self._url, data=body, headers=headers, method="POST"
                 )
+                req._allow_private = self._allow_private
                 with _opener.open(req, timeout=10) as resp:
                     resp.read()
                 return  # success
@@ -333,6 +352,9 @@ class HttpSink(TraceSink):
                             wait = float(retry_after)
                         except ValueError:
                             pass  # HTTP-date or unparseable — use default backoff
+                    if not math.isfinite(wait) or wait < 0:
+                        wait = 2 ** attempt
+                    wait = min(wait, 30.0)
                     logger.warning(
                         "Rate limited (429) by %s, retrying in %.1fs",
                         self._url, wait,

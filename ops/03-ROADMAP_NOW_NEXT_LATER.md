@@ -3,9 +3,11 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-08-15
+**Last reviewed:** 2026-09-12
 
 ## Current Focus Notes
+
+- September security pass: repair budget and transport boundaries, test real framework dispatch, then publish a verified SDK release.
 
 - **Human-signal baseline for distribution metrics.** Separate PyPI package
   downloads from scheduled checkout clones. Clone counts can be self-inflicted

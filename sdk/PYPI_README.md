@@ -128,7 +128,11 @@ pip install "agentguard47[langchain]"   # optional extras as needed
 
 The base install declares zero runtime dependencies. `pip install agentguard47` pulls nothing, so a default install adds no third-party exposure.
 
-Extras pull real dependency trees. The `[crewai]` extra pulls `chromadb`, which carries [PYSEC-2026-311](https://osv.dev/vulnerability/PYSEC-2026-311): a pre-authentication remote code execution advisory with **no fixed release available**. Nothing in AgentGuard calls the affected endpoint, and installing the extra does not start a ChromaDB server. You are exposed only if you run a ChromaDB server reachable by untrusted callers. A 2026-08-28 `pip-audit` run also flags CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833 against the same `chromadb` release, none with a fixed version. The `[langchain]`, `[langgraph]`, and `[otel]` extras resolve clean under `pip-audit`. See [#702](https://github.com/bmdhodl/agent47/issues/702) for the full finding.
+Extras install third-party packages and need a separate audit. The LangChain and LangGraph extras now require Python 3.10+ and raise their minimum versions to the tested September 2026 releases. OpenTelemetry requires 1.44.0 or newer. The base SDK remains compatible with Python 3.9+.
+
+The optional `[crewai]` extra requires CrewAI 1.15.21 or newer. Its current dependency tree still installs ChromaDB 1.1.1, with four distinct unresolved advisories: CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833. The audit database provides no fixed version. Avoid this extra unless you have reviewed that upstream exposure. Installing AgentGuard alone does not install ChromaDB or start a server. See [the upstream advisory](https://osv.dev/vulnerability/PYSEC-2026-311) and [the release audit](https://github.com/bmdhodl/agent47/blob/v1.2.14/proof/audit-20260912/README.md).
+
+`HttpSink` validates the address it actually connects to, retains TLS hostname verification, and refuses cross-origin redirects. It connects directly and does not use environment proxy settings. A local guard stops instrumented work in your Python process; it does not cancel an agent loop running on a provider's server. Cost estimates are not invoices; supply provider-reported cost or use strict cost resolution when an estimate is insufficient.
 
 ## Docs
 

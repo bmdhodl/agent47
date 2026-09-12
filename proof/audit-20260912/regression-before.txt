@@ -1,0 +1,285 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\agent47-release-20260912\sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collected 42 items
+
+sdk\tests\test_release_audit.py FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF [ 95%]
+FF                                                                       [100%]
+
+================================== FAILURES ===================================
+______________ test_budget_rejects_invalid_caps[nan-max_tokens] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_______________ test_budget_rejects_invalid_caps[nan-max_calls] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_____________ test_budget_rejects_invalid_caps[nan-max_cost_usd] ______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+______________ test_budget_rejects_invalid_caps[inf-max_tokens] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_______________ test_budget_rejects_invalid_caps[inf-max_calls] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_____________ test_budget_rejects_invalid_caps[inf-max_cost_usd] ______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_______________ test_budget_rejects_invalid_caps[-1-max_tokens] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_______________ test_budget_rejects_invalid_caps[-1-max_calls] ________________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+______________ test_budget_rejects_invalid_caps[-1-max_cost_usd] ______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+______________ test_budget_rejects_invalid_caps[True-max_tokens] ______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+______________ test_budget_rejects_invalid_caps[True-max_calls] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_____________ test_budget_rejects_invalid_caps[True-max_cost_usd] _____________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_______________ test_budget_rejects_invalid_caps[5-max_tokens] ________________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+________________ test_budget_rejects_invalid_caps[5-max_calls] ________________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+______________ test_budget_rejects_invalid_caps[5-max_cost_usd] _______________
+sdk\tests\test_release_audit.py:15: in test_budget_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+____________ test_payment_rejects_invalid_caps[nan-max_total_usd] _____________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_________ test_payment_rejects_invalid_caps[nan-max_per_endpoint_usd] _________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+___________ test_payment_rejects_invalid_caps[nan-max_per_call_usd] ___________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+____________ test_payment_rejects_invalid_caps[inf-max_total_usd] _____________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_________ test_payment_rejects_invalid_caps[inf-max_per_endpoint_usd] _________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+___________ test_payment_rejects_invalid_caps[inf-max_per_call_usd] ___________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_____________ test_payment_rejects_invalid_caps[-1-max_total_usd] _____________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_________ test_payment_rejects_invalid_caps[-1-max_per_endpoint_usd] __________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+___________ test_payment_rejects_invalid_caps[-1-max_per_call_usd] ____________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+____________ test_payment_rejects_invalid_caps[True-max_total_usd] ____________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+________ test_payment_rejects_invalid_caps[True-max_per_endpoint_usd] _________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+__________ test_payment_rejects_invalid_caps[True-max_per_call_usd] ___________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_____________ test_payment_rejects_invalid_caps[5-max_total_usd] ______________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+__________ test_payment_rejects_invalid_caps[5-max_per_endpoint_usd] __________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+____________ test_payment_rejects_invalid_caps[5-max_per_call_usd] ____________
+sdk\tests\test_release_audit.py:22: in test_payment_rejects_invalid_caps
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+____________________ test_timeout_rejects_invalid_cap[nan] ____________________
+sdk\tests\test_release_audit.py:28: in test_timeout_rejects_invalid_cap
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+____________________ test_timeout_rejects_invalid_cap[inf] ____________________
+sdk\tests\test_release_audit.py:28: in test_timeout_rejects_invalid_cap
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+___________________ test_timeout_rejects_invalid_cap[True] ____________________
+sdk\tests\test_release_audit.py:28: in test_timeout_rejects_invalid_cap
+    with pytest.raises((TypeError, ValueError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (TypeError, ValueError)
+_________ test_zero_budget_allows_zero_usage_with_warning[max_tokens] _________
+sdk\tests\test_release_audit.py:36: in test_zero_budget_allows_zero_usage_with_warning
+    guard.consume()
+sdk\agentguard\guards.py:308: in consume
+    self._consume_in_memory(tokens, calls, cost_usd)
+sdk\agentguard\guards.py:324: in _consume_in_memory
+    self._check_warning()
+sdk\agentguard\guards.py:399: in _check_warning
+    ratio = self.state.tokens_used / self._max_tokens
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ZeroDivisionError: division by zero
+_________ test_zero_budget_allows_zero_usage_with_warning[max_calls] __________
+sdk\tests\test_release_audit.py:36: in test_zero_budget_allows_zero_usage_with_warning
+    guard.consume()
+sdk\agentguard\guards.py:308: in consume
+    self._consume_in_memory(tokens, calls, cost_usd)
+sdk\agentguard\guards.py:324: in _consume_in_memory
+    self._check_warning()
+sdk\agentguard\guards.py:404: in _check_warning
+    ratio = self.state.calls_used / self._max_calls
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ZeroDivisionError: division by zero
+________ test_zero_budget_allows_zero_usage_with_warning[max_cost_usd] ________
+sdk\tests\test_release_audit.py:36: in test_zero_budget_allows_zero_usage_with_warning
+    guard.consume()
+sdk\agentguard\guards.py:308: in consume
+    self._consume_in_memory(tokens, calls, cost_usd)
+sdk\agentguard\guards.py:324: in _consume_in_memory
+    self._check_warning()
+sdk\agentguard\guards.py:409: in _check_warning
+    ratio = self.state.cost_used / self._max_cost_usd
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ZeroDivisionError: float division by zero
+___________________ test_warning_callback_can_reenter_guard ___________________
+sdk\tests\test_release_audit.py:47: in test_warning_callback_can_reenter_guard
+    assert not thread.is_alive(), "warning callback deadlocked"
+E   AssertionError: warning callback deadlocked
+E   assert not True
+E    +  where True = is_alive()
+E    +    where is_alive = <Thread(Thread-1 (<lambda>), started daemon 51628)>.is_alive
+__________ test_old_payment_failure_does_not_refund_new_period[True] __________
+sdk\tests\test_release_audit.py:68: in test_old_payment_failure_does_not_refund_new_period
+    assert guard.total_spent_usd == 0.75
+E   assert 0.25 == 0.75
+E    +  where 0.25 = X402SpendGuard(max_total_usd=1, max_per_endpoint_usd=None, max_per_call_usd=None).total_spent_usd
+_________ test_old_payment_failure_does_not_refund_new_period[False] __________
+sdk\tests\test_release_audit.py:68: in test_old_payment_failure_does_not_refund_new_period
+    assert guard.total_spent_usd == 0.75
+E   assert 0.25 == 0.75
+E    +  where 0.25 = X402SpendGuard(max_total_usd=1, max_per_endpoint_usd=None, max_per_call_usd=None).total_spent_usd
+_____ test_ipv4_mapped_private_addresses_are_blocked[[::ffff:127.0.0.1]] ______
+sdk\tests\test_release_audit.py:76: in test_ipv4_mapped_private_addresses_are_blocked
+    with pytest.raises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ValueError
+__ test_ipv4_mapped_private_addresses_are_blocked[[::ffff:169.254.169.254]] ___
+sdk\tests\test_release_audit.py:76: in test_ipv4_mapped_private_addresses_are_blocked
+    with pytest.raises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ValueError
+___________ test_cross_origin_redirect_does_not_forward_credentials ___________
+sdk\tests\test_release_audit.py:83: in test_cross_origin_redirect_does_not_forward_credentials
+    with pytest.raises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ValueError
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[nan-max_tokens]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[nan-max_calls]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[nan-max_cost_usd]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[inf-max_tokens]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[inf-max_calls]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[inf-max_cost_usd]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[-1-max_tokens]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[-1-max_calls]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[-1-max_cost_usd]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[True-max_tokens]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[True-max_calls]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[True-max_cost_usd]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[5-max_tokens]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[5-max_calls]
+FAILED sdk\tests\test_release_audit.py::test_budget_rejects_invalid_caps[5-max_cost_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[nan-max_total_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[nan-max_per_endpoint_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[nan-max_per_call_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[inf-max_total_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[inf-max_per_endpoint_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[inf-max_per_call_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[-1-max_total_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[-1-max_per_endpoint_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[-1-max_per_call_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[True-max_total_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[True-max_per_endpoint_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[True-max_per_call_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[5-max_total_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[5-max_per_endpoint_usd]
+FAILED sdk\tests\test_release_audit.py::test_payment_rejects_invalid_caps[5-max_per_call_usd]
+FAILED sdk\tests\test_release_audit.py::test_timeout_rejects_invalid_cap[nan]
+FAILED sdk\tests\test_release_audit.py::test_timeout_rejects_invalid_cap[inf]
+FAILED sdk\tests\test_release_audit.py::test_timeout_rejects_invalid_cap[True]
+FAILED sdk\tests\test_release_audit.py::test_zero_budget_allows_zero_usage_with_warning[max_tokens]
+FAILED sdk\tests\test_release_audit.py::test_zero_budget_allows_zero_usage_with_warning[max_calls]
+FAILED sdk\tests\test_release_audit.py::test_zero_budget_allows_zero_usage_with_warning[max_cost_usd]
+FAILED sdk\tests\test_release_audit.py::test_warning_callback_can_reenter_guard
+FAILED sdk\tests\test_release_audit.py::test_old_payment_failure_does_not_refund_new_period[True]
+FAILED sdk\tests\test_release_audit.py::test_old_payment_failure_does_not_refund_new_period[False]
+FAILED sdk\tests\test_release_audit.py::test_ipv4_mapped_private_addresses_are_blocked[[::ffff:127.0.0.1]]
+FAILED sdk\tests\test_release_audit.py::test_ipv4_mapped_private_addresses_are_blocked[[::ffff:169.254.169.254]]
+FAILED sdk\tests\test_release_audit.py::test_cross_origin_redirect_does_not_forward_credentials
+============================= 42 failed in 2.25s ==============================

@@ -24,6 +24,8 @@ from collections import Counter, deque
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable, Deque, Dict, Optional, Tuple
 
+from ._budget_validation import validate_budget_config, validate_budget_state, validate_consumption
+
 if TYPE_CHECKING:
     from .state import StateStore
 
@@ -226,6 +228,7 @@ class BudgetGuard(BaseGuard):
     ) -> None:
         if max_tokens is None and max_calls is None and max_cost_usd is None:
             raise ValueError("Provide max_tokens, max_calls, or max_cost_usd")
+        validate_budget_config(max_tokens, max_calls, max_cost_usd, warn_at_pct, on_warning)
         if store is not None and not key:
             raise ValueError("key is required when store is set")
         if period is not None:
@@ -277,28 +280,7 @@ class BudgetGuard(BaseGuard):
             ValueError: If any argument is not finite (NaN or inf) or is negative.
             BudgetExceeded: If any configured limit is exceeded.
         """
-        if not isinstance(tokens, (int, float)):
-            raise TypeError(
-                f"tokens must be a number, got {type(tokens).__name__}: {tokens!r}"
-            )
-        if not isinstance(calls, (int, float)):
-            raise TypeError(
-                f"calls must be a number, got {type(calls).__name__}: {calls!r}"
-            )
-        if not isinstance(cost_usd, (int, float)):
-            raise TypeError(
-                f"cost_usd must be a number, got {type(cost_usd).__name__}: {cost_usd!r}"
-            )
-        # A non-finite value (NaN/inf) would silently defeat budget enforcement:
-        # NaN poisons the running total and `NaN > max` is always False, so the
-        # guard would never fire again. Negative values reduce running totals and
-        # can similarly bypass enforcement (e.g. consume(cost_usd=-100) after spend).
-        # Reject both classes loudly before any state mutation.
-        for _name, _val in (("tokens", tokens), ("calls", calls), ("cost_usd", cost_usd)):
-            if isinstance(_val, float) and not math.isfinite(_val):
-                raise ValueError(f"{_name} must be finite, got {_val!r}")
-            if _val < 0:
-                raise ValueError(f"{_name} must be non-negative, got {_val!r}")
+        validate_consumption(tokens, calls, cost_usd)
         # Attribute the call to any active goal BEFORE budget checks so the
         # goal ledger includes the call even when this consume call is the one
         # that trips BudgetExceeded.
@@ -321,13 +303,17 @@ class BudgetGuard(BaseGuard):
                 tokens, calls, cost_usd,
             )
             if self._warn_at_pct is not None and not self._warned:
-                self._check_warning()
+                warning = self._check_warning()
+            else:
+                warning = None
+        if warning is not None and self._on_warning is not None:
+            self._on_warning(warning)
 
     def _consume_persistent(self, tokens: float, calls: float, cost_usd: float) -> None:
         bucket = self._period_bucket()
 
         def mutator(current: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-            st = dict(current) if current else {}
+            st = validate_budget_state(current)
             st["tokens_used"] = st.get("tokens_used", 0) + tokens
             st["calls_used"] = st.get("calls_used", 0) + calls
             st["cost_used"] = st.get("cost_used", 0.0) + cost_usd
@@ -348,7 +334,11 @@ class BudgetGuard(BaseGuard):
                 tokens, calls, cost_usd,
             )
             if self._warn_at_pct is not None and not self._warned:
-                self._check_warning()
+                warning = self._check_warning()
+            else:
+                warning = None
+        if warning is not None and self._on_warning is not None:
+            self._on_warning(warning)
 
     def _period_bucket(self) -> str:
         """Storage key for the current period. With period='day' the key rolls over at
@@ -385,27 +375,27 @@ class BudgetGuard(BaseGuard):
                 f"(this call added ${added_cost:.4f})"
             )
 
-    def _check_warning(self) -> None:
-        """Emit a warning if usage crosses the warn_at_pct threshold.
+    def _check_warning(self) -> Optional[str]:
+        """Claim a warning if usage crosses the warn_at_pct threshold.
 
-        Must be called while holding self._lock.
+        Called with self._lock held; the caller invokes callbacks after release.
         """
         pct = self._warn_at_pct
         if pct is None:  # pragma: no cover — defensive; caller checks first
             return
         triggered = False
         parts = []
-        if self._max_tokens is not None:
+        if self._max_tokens is not None and self._max_tokens > 0:
             ratio = self.state.tokens_used / self._max_tokens
             if ratio >= pct:
                 triggered = True
                 parts.append(f"tokens {ratio:.0%}")
-        if self._max_calls is not None:
+        if self._max_calls is not None and self._max_calls > 0:
             ratio = self.state.calls_used / self._max_calls
             if ratio >= pct:
                 triggered = True
                 parts.append(f"calls {ratio:.0%}")
-        if self._max_cost_usd is not None:
+        if self._max_cost_usd is not None and self._max_cost_usd > 0:
             ratio = self.state.cost_used / self._max_cost_usd
             if ratio >= pct:
                 triggered = True
@@ -413,8 +403,8 @@ class BudgetGuard(BaseGuard):
         if triggered:
             self._warned = True
             msg = f"Budget warning: {', '.join(parts)} of limit reached (threshold: {pct:.0%})"
-            if self._on_warning:
-                self._on_warning(msg)
+            return msg
+        return None
 
     def reset(self) -> None:
         """Reset all usage counters to zero.
@@ -482,7 +472,9 @@ class TimeoutGuard(BaseGuard):
     """
 
     def __init__(self, max_seconds: float) -> None:
-        if max_seconds <= 0:
+        if isinstance(max_seconds, bool) or not isinstance(max_seconds, (int, float)):
+            raise TypeError("max_seconds must be a number")
+        if not math.isfinite(max_seconds) or max_seconds <= 0:
             raise ValueError("max_seconds must be > 0")
         self._max_seconds = max_seconds
         self._start: Optional[float] = None

@@ -1,0 +1,20 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\agent47-release-20260912\sdk
+configfile: pyproject.toml
+plugins: anyio-4.15.1, langsmith-0.12.4
+collected 55 items / 54 deselected / 1 selected
+
+sdk\tests\test_release_audit.py F                                        [100%]
+
+================================== FAILURES ===================================
+_______________ test_langchain_dispatch_propagates_budget_stop ________________
+sdk\tests\test_release_audit.py:144: in test_langchain_dispatch_propagates_budget_stop
+    with pytest.raises(BudgetExceeded):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE BudgetExceeded
+------------------------------ Captured log call ------------------------------
+WARNING  langchain_core.callbacks.manager:manager.py:341 Error in AgentGuardCallbackHandler.on_tool_start callback: BudgetExceeded('Call budget exceeded: 1 > 0 (this call added 1 calls)')
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_release_audit.py::test_langchain_dispatch_propagates_budget_stop
+====================== 1 failed, 54 deselected in 0.28s =======================

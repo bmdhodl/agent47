@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from json import JSONDecodeError
 from pathlib import Path
@@ -61,7 +62,8 @@ def load_repo_config(start_path: Optional[str] = None) -> Tuple[Optional[str], D
 
     budget_usd = raw.get("budget_usd")
     if budget_usd is not None:
-        if isinstance(budget_usd, bool) or not isinstance(budget_usd, (int, float)) or budget_usd < 0:
+        if (isinstance(budget_usd, bool) or not isinstance(budget_usd, (int, float))
+                or not math.isfinite(budget_usd) or budget_usd < 0):
             raise ValueError("budget_usd in .agentguard.json must be a non-negative number")
         parsed["budget_usd"] = float(budget_usd)
 

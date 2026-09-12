@@ -1,0 +1,15 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\agent47-release-20260912\sdk
+configfile: pyproject.toml
+plugins: anyio-4.15.1, langsmith-0.12.4
+collected 107 items
+
+sdk\tests\test_release_audit.py ........................................ [ 37%]
+...............                                                          [ 51%]
+sdk\tests\test_langchain_integration.py ..................               [ 68%]
+sdk\tests\test_langgraph_integration.py ............                     [ 79%]
+sdk\tests\test_otel_sink.py ............                                 [ 90%]
+sdk\tests\test_crewai_integration.py ..........                          [100%]
+
+============================= 107 passed in 0.43s =============================
