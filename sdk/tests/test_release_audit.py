@@ -1,11 +1,14 @@
 """Behavioral regressions found during the September SDK release audit."""
 import threading
+import socket
+from unittest.mock import Mock, patch
 from urllib.request import Request
 
 import pytest
 
 from agentguard import BudgetExceeded, BudgetGuard, TimeoutGuard, X402SpendGuard
 from agentguard.sinks.http import _SsrfSafeRedirectHandler, _validate_url
+from agentguard.sinks._transport import _connect_public
 
 
 @pytest.mark.parametrize("field", ["max_tokens", "max_calls", "max_cost_usd"])
@@ -111,3 +114,21 @@ def test_config_rejects_nonfinite_budget(tmp_path, value):
 def test_quickstart_rejects_invalid_budget(value):
     from agentguard.quickstart import run_quickstart
     assert run_quickstart(budget_usd=value) == 1
+
+
+def test_connection_uses_validated_address_without_resolving_again():
+    sock = Mock()
+    answer = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.8.8", 443))]
+    with patch("socket.getaddrinfo", return_value=answer) as dns, \
+            patch("socket.socket", return_value=sock):
+        assert _connect_public(("sink.example", 443), 10) is sock
+    dns.assert_called_once()
+    sock.connect.assert_called_once_with(("8.8.8.8", 443))
+
+
+def test_private_dns_answer_never_opens_socket():
+    answer = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("127.0.0.1", 443))]
+    with patch("socket.getaddrinfo", return_value=answer), patch("socket.socket") as create:
+        with pytest.raises(ValueError):
+            _connect_public(("sink.example", 443), 10)
+    create.assert_not_called()
