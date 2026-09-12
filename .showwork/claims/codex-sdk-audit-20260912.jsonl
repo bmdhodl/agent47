@@ -1,0 +1,1 @@
+{"session": "codex-sdk-audit-20260912", "ts": "2026-09-12T13:29:54", "claim": "Budget audit rejects corrupt stored counters before mutation", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/agentguard/_budget_validation.py", "pattern": "stored budget"}, "prev": "b29ce4be238a2cdf8547960340a094df2c61e7307c660fa66c24eadd1cf16a5f"}

@@ -1,0 +1,12 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\agent47-release-20260912\agentguard-mcp
+configfile: pyproject.toml
+plugins: anyio-4.15.1, cov-7.1.0
+collected 19 items
+
+agentguard-mcp\tests\test_server.py ...                                  [ 15%]
+agentguard-mcp\tests\test_storage.py ..........                          [ 68%]
+agentguard-mcp\tests\test_sync.py ......                                 [100%]
+
+============================= 19 passed in 2.19s ==============================

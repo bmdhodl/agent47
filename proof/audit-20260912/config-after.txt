@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\patri\.codex\worktrees\agent47-release-20260912\sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collected 88 items
+
+sdk\tests\test_release_audit.py ........................................ [ 45%]
+............                                                             [ 59%]
+sdk\tests\test_repo_config.py ............                               [ 72%]
+sdk\tests\test_skillpack.py ..........                                   [ 84%]
+sdk\tests\test_quickstart.py ..............                              [100%]
+
+============================= 88 passed in 0.47s ==============================

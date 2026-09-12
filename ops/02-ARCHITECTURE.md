@@ -1,6 +1,6 @@
 # Architecture
 
-**Last reviewed:** 2026-08-15
+**Last reviewed:** 2026-09-12
 
 ## High-level shape
 
@@ -15,20 +15,11 @@ only through explicit hosted integration points such as `HttpSink`.
 
 The SDK must stand on its own. It should be usable offline, auditable from source, and credible in production even when the hosted dashboard is not configured.
 
-## Current release state
+## Release state and security boundaries
 
-This review found no public architecture drift on `main` at `4009798`. The
-current public artifacts are:
+See `../memory/state.md` for release status. `../ARCHITECTURE.md` owns module structure.
 
-- Python SDK `agentguard47` `1.2.13` on PyPI, published 2026-05-30.
-- Read-only MCP package `@agentguard47/mcp-server` `0.2.2` on npm.
-- Official MCP Registry entry `io.github.bmdhodl/agentguard47` at `0.2.2`,
-  marked `isLatest: true`; the older `0.2.1` entry is historical metadata.
-
-The Glama public API returned an empty `tools` array on 2026-08-15. That is a
-directory/API indexing signal, not evidence that the source MCP server has no
-tools. It must be checked separately from the rendered listing and does not
-justify changing the SDK architecture.
+The September audit added `_budget_validation.py` for finite numeric and stored-state checks, and `sinks/_transport.py` for connection-time address validation without DNS rebinding. Warning callbacks run outside budget locks. Payment rollback applies only to the generation that reserved the spend. LangChain callback dispatch propagates guard exceptions.
 
 ## Runtime flow
 
