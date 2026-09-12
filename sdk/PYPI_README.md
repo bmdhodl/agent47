@@ -184,7 +184,7 @@ This release includes the accumulated, unpublished 1.2.14 candidate work below.
   No fixed upstream version was available in the audit. Avoid this extra unless
   its exposure has been reviewed. Base installs do not include ChromaDB.
 - Audit scope, regression results, dependency resolutions, and limitations:
-  [September audit](proof/audit-20260912/README.md).
+  [September audit](https://github.com/bmdhodl/agent47/blob/v1.3.0/proof/audit-20260912/README.md).
 
 
 ### Reliability

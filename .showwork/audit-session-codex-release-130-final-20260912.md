@@ -1,6 +1,6 @@
 # Claims audit - session codex-release-130-final-20260912
 
-**Verdict: GREEN**  (13/13 verified)
+**Verdict: GREEN**  (14/14 verified)
 
 - OK **SDK developer instructions identify the 1.3.0 candidate** (`file_contains`)
     - /v1.3.0/ found in .claude/agents/sdk-dev.md
@@ -28,3 +28,5 @@
     - /RESULTS: 7/7 passed, 0 failed/ found in proof/v1.3.0/wheel-hosted.txt
 - OK **Release proof preserves the unresolved security limitation** (`file_contains`)
     - /CrewAI extra carries four unresolved/ found in proof/v1.3.0/README.md
+- OK **Roadmap now targets the 1.3.0 candidate and preserves publication gates** (`file_contains`)
+    - /release-prep branch targets/ found in ops/03-ROADMAP_NOW_NEXT_LATER.md

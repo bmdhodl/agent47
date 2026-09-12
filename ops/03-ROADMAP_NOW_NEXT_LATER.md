@@ -17,9 +17,9 @@ they directly strengthen coding-agent adoption.
   `main` is ahead of that tag and contains unreleased onboarding improvements;
   do not describe those improvements as shipped until a new SDK tag passes the
   release gates.
-- The stacked release-prep branch is targeting `v1.2.14`; this remains a
-  candidate only until the dependency PR lands on `main` and the tag workflow
-  publishes the package.
+- The release-prep branch targets `v1.3.0`, including the unpublished 1.2.14
+  work. The audit fixes are on `main`; the candidate becomes a public release
+  only after the tag workflow publishes the package and PyPI smoke passes.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47` at
   `0.2.2` with `isLatest: true`; the older `0.2.1` result is historical
   metadata, not a current release blocker.
