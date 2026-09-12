@@ -10,6 +10,11 @@ on:
         description: Release tag to announce
         required: true
         type: string
+      queue_social:
+        description: Queue text-only social drafts after editorial review
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -103,6 +108,7 @@ jobs:
             -f body="$(cat "$BODY_FILE")"
 
       - name: Add to social queue (dashboard repo)
+        if: github.event_name == 'workflow_dispatch' && inputs.queue_social == true
         env:
           GH_TOKEN: ${{ secrets.DASHBOARD_PAT }}
         run: |
