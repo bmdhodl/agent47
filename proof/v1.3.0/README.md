@@ -25,7 +25,7 @@ OpenAI | GPT-6 | auto
 - LinkedIn published and read back: https://www.linkedin.com/feed/update/urn:li:ugcPost:7504283081680297985/
 - X published and read back with the image and alt text: https://x.com/phughes9000/status/2098847583556845686
 - Both exact post texts passed defluff 0.1.2, score 0.0. LinkedIn also returned 0% likely AI on QuillBot model 7.1.0. This is detector output, not an authorship guarantee. X was scanned with defluff; no QuillBot authorship result is claimed for it.
-- LinkedIn's alt-text editor crashed. The recovered photo flow published the correct image; its post body explains the image. An unrelated pre-existing GolfFly video draft was retained in a separate tab and saved unchanged.
+- LinkedIn's alt-text editor crashed. The recovered photo flow published the correct image; its post body explains the image. An unrelated pre-existing GolfFly video draft was kept open unchanged in a separate tab.
 - All nine default-branch Dependabot alerts resolved. Issues 709, 685, 698 and 642 closed; 686 closed as not planned. Nine superseded PRs closed. Issue 644 remains open because the CrewAI/ChromaDB finding is unresolved.
 - Secret scan initially flagged 70 SHA-256 values in showwork snapshots as generic API keys. Snapshot values were validated as hashes; scanning the rest of the staged diff found no leaks. No global scanner exclusion was added.
 
