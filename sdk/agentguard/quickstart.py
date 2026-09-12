@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 from textwrap import dedent
@@ -94,6 +95,9 @@ def _build_quickstart_payload(
     if framework not in _TEMPLATES:
         raise ValueError(f"Unknown framework '{framework}'")
 
+    if (isinstance(budget_usd, bool) or not isinstance(budget_usd, (int, float))
+            or not math.isfinite(budget_usd) or budget_usd < 0):
+        raise ValueError("budget_usd must be a finite non-negative number")
     payload = _TEMPLATES[framework](service, budget_usd, trace_file)
     payload["status"] = "ok"
     payload["framework"] = framework

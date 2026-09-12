@@ -345,7 +345,16 @@ class BudgetGuard(BaseGuard):
         bucket = self._period_bucket()
 
         def mutator(current: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+            from .state import StateStoreError
+            if current is not None and not isinstance(current, dict):
+                raise StateStoreError("stored budget must be an object")
             st = dict(current) if current else {}
+            for field in ("tokens_used", "calls_used", "cost_used"):
+                value = st.get(field, 0)
+                if (isinstance(value, bool) or not isinstance(value, (int, float))
+                        or value < 0
+                        or (isinstance(value, float) and not math.isfinite(value))):
+                    raise StateStoreError(f"stored budget {field} must be finite and non-negative")
             st["tokens_used"] = st.get("tokens_used", 0) + tokens
             st["calls_used"] = st.get("calls_used", 0) + calls
             st["cost_used"] = st.get("cost_used", 0.0) + cost_usd

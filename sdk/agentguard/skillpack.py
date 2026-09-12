@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 from textwrap import dedent
@@ -152,7 +153,8 @@ def _validate_service(service: str) -> str:
 
 
 def _validate_budget_usd(budget_usd: float) -> float:
-    if isinstance(budget_usd, bool) or not isinstance(budget_usd, (int, float)) or budget_usd < 0:
+    if (isinstance(budget_usd, bool) or not isinstance(budget_usd, (int, float))
+            or not math.isfinite(budget_usd) or budget_usd < 0):
         raise ValueError("budget_usd must be a non-negative number")
     return float(budget_usd)
 

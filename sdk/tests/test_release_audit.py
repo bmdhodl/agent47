@@ -83,3 +83,31 @@ def test_cross_origin_redirect_does_not_forward_credentials():
     with pytest.raises(ValueError):
         _SsrfSafeRedirectHandler().redirect_request(
             request, None, 302, "Found", {}, "https://1.1.1.1/collect")
+
+
+@pytest.mark.parametrize("stored", [float("nan"), float("inf"), -5, True, "bad"])
+def test_corrupt_persisted_budget_fails_closed(tmp_path, stored):
+    import json
+    from agentguard.state import JsonFileStateStore, StateStoreError
+    path = tmp_path / "state.json"
+    original = json.dumps({"budget": {"cost_used": stored}})
+    path.write_text(original)
+    guard = BudgetGuard(max_cost_usd=1, store=JsonFileStateStore(path), key="budget")
+    with pytest.raises(StateStoreError):
+        guard.consume(cost_usd=0.5)
+    assert path.read_text() == original
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf")])
+def test_config_rejects_nonfinite_budget(tmp_path, value):
+    import json
+    from agentguard.repo_config import load_repo_config
+    (tmp_path / ".agentguard.json").write_text(json.dumps({"budget_usd": value}))
+    with pytest.raises(ValueError):
+        load_repo_config(str(tmp_path))
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -1])
+def test_quickstart_rejects_invalid_budget(value):
+    from agentguard.quickstart import run_quickstart
+    assert run_quickstart(budget_usd=value) == 1
