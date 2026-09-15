@@ -1,4 +1,10 @@
-"""Run against an installed SDK: mock provider dispatch, real patch and budget."""
+"""Version-pinned regression demo: mock provider, real patch and budget.
+
+This compares 1.3.0 and 1.3.1 using a private instance hook so neither version
+needs an optional provider dependency. It is not an application integration
+example. Applications should use the public patch_openai API; the real-client
+test in proof/v1.3.1/provider_smoke.py exercises that public constructor path.
+"""
 import json
 from importlib.metadata import version
 from types import SimpleNamespace

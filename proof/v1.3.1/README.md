@@ -55,4 +55,4 @@ guarantee that every in-flight response fits under a token or dollar cap.
 Public installation, release provenance, PR review outcomes, and social
 permalinks must be added after publication. No candidate result proves those.
 
-OpenAI | GPT-6 | auto
+Agent sign-off (provider | model | reasoning tier): OpenAI | GPT-6 | auto

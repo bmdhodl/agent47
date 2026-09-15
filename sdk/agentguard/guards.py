@@ -296,7 +296,7 @@ class BudgetGuard(BaseGuard):
     def check(self) -> None:
         """Refuse a new request at an exhausted limit, without charging usage.
 
-        Refreshes state from the current persisted period. This is not a
+        With a store, refreshes the current persisted period. This is not a
         reservation: concurrent in-flight requests can still exceed a limit.
         """
         from ._budget_validation import check_budget_available

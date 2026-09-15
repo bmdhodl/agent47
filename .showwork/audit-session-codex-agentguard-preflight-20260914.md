@@ -1,6 +1,6 @@
 # Claims audit - session codex-agentguard-preflight-20260914
 
-**Verdict: RED**  (13/14 verified)
+**Verdict: GREEN**  (17/17 verified)
 
 - OK **Release 1.3.1 marker updated in AGENTS.md** (`file_contains`)
     - /1\.3\.1/ found in AGENTS.md
@@ -28,9 +28,11 @@
     - /_check_budget_before_request/ found in sdk/agentguard/instrument.py
 - OK **Audit and reproducible installed demo evidence retained** (`file_exists`)
     - proof/v1.3.1/README.md exists
-- XX **undeclared change: traces.jsonl** (`undeclared_change`, RED)
-    - traces.jsonl changed since session.start; no active claim named that path
-
-## 1 gap(s) - a claimed 'done' is not real
-
-- [RED/fail] undeclared change: traces.jsonl - traces.jsonl changed since session.start; no active claim named that path
+- OK **Generated mock test trace retained with release evidence** (`path_moved`)
+    - traces.jsonl -> proof/v1.3.1/mock-test-events.jsonl
+- OK **Review follow-up separates source candidate from published release** (`file_contains`)
+    - /1.3.1 release candidate/ found in memory/state.md
+- OK **Review follow-up documents persisted snapshot refresh** (`file_contains`)
+    - /Refresh persisted state/ found in sdk/agentguard/_budget_validation.py
+- OK **Review follow-up scopes refresh to store backed guards** (`file_contains`)
+    - /With a store/ found in sdk/agentguard/guards.py
