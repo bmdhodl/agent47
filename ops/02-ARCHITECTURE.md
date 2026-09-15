@@ -1,6 +1,6 @@
 # Architecture
 
-**Last reviewed:** 2026-09-12
+**Last reviewed:** 2026-09-14
 
 ## High-level shape
 
@@ -22,6 +22,12 @@ See `../memory/state.md` for release status. `../ARCHITECTURE.md` owns module st
 The September audit added `_budget_validation.py` for finite numeric and stored-state checks, and `sinks/_transport.py` for connection-time address validation without DNS rebinding. Warning callbacks run outside budget locks. Payment rollback applies only to the generation that reserved the spend. LangChain callback dispatch propagates guard exceptions.
 
 ## Runtime flow
+
+Provider patches call `BudgetGuard.check()` before dispatch and consume the
+response usage afterward. The check reads the current persistent bucket under
+the guard lock and raises at equality or above; it never charges or reserves
+usage. Concurrent requests can pass before either response is recorded. The
+check does not predict token/cost totals and does not enforce goal-level caps.
 
 ```text
 Your agent code

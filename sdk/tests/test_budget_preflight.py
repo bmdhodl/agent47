@@ -78,3 +78,47 @@ def test_check_does_not_charge_or_warn_and_reset_reopens():
         guard.check()
     guard.reset()
     guard.check()
+
+
+@pytest.mark.parametrize("provider", ["openai", "anthropic"])
+@pytest.mark.parametrize("asynchronous", [False, True])
+def test_first_call_is_counted_once_then_retries_are_blocked(provider, asynchronous):
+    guard = BudgetGuard(max_calls=1)
+    sent = []
+    response = SimpleNamespace(usage=SimpleNamespace(
+        prompt_tokens=3, completion_tokens=2, input_tokens=3, output_tokens=2,
+    ))
+
+    def create(**kwargs):
+        sent.append(kwargs)
+        return response
+
+    async def async_create(**kwargs):
+        return create(**kwargs)
+
+    endpoint = SimpleNamespace(create=async_create if asynchronous else create)
+    client = SimpleNamespace(chat=SimpleNamespace(completions=endpoint), messages=endpoint)
+    tracer = (AsyncTracer if asynchronous else Tracer)(sink=Sink())
+    suffix = "_async" if asynchronous else ""
+    getattr(instrument, f"_patch_{provider}{suffix}_instance")(client, tracer, guard)
+    result = endpoint.create(model="gpt-4o-mini")
+    if asynchronous:
+        result = asyncio.run(result)
+    assert result is response
+    for _ in range(2):
+        with pytest.raises(BudgetExceeded):
+            result = endpoint.create(model="gpt-4o-mini")
+            if asynchronous:
+                asyncio.run(result)
+    assert len(sent) == 1
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 5
+
+
+def test_corrupt_persisted_budget_refuses_preflight():
+    from agentguard.state import StateStoreError
+
+    store = SimpleNamespace(read=lambda key: {"calls_used": float("nan")})
+    guard = BudgetGuard(max_calls=1, store=store, key="shared")
+    with pytest.raises(StateStoreError):
+        guard.check()

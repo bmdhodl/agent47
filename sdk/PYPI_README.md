@@ -10,7 +10,7 @@ Zero-dependency Python kill switch for AI agents. Hard budget caps. Loop detecti
 [![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.3.0/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/bmdhodl/agent47/blob/v1.3.1/LICENSE)
 
 ```bash
 pip install agentguard47
@@ -106,6 +106,12 @@ your x402 client. No crypto dependencies.
 - **Local traces** — JSONL by default; no network unless you opt in
 - **Zero deps** — stdlib only; Python 3.9+
 - **Provider patches** — `patch_openai` / `patch_anthropic`
+- **Budget preflight** — provider patches refuse new requests once recorded
+  usage reaches a configured cap, including sync and async clients. Use
+  `budget.check()` before your own provider call and `budget.consume(...)`
+  after its response. The check does not charge usage or reserve concurrent
+  capacity. A response can exceed the remaining token/cost allowance; streaming
+  totals are not yet tracked by the patches.
 - **Framework hooks** — LangChain, LangGraph, CrewAI (optional extras)
 
 ## Local by default
@@ -130,15 +136,15 @@ The base install declares zero runtime dependencies. `pip install agentguard47` 
 
 Extras install third-party packages and need a separate audit. The LangChain and LangGraph extras now require Python 3.10+ and raise their minimum versions to the tested September 2026 releases. OpenTelemetry requires 1.44.0 or newer. The base SDK remains compatible with Python 3.9+.
 
-The optional `[crewai]` extra requires CrewAI 1.15.21 or newer. Its current dependency tree still installs ChromaDB 1.1.1, with four distinct unresolved advisories: CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833. The audit database provides no fixed version. Avoid this extra unless you have reviewed that upstream exposure. Installing AgentGuard alone does not install ChromaDB or start a server. See [the upstream advisory](https://osv.dev/vulnerability/PYSEC-2026-311) and [the release audit](https://github.com/bmdhodl/agent47/blob/v1.3.0/proof/audit-20260912/README.md).
+The optional `[crewai]` extra requires CrewAI 1.15.21 or newer. Its current dependency tree still installs ChromaDB 1.1.1, with four distinct unresolved advisories: CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833. The audit database provides no fixed version. Avoid this extra unless you have reviewed that upstream exposure. Installing AgentGuard alone does not install ChromaDB or start a server. See [the upstream advisory](https://osv.dev/vulnerability/PYSEC-2026-311) and [the release audit](https://github.com/bmdhodl/agent47/blob/v1.3.1/proof/audit-20260912/README.md).
 
 `HttpSink` validates the address it actually connects to, retains TLS hostname verification, and refuses cross-origin redirects. It connects directly and does not use environment proxy settings. A local guard stops instrumented work in your Python process; it does not cancel an agent loop running on a provider's server. Cost estimates are not invoices; supply provider-reported cost or use strict cost resolution when an estimate is insufficient.
 
 ## Docs
 
-- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.3.0/docs/guides/getting-started.md)
-- [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.0/examples)
-- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.0/mcp-server) — `npx -y @agentguard47/mcp-server`
+- [Getting started guide](https://github.com/bmdhodl/agent47/blob/v1.3.1/docs/guides/getting-started.md)
+- [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.1/examples)
+- [MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.1/mcp-server) — `npx -y @agentguard47/mcp-server`
 
 ## Links
 
@@ -152,105 +158,23 @@ The hosted page is an optional next step, not a requirement. The SDK stays free,
 
 MIT · Built for people who ship agents and hate surprise bills.
 
-## Latest Release Notes (1.3.0)
+## Latest Release Notes (1.3.1)
 
-(2026-09-12)
+(2026-09-14)
 
-This release includes the accumulated, unpublished 1.2.14 candidate work below.
+### Stop exhausted-budget retries before provider dispatch
+- OpenAI and Anthropic patches now check their supplied budget before calling
+  the provider, for both sync and async clients. Catching `BudgetExceeded`
+  cannot send another request after the recorded budget reaches its cap.
+- Added `BudgetGuard.check()`: a non-consuming check of call, token, and cost
+  limits, including zero caps and the current persisted daily budget.
+- Successful responses are still charged once. Reset and daily rollover allow
+  new calls. Corrupt persisted counters fail closed.
+- This is a preflight check, not a concurrent reservation or an estimate of
+  the next response. In-flight calls can exceed token/cost caps. Streaming
+  usage accounting remains outside this release.
+- Reproduce the before/after behavior without network calls with
+  `examples/budget_preflight_demo.py`. The provider is mocked; the installed
+  AgentGuard patch, guard, and retry loop are real.
 
-### Security and enforcement fixes
-- LangChain now propagates guard exceptions through its real callback manager.
-  A zero-call budget stops the tool before its body runs; previously LangChain
-  could log the exception and continue. Sync and async dispatch run inline.
-- Budget and timeout caps reject invalid, negative, boolean, and non-finite
-  values. Corrupt stored budget counters fail closed without rewriting state.
-  Warning callbacks run outside budget locks and zero limits do not divide by zero.
-- Failed x402 payment callbacks refund only their original budget generation,
-  so a reset or day rollover cannot reduce a later period's spending.
-- HTTP trace delivery rejects credential-bearing URLs, cross-origin redirects,
-  mapped private IPv6 addresses, and private/reserved DNS answers at connection
-  time. Connections use the validated address while TLS retains hostname checks.
-  This transport deliberately does not use environment proxies.
-- Retry-After delays are finite, non-negative, and capped at 30 seconds.
-- MCP dependency updates resolve the npm audit findings in the committed lockfile.
-
-### Optional dependency compatibility
-- LangChain requires 1.6.3+, LangGraph 1.2.11+ with checkpoint 4.2.0+ and SDK
-  0.4.4+, OpenTelemetry 1.44.0+, and CrewAI 1.15.21+.
-- LangChain and LangGraph extras require Python 3.10+. The dependency-free base
-  package remains compatible with Python 3.9+.
-- The optional CrewAI tree still installs ChromaDB with four distinct unresolved
-  advisories (CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, CVE-2026-45833).
-  No fixed upstream version was available in the audit. Avoid this extra unless
-  its exposure has been reviewed. Base installs do not include ChromaDB.
-- Audit scope, regression results, dependency resolutions, and limitations:
-  [September audit](https://github.com/bmdhodl/agent47/blob/v1.3.0/proof/audit-20260912/README.md).
-
-
-### Reliability
-- Added the file-backed `JsonFileStateStore` integration for
-  `BudgetGuard(store=...)`, so configured budget usage can persist across
-  processes and scheduled tasks. This is local persistence, not distributed
-  coordination or a fairness guarantee.
-- Hardened the cross-process state lock (`JsonFileStateStore`, used by
-  `BudgetGuard(store=...)`) against two Windows races that crashed concurrent
-  processes under contention: an exclusive lock create that fails with
-  `PermissionError` instead of `FileExistsError` during a concurrent release
-  ("delete pending"), and an `os.replace` that transiently fails with
-  access-denied when an antivirus/indexer holds the destination. Both now retry
-  safely, so cross-process budget enforcement holds on Windows scheduled tasks.
-
-### Budget Goals
-- Added `BudgetGuard.goal(...)` for scoped per-goal caps on tokens, calls, and
-  cost, with an optional `warn_at_pct` threshold and `on_warning` callback.
-  Goal warnings are emitted once per goal while hard caps still refuse excess
-  spend.
-
-### Payment Guardrails
-- Added `X402SpendGuard` for local caps on total, per-endpoint, and per-call
-  x402/USDC spend. It checks and reserves configured spend before payment and
-  rolls the reservation back if the payment callback raises. It does not settle
-  x402 payments or add a crypto dependency.
-
-### Cost Accounting
-- Added maximum-precision billable-cost resolution with explicit source labels
-  for provider-reported values, caller prices, estimates, zero-cost tool/local
-  work, and unknown cost. Unknown usage stays conservative or fails in strict
-  mode; the result is not a provider invoice.
-
-### Usage Accounting
-- Anthropic usage normalization now preserves thinking/reasoning tokens and
-  separates them from answer tokens when the provider payload exposes that
-  detail, alongside cache-read and cache-write fields.
-
-### Hardening
-- Rejected NaN, infinite, and negative budget inputs before state mutation so
-  non-finite values cannot bypass a cost ceiling.
-- Made LoopGuard argument fingerprinting tolerate non-JSON-serializable tool
-  arguments instead of crashing the guard while it checks for repeats.
-
-### Public Docs
-- Made the reader-facing surface fully model-agnostic to match the
-  already-vendor-neutral code path: the README/PyPI "As a skill" heading now
-  leads with Codex alongside Claude Code, and the budget-aware escalation
-  example notes the escalate target can be any provider's model, not just
-  Claude.
-
-### Onboarding
-- Bare `agentguard` now prints a friendly first-run welcome with the 60-second
-  local path and the star call to action instead of an argparse help dump.
-- Added `python -m agentguard` as an entry point so the CLI works even when the
-  `agentguard` script is not on PATH.
-- Added `agentguard welcome` and `agentguard badge`. `badge` prints a
-  paste-able "Guarded by AgentGuard" README badge (markdown, rST, or HTML) so
-  adopters can advertise the SDK and drive new installs.
-
-### Distribution
-- Added an opt-in bridge to the hosted AgentGuard page
-  (`bmdpat.com/tools/agentguard`) from the README/PyPI page, the `agentguard
-  --help` footer, and the first-run welcome. These are static links only: the
-  SDK still makes no network calls unless you configure `HttpSink`, and nothing
-  in the package phones home. The links carry UTM parameters so the site can
-  measure click-through; no identifier is sent from your machine.
-
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.3.0/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.3.1/CHANGELOG.md)

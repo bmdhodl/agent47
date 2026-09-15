@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.3.1 (2026-09-14)
+
+### Stop exhausted-budget retries before provider dispatch
+- OpenAI and Anthropic patches now check their supplied budget before calling
+  the provider, for both sync and async clients. Catching `BudgetExceeded`
+  cannot send another request after the recorded budget reaches its cap.
+- Added `BudgetGuard.check()`: a non-consuming check of call, token, and cost
+  limits, including zero caps and the current persisted daily budget.
+- Successful responses are still charged once. Reset and daily rollover allow
+  new calls. Corrupt persisted counters fail closed.
+- This is a preflight check, not a concurrent reservation or an estimate of
+  the next response. In-flight calls can exceed token/cost caps. Streaming
+  usage accounting remains outside this release.
+- Reproduce the before/after behavior without network calls with
+  `examples/budget_preflight_demo.py`. The provider is mocked; the installed
+  AgentGuard patch, guard, and retry loop are real.
+
 ## 1.3.0 (2026-09-12)
 
 This release includes the accumulated, unpublished 1.2.14 candidate work below.

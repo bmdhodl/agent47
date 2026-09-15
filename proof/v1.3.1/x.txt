@@ -1,0 +1,7 @@
+Catch a budget exception. Retry. Send another request anyway.
+
+Fixed in AgentGuard 1.3.1: exhausted budgets stop before provider dispatch.
+
+Same local demo, one-call budget: 3 mocked requests before, 1 after.
+
+https://github.com/bmdhodl/agent47/releases/tag/v1.3.1

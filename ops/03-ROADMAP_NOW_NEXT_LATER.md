@@ -3,9 +3,13 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-12
+**Last reviewed:** 2026-09-14
 
 ## Current Focus Notes
+
+- 1.3.1 candidate fixes exhausted-budget retry dispatch in all four provider
+  patches. This tightens the existing runtime-enforcement promise without
+  adding another guard or expanding the SDK's product scope.
 
 - September security pass: repair budget and transport boundaries, test real framework dispatch, then publish a verified SDK release.
 
