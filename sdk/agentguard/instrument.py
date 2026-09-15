@@ -12,6 +12,21 @@ F = TypeVar("F", bound=Callable[..., Any])
 _originals: Dict[str, Any] = {}
 
 
+def _check_budget_before_request(budget_guard: Any, ctx: Any, model: str) -> None:
+    """Reject exhausted budgets before crossing the provider boundary."""
+    from agentguard.guards import BudgetExceeded
+
+    if budget_guard is None:
+        return
+    try:
+        budget_guard.check()
+    except BudgetExceeded as exc:
+        ctx.event("guard.budget_exceeded", data={
+            "message": str(exc), "model": model, "request_sent": False,
+        })
+        raise
+
+
 def _consume_budget(
     budget_guard: Any,
     ctx: Any,
@@ -322,6 +337,7 @@ def _traced_openai_create(
     """Shared traced wrapper for sync OpenAI create calls."""
     model = str(kwargs.get("model", "unknown"))
     with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
+        _check_budget_before_request(budget_guard, ctx, model)
         result = original(*args, **kwargs)
         _emit_llm_result(
             ctx, budget_guard, model, "openai", getattr(result, "usage", None), response=result
@@ -383,6 +399,7 @@ def _patch_anthropic_instance(client: Any, tracer: Any, budget_guard: Any = None
     def traced_create(*args: Any, **kwargs: Any) -> Any:
         model = str(kwargs.get("model", "unknown"))
         with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
+            _check_budget_before_request(budget_guard, ctx, model)
             result = original_create(*args, **kwargs)
             _emit_llm_result(
                 ctx, budget_guard, model, "anthropic", getattr(result, "usage", None), response=result
@@ -570,6 +587,7 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
         model = str(kwargs.get("model", "unknown"))
         async with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
+            _check_budget_before_request(budget_guard, ctx, model)
             result = await original_create(*args, **kwargs)
             _emit_llm_result(
                 ctx, budget_guard, model, "openai", getattr(result, "usage", None), response=result
@@ -630,6 +648,7 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any 
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
         model = str(kwargs.get("model", "unknown"))
         async with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
+            _check_budget_before_request(budget_guard, ctx, model)
             result = await original_create(*args, **kwargs)
             _emit_llm_result(
                 ctx, budget_guard, model, "anthropic", getattr(result, "usage", None), response=result

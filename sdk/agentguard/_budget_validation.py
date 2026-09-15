@@ -60,3 +60,26 @@ def validate_consumption(tokens: Any, calls: Any, cost_usd: Any) -> None:
             raise ValueError(f"{_name} must be finite, got {_val!r}")
         if _val < 0:
             raise ValueError(f"{_name} must be non-negative, got {_val!r}")
+
+
+def check_budget_available(guard: Any) -> None:
+    """Read the current budget under its lock without charging or reserving it."""
+    from .guards import BudgetExceeded, BudgetState
+
+    with guard._lock:
+        if guard._store is not None:
+            stored = validate_budget_state(guard._store.read(guard._period_bucket()))
+            guard.state = BudgetState(
+                tokens_used=stored.get("tokens_used", 0),
+                calls_used=stored.get("calls_used", 0),
+                cost_used=stored.get("cost_used", 0.0),
+            )
+        for label, used, limit in (
+            ("Token", guard.state.tokens_used, guard.max_tokens),
+            ("Call", guard.state.calls_used, guard.max_calls),
+            ("Cost", guard.state.cost_used, guard.max_cost_usd),
+        ):
+            if limit is not None and used >= limit:
+                raise BudgetExceeded(
+                    f"{label} budget exhausted: {used} >= {limit}; request not sent"
+                )

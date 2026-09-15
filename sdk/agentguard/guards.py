@@ -293,6 +293,15 @@ class BudgetGuard(BaseGuard):
         # Goal caps after session update so both ledgers include the tripping call.
         _enforce_active_goal_limits(tokens, calls, cost_usd)
 
+    def check(self) -> None:
+        """Refuse a new request at an exhausted limit, without charging usage.
+
+        Reads the current persisted period when configured. This is not a
+        reservation: concurrent in-flight requests can still exceed a limit.
+        """
+        from ._budget_validation import check_budget_available
+        check_budget_available(self)
+
     def _consume_in_memory(self, tokens: float, calls: float, cost_usd: float) -> None:
         with self._lock:
             self.state.tokens_used += tokens
