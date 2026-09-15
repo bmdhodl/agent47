@@ -1,0 +1,1 @@
+AgentGuard comparison using installed versions and a mocked provider. The same script attempts three calls with a one-call budget. Version 1.3.0 sends all three requests. Version 1.3.1 sends one request and blocks both retries before dispatch. No network calls are made.

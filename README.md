@@ -104,6 +104,12 @@ your x402 client. No crypto dependencies.
 - **Local traces** — JSONL by default; no network unless you opt in
 - **Zero deps** — stdlib only; Python 3.9+
 - **Provider patches** — `patch_openai` / `patch_anthropic`
+- **Budget preflight** — provider patches refuse new requests once recorded
+  usage reaches a configured cap, including sync and async clients. Use
+  `budget.check()` before your own provider call and `budget.consume(...)`
+  after its response. The check does not charge usage or reserve concurrent
+  capacity. A response can exceed the remaining token/cost allowance; streaming
+  totals are not yet tracked by the patches.
 - **Framework hooks** — LangChain, LangGraph, CrewAI (optional extras)
 
 ## Local by default

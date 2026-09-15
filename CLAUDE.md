@@ -130,8 +130,8 @@ For this repo, the most relevant Claude-side assets are:
 - official MCP Registry listing: live
 - dashboard remains private
 
-Current release candidate: v1.3.0.
-<!-- release candidate is 1.3.0 -->
+Current release candidate: v1.3.1.
+<!-- release candidate is 1.3.1 -->
 
 Core message to preserve:
 

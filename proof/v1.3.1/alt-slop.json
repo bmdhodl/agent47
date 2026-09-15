@@ -1,0 +1,11 @@
+{
+  "slop_score": 0.0,
+  "slop_density": 0.0,
+  "categories": {},
+  "spans": [],
+  "n_words": 46,
+  "low_confidence": false,
+  "lexicon_version": "ded58e3a0c4c",
+  "threshold_provisional": true,
+  "input_sha256": "6db9539da453276e5eed569dce9d0efb56dfc6c28449edff2e66abfca32aa429"
+}
