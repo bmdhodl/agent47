@@ -1,0 +1,63 @@
+{
+  "version": "1.3.1",
+  "python": "3.12.13 (main, Jun 23 2026, 15:23:43) [MSC v.1944 64 bit (AMD64)]",
+  "import_path": "C:\\Users\\patri\\.codex\\worktrees\\agentguard-budget-preflight-20260914\\.venv\\public\\Lib\\site-packages\\agentguard\\__init__.py",
+  "results": [
+    {
+      "args": [],
+      "exit": 0
+    },
+    {
+      "args": [
+        "doctor"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "demo",
+        "--trace-file",
+        "demo.jsonl"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "report",
+        "demo.jsonl",
+        "--json"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "incident",
+        "demo.jsonl"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "quickstart",
+        "--framework",
+        "raw",
+        "--write",
+        "--output",
+        "starter.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "badge"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "starter.py"
+      ],
+      "exit": 0
+    }
+  ]
+}

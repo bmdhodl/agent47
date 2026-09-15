@@ -1,0 +1,36 @@
+https://www.linkedin.com/feed/update/urn:li:share:7505451968731987968/
+
+Feed post
+Patrick Hughes
+   • You
+I help companies build, manage, and deploy AI systems
+now • 
+ 
+I caught a budget exception. My retry still sent another request.
+
+AgentGuard's OpenAI and Anthropic patches were checking the budget after the response. A loop that caught BudgetExceeded could keep calling the provider after the budget was spent.
+
+I fixed that in AgentGuard 1.3.1. The patches now check the recorded budget before sending a request, for sync and async clients.
+
+The picture runs the same three attempts with a one-call budget:
+1.3.0: three requests reached the mocked provider.
+1.3.1: one request reached it. Both retries stopped before dispatch.
+
+I also checked the real OpenAI and Anthropic clients using mocked HTTP. No paid model calls.
+
+This check does not reserve budget for concurrent requests or predict a response's token cost. It stops a new request once recorded usage reaches the cap.
+
+pip install -U agentguard47
+https://lnkd.in/gFKc3RcZ
+Activate to view larger image,
+Activate to view larger image,
+Like
+Comment
+Repost
+Send
+
+
+
+
+Add a comment…
+Open Emoji Keyboard
