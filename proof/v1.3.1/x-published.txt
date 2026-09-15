@@ -1,0 +1,18 @@
+https://x.com/phughes9000/status/2099689675032056208
+
+Patrick
+@phughes9000
+Boost
+Catch a budget exception. Retry. Send another request anyway.
+
+Fixed in AgentGuard 1.3.1: exhausted budgets stop before provider dispatch.
+
+Same local demo, one-call budget: 3 mocked requests before, 1 after.
+
+
+https://
+github.com/bmdhodl/agent4
+7/releases/tag/v1.3.1
+…
+ALT
+9:40 PM · Sep 14, 2026

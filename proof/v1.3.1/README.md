@@ -53,6 +53,7 @@ guarantee that every in-flight response fits under a token or dollar cap.
   patterns, not authorship or image provenance.
 
 Public installation, release provenance, PR review outcomes, and social
-permalinks must be added after publication. No candidate result proves those.
+permalinks are recorded separately in PUBLICATION.md. The candidate results
+above do not substitute for those public checks.
 
 Agent sign-off (provider | model | reasoning tier): OpenAI | GPT-6 | auto

@@ -3,6 +3,13 @@
 
 ---
 
+## 2026-09-14 | Codex
+
+- AgentGuard 1.3.1 shipped after PR 721: exhausted recorded budgets now stop OpenAI/Anthropic sync and async requests before dispatch. A one-call budget sends one mocked request across three attempts, versus three on 1.3.0.
+- Fresh PyPI install, eight CLI paths, build attestation, 992 tests, and published LinkedIn/X image readbacks passed. Copy and image text scored 0.0 on Defluff. Receipts: `proof/v1.3.1/PUBLICATION.md`.
+- Concurrent reservations, streaming totals, and optional CrewAI/ChromaDB issue 644 remain outside this fix. Signup capture is not adoption proof.
+- Sign-off: OpenAI | GPT-6 | auto
+
 ## 2026-05-31 | Codex
 
 ### What shipped
