@@ -63,7 +63,7 @@ def validate_consumption(tokens: Any, calls: Any, cost_usd: Any) -> None:
 
 
 def check_budget_available(guard: Any) -> None:
-    """Read the current budget under its lock without charging or reserving it."""
+    """Refresh persisted state under its lock without charging or reserving it."""
     from .guards import BudgetExceeded, BudgetState
 
     with guard._lock:

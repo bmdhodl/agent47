@@ -69,6 +69,7 @@ async def main():
     results = [await run(p, a) for p in ("openai", "anthropic") for a in (False, True)]
     print(json.dumps({"agentguard47": version("agentguard47"),
                       "openai": version("openai"), "anthropic": version("anthropic"),
+                      "httpx2": version("httpx2"),
                       "network": "MockTransport only", "results": results}, indent=2))
 
 

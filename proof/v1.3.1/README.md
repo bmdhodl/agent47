@@ -42,6 +42,9 @@ guarantee that every in-flight response fits under a token or dollar cap.
 - Real OpenAI 3.14.0 and Anthropic 1.5.0 clients, sync and async, passed with
   HTTP MockTransport: one dispatch, two blocked retries, five tokens recorded.
   No paid provider requests. See provider_smoke.py and provider-smoke.json.
+  Reproduce with openai==3.14.0, anthropic==1.5.0, httpx2==2.13.0. These
+  provider versions depend on httpx2 (OpenAI requires httpx2>=2.7.0,<3).
+  The import is the real package name, not an alias for httpx.
 - The image's visible text matches image-copy.txt after whitespace normalization.
   Browser overflow assertions passed at 375, 768, and 1440 pixels. The saved
   screenshot was visually inspected for readable text and correct results.
