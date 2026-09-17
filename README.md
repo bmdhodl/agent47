@@ -1,157 +1,175 @@
 # AgentGuard
 
-**Stop runaway agents before they burn money.**
+Stop runaway agents with runtime checks in Python.
 
-Zero-dependency Python kill switch for AI agents. Hard budget caps. Loop detection. Local traces. MIT.
+[![PyPI version](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
+[![Python versions](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
+[![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](LICENSE)
 
-[![PyPI](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
-[![Downloads](https://img.shields.io/pypi/dm/agentguard47)](https://pypi.org/project/agentguard47/)
-[![Python](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
-[![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+AgentGuard checks budgets, repeated tool calls, retries, and elapsed time in
+instrumented Python code. Guards raise exceptions so your application can stop
+the next operation. The base SDK has no runtime dependencies and needs no account.
 
-```bash
-pip install agentguard47
-```
+**Names:** this repository is `agent47`, the PyPI package is `agentguard47`,
+and the Python import is `agentguard`. Requires Python 3.9 or newer.
 
 ## Getting started
 
-### 1. Install and verify
+Install in a virtual environment, then run the offline checks:
 
 ```bash
-pip install agentguard47
-agentguard doctor   # package ok?
-agentguard demo     # offline proof (no API keys)
+python -m pip install agentguard47
+agentguard doctor
+agentguard demo
 ```
 
-### 2. Guard an OpenAI client
+`doctor` checks the installation and local trace writing. `demo` exercises
+budget, loop, and retry stops without provider keys or network access. Follow
+the trace path printed by the command to inspect its output.
+
+### Stop before a third call
+
+Save this as `budget_demo.py` and run `python budget_demo.py`. It makes no
+network requests.
 
 ```python
-from agentguard import BudgetGuard, LoopGuard, Tracer, patch_openai
+from agentguard import BudgetExceeded, BudgetGuard
 
-budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
-loop = LoopGuard(max_repeats=3)
-tracer = Tracer(service="my-agent", guards=[loop])
+budget = BudgetGuard(max_calls=2)
+completed = 0
 
-patch_openai(tracer, budget_guard=budget)
-# every OpenAI call is now traced + budget-enforced
+for _ in range(3):
+    try:
+        budget.check()  # Check before the operation.
+        # Put your provider or tool call here.
+        completed += 1
+        budget.consume(calls=1)  # Record the completed operation.
+    except BudgetExceeded:
+        print(f"Stopped before call {completed + 1}")
+
+assert completed == 2
 ```
 
-When spend crosses the hard limit, `BudgetExceeded` is raised and the run stops.
+Expected output: `Stopped before call 3`.
 
-### 3. Cap a single task
+### Connect a provider
 
-Session budget can still have headroom. One goal can still be killed:
-
-```python
-with budget.goal("refund", max_cost_usd=0.50, warn_at_pct=0.8) as g:
-    g.attempt()
-    budget.consume(cost_usd=0.12)
-    # BudgetExceeded names the goal when it crosses
-```
-
-### 4. Read the local proof
+Install the provider's client separately. For OpenAI:
 
 ```bash
-agentguard report .agentguard/traces.jsonl
-agentguard incident .agentguard/traces.jsonl
+python -m pip install openai
 ```
-
-Or scaffold a starter file:
-
-```bash
-agentguard quickstart --framework raw --write
-python agentguard_raw_quickstart.py
-```
-
-## What it stops
-
-| Problem | Guard | Exception |
-|---------|-------|-----------|
-| Spend blowup | `BudgetGuard` | `BudgetExceeded` |
-| Same tool forever | `LoopGuard` | `LoopDetected` |
-| Fuzzy / A-B-A-B loops | `FuzzyLoopGuard` | `LoopDetected` |
-| Retry storms | `RetryGuard` | `RetryLimitExceeded` |
-| Hung runs | `TimeoutGuard` | `TimeoutExceeded` |
-| Spam calls | `RateLimitGuard` | — |
-| Wallet drain (x402/USDC) | `X402SpendGuard` | `BudgetExceeded` |
-
-Not a dashboard. Not a model router. An **in-process exception** that kills the bad run mid-flight.
-
-### Cap your agent's x402 wallet spend
-
-Agents that pay per-call via x402 (USDC micropayments) can drain a wallet in a
-silent loop. `X402SpendGuard` wraps the payment step and refuses before paying:
 
 ```python
-from agentguard import X402SpendGuard
+from agentguard import BudgetGuard, JsonlFileSink, Tracer, patch_openai
 
-guard = X402SpendGuard(
-    max_total_usd=5.00,        # wallet cap, add period="day" for a daily reset
-    max_per_endpoint_usd=1.00, # cap per resource URL
-    max_per_call_usd=0.10,     # refuse any single payment above this
+budget = BudgetGuard(max_cost_usd=5.00)
+tracer = Tracer(
+    service="my-agent",
+    sink=JsonlFileSink(".agentguard/traces.jsonl"),
 )
-guard.charge(0.001, "https://api.example.com/search", my_x402_pay_step)
+patch_openai(tracer, budget_guard=budget)
+# Make your OpenAI chat.completions.create calls after this setup.
 ```
 
-AgentGuard meters and refuses; it never signs or settles. Amounts come from
-your x402 client. No crypto dependencies.
+The patch checks recorded usage before dispatch and records response usage
+afterward. A response can exceed the remaining cost or token allowance.
+Concurrent requests do not reserve capacity. The patches do not yet track
+streaming totals. See the [getting started guide](docs/guides/getting-started.md)
+for setup, traces, and framework starters.
 
-## Features
+## How enforcement works
 
-- **Hard stops** — exceptions inside your process, not after-the-fact alerts
-- **Task-level budgets** — `BudgetGuard.goal(...)` for sub-task caps + warn hooks
-- **Local traces** — JSONL by default; no network unless you opt in
-- **Zero deps** — stdlib only; Python 3.9+
-- **Provider patches** — `patch_openai` / `patch_anthropic`
-- **Budget preflight** — provider patches refuse new requests once recorded
-  usage reaches a configured cap, including sync and async clients. Use
-  `budget.check()` before your own provider call and `budget.consume(...)`
-  after its response. The check does not charge usage or reserve concurrent
-  capacity. A response can exceed the remaining token/cost allowance; streaming
-  totals are not yet tracked by the patches.
-- **Framework hooks** — LangChain, LangGraph, CrewAI (optional extras)
-
-## Local by default
-
-- No API key required for local proof
-- No network unless you configure `HttpSink`
-- MIT licensed
-
-The SDK is the free local proof path. Start local. Add hosted ingest later only if you want retained history, alerts, team visibility, spend trends, hosted decision history, or dashboard-managed remote kill signals. Local guards remain authoritative. `HttpSink` mirrors trace and decision events; it does not execute remote kill signals by itself.
-
-## Integrations
-
-OpenAI · Anthropic · LangChain · LangGraph · CrewAI · raw agent loops
-
-```bash
-pip install "agentguard47[langchain]"   # optional extras as needed
+```mermaid
+flowchart TD
+    accTitle: AgentGuard operation checks
+    accDescr: Check a limit before an operation, then record usage.
+    A[Instrumented operation] --> B{Guard check}
+    B -->|Limit reached| C[Raise exception]
+    B -->|Allowed| D[Run operation]
+    D --> E[Record usage and trace]
+    E --> A
 ```
 
-## Security
+Text equivalent: check before an operation, run it if allowed, then record
+usage. A guard exception returns control to your application's error handler.
 
-The base install declares zero runtime dependencies. `pip install agentguard47` pulls nothing, so a default install adds no third-party exposure.
+| Guard | Checks | Raises |
+| --- | --- | --- |
+| `BudgetGuard` | Recorded calls, tokens, or estimated cost | `BudgetExceeded` |
+| `LoopGuard` | Repeated tool calls | `LoopDetected` |
+| `FuzzyLoopGuard` | Tool frequency and alternating patterns | `LoopDetected` |
+| `RetryGuard` | Retries per tool | `RetryLimitExceeded` |
+| `TimeoutGuard` | Elapsed time when checked | `TimeoutExceeded` |
+| `RateLimitGuard` | Calls within a sliding minute | `BudgetExceeded` |
+| `X402SpendGuard` | Payment amounts before the payment callback | `BudgetExceeded` |
 
-Extras install third-party packages and need a separate audit. The LangChain and LangGraph extras now require Python 3.10+ and raise their minimum versions to the tested September 2026 releases. OpenTelemetry requires 1.44.0 or newer. The base SDK remains compatible with Python 3.9+.
+For task budgets, use `BudgetGuard.goal(...)`. For signatures and defaults,
+read the [guard source](sdk/agentguard/guards.py) and
+[public exports](sdk/agentguard/__init__.py).
 
-The optional `[crewai]` extra requires CrewAI 1.15.21 or newer. Its current dependency tree still installs ChromaDB 1.1.1, with four distinct unresolved advisories: CVE-2026-45829, CVE-2026-45830, CVE-2026-45831, and CVE-2026-45833. The audit database provides no fixed version. Avoid this extra unless you have reviewed that upstream exposure. Installing AgentGuard alone does not install ChromaDB or start a server. See [the upstream advisory](https://osv.dev/vulnerability/PYSEC-2026-311) and [the release audit](proof/audit-20260912/README.md).
+## Limits and security
 
-`HttpSink` validates the address it actually connects to, retains TLS hostname verification, and refuses cross-origin redirects. It connects directly and does not use environment proxy settings. A local guard stops instrumented work in your Python process; it does not cancel an agent loop running on a provider's server. Cost estimates are not invoices; supply provider-reported cost or use strict cost resolution when an estimate is insufficient.
+- Guards cover operations you instrument. Installing the package does not
+  intercept every action in Cursor, Claude Code, or another agent.
+- A guard is not a sandbox or permission system. A permitted operation can
+  still be destructive.
+- Timeout checks do not interrupt an already blocked function or cancel an
+  agent running on a provider's server.
+- Cost estimates are not invoices. Supply reported cost or use strict cost
+  resolution when an estimate is insufficient.
+- The base SDK uses the standard library. Optional framework extras install
+  third-party dependencies and need their own security review.
+- Trace content can contain application data. Review it before sharing or
+  configuring a remote sink.
 
-## Docs
+See [security reporting](SECURITY.md), the
+[dated dependency audit](proof/audit-20260912/README.md), and
+[release notes](CHANGELOG.md). Audit results describe their recorded date,
+not a permanent clean bill of health.
 
-- [Getting started guide](docs/guides/getting-started.md)
-- [Examples](examples/)
-- [MCP server](mcp-server/) — `npx -y @agentguard47/mcp-server`
+## Local traces and optional hosted ingest
 
-## Links
+The SDK is the free local proof path. Start local. Add hosted ingest only
+when you need retained history, alerts, team visibility, spend trends,
+hosted decision history, or dashboard-managed remote kill signals.
 
-- PyPI: https://pypi.org/project/agentguard47/
-- Issues: https://github.com/bmdhodl/agent47/issues
-- AgentGuard on the web (hosted history, alerts, and MCP visibility for Claude Code, Cursor, and Codex): https://bmdpat.com/tools/agentguard?utm_source=agentguard47&utm_medium=readme&utm_campaign=touchpoints
+Local guards remain authoritative. `HttpSink` mirrors trace and decision events;
+it does not execute remote kill signals by itself. See the
+[dashboard contract](docs/guides/dashboard-contract.md) before configuring it.
 
-The hosted page is an optional next step, not a requirement. The SDK stays free, local, and MIT, and the local guards stay authoritative. Nothing in this package phones home. The only network egress is a sink or exporter you configure yourself, such as `HttpSink` or an OpenTelemetry exporter.
+Local use has no hosted event quota, retention period, or API-key allocation.
+Network egress requires an integration you configure, such as `HttpSink` or
+an OpenTelemetry exporter.
 
----
+Nothing in the local SDK phones home. The
+[AgentGuard website](https://bmdpat.com/tools/agentguard?utm_source=agentguard47&utm_medium=readme&utm_campaign=touchpoints)
+describes the optional hosted service.
 
-MIT · Built for people who ship agents and hate surprise bills.
+## Documentation
+
+| You want to | Start here |
+| --- | --- |
+| Install and trace a first run | [Getting started](docs/guides/getting-started.md) |
+| Find guides and source references | [Documentation index](docs/README.md) |
+| Try a runnable example | [Examples](examples/) |
+| Connect LangChain, LangGraph, or CrewAI | [Integration guides](docs/integrations/) |
+| Inspect hosted data through MCP | [Read-only TypeScript MCP server](mcp-server/) |
+| Use local budget tools through MCP | [Python budget MCP server](agentguard-mcp/) |
+| Navigate with an AI assistant | [AI documentation index](llms.txt) |
+| Contribute a fix | [Contributing](CONTRIBUTING.md) |
+| Check what changed | [Changelog](CHANGELOG.md) |
+
+## Help and maintenance
+
+Maintained by [Patrick Hughes](https://github.com/bmdhodl).
+[Report a bug](https://github.com/bmdhodl/agent47/issues) with the package
+version, a minimal reproduction, and the expected result. Report vulnerabilities
+through [SECURITY.md](SECURITY.md).
+
+The source metadata defines the branch version. The PyPI badge links to the
+published version. Documentation examples and local links are tested in CI.
+The PyPI README is generated from this README and the changelog.
+
+[MIT license](LICENSE).

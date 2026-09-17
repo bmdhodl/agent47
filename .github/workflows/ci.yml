@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - "**/*.md"
-      - "docs/**"
       - "inbox/**"
       - "memory/**"
       - "ops/**"
@@ -13,8 +11,6 @@ on:
   pull_request:
     branches: [main]
     paths-ignore:
-      - "**/*.md"
-      - "docs/**"
       - "inbox/**"
       - "memory/**"
       - "ops/**"

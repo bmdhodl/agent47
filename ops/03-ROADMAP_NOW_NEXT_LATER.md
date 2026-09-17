@@ -7,9 +7,9 @@ they directly strengthen coding-agent adoption.
 
 ## Current Focus Notes
 
-- 1.3.1 candidate fixes exhausted-budget retry dispatch in all four provider
-  patches. This tightens the existing runtime-enforcement promise without
-  adding another guard or expanding the SDK's product scope.
+- Provider patches reject exhausted recorded budgets before dispatch.
+  See [release state](../memory/state.md) for publication evidence and
+  [package metadata](../sdk/pyproject.toml) for the branch version.
 
 - September security pass: repair budget and transport boundaries, test real framework dispatch, then publish a verified SDK release.
 
@@ -17,10 +17,8 @@ they directly strengthen coding-agent adoption.
   downloads from scheduled checkout clones. Clone counts can be self-inflicted
   by internal CI workflows; downloads are a directional activation signal, not
   proof of distinct users or production adoption.
-- Current public SDK release is `v1.3.0`, published to PyPI on 2026-09-12.
-  A fresh public install passed the offline CLI checks and live hosted trace
-  readback. The release includes the previously unpublished 1.2.14 work.
-  Evidence: `proof/v1.3.0/`. The optional CrewAI advisory remains tracked in #644.
+- Published release status lives in [release state](../memory/state.md).
+  The optional CrewAI advisory remains tracked in #644.
 - Official MCP Registry listing is live as `io.github.bmdhodl/agentguard47` at
   `0.2.2` with `isLatest: true`; the older `0.2.1` result is historical
   metadata, not a current release blocker.
