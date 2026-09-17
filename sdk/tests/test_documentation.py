@@ -42,6 +42,33 @@ def test_valid_heading_and_code_example_link_are_accepted(tmp_path):
                     "```python\n# [example](not-a-real-link)\n```\n", encoding="utf-8")
     assert checker.check_file(path, root=tmp_path) == []
 
+@pytest.mark.parametrize("link", ['[guide](missing.md "Guide")',
+                                  "![image](missing.png 'Diagram')"])
+def test_link_titles_do_not_hide_missing_targets(tmp_path, link):
+    # REGRESSION: a Markdown title made the whole link invisible to the checker.
+    path = tmp_path / "README.md"
+    path.write_text("# Test\n" + link, encoding="utf-8")
+    assert checker.check_file(path, root=tmp_path)
+
+
+@pytest.mark.parametrize("fence", ["~~~~", "````", "~~~", "   ```"])
+def test_all_fenced_examples_are_ignored(tmp_path, fence):
+    # REGRESSION: valid alternative fences exposed example links to validation.
+    path = tmp_path / "README.md"
+    path.write_text("# Test\n" + fence + "text\n[example](missing.md)\n"
+                    + fence + "\n", encoding="utf-8")
+    assert checker.check_file(path, root=tmp_path) == []
+
+
+def test_missing_entry_points_fail(tmp_path):
+    # REGRESSION: deleting a curated document silently skipped its checks.
+    assert checker.check_documents(tmp_path, "agent47")
+
+
+def test_current_entry_points_exist_and_pass():
+    assert checker.check_documents(ROOT, "agent47") == []
+
+
 def test_readme_budget_example_stops_before_third_call(capsys):
     import re
     # REGRESSION: profile docs used a nonexistent import; execute the real example.

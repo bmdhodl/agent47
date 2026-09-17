@@ -11,10 +11,24 @@ import re
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = ("README.md", "docs/README.md", "llms.txt",
-        "docs/guides/getting-started.md", "docs/quickstart-python.md")
-LINK = re.compile(r"(!?)\[([^\]\n]*)\]\(([^\s)]+)\)")
-FENCE = re.compile(r"^\x60{3}[^\n]*\n.*?^\x60{3}\s*$", re.M | re.S)
+DOCS = ("README.md", "docs/README.md", "llms.txt", "docs/guides/getting-started.md")
+LINK = re.compile(r"""(!?)\[([^\]\n]*)\]\(([^\s)]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)""")
+
+
+def strip_fences(text):
+    lines = []
+    fence = None
+    for line in text.splitlines():
+        if fence is not None:
+            if re.fullmatch(r" {0,3}" + re.escape(fence[0]) + "{" + str(len(fence)) + r",}\s*", line):
+                fence = None
+            continue
+        opening = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+        if opening:
+            fence = opening.group(1)
+        else:
+            lines.append(line)
+    return "\n".join(lines)
 
 
 def headings(text):
@@ -30,13 +44,13 @@ def headings(text):
 
 def check_file(path, root=ROOT, repository=None):
     errors = []
-    text = FENCE.sub("", path.read_text(encoding="utf-8"))
+    text = strip_fences(path.read_text(encoding="utf-8"))
     if not text.startswith("# "):
         errors.append(f"{path.name}: missing descriptive H1")
     for image, label, target in LINK.findall(text):
         if image and not label.strip():
             errors.append(f"{path.name}: image has no alt text")
-        url = urlsplit(target)
+        url = urlsplit(target.strip("<>"))
         if url.scheme or url.netloc:
             prefix = f"/bmdhodl/{repository}/" if repository else None
             if url.netloc == "github.com" and prefix and url.path.startswith(prefix):
@@ -55,9 +69,20 @@ def check_file(path, root=ROOT, repository=None):
         if not target_path.exists():
             errors.append(f"{path.name}: missing link target {target}")
         elif url.fragment and target_path.is_file() and target_path.suffix == ".md":
-            anchors = headings(FENCE.sub("", target_path.read_text(encoding="utf-8")))
+            anchors = headings(strip_fences(target_path.read_text(encoding="utf-8")))
             if unquote(url.fragment) not in anchors:
                 errors.append(f"{path.name}: missing heading {target}")
+    return errors
+
+
+def check_documents(root, repository):
+    errors = []
+    for name in DOCS:
+        path = root / name
+        if not path.is_file():
+            errors.append(f"Missing documentation entry point: {name}")
+        else:
+            errors.extend(check_file(path, root=root, repository=repository))
     return errors
 
 
@@ -65,11 +90,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", required=True)
     args = parser.parse_args()
-    errors = []
-    for name in DOCS:
-        path = ROOT / name
-        if path.exists():
-            errors.extend(check_file(path, repository=args.repository))
+    errors = check_documents(ROOT, args.repository)
     for error in errors:
         print(error)
     if not errors:
