@@ -85,6 +85,8 @@ for setup, traces, and framework starters.
 
 ```mermaid
 flowchart TD
+    accTitle: AgentGuard operation checks
+    accDescr: Check a limit before an operation, then record usage.
     A[Instrumented operation] --> B{Guard check}
     B -->|Limit reached| C[Raise exception]
     B -->|Allowed| D[Run operation]
