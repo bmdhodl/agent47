@@ -3,7 +3,7 @@ platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
 rootdir: /workspace/sdk
 configfile: pyproject.toml
 plugins: cov-7.1.0, showwork-0.6.2, anyio-4.15.1
-collected 1020 items
+collected 1021 items
 
 sdk/tests/test_architecture.py .........                                 [  0%]
 sdk/tests/test_async_patches.py ..........                               [  1%]
@@ -23,7 +23,7 @@ sdk/tests/test_decision_trace.py .............                           [ 21%]
 sdk/tests/test_demo.py ...                                               [ 22%]
 sdk/tests/test_doctor.py ..........                                      [ 23%]
 sdk/tests/test_documentation.py ................                         [ 24%]
-sdk/tests/test_dx.py .............................................       [ 29%]
+sdk/tests/test_dx.py .............................................       [ 28%]
 sdk/tests/test_e2e_pipeline.py ....                                      [ 29%]
 sdk/tests/test_evaluation.py ............................                [ 32%]
 sdk/tests/test_example_starters.py ...........                           [ 33%]
@@ -41,7 +41,7 @@ sdk/tests/test_init.py ................................................. [ 63%]
 .                                                                        [ 63%]
 sdk/tests/test_instrument.py ............                                [ 64%]
 sdk/tests/test_instrument_patch.py ..........                            [ 65%]
-sdk/tests/test_instrument_stream.py ...........                          [ 66%]
+sdk/tests/test_instrument_stream.py ............                         [ 66%]
 sdk/tests/test_integration_cost_guardrail.py .                           [ 66%]
 sdk/tests/test_integration_dashboard_script.py ...........               [ 67%]
 sdk/tests/test_langchain_integration.py ..................               [ 69%]
@@ -94,7 +94,7 @@ sdk/agentguard/first_run.py                   55      0   100%
 sdk/agentguard/goal.py                       189     13    93%
 sdk/agentguard/guards.py                     337      4    99%
 sdk/agentguard/instrument.py                 325     43    87%
-sdk/agentguard/instrument_stream.py          297     75    75%
+sdk/agentguard/instrument_stream.py          297     72    76%
 sdk/agentguard/integrations/__init__.py        4      0   100%
 sdk/agentguard/integrations/crewai.py         79      0   100%
 sdk/agentguard/integrations/langchain.py     228     61    73%
@@ -118,6 +118,6 @@ sdk/agentguard/tracing.py                    228     12    95%
 sdk/agentguard/usage.py                       96     16    83%
 sdk/agentguard/x402.py                       120      4    97%
 --------------------------------------------------------------
-TOTAL                                       5036    476    91%
-Required test coverage of 80% reached. Total coverage: 90.55%
-======================= 1019 passed, 1 skipped in 13.47s =======================
+TOTAL                                       5036    473    91%
+Required test coverage of 80% reached. Total coverage: 90.61%
+======================= 1020 passed, 1 skipped in 12.84s =======================

@@ -185,6 +185,27 @@ def test_empty_stream_counts_one_call_zero_tokens():
     assert guard.state.cost_used == 0.0
 
 
+def test_aborted_stream_counts_one_call_zero_tokens():
+    class Boom:
+        usage = None
+
+        def __iter__(self):
+            yield SimpleNamespace(usage=None)
+            raise RuntimeError("abort")
+
+    def create(**kwargs):
+        return Boom()
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    guard = BudgetGuard(max_tokens=10_000, max_calls=10)
+    instrument._patch_openai_instance(client, Tracer(sink=Sink()), guard)
+    with pytest.raises(RuntimeError, match="abort"):
+        list(client.chat.completions.create(model="gpt-4o-mini", stream=True))
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 0
+    assert guard.state.cost_used == 0.0
+
+
 def test_nonstream_openai_still_bills_once():
     def create(**kwargs):
         return SimpleNamespace(
