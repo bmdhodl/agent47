@@ -8,6 +8,11 @@
   `messages.stream()` is included. Chunks without usage are ignored.
 - OpenAI streaming requests set `stream_options.include_usage=True` when the
   caller did not set `include_usage`. An explicit `False` is left unchanged.
+- Anthropic `create(stream=True)` events split input usage on `message_start`
+  and output usage on `message_delta`; the wrapper now merges those fields
+  before billing. Stream wrappers are iterators (`next` / `anext`). A failed
+  stream closes the trace span with the exception so `assert_no_errors()`
+  sees it.
 - A stream that ends without usage still counts as one dispatched call with
   zero tokens and zero cost. Exhausted budgets still refuse the request before
   dispatch.

@@ -41,6 +41,66 @@ def chunk_usage(chunk: Any) -> Any:
     return usage
 
 
+def _usage_mapping(usage: Any) -> Dict[str, Any]:
+    if usage is None:
+        return {}
+    if isinstance(usage, dict):
+        return {key: value for key, value in usage.items() if not str(key).startswith("_")}
+    mapping: Dict[str, Any] = {}
+    source = getattr(usage, "__dict__", None)
+    if isinstance(source, dict):
+        mapping.update(
+            {key: value for key, value in source.items() if not str(key).startswith("_")}
+        )
+    for name in (
+        "input_tokens",
+        "output_tokens",
+        "prompt_tokens",
+        "completion_tokens",
+        "total_tokens",
+        "cache_read_input_tokens",
+        "cache_creation_input_tokens",
+        "cached_input_tokens",
+        "cache_write_input_tokens",
+    ):
+        if name not in mapping and hasattr(usage, name):
+            mapping[name] = getattr(usage, name)
+    return mapping
+
+
+def merge_usage(current: Any, incoming: Any) -> Any:
+    """Keep complementary stream usage fields instead of replacing the payload."""
+    if incoming is None:
+        return current
+    if current is None:
+        return incoming
+    merged = _usage_mapping(current)
+    extra = _usage_mapping(incoming)
+    if not extra:
+        return current
+    for key, value in extra.items():
+        if value is None:
+            continue
+        previous = merged.get(key)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            if isinstance(previous, (int, float)) and not isinstance(previous, bool):
+                merged[key] = max(int(previous), int(value))
+            else:
+                merged[key] = int(value)
+            continue
+        if previous in (None, 0, ""):
+            merged[key] = value
+    input_tokens = int(merged.get("input_tokens") or merged.get("prompt_tokens") or 0)
+    output_tokens = int(merged.get("output_tokens") or merged.get("completion_tokens") or 0)
+    cache_tokens = int(merged.get("cache_read_input_tokens") or 0) + int(
+        merged.get("cache_creation_input_tokens") or 0
+    )
+    parts = input_tokens + output_tokens + cache_tokens
+    if parts > int(merged.get("total_tokens") or 0):
+        merged["total_tokens"] = parts
+    return merged
+
+
 class CountedStream:
     """Proxy that records final usage once, then closes the held trace span."""
 
@@ -65,6 +125,8 @@ class CountedStream:
         self._response: Any = None
         self._done = False
         self._opened = factory is None
+        self._sync_iter: Any = None
+        self._async_iter: Any = None
         self._lock = threading.Lock()
 
     def _source(self) -> Any:
@@ -108,9 +170,10 @@ class CountedStream:
 
     def _capture(self, chunk: Any) -> None:
         usage = chunk_usage(chunk)
-        if usage is not None:
-            self._usage = usage
-            self._response = chunk
+        if usage is None:
+            return
+        self._usage = merge_usage(self._usage, usage)
+        self._response = chunk
 
     def _harvest(self) -> None:
         if self._usage is not None:
@@ -140,7 +203,26 @@ class CountedStream:
             return
         self._capture(result)
 
-    def _finish(self) -> None:
+    def _close_span(self, exc_info: Any = None) -> None:
+        if self._async_span or self._span_cm is None:
+            return
+        cm, self._span_cm = self._span_cm, None
+        if exc_info is None:
+            cm.__exit__(None, None, None)
+        else:
+            cm.__exit__(*exc_info)
+
+    async def _aclose_span(self, exc_info: Any = None) -> None:
+        if self._span_cm is None:
+            return
+        cm, self._span_cm = self._span_cm, None
+        info = (None, None, None) if exc_info is None else exc_info
+        if self._async_span:
+            await cm.__aexit__(*info)
+        else:
+            cm.__exit__(*info)
+
+    def _finish(self, exc_info: Any = None) -> None:
         if not self._opened:
             return
         with self._lock:
@@ -151,11 +233,9 @@ class CountedStream:
         try:
             self._on_final(self._usage, self._response)
         finally:
-            if not self._async_span and self._span_cm is not None:
-                cm, self._span_cm = self._span_cm, None
-                cm.__exit__(None, None, None)
+            self._close_span(exc_info)
 
-    async def _afinish(self) -> None:
+    async def _afinish(self, exc_info: Any = None) -> None:
         if not self._opened:
             return
         first = False
@@ -168,40 +248,51 @@ class CountedStream:
                 await self._aharvest()
                 self._on_final(self._usage, self._response)
         finally:
-            if self._span_cm is not None:
-                cm, self._span_cm = self._span_cm, None
-                if self._async_span:
-                    await cm.__aexit__(None, None, None)
-                else:
-                    cm.__exit__(None, None, None)
+            await self._aclose_span(exc_info)
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._source(), name)
 
-    def __iter__(self) -> Any:
+    def __iter__(self) -> "CountedStream":
         self._open_sync()
+        if self._sync_iter is None:
+            self._sync_iter = iter(self._source())
+        return self
+
+    def __next__(self) -> Any:
+        iterator = self.__iter__()
         try:
-            for chunk in self._source():
-                self._capture(chunk)
-                yield chunk
-        except BaseException:
+            chunk = next(iterator._sync_iter)
+        except StopIteration:
             self._finish()
             raise
-        self._finish()
-
-    def __aiter__(self) -> Any:
-        return self._async_chunks()
-
-    async def _async_chunks(self) -> Any:
-        await self._open_async()
-        try:
-            async for chunk in self._source():
-                self._capture(chunk)
-                yield chunk
         except BaseException:
+            self._finish(sys.exc_info())
+            raise
+        self._capture(chunk)
+        return chunk
+
+    def __aiter__(self) -> "CountedStream":
+        return self
+
+    async def __anext__(self) -> Any:
+        await self._open_async()
+        if self._async_iter is None:
+            source = self._source()
+            iterator = source.__aiter__()
+            if inspect.isawaitable(iterator):
+                iterator = await iterator
+            self._async_iter = iterator
+        try:
+            chunk = await self._async_iter.__anext__()
+        except StopAsyncIteration:
             await self._afinish()
             raise
-        await self._afinish()
+        except BaseException:
+            await self._afinish(sys.exc_info())
+            raise
+        self._capture(chunk)
+        return chunk
 
     def __enter__(self) -> "CountedStream":
         self._open_sync()
@@ -219,7 +310,7 @@ class CountedStream:
                 return exit_fn(exc_type, exc, tb)
             return None
         finally:
-            self._finish()
+            self._finish(None if exc_type is None else (exc_type, exc, tb))
 
     async def __aenter__(self) -> "CountedStream":
         await self._open_async()
@@ -242,7 +333,7 @@ class CountedStream:
                 return result
             return None
         finally:
-            await self._afinish()
+            await self._afinish(None if exc_type is None else (exc_type, exc, tb))
 
     def get_final_message(self, *args: Any, **kwargs: Any) -> Any:
         self._open_sync()
@@ -265,7 +356,7 @@ class CountedStream:
         try:
             result = closer() if callable(closer) else None
         except BaseException:
-            self._finish()
+            self._finish(sys.exc_info())
             raise
         if inspect.isawaitable(result):
             return self._await_close(result)
@@ -279,8 +370,10 @@ class CountedStream:
                 result = closer()
                 if inspect.isawaitable(result):
                     await result
-        finally:
-            await self._afinish()
+        except BaseException:
+            await self._afinish(sys.exc_info())
+            raise
+        await self._afinish()
 
     async def _await_close(self, result: Any) -> Any:
         try:
@@ -305,7 +398,12 @@ def emit_stream_final(
         resolved_usage = getattr(response, "usage", None)
     if resolved_usage is not None:
         emit_result(
-            ctx, budget_guard, model, provider, resolved_usage, response=response
+            ctx,
+            budget_guard,
+            model,
+            provider,
+            resolved_usage,
+            response={"usage": resolved_usage},
         )
         return
     ctx.event(

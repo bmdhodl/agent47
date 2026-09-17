@@ -27,13 +27,14 @@ the provider library.
   1.3.1 recorded 0 tokens. 1.3.2 recorded 200 tokens and one consume.
   See previous-demo.json and candidate-demo.json. Command:
   `PYTHONPATH=sdk python examples/streaming_usage_demo.py`.
-- Full suite: 1020 passed, one optional skip, 90.61% coverage. Command:
+- Full suite: 1024 passed, one optional skip, 90.48% coverage. Command:
   `PYTHONPATH=sdk python -m pytest sdk/tests/ -q --tb=short --cov=agentguard --cov-report=term --cov-fail-under=80`.
   Exit 0. See pytest.txt. lint.txt is captured with `--color never` so the
   file is plain text (no ANSI).
 - Stream tests cover OpenAI/Anthropic sync and async create(stream=True),
   Anthropic messages.stream(), include_usage injection, empty and aborted
-  streams, and exhausted-budget preflight. See
+  streams, split Anthropic usage merge, iterator next/anext, span errors on
+  failed streams, and exhausted-budget preflight. See
   sdk/tests/test_instrument_stream.py.
 - Pinned Ruff and Bandit pass. Release guard passes. MCP npm test: 10
   passed. See lint.txt, bandit.json, release-guard.txt, mcp-test.txt.

@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 
 from agentguard import AsyncTracer, BudgetExceeded, BudgetGuard, Tracer, instrument
-from agentguard.instrument_stream import ensure_openai_stream_usage
+from agentguard.instrument_stream import ensure_openai_stream_usage, merge_usage
 
 
 class Sink:
@@ -130,6 +130,15 @@ def test_ensure_openai_stream_usage_injects_and_respects_false():
     assert "stream_options" not in unchanged
 
 
+def test_merge_usage_keeps_input_from_start_and_output_from_delta():
+    start = SimpleNamespace(input_tokens=80, output_tokens=0)
+    delta = SimpleNamespace(output_tokens=40)
+    merged = merge_usage(start, delta)
+    assert merged["input_tokens"] == 80
+    assert merged["output_tokens"] == 40
+    assert merged["total_tokens"] == 120
+
+
 def test_openai_stream_bills_final_usage_once():
     sent = []
     chunks = _openai_chunks()
@@ -198,12 +207,16 @@ def test_aborted_stream_counts_one_call_zero_tokens():
 
     client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
     guard = BudgetGuard(max_tokens=10_000, max_calls=10)
-    instrument._patch_openai_instance(client, Tracer(sink=Sink()), guard)
+    sink = Sink()
+    instrument._patch_openai_instance(client, Tracer(sink=sink), guard)
     with pytest.raises(RuntimeError, match="abort"):
         list(client.chat.completions.create(model="gpt-4o-mini", stream=True))
     assert guard.state.calls_used == 1
     assert guard.state.tokens_used == 0
     assert guard.state.cost_used == 0.0
+    ends = [e for e in sink.events if e.get("phase") == "end"]
+    assert ends
+    assert ends[-1].get("error", {}).get("type") == "RuntimeError"
 
 
 def test_nonstream_openai_still_bills_once():
@@ -255,7 +268,44 @@ def test_anthropic_create_stream_bills_final_chunk_once():
     assert guard.state.tokens_used == 120
 
 
-def test_anthropic_messages_stream_bills_get_final_message_once():
+def test_anthropic_create_stream_merges_start_and_delta_usage():
+    def create(**kwargs):
+        return SyncStream([
+            SimpleNamespace(
+                type="message_start",
+                usage=None,
+                message=SimpleNamespace(
+                    usage=SimpleNamespace(input_tokens=80, output_tokens=0)
+                ),
+            ),
+            SimpleNamespace(
+                type="message_delta",
+                usage=SimpleNamespace(output_tokens=40),
+            ),
+        ])
+
+    client = SimpleNamespace(messages=SimpleNamespace(create=create))
+    guard = BudgetGuard(max_tokens=10_000, max_calls=10)
+    instrument._patch_anthropic_instance(client, Tracer(sink=Sink()), guard)
+    list(client.messages.create(model="claude-sonnet-4-20250514", stream=True))
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 120
+
+
+def test_openai_stream_supports_next():
+    def create(**kwargs):
+        return SyncStream(_openai_chunks())
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    guard = BudgetGuard(max_tokens=10_000, max_calls=10)
+    instrument._patch_openai_instance(client, Tracer(sink=Sink()), guard)
+    stream = client.chat.completions.create(model="gpt-4o-mini", stream=True)
+    first = next(stream)
+    rest = list(stream)
+    assert first.usage is None
+    assert len(rest) == 2
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 200
     message = _anthropic_message()
 
     def stream(**kwargs):
@@ -295,6 +345,29 @@ def test_async_openai_stream_bills_once():
     assert guard.state.tokens_used == 200
 
 
+def test_async_openai_stream_supports_anext():
+    async def create(**kwargs):
+        return AsyncStream(_openai_chunks())
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    guard = BudgetGuard(max_tokens=10_000, max_calls=10)
+
+    async def body():
+        instrument._patch_openai_async_instance(client, AsyncTracer(sink=Sink()), guard)
+        stream = await client.chat.completions.create(model="gpt-4o-mini", stream=True)
+        first = await stream.__anext__()
+        rest = []
+        async for chunk in stream:
+            rest.append(chunk)
+        return first, rest
+
+    first, rest = asyncio.run(body())
+    assert first.usage is None
+    assert len(rest) == 2
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 200
+
+
 def test_async_anthropic_stream_manager_bills_once():
     message = _anthropic_message()
 
@@ -324,6 +397,36 @@ def test_async_anthropic_create_stream_bills_once():
         return AsyncStream([
             SimpleNamespace(type="content", usage=None),
             SimpleNamespace(type="message_delta", usage=usage),
+        ])
+
+    client = SimpleNamespace(messages=SimpleNamespace(create=create))
+    guard = BudgetGuard(max_tokens=10_000, max_calls=10)
+
+    async def body():
+        instrument._patch_anthropic_async_instance(client, AsyncTracer(sink=Sink()), guard)
+        stream = await client.messages.create(model="claude-sonnet-4-20250514", stream=True)
+        async for _chunk in stream:
+            pass
+
+    asyncio.run(body())
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 20
+
+
+def test_async_anthropic_create_stream_merges_start_and_delta_usage():
+    async def create(**kwargs):
+        return AsyncStream([
+            SimpleNamespace(
+                type="message_start",
+                usage=None,
+                message=SimpleNamespace(
+                    usage=SimpleNamespace(input_tokens=11, output_tokens=0)
+                ),
+            ),
+            SimpleNamespace(
+                type="message_delta",
+                usage=SimpleNamespace(output_tokens=9),
+            ),
         ])
 
     client = SimpleNamespace(messages=SimpleNamespace(create=create))

@@ -3,7 +3,7 @@ platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
 rootdir: /workspace/sdk
 configfile: pyproject.toml
 plugins: cov-7.1.0, showwork-0.6.2, anyio-4.15.1
-collected 1021 items
+collected 1025 items
 
 sdk/tests/test_architecture.py .........                                 [  0%]
 sdk/tests/test_async_patches.py ..........                               [  1%]
@@ -20,8 +20,8 @@ sdk/tests/test_coverage_gaps.py ........................................ [ 18%]
 sdk/tests/test_crewai_integration.py ..........                          [ 20%]
 sdk/tests/test_dashboard_handoff_docs.py ..                              [ 20%]
 sdk/tests/test_decision_trace.py .............                           [ 21%]
-sdk/tests/test_demo.py ...                                               [ 22%]
-sdk/tests/test_doctor.py ..........                                      [ 23%]
+sdk/tests/test_demo.py ...                                               [ 21%]
+sdk/tests/test_doctor.py ..........                                      [ 22%]
 sdk/tests/test_documentation.py ................                         [ 24%]
 sdk/tests/test_dx.py .............................................       [ 28%]
 sdk/tests/test_e2e_pipeline.py ....                                      [ 29%]
@@ -30,27 +30,27 @@ sdk/tests/test_example_starters.py ...........                           [ 33%]
 sdk/tests/test_export.py ...........                                     [ 34%]
 sdk/tests/test_exports.py ...............                                [ 35%]
 sdk/tests/test_first_run.py .........................                    [ 38%]
-sdk/tests/test_goal.py ..............................                    [ 41%]
-sdk/tests/test_guard_persistence.py ..........                           [ 42%]
+sdk/tests/test_goal.py ..............................                    [ 40%]
+sdk/tests/test_guard_persistence.py ..........                           [ 41%]
 sdk/tests/test_guards.py ............................................... [ 46%]
 .................................................                        [ 51%]
 sdk/tests/test_hardening.py ...........................................  [ 55%]
-sdk/tests/test_hosted_ingest_contract.py ....                            [ 56%]
+sdk/tests/test_hosted_ingest_contract.py ....                            [ 55%]
 sdk/tests/test_http_sink.py .......................                      [ 58%]
-sdk/tests/test_init.py ................................................. [ 63%]
+sdk/tests/test_init.py ................................................. [ 62%]
 .                                                                        [ 63%]
 sdk/tests/test_instrument.py ............                                [ 64%]
 sdk/tests/test_instrument_patch.py ..........                            [ 65%]
-sdk/tests/test_instrument_stream.py ............                         [ 66%]
+sdk/tests/test_instrument_stream.py ................                     [ 66%]
 sdk/tests/test_integration_cost_guardrail.py .                           [ 66%]
 sdk/tests/test_integration_dashboard_script.py ...........               [ 67%]
 sdk/tests/test_langchain_integration.py ..................               [ 69%]
 sdk/tests/test_langgraph_integration.py ............                     [ 70%]
 sdk/tests/test_local_first_template.py ......                            [ 71%]
 sdk/tests/test_mcp_registry_metadata.py .....                            [ 71%]
-sdk/tests/test_otel_sink.py ............                                 [ 72%]
+sdk/tests/test_otel_sink.py ............                                 [ 73%]
 sdk/tests/test_precision_cost.py .........................               [ 75%]
-sdk/tests/test_production.py ................                            [ 76%]
+sdk/tests/test_production.py ................                            [ 77%]
 sdk/tests/test_pypi_readme_sync.py ....                                  [ 77%]
 sdk/tests/test_quickstart.py ..............                              [ 78%]
 sdk/tests/test_release_audit.py ........................................ [ 82%]
@@ -58,10 +58,10 @@ sdk/tests/test_release_audit.py ........................................ [ 82%]
 sdk/tests/test_release_discussion_category.py .....                      [ 84%]
 sdk/tests/test_repo_config.py ............                               [ 85%]
 sdk/tests/test_reporting.py ........                                     [ 86%]
-sdk/tests/test_review_readiness_guard.py ..............                  [ 87%]
+sdk/tests/test_review_readiness_guard.py ..............                  [ 88%]
 sdk/tests/test_richard_task_budget_scenarios.py ...                      [ 88%]
 sdk/tests/test_savings.py ..............                                 [ 89%]
-sdk/tests/test_schemas.py ........................                       [ 91%]
+sdk/tests/test_schemas.py ........................                       [ 92%]
 sdk/tests/test_sdk_preflight.py ...........                              [ 93%]
 sdk/tests/test_sdk_release_guard.py ..............                       [ 94%]
 sdk/tests/test_skillpack.py ..........                                   [ 95%]
@@ -94,7 +94,7 @@ sdk/agentguard/first_run.py                   55      0   100%
 sdk/agentguard/goal.py                       189     13    93%
 sdk/agentguard/guards.py                     337      4    99%
 sdk/agentguard/instrument.py                 325     43    87%
-sdk/agentguard/instrument_stream.py          297     72    76%
+sdk/agentguard/instrument_stream.py          367     85    77%
 sdk/agentguard/integrations/__init__.py        4      0   100%
 sdk/agentguard/integrations/crewai.py         79      0   100%
 sdk/agentguard/integrations/langchain.py     228     61    73%
@@ -118,6 +118,6 @@ sdk/agentguard/tracing.py                    228     12    95%
 sdk/agentguard/usage.py                       96     16    83%
 sdk/agentguard/x402.py                       120      4    97%
 --------------------------------------------------------------
-TOTAL                                       5036    473    91%
-Required test coverage of 80% reached. Total coverage: 90.61%
-======================= 1020 passed, 1 skipped in 12.84s =======================
+TOTAL                                       5106    486    90%
+Required test coverage of 80% reached. Total coverage: 90.48%
+======================= 1024 passed, 1 skipped in 12.97s =======================
