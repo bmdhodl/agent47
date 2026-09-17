@@ -281,3 +281,5 @@
 - None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.
 
 2026-09-12 | OpenAI GPT-6 auto | Merged #710: restored generated README checks and moved price-age reminders out of deterministic tests. SDK audit and security release in progress.
+
+2026-09-16 | OpenAI GPT-6 auto | Merged #723: tested README budget and trace examples, refreshed the docs and AI indexes, clarified enforcement limits, and enabled existing CI for documentation edits. Decisions: link to source metadata and dated audits instead of copying status numbers. Blockers: none for the GitHub docs; the generated PyPI description ships with the next owner-approved release.
