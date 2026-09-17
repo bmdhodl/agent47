@@ -123,6 +123,11 @@ read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.1/sdk/agent
   resolution when an estimate is insufficient.
 - The base SDK uses the standard library. Optional framework extras install
   third-party dependencies and need their own security review.
+- The optional `[crewai]` extra pulls ChromaDB. The
+  [2026-09-12 audit](https://github.com/bmdhodl/agent47/blob/v1.3.1/proof/audit-20260912/README.md) found four unresolved
+  advisories, including [PYSEC-2026-311 / CVE-2026-45829](https://github.com/advisories/GHSA-f4j7-r4q5-qw2c).
+  Review that exposure before installing the extra. Base SDK installs do not
+  include ChromaDB.
 - Trace content can contain application data. Review it before sharing or
   configuring a remote sink.
 
