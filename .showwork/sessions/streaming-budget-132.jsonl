@@ -1,0 +1,1 @@
+{"event": "session.start", "session": "streaming-budget-132", "ts": "2026-09-17T21:33:51", "agent": "codex", "tree_snapshot": {"count": 605, "sha256": "4a2ba148118eb5f2d827093ed8d24b6931f3c967af18567354b2aea54cf1ce34"}, "verifier_version": "0.6.2", "prev": "87dd130331b6393cdb855d4218abd402fd7acf212838976a95860b289b9e875b"}

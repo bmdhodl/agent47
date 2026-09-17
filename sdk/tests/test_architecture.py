@@ -38,6 +38,7 @@ CORE_MODULES = [
     "export.py",
     "guards.py",
     "instrument.py",
+    "instrument_stream.py",
     "profiles.py",
     "quickstart.py",
     "savings.py",
