@@ -7,7 +7,7 @@ Stop runaway agents with runtime checks in Python.
 [![PyPI version](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python versions](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](https://github.com/bmdhodl/agent47/blob/v1.3.1/LICENSE)
+[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](https://github.com/bmdhodl/agent47/blob/v1.3.2/LICENSE)
 
 AgentGuard checks budgets, repeated tool calls, retries, and elapsed time in
 instrumented Python code. Guards raise exceptions so your application can stop
@@ -76,9 +76,10 @@ patch_openai(tracer, budget_guard=budget)
 ```
 
 The patch checks recorded usage before dispatch and records response usage
-afterward. A response can exceed the remaining cost or token allowance.
-Concurrent requests do not reserve capacity. The patches do not yet track
-streaming totals. See the [getting started guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md)
+afterward, including streamed calls once the final usage arrives. A response
+can exceed the remaining cost or token allowance. Concurrent requests do not
+reserve capacity. OpenAI streams request `include_usage` unless the caller
+already set it. See the [getting started guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md)
 for setup, traces, and framework starters.
 
 ## How enforcement works
@@ -108,8 +109,8 @@ usage. A guard exception returns control to your application's error handler.
 | `X402SpendGuard` | Payment amounts before the payment callback | `BudgetExceeded` |
 
 For task budgets, use `BudgetGuard.goal(...)`. For signatures and defaults,
-read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.1/sdk/agentguard/guards.py) and
-[public exports](https://github.com/bmdhodl/agent47/blob/v1.3.1/sdk/agentguard/__init__.py).
+read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.2/sdk/agentguard/guards.py) and
+[public exports](https://github.com/bmdhodl/agent47/blob/v1.3.2/sdk/agentguard/__init__.py).
 
 ## Limits and security
 
@@ -126,9 +127,9 @@ read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.1/sdk/agent
 - Trace content can contain application data. Review it before sharing or
   configuring a remote sink.
 
-See [security reporting](https://github.com/bmdhodl/agent47/blob/v1.3.1/SECURITY.md), the
-[dated dependency audit](https://github.com/bmdhodl/agent47/blob/v1.3.1/proof/audit-20260912/README.md), and
-[release notes](https://github.com/bmdhodl/agent47/blob/v1.3.1/CHANGELOG.md). Audit results describe their recorded date,
+See [security reporting](https://github.com/bmdhodl/agent47/blob/v1.3.2/SECURITY.md), the
+[dated dependency audit](https://github.com/bmdhodl/agent47/blob/v1.3.2/proof/audit-20260912/README.md), and
+[release notes](https://github.com/bmdhodl/agent47/blob/v1.3.2/CHANGELOG.md). Audit results describe their recorded date,
 not a permanent clean bill of health.
 
 ## Local traces and optional hosted ingest
@@ -155,44 +156,45 @@ describes the optional hosted service.
 | --- | --- |
 | Install and trace a first run | [Getting started](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md) |
 | Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/main/docs/README.md) |
-| Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.1/examples) |
-| Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v1.3.1/docs/integrations) |
-| Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.1/mcp-server) |
-| Use local budget tools through MCP | [Python budget MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.1/agentguard-mcp) |
+| Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.2/examples) |
+| Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v1.3.2/docs/integrations) |
+| Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.2/mcp-server) |
+| Use local budget tools through MCP | [Python budget MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.2/agentguard-mcp) |
 | Navigate with an AI assistant | [AI documentation index](https://github.com/bmdhodl/agent47/blob/main/llms.txt) |
-| Contribute a fix | [Contributing](https://github.com/bmdhodl/agent47/blob/v1.3.1/CONTRIBUTING.md) |
-| Check what changed | [Changelog](https://github.com/bmdhodl/agent47/blob/v1.3.1/CHANGELOG.md) |
+| Contribute a fix | [Contributing](https://github.com/bmdhodl/agent47/blob/v1.3.2/CONTRIBUTING.md) |
+| Check what changed | [Changelog](https://github.com/bmdhodl/agent47/blob/v1.3.2/CHANGELOG.md) |
 
 ## Help and maintenance
 
 Maintained by [Patrick Hughes](https://github.com/bmdhodl).
 [Report a bug](https://github.com/bmdhodl/agent47/issues) with the package
 version, a minimal reproduction, and the expected result. Report vulnerabilities
-through [SECURITY.md](https://github.com/bmdhodl/agent47/blob/v1.3.1/SECURITY.md).
+through [SECURITY.md](https://github.com/bmdhodl/agent47/blob/v1.3.2/SECURITY.md).
 
 The source metadata defines the branch version. The PyPI badge links to the
 published version. Documentation examples and local links are tested in CI.
 The PyPI README is generated from this README and the changelog.
 
-[MIT license](https://github.com/bmdhodl/agent47/blob/v1.3.1/LICENSE).
+[MIT license](https://github.com/bmdhodl/agent47/blob/v1.3.2/LICENSE).
 
-## Latest Release Notes (1.3.1)
+## Latest Release Notes (1.3.2)
 
-(2026-09-14)
+(2026-09-17)
 
-### Stop exhausted-budget retries before provider dispatch
-- OpenAI and Anthropic patches now check their supplied budget before calling
-  the provider, for both sync and async clients. Catching `BudgetExceeded`
-  cannot send another request after the recorded budget reaches its cap.
-- Added `BudgetGuard.check()`: a non-consuming check of call, token, and cost
-  limits, including zero caps and the current persisted daily budget.
-- Successful responses are still charged once. Reset and daily rollover allow
-  new calls. Corrupt persisted counters fail closed.
-- This is a preflight check, not a concurrent reservation or an estimate of
-  the next response. In-flight calls can exceed token/cost caps. Streaming
-  usage accounting remains outside this release.
-- Reproduce the before/after behavior without network calls with
-  `examples/budget_preflight_demo.py`. The provider is mocked; the installed
-  AgentGuard patch, guard, and retry loop are real.
+### Record final usage on streamed provider calls
+- OpenAI and Anthropic patches now wrap `stream=True` responses and bill the
+  final usage payload once, for both sync and async clients. Anthropic
+  `messages.stream()` is included. Chunks without usage are ignored.
+- OpenAI streaming requests set `stream_options.include_usage=True` when the
+  caller did not set `include_usage`. An explicit `False` is left unchanged.
+- A stream that ends without usage still counts as one dispatched call with
+  zero tokens and zero cost. Exhausted budgets still refuse the request before
+  dispatch.
+- This does not reserve concurrent capacity, predict a response's cost, or
+  preflight goal-level caps. Mid-stream abort without a usage payload cannot
+  recover tokens from partial text.
+- Reproduce the before/after token counts without network calls with
+  `examples/streaming_usage_demo.py`. The provider is mocked; the installed
+  AgentGuard patch, stream wrapper, and budget consume path are real.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.3.1/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.3.2/CHANGELOG.md)

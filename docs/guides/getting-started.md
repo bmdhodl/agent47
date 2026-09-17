@@ -69,7 +69,9 @@ configure `patch_openai(tracer, budget_guard=budget)` as shown in the
 
 Provider patches check the recorded budget before dispatch. Response usage
 can exceed the remaining allowance; concurrent calls do not reserve capacity.
-Streaming totals are not yet tracked by these patches.
+Streamed OpenAI and Anthropic calls record final usage once. OpenAI streams
+request `include_usage` unless the caller already set it. A stream that ends
+without usage counts as one call with zero tokens.
 
 For tools, call `LoopGuard.check(tool_name, arguments)` before dispatch.
 With a tracer, emit the tool-call event before running the tool. A guard

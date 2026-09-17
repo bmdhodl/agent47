@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.3.2 (2026-09-17)
+
+### Record final usage on streamed provider calls
+- OpenAI and Anthropic patches now wrap `stream=True` responses and bill the
+  final usage payload once, for both sync and async clients. Anthropic
+  `messages.stream()` is included. Chunks without usage are ignored.
+- OpenAI streaming requests set `stream_options.include_usage=True` when the
+  caller did not set `include_usage`. An explicit `False` is left unchanged.
+- A stream that ends without usage still counts as one dispatched call with
+  zero tokens and zero cost. Exhausted budgets still refuse the request before
+  dispatch.
+- This does not reserve concurrent capacity, predict a response's cost, or
+  preflight goal-level caps. Mid-stream abort without a usage payload cannot
+  recover tokens from partial text.
+- Reproduce the before/after token counts without network calls with
+  `examples/streaming_usage_demo.py`. The provider is mocked; the installed
+  AgentGuard patch, stream wrapper, and budget consume path are real.
+
 ## 1.3.1 (2026-09-14)
 
 ### Stop exhausted-budget retries before provider dispatch

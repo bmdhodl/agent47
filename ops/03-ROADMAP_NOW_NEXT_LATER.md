@@ -3,11 +3,12 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-14
+**Last reviewed:** 2026-09-17
 
 ## Current Focus Notes
 
-- Provider patches reject exhausted recorded budgets before dispatch.
+- Provider patches record final streamed usage once and reject exhausted
+  recorded budgets before dispatch.
   See [release state](../memory/state.md) for publication evidence and
   [package metadata](../sdk/pyproject.toml) for the branch version.
 
@@ -40,6 +41,7 @@ they directly strengthen coding-agent adoption.
 
 | Item | Status |
 |------|--------|
+| Provider patches record final streamed usage once | Done - 2026-09-17; OpenAI and Anthropic sync/async `stream=True` calls, plus Anthropic `messages.stream()`, bill the final usage payload once. OpenAI injects `include_usage` when unset. Exhausted-budget preflight is unchanged |
 | Clean-wheel activation proof | Done - 2026-08-15; an isolated venv installed the locally built candidate wheel and completed `python -m agentguard`, `doctor`, `demo`, raw `quickstart --write`, generated-starter execution, `report`, and `badge` without API keys or network |
 | Competitor Wedge Map consolidation | Done - README wedge map (WorkOS, Uber, Anthropic) refreshed on 2026-06-17 |
 | Eval assertion expansion | Done - `EvalSuite` now has >=12 built-in assertions |
@@ -80,7 +82,6 @@ they directly strengthen coding-agent adoption.
 
 | Item | Success Signal |
 |------|---------------|
-| Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
 | Release announcement reliability | Release-content automation handles missing GitHub Discussions categories without failing the package release path |
