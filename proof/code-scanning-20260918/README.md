@@ -28,7 +28,8 @@ Signed-Releases GitHub assets, optional CrewAI/ChromaDB (`#644`).
 - September audit extra floors were renamed off `*requirements*.txt` so they
   are snapshots, not lockfiles.
 - The eval composite action pins `actions/setup-python` by SHA. Claude review
-  writes `gh pr diff` to a file and prints CLI stderr.
+  fetches the PR diff via the GitHub API (no `gh pr diff` flag) and prints
+  CLI stderr.
 
 ## Proof
 
@@ -41,4 +42,4 @@ Signed-Releases GitHub assets, optional CrewAI/ChromaDB (`#644`).
 | `ruff.txt` | `ruff check` on touched Python | 0 | linux |
 
 Regenerated after local review of the targeted suite and full `make check`
-(`make-check-summary.txt`: 1049 passed, 1 skipped, 90.48% coverage).
+(`make-check-summary.txt`: 1051 passed, 1 skipped, 90.48% coverage).

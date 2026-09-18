@@ -435,7 +435,7 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
             findings.append(
                 _workflow_finding(
                     "no-full-history",
-                    "Claude review uses gh pr diff; full history checkout is unnecessary.",
+                    "Claude review fetches the PR diff over the GitHub API; full history checkout is unnecessary.",
                 )
             )
         elif fetch_depth not in (1, "1"):

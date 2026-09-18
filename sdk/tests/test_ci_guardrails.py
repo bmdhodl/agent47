@@ -144,9 +144,10 @@ def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:
     assert "ref: ${{ github.event.pull_request.base.sha }}" not in text
     assert "ref: ${{ github.event.pull_request.head.sha }}" not in text
     assert "pull_request_target:" in text
-    assert 'gh pr diff "$PR" --repo "$REPO" --allow-escape-sequences' in text
+    assert "application/vnd.github.diff" in text
+    assert "gh pr diff" not in text
+    assert "--allow-escape-sequences" not in text
     assert "2>/tmp/review.err" in text
-    assert "> /tmp/pr.diff.raw" in text
 
 
 def test_github_actions_under_dot_github_are_pinned() -> None:
