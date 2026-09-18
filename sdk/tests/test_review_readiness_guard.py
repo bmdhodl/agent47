@@ -58,7 +58,7 @@ __CHECKOUT_PATH__
                       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     run: |
                       __REVIEW_PREFIX__set -euo pipefail
-                      gh pr diff "$PR" --repo "$REPO" |
+                      gh pr diff "$PR" --repo "$REPO" --allow-escape-sequences |
                         python -c 'import sys; sys.stdout.buffer.write(sys.stdin.buffer.read()[:200000])' \
                         > /tmp/pr.diff
                       printf '%s\\n' 'UNTRUSTED PR DIFF START'

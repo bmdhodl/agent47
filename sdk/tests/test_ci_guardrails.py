@@ -143,6 +143,20 @@ def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:
     assert "ref: ${{ github.event.pull_request.base.sha }}" not in text
     assert "ref: ${{ github.event.pull_request.head.sha }}" not in text
     assert "pull_request_target:" in text
+    assert 'gh pr diff "$PR" --repo "$REPO" --allow-escape-sequences' in text
+
+
+def test_code_scanning_proof_logs_do_not_contain_ansi() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    proof_dir = repo_root / "proof" / "code-scanning-20260918"
+    offenders = []
+    for path in sorted(proof_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        data = path.read_bytes()
+        if b"\x1b[" in data:
+            offenders.append(path.relative_to(repo_root).as_posix())
+    assert offenders == []
 
 
 def test_proof_snapshots_are_not_live_pip_requirements() -> None:

@@ -9,4 +9,5 @@ assert "python -m pip install --require-hashes -r .github/requirements/mcp-budge
 assert "python -m pip install -e ./agentguard-mcp" not in CI
 assert "ref: ${{ github.sha }}" in REVIEW
 assert "ref: ${{ github.event.pull_request.base.sha }}" not in REVIEW
+assert "--allow-escape-sequences" in REVIEW
 print("passed")

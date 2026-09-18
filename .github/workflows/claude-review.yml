@@ -43,7 +43,9 @@ jobs:
           set -euo pipefail
 
           # Pull the diff (cap size so we never blow the context window).
-          gh pr diff "$PR" --repo "$REPO" \
+          # Proof logs and other text files can contain ANSI; gh refuses those
+          # diffs unless this flag is set.
+          gh pr diff "$PR" --repo "$REPO" --allow-escape-sequences \
             | python -c 'import sys; sys.stdout.buffer.write(sys.stdin.buffer.read()[:200000])' \
             > /tmp/pr.diff
           if [ ! -s /tmp/pr.diff ]; then
