@@ -1,0 +1,16 @@
+I streamed a completion. The token count stayed at zero.
+
+AgentGuard's OpenAI and Anthropic patches read usage on the returned object. A stream has no usage until the last chunk. Token and cost totals were dropped.
+
+I fixed that in AgentGuard 1.3.2. The same patches now take the final stream usage once, for sync and async clients.
+
+The picture runs the same mocked stream:
+1.3.1: 0 tokens recorded.
+1.3.2: 200 tokens recorded. One consume.
+
+The OpenAI patch sets include_usage when the caller did not.
+
+This does not reserve budget for concurrent requests or predict a response's token cost. It records the provider's final usage after the stream ends.
+
+pip install -U agentguard47
+https://github.com/bmdhodl/agent47

@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>AgentGuard streamed usage</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0a0a0a url("hdr-plate.png") center/cover no-repeat fixed;color:#eee;font-family:Arial,sans-serif}main{max-width:1200px;margin:auto;padding:48px;background:rgba(10,10,10,.78)}header{font:700 18px monospace;color:#FF8200;letter-spacing:2px}h1{font-size:48px;line-height:1.08;max-width:1050px;margin:22px 0 14px}p{font-size:22px;color:#bbb;margin:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:34px 0}.card{background:#161616;border:1px solid #444;padding:26px 30px}.card:last-child{border-color:#FF8200}.label{font:17px monospace;color:#bbb}.number{font-size:42px;font-weight:700;color:#fff;margin:25px 0 18px}.card:last-child .number{color:#FF8200}.detail{font-size:20px}.footer{font:16px monospace;color:#bbb;line-height:1.8}code{display:block;color:#FF8200;font-size:20px;margin-top:8px}@media(max-width:600px){main{padding:24px}h1{font-size:35px}.grid{grid-template-columns:1fr}.number{font-size:32px}.detail{font-size:18px}code{font-size:16px}}
+</style></head><body><main>
+<header>AGENTGUARD 1.3.2</header>
+<h1>Bill the last stream chunk once.</h1>
+<p>Same patch. Stream=True. Three chunks.</p>
+<div class="grid"><section class="card"><div class="label">BEFORE / 1.3.1</div><div class="number">0 tokens recorded</div><div class="detail">Usage missing on the stream object</div></section><section class="card"><div class="label">AFTER / 1.3.2</div><div class="number">200 tokens recorded</div><div class="detail">Final chunk billed once</div></section></div>
+<div class="footer">Installed SDK. Mocked stream. No network calls.<code>pip install -U agentguard47</code></div>
+</main></body></html>
