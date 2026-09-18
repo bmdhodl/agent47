@@ -3,6 +3,16 @@
 
 ---
 
+## 2026-09-18 | Codex
+
+- Release email pipeline: PR 726 merged. Published stable GitHub releases with an available PyPI package trigger announcements to the existing AgentGuard subscriber cohort through bmdpat. Retries use one campaign key per version.
+- Decision: Patrick authorized automatic release announcements, plus the admin merge after the automated approver hit its usage limit. Weekly newsletter approvals remain separate.
+- Proof: 22 sender tests, Python 3.9/3.12 CI, actionlint, lint, MCP checks and CodeQL passed. Review findings were repaired. Merge: 6285d39c54fc75b914c2586f1dbb7ceec98131e3.
+- Activation: bmdpat receiver deployment and live owner-email verification are in progress. The shared complaint pause is still active; no subscriber release announcement has been sent.
+- Sign-off: OpenAI | GPT-6 | auto
+
+---
+
 ## 2026-09-14 | Codex
 
 - AgentGuard 1.3.1 shipped after PR 721: exhausted recorded budgets now stop OpenAI/Anthropic sync and async requests before dispatch. A one-call budget sends one mocked request across three attempts, versus three on 1.3.0.
