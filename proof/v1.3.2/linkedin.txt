@@ -13,4 +13,4 @@ The OpenAI patch sets include_usage when the caller did not.
 This does not reserve budget for concurrent requests or predict a response's token cost. It records the provider's final usage after the stream ends.
 
 pip install -U agentguard47
-https://github.com/bmdhodl/agent47
+https://github.com/bmdhodl/agent47/releases/tag/v1.3.2

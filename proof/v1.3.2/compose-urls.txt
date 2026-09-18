@@ -1,0 +1,14 @@
+X (paste graphic demo-1440.png after the composer opens):
+https://x.com/intent/tweet?text=Stream%20a%20completion.%20Token%20count%20stays%20at%20zero.%0A%0AFixed%20in%20AgentGuard%201.3.2%3A%20streamed%20OpenAI%20and%20Anthropic%20calls%20record%20final%20usage%20once.%0A%0ASame%20mocked%20stream%3A%200%20tokens%20on%201.3.1%2C%20200%20on%201.3.2.%0A%0Ahttps%3A//github.com/bmdhodl/agent47/releases/tag/v1.3.2%0A
+
+LinkedIn feed (paste linkedin.txt, attach demo-1440.png):
+https://www.linkedin.com/feed/
+
+LinkedIn share of the release URL:
+https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github.com/bmdhodl/agent47/releases/tag/v1.3.2
+
+Graphic in repo:
+https://github.com/bmdhodl/agent47/blob/main/proof/v1.3.2/demo-1440.png
+
+Subscriber email (tag v1.3.2, not a dry run):
+https://github.com/bmdhodl/agent47/actions/workflows/release-content.yml
