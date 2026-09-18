@@ -24,6 +24,11 @@
 - [ ] PyPI file metadata confirms Trusted Publishing and attestations for the
       release artifacts.
 - [ ] Release notes link to the correct docs, repo, and package name.
+- [ ] The `email` job in `release-content.yml` succeeds for the stable release.
+      It verifies GitHub + PyPI publication, then emails active AgentGuard
+      subscribers through bmdpat. Read the delivery receipt; acceptance is not
+      delivery. Retry with the same tag, never a new campaign key.
+      Setup and verification: [release email](../docs/guides/release-email.md).
 
 ## Adding a new guard
 
