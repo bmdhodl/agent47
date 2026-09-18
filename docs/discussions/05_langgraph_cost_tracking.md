@@ -60,29 +60,25 @@ try:
     result = graph.invoke({"messages": [initial_message]})
 except BudgetExceeded as e:
     print(f"Graph stopped: {e}")
-    print(f"Total cost: ${budget.state.cost_used:.2f}")
-    print(f"API calls: {budget.state.calls_used}")
+    print(f"Recorded calls: {budget.state.calls_used}")
 ```
 
-The budget is shared across all nodes — so a $5 limit applies to the entire graph execution, not per-node.
+The call budget is shared across all nodes — so `max_calls=20` applies to the entire graph execution, not per-node. Token and dollar totals are not incremented by this wrapper.
 
-## Adding the `guard_node` to your graph
+## Adding `guard_node` at graph construction
 
-For more control, you can add a standalone guard node that checks the budget between steps:
+Wrap an existing node function when you cannot use the decorator:
 
 ```python
 from agentguard.integrations.langgraph import guard_node
 
-# Create a guard node
-budget_check = guard_node(budget_guard=budget)
-
-# Add to your graph
-graph.add_node("budget_check", budget_check)
-graph.add_edge("research", "budget_check")
-graph.add_edge("budget_check", "synthesis")
+graph.add_node(
+    "research",
+    guard_node(research_fn, tracer=tracer, budget_guard=budget),
+)
 ```
 
-This checks the budget explicitly between the research and synthesis steps.
+That is the same `consume(calls=1)` entry check as `guarded_node`.
 
 ## Install
 

@@ -238,6 +238,8 @@ def test_langgraph_public_copy_uses_call_budget():
         text = _strip_tags(path.read_text(encoding="utf-8"))
         assert "max_calls" in text, path
         assert "consume(calls=1)" in text.replace(" ", "")
+        assert "$5 limit" not in text
+        assert "guard_node(budget_guard=budget)" not in text.replace(" ", "")
 
 
 def test_live_blogs_do_not_claim_all_openai_surfaces():
