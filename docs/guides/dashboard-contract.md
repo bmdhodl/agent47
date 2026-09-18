@@ -16,7 +16,7 @@ risky enough that local files are no longer enough.
 | Use local SDK when | Use hosted dashboard when |
 | --- | --- |
 | You are proving AgentGuard in one repo | Multiple people need the same incident history |
-| You need hard stops for loops, retries, timeouts, or budget burn | Runs need retained alerts and follow-up outside the terminal |
+| You need in-process stops for instrumented loops, retries, timeouts, or recorded budgets | Runs need retained alerts and follow-up outside the terminal |
 | You want JSONL traces and reports without an API key | You need spend trends across traces, services, or teammates |
 | You are testing an agent before production | Operators need dashboard-managed remote kill signals |
 
@@ -125,7 +125,8 @@ Current SDK behavior:
 - `HttpSink` does not poll for kill signals
 - `agentguard.init(api_key=...)` sends traces but does not execute remote kill
   signals
-- local guards remain the authoritative way to stop a runaway agent in-process
+- local guards remain the authoritative way to stop an instrumented agent in-process
+  (see [enforcement-boundary.md](../enforcement-boundary.md))
 
 If an application implements dashboard kill polling directly, keep it bounded:
 - poll with short HTTP timeouts

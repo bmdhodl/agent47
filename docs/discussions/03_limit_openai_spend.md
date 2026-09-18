@@ -1,5 +1,8 @@
 # How to Limit OpenAI API Spend Per Agent Run
 
+> Tested bounds (2026-09-18): recorded-budget preflight is not an invoice cap.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
+
 **Category:** Show and tell
 **Labels:** openai, budget, cost-control
 

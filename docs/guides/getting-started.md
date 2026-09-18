@@ -71,7 +71,10 @@ Provider patches check the recorded budget before dispatch. Response usage
 can exceed the remaining allowance; concurrent calls do not reserve capacity.
 Streamed OpenAI and Anthropic calls record final usage once. OpenAI streams
 request `include_usage` unless the caller already set it. A stream that ends
-without usage counts as one call with zero tokens.
+without usage counts as one call with zero tokens. The OpenAI Responses API
+is not patched. Direct SDK clients you do not wrap are a bypass. Subscription
+quotas stay with the provider. See the
+[enforcement boundary](../enforcement-boundary.md).
 
 For tools, call `LoopGuard.check(tool_name, arguments)` before dispatch.
 With a tracer, emit the tool-call event before running the tool. A guard

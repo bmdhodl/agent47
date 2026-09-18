@@ -127,6 +127,7 @@ def _build_skillpack_payload(
         "notes": [
             "The generated .agentguard.json stays local-first: no API keys, no dashboard URL, no secrets.",
             "Each instruction file points agents at agentguard doctor, quickstart --write, and a local report run.",
+            "These files are onboarding instructions. They do not intercept Cursor, Claude Code, Copilot, or Codex host tools.",
             "Use --output-dir . only if you intentionally want to materialize these files directly into a repo.",
         ],
         "next_commands": [

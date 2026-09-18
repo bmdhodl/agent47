@@ -1,6 +1,6 @@
 # Architecture
 
-**Last reviewed:** 2026-09-14
+**Last reviewed:** 2026-09-18
 
 ## High-level shape
 
@@ -28,6 +28,8 @@ response usage afterward. The check reads the current persistent bucket under
 the guard lock and raises at equality or above; it never charges or reserves
 usage. Concurrent requests can pass before either response is recorded. The
 check does not predict token/cost totals and does not enforce goal-level caps.
+The public map of every advertised path is
+[`docs/enforcement-boundary.md`](../docs/enforcement-boundary.md).
 
 ```text
 Your agent code

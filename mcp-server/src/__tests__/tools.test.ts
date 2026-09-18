@@ -112,3 +112,25 @@ test("all tools expose object input schemas", () => {
     assert.ok(tool.inputSchema.properties, tool.name);
   }
 });
+
+test("published MCP tools are read-only and deny mutating budget names", () => {
+  const allowed = [
+    "query_traces",
+    "get_trace",
+    "get_trace_decisions",
+    "get_alerts",
+    "get_usage",
+    "get_costs",
+    "check_budget",
+  ];
+  const names = tools.map((tool) => tool.name).sort();
+  assert.deepEqual(names, [...allowed].sort());
+  for (const tool of tools) {
+    assert.equal(tool.annotations?.readOnlyHint, true, tool.name);
+    assert.equal(tool.annotations?.destructiveHint, false, tool.name);
+  }
+  assert.equal(tools.some((tool) => ["record_call", "set_budget", "kill_switch"].includes(tool.name)), false);
+  const budget = tools.find((entry) => entry.name === "check_budget");
+  assert.match(budget!.description, /hosted event-quota/);
+  assert.match(budget!.description, /not SDK BudgetGuard/);
+});

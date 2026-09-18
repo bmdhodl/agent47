@@ -75,6 +75,38 @@ def test_period_day_resets_at_utc_boundary():
     assert len(paid) == 2
 
 
+def test_concurrent_charges_do_not_overshoot():
+    import threading
+
+    guard = X402SpendGuard(max_total_usd=1.00)
+    barrier = threading.Barrier(2)
+    paid = []
+    lock = threading.Lock()
+    blocked = []
+
+    def worker():
+        def pay(*_args, **_kwargs):
+            with lock:
+                paid.append(1)
+            return "paid"
+
+        barrier.wait()
+        try:
+            guard.charge(1.00, "https://a.example/x", pay)
+        except BudgetExceeded:
+            with lock:
+                blocked.append(1)
+
+    threads = [threading.Thread(target=worker) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    assert len(paid) == 1
+    assert len(blocked) == 1
+    assert guard.total_spent_usd == 1.00
+
+
 def test_check_records_nothing():
     guard = X402SpendGuard(max_total_usd=1.00)
     guard.check(0.50, "https://a.example/x")

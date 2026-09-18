@@ -42,7 +42,11 @@ result = llm.invoke("What is AgentGuard?")
 
 **LoopGuard** fires `LoopDetected` if the same tool is called with the same args repeatedly.
 
-**BudgetGuard** tracks token usage from LLM responses and fires `BudgetExceeded` when limits are hit. Cost estimation is automatic for supported models.
+**BudgetGuard** on LLM calls is advisory: usage is consumed on `on_llm_end`
+after the model returns. Tool starts call `consume(calls=1)` and can refuse
+an exhausted **call** budget before the tool span. This is not token preflight
+for the LLM and not a provider invoice cap. See
+[enforcement-boundary.md](../enforcement-boundary.md).
 
 ## With LangChain Agents
 

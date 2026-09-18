@@ -6,7 +6,7 @@ import unittest
 import uuid
 
 from agentguard.cost import UnknownModelWarning
-from agentguard.guards import BudgetGuard, LoopDetected, LoopGuard
+from agentguard.guards import BudgetExceeded, BudgetGuard, LoopDetected, LoopGuard
 from agentguard.integrations.langchain import AgentGuardCallbackHandler
 from agentguard.tracing import JsonlFileSink, Tracer
 
@@ -148,6 +148,34 @@ class TestLangChainIntegration(unittest.TestCase):
         handler.on_tool_end("2", run_id=uuid.uuid4())
 
         self.assertEqual(guard.state.calls_used, 2)
+
+    def test_llm_start_does_not_preflight_exhausted_budget(self):
+        """LLM dispatch is recorded after the call, not refused before it."""
+        guard = BudgetGuard(max_tokens=1)
+        guard.consume(tokens=1)
+        handler = AgentGuardCallbackHandler(
+            tracer=self.tracer, budget_guard=guard
+        )
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        with self.assertRaises(BudgetExceeded):
+            handler.on_llm_end(
+                _MockResponseWithModel(model="gpt-4o", input_t=1, output_t=1),
+                run_id=llm_id,
+            )
+
+    def test_tool_start_blocks_exhausted_call_budget(self):
+        guard = BudgetGuard(max_calls=1)
+        guard.consume(calls=1)
+        handler = AgentGuardCallbackHandler(
+            tracer=self.tracer, budget_guard=guard
+        )
+        chain_id = uuid.uuid4()
+        handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
+        with self.assertRaises(BudgetExceeded):
+            handler.on_tool_start({"name": "search"}, "q1", run_id=uuid.uuid4())
 
     def test_budget_guard_cost_usd_on_llm_end(self):
         """on_llm_end with a known model should pass cost_usd to BudgetGuard.consume."""

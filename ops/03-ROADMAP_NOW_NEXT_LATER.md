@@ -3,10 +3,17 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-17
+**Last reviewed:** 2026-09-18
 
 ## Current Focus Notes
 
+- Planning authority for 2026 weekly work is
+  [GitHub #729](https://github.com/bmdhodl/agent47/issues/729) and
+  [Project 4](https://github.com/users/bmdhodl/projects/4). This file is the
+  SDK-now view. Do not treat the tables below as a second execution queue.
+- Honest enforcement claims (AG-01): recorded-budget preflight vs remaining
+  exposure. Canonical map:
+  [enforcement boundary](../docs/enforcement-boundary.md).
 - Stable SDK releases automatically email active AgentGuard subscribers.
   The release email is owner-authorized (2026-09-18) and uses the existing
   subscriber service. See [release email](../docs/guides/release-email.md).
@@ -76,11 +83,12 @@ they directly strengthen coding-agent adoption.
 
 | Item | Success Signal |
 |------|---------------|
-| External adoption proof | Obtain explicit evidence from at least three external repeat users or design partners before adding another broad SDK feature; do not add telemetry to satisfy this gate |
+| Honest enforcement boundary (AG-01 / #730) | A first-time reader can state the protected path and remaining exposure; no invented invoice caps. Map: [enforcement-boundary.md](../docs/enforcement-boundary.md) |
+| Activation evidence (AG-02 / #731) | Owner-selected measurement of first value; do not self-select this card after AG-01 |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
-| Ops/doc freshness | Done on 2026-08-15; the freshness commands are now under the AGENTS.md thresholds and stale release claims are removed |
+| Ops/doc freshness | Reconciled 2026-09-18 with #729. Older dashboard-era hard-cap copy is replaced by the enforcement map |
 
 ## Next (next month)
 

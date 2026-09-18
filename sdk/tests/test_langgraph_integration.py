@@ -93,6 +93,19 @@ class TestGuardedNode(unittest.TestCase):
         with self.assertRaises(BudgetExceeded):
             costly_node({"a": 3})
 
+    def test_exhausted_budget_stops_before_node_body(self):
+        budget_guard = BudgetGuard(max_calls=0)
+        ran = []
+
+        @guarded_node(tracer=self.tracer, budget_guard=budget_guard)
+        def blocked_node(state):
+            ran.append(1)
+            return state
+
+        with self.assertRaises(BudgetExceeded):
+            blocked_node({"a": 1})
+        self.assertEqual(ran, [])
+
     def test_guard_node_functional_form(self):
         """guard_node() wraps a plain function."""
 
