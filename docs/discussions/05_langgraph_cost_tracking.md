@@ -11,11 +11,12 @@
 
 LangGraph agents can run for a long time — branching, backtracking, calling tools across multiple nodes. Without cost tracking, you have no idea what a graph execution costs until the OpenAI invoice arrives.
 
-Here's how to add per-node budget enforcement to a LangGraph agent.
+Here's how to add per-node call-budget enforcement to a LangGraph agent.
 
 ## The `guarded_node` decorator
 
-AgentGuard provides a LangGraph-specific decorator that wraps any node with budget and loop guards:
+AgentGuard provides a LangGraph-specific decorator that wraps any node with
+tracing, an optional loop guard, and `consume(calls=1)` at entry:
 
 ```bash
 pip install agentguard47[langgraph]
@@ -26,7 +27,7 @@ from agentguard import Tracer, BudgetGuard, LoopGuard
 from agentguard.integrations.langgraph import guarded_node
 
 tracer = Tracer(service="my-graph-agent")
-budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+budget = BudgetGuard(max_calls=20)
 
 @guarded_node(tracer=tracer, budget_guard=budget)
 def research_node(state):
@@ -41,8 +42,12 @@ def synthesis_node(state):
 
 Every node execution is:
 1. **Traced** — start/end events with timing
-2. **Budget-checked** — if cumulative cost exceeds $5, `BudgetExceeded` is raised
-3. **Loop-guarded** (optional) — catches repeated tool calls within the node
+2. **Call-budget checked** — if recorded calls already exceed `max_calls`, `BudgetExceeded` is raised before the node body
+3. **Loop-guarded** (optional) — catches repeated identical node invocations
+
+A dollar-only `BudgetGuard` does not fire from this wrapper. Patch inner
+Chat Completions/Messages clients separately if you need recorded token or
+cost preflight.
 
 ## What happens when the budget is exceeded
 

@@ -224,6 +224,30 @@ def test_historical_surfaces_link_enforcement():
         assert "enforcement-boundary.md" in text or "enforcement.html" in text, path.name
 
 
+def _strip_tags(text: str) -> str:
+    return re.sub(r"<[^>]+>", "", text)
+
+
+def test_langgraph_public_copy_uses_call_budget():
+    pages = (
+        ROOT / "docs" / "integrations" / "langgraph.md",
+        ROOT / "docs" / "discussions" / "05_langgraph_cost_tracking.md",
+        ROOT / "site" / "blog" / "langchain-cost-tracking.html",
+    )
+    for path in pages:
+        text = _strip_tags(path.read_text(encoding="utf-8"))
+        assert "max_calls" in text, path
+        assert "consume(calls=1)" in text.replace(" ", "")
+
+
+def test_live_blogs_do_not_claim_all_openai_surfaces():
+    for path in (ROOT / "site" / "blog").glob("*.html"):
+        text = _strip_tags(path.read_text(encoding="utf-8"))
+        lowered = text.lower()
+        assert "every openai call is intercepted" not in lowered, path.name
+        assert "intercepting every openai api call" not in lowered, path.name
+
+
 def test_product_docs_reject_invoice_guarantees():
     for path in PRODUCT_DOCS:
         text = path.read_text(encoding="utf-8")

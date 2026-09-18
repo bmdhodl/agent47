@@ -244,13 +244,13 @@ result = agent.<span class="fn">invoke</span>(
 
         <h2>Step 4: LangGraph with guarded_node</h2>
 
-        <p>If you are using LangGraph, AgentGuard provides a <code>guarded_node</code> decorator that wraps individual graph nodes with tracing and guard checks. This gives you per-node cost tracking across your entire graph.</p>
+        <p>If you are using LangGraph, AgentGuard provides a <code>guarded_node</code> decorator that wraps individual graph nodes with tracing and a call-budget check. This wrapper records <code>consume(calls=1)</code> at node entry. It does not charge tokens or dollars. Inner LLM clients still need their own patch if you want recorded-budget preflight on Chat Completions.</p>
 
 <pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, LoopGuard
 <span class="kw">from</span> agentguard.integrations.langgraph <span class="kw">import</span> guarded_node
 <span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph
 
-budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">10.00</span>)
+budget = <span class="fn">BudgetGuard</span>(max_calls=<span class="str">20</span>)
 loops = <span class="fn">LoopGuard</span>(max_repeats=<span class="str">3</span>)
 tracer = <span class="fn">Tracer</span>(service=<span class="str">"langgraph-agent"</span>)
 
@@ -274,7 +274,7 @@ graph.<span class="fn">add_edge</span>(<span class="str">"research"</span>, <spa
 graph.<span class="fn">set_entry_point</span>(<span class="str">"research"</span>)
 app = graph.<span class="fn">compile</span>()</pre>
 
-        <p>Each node execution is traced as a separate span. The BudgetGuard tracks cumulative cost across all nodes, so a $10 limit applies to the entire graph run, not per node. If one node exhausts the budget, subsequent nodes are never reached.</p>
+        <p>Each node execution is traced as a separate span. The BudgetGuard records one call at node entry, so a <code>max_calls=20</code> limit applies to the entire graph run, not per inner LLM. A <code>max_cost_usd</code>-only guard does not fire from this wrapper. If one node exhausts the call budget, subsequent nodes are never reached.</p>
 
         <div class="callout">
           <p><strong>Tip:</strong> For existing graphs where you cannot use decorators, use the <code>guard_node</code> function instead: <code>graph.add_node("research", guard_node(research_fn, tracer=tracer, budget_guard=budget))</code></p>

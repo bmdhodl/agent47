@@ -228,7 +228,7 @@ guard = <span class="fn">BudgetGuard</span>(
 
         <h2>Pattern 3: Auto-Tracking with patch_openai</h2>
 
-        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function eliminates this by automatically intercepting every OpenAI API call, extracting token usage from the response, and feeding it to the BudgetGuard.</p>
+        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function intercepts patched Chat Completions calls, extracts token usage from the response, and feeds it to the BudgetGuard. It does not patch the Responses API.</p>
 
 <pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, patch_openai
 
@@ -236,7 +236,7 @@ guard = <span class="fn">BudgetGuard</span>(
 budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>, warn_at_pct=<span class="str">0.8</span>)
 tracer = <span class="fn">Tracer</span>(service=<span class="str">"my-agent"</span>, guards=[budget])
 
-<span class="comment"># Patch OpenAI — every call is now auto-tracked</span>
+<span class="comment"># Patch OpenAI Chat Completions — Responses API is not patched</span>
 <span class="fn">patch_openai</span>(tracer, budget_guard=budget)
 
 <span class="comment"># Use OpenAI normally. No manual consume() calls needed.</span>
