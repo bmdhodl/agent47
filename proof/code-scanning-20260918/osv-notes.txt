@@ -1,0 +1,11 @@
+osv-scanner 2.6.0 recursive scan of the repo after renaming proof extra floors:
+  scanned npm lockfiles only; 0 vulnerabilities
+
+Explicit scan of the old proof/audit-20260912/crewai-requirements.txt name
+  (content: crewai>=0.28) reported 81 vulnerability IDs, including chromadb PYSEC-2026-311/3813/3814/3815.
+
+Explicit scan of .github/requirements/mcp-budget.txt after hashing mcp>=1.23,<2:
+  0 vulnerabilities
+
+Scorecard VulnerabilitiesID on main listed 19 PYSECs (aiohttp, chromadb, requests).
+Those match resolving a live *requirements*.txt extra floor, not the stdlib SDK.

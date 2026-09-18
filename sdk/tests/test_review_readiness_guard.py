@@ -19,7 +19,7 @@ class TestReviewReadinessGuard(unittest.TestCase):
     def _valid_workflow(
         *,
         trigger="pull_request_target",
-        checkout_ref="${{ github.event.pull_request.base.sha }}",
+        checkout_ref="${{ github.sha }}",
         checkout_fetch_depth="1",
         checkout_path=None,
         install_directory=".github/claude-review",
@@ -205,8 +205,8 @@ __CHECKOUT_PATH__
             ),
             "wrong-checkout-ref": (
                 lambda workflow: workflow.replace(
-                    "ref: ${{ github.event.pull_request.base.sha }}",
-                    "# ref: ${{ github.event.pull_request.base.sha }}\n          ref: main",
+                    "ref: ${{ github.sha }}",
+                    "# ref: ${{ github.sha }}\n          ref: main",
                 ),
                 "claude-review:trusted-base-ref",
             ),

@@ -1,0 +1,2 @@
+[1;32mAll checks passed![0m
+ruff exit 0

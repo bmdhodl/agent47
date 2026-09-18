@@ -110,3 +110,46 @@ def test_publish_workflow_release_steps_are_post_publish_rerunnable() -> None:
     assert 'PREV_RELEASE_TAG="$(gh release list' in release_job
     assert "gh workflow run release-content.yml" in release_job
     assert '-f tag="$TAG"' in release_job
+
+
+def test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    workflow = repo_root / ".github" / "workflows" / "ci.yml"
+    lockfile = repo_root / ".github" / "requirements" / "mcp-budget.txt"
+    manifest = repo_root / ".github" / "requirements" / "mcp-budget.in"
+
+    text = workflow.read_text(encoding="utf-8")
+    assert "python -m pip install --require-hashes -r .github/requirements/ci-tools.txt" in text
+    assert "python -m pip install --require-hashes -r .github/requirements/mcp-budget.txt" in text
+    assert "python -m pip install -e ./agentguard-mcp" not in text
+    assert "working-directory: agentguard-mcp" in text
+    assert "PYTHONPATH: ." in text
+    assert lockfile.exists(), "CI must pin agentguard-mcp deps with a hashed lockfile"
+    lock_text = lockfile.read_text(encoding="utf-8")
+    assert "--hash=sha256:" in lock_text
+    assert lock_text.count("mcp==") >= 1
+    manifest_text = manifest.read_text(encoding="utf-8")
+    assert "mcp>=1.23,<2" in manifest_text
+    assert "pytest==" not in manifest_text
+    assert "ruff==" not in manifest_text
+
+
+def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    workflow = repo_root / ".github" / "workflows" / "claude-review.yml"
+    text = workflow.read_text(encoding="utf-8")
+
+    assert "ref: ${{ github.sha }}" in text
+    assert "ref: ${{ github.event.pull_request.base.sha }}" not in text
+    assert "ref: ${{ github.event.pull_request.head.sha }}" not in text
+    assert "pull_request_target:" in text
+
+
+def test_proof_snapshots_are_not_live_pip_requirements() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    matches = sorted(
+        path.relative_to(repo_root).as_posix()
+        for path in (repo_root / "proof").rglob("*")
+        if path.is_file() and "requirements" in path.name.lower() and path.suffix == ".txt"
+    )
+    assert matches == [], matches

@@ -19,7 +19,10 @@ jobs:
       - name: Checkout trusted base review runtime
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          # pull_request_target: github.sha is the last commit on the PR base.
+          # Scorecard treats any github.event.pull_request.* checkout ref as
+          # untrusted, including base.sha, so keep this expression on github.sha.
+          ref: ${{ github.sha }}
           fetch-depth: 1
           persist-credentials: false
 

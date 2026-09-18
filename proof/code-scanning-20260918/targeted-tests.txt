@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /workspace/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0, showwork-0.6.2, anyio-4.15.1
+collecting ... collected 27 items
+
+sdk/tests/test_ci_guardrails.py::test_actionlint_workflow_is_wired PASSED [  3%]
+sdk/tests/test_ci_guardrails.py::test_release_content_waits_for_published_github_release PASSED [  7%]
+sdk/tests/test_ci_guardrails.py::test_publish_workflow_release_steps_are_post_publish_rerunnable PASSED [ 11%]
+sdk/tests/test_ci_guardrails.py::test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip PASSED [ 14%]
+sdk/tests/test_ci_guardrails.py::test_claude_review_checks_out_github_sha_not_pull_request_sha PASSED [ 18%]
+sdk/tests/test_ci_guardrails.py::test_proof_snapshots_are_not_live_pip_requirements PASSED [ 22%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_active_workflow_structure_rejects_decoys_and_pr_controlled_paths PASSED [ 25%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_current_repo_is_clean PASSED [ 29%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_json_output_is_parseable PASSED [ 33%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_lockfile_backed_cli_contract_is_required PASSED [ 37%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_lockfile_contract_rejects_unapproved_linux_platform_artifact PASSED [ 40%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_lockfile_contract_rejects_unapproved_tarball_or_integrity PASSED [ 44%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_missing_pr_template_skill_gate_is_reported PASSED [ 48%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_secret_reference_scan_covers_step_fields_beyond_env PASSED [ 51%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_single_token_bearing_sequence_rejects_safe_decoy_and_malicious_secondary PASSED [ 55%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_timeout_must_anchor_local_cli_immediately_after_duration PASSED [ 59%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_timeout_rejects_inert_prefixes PASSED [ 62%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_workflow_full_history_and_head_pipe_are_reported PASSED [ 66%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_workflow_requires_semantic_three_hundred_second_timeout PASSED [ 70%]
+sdk/tests/test_review_readiness_guard.py::TestReviewReadinessGuard::test_workflow_requires_trusted_base_for_runtime_install PASSED [ 74%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_rejects_direct_pin_above_ci_python_floor PASSED [ 77%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_accepts_direct_pin_matching_ci_python_floor PASSED [ 81%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_ci_tool_manifest_pins_python_floor_transitives PASSED [ 85%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_rejects_non_exact_direct_pins PASSED [ 88%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_skips_pin_when_environment_marker_excludes_python_floor PASSED [ 92%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_validates_pin_when_environment_marker_includes_python_floor PASSED [ 96%]
+sdk/tests/test_ci_tools_requirements_guard.py::test_main_reports_value_errors_without_traceback PASSED [100%]
+
+============================== 27 passed in 0.18s ==============================

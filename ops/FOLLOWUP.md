@@ -9,6 +9,19 @@
 - Record explicit external adoption evidence from three repeat users or design
   partners before broadening the SDK feature surface. Use issues, PRs, or
   user-provided proof; do not add telemetry to manufacture this signal.
+- OpenSSF Scorecard remainder after the code-scanning workflow pass: Fuzzing
+  (no ClusterFuzzLite on purpose), CII Best Practices still InProgress,
+  Code-Review depends on human approvals, Signed-Releases needs GitHub Release
+  assets rather than PyPI attestations, and the optional CrewAI extra still
+  carries unresolved ChromaDB advisories tracked in `#644`. Do not add a
+  fuzzer or a fake CrewAI bump to chase those scores.
+- Reviewed 2026-08-15: deferred issue `#686`'s optional OAA-signed local trace
+- Keep the official MCP Registry readback in the weekly MCP train. It currently
+  serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
+  historical metadata.
+- Record explicit external adoption evidence from three repeat users or design
+  partners before broadening the SDK feature surface. Use issues, PRs, or
+  user-provided proof; do not add telemetry to manufacture this signal.
 - Reviewed 2026-08-15: deferred issue `#686`'s optional OAA-signed local trace
   proposal. The external draft is not adopted yet, and its reference path uses
   `PyJWT` plus `cryptography`; adding it would require an explicit optional
