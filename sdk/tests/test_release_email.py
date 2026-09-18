@@ -1,6 +1,8 @@
 """Release mail requires both published artifacts and a stable delivery key."""
 
 import importlib.util
+import io
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -59,6 +61,22 @@ def test_missing_credentials_never_sends():
         with pytest.raises(ValueError):
             sender.send({}, None)
         request.assert_not_called()
+
+
+def test_send_uses_scoped_payload_and_redacts_response_details():
+    payload = sender.build_payload("v1.3.1", release(), package())
+    response = io.BytesIO(json.dumps({"ok": True, "accepted": 2, "private": "must-not-log"}).encode())
+    with patch.object(sender.urllib.request, "urlopen", return_value=response) as request:
+        assert sender.send(payload, "test-key") == {"ok": True, "accepted": 2}
+    outgoing = request.call_args.args[0]
+    assert outgoing.full_url == sender.ENDPOINT
+    assert json.loads(outgoing.data)["campaign_key"] == "agentguard-release:v1.3.1"
+
+
+def test_partial_service_failure_is_not_success():
+    with patch.object(sender.urllib.request, "urlopen", return_value=io.BytesIO(b'{"ok": false}')):
+        with pytest.raises(RuntimeError):
+            sender.send({}, "test-key")
 
 
 def test_email_job_is_independent_of_discussions_and_existing_publish_dispatches_it():

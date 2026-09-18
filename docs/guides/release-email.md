@@ -26,7 +26,7 @@ policy remains in effect for weekly issues.
 Run the Release Content workflow with the existing published tag and
 `email_dry_run=true`. Its email job validates the artifacts and eligible audience,
 returning counts only. It writes no delivery claims and sends no email. The
-other announcement job retains its existing behavior.
+other announcement job is skipped for this dry run.
 
 ## Retry and delivery proof
 
