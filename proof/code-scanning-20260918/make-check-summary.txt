@@ -1,0 +1,14 @@
+platform=linux
+command=make check && make security
+exit=0
+
+make check:
+  ruff: All checks passed
+  review-readiness: passed
+  ci-tools-guard: passed
+  pytest: 1049 passed, 1 skipped in 15.94s
+  coverage: 90.48% (floor 80%)
+  mcp-server: 10/10
+
+make security:
+  bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q: exit 0

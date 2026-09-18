@@ -38,5 +38,5 @@ Signed-Releases GitHub assets, optional CrewAI/ChromaDB (`#644`).
 | `osv-notes.txt` | osv-scanner 2.6.0 | 0 | linux |
 | `ruff.txt` | `ruff check` on touched Python | 0 | linux |
 
-Regenerated after local review of the targeted suite. Full `make check` is
-recorded with the PR.
+Regenerated after local review of the targeted suite and full `make check`
+(`make-check-summary.txt`: 1049 passed, 1 skipped, 90.48% coverage).
