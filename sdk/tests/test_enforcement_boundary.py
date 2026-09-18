@@ -281,8 +281,8 @@ def test_skillpack_is_not_host_enforcement():
     assert code == 0
     payload = json.loads(buf.getvalue())
     notes = " ".join(payload["notes"])
-    assert "onboarding" in notes.lower() or "not" in notes.lower()
-    assert "host" in notes.lower() or "intercept" in notes.lower()
+    assert "onboarding" in notes.lower()
+    assert "intercept" in notes.lower()
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "does not" in readme and "intercept" in readme
 
@@ -314,16 +314,20 @@ def test_readonly_mcp_allows_reads_and_denies_mutations():
 
 
 def test_local_mcp_record_call_allow_and_deny(tmp_path):
+    original_path = list(sys.path)
     sys.path.insert(0, str(ROOT / "agentguard-mcp"))
-    from agentguard_mcp.storage import BudgetStore
+    try:
+        from agentguard_mcp.storage import BudgetStore
 
-    store = BudgetStore(tmp_path / "state.db")
-    store.set_budget("global", 1, None, "day")
-    allowed = store.record_call("github", "create_issue", 1, 0, 0.0, None)
-    denied = store.record_call("github", "create_issue", 1, 0, 0.0, None)
-    assert allowed["allowed"] is True
-    assert denied["allowed"] is False
-    assert store.check_remaining("global")["tokens_used"] == 1
+        store = BudgetStore(tmp_path / "state.db")
+        store.set_budget("global", 1, None, "day")
+        allowed = store.record_call("github", "create_issue", 1, 0, 0.0, None)
+        denied = store.record_call("github", "create_issue", 1, 0, 0.0, None)
+        assert allowed["allowed"] is True
+        assert denied["allowed"] is False
+        assert store.check_remaining("global")["tokens_used"] == 1
+    finally:
+        sys.path[:] = original_path
 
 
 def test_rendered_enforcement_page_states_bounds():

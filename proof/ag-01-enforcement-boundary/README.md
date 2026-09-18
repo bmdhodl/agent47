@@ -30,5 +30,11 @@ npm --prefix mcp-server test
   preflight; CLI demo budget path classified advisory; LangGraph docs use
   `max_calls`; installed-artifact test pip-installs `./sdk` into an isolated
   `--target` and runs examples without repo `PYTHONPATH=sdk`.
+- Independent GPT reviewer signed off SHA `ab1937856fac470123208b097b4d6d835a0837c9`.
+- Showwork `ag-01-qa-r3`, `ag-01-qa-r4`, and `ag-01-qa-r6` finished GREEN.
+  `ag-01-qa-fixes`, `ag-01-qa-r2`, and `ag-01-qa-r5` are blocked process
+  artifacts (require-before-claim ordering); they are not a product gap.
+- `BudgetGuard.reset()` exists in `sdk/agentguard/guards.py`; the cost-guardrails
+  FAQ is describing current code, not a new API from this PR.
 
 No new public SDK API. No `BudgetGuard` reservation. No dashboard revival.

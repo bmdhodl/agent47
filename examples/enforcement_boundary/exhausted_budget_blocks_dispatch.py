@@ -9,7 +9,7 @@ import json
 from types import SimpleNamespace
 
 from agentguard import BudgetExceeded, BudgetGuard, Tracer
-from agentguard.instrument import _patch_openai_instance
+from agentguard.instrument import _patch_openai_instance  # private; mock-client proof only
 
 
 class Sink:
