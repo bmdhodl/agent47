@@ -11,10 +11,12 @@
   user-provided proof; do not add telemetry to manufacture this signal.
 - OpenSSF Scorecard remainder after the code-scanning workflow pass: Fuzzing
   (no ClusterFuzzLite on purpose), CII Best Practices still InProgress,
-  Code-Review depends on human approvals, Signed-Releases needs GitHub Release
-  assets rather than PyPI attestations, and the optional CrewAI extra still
-  carries unresolved ChromaDB advisories tracked in `#644`. Do not add a
-  fuzzer or a fake CrewAI bump to chase those scores.
+  Code-Review depends on human approvals, Signed-Releases is 0 because older
+  GitHub Releases (`v1.3.0`, `v1.3.1`) attached unsigned proof png/zip files
+  (`v1.3.2` is notes-only; PyPI attestations do not count), and the optional
+  CrewAI extra still carries unresolved ChromaDB advisories tracked in `#644`.
+  Do not add a fuzzer or a fake CrewAI bump to chase those scores. Do not
+  upload more unsigned GitHub Release assets.
 - Reviewed 2026-08-15: deferred issue `#686`'s optional OAA-signed local trace
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected

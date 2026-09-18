@@ -110,6 +110,7 @@ def test_publish_workflow_release_steps_are_post_publish_rerunnable() -> None:
     assert 'PREV_RELEASE_TAG="$(gh release list' in release_job
     assert "gh workflow run release-content.yml" in release_job
     assert '-f tag="$TAG"' in release_job
+    assert "gh release upload" not in release_job
 
 
 def test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip() -> None:
@@ -144,6 +145,32 @@ def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:
     assert "ref: ${{ github.event.pull_request.head.sha }}" not in text
     assert "pull_request_target:" in text
     assert 'gh pr diff "$PR" --repo "$REPO" --allow-escape-sequences' in text
+    assert "2>/tmp/review.err" in text
+    assert "> /tmp/pr.diff.raw" in text
+
+
+def test_github_actions_under_dot_github_are_pinned() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    unpinned = []
+    for path in sorted((repo_root / ".github").rglob("*.yml")):
+        text = path.read_text(encoding="utf-8")
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            stripped = line.strip()
+            if not stripped.startswith("uses:"):
+                continue
+            uses = stripped.split("uses:", 1)[1].strip()
+            if uses.startswith("./") or uses.startswith(".github/"):
+                continue
+            action, _, ref = uses.partition("@")
+            comment_sha = ""
+            if " #" in ref:
+                ref, _, comment_sha = ref.partition(" #")
+                ref = ref.strip()
+            if len(ref) != 40 or any(ch not in "0123456789abcdef" for ch in ref.lower()):
+                unpinned.append(f"{path.relative_to(repo_root)}:{lineno}:{uses}")
+            elif not comment_sha.strip():
+                unpinned.append(f"{path.relative_to(repo_root)}:{lineno}:missing version comment")
+    assert unpinned == [], unpinned
 
 
 def test_code_scanning_proof_logs_do_not_contain_ansi() -> None:
