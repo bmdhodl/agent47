@@ -161,7 +161,7 @@ def test_github_actions_under_dot_github_are_pinned() -> None:
             uses = stripped.split("uses:", 1)[1].strip()
             if uses.startswith("./") or uses.startswith(".github/"):
                 continue
-            action, _, ref = uses.partition("@")
+            _action, _, ref = uses.partition("@")
             comment_sha = ""
             if " #" in ref:
                 ref, _, comment_sha = ref.partition(" #")

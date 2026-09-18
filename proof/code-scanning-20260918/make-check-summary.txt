@@ -1,14 +1,16 @@
-platform=linux
-command=make check && make security
-exit=0
+platform: linux
+exit: 0
 
-make check:
-  ruff: All checks passed
-  review-readiness: passed
-  ci-tools-guard: passed
-  pytest: 1049 passed, 1 skipped in 15.94s
-  coverage: 90.48% (floor 80%)
-  mcp-server: 10/10
-
-make security:
-  bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q: exit 0
+=== make check ===
+Required test coverage of 80% reached. Total coverage: 90.48%
+======================= 1051 passed, 1 skipped in 14.83s =======================
+# tests 10
+# pass 10
+# fail 0
+check_exit:0
+=== make structural ===
+structural_exit:0
+=== make security ===
+security_exit:0
+=== pin checker ===
+passed

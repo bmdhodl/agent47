@@ -27,6 +27,8 @@ Signed-Releases GitHub assets, optional CrewAI/ChromaDB (`#644`).
   runs tests with `PYTHONPATH` instead of an unhashed editable install.
 - September audit extra floors were renamed off `*requirements*.txt` so they
   are snapshots, not lockfiles.
+- The eval composite action pins `actions/setup-python` by SHA. Claude review
+  writes `gh pr diff` to a file and prints CLI stderr.
 
 ## Proof
 
