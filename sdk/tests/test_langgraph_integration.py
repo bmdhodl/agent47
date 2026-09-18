@@ -106,6 +106,20 @@ class TestGuardedNode(unittest.TestCase):
             blocked_node({"a": 1})
         self.assertEqual(ran, [])
 
+    def test_cost_only_budget_does_not_stop_node(self):
+        budget_guard = BudgetGuard(max_cost_usd=0.01)
+        ran = []
+
+        @guarded_node(tracer=self.tracer, budget_guard=budget_guard)
+        def paid_node(state):
+            ran.append(1)
+            return state
+
+        paid_node({"a": 1})
+        self.assertEqual(ran, [1])
+        self.assertEqual(budget_guard.state.cost_used, 0.0)
+        self.assertEqual(budget_guard.state.calls_used, 1)
+
     def test_guard_node_functional_form(self):
         """guard_node() wraps a plain function."""
 

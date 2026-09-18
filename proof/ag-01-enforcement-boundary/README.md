@@ -19,12 +19,16 @@ npm --prefix mcp-server test
 
 - Exhausted recorded budget blocked the next mock dispatch (`exhausted.json`).
 - Two-worker `check()` overshoot observed and labeled not-fixed (`overshoot.json`).
-- `make check`: 1064 passed, 1 skipped, coverage 91%.
+- `make check`: 1068 passed, 1 skipped, coverage 91%.
 - `make structural`: 9 passed.
 - `make security`: bandit quiet pass.
 - MCP tests: 11 passed, including read-only allow and mutating-name deny.
 - Site pages `enforcement.html`, `index.html`, `quickstart.html` at 375/768/1440:
   horizontal overflow 0. Bounds nav from the homepage lands on `/enforcement.html`.
   Favicon 404 only.
+- Independent QA follow-up: Loop/timeout/rate classified as recorded-event
+  preflight; CLI demo budget path classified advisory; LangGraph docs use
+  `max_calls`; installed-artifact test pip-installs `./sdk` into an isolated
+  `--target` and runs examples without repo `PYTHONPATH=sdk`.
 
 No new public SDK API. No `BudgetGuard` reservation. No dashboard revival.

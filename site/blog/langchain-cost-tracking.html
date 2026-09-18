@@ -374,7 +374,7 @@ llm = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4"</span>,
 
         <ul>
           <li><strong>Automatic token counting</strong> for every LLM call via the callback handler</li>
-          <li><strong>Hard budget limits</strong> that stop the agent at a dollar amount you set</li>
+          <li><strong>Recorded budget limits</strong> that refuse the next instrumented action once stored usage is already at a cap. LangChain LLM usage is recorded after the model returns.</li>
           <li><strong>Loop detection</strong> that catches repeated tool calls before they compound</li>
           <li><strong>Per-node cost tracking</strong> in LangGraph with the <code>guarded_node</code> decorator</li>
           <li><strong>CLI cost reports</strong> showing per-span breakdowns</li>
@@ -385,7 +385,7 @@ llm = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4"</span>,
 
         <div class="cta-section">
           <h2>Add cost tracking to your LangChain agent</h2>
-          <p class="muted">One callback handler. Zero hard dependencies. Budget enforcement that actually stops the agent.</p>
+          <p class="muted">One callback handler. Zero hard dependencies. Recorded-budget limits on instrumented LangChain paths, not an invoice cap.</p>
 <pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47[langchain]</pre>
           <div class="cta-buttons">
             <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>

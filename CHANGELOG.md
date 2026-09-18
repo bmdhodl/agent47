@@ -5,7 +5,8 @@
 ### Honest enforcement boundary (AG-01)
 - Published the tested surface map in
   [docs/enforcement-boundary.md](docs/enforcement-boundary.md): advisory,
-  recorded-budget preflight, reservation-backed, or unsupported.
+  recorded-budget preflight, recorded-event preflight, reservation-backed,
+  or unsupported.
 - Replaced absolute bill-prevention copy with recorded-budget bounds.
   Direct SDK bypass, in-flight spend, missing usage, concurrent overshoot,
   and provider subscription quotas stay documented as remaining exposure.

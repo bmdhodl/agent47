@@ -23,7 +23,8 @@ Codex until your code (or a generated starter) calls the SDK.
 | Class | Meaning |
 | --- | --- |
 | `advisory` | Reports, instructs, or records after the fact. Does not refuse the action that just ran. |
-| `recorded-budget preflight` | Refuses the next instrumented action when recorded usage is already at or above a cap. No reservation. |
+| `recorded-budget preflight` | Refuses the next instrumented action when recorded token/call/cost usage is already at or above a cap. `check()` does not reserve concurrent in-flight requests. `consume()` at entry serializes call accounting on the guard lock; that is still not token or dollar reservation. |
+| `recorded-event preflight` | Refuses the next instrumented action when recorded loop, retry, timeout, or rate state is already at a cap. This is not a token, call, or dollar budget. |
 | `reservation-backed` | Holds capacity before in-flight work so concurrent callers cannot both spend the last unit. |
 | `unsupported` | Not intercepted. Do not advertise a stop here. |
 
@@ -41,13 +42,13 @@ paths are marked `unsupported`.
 | Exhausted budget vs next dispatch (repro) | recorded-budget preflight | `examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py` | Mock provider; real patch and `BudgetGuard`. No network. |
 | Concurrent `check()` overshoot (repro) | unsupported | `examples/enforcement_boundary/two_worker_overshoot.py` | Two workers can both pass `check()` and both dispatch. This characterizes current overshoot; it is not a fix. Reservation is later work (AG-03/AG-04). |
 | LangChain LLM callbacks | advisory | `sdk/tests/test_langchain_integration.py::test_llm_start_does_not_preflight_exhausted_budget` | `consume` runs on `on_llm_end` after the LLM returns. An exhausted token budget does not block `on_llm_start`. |
-| LangChain tool callbacks | recorded-budget preflight | `sdk/tests/test_langchain_integration.py::test_tool_start_blocks_exhausted_call_budget` | `consume(calls=1)` runs at `on_tool_start`. An exhausted call budget raises before the tool span. This is not token preflight for the LLM. |
-| LangGraph `guarded_node` / `guard_node` | recorded-budget preflight | `sdk/tests/test_langgraph_integration.py::test_budget_guard_fires` | `consume(calls=1)` runs at node entry. Inner provider clients are not patched unless you patch them separately. |
+| LangChain tool callbacks | recorded-budget preflight | `sdk/tests/test_langchain_integration.py::test_tool_start_blocks_exhausted_call_budget` | `consume(calls=1)` runs at `on_tool_start`. An exhausted call budget raises before the tool span. The guard lock serializes that call increment, so two threads cannot both take the last call slot. This is not token or dollar preflight for the LLM. |
+| LangGraph `guarded_node` / `guard_node` | recorded-budget preflight | `sdk/tests/test_langgraph_integration.py::test_budget_guard_fires` | `consume(calls=1)` runs at node entry. A `max_cost_usd`-only guard does not fire here. Inner provider clients are not patched unless you patch them separately. |
 | CrewAI `AgentGuardCrewHandler` | advisory | `sdk/tests/test_crewai_integration.py::test_budget_guard_fires` | `step_callback` runs after the step. The step that exhausts the call budget already ran. |
-| `LoopGuard` / `FuzzyLoopGuard` / `RetryGuard` / `TimeoutGuard` / `RateLimitGuard` | recorded-budget preflight | `sdk/tests/test_guards.py` | Runtime event checks at `check()`. `TimeoutGuard` does not interrupt a blocked call or a provider-side job. `RateLimitGuard` raises `BudgetExceeded`. |
+| `LoopGuard` / `FuzzyLoopGuard` / `RetryGuard` / `TimeoutGuard` / `RateLimitGuard` | recorded-event preflight | `sdk/tests/test_guards.py` | Runtime event checks at `check()`. Not a token/call/cost budget. `TimeoutGuard` does not interrupt a blocked call or a provider-side job. `RateLimitGuard` raises `BudgetExceeded`. |
 | `X402SpendGuard.charge()` | reservation-backed | `sdk/tests/test_x402.py::test_concurrent_charges_do_not_overshoot` | Reserves the payment amount before `pay()`. Failed `pay` rolls back. This is not LLM spend. |
 | CLI `doctor` | advisory | `sdk/tests/test_doctor.py::test_run_doctor_writes_local_trace_and_snippet` | Verifies install and local traces. Does not wrap host tools. |
-| CLI `demo` | recorded-budget preflight | `sdk/tests/test_demo.py::test_run_offline_demo_writes_trace_and_explains_boundary` | Offline mock agent. Proof of guards, not host interception. |
+| CLI `demo` | advisory | `sdk/tests/test_enforcement_boundary.py::test_cli_demo_budget_path_is_advisory` | Budget demo emits `llm.result` then `consume()`. Loop/retry demos fire Tracer event guards. Not host interception. |
 | CLI `skillpack` / `skills/agentguard` | advisory | `sdk/tests/test_skillpack.py::test_skillpack_notes_are_onboarding_not_host_enforcement` | Generated instructions. Not Cursor, Claude Code, Copilot, or Codex enforcement. |
 | npm `@agentguard47/mcp-server` | advisory | `mcp-server/src/__tests__/tools.test.ts` | Read-only hosted traces, alerts, usage, costs, and event-quota health. `check_budget` is hosted event quota, not `BudgetGuard` and not a provider invoice. Mutating budget tools are denied. |
 | Python `agentguard-mcp` `record_call` | reservation-backed | `agentguard-mcp/tests/test_storage.py::test_concurrent_record_call_never_exceeds_budget` | SQLite `BEGIN IMMEDIATE` for clients that call this server. Does not intercept other MCP servers. Unpublished checkout package. |
@@ -70,7 +71,7 @@ paths are marked `unsupported`.
   `examples/enforcement_boundary/two_worker_overshoot.py`.
 - **Framework adapters.** LangChain LLM and CrewAI steps record after the
   model or step ran. LangGraph charges a call at node entry, not per inner
-  LLM.
+  LLM, and does not increment token or dollar totals.
 
 Native provider or host caps are the right default when they already cover
 the workflow. Use AgentGuard when you need an in-process stop at a specific

@@ -13,6 +13,7 @@ MAP = ROOT / "docs" / "enforcement-boundary.md"
 CLASSES = {
     "advisory",
     "recorded-budget preflight",
+    "recorded-event preflight",
     "reservation-backed",
     "unsupported",
 }
@@ -21,6 +22,7 @@ PRODUCT_DOCS = (
     ROOT / "docs" / "cost-guardrails.md",
     ROOT / "docs" / "guides" / "getting-started.md",
     ROOT / "docs" / "README.md",
+    ROOT / "docs" / "launch" / "show-hn.md",
     ROOT / "ops" / "00-NORTHSTAR.md",
     ROOT / "memory" / "distribution.md",
     ROOT / "skills" / "agentguard" / "SKILL.md",
@@ -31,14 +33,17 @@ PRODUCT_DOCS = (
     ROOT / "site" / "enforcement.html",
 )
 FORBIDDEN_CLAIM_RE = re.compile(
-    r"before they happen|hard dollar (limits?|ceiling|stops?)|"
-    r"stop runaway AI bills|guaranteed invoice|invoice cap we enforce|"
-    r"stops the moment it exceeds",
+    r"before they happen|hard dollar (limits?|ceiling|stops?|budgets?)|"
+    r"stop runaway AI (bills|agent costs)|guaranteed invoice|"
+    r"invoice cap we enforce|stops the moment it exceeds|"
+    r"Hard budget limits that (actually )?stop|"
+    r"Budget enforcement that actually stops",
     re.I,
 )
 TABLE_RE = re.compile(
     r"^\| (?!Surface)(?!---)(.+?) \| (advisory|recorded-budget preflight|"
-    r"reservation-backed|unsupported) \| (`[^`]+`|[^|]+) \| (.+?) \|\s*$",
+    r"recorded-event preflight|reservation-backed|unsupported) \| "
+    r"(`[^`]+`|[^|]+) \| (.+?) \|\s*$",
     re.M,
 )
 
@@ -82,6 +87,7 @@ def test_map_covers_required_surfaces():
         "HttpSink",
         "two_worker_overshoot.py",
         "exhausted_budget_blocks_dispatch.py",
+        "recorded-event preflight",
         "Direct SDK bypass",
         "In-flight spend",
         "Missing usage",
@@ -122,15 +128,51 @@ def test_two_worker_example_characterizes_overshoot():
     assert payload["recorded_calls"] > 1
 
 
-def test_examples_run_from_installed_distribution():
-    import importlib.metadata as metadata
-
-    import agentguard
-
-    version = metadata.version("agentguard47")
+def test_examples_run_from_installed_distribution(tmp_path):
+    target = tmp_path / "site-packages"
+    target.mkdir()
+    install = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            str(ROOT / "sdk"),
+            "--target",
+            str(target),
+            "--no-deps",
+            "--disable-pip-version-check",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert install.returncode == 0, install.stderr or install.stdout
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(target)
+    probe = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import importlib.metadata as m, pathlib, agentguard; "
+                "print(m.version('agentguard47')); "
+                "print(pathlib.Path(agentguard.__file__).resolve())"
+            ),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert probe.returncode == 0, probe.stderr
+    lines = [line.strip() for line in probe.stdout.splitlines() if line.strip()]
+    assert len(lines) >= 2
+    version, installed = lines[0], lines[1]
     assert version
-    installed = Path(agentguard.__file__).resolve()
-    assert "agentguard" in str(installed)
+    installed_path = Path(installed).resolve()
+    target_resolved = target.resolve()
+    assert target_resolved == installed_path or target_resolved in installed_path.parents
+    repo_init = (ROOT / "sdk" / "agentguard" / "__init__.py").resolve()
+    assert installed_path != repo_init
     for name in (
         "exhausted_budget_blocks_dispatch.py",
         "two_worker_overshoot.py",
@@ -142,8 +184,44 @@ def test_examples_run_from_installed_distribution():
             capture_output=True,
             text=True,
             check=True,
-            env=_example_env(),
+            env=env,
         )
+
+
+def test_cli_demo_budget_path_is_advisory():
+    source = (ROOT / "sdk" / "agentguard" / "demo.py").read_text(encoding="utf-8")
+    budget_fn = source.split("def _run_budget_demo", 1)[1].split("def _run_loop_demo", 1)[0]
+    assert '"llm.result"' in budget_fn or "'llm.result'" in budget_fn
+    assert budget_fn.find("llm.result") < budget_fn.find("budget.consume")
+    rows = {surface: class_name for surface, class_name, _, _ in _rows()}
+    assert rows["CLI `demo`"] == "advisory"
+
+
+def test_live_html_meta_rejects_invoice_guarantees():
+    meta_re = re.compile(
+        r"<meta[^>]+(?:name|property)=['\"](?:description|og:description|twitter:description)['\"][^>]*content=['\"]([^'\"]+)['\"]",
+        re.I,
+    )
+    meta_re_alt = re.compile(
+        r"<meta[^>]+content=['\"]([^'\"]+)['\"][^>]+(?:name|property)=['\"](?:description|og:description|twitter:description)['\"]",
+        re.I,
+    )
+    for path in (ROOT / "site").rglob("*.html"):
+        text = path.read_text(encoding="utf-8")
+        contents = meta_re.findall(text) + meta_re_alt.findall(text)
+        for content in contents:
+            match = FORBIDDEN_CLAIM_RE.search(content)
+            assert match is None, f"{path}: forbidden meta {match.group(0)!r}"
+
+
+def test_historical_surfaces_link_enforcement():
+    paths = list((ROOT / "site" / "blog").glob("*.html"))
+    paths.extend(p for p in (ROOT / "docs" / "blog").glob("*.md") if p.name != "PUBLISHING.md")
+    paths.extend((ROOT / "docs" / "discussions").glob("*.md"))
+    assert paths
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        assert "enforcement-boundary.md" in text or "enforcement.html" in text, path.name
 
 
 def test_product_docs_reject_invoice_guarantees():
@@ -226,6 +304,7 @@ def test_rendered_enforcement_page_states_bounds():
     html = (ROOT / "site" / "enforcement.html").read_text(encoding="utf-8")
     for needle in (
         "recorded-budget preflight",
+        "recorded-event preflight",
         "advisory",
         "reservation-backed",
         "unsupported",

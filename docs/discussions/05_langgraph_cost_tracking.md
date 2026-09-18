@@ -1,5 +1,9 @@
 # Cost Tracking for LangGraph Agents
 
+> Tested bounds (2026-09-18): `guarded_node` charges `calls=1` at node entry.
+> A dollar-only `BudgetGuard` does not fire from that wrapper. See
+> [enforcement-boundary.md](../enforcement-boundary.md).
+
 **Category:** Show and tell
 **Labels:** langgraph, cost-control, budget
 

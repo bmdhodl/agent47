@@ -4,8 +4,8 @@ Wrap LangGraph node functions with tracing and runtime guards. The supported
 API is `guarded_node` / `guard_node`. There is no `AgentGuardLangGraphCallback`.
 
 `consume(calls=1)` runs at node entry. That is recorded-budget preflight for
-the node, not a patch of inner provider clients. See
-[enforcement-boundary.md](../enforcement-boundary.md).
+the **call** budget, not a dollar cap and not a patch of inner provider
+clients. See [enforcement-boundary.md](../enforcement-boundary.md).
 
 ## Install
 
@@ -23,7 +23,7 @@ tracer = Tracer(
     sink=JsonlFileSink("traces.jsonl"),
     service="my-graph-agent",
 )
-budget = BudgetGuard(max_cost_usd=2.00)
+budget = BudgetGuard(max_calls=20)
 
 @guarded_node(
     tracer=tracer,

@@ -6,6 +6,9 @@ description: "Recorded-budget preflight, warning callbacks, and auto-tracking â€
 canonical_url: https://github.com/bmdhodl/agent47/blob/main/docs/blog/002-budget-enforcement-patterns-devto.md
 ---
 
+> Tested bounds (2026-09-18): recorded-budget preflight is not an invoice cap.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
+
 "How do I stop my agent from spending more than $X?"
 
 OpenAI's API doesn't have per-request budget caps. Account-level spend limits are a blunt instrument â€” they kill everything, not just the runaway agent. And by the time the limit kicks in, you've already spent the money.

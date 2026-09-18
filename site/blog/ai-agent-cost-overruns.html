@@ -268,7 +268,7 @@
 
         <h2>The Solution: Runtime Budget Enforcement</h2>
 
-        <p>Runtime enforcement means the guard runs <em>inside</em> your agent process. Every LLM call checks the budget before returning. When the limit is hit, the guard raises an exception and the agent stops immediately.</p>
+        <p>Runtime enforcement means the guard runs <em>inside</em> your agent process. Patched Chat Completions and Messages calls check the recorded budget before the next dispatch. When the recorded limit is already hit, the guard raises and that next call is not sent.</p>
 
         <p>Here is what it looks like with AgentGuard:</p>
 
@@ -315,7 +315,7 @@ tracer = <span class="fn">Tracer</span>(
 
         <div class="cta-section">
           <h2>Stop overspending on AI agents</h2>
-          <p class="muted">Three lines of Python. Zero dependencies. Hard budget limits that actually stop the agent.</p>
+          <p class="muted">Three lines of Python. Zero dependencies. Recorded-budget preflight on instrumented calls, not an invoice cap.</p>
 <pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47</pre>
           <div class="cta-buttons">
             <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>

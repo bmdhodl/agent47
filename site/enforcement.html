@@ -51,7 +51,8 @@
       <table>
         <tr><th>Class</th><th>Meaning</th></tr>
         <tr><td>advisory</td><td>Reports or records after the fact. Does not refuse the action that just ran.</td></tr>
-        <tr><td>recorded-budget preflight</td><td>Refuses the next instrumented action at a recorded cap. No reservation.</td></tr>
+        <tr><td>recorded-budget preflight</td><td>Refuses the next instrumented action at a recorded token/call/cost cap. <code>check()</code> does not reserve concurrent in-flight requests.</td></tr>
+        <tr><td>recorded-event preflight</td><td>Refuses the next instrumented action at a recorded loop, retry, timeout, or rate cap. Not a token budget.</td></tr>
         <tr><td>reservation-backed</td><td>Holds capacity before in-flight work.</td></tr>
         <tr><td>unsupported</td><td>Not intercepted. Do not advertise a stop here.</td></tr>
       </table>
@@ -59,8 +60,10 @@
       <ul>
         <li>OpenAI Chat Completions and Anthropic Messages patches: recorded-budget preflight, including streamed final usage.</li>
         <li>LangChain LLM callbacks: advisory. Usage is recorded after the model returns.</li>
-        <li>LangGraph <code>guarded_node</code>: recorded-budget preflight at node entry.</li>
+        <li>LangChain tool callbacks: recorded-budget preflight for an exhausted <em>call</em> budget only.</li>
+        <li>LangGraph <code>guarded_node</code>: recorded-budget preflight via <code>consume(calls=1)</code> at node entry. A dollar-only guard does not fire.</li>
         <li>CrewAI handler: advisory. The step callback runs after the step.</li>
+        <li>CLI <code>demo</code> budget path: advisory. It records <code>llm.result</code> then <code>consume()</code>.</li>
         <li>Skillpacks and coding-agent hosts: unsupported as enforcement.</li>
         <li>OpenAI Responses API: unsupported.</li>
         <li>Provider subscription quota: unsupported.</li>
