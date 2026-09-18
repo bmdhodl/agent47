@@ -8,7 +8,7 @@
 - Release email pipeline: PR 726 merged. Published stable GitHub releases with an available PyPI package trigger announcements to the existing AgentGuard subscriber cohort through bmdpat. Retries use one campaign key per version.
 - Decision: Patrick authorized automatic release announcements, plus the admin merge after the automated approver hit its usage limit. Weekly newsletter approvals remain separate.
 - Proof: 22 sender tests, Python 3.9/3.12 CI, actionlint, lint, MCP checks and CodeQL passed. Review findings were repaired. Merge: 6285d39c54fc75b914c2586f1dbb7ceec98131e3.
-- Activation: bmdpat receiver deployment and live owner-email verification are in progress. The shared complaint pause is still active; no subscriber release announcement has been sent.
+- Activation: production receiver and real GitHub workflow dry run passed. The owner test and v1.3.2 subscriber announcement have confirmed delivery. A repeat invocation sent zero duplicate messages. Future stable releases send automatically; unsubscribe and suppression filters stay enforced.
 - Sign-off: OpenAI | GPT-6 | auto
 
 ---
