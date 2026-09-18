@@ -7,6 +7,10 @@ they directly strengthen coding-agent adoption.
 
 ## Current Focus Notes
 
+- Stable SDK releases automatically email active AgentGuard subscribers.
+  The release email is owner-authorized (2026-09-18) and uses the existing
+  subscriber service. See [release email](../docs/guides/release-email.md).
+
 - Provider patches record final streamed usage once and reject exhausted
   recorded budgets before dispatch.
   See [release state](../memory/state.md) for publication evidence and
