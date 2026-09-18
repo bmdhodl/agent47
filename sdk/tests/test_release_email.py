@@ -74,9 +74,8 @@ def test_send_uses_scoped_payload_and_redacts_response_details():
 
 
 def test_partial_service_failure_is_not_success():
-    with patch.object(sender.urllib.request, "urlopen", return_value=io.BytesIO(b'{"ok": false}')):
-        with pytest.raises(RuntimeError):
-            sender.send({}, "test-key")
+    with patch.object(sender.urllib.request, "urlopen", return_value=io.BytesIO(b'{"ok": false}')), pytest.raises(RuntimeError):
+        sender.send({}, "test-key")
 
 
 def test_email_job_is_independent_of_discussions_and_existing_publish_dispatches_it():
