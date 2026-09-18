@@ -1,0 +1,1 @@
+AgentGuard comparison using installed versions and a mocked stream. The same script yields three chunks with 200 tokens of final usage. Version 1.3.1 records 0 tokens. Version 1.3.2 records 200 tokens after one consume. No network calls are made.

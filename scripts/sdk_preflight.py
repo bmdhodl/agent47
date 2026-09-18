@@ -64,6 +64,11 @@ TEST_MAP = {
     "sdk/agentguard/instrument.py": [
         "sdk/tests/test_instrument.py",
         "sdk/tests/test_instrument_patch.py",
+        "sdk/tests/test_instrument_stream.py",
+        "sdk/tests/test_budget_preflight.py",
+    ],
+    "sdk/agentguard/instrument_stream.py": [
+        "sdk/tests/test_instrument_stream.py",
     ],
     "sdk/agentguard/integrations/crewai.py": [
         "sdk/tests/test_crewai_integration.py",
