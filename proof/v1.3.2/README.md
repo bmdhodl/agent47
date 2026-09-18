@@ -48,7 +48,8 @@ the provider library.
   all scored 0.0. Adjacent receipts include exact input hashes. This
   detects writing patterns, not authorship or image provenance.
 
-The tag, PyPI publish, and live LinkedIn/X posts are outside this
-candidate. Do not treat these files as a publication receipt.
+Publication receipts: `PUBLICATION.md`, `pypi.json`, `public-smoke.json`,
+`public-demo.json`, `attestation.json`. Live LinkedIn/X posts are still
+manual; compose URLs are in `compose-urls.txt`.
 
 Agent sign-off (provider | model | reasoning tier): Cursor | Grok 4.6 | auto

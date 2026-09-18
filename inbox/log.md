@@ -3,6 +3,13 @@
 
 ---
 
+## 2026-09-18 | Cursor
+
+- Merged PR `#725` and tagged `v1.3.2`. OpenAI/Anthropic sync and async streams now bill final usage once. Same mocked stream: 0 tokens on 1.3.1, 200 tokens and one consume on 1.3.2.
+- Fresh PyPI wheel, eight CLI paths, build attestation, and GitHub Release passed. Copy still scores 0.0 on Defluff. LinkedIn/X were not posted from this environment. Receipts: `proof/v1.3.2/PUBLICATION.md`.
+- Concurrent reservations, predicted response cost, and optional CrewAI/ChromaDB issue 644 remain outside this fix. The PR 726 subscriber email job was not in the tag tree; re-run Release Content on `v1.3.2` from current main.
+- Sign-off: Cursor | Grok 4.6 | auto
+
 ## 2026-09-14 | Codex
 
 - AgentGuard 1.3.1 shipped after PR 721: exhausted recorded budgets now stop OpenAI/Anthropic sync and async requests before dispatch. A one-call budget sends one mocked request across three attempts, versus three on 1.3.0.
