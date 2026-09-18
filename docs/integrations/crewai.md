@@ -8,6 +8,18 @@ AgentGuard integrates with CrewAI to trace crew task execution and agent interac
 pip install agentguard47[crewai]
 ```
 
+The optional extra pulls ChromaDB. The
+[2026-09-12 audit](../../proof/audit-20260912/README.md) resolved CrewAI 1.15.21
+with ChromaDB 1.1.1 and recorded four unresolved advisories:
+CVE-2026-45829 (PYSEC-2026-311), CVE-2026-45830, CVE-2026-45831, and
+CVE-2026-45833. The audit found no fixed release at that time.
+
+[CVE-2026-45829](https://github.com/advisories/GHSA-f4j7-r4q5-qw2c) concerns
+code injection through the ChromaDB Python server. Review the upstream
+advisories and your deployment exposure before installing this extra.
+AgentGuard does not fix these dependencies. Base SDK installs do not include
+ChromaDB.
+
 ## Quick Start
 
 ```python

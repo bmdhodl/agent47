@@ -4,6 +4,18 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("name", ["README.md", "sdk/PYPI_README.md",
+                                  "docs/integrations/crewai.md"])
+def test_crewai_install_docs_disclose_chromadb_advisory(name):
+    # REGRESSION: the README rewrite dropped the optional-extra disclosure.
+    text = (ROOT / name).read_text(encoding="utf-8")
+    assert "ChromaDB" in text
+    assert "PYSEC-2026-311" in text
+    assert "CVE-2026-45829" in text
+
+
 spec = importlib.util.spec_from_file_location("docs_checker", ROOT / "scripts/check_docs.py")
 checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
