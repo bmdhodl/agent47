@@ -14,11 +14,21 @@ ENDPOINT = "https://bmdpat.com/api/newsletter/send"
 REPOSITORY = "bmdhodl/agent47"
 
 
+class NoRedirects(urllib.request.HTTPRedirectHandler):
+    """Never forward release or GitHub credentials to a redirected endpoint."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+urlopen = urllib.request.build_opener(NoRedirects()).open
+
+
 def get_json(url, token=None):
     headers = {"Accept": "application/json", "User-Agent": "AgentGuard-release-email"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:
+    with urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:
         return json.load(response)
 
 
@@ -61,7 +71,7 @@ def send(payload, key):
         ENDPOINT, data=json.dumps(payload).encode(), method="POST",
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(request, timeout=120) as response:
+    with urlopen(request, timeout=120) as response:
         result = json.load(response)
     if result.get("ok") is not True:
         raise RuntimeError("Release email service reported an incomplete send")

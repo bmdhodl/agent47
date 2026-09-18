@@ -3,6 +3,9 @@
 import importlib.util
 import io
 import json
+import threading
+import urllib.error
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from unittest.mock import patch
 
@@ -57,7 +60,7 @@ def test_package_must_exist_and_not_be_yanked(metadata):
 
 
 def test_missing_credentials_never_sends():
-    with patch.object(sender.urllib.request, "urlopen") as request:
+    with patch.object(sender, "urlopen") as request:
         with pytest.raises(ValueError):
             sender.send({}, None)
         request.assert_not_called()
@@ -66,7 +69,7 @@ def test_missing_credentials_never_sends():
 def test_send_uses_scoped_payload_and_redacts_response_details():
     payload = sender.build_payload("v1.3.1", release(), package())
     response = io.BytesIO(json.dumps({"ok": True, "accepted": 2, "private": "must-not-log"}).encode())
-    with patch.object(sender.urllib.request, "urlopen", return_value=response) as request:
+    with patch.object(sender, "urlopen", return_value=response) as request:
         assert sender.send(payload, "test-key") == {"ok": True, "accepted": 2}
     outgoing = request.call_args.args[0]
     assert outgoing.full_url == sender.ENDPOINT
@@ -74,8 +77,34 @@ def test_send_uses_scoped_payload_and_redacts_response_details():
 
 
 def test_partial_service_failure_is_not_success():
-    with patch.object(sender.urllib.request, "urlopen", return_value=io.BytesIO(b'{"ok": false}')), pytest.raises(RuntimeError):
+    with patch.object(sender, "urlopen", return_value=io.BytesIO(b'{"ok": false}')), pytest.raises(RuntimeError):
         sender.send({}, "test-key")
+
+
+@pytest.mark.parametrize("status", [301, 302, 303, 307, 308])
+def test_credentials_are_never_forwarded_on_redirect(status):
+    paths = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            paths.append(self.path)
+            self.send_response(status)
+            self.send_header("Location", f"http://localhost:{self.server.server_port}/target")
+            self.end_headers()
+
+        def log_message(self, *args):
+            pass
+
+    with HTTPServer(("127.0.0.1", 0), Handler) as server:
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            with pytest.raises(urllib.error.HTTPError):
+                sender.get_json(f"http://127.0.0.1:{server.server_port}/start", "test-secret")
+            assert paths == ["/start"]
+        finally:
+            server.shutdown()
+            thread.join()
 
 
 def test_email_job_is_independent_of_discussions_and_existing_publish_dispatches_it():
