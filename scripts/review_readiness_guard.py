@@ -80,7 +80,7 @@ REQUIRED_TEMPLATE_PHRASES = {
 REQUIRED_CLAUDE_REVIEW_PHRASES = {
     "pinned-checkout": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0",
     "trusted-trigger": "pull_request_target:",
-    "trusted-base-ref": "ref: ${{ github.event.pull_request.base.sha }}",
+    "trusted-base-ref": "ref: ${{ github.sha }}",
     "shallow-checkout": "fetch-depth: 1",
     "trusted-runtime-directory": "working-directory: .github/claude-review",
     "workflow-local-install": "npm ci --ignore-scripts --no-audit --no-fund",
@@ -403,12 +403,12 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
             )
         checkout_with = checkout_step.get("with")
         if not isinstance(checkout_with, dict) or checkout_with.get("ref") != (
-            "${{ github.event.pull_request.base.sha }}"
+            "${{ github.sha }}"
         ):
             findings.append(
                 _workflow_finding(
                     "trusted-base-ref",
-                    "The review runtime must check out github.event.pull_request.base.sha.",
+                    "The review runtime must check out github.sha, the pull_request_target base commit.",
                 )
             )
         if isinstance(checkout_with, dict) and checkout_with.get("path") not in (None, ""):
@@ -435,7 +435,7 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
             findings.append(
                 _workflow_finding(
                     "no-full-history",
-                    "Claude review uses gh pr diff; full history checkout is unnecessary.",
+                    "Claude review fetches the PR diff over the GitHub API; full history checkout is unnecessary.",
                 )
             )
         elif fetch_depth not in (1, "1"):

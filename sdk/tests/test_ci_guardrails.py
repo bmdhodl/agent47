@@ -110,3 +110,88 @@ def test_publish_workflow_release_steps_are_post_publish_rerunnable() -> None:
     assert 'PREV_RELEASE_TAG="$(gh release list' in release_job
     assert "gh workflow run release-content.yml" in release_job
     assert '-f tag="$TAG"' in release_job
+    assert "gh release upload" not in release_job
+
+
+def test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    workflow = repo_root / ".github" / "workflows" / "ci.yml"
+    lockfile = repo_root / ".github" / "requirements" / "mcp-budget.txt"
+    manifest = repo_root / ".github" / "requirements" / "mcp-budget.in"
+
+    text = workflow.read_text(encoding="utf-8")
+    assert "python -m pip install --require-hashes -r .github/requirements/ci-tools.txt" in text
+    assert "python -m pip install --require-hashes -r .github/requirements/mcp-budget.txt" in text
+    assert "python -m pip install -e ./agentguard-mcp" not in text
+    assert "working-directory: agentguard-mcp" in text
+    assert "PYTHONPATH: ." in text
+    assert lockfile.exists(), "CI must pin agentguard-mcp deps with a hashed lockfile"
+    lock_text = lockfile.read_text(encoding="utf-8")
+    assert "--hash=sha256:" in lock_text
+    assert lock_text.count("mcp==") >= 1
+    manifest_text = manifest.read_text(encoding="utf-8")
+    assert "mcp>=1.23,<2" in manifest_text
+    assert "pytest==" not in manifest_text
+    assert "ruff==" not in manifest_text
+
+
+def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    workflow = repo_root / ".github" / "workflows" / "claude-review.yml"
+    text = workflow.read_text(encoding="utf-8")
+
+    assert "ref: ${{ github.sha }}" in text
+    assert "ref: ${{ github.event.pull_request.base.sha }}" not in text
+    assert "ref: ${{ github.event.pull_request.head.sha }}" not in text
+    assert "pull_request_target:" in text
+    assert "application/vnd.github.diff" in text
+    assert "gh pr diff" not in text
+    assert "--allow-escape-sequences" not in text
+    assert "2>/tmp/review.err" in text
+
+
+def test_github_actions_under_dot_github_are_pinned() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    unpinned = []
+    for path in sorted((repo_root / ".github").rglob("*.yml")):
+        text = path.read_text(encoding="utf-8")
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            stripped = line.strip()
+            if not stripped.startswith("uses:"):
+                continue
+            uses = stripped.split("uses:", 1)[1].strip()
+            if uses.startswith("./") or uses.startswith(".github/"):
+                continue
+            _action, _, ref = uses.partition("@")
+            comment_sha = ""
+            if " #" in ref:
+                ref, _, comment_sha = ref.partition(" #")
+                ref = ref.strip()
+            if len(ref) != 40 or any(ch not in "0123456789abcdef" for ch in ref.lower()):
+                unpinned.append(f"{path.relative_to(repo_root)}:{lineno}:{uses}")
+            elif not comment_sha.strip():
+                unpinned.append(f"{path.relative_to(repo_root)}:{lineno}:missing version comment")
+    assert unpinned == [], unpinned
+
+
+def test_code_scanning_proof_logs_do_not_contain_ansi() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    proof_dir = repo_root / "proof" / "code-scanning-20260918"
+    offenders = []
+    for path in sorted(proof_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        data = path.read_bytes()
+        if b"\x1b[" in data:
+            offenders.append(path.relative_to(repo_root).as_posix())
+    assert offenders == []
+
+
+def test_proof_snapshots_are_not_live_pip_requirements() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    matches = sorted(
+        path.relative_to(repo_root).as_posix()
+        for path in (repo_root / "proof").rglob("*")
+        if path.is_file() and "requirements" in path.name.lower() and path.suffix == ".txt"
+    )
+    assert matches == [], matches

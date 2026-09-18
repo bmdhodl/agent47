@@ -1,0 +1,39 @@
+commit=dcebc225edd4f7d793c11aa36a584ed91c3d7914
+score=5.9
+scorecard=v5.5.0
+
+Code-Review                    2  Found 4/15 approved changesets -- score normalized to 2
+Dependency-Update-Tool        10  update tool detected
+Maintained                    10  30 commit(s) and 30 issue activity found in the last 90 days -- score normalized to 10
+Security-Policy               10  security policy file detected
+Dangerous-Workflow             0  dangerous workflow patterns detected
+  Warn: untrusted code checkout '${{ github.event.pull_request.base.sha }}': .github/workflows/claude-review.yml:19
+Token-Permissions             10  GitHub workflow tokens follow principle of least privilege
+  Warn: jobLevel 'contents' permission set to 'write': .github/workflows/publish.yml:78
+  Warn: jobLevel 'actions' permission set to 'write': .github/workflows/publish.yml:79
+Binary-Artifacts              10  no binaries found in the repo
+Pinned-Dependencies            9  dependency not pinned by hash detected -- score normalized to 9
+  Warn: pipCommand not pinned by hash: .github/workflows/ci.yml:111
+License                       10  license file detected
+CII-Best-Practices             2  badge detected: InProgress
+Packaging                     10  packaging workflow detected
+Fuzzing                        0  project is not fuzzed
+  Warn: no fuzzer integrations found
+Signed-Releases                0  Project has not signed or included provenance with any releases.
+  Warn: release artifact v1.3.1 not signed: https://api.github.com/repos/bmdhodl/agent47/releases/388832600
+  Warn: release artifact v1.3.0 not signed: https://api.github.com/repos/bmdhodl/agent47/releases/387670949
+  Warn: release artifact v1.3.1 does not have provenance: https://api.github.com/repos/bmdhodl/agent47/releases/388832600
+  Warn: release artifact v1.3.0 does not have provenance: https://api.github.com/repos/bmdhodl/agent47/releases/387670949
+SAST                          10  SAST tool is run on all commits
+Branch-Protection             -1  internal error: error during branchesHandler.setup: internal error: some github tokens can't read classic branch protection rules: https://github.com/ossf/score
+Contributors                   3  project has 1 contributing companies or organizations -- score normalized to 3
+CI-Tests                      10  16 out of 16 merged PRs checked by a CI test -- score normalized to 10
+Vulnerabilities                0  19 existing vulnerabilities detected
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2104
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2105
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2106
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2107
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2108
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2109
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2110
+  Warn: Project is vulnerable to: https://osv.dev/PYSEC-2026-2111
