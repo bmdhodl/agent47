@@ -1,5 +1,8 @@
 # Show HN Launch Plan
 
+Tested bounds: [docs/enforcement-boundary.md](../enforcement-boundary.md).
+Recorded-budget preflight is not an invoice cap or a host-wide kill switch.
+
 ## Post Title
 
 ```
@@ -27,7 +30,7 @@ Most tools show nice traces after the fact. AgentGuard is meant to stop the run 
 
 What it does:
 
-- BudgetGuard: hard dollar budgets with warnings before the ceiling
+- BudgetGuard: recorded token/call/cost caps with optional warning callbacks
 - LoopGuard: catches repeated tool calls and simple alternation patterns
 - RetryGuard: stops retry storms on the same flaky tool
 - Local tracing + reports: JSONL traces, incident reports, and eval assertions
@@ -47,8 +50,8 @@ The quickest way to try it is:
     agentguard demo
     python examples/demo_budget_kill.py
 
-That path stays local, writes traces, and proves the SDK can stop runaway
-spend before the agent burns more budget.
+That path stays local, writes traces, and proves the SDK can refuse the
+next instrumented call once recorded usage is already at a cap.
 
 I also ship a small MCP server for coding agents that want to inspect retained traces later:
 

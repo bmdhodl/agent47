@@ -122,6 +122,10 @@ read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.2/sdk/agent
   agent running on a provider's server.
 - Cost estimates are not invoices. Supply reported cost or use strict cost
   resolution when an estimate is insufficient.
+- Recorded-budget preflight refuses the next instrumented call when stored
+  usage is already at a cap. It does not reserve concurrent in-flight
+  requests, predict the next response, or cap a provider subscription.
+  See the [enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md).
 - The base SDK uses the standard library. Optional framework extras install
   third-party dependencies and need their own security review.
 - Trace content can contain application data. Review it before sharing or
@@ -154,8 +158,9 @@ describes the optional hosted service.
 
 | You want to | Start here |
 | --- | --- |
+| See which paths actually stop a call | [Enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md) |
 | Install and trace a first run | [Getting started](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md) |
-| Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/main/docs/README.md) |
+| Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/v1.3.2/docs/README.md) |
 | Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.2/examples) |
 | Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v1.3.2/docs/integrations) |
 | Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.2/mcp-server) |

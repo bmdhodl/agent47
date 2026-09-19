@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enforcement boundary — AgentGuard47</title>
+    <meta
+      name="description"
+      content="Tested AgentGuard bounds: recorded-budget preflight on patched Chat Completions and Messages. Not an invoice cap, concurrent reservation, or host interceptor."
+    />
+    <link rel="canonical" href="https://agentguard47.com/enforcement.html" />
+    <style>
+      :root {
+        --bg: #f7f4ee;
+        --ink: #1e1b16;
+        --accent: #1b6c4a;
+        --muted: #6c645a;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
+        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
+        color: var(--ink);
+      }
+      .wrap { max-width: 860px; margin: 0 auto; padding: 32px 16px 60px; }
+      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
+      a { color: var(--accent); }
+      h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; }
+      h2 { margin-top: 36px; font-size: 20px; }
+      p, li { font-size: 16px; line-height: 1.6; }
+      .muted { color: var(--muted); }
+      table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+      th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e8e2d6; vertical-align: top; }
+      th { background: rgba(0,0,0,0.02); }
+      code { font-size: 0.92em; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <p><a href="/">← AgentGuard47</a></p>
+      <h1>Enforcement boundary</h1>
+      <p class="muted">
+        Recorded-budget preflight refuses the next instrumented call when stored
+        usage is already at a cap. It does not reserve concurrent in-flight
+        requests, predict the next response, intercept host tools, or cap a
+        provider subscription quota.
+      </p>
+      <h2>Classes</h2>
+      <table>
+        <tr><th>Class</th><th>Meaning</th></tr>
+        <tr><td>advisory</td><td>Reports or records after the fact. Does not refuse the action that just ran.</td></tr>
+        <tr><td>recorded-budget preflight</td><td>Refuses the next instrumented action at a recorded token/call/cost cap. <code>check()</code> does not reserve concurrent in-flight requests.</td></tr>
+        <tr><td>recorded-event preflight</td><td>Refuses the next instrumented action at a recorded loop, retry, timeout, or rate cap. Not a token budget.</td></tr>
+        <tr><td>reservation-backed</td><td>Holds capacity before in-flight work.</td></tr>
+        <tr><td>unsupported</td><td>Not intercepted. Do not advertise a stop here.</td></tr>
+      </table>
+      <h2>Supported vs remaining exposure</h2>
+      <ul>
+        <li>OpenAI Chat Completions and Anthropic Messages patches: recorded-budget preflight, including streamed final usage.</li>
+        <li>LangChain LLM callbacks: advisory. Usage is recorded after the model returns.</li>
+        <li>LangChain tool callbacks: recorded-budget preflight for an exhausted <em>call</em> budget only.</li>
+        <li>LangGraph <code>guarded_node</code>: recorded-budget preflight via <code>consume(calls=1)</code> at node entry. A dollar-only guard does not fire.</li>
+        <li>CrewAI handler: advisory. The step callback runs after the step.</li>
+        <li>CLI <code>demo</code> budget path: advisory. It records <code>llm.result</code> then <code>consume()</code>.</li>
+        <li>Skillpacks and coding-agent hosts: unsupported as enforcement.</li>
+        <li>OpenAI Responses API: unsupported.</li>
+        <li>Provider subscription quota: unsupported.</li>
+      </ul>
+      <p>
+        Full map, tests, and reproductions:
+        <a href="https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md">docs/enforcement-boundary.md</a>.
+      </p>
+    </div>
+  </body>
+</html>

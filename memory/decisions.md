@@ -1,6 +1,6 @@
 # SDK Decisions
 
-**Last Updated:** 2026-04-02
+**Last Updated:** 2026-09-18
 
 ## Locked
 - SDK stays free, MIT, and zero-dependency.
@@ -9,11 +9,17 @@
 - AgentGuard SDK owns local enforcement, local proof, local reports, and local
   setup.
 - AgentGuard Dashboard owns retained history, alerts, remote controls, and team
-  operations.
+  operations. The public repo does not resurrect a hosted dashboard.
+- Public copy describes tested bounds. Do not promise invoice caps, concurrent
+  reservations, host-wide interception, or guaranteed bill prevention.
+  Canonical map: [docs/enforcement-boundary.md](../docs/enforcement-boundary.md).
+- GitHub issue #729 / Project 4 is the 2026 planning authority. `ops/03` is
+  the SDK-now view and must link that plan instead of drifting into a second
+  queue.
 - Do not drift into generic observability, prompt optimization, or broad AI
   analytics.
-- Keep MCP scope narrow: read access to traces, alerts, usage, costs, and
-  budget health.
+- Keep MCP scope narrow: the published npm server is read-only hosted data;
+  local `agentguard-mcp` budgets apply only when a client calls that server.
 
 ## Repo Hygiene
 - Do not store business-sensitive planning data in this repository.

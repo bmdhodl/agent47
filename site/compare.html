@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Why AgentGuard for AI Cost Control? — vs LangSmith, Langfuse, Portkey</title>
-    <meta name="description" content="Other tools show you the damage after it happens. AgentGuard stops it. Compare budget enforcement, cost tracking, and spend visibility side by side." />
+    <meta name="description" content="AgentGuard raises on instrumented recorded-budget paths. Observability tools report after the run. Compare enforcement, cost tracking, and remaining exposure." />
     <link rel="canonical" href="https://agentguard47.com/compare.html" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
 
@@ -12,13 +12,13 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://agentguard47.com/compare.html" />
     <meta property="og:title" content="Why AgentGuard for AI Cost Control?" />
-    <meta property="og:description" content="Other tools show you the damage after it happens. AgentGuard stops it. Compare budget enforcement and spend visibility." />
+    <meta property="og:description" content="AgentGuard raises on instrumented recorded-budget paths. Observability tools report after the run." />
     <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Why AgentGuard for AI Cost Control?" />
-    <meta name="twitter:description" content="Other tools show you the damage after it happens. AgentGuard stops it. Compare budget enforcement and spend visibility." />
+    <meta name="twitter:description" content="AgentGuard raises on instrumented recorded-budget paths. Observability tools report after the run." />
 
     <!-- SEO keywords -->
     <meta name="keywords" content="langsmith alternative, langfuse alternative, ai agent cost control, agent budget enforcement, ai agent spend tracking, langchain cost tracking, ai agent budget limits" />
@@ -115,11 +115,13 @@
       <nav class="nav">
         <a href="/">AgentGuard</a>
         <span class="muted">/</span>
+        <a href="/enforcement.html">Bounds</a>
+        <span class="muted">/</span>
         <span>Compare</span>
       </nav>
 
       <h1>Why AgentGuard for AI cost control?</h1>
-      <p class="muted">Other tools show you the damage after it happens. AgentGuard stops it. Compare budget enforcement, cost tracking, and spend visibility side by side.</p>
+      <p class="muted">Observability tools report spend after the run. AgentGuard can refuse the next instrumented call when recorded usage is already at a cap. That is not an invoice cap. See the <a href="/enforcement.html">enforcement boundary</a>.</p>
 
       <div class="cta">
         <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
@@ -274,7 +276,7 @@
       <div class="detail-grid">
         <div class="detail-card">
           <h3>LangSmith tracks costs. AgentGuard enforces them.</h3>
-          <p class="muted">LangSmith shows you what an agent spent after it finishes. AgentGuard raises <code>BudgetExceeded</code> at the dollar limit you set and stops the agent immediately. The difference between a report and a circuit breaker.</p>
+          <p class="muted">LangSmith shows you what an agent spent after it finishes. On patched Chat Completions and Messages, AgentGuard refuses the next dispatch when recorded usage is already at a cap. That is not an invoice circuit breaker. See the <a href="/enforcement.html">enforcement boundary</a>.</p>
         </div>
         <div class="detail-card">
           <h3>Langfuse traces. AgentGuard controls spend.</h3>

@@ -13,7 +13,7 @@ Usage::
     @guarded_node(
         tracer=tracer,
         loop_guard=LoopGuard(max_repeats=3),
-        budget_guard=BudgetGuard(max_cost_usd=5.00),
+        budget_guard=BudgetGuard(max_calls=20),
     )
     def research_node(state):
         # your node logic
@@ -46,7 +46,9 @@ def guarded_node(
     Args:
         tracer: AgentGuard Tracer instance. Creates a default if None.
         loop_guard: Optional LoopGuard — detects repeated node invocations.
-        budget_guard: Optional BudgetGuard — enforces token/call/cost limits.
+        budget_guard: Optional BudgetGuard — this wrapper calls
+            ``consume(calls=1)`` at node entry. Token and dollar caps are not
+            charged here.
         name: Span name override. Defaults to ``node.<function_name>``.
 
     Returns:

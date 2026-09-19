@@ -179,6 +179,7 @@
       <article>
         <h1>AI Agent Cost Overruns: Why They Happen and How to Prevent Them</h1>
         <div class="meta">By AgentGuard Team &middot; February 20, 2026 &middot; 7 min read</div>
+        <p><strong>Updated bounds:</strong> recorded-budget preflight is not an invoice cap. See the <a href="/enforcement.html">enforcement boundary</a>.</p>
 
         <p>AI agents are moving from demos to production. With that shift comes a problem nobody talks about until it hits their invoice: <strong>cost overruns averaging 340%</strong> on autonomous tasks.</p>
 
@@ -267,7 +268,7 @@
 
         <h2>The Solution: Runtime Budget Enforcement</h2>
 
-        <p>Runtime enforcement means the guard runs <em>inside</em> your agent process. Every LLM call checks the budget before returning. When the limit is hit, the guard raises an exception and the agent stops immediately.</p>
+        <p>Runtime enforcement means the guard runs <em>inside</em> your agent process. Patched Chat Completions and Messages calls check the recorded budget before the next dispatch. When the recorded limit is already hit, the guard raises and that next call is not sent.</p>
 
         <p>Here is what it looks like with AgentGuard:</p>
 
@@ -290,7 +291,7 @@ tracer = <span class="fn">Tracer</span>(
         <p>Three things happen automatically:</p>
 
         <ol>
-          <li><strong>Every OpenAI call is intercepted.</strong> Token usage and cost are extracted from the response and fed to the BudgetGuard.</li>
+          <li><strong>Patched OpenAI Chat Completions calls are intercepted.</strong> Token usage and cost are extracted from the response and fed to the BudgetGuard. The Responses API is not patched.</li>
           <li><strong>Every tool call is checked for loops.</strong> The LoopGuard tracks the last N events and detects repeated patterns.</li>
           <li><strong>Exceptions propagate up.</strong> <code>BudgetExceeded</code> and <code>LoopDetected</code> are standard Python exceptions. They stop the agent cleanly, no matter what framework you use.</li>
         </ol>
@@ -314,7 +315,7 @@ tracer = <span class="fn">Tracer</span>(
 
         <div class="cta-section">
           <h2>Stop overspending on AI agents</h2>
-          <p class="muted">Three lines of Python. Zero dependencies. Hard budget limits that actually stop the agent.</p>
+          <p class="muted">Three lines of Python. Zero dependencies. Recorded-budget preflight on instrumented calls, not an invoice cap.</p>
 <pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47</pre>
           <div class="cta-buttons">
             <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>

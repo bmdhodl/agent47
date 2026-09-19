@@ -155,6 +155,19 @@ Expected boundary:
 Requires AGENTGUARD_API_KEY for retained hosted data. Does not add local runtime enforcement.
 ```
 
+## 8. Enforcement Boundary
+
+```bash
+python examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py
+python examples/enforcement_boundary/two_worker_overshoot.py
+```
+
+Proves:
+
+- an exhausted recorded budget refuses the next mocked Chat Completions dispatch
+- two workers can both pass `check()` today; that overshoot is characterized, not claimed fixed
+- remaining exposure is documented in [enforcement-boundary.md](../enforcement-boundary.md)
+
 ## What To Share
 
 The most shareable public demo for the release train is the sticky agent proof:

@@ -5,6 +5,7 @@ Install `agentguard47`, import `agentguard`. The repository name is `agent47`.
 ## Learn with a local run
 
 - [Getting started](guides/getting-started.md): install, run an offline check, and inspect a trace.
+- [Enforcement boundary](enforcement-boundary.md): which paths are advisory, recorded-budget preflight, reservation-backed, or unsupported.
 - [Runnable examples](../examples/README.md): copy a complete example into your project.
 
 ## Complete a task
