@@ -56,6 +56,7 @@ they directly strengthen coding-agent adoption.
 | Item | Status |
 |------|--------|
 | Honest enforcement boundary (AG-01 / #730) | Done - 2026-09-20; map, examples, and copy repairs merged in #758 |
+| Activation evidence (AG-02 / #731) | Done - 2026-09-20; honest counts, local `demo --feedback`, and weekly classifier merged in #759 |
 | Provider patches record final streamed usage once | Done - 2026-09-17; OpenAI and Anthropic sync/async `stream=True` calls, plus Anthropic `messages.stream()`, bill the final usage payload once. OpenAI injects `include_usage` when unset. Exhausted-budget preflight is unchanged |
 | Clean-wheel activation proof | Done - 2026-08-15; an isolated venv installed the locally built candidate wheel and completed `python -m agentguard`, `doctor`, `demo`, raw `quickstart --write`, generated-starter execution, `report`, and `badge` without API keys or network |
 | Competitor Wedge Map consolidation | Done - README wedge map (WorkOS, Uber, Anthropic) refreshed on 2026-06-17 |
@@ -88,7 +89,7 @@ they directly strengthen coding-agent adoption.
 | Item | Success Signal |
 |------|---------------|
 | Honest enforcement boundary (AG-01 / #730) | Done in #758. Map: [enforcement-boundary.md](../docs/enforcement-boundary.md) |
-| Activation evidence (AG-02 / #731) | Install, guard activation, repeat use, and contributions stay separate; landing-page navigation never counts as install; demo `--feedback` is local-only |
+| Activation evidence (AG-02 / #731) | Done in #759. Landing-page navigation never counts as install; `demo --feedback` is local-only |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |

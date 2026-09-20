@@ -13,6 +13,11 @@
 - [ ] If the change ships user-visible behavior or release prep, docs and roadmap were reviewed for drift.
 - [ ] Every PR comment and review thread was addressed in code or with evidence, replied to on the thread, and resolved. Zero unresolved conversations.
 
+## After a merge
+
+- [ ] Owner got a short TLDR: what shipped, what did not, next only if already authorized.
+- [ ] One short SDK-only entry was appended to `inbox/log.md`.
+
 ## Cutting a release
 
 - [ ] `make release-guard` passes (version markers, changelog section, and generated PyPI README are aligned).

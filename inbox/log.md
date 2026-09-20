@@ -3,6 +3,20 @@
 
 ---
 
+## 2026-09-20 | Cursor
+
+- Merged PR `#759` (AG-02): honest activation evidence plus local `agentguard demo --feedback`. Page navigation is not an install. Guard activation is successful consented demo feedback only. Landing-page `install_intent` on 2026-09-18 is proven installs: 0.
+- Decisions: no hidden telemetry, no public `__all__` growth, `--omit` stays `nargs="+"`, failed/undifferentiated feedback is unknown not activation. `bmdpat` classifier stays a linked follow-up, not this repo.
+- Blockers: none for AG-02. Do not start AG-03 unless asked. No tag or PyPI publish from this PR.
+- Sign-off: Cursor | Grok 4.6 | auto
+
+## 2026-09-20 | Cursor
+
+- Merged PR `#758` (AG-01): public enforcement claims now follow `docs/enforcement-boundary.md`. Exhausted recorded budgets refuse the next patched OpenAI Chat Completions / Anthropic Messages dispatch. That is not a concurrent reservation, invoice cap, or host interceptor.
+- Decisions: installing the package does nothing to Cursor/Claude Code/Copilot/Codex until app code calls the SDK. Keep overbroad savings/kill-switch copy out of README and site.
+- Blockers: none for AG-01. Showwork AG-01 session stayed blocked on undeclared-file gaps; do not rewrite that ledger.
+- Sign-off: Cursor | Grok 4.6 | auto
+
 ## 2026-09-18 | Cursor
 
 - Merged PR `#725` and tagged `v1.3.2`. OpenAI/Anthropic sync and async streams now bill final usage once. Same mocked stream: 0 tokens on 1.3.1, 200 tokens and one consume on 1.3.2.
