@@ -378,3 +378,31 @@ def test_proof_artifacts_are_plain_text():
             continue
         data = path.read_bytes()
         assert b"\x1b" not in data, path.name
+
+
+def test_showwork_snapshots_suppress_git_diff():
+    """Keep Claude review under the 200k `gh pr diff` cap.
+
+    Snapshot JSON is still stored as LF text; `-diff` only hides the body
+    from patches so `_reservation_contract.py` stays visible.
+    """
+    attrs = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+    assert ".showwork/snapshots/*.json text eol=lf -diff" in attrs
+    probe = subprocess.run(
+        [
+            "git",
+            "check-attr",
+            "diff",
+            "text",
+            "eol",
+            "--",
+            ".showwork/snapshots/ag-03-reservation-contract.json",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "diff: unset" in probe.stdout
+    assert "text: set" in probe.stdout
+    assert "eol: lf" in probe.stdout

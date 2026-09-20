@@ -12,3 +12,6 @@ Expected: the model admits exactly one of two workers; current `check()` still o
 
 Capture ruff with `NO_COLOR=1`. Proof text files must stay plain ASCII so
 `gh pr diff` for Claude review does not refuse escape sequences.
+
+`.showwork/snapshots/*.json` is `-diff` in `.gitattributes` so those ~70KB
+hash maps do not fill the review bot's 200k cap before the contract source.

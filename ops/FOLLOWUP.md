@@ -7,6 +7,10 @@
   in the bmdpat classifier so landing-page hits stop arriving as `install_intent`.
 - AG-04 / #733 (not started): wire the approved reservation contract to one
   local store and one patched provider path. Do not start it from AG-03.
+- Claude PR review truncates `gh pr diff` at 200k bytes and `.showwork`
+  sorts first. Keep `.showwork/snapshots/*.json` as `text eol=lf -diff` so
+  SDK patches stay visible. Workflow changes on a PR do not apply until
+  merge (`pull_request_target` uses the base workflow).
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.
