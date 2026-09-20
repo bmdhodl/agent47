@@ -110,7 +110,12 @@ def run_offline_demo(
             omit=omit,
         )
         # Second fence if build_demo_feedback ever grows extra keys.
-        validate_redacted(report)
+        try:
+            validate_redacted(report)
+        except (ValueError, TypeError) as exc:
+            raise RuntimeError(
+                "demo feedback report was not redacted; nothing was sent"
+            ) from exc
         _print(out, "")
         _print(out, render_feedback_markdown(report).rstrip())
         # Repeat the local-only line after the body so it bookends the report.

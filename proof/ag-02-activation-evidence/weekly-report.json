@@ -8,7 +8,7 @@
   },
   "exclusions": {
     "ci_clones": "GitHub Actions and cloud-agent checkouts are not outside users",
-    "landing_page_install_intent": "targets that are the marketing origin never counts as install",
+    "landing_page_install_intent": "a marketing-origin target never counts as install",
     "mirrors": "PyPI counts use without_mirrors",
     "publish_dates": [
       "2026-09-12",

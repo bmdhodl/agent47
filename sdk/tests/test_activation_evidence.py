@@ -49,6 +49,24 @@ def test_feedback_payload_only_allows_four_fields():
     assert "version" in omitted
 
 
+def test_demo_redaction_failure_is_readable(monkeypatch):
+    import agentguard.demo as demo_mod
+
+    monkeypatch.setattr(
+        demo_mod,
+        "build_demo_feedback",
+        lambda **_kwargs: {"trace": "secret"},
+    )
+    with tempfile.TemporaryDirectory() as tmpdir, pytest.raises(
+        RuntimeError, match="not redacted"
+    ):
+        demo_mod.run_offline_demo(
+            trace_path=os.path.join(tmpdir, "demo.jsonl"),
+            stream=io.StringIO(),
+            feedback=True,
+        )
+
+
 def test_demo_feedback_is_local_and_declineable():
     with tempfile.TemporaryDirectory() as tmpdir:
         trace_path = os.path.join(tmpdir, "demo.jsonl")
@@ -213,14 +231,17 @@ def test_feedback_runs_from_installed_distribution(tmp_path):
             sys.executable,
             "-c",
             (
-                "import io, os, tempfile, agentguard.demo as demo;"
+                "import io, os, tempfile, pathlib, agentguard.demo as demo, agentguard.feedback as fb;"
                 "path=os.path.join(tempfile.mkdtemp(), 't.jsonl');"
                 "buf=io.StringIO();"
                 "code=demo.run_offline_demo(trace_path=path, stream=buf, feedback=True);"
                 "text=buf.getvalue();"
+                "src=pathlib.Path(demo.__file__).read_text()+pathlib.Path(fb.__file__).read_text();"
                 "print(code);"
                 "print('SENT' if 'Nothing was sent.' in text else 'MISSING');"
-                "print(demo.__file__)"
+                "print(demo.__file__);"
+                "print(fb.__file__);"
+                "print('SRC_OK' if 'import urllib' not in src and 'import http.client' not in src else 'SRC_BAD');"
             ),
         ],
         env=env,
@@ -232,5 +253,8 @@ def test_feedback_runs_from_installed_distribution(tmp_path):
     assert lines[0] == "0"
     assert lines[1] == "SENT"
     installed = Path(lines[2]).resolve()
+    feedback_installed = Path(lines[3]).resolve()
+    assert lines[4] == "SRC_OK"
     assert target.resolve() in installed.parents or installed.parent == target.resolve()
+    assert target.resolve() in feedback_installed.parents or feedback_installed.parent == target.resolve()
     assert installed != (ROOT / "sdk" / "agentguard" / "demo.py").resolve()
