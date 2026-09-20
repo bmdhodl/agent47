@@ -124,6 +124,28 @@ def test_weekly_report_does_not_count_landing_page_as_install():
     assert "pypi_7d" in report["windows"]
 
 
+def test_weekly_report_policy_stays_true_when_pypi_intent_exists(tmp_path):
+    raw = json.loads(BASELINE.read_text(encoding="utf-8"))
+    raw["site"]["install_intent_events"] = [
+        {"target": "https://agentguard47.com/", "count": 2},
+        {"target": "https://pypi.org/project/agentguard47/", "count": 3},
+        {"target": "pip install agentguard47", "count": 1},
+    ]
+    snapshot = tmp_path / "mixed.json"
+    snapshot.write_text(json.dumps(raw), encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, str(REPORT_SCRIPT), str(snapshot)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    report = json.loads(proc.stdout)
+    assert report["install_intent_proven"] == 4
+    assert report["page_navigation"]["misclassified_landing_install_intent"] == 2
+    assert report["landing_page_never_counts_as_install"] is True
+
+
 def test_issue_template_captures_allowed_fields_only():
     text = TEMPLATE.read_text(encoding="utf-8")
     for field in ("version", "adapter", "result", "reproduction"):

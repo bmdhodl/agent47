@@ -1,7 +1,7 @@
 """Local-only redacted demo feedback. Never sends network traffic."""
 from __future__ import annotations
 
-from typing import Any, Iterable, Mapping, Optional, Sequence
+from typing import Any, Mapping, Optional, Sequence
 
 ALLOWED_FIELDS = ("version", "adapter", "result", "reproduction")
 ISSUE_TEMPLATE_URL = (
@@ -70,13 +70,3 @@ def assert_redacted(report: Mapping[str, Any]) -> None:
     for key, value in report.items():
         if not isinstance(value, str):
             raise TypeError(f"{key} must be a string")
-
-
-def forbidden_network_modules() -> tuple[str, ...]:
-    """Modules this package must not import on the demo feedback path."""
-    return ("urllib.request", "http.client", "socket")
-
-
-def feedback_uses_network(imported: Iterable[str]) -> bool:
-    names = set(imported)
-    return any(module in names for module in forbidden_network_modules())

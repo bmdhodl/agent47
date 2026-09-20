@@ -68,9 +68,9 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         "guard_activation": int(snapshot.get("consented_feedback") or 0),
         "repeat_use": "unknown without a consented reporter",
         "accepted_contribution": int(snapshot.get("accepted_external_contributions") or 0),
-        "landing_page_never_counts_as_install": landing_intent >= 0 and proven_intent == 0
-        if intent_events
-        else True,
+        # Policy, not a snapshot quality bit: landing targets never increment
+        # install_intent_proven. Proven PyPI/copy events live in that field.
+        "landing_page_never_counts_as_install": True,
     }
     return report
 

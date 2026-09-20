@@ -190,7 +190,7 @@ def _decisions(
 def _demo(
     trace_path: str = "agentguard_demo_traces.jsonl",
     feedback: bool = False,
-    omit: Optional[list] = None,
+    omit: Optional[list[str]] = None,
 ) -> None:
     raise SystemExit(
         run_offline_demo(trace_path=trace_path, feedback=feedback, omit=omit)
