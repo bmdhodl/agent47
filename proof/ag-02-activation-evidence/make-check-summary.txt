@@ -1,0 +1,6 @@
+SHA: 961119cda5798c7b045cf8329b30ed436ad631cb
+make check: 1080 passed, 1 skipped, coverage 91%
+ruff: All checks passed
+MCP node tests: 11 pass, 0 fail
+showwork ag-02-activation-evidence: GREEN 36/36
+weekly classifier: install_intent_proven 0, landing_page_never_counts_as_install true
