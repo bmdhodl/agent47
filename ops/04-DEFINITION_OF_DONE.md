@@ -11,6 +11,7 @@
 - [ ] No hardcoded absolute paths.
 - [ ] If `__init__.py` exports changed, it was intentional.
 - [ ] If the change ships user-visible behavior or release prep, docs and roadmap were reviewed for drift.
+- [ ] Every PR comment and review thread was addressed in code or with evidence, replied to on the thread, and resolved. Zero unresolved conversations.
 
 ## Cutting a release
 

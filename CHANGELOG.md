@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Activation evidence (AG-02)
+- Landing-page navigation never counts as install or activation.
+- `agentguard demo --feedback` prints a local redacted report (`version`,
+  `adapter`, `result`, `reproduction`). Users inspect, `--omit`, or decline.
+  The demo still makes no network call.
+- Weekly classifier: `python scripts/activation_weekly_report.py
+  docs/guides/activation-baseline-2026-09-18.json`.
+- bmdpat `install_intent` follow-up:
+  [docs/guides/bmdpat-measurement-contract.md](docs/guides/bmdpat-measurement-contract.md).
+
 ### Honest enforcement boundary (AG-01)
 - Published the tested surface map in
   [docs/enforcement-boundary.md](docs/enforcement-boundary.md): advisory,

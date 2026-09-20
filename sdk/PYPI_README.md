@@ -29,6 +29,7 @@ agentguard demo
 `doctor` checks the installation and local trace writing. `demo` exercises
 budget, loop, and retry stops without provider keys or network access. Follow
 the trace path printed by the command to inspect its output.
+`agentguard demo --feedback` prints a local redacted report; nothing is sent.
 
 ### Stop before a third call
 

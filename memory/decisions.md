@@ -1,6 +1,6 @@
 # SDK Decisions
 
-**Last Updated:** 2026-09-18
+**Last Updated:** 2026-09-20
 
 ## Locked
 - SDK stays free, MIT, and zero-dependency.
@@ -13,6 +13,9 @@
 - Public copy describes tested bounds. Do not promise invoice caps, concurrent
   reservations, host-wide interception, or guaranteed bill prevention.
   Canonical map: [docs/enforcement-boundary.md](../docs/enforcement-boundary.md).
+- Landing-page navigation never counts as install or activation. Demo
+  feedback is voluntary, local, and limited to version, adapter, result, and
+  reproduction. No default SDK telemetry.
 - GitHub issue #729 / Project 4 is the 2026 planning authority. `ops/03` is
   the SDK-now view and must link that plan instead of drifting into a second
   queue.

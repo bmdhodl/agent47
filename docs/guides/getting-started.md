@@ -17,6 +17,11 @@ These checks run locally without provider credentials. The commands print
 their trace paths. Use those paths with `agentguard report <trace-path>` or
 `agentguard incident <trace-path>` to inspect what happened.
 
+`agentguard demo --feedback` prints a local redacted report with version,
+adapter, result, and reproduction. Nothing is sent. Decline by skipping that
+flag. Page views are not installs; see
+[activation metrics](activation-metrics-design.md).
+
 The [README budget example](../../README.md#stop-before-a-third-call) is a
 complete offline example with an assertion for the stopped call.
 

@@ -1,0 +1,58 @@
+name: Demo feedback
+description: Share a voluntary redacted local demo result. Inspect and edit before sending.
+labels: ["growth", "component:sdk"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This template is for a **local** `agentguard demo` result. Paste only
+        version, adapter, result, and reproduction. Do not attach traces,
+        prompts, paths, hostnames, or API keys. The CLI never sends this
+        report; opening the issue is your choice.
+
+  - type: checkboxes
+    id: inspected
+    attributes:
+      label: Inspected and redacted
+      options:
+        - label: I inspected this report locally and redacted anything I do not want public.
+          required: true
+        - label: I understand this is not telemetry and I can decline by not opening an issue.
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Installed `agentguard47` version from `agentguard demo --feedback`.
+      placeholder: "1.3.2"
+    validations:
+      required: true
+
+  - type: input
+    id: adapter
+    attributes:
+      label: Adapter
+      description: How you ran AgentGuard. Use `offline-demo` for the packaged demo.
+      placeholder: "offline-demo"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - success
+        - failure
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Exact command only. No trace files or secrets.
+      placeholder: "agentguard demo"
+    validations:
+      required: true

@@ -79,7 +79,7 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
 - `TraceContext` / `AsyncTraceContext`: the scoped unit of work inside a trace. Most runtime instrumentation, decision tracing, and examples build on these.
 - Guards (`guards.py`, `x402.py`): `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard`, `X402SpendGuard`. Guards raise exceptions (`LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded`, all under `AgentGuardError`) instead of returning booleans. `BudgetGuard.goal(...)` scopes hard caps and warning hooks to a named sub-task, with cost attribution propagated through `ThreadPoolExecutor.submit`.
 - Sinks: `JsonlFileSink` and `StdoutSink` (core, in `tracing.py`); `HttpSink` and `OtelTraceSink` (non-core, in `sinks/`). The `TraceSink` base is the boundary between runtime evidence and its destination.
-- Local proof surfaces: the `agentguard` CLI subcommands `doctor`, `demo`, `quickstart`, `report`, `incident`, `decisions`, `eval`, `summarize`, and `skillpack`, plus `EvalSuite` and checked-in starters. These are part of the product, not just internal tooling.
+- Local proof surfaces: the `agentguard` CLI subcommands `doctor`, `demo`, `quickstart`, `report`, `incident`, `decisions`, `eval`, `summarize`, and `skillpack`, plus `EvalSuite` and checked-in starters. `demo --feedback` prints a local redacted report and does not send it. These are part of the product, not just internal tooling.
 - MCP surfaces: the read-only TypeScript `mcp-server/` and the local-budget Python `agentguard-mcp/` are first-class adoption surfaces alongside the SDK.
 
 ## 6. Boundaries

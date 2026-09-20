@@ -1,0 +1,71 @@
+{
+  "accepted_contribution": 0,
+  "as_of": "2026-09-18",
+  "consented_feedback_failure": 0,
+  "dedup": {
+    "clones": "unique cloners include CI and internal checkouts",
+    "github_views": "GitHub unique viewers are not unique humans",
+    "pypi": "none; each download is a package event, not a unique user"
+  },
+  "exclusions": {
+    "ci_clones": "GitHub Actions and cloud-agent checkouts are not outside users",
+    "landing_page_install_intent": "a marketing-origin target never counts as install",
+    "mirrors": "PyPI counts use without_mirrors",
+    "publish_dates": [
+      "2026-09-12",
+      "2026-09-15",
+      "2026-09-18"
+    ]
+  },
+  "guard_activation": 0,
+  "install": {
+    "note": "package events, not unique users",
+    "pypi_events_outside_publish_burst": 25,
+    "pypi_without_mirrors_7d": 266
+  },
+  "install_intent_proven": 0,
+  "landing_page_never_counts_as_install": true,
+  "page_navigation": {
+    "ai_crawl_events": 180,
+    "bot_view_events": 85,
+    "cta_clicks": 2,
+    "misclassified_landing_install_intent": 2,
+    "view_events": 375
+  },
+  "repeat_use": "unknown without a consented reporter",
+  "unknowns": [
+    "unique PyPI installers",
+    "repeat use without a consented reporter",
+    "whether a clone became a local demo",
+    "bmdpat classifier still treats landing-page hits as install_intent"
+  ],
+  "windows": {
+    "github_traffic": {
+      "end": "2026-09-18",
+      "query": "GitHub traffic API for bmdhodl/agent47",
+      "start": "2026-09-11"
+    },
+    "npm_30d": {
+      "end": "2026-09-17",
+      "query": "https://api.npmjs.org/downloads/point/2026-08-19:2026-09-17/@agentguard47/mcp-server",
+      "start": "2026-08-19"
+    },
+    "pypi_30d": {
+      "end": "2026-09-17",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-08-19"
+    },
+    "pypi_7d": {
+      "end": "2026-09-17",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-11"
+    },
+    "site_events": {
+      "end": "2026-09-18",
+      "query": "bmdpat site-event store (read-only); classifier follow-up in docs/guides/bmdpat-measurement-contract.md",
+      "start": "2026-08-19"
+    }
+  }
+}
