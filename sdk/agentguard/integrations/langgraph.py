@@ -16,8 +16,9 @@ Usage::
         budget_guard=BudgetGuard(max_calls=20),
     )
     def research_node(state):
-        # your node logic
-        return {"messages": state["messages"] + [result]}
+        messages = list(state.get("messages", []))
+        messages.append("research complete")
+        return {"messages": messages}
 
     # Or wrap at graph construction time:
     builder.add_node("research", guard_node(research_fn, tracer=tracer))

@@ -31,10 +31,18 @@ npm --prefix mcp-server test
   `max_calls`; installed-artifact test pip-installs `./sdk` into an isolated
   `--target` and runs examples without repo `PYTHONPATH=sdk`.
 - Independent GPT reviewer signed off SHA `ab1937856fac470123208b097b4d6d835a0837c9`.
-- Showwork `ag-01-qa-r3`, `ag-01-qa-r4`, and `ag-01-qa-r6` finished GREEN.
-  `ag-01-qa-fixes`, `ag-01-qa-r2`, and `ag-01-qa-r5` are blocked process
-  artifacts (require-before-claim ordering); they are not a product gap.
-- `BudgetGuard.reset()` exists in `sdk/agentguard/guards.py`; the cost-guardrails
-  FAQ is describing current code, not a new API from this PR.
+- Showwork `ag-01-qa-r3`, `ag-01-qa-r4`, `ag-01-qa-r6`, and `ag-01-qa-r8`
+  finished GREEN. `ag-01-qa-fixes`, `ag-01-qa-r2`, `ag-01-qa-r5`, and
+  `ag-01-qa-r7` are append-only blocked process artifacts
+  (require-before-claim ordering or a check filed before the matching
+  edit landed). Later GREEN sessions cover those product claims. The
+  ledgers are not rewritten.
+- `BudgetGuard.reset()` exists in `sdk/agentguard/guards.py` and is covered
+  by `sdk/tests/test_guards.py`; the cost-guardrails FAQ is describing
+  current code, not a new API from this PR.
+- Codex P2 follow-up: CrewAI quickstart now imports `Agent` with `goal`
+  and `backstory`; LangGraph samples return a self-contained
+  `{"messages": ...}` state. Tests lock `BudgetGuard(max_calls=20)` and
+  reject leftover `+ [result]` / `+ [summary]` snippets.
 
 No new public SDK API. No `BudgetGuard` reservation. No dashboard revival.

@@ -19,6 +19,7 @@ The `[crewai]` extra still carries unresolved ChromaDB advisories. Review
 ## Quick Start
 
 ```python
+from crewai import Agent
 from agentguard import Tracer, JsonlFileSink, LoopGuard, BudgetGuard
 from agentguard.integrations.crewai import AgentGuardCrewHandler
 
@@ -35,6 +36,8 @@ handler = AgentGuardCrewHandler(
 
 agent = Agent(
     role="researcher",
+    goal="Answer one short question clearly.",
+    backstory="You are concise and careful.",
     step_callback=handler.step_callback,
 )
 ```

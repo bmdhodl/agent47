@@ -31,7 +31,9 @@ budget = BudgetGuard(max_calls=20)
     budget_guard=budget,
 )
 def research_node(state):
-    return {"messages": state["messages"] + [result]}
+    messages = list(state.get("messages", []))
+    messages.append("research complete")
+    return {"messages": messages}
 ```
 
 Or wrap at graph construction time:

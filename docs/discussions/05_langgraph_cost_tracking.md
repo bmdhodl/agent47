@@ -31,13 +31,15 @@ budget = BudgetGuard(max_calls=20)
 
 @guarded_node(tracer=tracer, budget_guard=budget)
 def research_node(state):
-    # Your LLM calls here
-    return {"messages": state["messages"] + [result]}
+    messages = list(state.get("messages", []))
+    messages.append("research complete")
+    return {"messages": messages}
 
 @guarded_node(tracer=tracer, budget_guard=budget)
 def synthesis_node(state):
-    # More LLM calls
-    return {"messages": state["messages"] + [summary]}
+    messages = list(state.get("messages", []))
+    messages.append("synthesis complete")
+    return {"messages": messages}
 ```
 
 Every node execution is:

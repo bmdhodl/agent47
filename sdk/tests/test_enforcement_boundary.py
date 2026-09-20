@@ -240,6 +240,18 @@ def test_langgraph_public_copy_uses_call_budget():
         assert "consume(calls=1)" in text.replace(" ", "")
         assert "$5 limit" not in text
         assert "guard_node(budget_guard=budget)" not in text.replace(" ", "")
+        assert "+ [result]" not in text
+        assert "+ [summary]" not in text
+    guide = (ROOT / "docs" / "integrations" / "langgraph.md").read_text(encoding="utf-8")
+    assert "BudgetGuard(max_calls=20)" in guide
+
+
+def test_crewai_quickstart_constructs_valid_agent():
+    text = (ROOT / "docs" / "integrations" / "crewai.md").read_text(encoding="utf-8")
+    assert "from crewai import Agent" in text
+    assert 'goal="Answer one short question clearly."' in text
+    assert 'backstory="You are concise and careful."' in text
+    assert "AgentGuardCrewCallback" in text
 
 
 def test_live_blogs_do_not_claim_all_openai_surfaces():
