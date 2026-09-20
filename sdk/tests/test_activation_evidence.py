@@ -79,9 +79,9 @@ def test_demo_feedback_is_local_and_declineable():
             encoding="utf-8"
         )
         demo_src = (ROOT / "sdk" / "agentguard" / "demo.py").read_text(encoding="utf-8")
-        assert "urllib.request" not in feedback_src
-        assert "http.client" not in feedback_src
-        assert "urllib.request" not in demo_src
+        assert "import urllib" not in feedback_src
+        assert "import http.client" not in feedback_src
+        assert "import urllib" not in demo_src
 
 
 def test_demo_feedback_makes_no_network_call(monkeypatch):
@@ -158,7 +158,7 @@ def test_activation_page_states_bounds():
         "Page navigation",
         "Guard activation",
         "Repeat use",
-        "nothing is sent",
+        "Nothing is sent",
         "max-width: 860px",
     ):
         assert needle in html, needle

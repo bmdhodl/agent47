@@ -35,7 +35,7 @@ def build_demo_feedback(
     unknown = skipped - set(ALLOWED_FIELDS)
     if unknown:
         raise ValueError(
-            "omit must be one of {0}, not {1}".format(
+            "omit must be one of {}, not {}".format(
                 ", ".join(ALLOWED_FIELDS),
                 ", ".join(sorted(unknown)),
             )
@@ -64,7 +64,9 @@ def assert_redacted(report: Mapping[str, Any]) -> None:
     """Refuse payloads that include anything beyond the four allowed fields."""
     extra = set(report) - set(ALLOWED_FIELDS)
     if extra:
-        raise ValueError("feedback payload has forbidden fields: {0}".format(", ".join(sorted(extra))))
+        raise ValueError(
+            "feedback payload has forbidden fields: {}".format(", ".join(sorted(extra)))
+        )
     for key, value in report.items():
         if not isinstance(value, str):
             raise TypeError(f"{key} must be a string")

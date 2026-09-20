@@ -158,7 +158,6 @@ def _run_budget_demo(tracer: Tracer, out: TextIO) -> bool:
                     f"  stopped on call {idx}: cost ${budget.state.cost_used:.2f} exceeded ${budget.max_cost_usd:.2f}",
                 )
                 return True
-    return False
             if not warned_before and budget._warned:
                 span.event(
                     "guard.budget_warning",
@@ -168,6 +167,7 @@ def _run_budget_demo(tracer: Tracer, out: TextIO) -> bool:
                     },
                 )
                 _print(out, f"  warning fired at ${budget.state.cost_used:.2f}")
+    return False
 
 
 def _run_loop_demo(tracer: Tracer, out: TextIO) -> bool:
