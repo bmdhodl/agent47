@@ -17,8 +17,8 @@ from agentguard.feedback import (
     ALLOWED_FIELDS,
     ISSUE_TEMPLATE_URL,
     NOTHING_SENT,
-    assert_redacted,
     build_demo_feedback,
+    validate_redacted,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -35,9 +35,9 @@ def test_feedback_payload_only_allows_four_fields():
         reproduction="agentguard demo",
     )
     assert tuple(report) == ALLOWED_FIELDS
-    assert_redacted(report)
+    validate_redacted(report)
     with pytest.raises(ValueError):
-        assert_redacted({**report, "trace": "secret"})
+        validate_redacted({**report, "trace": "secret"})
     omitted = build_demo_feedback(
         version="1.3.2",
         adapter="offline-demo",
@@ -69,7 +69,7 @@ def test_demo_feedback_is_local_and_declineable():
             == 0
         )
         text = feedback_out.getvalue()
-        assert NOTHING_SENT in text
+        assert text.count(NOTHING_SENT) == 2
         assert ISSUE_TEMPLATE_URL in text
         assert "**version:**" in text
         assert "**adapter:** offline-demo" in text
@@ -105,7 +105,8 @@ def test_demo_feedback_makes_no_network_call(monkeypatch):
 
 def test_weekly_report_does_not_count_landing_page_as_install():
     raw = json.loads(BASELINE.read_text(encoding="utf-8"))
-    assert "publish_dates" in raw
+    assert "publish_dates" in raw["exclusions"]
+    assert "publish_dates" not in raw
     assert "windows" in raw
     assert "never counts as install" in raw["exclusions"]["landing_page_install_intent"]
     proc = subprocess.run(
@@ -154,6 +155,15 @@ def test_issue_template_captures_allowed_fields_only():
     assert "Do not attach traces" in text
 
 
+def test_omit_requires_at_least_one_field(monkeypatch):
+    import agentguard.cli as cli
+
+    monkeypatch.setattr(sys, "argv", ["agentguard", "demo", "--omit"])
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert exc.value.code == 2
+
+
 def test_docs_and_site_reject_page_view_as_install():
     design = (ROOT / "docs" / "guides" / "activation-metrics-design.md").read_text(
         encoding="utf-8"
@@ -186,6 +196,7 @@ def test_activation_page_states_bounds():
         assert needle in html, needle
 
 
+@pytest.mark.integration
 def test_feedback_runs_from_installed_distribution(tmp_path):
     target = tmp_path / "site-packages"
     subprocess.run(

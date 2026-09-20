@@ -346,9 +346,9 @@ def main() -> None:
     )
     demo.add_argument(
         "--omit",
-        nargs="*",
+        nargs="+",  # not nargs="" — a bare --omit must error
         choices=("version", "adapter", "result", "reproduction"),
-        help="Drop fields from the local feedback report before you inspect it.",
+        help="Drop one or more fields from the local feedback report before you inspect it.",
     )
 
     doctor = sub.add_parser("doctor", help="Verify the local AgentGuard SDK setup")

@@ -41,7 +41,6 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     pypi = snapshot.get("pypi") or {}
     downloads_7d = int(pypi.get("without_mirrors_7d") or 0)
     burst = int(pypi.get("burst_downloads_in_7d") or 0)
-    labeled_install_events = downloads_7d
     outside_burst = max(downloads_7d - burst, 0)
 
     page_navigation = {
@@ -60,7 +59,7 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         "exclusions": snapshot.get("exclusions"),
         "page_navigation": page_navigation,
         "install": {
-            "pypi_without_mirrors_7d": labeled_install_events,
+            "pypi_without_mirrors_7d": downloads_7d,
             "pypi_events_outside_publish_burst": outside_burst,
             "note": "package events, not unique users",
         },

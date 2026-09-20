@@ -7,9 +7,9 @@ from typing import Optional, TextIO
 from agentguard.feedback import (
     DECLINE_HINT,
     NOTHING_SENT,
-    assert_redacted,
     build_demo_feedback,
     render_feedback_markdown,
+    validate_redacted,
 )
 from agentguard.first_run import STAR_CALL_TO_ACTION, local_proof_commands
 from agentguard.guards import (
@@ -109,9 +109,11 @@ def run_offline_demo(
             reproduction="agentguard demo",
             omit=omit,
         )
-        assert_redacted(report)
+        # Second fence if build_demo_feedback ever grows extra keys.
+        validate_redacted(report)
         _print(out, "")
         _print(out, render_feedback_markdown(report).rstrip())
+        # Repeat the local-only line after the body so it bookends the report.
         _print(out, NOTHING_SENT)
     else:
         _print(out, "")

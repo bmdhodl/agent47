@@ -60,8 +60,12 @@ def render_feedback_markdown(report: Mapping[str, str]) -> str:
     return "\n".join(lines)
 
 
-def assert_redacted(report: Mapping[str, Any]) -> None:
-    """Refuse payloads that include anything beyond the four allowed fields."""
+def validate_redacted(report: Mapping[str, Any]) -> None:
+    """Refuse payloads that include anything beyond the four allowed fields.
+
+    This raises ValueError/TypeError. It is not a Python assert and is not
+    stripped by ``python -O``.
+    """
     extra = set(report) - set(ALLOWED_FIELDS)
     if extra:
         raise ValueError(

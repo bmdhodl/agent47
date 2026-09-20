@@ -60,7 +60,6 @@
   "subscribers_active": 7,
   "consented_feedback": 0,
   "accepted_external_contributions": 0,
-  "publish_dates": ["2026-09-12", "2026-09-15", "2026-09-18"],
   "dedup": {
     "pypi": "none; each download is a package event, not a unique user",
     "github_views": "GitHub unique viewers are not unique humans",
