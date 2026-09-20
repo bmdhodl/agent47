@@ -1,0 +1,81 @@
+{
+  "as_of": "2026-09-18",
+  "source_issue": "https://github.com/bmdhodl/agent47/issues/729",
+  "windows": {
+    "pypi_7d": {
+      "start": "2026-09-11",
+      "end": "2026-09-17",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "note": "calendar window, without_mirrors"
+    },
+    "pypi_30d": {
+      "start": "2026-08-19",
+      "end": "2026-09-17",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "note": "calendar window, without_mirrors"
+    },
+    "npm_30d": {
+      "start": "2026-08-19",
+      "end": "2026-09-17",
+      "query": "https://api.npmjs.org/downloads/point/2026-08-19:2026-09-17/@agentguard47/mcp-server"
+    },
+    "site_events": {
+      "start": "2026-08-19",
+      "end": "2026-09-18",
+      "query": "bmdpat site-event store (read-only); classifier follow-up in docs/guides/bmdpat-measurement-contract.md"
+    },
+    "github_traffic": {
+      "start": "2026-09-11",
+      "end": "2026-09-18",
+      "query": "GitHub traffic API for bmdhodl/agent47"
+    }
+  },
+  "pypi": {
+    "without_mirrors_7d": 266,
+    "without_mirrors_30d": 295,
+    "burst_downloads_in_7d": 241,
+    "burst_share_7d": 0.906
+  },
+  "npm": {
+    "downloads_window": 144
+  },
+  "github": {
+    "stars": 4,
+    "forks": 2,
+    "watchers": 1,
+    "views": 49,
+    "unique_viewers": 38,
+    "clones": 1411,
+    "unique_cloners": 271
+  },
+  "site": {
+    "view_events": 375,
+    "ai_crawl_events": 180,
+    "bot_view_events": 85,
+    "cta_clicks": 2,
+    "install_intent_events": [
+      {"target": "https://agentguard47.com/", "count": 2}
+    ]
+  },
+  "subscribers_active": 7,
+  "consented_feedback": 0,
+  "accepted_external_contributions": 0,
+  "publish_dates": ["2026-09-12", "2026-09-15", "2026-09-18"],
+  "dedup": {
+    "pypi": "none; each download is a package event, not a unique user",
+    "github_views": "GitHub unique viewers are not unique humans",
+    "clones": "unique cloners include CI and internal checkouts"
+  },
+  "unknowns": [
+    "unique PyPI installers",
+    "repeat use without a consented reporter",
+    "whether a clone became a local demo",
+    "bmdpat classifier still treats landing-page hits as install_intent"
+  ],
+  "exclusions": {
+    "publish_dates": ["2026-09-12", "2026-09-15", "2026-09-18"],
+    "ci_clones": "GitHub Actions and cloud-agent checkouts are not outside users",
+    "mirrors": "PyPI counts use without_mirrors",
+    "landing_page_install_intent": "targets that are the marketing origin never counts as install"
+  }
+}

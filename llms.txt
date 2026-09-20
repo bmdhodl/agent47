@@ -9,6 +9,7 @@
 - [Enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md): tested classes and remaining exposure.
 - [Documentation index](https://github.com/bmdhodl/agent47/blob/main/docs/README.md): Guides and references by task.
 - [Getting started](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md): Local trace and provider setup.
+- [Activation evidence](https://github.com/bmdhodl/agent47/blob/main/docs/guides/activation-metrics-design.md): Page views are not installs. Demo feedback is voluntary and local.
 - [Contributing](https://github.com/bmdhodl/agent47/blob/main/CONTRIBUTING.md): Development setup and checks.
 - [Agent instructions](https://github.com/bmdhodl/agent47/blob/main/AGENTS.md): Repository contribution rules.
 

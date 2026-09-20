@@ -3,6 +3,8 @@
 - Recheck the Glama rendered listing and the "no recent usage" checklist item
   with the read key. The public API still returned `tools: []` on 2026-08-15;
   do not change SDK or MCP runtime code solely to chase that directory signal.
+- Apply [docs/guides/bmdpat-measurement-contract.md](../docs/guides/bmdpat-measurement-contract.md)
+  in the bmdpat classifier so landing-page hits stop arriving as `install_intent`.
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.

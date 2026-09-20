@@ -819,7 +819,7 @@
       })();
     </script>
   </head>
-  <body>
+  <body data-ag-metric="page-navigation">
     <div class="page">
       <header class="topbar">
         <nav class="nav" aria-label="Primary">
@@ -829,6 +829,7 @@
           </a>
           <div class="navlinks">
             <a href="/enforcement.html">Bounds</a>
+            <a href="/activation.html">How we count</a>
             <a href="/quickstart.html">Quickstart</a>
             <a href="/compare.html">Compare</a>
             <a href="/trust.html">Trust</a>
@@ -858,8 +859,9 @@
               </div>
               <div class="install-line">
                 <code id="install-command">pip install agentguard47</code>
-                <button class="btn copy-install" type="button" onclick="copyText('install-command', this)">Copy install</button>
+                <button class="btn copy-install" type="button" data-ag-metric="install-intent-candidate" onclick="copyText('install-command', this)">Copy install</button>
               </div>
+              <p class="muted">Viewing this page is not an install. See <a href="/activation.html">how we count use</a>.</p>
             </div>
 
             <aside class="proof-scene" aria-label="AgentGuard local proof terminal">

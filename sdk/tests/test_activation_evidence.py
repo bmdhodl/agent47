@@ -1,0 +1,203 @@
+"""AG-02: activation evidence and voluntary demo feedback."""
+from __future__ import annotations
+
+import io
+import json
+import os
+import socket
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+import pytest
+
+from agentguard.demo import run_offline_demo
+from agentguard.feedback import (
+    ALLOWED_FIELDS,
+    ISSUE_TEMPLATE_URL,
+    NOTHING_SENT,
+    assert_redacted,
+    build_demo_feedback,
+)
+
+ROOT = Path(__file__).resolve().parents[2]
+BASELINE = ROOT / "docs" / "guides" / "activation-baseline-2026-09-18.json"
+REPORT_SCRIPT = ROOT / "scripts" / "activation_weekly_report.py"
+TEMPLATE = ROOT / ".github" / "ISSUE_TEMPLATE" / "activation_feedback.yml"
+
+
+def test_feedback_payload_only_allows_four_fields():
+    report = build_demo_feedback(
+        version="1.3.2",
+        adapter="offline-demo",
+        result="success",
+        reproduction="agentguard demo",
+    )
+    assert tuple(report) == ALLOWED_FIELDS
+    assert_redacted(report)
+    with pytest.raises(ValueError):
+        assert_redacted({**report, "trace": "secret"})
+    omitted = build_demo_feedback(
+        version="1.3.2",
+        adapter="offline-demo",
+        result="success",
+        reproduction="agentguard demo",
+        omit=("reproduction",),
+    )
+    assert "reproduction" not in omitted
+    assert "version" in omitted
+
+
+def test_demo_feedback_is_local_and_declineable():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        trace_path = os.path.join(tmpdir, "demo.jsonl")
+        default_out = io.StringIO()
+        feedback_out = io.StringIO()
+        assert run_offline_demo(trace_path=trace_path, stream=default_out) == 0
+        default_text = default_out.getvalue()
+        assert "agentguard demo --feedback" in default_text
+        assert "Decline by skipping" in default_text
+        assert "Share template" not in default_text
+
+        assert (
+            run_offline_demo(
+                trace_path=trace_path,
+                stream=feedback_out,
+                feedback=True,
+            )
+            == 0
+        )
+        text = feedback_out.getvalue()
+        assert NOTHING_SENT in text
+        assert ISSUE_TEMPLATE_URL in text
+        assert "**version:**" in text
+        assert "**adapter:** offline-demo" in text
+        assert "**result:** success" in text
+        assert "**reproduction:** agentguard demo" in text
+        feedback_src = (ROOT / "sdk" / "agentguard" / "feedback.py").read_text(
+            encoding="utf-8"
+        )
+        demo_src = (ROOT / "sdk" / "agentguard" / "demo.py").read_text(encoding="utf-8")
+        assert "urllib.request" not in feedback_src
+        assert "http.client" not in feedback_src
+        assert "urllib.request" not in demo_src
+
+
+def test_demo_feedback_makes_no_network_call(monkeypatch):
+    def _blocked(*_args, **_kwargs):
+        raise AssertionError("demo feedback must not open a socket")
+
+    monkeypatch.setattr(socket.socket, "connect", _blocked)
+    monkeypatch.setattr(socket.socket, "connect_ex", _blocked)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        buf = io.StringIO()
+        assert (
+            run_offline_demo(
+                trace_path=os.path.join(tmpdir, "demo.jsonl"),
+                stream=buf,
+                feedback=True,
+            )
+            == 0
+        )
+        assert NOTHING_SENT in buf.getvalue()
+
+
+def test_weekly_report_does_not_count_landing_page_as_install():
+    raw = json.loads(BASELINE.read_text(encoding="utf-8"))
+    assert "publish_dates" in raw
+    assert "windows" in raw
+    assert "never counts as install" in raw["exclusions"]["landing_page_install_intent"]
+    proc = subprocess.run(
+        [sys.executable, str(REPORT_SCRIPT), str(BASELINE)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    report = json.loads(proc.stdout)
+    assert report["install_intent_proven"] == 0
+    assert report["page_navigation"]["misclassified_landing_install_intent"] == 2
+    assert report["guard_activation"] == 0
+    assert report["repeat_use"].startswith("unknown")
+    assert report["landing_page_never_counts_as_install"] is True
+    assert "pypi_7d" in report["windows"]
+
+
+def test_issue_template_captures_allowed_fields_only():
+    text = TEMPLATE.read_text(encoding="utf-8")
+    for field in ("version", "adapter", "result", "reproduction"):
+        assert f"id: {field}" in text
+    assert "I inspected this report locally" in text
+    assert "Do not attach traces" in text
+
+
+def test_docs_and_site_reject_page_view_as_install():
+    design = (ROOT / "docs" / "guides" / "activation-metrics-design.md").read_text(
+        encoding="utf-8"
+    )
+    contract = (ROOT / "docs" / "guides" / "bmdpat-measurement-contract.md").read_text(
+        encoding="utf-8"
+    )
+    activation = (ROOT / "site" / "activation.html").read_text(encoding="utf-8")
+    index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+    assert "never counts as install" in design
+    assert "install_intent" in contract
+    assert "This page view is not an install" in activation
+    assert "activation.html" in index
+    assert 'data-ag-metric="page-navigation"' in index
+    assert 'data-ag-metric="install-intent-candidate"' in index
+    for name in ("index.html", "quickstart.html", "compare.html", "enforcement.html"):
+        page = (ROOT / "site" / name).read_text(encoding="utf-8")
+        assert "activation.html" in page, name
+
+
+def test_activation_page_states_bounds():
+    html = (ROOT / "site" / "activation.html").read_text(encoding="utf-8")
+    for needle in (
+        "Page navigation",
+        "Guard activation",
+        "Repeat use",
+        "nothing is sent",
+        "max-width: 860px",
+    ):
+        assert needle in html, needle
+
+
+def test_feedback_runs_from_installed_distribution(tmp_path):
+    target = tmp_path / "site-packages"
+    subprocess.run(
+        [sys.executable, "-m", "pip", "install", str(ROOT / "sdk"), "--target", str(target)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(target)
+    env.pop("PYTHONHOME", None)
+    probe = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import io, os, tempfile, agentguard.demo as demo;"
+                "path=os.path.join(tempfile.mkdtemp(), 't.jsonl');"
+                "buf=io.StringIO();"
+                "code=demo.run_offline_demo(trace_path=path, stream=buf, feedback=True);"
+                "text=buf.getvalue();"
+                "print(code);"
+                "print('SENT' if 'Nothing was sent.' in text else 'MISSING');"
+                "print(demo.__file__)"
+            ),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    lines = [line.strip() for line in probe.stdout.splitlines() if line.strip()]
+    assert lines[0] == "0"
+    assert lines[1] == "SENT"
+    installed = Path(lines[2]).resolve()
+    assert target.resolve() in installed.parents or installed.parent == target.resolve()
+    assert installed != (ROOT / "sdk" / "agentguard" / "demo.py").resolve()

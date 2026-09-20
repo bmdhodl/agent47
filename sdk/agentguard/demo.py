@@ -4,6 +4,13 @@ import os
 import sys
 from typing import Optional, TextIO
 
+from agentguard.feedback import (
+    DECLINE_HINT,
+    NOTHING_SENT,
+    assert_redacted,
+    build_demo_feedback,
+    render_feedback_markdown,
+)
 from agentguard.first_run import STAR_CALL_TO_ACTION, local_proof_commands
 from agentguard.guards import (
     BudgetExceeded,
@@ -21,6 +28,8 @@ _BUDGET_STEPS = (0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12)
 def run_offline_demo(
     trace_path: str = "agentguard_demo_traces.jsonl",
     stream: Optional[TextIO] = None,
+    feedback: bool = False,
+    omit: Optional[list[str]] = None,
 ) -> int:
     """Run a deterministic local demo that proves AgentGuard enforcement.
 
@@ -56,11 +65,11 @@ def run_offline_demo(
     _print(out, "No API keys. No dashboard. No network calls.")
     _print(out, "")
 
-    _run_budget_demo(tracer, out)
+    budget_stopped = _run_budget_demo(tracer, out)
     _print(out, "")
-    _run_loop_demo(tracer, out)
+    loop_stopped = _run_loop_demo(tracer, out)
     _print(out, "")
-    _run_retry_demo(tracer, out)
+    retry_stopped = _run_retry_demo(tracer, out)
     _print(out, "")
     rendered_trace_path = _shell_quote_path(trace_path)
     _print(out, "Local proof complete.")
@@ -85,10 +94,39 @@ def run_offline_demo(
     _print(out, "")
     _print(out, "Show your repo is guarded (and help others find it): agentguard badge")
     _print(out, STAR_CALL_TO_ACTION)
+    if feedback:
+        result = (
+            "success"
+            if budget_stopped and loop_stopped and retry_stopped
+            else "failure"
+        )
+        report = build_demo_feedback(
+            version=_package_version(),
+            adapter="offline-demo",
+            result=result,
+            reproduction="agentguard demo",
+            omit=omit,
+        )
+        assert_redacted(report)
+        _print(out, "")
+        _print(out, render_feedback_markdown(report).rstrip())
+        _print(out, NOTHING_SENT)
+    else:
+        _print(out, "")
+        _print(out, DECLINE_HINT)
     return 0
 
 
-def _run_budget_demo(tracer: Tracer, out: TextIO) -> None:
+def _package_version() -> str:
+    try:
+        from importlib.metadata import version
+
+        return version("agentguard47")
+    except Exception:
+        return "unknown"
+
+
+def _run_budget_demo(tracer: Tracer, out: TextIO) -> bool:
     budget = BudgetGuard(
         max_cost_usd=1.00,
         warn_at_pct=0.8,
@@ -119,7 +157,8 @@ def _run_budget_demo(tracer: Tracer, out: TextIO) -> None:
                     out,
                     f"  stopped on call {idx}: cost ${budget.state.cost_used:.2f} exceeded ${budget.max_cost_usd:.2f}",
                 )
-                return
+                return True
+    return False
             if not warned_before and budget._warned:
                 span.event(
                     "guard.budget_warning",
@@ -131,7 +170,7 @@ def _run_budget_demo(tracer: Tracer, out: TextIO) -> None:
                 _print(out, f"  warning fired at ${budget.state.cost_used:.2f}")
 
 
-def _run_loop_demo(tracer: Tracer, out: TextIO) -> None:
+def _run_loop_demo(tracer: Tracer, out: TextIO) -> bool:
     _print(out, "2. LoopGuard: stopping repeated tool calls")
     with tracer.trace("demo.loop_guard") as span:
         for attempt in range(1, 5):
@@ -144,10 +183,11 @@ def _run_loop_demo(tracer: Tracer, out: TextIO) -> None:
                     data={"message": str(exc), "tool_name": "search"},
                 )
                 _print(out, f"  stopped on repeated tool call: {exc}")
-                return
+                return True
+    return False
 
 
-def _run_retry_demo(tracer: Tracer, out: TextIO) -> None:
+def _run_retry_demo(tracer: Tracer, out: TextIO) -> bool:
     _print(out, "3. RetryGuard: stopping retry storms")
     with tracer.trace("demo.retry_guard") as span:
         for attempt in range(1, 5):
@@ -168,7 +208,8 @@ def _run_retry_demo(tracer: Tracer, out: TextIO) -> None:
                     data={"message": str(exc), "tool_name": "fetch_docs"},
                 )
                 _print(out, f"  stopped retry storm: {exc}")
-                return
+                return True
+    return False
 
 
 def _print(stream: TextIO, line: str) -> None:

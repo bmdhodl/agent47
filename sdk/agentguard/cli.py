@@ -187,8 +187,14 @@ def _decisions(
         )
 
 
-def _demo(trace_path: str = "agentguard_demo_traces.jsonl") -> None:
-    raise SystemExit(run_offline_demo(trace_path=trace_path))
+def _demo(
+    trace_path: str = "agentguard_demo_traces.jsonl",
+    feedback: bool = False,
+    omit: Optional[list] = None,
+) -> None:
+    raise SystemExit(
+        run_offline_demo(trace_path=trace_path, feedback=feedback, omit=omit)
+    )
 
 
 def _doctor(trace_path: str = "agentguard_doctor_trace.jsonl", json_output: bool = False) -> None:
@@ -333,6 +339,17 @@ def main() -> None:
         default="agentguard_demo_traces.jsonl",
         help="Where to write the local JSONL trace.",
     )
+    demo.add_argument(
+        "--feedback",
+        action="store_true",
+        help="Print a local redacted demo report. Nothing is sent.",
+    )
+    demo.add_argument(
+        "--omit",
+        nargs="*",
+        choices=("version", "adapter", "result", "reproduction"),
+        help="Drop fields from the local feedback report before you inspect it.",
+    )
 
     doctor = sub.add_parser("doctor", help="Verify the local AgentGuard SDK setup")
     doctor.add_argument(
@@ -459,7 +476,11 @@ def main() -> None:
             as_json=args.json_output,
         )
     elif args.cmd == "demo":
-        _demo(trace_path=args.trace_file)
+        _demo(
+            trace_path=args.trace_file,
+            feedback=args.feedback,
+            omit=args.omit,
+        )
     elif args.cmd == "doctor":
         _doctor(trace_path=args.trace_file, json_output=args.json_output)
     elif args.cmd == "quickstart":
