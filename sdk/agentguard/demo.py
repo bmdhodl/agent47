@@ -38,6 +38,8 @@ def run_offline_demo(
     - no network access
     - no dashboard required
 
+    `agentguard demo --feedback` prints a local redacted report and does not send it.
+
     It demonstrates three concrete failure modes:
     - BudgetGuard stopping runaway spend
     - LoopGuard stopping repeated tool calls

@@ -1,0 +1,58 @@
+{
+  "server": "http://127.0.0.1:8765",
+  "pages": [
+    {
+      "page": "activation.html",
+      "width": 375,
+      "overflowX": 0,
+      "bodyMetric": "page-navigation",
+      "notInstall": true,
+      "file": "activation-375.png"
+    },
+    {
+      "page": "activation.html",
+      "width": 768,
+      "overflowX": 0,
+      "file": "activation-768.png"
+    },
+    {
+      "page": "activation.html",
+      "width": 1440,
+      "overflowX": 0,
+      "notInstall": true,
+      "file": "activation-1440.png"
+    },
+    {
+      "page": "index.html",
+      "width": 375,
+      "overflowX": 0,
+      "bodyMetric": "page-navigation",
+      "copyMetric": "install-intent-candidate",
+      "caption": "Viewing this page is not an install.",
+      "howWeCountHref": "/activation.html",
+      "file": "index-375.png"
+    },
+    {
+      "page": "index.html",
+      "width": 768,
+      "overflowX": 0,
+      "captionVisibleAfterScroll": true,
+      "file": "index-768-caption.png"
+    },
+    {
+      "page": "index.html",
+      "width": 1440,
+      "overflowX": 0,
+      "howWeCount": true,
+      "notInstall": true,
+      "file": "index-1440.png"
+    }
+  ],
+  "interaction": {
+    "from": "http://127.0.0.1:8765/",
+    "clicked": "how we count use",
+    "landed": "http://127.0.0.1:8765/activation.html",
+    "file": "activation-375-from-home.png"
+  },
+  "notes": "Horizontal overflow 0 at 375/768/1440. Nav links stay hidden below 760px (existing site rule); the hero caption still links to activation.html."
+}
