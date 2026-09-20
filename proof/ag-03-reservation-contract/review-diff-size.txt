@@ -1,4 +1,4 @@
-worktree_diff_bytes=86882
+worktree_diff_bytes=103683
 cap_bytes=200000
 reserve_visible=true
 commit_visible=true
