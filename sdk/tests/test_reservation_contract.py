@@ -369,3 +369,12 @@ def test_reservation_model_runs_from_installed_distribution(tmp_path):
     assert lines[1] == "HELD"
     assert target.resolve() in installed.parents or installed.parent == target.resolve()
     assert installed != MODEL.resolve()
+
+
+def test_proof_artifacts_are_plain_text():
+    folder = ROOT / "proof" / "ag-03-reservation-contract"
+    for path in folder.iterdir():
+        if path.suffix not in {".txt", ".json", ".md", ".py"}:
+            continue
+        data = path.read_bytes()
+        assert b"\x1b" not in data, path.name

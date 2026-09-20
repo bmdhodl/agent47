@@ -9,3 +9,6 @@ python examples/enforcement_boundary/two_worker_overshoot.py
 ```
 
 Expected: the model admits exactly one of two workers; current `check()` still overshoots.
+
+Capture ruff with `NO_COLOR=1`. Proof text files must stay plain ASCII so
+`gh pr diff` for Claude review does not refuse escape sequences.
