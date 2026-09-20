@@ -4,9 +4,10 @@ This is the executable contract for a future ``BudgetGuard`` reservation path
 (AG-04). It is not a public API. ``BudgetGuard.check()`` and ``consume()`` do
 not call it. Unknown provider outcomes never silently free holds.
 
-The ledger is meant to run inside an existing ``StateStore.update`` mutator
-after ``BudgetGuard._lock``, matching current lock order: process lock, then
-store lock. Do not invert that order.
+Operations: ``reserve``, ``commit``, ``cancel``, ``mark_unresolved``,
+``recover_crash``. The ledger is meant to run inside an existing
+``StateStore.update`` mutator after ``BudgetGuard._lock``, matching current
+lock order: process lock, then store lock. Do not invert that order.
 """
 from __future__ import annotations
 

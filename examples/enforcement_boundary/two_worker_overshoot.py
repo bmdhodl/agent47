@@ -49,7 +49,10 @@ def main() -> None:
         "recorded_calls": guard.state.calls_used,
         "overshoot": len(dispatched) > 1 and guard.state.calls_used > 1,
         "fixed": False,
-        "note": "check() does not reserve concurrent in-flight requests.",
+        "note": (
+            "check() does not reserve. consume() increments then raises, "
+            "so recorded_calls can exceed limit_calls while consume_blocked is 1."
+        ),
     }
     print(json.dumps(payload, indent=2))
     if not payload["overshoot"]:

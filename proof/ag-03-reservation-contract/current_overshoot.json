@@ -7,5 +7,5 @@
   "recorded_calls": 2,
   "overshoot": true,
   "fixed": false,
-  "note": "check() does not reserve concurrent in-flight requests."
+  "note": "check() does not reserve. consume() increments then raises, so recorded_calls can exceed limit_calls while consume_blocked is 1."
 }
