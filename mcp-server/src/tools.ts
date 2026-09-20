@@ -14,6 +14,13 @@ export interface ToolDefinition {
   handler: (client: AgentGuardClient, args: Record<string, unknown>) => Promise<string>;
 }
 
+const READ_ONLY: ToolAnnotations = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: true,
+};
+
 export const tools: ToolDefinition[] = [
   {
     name: "query_traces",
@@ -72,8 +79,13 @@ export const tools: ToolDefinition[] = [
   {
     name: "get_trace",
     description:
-      "Get the full event tree for a specific trace by its trace ID. " +
-      "Shows all spans, tool calls, LLM calls, guard triggers, and errors.",
+      "Read-only full event tree for one retained trace. " +
+      "Shows spans, tool calls, LLM calls, guard triggers, and errors. " +
+      "Does not enforce BudgetGuard or intercept provider calls.",
+    annotations: {
+      title: "Get one AgentGuard trace",
+      ...READ_ONLY,
+    },
     inputSchema: {
       type: "object",
       properties: {
@@ -89,8 +101,13 @@ export const tools: ToolDefinition[] = [
   {
     name: "get_trace_decisions",
     description:
-      "Extract normalized decision.* events from one trace. " +
-      "Use this when a workflow includes proposal, override, approval, or binding steps.",
+      "Read-only normalized decision.* events from one retained trace. " +
+      "Use this when a workflow includes proposal, override, approval, or binding steps. " +
+      "Does not approve, bind, or enforce those decisions.",
+    annotations: {
+      title: "Get trace decision events",
+      ...READ_ONLY,
+    },
     inputSchema: {
       type: "object",
       properties: {
@@ -111,8 +128,12 @@ export const tools: ToolDefinition[] = [
   {
     name: "get_alerts",
     description:
-      "Get recent guard alerts (loop detection, budget exceeded) and errors. " +
-      "Useful for checking if your agents are hitting safety limits.",
+      "Read-only recent guard alerts (loop detection, budget exceeded) and errors " +
+      "from the hosted Read API. This reports stored alerts; it does not stop a running agent.",
+    annotations: {
+      title: "Get AgentGuard alerts",
+      ...READ_ONLY,
+    },
     inputSchema: {
       type: "object",
       properties: {
@@ -131,8 +152,12 @@ export const tools: ToolDefinition[] = [
   {
     name: "get_usage",
     description:
-      "Check your current event quota usage and plan limits. " +
-      "Shows event count vs limit, retention period, and plan details.",
+      "Read-only hosted event quota usage and plan limits from the AgentGuard Read API. " +
+      "This is dashboard event quota, not SDK BudgetGuard and not a provider invoice cap.",
+    annotations: {
+      title: "Get hosted event quota",
+      ...READ_ONLY,
+    },
     inputSchema: {
       type: "object",
       properties: {},
@@ -148,8 +173,12 @@ export const tools: ToolDefinition[] = [
   {
     name: "get_costs",
     description:
-      "Get cost breakdown for the current month: total spend, cost by model, " +
-      "and estimated savings from guard interventions.",
+      "Read-only hosted cost breakdown for the current month from the AgentGuard Read API. " +
+      "Estimated savings are recorded guard events, not an invoice credit.",
+    annotations: {
+      title: "Get hosted cost breakdown",
+      ...READ_ONLY,
+    },
     inputSchema: {
       type: "object",
       properties: {},
@@ -162,8 +191,13 @@ export const tools: ToolDefinition[] = [
   {
     name: "check_budget",
     description:
-      "Quick pass/fail budget health check. Combines usage quota and cost data " +
-      "to give a summary of whether you're within safe operating limits.",
+      "Read-only hosted event-quota health check. Combines dashboard event quota and " +
+      "recorded cost summaries. This is not SDK BudgetGuard, not a provider invoice cap, " +
+      "and it does not refuse the next model call.",
+    annotations: {
+      title: "Check hosted event quota",
+      ...READ_ONLY,
+    },
     inputSchema: {
       type: "object",
       properties: {},

@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Honest enforcement boundary (AG-01)
+- Published the tested surface map in
+  [docs/enforcement-boundary.md](docs/enforcement-boundary.md): advisory,
+  recorded-budget preflight, recorded-event preflight, reservation-backed,
+  or unsupported.
+- Replaced absolute bill-prevention copy with recorded-budget bounds.
+  Direct SDK bypass, in-flight spend, missing usage, concurrent overshoot,
+  and provider subscription quotas stay documented as remaining exposure.
+- Offline reproductions:
+  `examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py` and
+  `examples/enforcement_boundary/two_worker_overshoot.py`.
+
 ## 1.3.2 (2026-09-17)
 
 ### Record final usage on streamed provider calls

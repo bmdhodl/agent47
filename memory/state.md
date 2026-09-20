@@ -10,3 +10,4 @@
 - LangChain/LangGraph extras require Python 3.10+ and tested current floors.
 - CrewAI remains optional with an explicitly documented unresolved ChromaDB advisory set. Base installs do not include it.
 - Release proof belongs in `proof/audit-20260912/` and the versioned release proof folder.
+- Public enforcement claims follow [docs/enforcement-boundary.md](../docs/enforcement-boundary.md). Recorded-budget preflight is not a concurrent reservation, invoice cap, or host interceptor.

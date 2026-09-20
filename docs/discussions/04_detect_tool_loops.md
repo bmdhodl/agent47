@@ -1,5 +1,8 @@
 # How to Detect Tool Call Loops in AI Agents
 
+> Tested bounds (2026-09-18): LoopGuard is recorded-event preflight, not a host kill switch.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
+
 **Category:** Show and tell
 **Labels:** loop-detection, agents, python
 

@@ -32,6 +32,8 @@ after the optional `pydantic-ai` package is installed.
 
 | File | Framework | What it shows |
 |------|-----------|---------------|
+| `enforcement_boundary/exhausted_budget_blocks_dispatch.py` | OpenAI patch (mocked) | Exhausted recorded budget blocks the next dispatch |
+| `enforcement_boundary/two_worker_overshoot.py` | Raw `BudgetGuard` | Two workers both pass `check()`; current overshoot, not a fix |
 | `local-first-template/` | Raw AgentGuard | Framework-free agent loop against a local llama.cpp/Ollama server with budget, rate-limit, and tool-allowlist guards + JSONL audit (runs offline, no GPU) |
 | `budget_aware_escalation.py` | Raw AgentGuard | Advisor-style escalation from a cheaper local model to a stronger model on hard turns |
 | `coding_agent_review_loop.py` | Raw AgentGuard | Local coding-agent review loop proof: repeated review/edit retries trip `BudgetGuard` and `RetryGuard` without network calls |
