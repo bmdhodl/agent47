@@ -58,7 +58,8 @@
     ]
   },
   "subscribers_active": 7,
-  "consented_feedback": 0,
+  "consented_feedback_success": 0,
+  "consented_feedback_failure": 0,
   "accepted_external_contributions": 0,
   "dedup": {
     "pypi": "none; each download is a package event, not a unique user",

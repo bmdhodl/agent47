@@ -61,6 +61,9 @@ skipping the command. The demo makes no network call.
 Share path: paste into
 [the Demo feedback issue template](../../.github/ISSUE_TEMPLATE/activation_feedback.yml)
 after inspecting it. Opening the issue is the user's action, not the SDK's.
+The weekly classifier counts only `result=success` as guard activation.
+Failed consented reports stay in `consented_feedback_failure`. A bare integer
+`consented_feedback` total is unknown, not an activation.
 
 ## bmdpat follow-up
 

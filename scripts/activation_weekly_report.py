@@ -12,6 +12,9 @@ from urllib.parse import urlparse
 INSTALL_HOSTS = {"pypi.org", "pypi.python.org"}
 INSTALL_PATH_MARKERS = ("/project/agentguard47",)
 INSTALL_COPY = "pip install agentguard47"
+UNDIFFERENTIATED_FEEDBACK = (
+    "consented_feedback total is not result=success; not counted as guard activation"
+)
 
 
 def is_install_intent_target(target: str) -> bool:
@@ -24,6 +27,29 @@ def is_install_intent_target(target: str) -> bool:
     if host in INSTALL_HOSTS and any(marker in path for marker in INSTALL_PATH_MARKERS):
         return True
     return False
+
+
+def feedback_counts(snapshot: Mapping[str, Any]) -> tuple[int, int, bool]:
+    """Return (success, failure, used_undifferentiated_total).
+
+    Guard activation is result=success only. A bare integer
+    ``consented_feedback`` total is not an activation count.
+    """
+    nested = snapshot.get("consented_feedback")
+    if isinstance(nested, Mapping):
+        return (
+            int(nested.get("success") or 0),
+            int(nested.get("failure") or 0),
+            False,
+        )
+    if "consented_feedback_success" in snapshot or "consented_feedback_failure" in snapshot:
+        return (
+            int(snapshot.get("consented_feedback_success") or 0),
+            int(snapshot.get("consented_feedback_failure") or 0),
+            False,
+        )
+    total = int(nested or 0) if nested is not None else 0
+    return 0, 0, total > 0
 
 
 def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
@@ -51,11 +77,16 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         "misclassified_landing_install_intent": landing_intent,
     }
 
+    success_feedback, failure_feedback, undifferentiated = feedback_counts(snapshot)
+    unknowns = list(snapshot.get("unknowns") or [])
+    if undifferentiated and UNDIFFERENTIATED_FEEDBACK not in unknowns:
+        unknowns.append(UNDIFFERENTIATED_FEEDBACK)
+
     report = {
         "as_of": snapshot.get("as_of"),
         "windows": snapshot.get("windows"),
         "dedup": snapshot.get("dedup"),
-        "unknowns": snapshot.get("unknowns"),
+        "unknowns": unknowns,
         "exclusions": snapshot.get("exclusions"),
         "page_navigation": page_navigation,
         "install": {
@@ -64,7 +95,8 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
             "note": "package events, not unique users",
         },
         "install_intent_proven": proven_intent,
-        "guard_activation": int(snapshot.get("consented_feedback") or 0),
+        "guard_activation": success_feedback,
+        "consented_feedback_failure": failure_feedback,
         "repeat_use": "unknown without a consented reporter",
         "accepted_contribution": int(snapshot.get("accepted_external_contributions") or 0),
         # Policy, not a snapshot quality bit: landing targets never increment

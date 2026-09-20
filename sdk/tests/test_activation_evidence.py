@@ -138,6 +138,7 @@ def test_weekly_report_does_not_count_landing_page_as_install():
     assert report["install_intent_proven"] == 0
     assert report["page_navigation"]["misclassified_landing_install_intent"] == 2
     assert report["guard_activation"] == 0
+    assert report["consented_feedback_failure"] == 0
     assert report["repeat_use"].startswith("unknown")
     assert report["landing_page_never_counts_as_install"] is True
     assert "pypi_7d" in report["windows"]
@@ -163,6 +164,44 @@ def test_weekly_report_policy_stays_true_when_pypi_intent_exists(tmp_path):
     assert report["install_intent_proven"] == 4
     assert report["page_navigation"]["misclassified_landing_install_intent"] == 2
     assert report["landing_page_never_counts_as_install"] is True
+
+
+def test_weekly_report_counts_only_successful_feedback(tmp_path):
+    raw = json.loads(BASELINE.read_text(encoding="utf-8"))
+    raw["consented_feedback_success"] = 2
+    raw["consented_feedback_failure"] = 3
+    snapshot = tmp_path / "feedback-split.json"
+    snapshot.write_text(json.dumps(raw), encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, str(REPORT_SCRIPT), str(snapshot)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    report = json.loads(proc.stdout)
+    assert report["guard_activation"] == 2
+    assert report["consented_feedback_failure"] == 3
+
+
+def test_weekly_report_does_not_treat_undifferentiated_feedback_as_activation(tmp_path):
+    raw = json.loads(BASELINE.read_text(encoding="utf-8"))
+    raw.pop("consented_feedback_success", None)
+    raw.pop("consented_feedback_failure", None)
+    raw["consented_feedback"] = 4
+    snapshot = tmp_path / "feedback-total.json"
+    snapshot.write_text(json.dumps(raw), encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, str(REPORT_SCRIPT), str(snapshot)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    report = json.loads(proc.stdout)
+    assert report["guard_activation"] == 0
+    assert report["consented_feedback_failure"] == 0
+    assert any("not result=success" in item for item in report["unknowns"])
 
 
 def test_issue_template_captures_allowed_fields_only():
