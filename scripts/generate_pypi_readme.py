@@ -30,6 +30,7 @@ UNRELEASED_PATHS = {
     "docs/guides/getting-started.md",
     "docs/guides/activation-metrics-design.md",
     "docs/guides/bmdpat-measurement-contract.md",
+    "docs/guides/reservation-contract.md",
     "llms.txt",
     "docs/competitive/agent-security-stack.md",
     "docs/examples/coding-agent-review-loop-incident.md",

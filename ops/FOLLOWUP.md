@@ -5,6 +5,8 @@
   do not change SDK or MCP runtime code solely to chase that directory signal.
 - Apply [docs/guides/bmdpat-measurement-contract.md](../docs/guides/bmdpat-measurement-contract.md)
   in the bmdpat classifier so landing-page hits stop arriving as `install_intent`.
+- AG-04 / #733 (not started): wire the approved reservation contract to one
+  local store and one patched provider path. Do not start it from AG-03.
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.

@@ -18,7 +18,7 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 - [`sdk/`](sdk/): Python package source, tests, packaging metadata (`pyproject.toml`), the generated PyPI README snapshot ([`sdk/PYPI_README.md`](sdk/PYPI_README.md)), and `sdk/examples/`.
 - [`sdk/agentguard/`](sdk/agentguard/): core SDK modules. Highlights:
   - `tracing.py` / `atracing.py`: `Tracer` / `AsyncTracer`, `TraceContext` / `AsyncTraceContext`, plus the core `JsonlFileSink`, `StdoutSink`, and `TraceSink` base.
-  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`).
+  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`). `_reservation_contract.py` is the private AG-03 reserve/commit/cancel model; it is not a public API and is not called by `BudgetGuard`.
   - `x402.py`: `X402SpendGuard`, spend caps for x402/USDC agent micropayments (total/per-endpoint/per-call, refuse-before-pay, reuses `BudgetExceeded`).
   - `setup.py`: `init()` / `get_tracer()` / `get_budget_guard()` / `shutdown()` convenience entrypoints.
   - `instrument.py` / `instrument_stream.py`: provider patches and the private stream wrapper that bills final streamed usage once.
@@ -134,3 +134,8 @@ the last raw git tag, because a tag can exist for a failed package publish.
   reservation-backed, or unsupported. No new public SDK API. Reservation for
   `BudgetGuard` remains later work. See [docs/enforcement-boundary.md](docs/enforcement-boundary.md)
   and GitHub #730 / #729.
+- 2026-09-20: Published the local reservation and reconciliation contract
+  (AG-03 / #732). Private model `_reservation_contract.py` is not a public
+  API and is not called by `BudgetGuard`. See
+  [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
+  Implementation is AG-04 / #733.

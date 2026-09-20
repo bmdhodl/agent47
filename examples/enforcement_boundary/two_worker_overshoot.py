@@ -1,7 +1,8 @@
 """Two workers can both pass check() and both dispatch.
 
 This characterizes current BudgetGuard overshoot. It is not a fix. Concurrent
-reservation is later work (AG-03 / AG-04). There is no network.
+reservation is designed in docs/guides/reservation-contract.md and implemented
+later (AG-04 / #733). There is no network.
 """
 from __future__ import annotations
 

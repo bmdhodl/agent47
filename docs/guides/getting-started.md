@@ -79,7 +79,9 @@ request `include_usage` unless the caller already set it. A stream that ends
 without usage counts as one call with zero tokens. The OpenAI Responses API
 is not patched. Direct SDK clients you do not wrap are a bypass. Subscription
 quotas stay with the provider. See the
-[enforcement boundary](../enforcement-boundary.md).
+[enforcement boundary](../enforcement-boundary.md). Concurrent reservation is
+designed in [reservation-contract.md](reservation-contract.md) and is not a
+`BudgetGuard` API yet.
 
 For tools, call `LoopGuard.check(tool_name, arguments)` before dispatch.
 With a tracer, emit the tool-call event before running the tool. A guard

@@ -12,3 +12,4 @@
 - Release proof belongs in `proof/audit-20260912/` and the versioned release proof folder.
 - Public enforcement claims follow [docs/enforcement-boundary.md](../docs/enforcement-boundary.md). Recorded-budget preflight is not a concurrent reservation, invoice cap, or host interceptor.
 - Public activation counts follow [docs/guides/activation-metrics-design.md](../docs/guides/activation-metrics-design.md). Page views are not installs. `agentguard demo --feedback` is local-only.
+- Local reservation/reconciliation is designed in [docs/guides/reservation-contract.md](../docs/guides/reservation-contract.md). It is not a public API and is not wired into `BudgetGuard`. Implementation is AG-04 / #733.
