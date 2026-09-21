@@ -21,7 +21,6 @@ import uuid
 from typing import Any, Callable, Dict, Optional
 
 from ._reservation_contract import MissingBound, ReservationLedger
-from .guards import BudgetExceeded, BudgetState
 from .price_table import DEFAULT_PRICE_TABLE
 
 _RESERVED = "reserved"
@@ -73,18 +72,16 @@ def commit_reservation(
 
     Usage is stored before any limit exception is raised. ``BudgetExceeded``
     means the provider usage was recorded, not blocked.
+
+    The check uses the totals from this store write and runs before this
+    guard's lock is released, same as ``consume()``. A later ``consume()``
+    checks its own write.
     """
-    holder = _mutate(
-        self,
-        lambda ledger: ledger.commit(
-            reservation_id, calls=calls, tokens=tokens, cost_usd=cost_usd
-        ),
-    )
-    if not holder["increased"]:
-        return holder["record"]
-    error: Optional[BaseException] = None
-    warning = None
-    with self._lock:
+    from .guards import BudgetExceeded
+
+    def _enforce(holder: Dict[str, Any]) -> None:
+        if not holder["increased"]:
+            return
         try:
             self._enforce_limits(
                 holder["state"]["tokens_used"],
@@ -95,10 +92,22 @@ def commit_reservation(
                 cost_usd,
             )
         except BudgetExceeded as exc:
-            error = exc
+            holder["limit_error"] = exc
         else:
             if self._warn_at_pct is not None and not self._warned:
-                warning = self._check_warning()
+                holder["warning"] = self._check_warning()
+
+    holder = _mutate(
+        self,
+        lambda ledger: ledger.commit(
+            reservation_id, calls=calls, tokens=tokens, cost_usd=cost_usd
+        ),
+        after=_enforce,
+    )
+    if not holder["increased"]:
+        return holder["record"]
+    error: Optional[BaseException] = holder.get("limit_error")
+    warning = holder.get("warning")
     from .goal import _enforce_active_goal_limits, _record_consume
 
     added_calls = holder["added_calls"]
@@ -190,6 +199,8 @@ def traced_openai_reserved(
     before_send: Optional[Callable[[], None]] = None,
 ) -> Any:
     """Reserve, send once, then commit. Cancel only if ``before_send`` aborts."""
+    from .guards import BudgetExceeded
+
     model = str(kwargs.get("model", "unknown"))
     span_cm = tracer.trace(
         f"llm.openai.{model}",
@@ -321,7 +332,19 @@ def _commit_provider_result(
     )
 
 
-def _mutate(guard: Any, operation: Callable[[ReservationLedger], Dict[str, Any]]) -> Dict[str, Any]:
+def _mutate(
+    guard: Any,
+    operation: Callable[[ReservationLedger], Dict[str, Any]],
+    after: Optional[Callable[[Dict[str, Any]], None]] = None,
+) -> Dict[str, Any]:
+    """Apply one ledger transition under the guard lock, then the store lock.
+
+    ``after`` runs before the guard lock is released, on the state this write
+    stored. ``guards`` is imported here so loading this module does not import
+    ``guards`` while ``BudgetGuard`` is still being defined.
+    """
+    from .guards import BudgetState
+
     if guard._store is None:
         raise ValueError("reservation requires a StateStore")
     bucket = guard._period_bucket()
@@ -353,6 +376,8 @@ def _mutate(guard: Any, operation: Callable[[ReservationLedger], Dict[str, Any]]
             cost_used=float(new.get("cost_used", 0.0)),
         )
         holder["state"] = new
+        if after is not None:
+            after(holder)
     return holder
 
 

@@ -293,6 +293,23 @@ def test_dollar_bound_refuses_when_the_estimate_does_not_fit(tmp_path):
     assert calls == []
 
 
+def test_commit_enforces_while_guard_lock_is_held(tmp_path):
+    guard = _guard(tmp_path, max_calls=None, max_tokens=1)
+    guard.reserve_for_dispatch("over", calls=1, tokens_bound=1)
+    seen = {}
+    original = guard._enforce_limits
+
+    def wrapped(*args, **kwargs):
+        seen["locked"] = guard._lock.locked()
+        return original(*args, **kwargs)
+
+    guard._enforce_limits = wrapped
+    with pytest.raises(BudgetExceeded):
+        guard.commit_reservation("over", tokens=5, cost_usd=0.0, calls=1)
+    assert seen["locked"] is True
+    assert guard.reservation_totals()["settled"]["tokens"] == 5
+
+
 def test_commit_records_estimate_overrun(tmp_path):
     guard = _guard(tmp_path, max_calls=None, max_cost_usd=1.0)
     guard.reserve_for_dispatch("over", calls=1, cost_bound=0.1, price_table_version="2026.07.15")
