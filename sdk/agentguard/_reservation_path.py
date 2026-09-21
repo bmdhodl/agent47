@@ -69,7 +69,11 @@ def commit_reservation(
     calls: Optional[int] = None,
     cost_usd: float = 0.0,
 ) -> Dict[str, Any]:
-    """Settle a hold with provider usage. Same usage twice is a no-op."""
+    """Settle a hold with provider usage. Same usage twice is a no-op.
+
+    Usage is stored before any limit exception is raised. ``BudgetExceeded``
+    means the provider usage was recorded, not blocked.
+    """
     holder = _mutate(
         self,
         lambda ledger: ledger.commit(
@@ -394,6 +398,11 @@ def _totals_from_ledger(ledger: ReservationLedger) -> Dict[str, Any]:
 
 
 def _still_holding(guard: Any, reservation_id: str) -> bool:
+    """See if a hold is still reserved before a best-effort unresolved mark.
+
+    The read and the later mark take the guard lock separately. A cancel in
+    between becomes a swallowed contract error, not a freed hold.
+    """
     try:
         totals = guard.reservation_totals()
     except Exception:
