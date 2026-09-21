@@ -1,0 +1,1 @@
+{"session": "ag-03-inbox", "ts": "2026-09-21T21:38:44", "claim": "Inbox records merged PR 761", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Merged PR `#761`"}, "prev": "85dfa36ac85a8a14a6354c1ffbd8f2c87dbadcb0aaf68c0acc8e8f5ce1b705b7"}
