@@ -157,13 +157,14 @@ def reservation_totals(self: Any) -> Dict[str, Any]:
     consume: this guard's lock, then the store.
     """
     if self._store is None:
-        return _totals_from_counters(
-            {
-                "tokens_used": self.state.tokens_used,
-                "calls_used": self.state.calls_used,
-                "cost_used": self.state.cost_used,
-            }
-        )
+        with self._lock:
+            return _totals_from_counters(
+                {
+                    "tokens_used": self.state.tokens_used,
+                    "calls_used": self.state.calls_used,
+                    "cost_used": self.state.cost_used,
+                }
+            )
     bucket = self._period_bucket()
     with self._lock:
         current = self._store.read(bucket)
@@ -257,6 +258,8 @@ def _openai_bounds(guard: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         cost_bound = tokens_bound * per_token
         version = str(DEFAULT_PRICE_TABLE.get("version") or "")
     held_tokens = tokens_bound if guard.max_tokens is not None else None
+    # A dollar cap already refused a missing token bound above. This covers
+    # a token cap on its own.
     if guard.max_tokens is not None and held_tokens is None:
         raise MissingBound(
             "Cannot claim a token stop without max_tokens on the request"
@@ -401,7 +404,7 @@ def _still_holding(guard: Any, reservation_id: str) -> bool:
     """See if a hold is still reserved before a best-effort unresolved mark.
 
     The read and the later mark take the guard lock separately. A cancel in
-    between becomes a swallowed contract error, not a freed hold.
+    between frees the hold. The later mark then fails and is swallowed.
     """
     try:
         totals = guard.reservation_totals()

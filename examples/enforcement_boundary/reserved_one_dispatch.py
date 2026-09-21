@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import multiprocessing
+import queue as queue_module
 import tempfile
 from pathlib import Path
 from types import SimpleNamespace
@@ -61,8 +62,11 @@ def main() -> dict:
             proc.join(60)
         exit_codes = [proc.exitcode for proc in procs]
         results = []
-        while not queue.empty():
-            results.append(queue.get())
+        for _ in procs:
+            try:
+                results.append(queue.get(timeout=10))
+            except queue_module.Empty:
+                results.append("missing")
         from agentguard import BudgetGuard, JsonFileStateStore
 
         totals = BudgetGuard(
