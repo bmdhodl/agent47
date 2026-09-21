@@ -274,6 +274,28 @@ def test_missing_token_bound_does_not_send(tmp_path):
     assert guard.reservation_totals()["reserved"]["calls"] == 0
 
 
+def test_dollar_bound_falls_back_when_the_price_table_omits_the_rate(tmp_path, monkeypatch):
+    from agentguard import _reservation_path
+
+    monkeypatch.setitem(_reservation_path.DEFAULT_PRICE_TABLE, "overestimate", {})
+    guard = _guard(tmp_path, max_calls=None, max_cost_usd=0.01)
+    calls = []
+
+    def create(**_kwargs):
+        calls.append(1)
+        return _usage_response()
+
+    with pytest.raises(BudgetExceeded):
+        _traced_openai_create(
+            create,
+            Tracer(sink=_Sink(), watermark=False),
+            guard,
+            model="gpt-4o-mini",
+            max_tokens=1_000_000,
+        )
+    assert calls == []
+
+
 def test_dollar_bound_refuses_when_the_estimate_does_not_fit(tmp_path):
     guard = _guard(tmp_path, max_calls=None, max_cost_usd=0.01)
     calls = []

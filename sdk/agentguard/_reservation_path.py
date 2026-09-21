@@ -21,7 +21,7 @@ import uuid
 from typing import Any, Callable, Dict, Optional
 
 from ._reservation_contract import MissingBound, ReservationLedger
-from .price_table import DEFAULT_PRICE_TABLE
+from .price_table import _DEFAULT_HIGH_WATER_PER_TOKEN, DEFAULT_PRICE_TABLE
 
 _RESERVED = "reserved"
 _UNRESOLVED = "unresolved"
@@ -265,7 +265,8 @@ def _openai_bounds(guard: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
             raise MissingBound(
                 "Cannot claim a dollar stop without max_tokens on the request"
             )
-        per_token = float(DEFAULT_PRICE_TABLE["overestimate"]["high_water_per_token"])
+        over = DEFAULT_PRICE_TABLE.get("overestimate") or {}
+        per_token = float(over.get("high_water_per_token", _DEFAULT_HIGH_WATER_PER_TOKEN))
         cost_bound = tokens_bound * per_token
         version = str(DEFAULT_PRICE_TABLE.get("version") or "")
     held_tokens = tokens_bound if guard.max_tokens is not None else None

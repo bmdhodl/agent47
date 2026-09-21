@@ -191,14 +191,14 @@ class BudgetGuard(BaseGuard):
 
     Thread-safe. Raises ``BudgetExceeded`` when any configured limit is
     exceeded. Optionally calls ``on_warning`` when usage crosses
-    ``warn_at_pct``.
+    ``warn_at_pct``. Store-backed reservation methods are attached by
+    ``_reservation_path`` and stay out of ``__all__``.
 
     Usage::
 
         guard = BudgetGuard(max_cost_usd=5.00, max_calls=100)
         guard.consume(tokens=150, calls=1, cost_usd=0.02)
 
-        # With warning callback at 80%:
         guard = BudgetGuard(
             max_cost_usd=5.00,
             warn_at_pct=0.8,
