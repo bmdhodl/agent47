@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Showwork tree snapshots are one-line hash maps (~70KB+ each). Leaving them
+# in the patch fills the Claude review 200k cap before SDK code is visible.
+# Keep LF text on disk; do not emit the JSON body in `git diff` / `gh pr diff`.
+# Existing snapshot bytes stay unchanged so recorded hashes remain verifiable.
+.showwork/snapshots/*.json text eol=lf -diff

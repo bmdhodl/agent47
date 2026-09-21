@@ -26,6 +26,7 @@ SDK_ROOT = Path(__file__).parent.parent / "agentguard"
 # Core modules — must use stdlib only (no third-party imports at module level)
 CORE_MODULES = [
     "_budget_validation.py",
+    "_reservation_contract.py",
     "sinks/_transport.py",
     "__init__.py",
     "atracing.py",

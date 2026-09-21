@@ -1,0 +1,7 @@
+worktree_diff_bytes=103683
+cap_bytes=200000
+reserve_visible=true
+commit_visible=true
+cancel_visible=true
+mark_unresolved_visible=true
+note=Measured after .gitattributes -diff on .showwork/snapshots/*.json. Snapshot file bytes unchanged.

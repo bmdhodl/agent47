@@ -1,7 +1,8 @@
 """Two workers can both pass check() and both dispatch.
 
 This characterizes current BudgetGuard overshoot. It is not a fix. Concurrent
-reservation is later work (AG-03 / AG-04). There is no network.
+reservation is designed in docs/guides/reservation-contract.md and implemented
+later (AG-04 / #733). There is no network.
 """
 from __future__ import annotations
 
@@ -48,7 +49,10 @@ def main() -> None:
         "recorded_calls": guard.state.calls_used,
         "overshoot": len(dispatched) > 1 and guard.state.calls_used > 1,
         "fixed": False,
-        "note": "check() does not reserve concurrent in-flight requests.",
+        "note": (
+            "check() does not reserve. consume() increments then raises, "
+            "so recorded_calls can exceed limit_calls while consume_blocked is 1."
+        ),
     }
     print(json.dumps(payload, indent=2))
     if not payload["overshoot"]:

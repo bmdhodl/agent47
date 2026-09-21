@@ -53,6 +53,7 @@ Always:
 - keep changes minimal and product-facing
 - stop if the request conflicts with `memory/` or `ops/`
 - leave proof for every PR
+- open every PR ready for review; never create a draft
 - do the post-PR review loop: CI, automated review, comment sweep, fixes, rerun
 - address and resolve EVERY comment, every time: reply on the thread, fix or
   cite the SHA, resolve the GitHub conversation, and repeat until none remain

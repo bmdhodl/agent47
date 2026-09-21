@@ -68,7 +68,10 @@ paths are marked `unsupported`.
   Anthropic, or cloud-account billing quotas.
 - **Concurrent recorded-budget paths.** Two threads can both pass `check()`
   before either `consume()`. Reproduce with
-  `examples/enforcement_boundary/two_worker_overshoot.py`.
+  `examples/enforcement_boundary/two_worker_overshoot.py`. The local
+  reservation contract is designed in
+  [reservation-contract.md](guides/reservation-contract.md) and is **not**
+  wired into `BudgetGuard` (AG-04).
 - **Framework adapters.** LangChain LLM and CrewAI steps record after the
   model or step ran. LangGraph charges a call at node entry, not per inner
   LLM, and does not increment token or dollar totals.
@@ -79,14 +82,15 @@ Python dispatch boundary plus a local JSONL record of why work stopped.
 
 ## Competitive check (documentation only)
 
-Read 2026-09-18. These are vendor docs, not a benchmark:
+Read 2026-09-20. These are vendor docs, not a benchmark:
 
 - [Claude managed-session budgets](https://platform.claude.com/docs/en/managed-agents/sessions)
   are session-level provider controls. Prefer them when one Claude session cap
   is enough.
 - [LiteLLM user budgets](https://docs.litellm.ai/docs/proxy/users) document
   reservations on a proxy. AgentGuard is not a proxy. Recorded-budget
-  preflight here is in-process and does not reserve.
+  preflight here is in-process and does not reserve. The proposed local
+  contract is [reservation-contract.md](guides/reservation-contract.md).
 
 ## History
 

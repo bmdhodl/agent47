@@ -24,12 +24,15 @@ GITHUB_ABSOLUTE_LINK_RE = re.compile(
 COLAB_ABSOLUTE_LINK_RE = re.compile(
     rf"https://colab\.research\.google\.com/github/{REPO_OWNER}/{REPO_NAME}/blob/main/(?P<path>[^)#]+)"
 )
+# Paths whose GitHub links should use `main` instead of the release tag.
+# This set does not copy file bodies into sdk/PYPI_README.md.
 UNRELEASED_PATHS = {
     "docs/enforcement-boundary.md",
     "docs/cost-guardrails.md",
     "docs/guides/getting-started.md",
     "docs/guides/activation-metrics-design.md",
     "docs/guides/bmdpat-measurement-contract.md",
+    "docs/guides/reservation-contract.md",
     "llms.txt",
     "docs/competitive/agent-security-stack.md",
     "docs/examples/coding-agent-review-loop-incident.md",

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Local reservation contract (AG-03)
+- Designed reserve / commit / cancel / unresolved semantics for a future
+  local `StateStore` path:
+  [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
+- Executable private model: `sdk/agentguard/_reservation_contract.py`.
+  Unknown provider outcomes cannot silently free funds. No public API.
+  `BudgetGuard.check()` still does not reserve. Implementation is AG-04.
+
 ### Activation evidence (AG-02)
 - Landing-page navigation never counts as install or activation.
 - `agentguard demo --feedback` prints a local redacted report (`version`,

@@ -125,7 +125,10 @@ def test_two_worker_example_characterizes_overshoot():
     assert payload["overshoot"] is True
     assert payload["fixed"] is False
     assert payload["dispatched"] == 2
-    assert payload["recorded_calls"] > 1
+    assert payload["consume_succeeded"] == 1
+    assert payload["consume_blocked"] == 1
+    assert payload["recorded_calls"] == 2
+    assert "consume() increments then raises" in payload["note"]
 
 
 def test_examples_run_from_installed_distribution(tmp_path):
