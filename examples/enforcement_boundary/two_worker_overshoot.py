@@ -1,8 +1,7 @@
 """Two workers can both pass check() and both dispatch.
 
-This characterizes current BudgetGuard overshoot. It is not a fix. Concurrent
-reservation is designed in docs/guides/reservation-contract.md and implemented
-later (AG-04 / #733). There is no network.
+This characterizes in-memory BudgetGuard overshoot. It is not the store-backed
+OpenAI path. That path is reserved_one_dispatch.py. There is no network.
 """
 from __future__ import annotations
 

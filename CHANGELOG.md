@@ -2,13 +2,25 @@
 
 ## Unreleased
 
+### One local reservation path (AG-04)
+- Sync, non-streaming OpenAI Chat Completions now reserve before send when
+  `BudgetGuard` has a `StateStore`. One shared key and one remaining call
+  produce one dispatch. Commit records provider usage. Cancel frees the hold
+  only if the request never left. Timeout, crash, and unknown outcomes keep
+  the hold.
+- `BudgetGuard.reservation_totals()` reports settled, reserved, and
+  unresolved amounts. `check()` and `consume()` are unchanged.
+  Streaming, async, and Anthropic patches do not reserve.
+- This is not an invoice cap. Token and dollar holds need `max_tokens` on
+  the request. The dollar bound is the owned high-water estimate.
+
 ### Local reservation contract (AG-03)
 - Designed reserve / commit / cancel / unresolved semantics for a future
   local `StateStore` path:
   [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
 - Executable private model: `sdk/agentguard/_reservation_contract.py`.
-  Unknown provider outcomes cannot silently free funds. No public API.
-  `BudgetGuard.check()` still does not reserve. Implementation is AG-04.
+  Unknown provider outcomes cannot silently free funds. No public type.
+  `BudgetGuard.check()` still does not reserve. AG-04 wires one OpenAI path.
 
 ### Activation evidence (AG-02)
 - Landing-page navigation never counts as install or activation.

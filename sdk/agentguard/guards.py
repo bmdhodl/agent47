@@ -781,16 +781,19 @@ def _extract_tool_name(
 def _stable_json(data: Dict[str, Any]) -> str:
     return json.dumps(data, sort_keys=True, separators=(",", ":"), default=str)
 
-_ESCALATION_COMPAT_EXPORTS = {
-    "BudgetAwareEscalation",
-    "EscalationRequired",
-    "EscalationSignal",
-}
+_ESCALATION_COMPAT_EXPORTS = {"BudgetAwareEscalation", "EscalationRequired", "EscalationSignal"}
 
 
 def __getattr__(name: str) -> Any:
     if name in _ESCALATION_COMPAT_EXPORTS:
         from . import escalation as _escalation
-
         return getattr(_escalation, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def _bind_reservation_methods() -> None:
+    from ._reservation_path import bind_budget_guard
+    bind_budget_guard(BudgetGuard)
+
+
+_bind_reservation_methods()

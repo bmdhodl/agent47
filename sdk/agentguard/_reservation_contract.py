@@ -1,8 +1,9 @@
 """Private local reservation and reconciliation model (AG-03).
 
-This is the executable contract for a future ``BudgetGuard`` reservation path
-(AG-04). It is not a public API. ``BudgetGuard.check()`` and ``consume()`` do
-not call it. Unknown provider outcomes never silently free holds.
+This is the executable contract for the store-backed reservation path.
+It is not a public API. ``BudgetGuard.check()`` and ``consume()`` do not call
+it. Sync non-streaming OpenAI calls with a ``StateStore`` do, via
+``_reservation_path``. Unknown provider outcomes never silently free holds.
 
 Operations: ``reserve``, ``commit``, ``cancel``, ``mark_unresolved``,
 ``recover_crash``. The ledger is meant to run inside an existing

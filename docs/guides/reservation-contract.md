@@ -10,9 +10,12 @@ or `consume()`. Those still overshoot when two workers both pass `check()`
 before either `consume()`. Reproduce with
 `examples/enforcement_boundary/two_worker_overshoot.py`.
 
-No public SDK API is added. The executable model is the private module
-`sdk/agentguard/_reservation_contract.py`. AG-04 may wire one provider path to
-that model after owner review of this table.
+No public SDK API is added by this contract. The executable model is the
+private module `sdk/agentguard/_reservation_contract.py`. AG-04 wires one
+provider path to that model: sync, non-streaming OpenAI Chat Completions
+when `BudgetGuard` has a `StateStore`. `ReservationLedger` stays private.
+`BudgetGuard.reservation_totals()` reports settled, reserved, and unresolved
+amounts. `check()` and `consume()` still do not reserve.
 
 ## Native-first alternative (smaller)
 
@@ -168,10 +171,44 @@ HttpSink remote kill stay unsupported. See
 No new MCP tools. No new rendered site page. Viewport and host allow/deny
 tests are N/A for this design PR.
 
-## AG-04 slice (not this PR)
+## AG-04 slice
 
-Implement this contract for **one** local store plus **one** patched
-OpenAI Chat Completions or Anthropic Messages dispatch. Barrier-synchronized
-workers with one remaining call must produce exactly one upstream mock
-request. Do not start that work from this document alone; #733 is the
-implementation card.
+Implemented for **one** local store plus **one** patched dispatch:
+sync OpenAI Chat Completions **without** `stream=True`, and only when
+`BudgetGuard` is constructed with a `StateStore`.
+
+`sdk/tests/test_reservation_path.py` and
+`examples/enforcement_boundary/reserved_one_dispatch.py` are the proof.
+Spawn is the multiprocessing start method used for the two-process race.
+Windows was not executed in the environment that added this slice; the
+lock file is the same `JsonFileStateStore` path the persistence tests
+already use.
+
+### What that path does
+
+- `reserve_for_dispatch` runs inside `StateStore.update` before the mock
+  or provider function is called.
+- `commit_reservation` writes provider usage. The same usage twice does
+  not add the call again.
+- `cancel_reservation(..., dispatch_never_sent=True)` frees a hold only
+  when this process has not called the provider.
+- A provider exception or a failed settlement calls
+  `mark_reservation_unresolved`. The hold stays.
+- `recover_reservation` is the process-death path. It does not free funds.
+- Call holds are exact. A token cap requires `max_tokens` or
+  `max_completion_tokens` on the request. A dollar cap estimates an upper
+  bound from that token cap and the owned high-water price
+  (`price_table` version `2026.07.15`). Missing either bound refuses the
+  send. The estimate is not an invoice.
+
+### Still unsupported
+
+- In-memory `BudgetGuard`, `check()`, and `consume()`.
+- OpenAI streaming, OpenAI async, and every Anthropic patch.
+- OpenAI Responses, unpatched clients, host tools, and `HttpSink` remote kill.
+- Mixed processes: an old `check()`/`consume()` worker can still overshoot
+  a store that a new worker is reserving. `check()` does not see holds.
+- UTC day rollover. Unresolved rows stay on the reserve-day key.
+- A provider invoice. `can_claim_invoice_cap()` stays false.
+- Actual usage above the reserved bound is stored as `estimate_overrun`.
+  It is not written down to the estimate.
