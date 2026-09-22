@@ -28,8 +28,9 @@ the response usage afterward. That check reads the current persistent bucket
 under the guard lock and raises at equality or above; it never charges or
 reserves usage. Concurrent requests on that path can pass before either
 response is recorded. Sync, non-streaming OpenAI Chat Completions with a
-`StateStore` are the exception: they reserve one call before send. The check
-does not predict token/cost totals and does not enforce goal-level caps.
+`StateStore` reserve one call before send. Store-backed OpenAI and Anthropic
+streams do too. The check does not predict token/cost totals and does not
+enforce goal-level caps.
 The public map of every advertised path is
 [`docs/enforcement-boundary.md`](../docs/enforcement-boundary.md).
 
