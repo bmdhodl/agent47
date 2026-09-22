@@ -20,8 +20,10 @@
   reproduction. No default SDK telemetry.
 - Local reservation is shipped for store-backed sync non-streaming OpenAI
   and for store-backed OpenAI/Anthropic streams. Unknown provider outcomes
-  cannot silently free funds. Call holds can be exact; token/dollar holds
-  need an explicit request bound and are still not an invoice cap. Canonical
+  cannot silently free funds. A stream that stops early keeps a token or
+  dollar hold; partial usage is not a settlement. Call holds can be exact;
+  token/dollar holds need an explicit request bound and are still not an
+  invoice cap. Canonical
   contract: [docs/guides/reservation-contract.md](../docs/guides/reservation-contract.md).
   `BudgetGuard.check()` / `consume()` stay recorded-budget preflight.
   In-memory streams, async non-stream calls, and Anthropic non-stream calls

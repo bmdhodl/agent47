@@ -3,7 +3,9 @@
 Store-backed OpenAI streams reserve before send. Two spawned processes share
 one `JsonFileStateStore` and `max_calls=1`. Exactly one mock stream runs.
 In-memory streams still consume after the fact. A token or dollar cap with
-no usage keeps the hold. This is not an invoice cap.
+no usage, an early stop, or a partial usage chunk keeps the hold. An
+exception while entering the stream context stays unresolved. A manager
+that is never entered stays reserved. This is not an invoice cap.
 
 Windows was not executed. Spawn is the start method; Linux was.
 

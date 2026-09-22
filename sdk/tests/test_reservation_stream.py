@@ -280,7 +280,170 @@ def test_mid_stream_timeout_without_usage_stays_unresolved(tmp_path):
     assert totals["unresolved"]["calls"] == 1
     assert totals["settled"]["tokens"] == 0
     assert totals["unresolved"]["tokens"] == 40
+    assert set(_reasons(guard).values()) == {"timeout"}
+
+
+def test_partial_usage_then_error_does_not_commit(tmp_path):
+    guard = _guard(tmp_path, max_tokens=1000)
+    from agentguard.instrument import _patch_anthropic_instance
+
+    class Body:
+        def __iter__(self):
+            yield SimpleNamespace(usage=SimpleNamespace(input_tokens=50, output_tokens=1))
+            raise ConnectionError("dropped after message_start")
+
+    class Manager:
+        def __enter__(self):
+            return Body()
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    client = SimpleNamespace(
+        messages=SimpleNamespace(create=lambda **_k: None, stream=lambda **_k: Manager())
+    )
+    _patch_anthropic_instance(client, _tracer(), guard)
+    with pytest.raises(ConnectionError), client.messages.stream(
+        model="claude-sonnet-4-20250514", max_tokens=400
+    ) as stream:
+        list(stream)
+    totals = guard.reservation_totals()
+    assert totals["settled"]["tokens"] == 0
+    assert totals["settled"]["calls"] == 0
+    assert totals["unresolved"]["calls"] == 1
+    assert totals["unresolved"]["tokens"] == 400
+    assert set(_reasons(guard).values()) == {"provider_outcome_unknown"}
+
+
+def test_partial_usage_then_close_keeps_the_token_hold(tmp_path):
+    guard = _guard(tmp_path, max_tokens=1000)
+    from agentguard.instrument import _patch_anthropic_instance
+
+    class Body:
+        def __iter__(self):
+            yield SimpleNamespace(usage=SimpleNamespace(input_tokens=50, output_tokens=1))
+
+    class Manager:
+        def __enter__(self):
+            return Body()
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    client = SimpleNamespace(
+        messages=SimpleNamespace(create=lambda **_k: None, stream=lambda **_k: Manager())
+    )
+    _patch_anthropic_instance(client, _tracer(), guard)
+    with client.messages.stream(model="claude-sonnet-4-20250514", max_tokens=400) as stream:
+        next(stream)
+    totals = guard.reservation_totals()
+    assert totals["settled"]["tokens"] == 0
+    assert totals["unresolved"]["tokens"] == 400
+    assert set(_reasons(guard).values()) == {"stream_incomplete"}
+
+
+def test_stream_enter_timeout_is_unresolved_not_reserved(tmp_path):
+    guard = _guard(tmp_path, max_tokens=100)
+
+    class Manager:
+        def __enter__(self):
+            raise TimeoutError("send failed")
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    from agentguard.instrument import _patch_anthropic_instance
+
+    client = SimpleNamespace(
+        messages=SimpleNamespace(create=lambda **_k: None, stream=lambda **_k: Manager())
+    )
+    _patch_anthropic_instance(client, _tracer(), guard)
+    with pytest.raises(TimeoutError), client.messages.stream(
+        model="claude-sonnet-4-20250514", max_tokens=40
+    ):
+        pass
+    totals = guard.reservation_totals()
+    assert totals["reserved"]["calls"] == 0
+    assert totals["unresolved"]["calls"] == 1
+    assert totals["unresolved"]["tokens"] == 40
+    assert totals["settled"]["tokens"] == 0
+    assert set(_reasons(guard).values()) == {"timeout"}
+
+
+def test_unentered_stream_manager_stays_reserved(tmp_path):
+    guard = _guard(tmp_path, max_calls=1)
+    from agentguard.instrument import _patch_anthropic_instance
+
+    class Manager:
+        def __enter__(self):
+            raise AssertionError("enter must not run")
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    client = SimpleNamespace(
+        messages=SimpleNamespace(create=lambda **_k: None, stream=lambda **_k: Manager())
+    )
+    _patch_anthropic_instance(client, _tracer(), guard)
+    client.messages.stream(model="claude-sonnet-4-20250514")
+    totals = guard.reservation_totals()
+    assert totals["reserved"]["calls"] == 1
+    assert totals["unresolved"]["calls"] == 0
+    assert totals["settled"]["calls"] == 0
+
+
+def test_close_before_chunks_under_token_cap_stays_unresolved(tmp_path):
+    guard = _guard(tmp_path, max_tokens=100)
+    stream = _patch_and_stream(
+        guard,
+        lambda **_kwargs: _SyncStream(_usage_chunks()),
+        max_tokens=40,
+    )
+    stream.close()
+    totals = guard.reservation_totals()
+    assert totals["settled"]["tokens"] == 0
+    assert totals["unresolved"]["tokens"] == 40
     assert set(_reasons(guard).values()) == {"usage_missing"}
+
+
+def test_calls_only_early_close_still_settles_one_call(tmp_path):
+    guard = _guard(tmp_path, max_calls=2)
+    stream = _patch_and_stream(guard, lambda **_kwargs: _SyncStream([]))
+    stream.close()
+    totals = guard.reservation_totals()
+    assert totals["settled"]["calls"] == 1
+    assert totals["settled"]["tokens"] == 0
+    assert totals["unresolved"]["calls"] == 0
+
+
+def test_async_stream_enter_timeout_is_unresolved(tmp_path):
+    guard = _guard(tmp_path, max_tokens=100)
+
+    class Manager:
+        async def __aenter__(self):
+            raise TimeoutError("send failed")
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return False
+
+    client = SimpleNamespace(
+        messages=SimpleNamespace(create=lambda **_k: None, stream=lambda **_k: Manager())
+    )
+
+    async def body():
+        _patch_anthropic_async_instance(client, AsyncTracer(sink=_Sink()), guard)
+        with pytest.raises(TimeoutError):
+            async with client.messages.stream(
+                model="claude-sonnet-4-20250514", max_tokens=40
+            ):
+                pass
+
+    asyncio.run(body())
+    totals = guard.reservation_totals()
+    assert totals["reserved"]["calls"] == 0
+    assert totals["unresolved"]["calls"] == 1
+    assert totals["unresolved"]["tokens"] == 40
+    assert set(_reasons(guard).values()) == {"timeout"}
 
 
 def test_missing_usage_under_dollar_cap_is_not_authoritative_zero(tmp_path):

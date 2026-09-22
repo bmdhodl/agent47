@@ -39,7 +39,7 @@ paths are marked `unsupported`.
 | `BudgetGuard.consume()` | advisory | `sdk/tests/test_guards.py` | Records usage for a call that already ran, then raises if the new total exceeds the cap. The billed provider call is not undone. |
 | OpenAI Chat Completions patch (sync, async, stream) | recorded-budget preflight | `sdk/tests/test_budget_preflight.py::test_exhausted_budget_never_dispatches` | Chat Completions only. In-flight responses can exceed remaining tokens or cost. An in-memory stream without usage counts as one call and zero tokens. In-memory and async non-stream calls do not reserve. Store-backed rows below do. |
 | OpenAI Chat Completions sync, non-stream, with `StateStore` | reservation-backed | `sdk/tests/test_reservation_path.py::test_barrier_threads_dispatch_once` | Holds one call before send for workers that share that store key. Token and dollar holds need `max_tokens` on the request; the dollar figure is a high-water estimate, not an invoice. Unknown provider outcome keeps the hold. In-memory guards and async non-stream calls stay on recorded-budget preflight. |
-| OpenAI and Anthropic streams with `StateStore` | reservation-backed | `sdk/tests/test_reservation_stream.py::test_two_store_streams_dispatch_once` | Holds one call before the stream is sent. Missing usage under a token or dollar cap stays unresolved. A calls-only cap settles one call and zero tokens. Unknown model cost is an overestimate, not free. Not an invoice cap. |
+| OpenAI and Anthropic streams with `StateStore` | reservation-backed | `sdk/tests/test_reservation_stream.py::test_two_store_streams_dispatch_once` | Holds one call before the stream is sent. Missing usage, an early stop, or a partial usage chunk under a token or dollar cap stays unresolved. An exception while entering the stream context stays unresolved. A calls-only cap settles one call and zero tokens. Unknown model cost is an overestimate, not free. Not an invoice cap. |
 | Anthropic Messages patch (sync, async, stream, `messages.stream`) | recorded-budget preflight | `sdk/tests/test_budget_preflight.py::test_exhausted_budget_never_dispatches` | In-memory and non-stream calls use recorded-budget preflight. Store-backed streams are the reservation row above. |
 | Exhausted budget vs next dispatch (repro) | recorded-budget preflight | `examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py` | Mock provider; real patch and `BudgetGuard`. No network. |
 | Concurrent `check()` overshoot (repro) | unsupported | `examples/enforcement_boundary/two_worker_overshoot.py` | Two workers can both pass `check()` and both dispatch. This characterizes in-memory overshoot. The store-backed sync OpenAI path is the separate reservation row. |
@@ -68,7 +68,8 @@ paths are marked `unsupported`.
   tokens or dollars than remain.
 - **Missing usage.** An in-memory stream or response without usage still
   counts as a dispatched call with zero tokens and zero cost. A store-backed
-  stream with a token or dollar cap keeps that hold unresolved instead.
+  stream with a token or dollar cap keeps that hold unresolved instead,
+  including when the stream stops early after a partial usage chunk.
 - **Subscription quota.** AgentGuard does not read or enforce OpenAI,
   Anthropic, or cloud-account billing quotas.
 - **Concurrent recorded-budget paths.** Two threads can both pass `check()`
