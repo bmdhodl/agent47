@@ -340,13 +340,9 @@ def test_commit_records_estimate_overrun(tmp_path):
     assert guard.reservation_totals()["settled"]["cost"] == 0.4
 
 
-def test_stream_and_anthropic_do_not_reserve(tmp_path):
+def test_stream_reserves_and_anthropic_non_stream_does_not(tmp_path):
     store = JsonFileStateStore(tmp_path / "budget.json")
     guard = BudgetGuard(max_calls=2, store=store, key="fleet")
-
-    def create(**_kwargs):
-        return SimpleNamespace(usage=SimpleNamespace(input_tokens=1, output_tokens=1))
-
     _traced_openai_create(
         lambda **_kwargs: SimpleNamespace(),
         Tracer(sink=_Sink(), watermark=False),
@@ -354,11 +350,18 @@ def test_stream_and_anthropic_do_not_reserve(tmp_path):
         model="gpt-4o-mini",
         stream=True,
     )
-    assert store.read("fleet") is None
+    assert guard.reservation_totals()["reserved"]["calls"] == 1
+
+    plain = JsonFileStateStore(tmp_path / "plain.json")
+    anthropic_guard = BudgetGuard(max_calls=2, store=plain, key="fleet")
+
+    def create(**_kwargs):
+        return SimpleNamespace(usage=SimpleNamespace(input_tokens=1, output_tokens=1))
+
     client = SimpleNamespace(messages=SimpleNamespace(create=create))
-    _patch_anthropic_instance(client, Tracer(sink=_Sink(), watermark=False), guard)
+    _patch_anthropic_instance(client, Tracer(sink=_Sink(), watermark=False), anthropic_guard)
     client.messages.create(model="claude-test")
-    stored = store.read("fleet")
+    stored = plain.read("fleet")
     assert "reservations" not in stored
     assert stored["calls_used"] == 1
 

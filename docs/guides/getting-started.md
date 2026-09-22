@@ -74,14 +74,16 @@ configure `patch_openai(tracer, budget_guard=budget)` as shown in the
 
 Provider patches check the recorded budget before dispatch. Response usage
 can exceed the remaining allowance. In-memory guards do not reserve
-concurrent calls. Sync, non-streaming OpenAI Chat Completions do reserve
-when `BudgetGuard` has a `StateStore`: one shared key, one remaining call,
-one dispatch. Streaming, async, and Anthropic patches stay on the recorded
-budget. Streamed OpenAI and Anthropic calls record final usage once. OpenAI
-streams request `include_usage` unless the caller already set it. A stream
-that ends without usage counts as one call with zero tokens. The OpenAI
-Responses API is not patched. Direct SDK clients you do not wrap are a
-bypass. Subscription quotas stay with the provider. See the
+concurrent calls. Sync, non-streaming OpenAI Chat Completions reserve when
+`BudgetGuard` has a `StateStore`: one shared key, one remaining call, one
+dispatch. Store-backed OpenAI and Anthropic streams reserve the same way.
+Async non-stream calls and Anthropic non-stream calls stay on the recorded
+budget. OpenAI streams request `include_usage` unless the caller already set
+it. An in-memory stream that ends without usage counts as one call with zero
+tokens. A stored stream with a token or dollar cap keeps that hold instead of
+recording an authoritative zero. The OpenAI Responses API is not patched.
+Direct SDK clients you do not wrap are a bypass. Subscription quotas stay
+with the provider. See the
 [enforcement boundary](../enforcement-boundary.md) and the
 [reservation contract](reservation-contract.md).
 

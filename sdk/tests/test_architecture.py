@@ -28,6 +28,7 @@ CORE_MODULES = [
     "_budget_validation.py",
     "_reservation_contract.py",
     "_reservation_path.py",
+    "_reservation_stream.py",
     "sinks/_transport.py",
     "__init__.py",
     "atracing.py",

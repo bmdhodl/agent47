@@ -44,9 +44,10 @@
       <p class="muted">
         Recorded-budget preflight refuses the next instrumented call when stored
         usage is already at a cap. Sync, non-streaming OpenAI Chat Completions
-        that share a StateStore reserve one call before send. Other paths do
-        not reserve concurrent in-flight requests. This does not predict the
-        next response, intercept host tools, or cap a provider subscription quota.
+        and store-backed streams that share a StateStore reserve one call before
+        send. In-memory and async non-stream paths do not reserve concurrent
+        in-flight requests. This does not predict the next response, intercept
+        host tools, or cap a provider subscription quota.
       </p>
       <h2>Classes</h2>
       <table>
@@ -60,7 +61,8 @@
       <h2>Supported vs remaining exposure</h2>
       <ul>
         <li>OpenAI Chat Completions with a shared StateStore, sync and non-streaming: reserves one call before send. Not an invoice cap.</li>
-        <li>Other OpenAI Chat Completions and Anthropic Messages patches: recorded-budget preflight, including streamed final usage.</li>
+        <li>OpenAI and Anthropic streams with a shared StateStore: reserve one call before send. Missing usage under a token or dollar cap stays unresolved.</li>
+        <li>In-memory patches, async non-stream calls, and Anthropic non-stream calls: recorded-budget preflight.</li>
         <li>LangChain LLM callbacks: advisory. Usage is recorded after the model returns.</li>
         <li>LangChain tool callbacks: recorded-budget preflight for an exhausted <em>call</em> budget only.</li>
         <li>LangGraph <code>guarded_node</code>: recorded-budget preflight via <code>consume(calls=1)</code> at node entry. A dollar-only guard does not fire.</li>

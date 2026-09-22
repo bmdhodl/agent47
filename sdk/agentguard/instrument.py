@@ -5,7 +5,6 @@ import functools
 from typing import Any, Callable, Dict, Optional, TypeVar
 
 from agentguard.instrument_stream import (
-    CountedStream,
     run_traced_create,
     run_traced_create_async,
 )
@@ -762,29 +761,16 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any 
 
     @functools.wraps(original_stream)
     def traced_stream(*args: Any, **kwargs: Any) -> Any:
-        model = str(kwargs.get("model", "unknown"))
-        span_cm = tracer.trace(
-            f"llm.anthropic.{model}",
-            data={"model": model, "provider": "anthropic"},
-        )
-        ctx_holder: list = []
+        from agentguard.instrument_stream import open_provider_async_stream
 
-        def on_open(ctx: Any) -> None:
-            ctx_holder.append(ctx)
-            _check_budget_before_request(budget_guard, ctx, model)
-
-        def on_final(usage: Any, response: Any) -> None:
-            _emit_stream_final(
-                ctx_holder[0], budget_guard, model, "anthropic", usage, response
-            )
-
-        return CountedStream(
-            None,
-            on_final,
-            span_cm,
-            async_span=True,
-            factory=lambda: original_stream(*args, **kwargs),
-            on_open=on_open,
+        return open_provider_async_stream(
+            original_stream,
+            tracer,
+            budget_guard,
+            args,
+            kwargs,
+            check_budget=_check_budget_before_request,
+            emit_final=_emit_stream_final,
         )
 
     messages.stream = traced_stream  # type: ignore[attr-defined]
