@@ -61,7 +61,7 @@
       <h2>Supported vs remaining exposure</h2>
       <ul>
         <li>OpenAI Chat Completions with a shared StateStore, sync and non-streaming: reserves one call before send. Not an invoice cap.</li>
-        <li>OpenAI and Anthropic streams with a shared StateStore: reserve one call before send. Missing usage under a token or dollar cap stays unresolved.</li>
+        <li>OpenAI and Anthropic streams with a shared StateStore: reserve one call before send. Missing usage, an early stop, or a partial usage chunk under a token or dollar cap stays unresolved.</li>
         <li>In-memory patches, async non-stream calls, and Anthropic non-stream calls: recorded-budget preflight.</li>
         <li>LangChain LLM callbacks: advisory. Usage is recorded after the model returns.</li>
         <li>LangChain tool callbacks: recorded-budget preflight for an exhausted <em>call</em> budget only.</li>

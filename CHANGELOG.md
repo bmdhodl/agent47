@@ -4,8 +4,9 @@
 
 ### Stream reservation (AG-05)
 - Store-backed OpenAI and Anthropic streams reserve one call before send.
-  Final usage commits once. A dropped connection or a provider timeout keeps
-  the hold. Missing usage under a token or dollar cap stays unresolved
+  Final usage commits once. A dropped connection, a provider timeout, or a
+  stream that stops early keeps the hold, including after a partial usage
+  chunk. Missing usage under a token or dollar cap stays unresolved
   instead of an authoritative zero. A calls-only cap settles one call.
 - Unknown model cost is an overestimate. Dated model ids use the owned alias
   map. Cache and reasoning tokens follow the owned price table. Pass

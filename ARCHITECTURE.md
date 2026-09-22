@@ -143,5 +143,6 @@ the last raw git tag, because a tag can exist for a failed package publish.
   provider usage, and keep the hold when the provider outcome is unknown.
   No new public type. Not an invoice cap.
 - 2026-09-22: AG-05 uses the same private ledger for store-backed OpenAI and
-  Anthropic streams. Missing usage under a token or dollar cap stays
-  unresolved. No new public type. Not an invoice cap.
+  Anthropic streams. Missing usage, an early stop, or a partial usage chunk
+  under a token or dollar cap stays unresolved. No new public type. Not an
+  invoice cap.

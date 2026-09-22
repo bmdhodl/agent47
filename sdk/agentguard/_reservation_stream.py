@@ -9,9 +9,11 @@ application call is a second reservation. Retries inside that one provider
 call stay on the same hold.
 
 Missing usage under a token or dollar cap stays unresolved. It is not
-recorded as an authoritative zero. A calls-only cap settles one call and
-zero tokens, because that cap is a count, not a price. Unknown model cost
-uses ``resolve_billable_cost`` and is an overestimate, not a free call.
+recorded as an authoritative zero. A stream that stops before it finishes
+keeps that hold too, including after a partial usage chunk. A calls-only
+cap with no exception settles one call and zero tokens, because that cap
+is a count, not a price. Unknown model cost uses ``resolve_billable_cost``
+and is an overestimate, not a free call.
 """
 from __future__ import annotations
 
@@ -74,23 +76,64 @@ def settle_stream_reservation(
     response: Any,
     *,
     prices: Optional[dict] = None,
+    completed: bool = True,
+    error: Optional[BaseException] = None,
 ) -> None:
     """Commit final usage once, or keep the hold when the outcome is not billable.
 
     ``prices`` overrides the owned table for this settlement only. Patched
     streams omit it and use ``DEFAULT_PRICE_TABLE``. This is not a new
     ``BudgetGuard`` argument.
+
+    ``completed`` is true only when the stream ran to the end or returned a
+    final message. An exception, or a close after a partial chunk, does not
+    release a token or dollar hold.
     """
     if usage is None and response is not None:
         usage = getattr(response, "usage", None)
         if usage is None and isinstance(response, dict):
             usage = response.get("usage")
+    reason = _incomplete_reason(guard, usage, completed=completed, error=error)
+    if reason is not None:
+        guard.mark_reservation_unresolved(reservation_id, reason=reason)
+        ctx.event(
+            "llm.result",
+            data={
+                "model": model,
+                "provider": provider,
+                "usage": None,
+                "stream": True,
+                "source_of_cost": "unresolved",
+                "reason": reason,
+                "reservation_id": reservation_id,
+            },
+        )
+        return
     if usage is None:
         _settle_missing(guard, ctx, reservation_id, model, provider)
         return
     _settle_present(
         guard, ctx, reservation_id, model, provider, usage, prices=prices
     )
+
+
+def _incomplete_reason(
+    guard: Any,
+    usage: Any,
+    *,
+    completed: bool,
+    error: Optional[BaseException],
+) -> Optional[str]:
+    """Return an unresolved reason when settling would shrink a real hold."""
+    if error is not None:
+        return dispatch_failure_reason(error)
+    if completed:
+        return None
+    if guard.max_tokens is None and guard.max_cost_usd is None:
+        return None
+    if usage is None:
+        return "usage_missing"
+    return "stream_incomplete"
 
 
 def _settle_missing(

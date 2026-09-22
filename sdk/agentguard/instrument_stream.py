@@ -124,6 +124,8 @@ class CountedStream:
         self._usage: Any = None
         self._response: Any = None
         self._done = False
+        self._completed = False
+        self._finish_error: Any = None
         self._opened = factory is None
         self._sync_iter: Any = None
         self._async_iter: Any = None
@@ -229,6 +231,7 @@ class CountedStream:
             if self._done:
                 return
             self._done = True
+        self._finish_error = None if exc_info is None else exc_info[1]
         self._harvest()
         try:
             self._on_final(self._usage, self._response)
@@ -243,6 +246,7 @@ class CountedStream:
             if not self._done:
                 self._done = True
                 first = True
+        self._finish_error = None if exc_info is None else exc_info[1]
         try:
             if first:
                 await self._aharvest()
@@ -264,6 +268,7 @@ class CountedStream:
         try:
             chunk = next(iterator._sync_iter)
         except StopIteration:
+            self._completed = True
             self._finish()
             raise
         except BaseException:
@@ -286,6 +291,7 @@ class CountedStream:
         try:
             chunk = await self._async_iter.__anext__()
         except StopAsyncIteration:
+            self._completed = True
             await self._afinish()
             raise
         except BaseException:
@@ -298,7 +304,11 @@ class CountedStream:
         self._open_sync()
         enter = getattr(self._inner, "__enter__", None)
         if callable(enter):
-            entered = enter()
+            try:
+                entered = enter()
+            except BaseException:
+                self._finish(sys.exc_info())
+                raise
             if entered is not self._inner and entered is not self:
                 self._entered = entered
         return self
@@ -316,9 +326,13 @@ class CountedStream:
         await self._open_async()
         enter = getattr(self._inner, "__aenter__", None)
         if callable(enter):
-            entered = enter()
-            if inspect.isawaitable(entered):
-                entered = await entered
+            try:
+                entered = enter()
+                if inspect.isawaitable(entered):
+                    entered = await entered
+            except BaseException:
+                await self._afinish(sys.exc_info())
+                raise
             if entered is not self._inner and entered is not self:
                 self._entered = entered
         return self
@@ -342,12 +356,14 @@ class CountedStream:
         if inspect.isawaitable(result):
             return self._await_final_message(result)
         self._capture(result)
+        self._completed = True
         self._finish()
         return result
 
     async def _await_final_message(self, result: Any) -> Any:
         message = await result
         self._capture(message)
+        self._completed = True
         await self._afinish()
         return message
 
@@ -471,6 +487,9 @@ def _finish_stream(
     reservation_id: Any,
     emit_result: Callable[..., None],
     consume_budget: Callable[..., None],
+    *,
+    completed: bool = True,
+    error: Any = None,
 ) -> None:
     if reservation_id is None:
         emit_stream_final(
@@ -481,7 +500,15 @@ def _finish_stream(
     from ._reservation_stream import settle_stream_reservation
 
     settle_stream_reservation(
-        budget_guard, ctx, reservation_id, model, provider, usage, response
+        budget_guard,
+        ctx,
+        reservation_id,
+        model,
+        provider,
+        usage,
+        response,
+        completed=completed,
+        error=error,
     )
 
 
@@ -529,13 +556,19 @@ def run_traced_create(
         span_cm.__exit__(*sys.exc_info())
         raise
     if wrap_stream:
+        box: Dict[str, Any] = {}
+
         def on_final(usage: Any, response: Any) -> None:
+            stream = box["stream"]
             _finish_stream(
                 ctx, budget_guard, model, provider, usage, response,
                 reservation_id, emit_result, consume_budget,
+                completed=stream._completed,
+                error=stream._finish_error,
             )
 
-        return CountedStream(result, on_final, span_cm, async_span=False)
+        box["stream"] = CountedStream(result, on_final, span_cm, async_span=False)
+        return box["stream"]
     try:
         emit_result(
             ctx, budget_guard, model, provider, getattr(result, "usage", None), response=result
@@ -593,13 +626,19 @@ async def run_traced_create_async(
         await span_cm.__aexit__(*sys.exc_info())
         raise
     if wrap_stream:
+        box: Dict[str, Any] = {}
+
         def on_final(usage: Any, response: Any) -> None:
+            stream = box["stream"]
             _finish_stream(
                 ctx, budget_guard, model, provider, usage, response,
                 reservation_id, emit_result, consume_budget,
+                completed=stream._completed,
+                error=stream._finish_error,
             )
 
-        return CountedStream(result, on_final, span_cm, async_span=True)
+        box["stream"] = CountedStream(result, on_final, span_cm, async_span=True)
+        return box["stream"]
     try:
         emit_result(
             ctx, budget_guard, model, provider, getattr(result, "usage", None), response=result
@@ -664,18 +703,29 @@ def open_provider_async_stream(
 
         return _call()
 
+    box: Dict[str, Any] = {}
+
     def on_final(usage: Any, response: Any) -> None:
         held = reservation_id["id"]
+        stream = box["stream"]
         if held is None:
             emit_final(ctx_holder[0], budget_guard, model, provider, usage, response)
             return
         from ._reservation_stream import settle_stream_reservation
 
         settle_stream_reservation(
-            budget_guard, ctx_holder[0], held, model, provider, usage, response
+            budget_guard,
+            ctx_holder[0],
+            held,
+            model,
+            provider,
+            usage,
+            response,
+            completed=stream._completed,
+            error=stream._finish_error,
         )
 
-    return CountedStream(
+    box["stream"] = CountedStream(
         None,
         on_final,
         span_cm,
@@ -683,3 +733,4 @@ def open_provider_async_stream(
         factory=factory,
         on_open=on_open,
     )
+    return box["stream"]

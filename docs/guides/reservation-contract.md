@@ -241,6 +241,14 @@ repro.
 - Final usage commits once. The same usage again does not add another call.
 - No usage, with a token or dollar cap: `usage_missing`. The hold stays.
   That is not an authoritative `$0` or zero-token settlement.
+- A stream that stops before it finishes keeps a token or dollar hold.
+  An exception is `timeout` or `provider_outcome_unknown`. A close after a
+  partial usage chunk, with no exception, is `stream_incomplete`. Partial
+  usage is not committed. A calls-only cap with no exception still settles
+  one call.
+- An exception while entering the stream context is unresolved. A manager
+  from `messages.stream()` that this process never enters stays `reserved`.
+  The Anthropic SDK sends on enter, and this slice does not free that hold.
 - No usage, calls-only cap: commit one call and zero tokens. The cap is a
   count, not a price.
 - Unknown models and usage objects with no token fields settle as
