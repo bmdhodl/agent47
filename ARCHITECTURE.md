@@ -35,6 +35,7 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 
 ### Distribution, docs, and tooling
 - [`skills/`](skills/): distributable agent skill packs. `skills/agentguard/SKILL.md` is the AgentGuard skill, also surfaced through the SDK `skillpack` CLI command.
+- [`.agents/skills/next-ticket/SKILL.md`](.agents/skills/next-ticket/SKILL.md): owner workflow for the next weekly ticket. The same folder is linked from `.claude/skills/`, `.cursor/skills/`, `.codex/skills/`, and `.github/skills/` so Claude, Cursor, Codex, and Copilot load one copy.
 - [`examples/`](examples/): runnable local examples, checked-in starter files, notebooks, and proof-oriented onboarding paths (plus `examples/agentguard-mcp/`).
 - [`docs/`](docs/): public guides, integration docs, cookbooks, incident/report flows, and community/launch material.
 - [`site/`](site/): static public landing/docs pages describing the public SDK surface only; not the source of truth for private dashboard behavior.
@@ -142,3 +143,6 @@ the last raw git tag, because a tag can exist for a failed package publish.
   OpenAI Chat Completions with a `StateStore` reserve before send, commit
   provider usage, and keep the hold when the provider outcome is unknown.
   No new public type. Not an invoice cap.
+- 2026-09-22: Added the owner `next-ticket` skill at
+  `.agents/skills/next-ticket/SKILL.md`, linked into the Claude, Cursor,
+  Codex, and Copilot skill folders. No SDK change.

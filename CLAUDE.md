@@ -124,6 +124,7 @@ For this repo, the most relevant Claude-side assets are:
 
 - `.claude/agents/sdk-dev.md`
 - `.claude/agents/pm.md`
+- `.agents/skills/next-ticket/SKILL.md` when the owner says to pull or work the next ticket
 - `memory/`
 - `ARCHITECTURE.md`
 
