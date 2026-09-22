@@ -179,9 +179,10 @@ def test_examples_run_from_installed_distribution(tmp_path):
     for name in (
         "exhausted_budget_blocks_dispatch.py",
         "two_worker_overshoot.py",
+        "reserved_one_dispatch.py",
     ):
         script = ROOT / "examples" / "enforcement_boundary" / name
-        subprocess.run(
+        completed = subprocess.run(
             [sys.executable, str(script)],
             cwd=ROOT,
             capture_output=True,
@@ -189,6 +190,12 @@ def test_examples_run_from_installed_distribution(tmp_path):
             check=True,
             env=env,
         )
+        if name == "reserved_one_dispatch.py":
+            payload = json.loads(completed.stdout)
+            assert payload["dispatched"] == 1
+            assert payload["blocked"] == 1
+            assert payload["fixed"] is True
+            assert installed_path != repo_init
 
 
 def test_cli_demo_budget_path_is_advisory():

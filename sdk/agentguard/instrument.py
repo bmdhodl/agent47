@@ -409,7 +409,11 @@ def _patch_openai_instance(client: Any, tracer: Any, budget_guard: Any = None) -
 def _traced_openai_create(
     original: Any, tracer: Any, budget_guard: Any, *args: Any, **kwargs: Any
 ) -> Any:
-    """Shared traced wrapper for sync OpenAI create calls."""
+    """Sync OpenAI create. A stored budget reserves before a non-stream send."""
+    if getattr(budget_guard, "_store", None) is not None and not kwargs.get("stream"):
+        from ._reservation_path import traced_openai_reserved
+
+        return traced_openai_reserved(original, tracer, budget_guard, args, kwargs)
     return _traced_provider_create(
         original,
         tracer,
