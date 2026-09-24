@@ -24,8 +24,11 @@ def test_generated_pypi_readme_includes_current_release_notes() -> None:
     changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     release_notes = module.extract_release_notes(changelog, version)
 
+    rewritten_notes = module.rewrite_relative_links(release_notes, version, REPO_ROOT)
     assert f"## Latest Release Notes ({version})" in content
-    assert release_notes in content
+    assert rewritten_notes in content
+    assert "](docs/enforcement-boundary.md)" not in content
+    assert "https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md" in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/LICENSE" in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/CHANGELOG.md" in content
 

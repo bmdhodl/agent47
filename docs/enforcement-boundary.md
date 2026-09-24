@@ -1,6 +1,6 @@
 # Enforcement boundary
 
-Checked 2026-09-18 against AgentGuard `1.3.2` source. This is the tested
+Checked 2026-09-24 against AgentGuard `1.4.0` source. This is the tested
 promise. It is not an invoice cap, a host-wide kill switch, or a savings
 guarantee.
 

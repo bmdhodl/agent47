@@ -149,6 +149,8 @@ def build_pypi_readme(repo_root: Path) -> str:
     readme = (repo_root / README_PATH).read_text(encoding="utf-8").strip()
     changelog = (repo_root / CHANGELOG_PATH).read_text(encoding="utf-8")
     release_notes = extract_release_notes(changelog, version)
+    release_notes = rewrite_relative_links(release_notes, version, repo_root)
+    release_notes = rewrite_repo_absolute_links(release_notes, version, repo_root)
 
     rewritten_readme = rewrite_relative_links(readme, version, repo_root)
     rewritten_readme = rewrite_repo_absolute_links(rewritten_readme, version, repo_root)

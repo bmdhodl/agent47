@@ -214,7 +214,7 @@ The PyPI README is generated from this README and the changelog.
 ### Local reservation contract (AG-03)
 - Designed reserve / commit / cancel / unresolved semantics for a future
   local `StateStore` path:
-  [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
+  [docs/guides/reservation-contract.md](https://github.com/bmdhodl/agent47/blob/main/docs/guides/reservation-contract.md).
 - Executable private model: `sdk/agentguard/_reservation_contract.py`.
   Unknown provider outcomes cannot silently free funds. No public type.
   `BudgetGuard.check()` still does not reserve. AG-04 wires one OpenAI path.
@@ -227,11 +227,11 @@ The PyPI README is generated from this README and the changelog.
 - Weekly classifier: `python scripts/activation_weekly_report.py
   docs/guides/activation-baseline-2026-09-18.json`.
 - bmdpat `install_intent` follow-up:
-  [docs/guides/bmdpat-measurement-contract.md](docs/guides/bmdpat-measurement-contract.md).
+  [docs/guides/bmdpat-measurement-contract.md](https://github.com/bmdhodl/agent47/blob/main/docs/guides/bmdpat-measurement-contract.md).
 
 ### Honest enforcement boundary (AG-01)
 - Published the tested surface map in
-  [docs/enforcement-boundary.md](docs/enforcement-boundary.md): advisory,
+  [docs/enforcement-boundary.md](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md): advisory,
   recorded-budget preflight, recorded-event preflight, reservation-backed,
   or unsupported.
 - Replaced absolute bill-prevention copy with recorded-budget bounds.
