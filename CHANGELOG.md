@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0
 
 ### Stream reservation (AG-05)
 - Store-backed OpenAI and Anthropic streams reserve one call before send.

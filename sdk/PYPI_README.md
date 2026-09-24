@@ -7,7 +7,7 @@ Stop runaway agents with runtime checks in Python.
 [![PyPI version](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python versions](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](https://github.com/bmdhodl/agent47/blob/v1.3.2/LICENSE)
+[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](https://github.com/bmdhodl/agent47/blob/v1.4.0/LICENSE)
 
 AgentGuard checks budgets, repeated tool calls, retries, and elapsed time in
 instrumented Python code. Guards raise exceptions so your application can stop
@@ -110,8 +110,8 @@ usage. A guard exception returns control to your application's error handler.
 | `X402SpendGuard` | Payment amounts before the payment callback | `BudgetExceeded` |
 
 For task budgets, use `BudgetGuard.goal(...)`. For signatures and defaults,
-read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.2/sdk/agentguard/guards.py) and
-[public exports](https://github.com/bmdhodl/agent47/blob/v1.3.2/sdk/agentguard/__init__.py).
+read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.4.0/sdk/agentguard/guards.py) and
+[public exports](https://github.com/bmdhodl/agent47/blob/v1.4.0/sdk/agentguard/__init__.py).
 
 ## Limits and security
 
@@ -132,9 +132,9 @@ read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.3.2/sdk/agent
 - Trace content can contain application data. Review it before sharing or
   configuring a remote sink.
 
-See [security reporting](https://github.com/bmdhodl/agent47/blob/v1.3.2/SECURITY.md), the
-[dated dependency audit](https://github.com/bmdhodl/agent47/blob/v1.3.2/proof/audit-20260912/README.md), and
-[release notes](https://github.com/bmdhodl/agent47/blob/v1.3.2/CHANGELOG.md). Audit results describe their recorded date,
+See [security reporting](https://github.com/bmdhodl/agent47/blob/v1.4.0/SECURITY.md), the
+[dated dependency audit](https://github.com/bmdhodl/agent47/blob/v1.4.0/proof/audit-20260912/README.md), and
+[release notes](https://github.com/bmdhodl/agent47/blob/v1.4.0/CHANGELOG.md). Audit results describe their recorded date,
 not a permanent clean bill of health.
 
 ## Local traces and optional hosted ingest
@@ -161,51 +161,84 @@ describes the optional hosted service.
 | --- | --- |
 | See which paths actually stop a call | [Enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md) |
 | Install and trace a first run | [Getting started](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md) |
-| Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/v1.3.2/docs/README.md) |
-| Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v1.3.2/examples) |
-| Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v1.3.2/docs/integrations) |
-| Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.2/mcp-server) |
-| Use local budget tools through MCP | [Python budget MCP server](https://github.com/bmdhodl/agent47/tree/v1.3.2/agentguard-mcp) |
+| Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/v1.4.0/docs/README.md) |
+| Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v1.4.0/examples) |
+| Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v1.4.0/docs/integrations) |
+| Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v1.4.0/mcp-server) |
+| Use local budget tools through MCP | [Python budget MCP server](https://github.com/bmdhodl/agent47/tree/v1.4.0/agentguard-mcp) |
 | Navigate with an AI assistant | [AI documentation index](https://github.com/bmdhodl/agent47/blob/main/llms.txt) |
-| Contribute a fix | [Contributing](https://github.com/bmdhodl/agent47/blob/v1.3.2/CONTRIBUTING.md) |
-| Check what changed | [Changelog](https://github.com/bmdhodl/agent47/blob/v1.3.2/CHANGELOG.md) |
+| Contribute a fix | [Contributing](https://github.com/bmdhodl/agent47/blob/v1.4.0/CONTRIBUTING.md) |
+| Check what changed | [Changelog](https://github.com/bmdhodl/agent47/blob/v1.4.0/CHANGELOG.md) |
 
 ## Help and maintenance
 
 Maintained by [Patrick Hughes](https://github.com/bmdhodl).
 [Report a bug](https://github.com/bmdhodl/agent47/issues) with the package
 version, a minimal reproduction, and the expected result. Report vulnerabilities
-through [SECURITY.md](https://github.com/bmdhodl/agent47/blob/v1.3.2/SECURITY.md).
+through [SECURITY.md](https://github.com/bmdhodl/agent47/blob/v1.4.0/SECURITY.md).
 
 The source metadata defines the branch version. The PyPI badge links to the
 published version. Documentation examples and local links are tested in CI.
 The PyPI README is generated from this README and the changelog.
 
-[MIT license](https://github.com/bmdhodl/agent47/blob/v1.3.2/LICENSE).
+[MIT license](https://github.com/bmdhodl/agent47/blob/v1.4.0/LICENSE).
 
-## Latest Release Notes (1.3.2)
+## Latest Release Notes (1.4.0)
 
-(2026-09-17)
+### Stream reservation (AG-05)
+- Store-backed OpenAI and Anthropic streams reserve one call before send.
+  Final usage commits once. A dropped connection, a provider timeout, or a
+  stream that stops early keeps the hold, including after a partial usage
+  chunk. Missing usage under a token or dollar cap stays unresolved
+  instead of an authoritative zero. A calls-only cap settles one call.
+- Unknown model cost is an overestimate. Dated model ids use the owned alias
+  map. Cache and reasoning tokens follow the owned price table. Pass
+  `prices=` to `resolve_billable_cost` to override that table. No new public
+  export.
+- In-memory streams, async non-stream calls, and Anthropic non-stream calls
+  stay on recorded-budget preflight. Not an invoice cap.
 
-### Record final usage on streamed provider calls
-- OpenAI and Anthropic patches now wrap `stream=True` responses and bill the
-  final usage payload once, for both sync and async clients. Anthropic
-  `messages.stream()` is included. Chunks without usage are ignored.
-- OpenAI streaming requests set `stream_options.include_usage=True` when the
-  caller did not set `include_usage`. An explicit `False` is left unchanged.
-- Anthropic `create(stream=True)` events split input usage on `message_start`
-  and output usage on `message_delta`; the wrapper now merges those fields
-  before billing. Stream wrappers are iterators (`next` / `anext`). A failed
-  stream closes the trace span with the exception so `assert_no_errors()`
-  sees it.
-- A stream that ends without usage still counts as one dispatched call with
-  zero tokens and zero cost. Exhausted budgets still refuse the request before
-  dispatch.
-- This does not reserve concurrent capacity, predict a response's cost, or
-  preflight goal-level caps. Mid-stream abort without a usage payload cannot
-  recover tokens from partial text.
-- Reproduce the before/after token counts without network calls with
-  `examples/streaming_usage_demo.py`. The provider is mocked; the installed
-  AgentGuard patch, stream wrapper, and budget consume path are real.
+### One local reservation path (AG-04)
+- Sync, non-streaming OpenAI Chat Completions now reserve before send when
+  `BudgetGuard` has a `StateStore`. One shared key and one remaining call
+  produce one dispatch. Commit records provider usage. Cancel frees the hold
+  only if the request never left. Timeout, crash, and unknown outcomes keep
+  the hold.
+- `BudgetGuard.reservation_totals()` reports settled, reserved, and
+  unresolved amounts. `check()` and `consume()` are unchanged.
+  This slice left streaming, async, and Anthropic on recorded-budget
+  preflight. Store-backed streams are the AG-05 note above.
+- This is not an invoice cap. Token and dollar holds need `max_tokens` on
+  the request. The dollar bound is the owned high-water estimate.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.3.2/CHANGELOG.md)
+### Local reservation contract (AG-03)
+- Designed reserve / commit / cancel / unresolved semantics for a future
+  local `StateStore` path:
+  [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
+- Executable private model: `sdk/agentguard/_reservation_contract.py`.
+  Unknown provider outcomes cannot silently free funds. No public type.
+  `BudgetGuard.check()` still does not reserve. AG-04 wires one OpenAI path.
+
+### Activation evidence (AG-02)
+- Landing-page navigation never counts as install or activation.
+- `agentguard demo --feedback` prints a local redacted report (`version`,
+  `adapter`, `result`, `reproduction`). Users inspect, `--omit`, or decline.
+  The demo still makes no network call.
+- Weekly classifier: `python scripts/activation_weekly_report.py
+  docs/guides/activation-baseline-2026-09-18.json`.
+- bmdpat `install_intent` follow-up:
+  [docs/guides/bmdpat-measurement-contract.md](docs/guides/bmdpat-measurement-contract.md).
+
+### Honest enforcement boundary (AG-01)
+- Published the tested surface map in
+  [docs/enforcement-boundary.md](docs/enforcement-boundary.md): advisory,
+  recorded-budget preflight, recorded-event preflight, reservation-backed,
+  or unsupported.
+- Replaced absolute bill-prevention copy with recorded-budget bounds.
+  Direct SDK bypass, in-flight spend, missing usage, concurrent overshoot,
+  and provider subscription quotas stay documented as remaining exposure.
+- Offline reproductions:
+  `examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py` and
+  `examples/enforcement_boundary/two_worker_overshoot.py`.
+
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.4.0/CHANGELOG.md)

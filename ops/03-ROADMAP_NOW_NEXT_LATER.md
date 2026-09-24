@@ -3,7 +3,7 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-22
+**Last reviewed:** 2026-09-24
 
 ## Current Focus Notes
 
@@ -98,6 +98,7 @@ they directly strengthen coding-agent adoption.
 | Local reservation contract (AG-03 / #732) | Transition table, native-first alternative, and private model in [reservation-contract.md](../docs/guides/reservation-contract.md); `check()` still overshoots |
 | One atomic reservation path (AG-04 / #733) | Store-backed sync OpenAI non-stream reserves before send. Barrier race dispatches once. Not an invoice cap. |
 | Stream reservation (AG-05 / #734) | Store-backed OpenAI and Anthropic streams reserve before send. Missing token or dollar usage stays unresolved. Not an invoice cap. |
+| 1.4.0 release candidate | Source version, changelog, and release-guard match `1.4.0`. Published PyPI stays `1.3.2` until the owner tags `v1.4.0`. AG-06 and later adapters stay held. |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
