@@ -10,3 +10,7 @@ sdk/tests/test_enforcement_boundary.py::test_site_patch_examples_pass_a_budget_g
 
 ============================== 20 passed in 4.14s ==============================
 Documentation links and image alt text passed
+============================== 9 passed in 0.30s ===============================
+make lint target: All checks passed!
+bandit exit 0
+platform: Linux 6.18.44-fc-v37, Python 3.11.15
