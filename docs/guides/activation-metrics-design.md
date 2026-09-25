@@ -35,6 +35,15 @@ Regenerate a weekly aggregate with:
 python scripts/activation_weekly_report.py docs/guides/activation-baseline-2026-09-18.json
 ```
 
+Refresh public PyPI and npm counts, then classify them. This does not read site events, GitHub traffic, or identities:
+
+```bash
+python scripts/refresh_activation_snapshot.py --fetch-public --retrieved-at 2026-09-25T01:40:00Z --out docs/guides/activation-snapshot-2026-09-25.json
+python scripts/activation_weekly_report.py docs/guides/activation-snapshot-2026-09-25.json
+```
+
+The 2026-09-25 snapshot records 255 PyPI `without_mirrors` events for 2026-09-18 through 2026-09-24 and 537 for 2026-08-26 through 2026-09-24. Release dates stay annotated on those totals. Repository visits, site events, real-workflow activation, and repeat use are unknown. The September 18 landing-page `install_intent` rows stay navigation in that baseline and are not copied forward.
+
 The script is offline by default. It never scrapes identities. Unknowns stay
 unknown. Publication dates and CI clones are exclusions, not users.
 
