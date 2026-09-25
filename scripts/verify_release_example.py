@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import platform
 import re
 import subprocess
 import sys
@@ -53,15 +54,19 @@ def verify_wheel(tag):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tag", required=True)
+    parser.add_argument("--wheel-only", action="store_true",
+                        help="Skip GitHub Release and email payload checks; only run the published wheel.")
     args = parser.parse_args()
     if not re.fullmatch(r"v\d+\.\d+\.\d+", args.tag):
         parser.error("A stable release tag is required")
-    release = get_json(f"https://api.github.com/repos/{REPOSITORY}/releases/tags/{args.tag}", os.environ.get("GH_TOKEN"))
-    package = get_json(f"https://pypi.org/pypi/agentguard47/{args.tag[1:]}/json")
-    build_payload(args.tag, release, package)
+    if not args.wheel_only:
+        release = get_json(f"https://api.github.com/repos/{REPOSITORY}/releases/tags/{args.tag}", os.environ.get("GH_TOKEN"))
+        package = get_json(f"https://pypi.org/pypi/agentguard47/{args.tag[1:]}/json")
+        build_payload(args.tag, release, package)
     verify_wheel(args.tag)
     result = (
-        f"## Published AgentGuard {args.tag}: offline example passed\n\n"
+        f"## Published AgentGuard {args.tag}: offline example passed on "
+        f"{platform.system()}, Python {platform.python_version()}\n\n"
         "Installed the exact PyPI wheel in a fresh environment. Budget, loop and "
         "retry stop events appeared; the report command completed. "
         "This is a simulated example, not proof of customer adoption or savings.\n\n"

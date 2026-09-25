@@ -1,0 +1,49 @@
+name: Published wheel - OS matrix
+
+# Installs the exact PyPI wheel for a stable tag into a fresh venv on each
+# supported OS and runs the offline demo with sockets refused. Dispatched by
+# publish.yml after a release; run it by hand to recheck an older tag. No
+# schedule, so it adds no recurring checkouts to clone traffic.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Stable release tag already on PyPI, for example v1.4.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: published-wheel-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  offline-example:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.12"]
+        include:
+          - os: ubuntu-latest
+            python-version: "3.9"
+    steps:
+      # Run the reviewed verifier from main against the published wheel.
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: scripts
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the published wheel and run the offline example
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: python scripts/verify_release_example.py --tag "$RELEASE_TAG" --wheel-only

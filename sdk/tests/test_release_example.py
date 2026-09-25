@@ -44,3 +44,34 @@ def test_workflow_verifies_before_email_without_write_access():
     email_job = workflow.split("  email:\n")[1].split("  announce:\n")[0]
     assert "contents: read" in email_job
     assert "continue-on-error" not in email_job
+
+
+def test_wheel_only_skips_release_metadata(monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["verify_release_example.py", "--tag", "v1.4.0", "--wheel-only"])
+    with patch.object(example, "get_json") as get_json, patch.object(example, "verify_wheel") as verify:
+        example.main()
+    get_json.assert_not_called()
+    verify.assert_called_once_with("v1.4.0")
+
+
+def test_default_still_checks_release_metadata_before_wheel(monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["verify_release_example.py", "--tag", "v1.4.0"])
+    calls = []
+    with patch.object(example, "get_json", side_effect=lambda *a: calls.append("get_json") or {}), \
+            patch.object(example, "build_payload", side_effect=lambda *a: calls.append("payload")), \
+            patch.object(example, "verify_wheel", side_effect=lambda tag: calls.append("wheel")):
+        example.main()
+    assert calls == ["get_json", "get_json", "payload", "wheel"]
+
+
+def test_published_wheel_matrix_runs_after_each_publish():
+    workflow = (ROOT / ".github/workflows/published-wheel.yml").read_text()
+    for runner in ("ubuntu-latest", "macos-latest", "windows-latest"):
+        assert runner in workflow
+    assert 'python-version: "3.9"' in workflow
+    assert "--wheel-only" in workflow
+    assert "permissions:\n  contents: read" in workflow
+    assert "secrets." not in workflow
+    assert "schedule:" not in workflow
+    publish = (ROOT / ".github/workflows/publish.yml").read_text()
+    assert 'gh workflow run published-wheel.yml -f tag="$TAG"' in publish

@@ -107,3 +107,4 @@ jobs:
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           gh workflow run release-content.yml -f tag="$TAG"
+          gh workflow run published-wheel.yml -f tag="$TAG"
