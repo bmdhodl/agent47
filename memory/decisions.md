@@ -1,6 +1,6 @@
 # SDK Decisions
 
-**Last Updated:** 2026-09-20
+**Last Updated:** 2026-09-22
 
 ## Locked
 - SDK stays free, MIT, and zero-dependency.
@@ -10,18 +10,24 @@
   setup.
 - AgentGuard Dashboard owns retained history, alerts, remote controls, and team
   operations. The public repo does not resurrect a hosted dashboard.
-- Public copy describes tested bounds. Do not promise invoice caps, concurrent
-  reservations, host-wide interception, or guaranteed bill prevention.
+- Public copy describes tested bounds. Do not promise invoice caps,
+  host-wide interception, or guaranteed bill prevention. Concurrent
+  reservation is the store-backed sync OpenAI non-stream path and
+  store-backed streams.
   Canonical map: [docs/enforcement-boundary.md](../docs/enforcement-boundary.md).
 - Landing-page navigation never counts as install or activation. Demo
   feedback is voluntary, local, and limited to version, adapter, result, and
   reproduction. No default SDK telemetry.
-- Local reservation is designed, not shipped. Unknown provider outcomes
-  cannot silently free funds. Call holds can be exact; token/dollar holds
-  need an explicit request bound and are still not an invoice cap. Canonical
+- Local reservation is shipped for store-backed sync non-streaming OpenAI
+  and for store-backed OpenAI/Anthropic streams. Unknown provider outcomes
+  cannot silently free funds. A stream that stops early keeps a token or
+  dollar hold; partial usage is not a settlement. Call holds can be exact;
+  token/dollar holds need an explicit request bound and are still not an
+  invoice cap. Canonical
   contract: [docs/guides/reservation-contract.md](../docs/guides/reservation-contract.md).
-  `BudgetGuard.check()` / `consume()` stay recorded-budget preflight until
-  AG-04.
+  `BudgetGuard.check()` / `consume()` stay recorded-budget preflight.
+  In-memory streams, async non-stream calls, and Anthropic non-stream calls
+  do not reserve.
 - GitHub issue #729 / Project 4 is the 2026 planning authority. `ops/03` is
   the SDK-now view and must link that plan instead of drifting into a second
   queue.

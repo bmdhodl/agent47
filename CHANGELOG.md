@@ -1,14 +1,40 @@
 # Changelog
 
-## Unreleased
+## 1.4.0
+
+### Stream reservation (AG-05)
+- Store-backed OpenAI and Anthropic streams reserve one call before send.
+  Final usage commits once. A dropped connection, a provider timeout, or a
+  stream that stops early keeps the hold, including after a partial usage
+  chunk. Missing usage under a token or dollar cap stays unresolved
+  instead of an authoritative zero. A calls-only cap settles one call.
+- Unknown model cost is an overestimate. Dated model ids use the owned alias
+  map. Cache and reasoning tokens follow the owned price table. Pass
+  `prices=` to `resolve_billable_cost` to override that table. No new public
+  export.
+- In-memory streams, async non-stream calls, and Anthropic non-stream calls
+  stay on recorded-budget preflight. Not an invoice cap.
+
+### One local reservation path (AG-04)
+- Sync, non-streaming OpenAI Chat Completions now reserve before send when
+  `BudgetGuard` has a `StateStore`. One shared key and one remaining call
+  produce one dispatch. Commit records provider usage. Cancel frees the hold
+  only if the request never left. Timeout, crash, and unknown outcomes keep
+  the hold.
+- `BudgetGuard.reservation_totals()` reports settled, reserved, and
+  unresolved amounts. `check()` and `consume()` are unchanged.
+  This slice left streaming, async, and Anthropic on recorded-budget
+  preflight. Store-backed streams are the AG-05 note above.
+- This is not an invoice cap. Token and dollar holds need `max_tokens` on
+  the request. The dollar bound is the owned high-water estimate.
 
 ### Local reservation contract (AG-03)
 - Designed reserve / commit / cancel / unresolved semantics for a future
   local `StateStore` path:
   [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
 - Executable private model: `sdk/agentguard/_reservation_contract.py`.
-  Unknown provider outcomes cannot silently free funds. No public API.
-  `BudgetGuard.check()` still does not reserve. Implementation is AG-04.
+  Unknown provider outcomes cannot silently free funds. No public type.
+  `BudgetGuard.check()` still does not reserve. AG-04 wires one OpenAI path.
 
 ### Activation evidence (AG-02)
 - Landing-page navigation never counts as install or activation.

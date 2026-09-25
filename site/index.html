@@ -911,9 +911,11 @@
             <h2>Recorded-budget preflight, not an invoice cap.</h2>
             <p class="muted">
               OpenAI Chat Completions and Anthropic Messages patches refuse an
-              exhausted recorded budget before the next dispatch. Concurrent
-              requests do not reserve capacity. Direct SDK clients, host tools,
-              the Responses API, and provider subscription quotas are unsupported.
+              exhausted recorded budget before the next dispatch. Sync
+              non-streaming OpenAI calls, and streamed calls that share a local
+              store, reserve one call before send. In-memory and async non-stream
+              requests do not. Direct SDK clients, host tools, the Responses API,
+              and provider subscription quotas are unsupported.
               Read the <a href="/enforcement.html">enforcement boundary</a>.
             </p>
           </div>

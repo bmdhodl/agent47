@@ -5,8 +5,12 @@
   do not change SDK or MCP runtime code solely to chase that directory signal.
 - Apply [docs/guides/bmdpat-measurement-contract.md](../docs/guides/bmdpat-measurement-contract.md)
   in the bmdpat classifier so landing-page hits stop arriving as `install_intent`.
-- AG-04 / #733 (not started): wire the approved reservation contract to one
-  local store and one patched provider path. Do not start it from AG-03.
+- 1.4.0 candidate is the merged AG-01 through AG-05 slice. Do not tag it
+  from this prep branch until `make release-guard` is green and the owner
+  chooses the tag. AG-06 stays open: it needs an approved public API, and
+  the week-four gate has no external repeat user, so later adapters stay held.
+- AG-05 / #734 reserves store-backed streams on the AG-04 ledger. Windows was not executed for the stream spawn
+  race; Linux was. The AG-04 non-stream race has the same Windows gap.
 - Claude PR review truncates `gh pr diff` at 200k bytes and `.showwork`
   sorts first. Keep `.showwork/snapshots/*.json` as `text eol=lf -diff` so
   SDK patches stay visible. Workflow changes on a PR do not apply until

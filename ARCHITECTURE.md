@@ -18,10 +18,10 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 - [`sdk/`](sdk/): Python package source, tests, packaging metadata (`pyproject.toml`), the generated PyPI README snapshot ([`sdk/PYPI_README.md`](sdk/PYPI_README.md)), and `sdk/examples/`.
 - [`sdk/agentguard/`](sdk/agentguard/): core SDK modules. Highlights:
   - `tracing.py` / `atracing.py`: `Tracer` / `AsyncTracer`, `TraceContext` / `AsyncTraceContext`, plus the core `JsonlFileSink`, `StdoutSink`, and `TraceSink` base.
-  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`). `_reservation_contract.py` is the private AG-03 reserve/commit/cancel model; it is not a public API and is not called by `BudgetGuard`.
+  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`). `_reservation_contract.py` is the private reserve/commit/cancel model. `_reservation_path.py` wires it to sync, non-streaming OpenAI Chat Completions when `BudgetGuard` has a `StateStore`. `_reservation_stream.py` uses the same ledger for store-backed OpenAI and Anthropic streams. `check()` and `consume()` do not reserve.
   - `x402.py`: `X402SpendGuard`, spend caps for x402/USDC agent micropayments (total/per-endpoint/per-call, refuse-before-pay, reuses `BudgetExceeded`).
   - `setup.py`: `init()` / `get_tracer()` / `get_budget_guard()` / `shutdown()` convenience entrypoints.
-  - `instrument.py` / `instrument_stream.py`: provider patches and the private stream wrapper that bills final streamed usage once.
+  - `instrument.py` / `instrument_stream.py`: provider patches and the private stream wrapper that bills final streamed usage once. A `StateStore` reserves that stream before send.
   - `decision.py`, `evaluation.py`, `cost.py`, `usage.py`, `savings.py`, `escalation.py`, `schemas.py`, `profiles.py`, `repo_config.py`, `reporting.py`, `export.py`: instrumentation, decision tracing, eval, cost/usage accounting, Anthropic thinking-token accounting, and report surfaces.
   - `precision_cost.py` / `price_table.py`: maximum-precision billable cost resolution (`resolve_billable_cost`, `consume_billable`) over a versioned price table; STRICT mode fails loudly on the provider patch path instead of guessing prices.
   - `cli.py`, `__main__.py`, `doctor.py`, `demo.py`, `quickstart.py`, `skillpack.py`, `first_run.py`: the CLI and local proof surfaces. `__main__.py` makes `python -m agentguard` mirror the console script; `first_run.py` holds the bare-command welcome and the paste-able "Guarded by AgentGuard" badge used by `agentguard welcome` / `agentguard badge`.
@@ -136,6 +136,13 @@ the last raw git tag, because a tag can exist for a failed package publish.
   and GitHub #730 / #729.
 - 2026-09-20: Published the local reservation and reconciliation contract
   (AG-03 / #732). Private model `_reservation_contract.py` is not a public
-  API and is not called by `BudgetGuard`. See
+  API and is not called by `BudgetGuard.check()` or `consume()`. See
   [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
-  Implementation is AG-04 / #733.
+- 2026-09-21: AG-04 wires that contract to one path. Sync non-streaming
+  OpenAI Chat Completions with a `StateStore` reserve before send, commit
+  provider usage, and keep the hold when the provider outcome is unknown.
+  No new public type. Not an invoice cap.
+- 2026-09-22: AG-05 uses the same private ledger for store-backed OpenAI and
+  Anthropic streams. Missing usage, an early stop, or a partial usage chunk
+  under a token or dollar cap stays unresolved. No new public type. Not an
+  invoice cap.
