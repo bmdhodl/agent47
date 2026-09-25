@@ -44,10 +44,13 @@ jobs:
 
           # Fetch the PR diff as raw bytes through the GitHub API. Skip the
           # GitHub CLI diff subcommand: its verbatim-escape flag exists only
-          # on gh >= 2.97, and older gh exits 1 with "unknown flag". Cap size
-          # so we never blow the window. Keep this as one python -c line so
-          # YAML indent cannot leak into the script.
-          python -c 'import os,sys,urllib.request as u; req=u.Request("https://api.github.com/repos/%s/pulls/%s"%(os.environ["REPO"],os.environ["PR"]), headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"], "Accept":"application/vnd.github.diff", "X-GitHub-Api-Version":"2022-11-28", "User-Agent":"agentguard-claude-review"}); sys.stdout.buffer.write(u.urlopen(req, timeout=60).read()[:200000])' > /tmp/pr.diff
+          # on gh >= 2.97, and older gh exits 1 with "unknown flag". Keep this
+          # as one python -c line so YAML indent cannot leak into the script.
+          # filter_diff.py comes from the trusted base checkout. It drops
+          # lockfiles and showwork snapshots, names them, then caps at 200k so
+          # generated files cannot crowd code out of the review.
+          python -c 'import os,sys,urllib.request as u; req=u.Request("https://api.github.com/repos/%s/pulls/%s"%(os.environ["REPO"],os.environ["PR"]), headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"], "Accept":"application/vnd.github.diff", "X-GitHub-Api-Version":"2022-11-28", "User-Agent":"agentguard-claude-review"}); sys.stdout.buffer.write(u.urlopen(req, timeout=60).read())' \
+            | python .github/claude-review/filter_diff.py > /tmp/pr.diff
           if [ ! -s /tmp/pr.diff ]; then
             echo "Empty diff, nothing to review."
             exit 0

@@ -16,10 +16,12 @@
   release images outside release assets from now on.
 - AG-05 / #734 reserves store-backed streams on the AG-04 ledger. Windows was not executed for the stream spawn
   race; Linux was. The AG-04 non-stream race has the same Windows gap.
-- Claude PR review truncates `gh pr diff` at 200k bytes and `.showwork`
-  sorts first. Keep `.showwork/snapshots/*.json` as `text eol=lf -diff` so
-  SDK patches stay visible. Workflow changes on a PR do not apply until
-  merge (`pull_request_target` uses the base workflow).
+- Claude PR review caps the diff at 200k bytes. The GitHub API diff ignores
+  the `-diff` gitattribute, so `.github/claude-review/filter_diff.py` drops
+  pip-compile locks, `.showwork` snapshots, and `package-lock.json` sections
+  (and names them) before the cap. Add new bulk generated paths to its `OMIT`
+  list. Workflow changes on a PR do not apply until merge
+  (`pull_request_target` uses the base workflow).
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.

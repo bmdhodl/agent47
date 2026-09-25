@@ -1,5 +1,17 @@
 # Inbox Log
 
+## 2026-09-25 | Claude Code | PR #777
+
+- Shipped: AG-07 compat CI job. The full suite runs against real OpenAI, Anthropic, LangChain, LangGraph, and OTel packages at floor and latest; a missing package fails. `docs/compatibility.md` publishes the matrix and support policy.
+- Decisions: CrewAI stays Experimental (#644); Responses API stays Unsupported (AG-06). Async/streamed provider calls are marked stand-ins only.
+- Blockers: none. Dependabot's weekly `compat-latest.txt` refresh is the early warning.
+
+## 2026-09-25 | Claude Code | PR #776
+
+- Shipped: `agentguard --version` exits 0; source bumped to 1.4.1.
+- Decisions: Owner held the tag; release is scheduled for 2026-10-01.
+- Blockers: none.
+
 ## 2026-09-25 | Claude Code | PR #775
 
 - Shipped: Recorded 1.4.0 as published: `memory/state.md`, `proof/v1.4.0/PUBLICATION.md` (PyPI attestations, clean install, Windows/macOS/Linux run 36190628659), roadmap and follow-ups.
