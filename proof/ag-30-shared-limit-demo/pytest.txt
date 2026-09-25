@@ -1,0 +1,13 @@
+command: python3 -m pytest sdk/tests/test_enforcement_boundary.py::test_examples_run_from_installed_distribution sdk/tests/test_example_starters.py::test_proof_gallery_demo_references_stay_valid -q --tb=short
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /workspace/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0, showwork-0.6.2, anyio-4.15.1
+collected 2 items
+
+sdk/tests/test_enforcement_boundary.py .                                 [ 50%]
+sdk/tests/test_example_starters.py .                                     [100%]
+
+============================== 2 passed in 2.80s ===============================
+exit:0

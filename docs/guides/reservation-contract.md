@@ -3,7 +3,8 @@
 Design date: **2026-09-20**. Closes the design slice of
 [AG-03 / #732](https://github.com/bmdhodl/agent47/issues/732). Parent plan:
 [#729](https://github.com/bmdhodl/agent47/issues/729). Implementation is
-[AG-04 / #733](https://github.com/bmdhodl/agent47/issues/733), not this document.
+[AG-04 / #733](https://github.com/bmdhodl/agent47/issues/733) and
+[AG-05 / #734](https://github.com/bmdhodl/agent47/issues/734), not this document.
 
 This is an architecture contract. It does **not** change `BudgetGuard.check()`
 or `consume()`. Those still overshoot when two workers both pass `check()`
@@ -11,9 +12,10 @@ before either `consume()`. Reproduce with
 `examples/enforcement_boundary/two_worker_overshoot.py`.
 
 No public SDK API is added by this contract. The executable model is the
-private module `sdk/agentguard/_reservation_contract.py`. AG-04 wires one
-provider path to that model: sync, non-streaming OpenAI Chat Completions
-when `BudgetGuard` has a `StateStore`. `ReservationLedger` stays private.
+private module `sdk/agentguard/_reservation_contract.py`. AG-04 wires
+sync, non-streaming OpenAI Chat Completions when `BudgetGuard` has a
+`StateStore`. AG-05 uses the same ledger for store-backed OpenAI and
+Anthropic streams. `ReservationLedger` stays private.
 `BudgetGuard.reservation_totals()` reports settled, reserved, and unresolved
 amounts. `check()` and `consume()` still do not reserve.
 
@@ -201,10 +203,12 @@ already use.
   (`price_table` version `2026.07.15`). Missing either bound refuses the
   send. The estimate is not an invoice.
 
-### Still unsupported
+### Still unsupported on the AG-04 path
+
+AG-05 covers store-backed streams. These stay off this non-stream slice:
 
 - In-memory `BudgetGuard`, `check()`, and `consume()`.
-- OpenAI streaming, OpenAI async, and every Anthropic patch.
+- OpenAI async non-stream calls, and every Anthropic non-stream patch.
 - OpenAI Responses, unpatched clients, host tools, and `HttpSink` remote kill.
 - Mixed processes: an old `check()`/`consume()` worker can still overshoot
   a store that a new worker is reserving. `check()` does not see holds.
@@ -212,3 +216,71 @@ already use.
 - A provider invoice. `can_claim_invoice_cap()` stays false.
 - Actual usage above the reserved bound is stored as `estimate_overrun`.
   It is not written down to the estimate.
+
+## AG-05 slice
+
+Store-backed **streams** use the same private ledger. In-memory streams still
+`check()` then `consume()` after the stream ends. There is no new public
+export and no new `BudgetGuard` argument.
+
+`sdk/tests/test_reservation_stream.py` and
+`examples/enforcement_boundary/reserved_stream_dispatch.py` are the proof.
+Spawn is the multiprocessing start method. Windows was not executed for that
+repro.
+
+### What a stored stream does
+
+- `reserve_for_dispatch` runs before `create()` or before an Anthropic async
+  `messages.stream()` enter. Reserve failure does not call the provider.
+- A local abort before that call cancels the hold (`dispatch_never_sent`).
+- `TimeoutError` from the provider call, or a dropped connection, keeps the
+  hold (`timeout` or `provider_outcome_unknown`).
+- One `create()` is one reservation. Provider retries inside that call are
+  the same hold. The application's next `create()` is a new reservation.
+  An unresolved hold still counts, so a retry cannot spend the last call twice.
+- Final usage commits once. The same usage again does not add another call.
+- No usage, with a token or dollar cap: `usage_missing`. The hold stays.
+  That is not an authoritative `$0` or zero-token settlement.
+- A stream that stops before it finishes keeps a token or dollar hold.
+  An exception is `timeout` or `provider_outcome_unknown`. A close after a
+  partial usage chunk, with no exception, is `stream_incomplete`. Partial
+  usage is not committed. A calls-only cap with no exception still settles
+  one call.
+- An exception while entering the stream context is unresolved. A manager
+  from `messages.stream()` that this process never enters stays `reserved`.
+  The Anthropic SDK sends on enter, and this slice does not free that hold.
+- No usage, calls-only cap: commit one call and zero tokens. The cap is a
+  count, not a price.
+- Unknown models and usage objects with no token fields settle as
+  `overestimate` (owned high-water or the table minimum). They are not free.
+  An explicit free rate row may settle `$0` with source `zero`.
+- `STRICT_PRECISION` that cannot price the call leaves the hold unresolved
+  and raises. It does not commit `$0`.
+
+### Price provenance
+
+Patched streams call `resolve_billable_cost` with the owned table
+(`price_table` version `2026.07.15`). Pass `prices=` to that function, or to
+the private settler, to replace the table for one settlement. The patch does
+not grow a public price argument.
+
+- Dated model ids use the alias map (`gpt-4o-2024-08-06` → `gpt-4o`).
+- OpenAI `prompt_tokens` include cached tokens. The cached slice uses
+  `cached_input_per_1m`; the rest uses the input rate.
+- Anthropic `input_tokens` exclude cache reads. Cache read and cache write
+  are added. They are not subtracted from input.
+- Reasoning or thinking tokens use `reasoning_per_1m` when the row has it,
+  otherwise the output rate, in addition to output tokens. There is no
+  universal tokenizer and no automatic budget increase.
+- The dollar hold is still the high-water estimate from the request
+  `max_tokens`. It is not an invoice. Usage above the hold is
+  `estimate_overrun` and is stored as reported.
+
+### Still unsupported
+
+- In-memory streams, `check()`, and `consume()`.
+- Async non-stream calls and Anthropic non-stream calls.
+- OpenAI Responses, unpatched clients, host tools, and `HttpSink` remote kill.
+- A provider invoice. `can_claim_invoice_cap()` stays false.
+- Mixed processes: an old `check()`/`consume()` worker can still overshoot
+  a store that a stream worker is reserving. `check()` does not see holds.

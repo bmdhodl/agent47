@@ -3,7 +3,7 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-21
+**Last reviewed:** 2026-09-24
 
 ## Current Focus Notes
 
@@ -17,9 +17,9 @@ they directly strengthen coding-agent adoption.
 - Activation evidence (AG-02): page views are not installs. Voluntary demo
   feedback is local-only. Classifier:
   [activation-metrics-design.md](../docs/guides/activation-metrics-design.md).
-- Local reservation (AG-03 contract, AG-04 one path): sync non-streaming
-  OpenAI Chat Completions with a shared `StateStore` reserve before send.
-  Canonical:
+- Local reservation (AG-03 contract, AG-04 one path, AG-05 streams):
+  sync non-streaming OpenAI Chat Completions and store-backed streams
+  reserve before send. Canonical:
   [reservation-contract.md](../docs/guides/reservation-contract.md).
   `check()` / `consume()` still overshoot.
 - Stable SDK releases automatically email active AgentGuard subscribers.
@@ -97,6 +97,8 @@ they directly strengthen coding-agent adoption.
 | Activation evidence (AG-02 / #731) | Done in #759. Landing-page navigation never counts as install; `demo --feedback` is local-only |
 | Local reservation contract (AG-03 / #732) | Transition table, native-first alternative, and private model in [reservation-contract.md](../docs/guides/reservation-contract.md); `check()` still overshoots |
 | One atomic reservation path (AG-04 / #733) | Store-backed sync OpenAI non-stream reserves before send. Barrier race dispatches once. Not an invoice cap. |
+| Stream reservation (AG-05 / #734) | Store-backed OpenAI and Anthropic streams reserve before send. Missing token or dollar usage stays unresolved. Not an invoice cap. |
+| 1.4.0 release candidate | Source version, changelog, and release-guard match `1.4.0`. Published PyPI stays `1.3.2` until the owner tags `v1.4.0`. AG-06 and later adapters stay held. |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |

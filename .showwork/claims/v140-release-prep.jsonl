@@ -1,0 +1,1 @@
+{"session": "v140-release-prep", "ts": "2026-09-24T20:06:25", "claim": "pyproject version is 1.4.0", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/pyproject.toml", "pattern": "version = \"1.4.0\""}, "prev": "df2d0620f6290da8b87cd2f1349537f49883d54d129e40c98f7aaaa3d4ecb598"}

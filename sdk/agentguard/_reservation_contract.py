@@ -2,8 +2,9 @@
 
 This is the executable contract for the store-backed reservation path.
 It is not a public API. ``BudgetGuard.check()`` and ``consume()`` do not call
-it. Sync non-streaming OpenAI calls with a ``StateStore`` do, via
-``_reservation_path``. Unknown provider outcomes never silently free holds.
+it. Store-backed sync non-streaming OpenAI calls do, via
+``_reservation_path``. Store-backed streams do, via ``_reservation_stream``.
+Unknown provider outcomes never silently free holds.
 
 Operations: ``reserve``, ``commit``, ``cancel``, ``mark_unresolved``,
 ``recover_crash``. The ledger is meant to run inside an existing

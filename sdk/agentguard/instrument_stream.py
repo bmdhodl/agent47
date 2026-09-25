@@ -124,6 +124,8 @@ class CountedStream:
         self._usage: Any = None
         self._response: Any = None
         self._done = False
+        self._completed = False
+        self._finish_error: Any = None
         self._opened = factory is None
         self._sync_iter: Any = None
         self._async_iter: Any = None
@@ -229,6 +231,7 @@ class CountedStream:
             if self._done:
                 return
             self._done = True
+        self._finish_error = None if exc_info is None else exc_info[1]
         self._harvest()
         try:
             self._on_final(self._usage, self._response)
@@ -243,6 +246,7 @@ class CountedStream:
             if not self._done:
                 self._done = True
                 first = True
+        self._finish_error = None if exc_info is None else exc_info[1]
         try:
             if first:
                 await self._aharvest()
@@ -264,6 +268,7 @@ class CountedStream:
         try:
             chunk = next(iterator._sync_iter)
         except StopIteration:
+            self._completed = True
             self._finish()
             raise
         except BaseException:
@@ -286,6 +291,7 @@ class CountedStream:
         try:
             chunk = await self._async_iter.__anext__()
         except StopAsyncIteration:
+            self._completed = True
             await self._afinish()
             raise
         except BaseException:
@@ -298,7 +304,11 @@ class CountedStream:
         self._open_sync()
         enter = getattr(self._inner, "__enter__", None)
         if callable(enter):
-            entered = enter()
+            try:
+                entered = enter()
+            except BaseException:
+                self._finish(sys.exc_info())
+                raise
             if entered is not self._inner and entered is not self:
                 self._entered = entered
         return self
@@ -316,9 +326,13 @@ class CountedStream:
         await self._open_async()
         enter = getattr(self._inner, "__aenter__", None)
         if callable(enter):
-            entered = enter()
-            if inspect.isawaitable(entered):
-                entered = await entered
+            try:
+                entered = enter()
+                if inspect.isawaitable(entered):
+                    entered = await entered
+            except BaseException:
+                await self._afinish(sys.exc_info())
+                raise
             if entered is not self._inner and entered is not self:
                 self._entered = entered
         return self
@@ -342,12 +356,14 @@ class CountedStream:
         if inspect.isawaitable(result):
             return self._await_final_message(result)
         self._capture(result)
+        self._completed = True
         self._finish()
         return result
 
     async def _await_final_message(self, result: Any) -> Any:
         message = await result
         self._capture(message)
+        self._completed = True
         await self._afinish()
         return message
 
@@ -414,6 +430,88 @@ def emit_stream_final(
         consume_budget(budget_guard, ctx, 0, 1, 0.0, model)
 
 
+def _store_backed_stream(budget_guard: Any, wrap_stream: bool) -> bool:
+    return bool(
+        wrap_stream
+        and budget_guard is not None
+        and getattr(budget_guard, "_store", None) is not None
+    )
+
+
+def _prepare_stream_call(
+    ctx: Any,
+    budget_guard: Any,
+    model: str,
+    kwargs: Dict[str, Any],
+    wrap_stream: bool,
+    check_budget: Callable[..., None],
+) -> Any:
+    """Reserve a stored stream, or preflight an in-memory budget."""
+    if not _store_backed_stream(budget_guard, wrap_stream):
+        check_budget(budget_guard, ctx, model)
+        return None
+    from ._reservation_stream import begin_stream_reservation, note_not_sent
+
+    try:
+        return begin_stream_reservation(budget_guard, kwargs)
+    except BaseException as exc:
+        note_not_sent(ctx, exc, model)
+        raise
+
+
+def _fail_stream_dispatch(budget_guard: Any, reservation_id: Any, exc: BaseException) -> None:
+    if reservation_id is None:
+        return
+    from ._reservation_stream import abandon_stream_reservation, dispatch_failure_reason
+
+    abandon_stream_reservation(
+        budget_guard, reservation_id, reason=dispatch_failure_reason(exc)
+    )
+
+
+def _cancel_unsent_stream(budget_guard: Any, reservation_id: Any) -> None:
+    if reservation_id is None:
+        return
+    from ._reservation_stream import cancel_unsent_stream_reservation
+
+    cancel_unsent_stream_reservation(budget_guard, reservation_id)
+
+
+def _finish_stream(
+    ctx: Any,
+    budget_guard: Any,
+    model: str,
+    provider: str,
+    usage: Any,
+    response: Any,
+    reservation_id: Any,
+    emit_result: Callable[..., None],
+    consume_budget: Callable[..., None],
+    *,
+    completed: bool = True,
+    error: Any = None,
+) -> None:
+    if reservation_id is None:
+        emit_stream_final(
+            ctx, budget_guard, model, provider, usage, response,
+            emit_result, consume_budget,
+        )
+        return
+    from ._reservation_stream import settle_stream_reservation
+
+    settle_stream_reservation(
+        budget_guard,
+        ctx,
+        reservation_id,
+        model,
+        provider,
+        usage,
+        response,
+        completed=completed,
+        error=error,
+    )
+
+
 def run_traced_create(
     original: Any,
     tracer: Any,
@@ -426,8 +524,9 @@ def run_traced_create(
     check_budget: Callable[..., None],
     emit_result: Callable[..., None],
     consume_budget: Callable[..., None],
+    before_send: Any = None,
 ) -> Any:
-    """Sync provider call: preflight, then bill a response or wrap a stream."""
+    """Sync provider call: preflight or reserve, then bill a response or wrap a stream."""
     model = str(kwargs.get("model", "unknown"))
     if wrap_stream and provider == "openai":
         kwargs = ensure_openai_stream_usage(kwargs)
@@ -437,19 +536,39 @@ def run_traced_create(
     )
     ctx = span_cm.__enter__()
     try:
-        check_budget(budget_guard, ctx, model)
-        result = original(*args, **kwargs)
+        reservation_id = _prepare_stream_call(
+            ctx, budget_guard, model, kwargs, wrap_stream, check_budget
+        )
     except BaseException:
         span_cm.__exit__(*sys.exc_info())
         raise
+    if before_send is not None:
+        try:
+            before_send()
+        except BaseException:
+            _cancel_unsent_stream(budget_guard, reservation_id)
+            span_cm.__exit__(*sys.exc_info())
+            raise
+    try:
+        result = original(*args, **kwargs)
+    except BaseException as exc:
+        _fail_stream_dispatch(budget_guard, reservation_id, exc)
+        span_cm.__exit__(*sys.exc_info())
+        raise
     if wrap_stream:
+        box: Dict[str, Any] = {}
+
         def on_final(usage: Any, response: Any) -> None:
-            emit_stream_final(
+            stream = box["stream"]
+            _finish_stream(
                 ctx, budget_guard, model, provider, usage, response,
-                emit_result, consume_budget,
+                reservation_id, emit_result, consume_budget,
+                completed=stream._completed,
+                error=stream._finish_error,
             )
 
-        return CountedStream(result, on_final, span_cm, async_span=False)
+        box["stream"] = CountedStream(result, on_final, span_cm, async_span=False)
+        return box["stream"]
     try:
         emit_result(
             ctx, budget_guard, model, provider, getattr(result, "usage", None), response=result
@@ -473,8 +592,9 @@ async def run_traced_create_async(
     check_budget: Callable[..., None],
     emit_result: Callable[..., None],
     consume_budget: Callable[..., None],
+    before_send: Any = None,
 ) -> Any:
-    """Async provider call: preflight, then bill a response or wrap a stream."""
+    """Async provider call: preflight or reserve, then bill a response or wrap a stream."""
     model = str(kwargs.get("model", "unknown"))
     if wrap_stream and provider == "openai":
         kwargs = ensure_openai_stream_usage(kwargs)
@@ -484,21 +604,41 @@ async def run_traced_create_async(
     )
     ctx = await span_cm.__aenter__()
     try:
-        check_budget(budget_guard, ctx, model)
-        result = original(*args, **kwargs)
-        if inspect.isawaitable(result):
-            result = await result
+        reservation_id = _prepare_stream_call(
+            ctx, budget_guard, model, kwargs, wrap_stream, check_budget
+        )
     except BaseException:
         await span_cm.__aexit__(*sys.exc_info())
         raise
+    if before_send is not None:
+        try:
+            before_send()
+        except BaseException:
+            _cancel_unsent_stream(budget_guard, reservation_id)
+            await span_cm.__aexit__(*sys.exc_info())
+            raise
+    try:
+        result = original(*args, **kwargs)
+        if inspect.isawaitable(result):
+            result = await result
+    except BaseException as exc:
+        _fail_stream_dispatch(budget_guard, reservation_id, exc)
+        await span_cm.__aexit__(*sys.exc_info())
+        raise
     if wrap_stream:
+        box: Dict[str, Any] = {}
+
         def on_final(usage: Any, response: Any) -> None:
-            emit_stream_final(
+            stream = box["stream"]
+            _finish_stream(
                 ctx, budget_guard, model, provider, usage, response,
-                emit_result, consume_budget,
+                reservation_id, emit_result, consume_budget,
+                completed=stream._completed,
+                error=stream._finish_error,
             )
 
-        return CountedStream(result, on_final, span_cm, async_span=True)
+        box["stream"] = CountedStream(result, on_final, span_cm, async_span=True)
+        return box["stream"]
     try:
         emit_result(
             ctx, budget_guard, model, provider, getattr(result, "usage", None), response=result
@@ -508,3 +648,89 @@ async def run_traced_create_async(
         raise
     await span_cm.__aexit__(None, None, None)
     return result
+
+
+def open_provider_async_stream(
+    original: Any,
+    tracer: Any,
+    budget_guard: Any,
+    args: tuple,
+    kwargs: Dict[str, Any],
+    *,
+    check_budget: Callable[..., None],
+    emit_final: Callable[..., None],
+) -> CountedStream:
+    """Lazy Anthropic async ``messages.stream``: reserve on enter, settle on exit."""
+    model = str(kwargs.get("model", "unknown"))
+    provider = "anthropic"
+    span_cm = tracer.trace(
+        f"llm.{provider}.{model}",
+        data={"model": model, "provider": provider},
+    )
+    ctx_holder: list = []
+    reservation_id: Dict[str, Any] = {"id": None}
+    store_backed = _store_backed_stream(budget_guard, True)
+
+    def on_open(ctx: Any) -> None:
+        ctx_holder.append(ctx)
+        if not store_backed:
+            check_budget(budget_guard, ctx, model)
+            return
+        from ._reservation_stream import begin_stream_reservation, note_not_sent
+
+        try:
+            reservation_id["id"] = begin_stream_reservation(budget_guard, kwargs)
+        except BaseException as exc:
+            note_not_sent(ctx, exc, model)
+            raise
+
+    def factory() -> Any:
+        if not store_backed:
+            return original(*args, **kwargs)
+
+        async def _call() -> Any:
+            try:
+                result = original(*args, **kwargs)
+                if inspect.isawaitable(result):
+                    result = await result
+                return result
+            except BaseException as exc:
+                held = reservation_id["id"]
+                if held is not None:
+                    _fail_stream_dispatch(budget_guard, held, exc)
+                    reservation_id["id"] = None
+                raise
+
+        return _call()
+
+    box: Dict[str, Any] = {}
+
+    def on_final(usage: Any, response: Any) -> None:
+        held = reservation_id["id"]
+        stream = box["stream"]
+        if held is None:
+            emit_final(ctx_holder[0], budget_guard, model, provider, usage, response)
+            return
+        from ._reservation_stream import settle_stream_reservation
+
+        settle_stream_reservation(
+            budget_guard,
+            ctx_holder[0],
+            held,
+            model,
+            provider,
+            usage,
+            response,
+            completed=stream._completed,
+            error=stream._finish_error,
+        )
+
+    box["stream"] = CountedStream(
+        None,
+        on_final,
+        span_cm,
+        async_span=True,
+        factory=factory,
+        on_open=on_open,
+    )
+    return box["stream"]
