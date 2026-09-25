@@ -203,5 +203,10 @@ The PyPI README is generated from this README and the changelog.
 ### Release checks
 - Every stable publish now runs the exact PyPI wheel offline on Windows,
   macOS, and Linux. No SDK runtime behavior changed.
+- New [compatibility matrix](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/compatibility.md). CI now runs the full
+  suite against the real OpenAI, Anthropic, LangChain, LangGraph, and
+  OpenTelemetry packages at the oldest supported versions and at current
+  releases. Missing packages fail the job instead of skipping. CrewAI stays
+  experimental (#644); the OpenAI Responses API stays unsupported (AG-06).
 
 Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.4.1/CHANGELOG.md)

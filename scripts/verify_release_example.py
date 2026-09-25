@@ -40,6 +40,8 @@ def verify_wheel(tag):
         probe = (
             "import importlib.metadata, runpy, socket, sys\n"
             f"assert importlib.metadata.version('agentguard47') == {tag[1:]!r}\n"
+            "# The base wheel must not pull any provider, framework, or MCP package.\n"
+            "assert all('extra ==' in r for r in importlib.metadata.requires('agentguard47') or [])\n"
             "def offline(*args, **kwargs):\n    raise RuntimeError('Offline demo attempted network access')\n"
             "socket.socket.connect = offline\nsocket.create_connection = offline\n"
             "sys.argv = ['agentguard', 'demo', '--feedback']\n"
