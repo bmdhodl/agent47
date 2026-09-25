@@ -176,12 +176,16 @@ def test_examples_run_from_installed_distribution(tmp_path):
     assert target_resolved == installed_path or target_resolved in installed_path.parents
     repo_init = (ROOT / "sdk" / "agentguard" / "__init__.py").resolve()
     assert installed_path != repo_init
-    for name in (
-        "exhausted_budget_blocks_dispatch.py",
-        "two_worker_overshoot.py",
-        "reserved_one_dispatch.py",
-    ):
-        script = ROOT / "examples" / "enforcement_boundary" / name
+    scripts = [
+        ROOT / "examples" / "enforcement_boundary" / name
+        for name in (
+            "exhausted_budget_blocks_dispatch.py",
+            "two_worker_overshoot.py",
+            "reserved_one_dispatch.py",
+        )
+    ]
+    scripts.append(ROOT / "examples" / "shared_call_limit.py")
+    for script in scripts:
         completed = subprocess.run(
             [sys.executable, str(script)],
             cwd=ROOT,
@@ -190,12 +194,25 @@ def test_examples_run_from_installed_distribution(tmp_path):
             check=True,
             env=env,
         )
-        if name == "reserved_one_dispatch.py":
+        if script.name == "reserved_one_dispatch.py":
             payload = json.loads(completed.stdout)
             assert payload["dispatched"] == 1
             assert payload["blocked"] == 1
             assert payload["fixed"] is True
             assert installed_path != repo_init
+        if script.name == "shared_call_limit.py":
+            source = script.read_text(encoding="utf-8")
+            assert "_traced_openai_create" not in source
+            assert "patch_openai" in source
+            result_line = next(
+                line for line in completed.stdout.splitlines() if line.startswith("RESULT ")
+            )
+            payload = json.loads(result_line.removeprefix("RESULT "))
+            assert payload["dispatched"] == 1
+            assert payload["stopped"] == 1
+            assert payload["fixed"] is True
+            assert payload["provider"] == "simulated"
+            assert "Not a provider invoice cap." in completed.stdout
 
 
 def test_cli_demo_budget_path_is_advisory():
