@@ -1,0 +1,2 @@
+{"session": "site-deslop", "ts": "2026-09-25T23:18:47", "claim": "Shared site stylesheet exists", "severity": "RED", "check": {"type": "file_exists", "path": "site/assets/site.css"}, "prev": "d205bc4dea09a5f5ee8674d46a9d5c334e827ca17fbd07d1cb94637d9fdca5b0"}
+{"session": "site-deslop", "ts": "2026-09-25T23:18:47", "claim": "Compare snippet passes budget_guard", "severity": "RED", "check": {"type": "file_contains", "path": "site/compare.html", "pattern": "budget_guard=BudgetGuard\\(max_cost_usd=5.00"}, "prev": "5b7a6d95b18d83357661c521e6e41521fb740668ab020b473983394acdac5dbd"}

@@ -3,67 +3,139 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>How we count use — AgentGuard47</title>
-    <meta
-      name="description"
-      content="Page views are not installs. AgentGuard counts install, guard activation, repeat use, and contributions as separate measures. No SDK telemetry."
-    />
+    <title>How we count use | AgentGuard47</title>
+    <meta name="description" content="Page views are not installs. AgentGuard counts install, guard activation, repeat use, and contributions as separate measures. No SDK telemetry." />
     <link rel="canonical" href="https://agentguard47.com/activation.html" />
-    <style>
-      :root {
-        --bg: #f7f4ee;
-        --ink: #1e1b16;
-        --accent: #1b6c4a;
-        --muted: #6c645a;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
-        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
-        color: var(--ink);
-      }
-      .wrap { max-width: 860px; margin: 0 auto; padding: 32px 16px 60px; }
-      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
-      a { color: var(--accent); }
-      h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; }
-      h2 { margin-top: 36px; font-size: 20px; }
-      p, li { font-size: 16px; line-height: 1.6; }
-      .muted { color: var(--muted); }
-      table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
-      th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e8e2d6; vertical-align: top; }
-      th { background: rgba(0,0,0,0.02); }
-      code { font-size: 0.92em; }
-    </style>
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://agentguard47.com/activation.html" />
+    <meta property="og:title" content="How we count use | AgentGuard47" />
+    <meta property="og:description" content="Page views are not installs. AgentGuard counts install, guard activation, repeat use, and contributions as separate measures. No SDK telemetry." />
+    <meta property="og:site_name" content="AgentGuard47" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script>
+      (function() {
+        var host = window.location.hostname;
+        var isLocalHost =
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host === '::1' ||
+          window.location.protocol === 'file:';
+        var isAllowedHost =
+          host === 'agentguard47.com' ||
+          host === 'www.agentguard47.com' ||
+          host.endsWith('.vercel.app');
+
+        if (isLocalHost || !isAllowedHost) {
+          return;
+        }
+
+        function loadInsights() {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = '/_vercel/insights/script.js';
+          document.head.appendChild(script);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadInsights, { once: true });
+        } else {
+          loadInsights();
+        }
+      })();
+    </script>
   </head>
   <body data-ag-metric="page-navigation">
-    <div class="wrap">
-      <p><a href="/">← AgentGuard47</a> · <a href="/enforcement.html">Bounds</a></p>
-      <h1>How we count use</h1>
-      <p class="muted">
-        This page view is not an install and not a guard activation. AgentGuard
-        does not ship SDK telemetry. Voluntary demo feedback is inspectable,
-        redacted, and offline until you paste it into GitHub yourself.
-      </p>
-      <h2>Separate measures</h2>
-      <table>
-        <tr><th>Measure</th><th>Counts</th><th>Does not count</th></tr>
-        <tr><td>Page navigation</td><td>Views, CTA clicks, this page</td><td>Install or activation</td></tr>
-        <tr><td>Install</td><td>PyPI package events in a calendar window</td><td>Unique people</td></tr>
-        <tr><td>Guard activation</td><td>Consented demo feedback with result=success</td><td>Downloads or clones</td></tr>
-        <tr><td>Repeat use</td><td>Same consented reporter on two days in 14</td><td>Two package downloads</td></tr>
-        <tr><td>Accepted contribution</td><td>Merged external PR or accepted issue</td><td>Stars or subscribers</td></tr>
-      </table>
-      <h2>Local demo report</h2>
-      <p>
-        After a local proof, inspect a four-field report with
-        <code>agentguard demo --feedback</code>. Decline by skipping that
-        command. Nothing is sent from the CLI.
-      </p>
-      <p>
-        Rules and dated baseline:
-        <a href="https://github.com/bmdhodl/agent47/blob/main/docs/guides/activation-metrics-design.md">activation-metrics-design.md</a>.
-      </p>
-    </div>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/" aria-label="AgentGuard47 home">
+          <svg viewBox="0 0 34 18" aria-hidden="true"><rect x="0" width="2" height="18"/><rect x="4" width="1" height="18"/><rect x="7" width="3" height="18"/><rect x="12" width="1" height="18"/><rect x="15" width="2" height="18"/><rect x="19" width="1" height="18"/><rect x="22" width="3" height="18"/><rect x="27" width="1" height="18"/><rect x="30" width="2" height="18"/><rect x="33" width="1" height="18"/></svg>
+          <span>AgentGuard<b>47</b></span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="/quickstart.html">Quickstart</a>
+          <a href="/enforcement.html">Limits</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Trust</a>
+          <a href="/compare.html#pricing">Pricing</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-head">
+        <div class="wrap">
+          <p class="kicker">How we count use</p>
+          <h1>A page view is not an install</h1>
+          <p class="lead">This page view is not an install and not a guard activation. The SDK ships no telemetry. Demo feedback is something you read, redact, and paste into GitHub yourself.</p>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">01</div>
+            <h2>Separate measures</h2>
+            <p>We report each one on its own and never add them together.</p>
+          </div>
+          <div class="table-wrap" style="max-width: 860px">
+            <table class="plain stack">
+              <thead><tr><th>Measure</th><th>Counts</th><th>Does not count</th></tr></thead>
+              <tbody>
+                <tr><td data-label="Measure">Page navigation</td><td data-label="Counts">Views, link clicks, this page</td><td data-label="Does not count">Install or activation</td></tr>
+                <tr><td data-label="Measure">Install</td><td data-label="Counts">PyPI package events in a calendar window</td><td data-label="Does not count">Unique people</td></tr>
+                <tr><td data-label="Measure">Guard activation</td><td data-label="Counts">Consented demo feedback with result=success</td><td data-label="Does not count">Downloads or clones</td></tr>
+                <tr><td data-label="Measure">Repeat use</td><td data-label="Counts">Same consented reporter on two days in 14</td><td data-label="Does not count">Two package downloads</td></tr>
+                <tr><td data-label="Measure">Accepted contribution</td><td data-label="Counts">Merged external PR or accepted issue</td><td data-label="Does not count">Stars or subscribers</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">02</div>
+            <h2>Local demo report</h2>
+          </div>
+          <div>
+            <p>
+              After a local run, print a four-field report with
+              <code>agentguard demo --feedback</code>. Skip the command to decline.
+              Nothing is sent from the CLI.
+            </p>
+            <div class="more">
+              <a href="https://github.com/bmdhodl/agent47/blob/main/docs/guides/activation-metrics-design.md">Rules and dated baseline</a>
+              <a href="/enforcement.html">What each limit stops</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <div class="wrap">
+        <nav aria-label="Footer">
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="https://pypi.org/project/agentguard47/">PyPI</a>
+          <a href="/quickstart.html">Quickstart</a>
+          <a href="/enforcement.html">Limits</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Trust</a>
+          <a href="/activation.html">How we count use</a>
+          <a href="https://bmdpat.com/blog">Blog</a>
+          <a href="https://bmdpat.com/tools/agentguard?utm_source=agentguard47&amp;utm_medium=site&amp;utm_campaign=field-notes">Release notes by email</a>
+          <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+        </nav>
+        <p>AgentGuard47 by BMD PAT LLC. The SDK is MIT licensed.</p>
+      </div>
+    </footer>
+
   </body>
 </html>

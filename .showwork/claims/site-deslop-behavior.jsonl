@@ -1,0 +1,1 @@
+{"session": "site-deslop-behavior", "ts": "2026-09-25T23:19:28", "claim": "Nine pages on shared CSS, no 340 stat, zero slop, site tests pass", "severity": "RED", "check": {"type": "command", "argv": ["python", "proof/landing-deslop/verify.py"], "expect_exit": 0, "stdout_contains": "site claims hold"}, "prev": "2c0df542b8a9286ecc9d5b67cab868ea9fbf9ecc92fcb9ab3b9a41cde11bdbe4"}

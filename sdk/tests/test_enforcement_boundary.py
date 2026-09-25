@@ -395,3 +395,20 @@ def _example_env():
     existing = env.get("PYTHONPATH")
     env["PYTHONPATH"] = sdk if not existing else os.pathsep.join([sdk, existing])
     return env
+
+
+def test_site_patch_examples_pass_a_budget_guard():
+    # patch_openai(tracer) alone records cost but never raises; compare.html once shipped it.
+    checked = 0
+    for path in (ROOT / "site").rglob("*.html"):
+        text = _strip_tags(path.read_text(encoding="utf-8"))
+        for match in re.finditer(r"patch_(?:openai|anthropic)\(", text):
+            depth, end = 1, match.end()
+            while depth and end < len(text):
+                depth += {"(": 1, ")": -1}.get(text[end], 0)
+                end += 1
+            call = text[match.start():end]
+            assert depth == 0, f"{path.name}: unmatched parens in {call[:80]}"
+            assert "budget_guard=" in call, f"{path.name}: {call}"
+            checked += 1
+    assert checked >= 5, checked

@@ -1,0 +1,145 @@
+{
+  "activation.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 138,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "27d432de68f28a31521845f01cacd6fdb1a8ca4a894deba5acfc94c4d78c6de5"
+  },
+  "blog/ai-agent-cost-overruns.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 846,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "6d17d1cdac2f0f47bdd96005897770be58c069d554eb7641f2d1f2ab8bbf30a5"
+  },
+  "blog/budget-limits-ai-agents.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 681,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "57fd79531320ae82277e95791cc3296ea8a78bbf9ce4d1de64c381edf19a9345"
+  },
+  "blog/langchain-cost-tracking.html": {
+    "slop_score": 0.0009,
+    "slop_density": 0.0009,
+    "categories": {
+      "hedge": 0.0009
+    },
+    "spans": [
+      {
+        "start": 2626,
+        "end": 2634,
+        "text": "and more",
+        "categories": [
+          "hedge"
+        ],
+        "weight": 0.8
+      }
+    ],
+    "n_words": 904,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "ccda4b68400b03a49ac744f15ad424b81ef7d369c37d44b4287dcbf5ba6bb46f"
+  },
+  "compare.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 503,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "8f645b46994d2d8a5ee2cef5136d4a5539fecf28afe51c35ba6b309b42c92dd6"
+  },
+  "enforcement.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 305,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "bc9a0361b9284fd4b5408bfea77e76284da6994670efa75f10f6c7386387f435"
+  },
+  "index.html": {
+    "slop_score": 0.001,
+    "slop_density": 0.001,
+    "categories": {
+      "hedge": 0.001
+    },
+    "spans": [
+      {
+        "start": 2162,
+        "end": 2169,
+        "text": "clearly",
+        "categories": [
+          "hedge"
+        ],
+        "weight": 0.3
+      },
+      {
+        "start": 3365,
+        "end": 3373,
+        "text": "actually",
+        "categories": [
+          "hedge"
+        ],
+        "weight": 0.3
+      }
+    ],
+    "n_words": 587,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "ae39c34e3c03cfb87eb2816dc80915703fa2c823589218c5e78a7fd33ad8284e"
+  },
+  "quickstart.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 316,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "b30ec5580e5a89881e674349d69e611bbdba976c9551ec66bf78f492b8a200a6"
+  },
+  "security.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 16,
+    "low_confidence": true,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "b89d1fe45459db2ccaeb74a8c90b8427e261d9a9bf58fee848e8ded1b717ca4c"
+  },
+  "trust.html": {
+    "slop_score": 0.0,
+    "slop_density": 0.0,
+    "categories": {},
+    "spans": [],
+    "n_words": 428,
+    "low_confidence": false,
+    "lexicon_version": "ded58e3a0c4c",
+    "threshold_provisional": true,
+    "input_sha256": "1887d9152be4f27e198c3a8099c8516ef7d22d47020728d6dcd3eb82e3fdf271"
+  }
+}
