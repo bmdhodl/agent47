@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 
@@ -130,7 +131,15 @@ def test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip() -> None:
     assert "--hash=sha256:" in lock_text
     assert lock_text.count("mcp==") >= 1
     manifest_text = manifest.read_text(encoding="utf-8")
-    assert "mcp>=1.23,<2" in manifest_text
+    # agentguard-mcp is imported via PYTHONPATH, so pip never checks its
+    # declared runtime deps. The lock manifest must carry them verbatim.
+    pyproject = (repo_root / "agentguard-mcp" / "pyproject.toml").read_text(encoding="utf-8")
+    deps_block = re.search(r"^dependencies = \[(.*?)^\]", pyproject, re.M | re.S)
+    assert deps_block is not None
+    declared = re.findall(r'"([^"]+)"', deps_block.group(1))
+    assert declared
+    for dep in declared:
+        assert dep in manifest_text, f"{dep} missing from mcp-budget.in"
     assert "pytest==" not in manifest_text
     assert "ruff==" not in manifest_text
 
