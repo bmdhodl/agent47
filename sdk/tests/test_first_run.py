@@ -131,6 +131,17 @@ class TestCliDispatch:
         out = self._run_cli(["agentguard", "badge", "--format", "html"])
         assert "<img" in out
 
+    def test_version_flag_prints_package_version_and_exits_zero(self):
+        # REGRESSION: `agentguard --version` exited 2 on the published 1.4.0 wheel.
+        with pytest.raises(SystemExit) as exc:
+            self._run_cli(["agentguard", "--version"])
+        assert exc.value.code == 0
+
+    def test_version_flag_output(self, capsys):
+        with mock.patch.object(sys, "argv", ["agentguard", "--version"]), pytest.raises(SystemExit):
+            cli.main()
+        assert capsys.readouterr().out.strip() == f"agentguard {agentguard.__version__}"
+
 
 _CLI_ROUTES = [
     (["agentguard"], "_welcome"),  # bare command -> welcome

@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.1
+
+### Fixes
+- `agentguard --version` prints the installed version and exits 0. In 1.4.0
+  it exited 2, often on the first command after install.
+
+### Docs
+- The PyPI README again states that the optional `[crewai]` extra pulls
+  ChromaDB with unresolved advisories, including PYSEC-2026-311 /
+  CVE-2026-45829. Base installs do not include ChromaDB.
+- CONTRIBUTING shows how to add a provider usage fixture in one session.
+
+### Release checks
+- Every stable publish now runs the exact PyPI wheel offline on Windows,
+  macOS, and Linux. No SDK runtime behavior changed.
+
 ## 1.4.0
 
 ### Stream reservation (AG-05)
