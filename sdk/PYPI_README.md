@@ -31,6 +31,10 @@ budget, loop, and retry stops without provider keys or network access. Follow
 the trace path printed by the command to inspect its output.
 `agentguard demo --feedback` prints a local redacted report; nothing is sent.
 
+`agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
+with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
+into a PR or issue. The hash identifies the trace file; it is not a signature.
+
 ### Stop before a third call
 
 Save this as `budget_demo.py` and run `python budget_demo.py`. It makes no
@@ -189,6 +193,12 @@ The PyPI README is generated from this README and the changelog.
 [MIT license](https://github.com/bmdhodl/agent47/blob/v1.4.1/LICENSE).
 
 ## Latest Release Notes (1.4.1)
+
+### Added
+- `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
+  cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
+  PRs and issues; `--format json` is for CI. Guard events no longer count
+  toward the receipt's cost, so the call that tripped a budget is counted once.
 
 ### Fixes
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0

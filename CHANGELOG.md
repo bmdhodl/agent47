@@ -2,6 +2,12 @@
 
 ## 1.4.1
 
+### Added
+- `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
+  cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
+  PRs and issues; `--format json` is for CI. Guard events no longer count
+  toward the receipt's cost, so the call that tripped a budget is counted once.
+
 ### Fixes
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.

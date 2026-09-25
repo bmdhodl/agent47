@@ -29,6 +29,10 @@ budget, loop, and retry stops without provider keys or network access. Follow
 the trace path printed by the command to inspect its output.
 `agentguard demo --feedback` prints a local redacted report; nothing is sent.
 
+`agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
+with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
+into a PR or issue. The hash identifies the trace file; it is not a signature.
+
 ### Stop before a third call
 
 Save this as `budget_demo.py` and run `python budget_demo.py`. It makes no

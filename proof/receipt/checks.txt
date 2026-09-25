@@ -1,0 +1,19 @@
+$ pytest sdk/tests
+======================= 1217 passed, 6 skipped in 29.12s =======================
+$ python scripts/sdk_preflight.py
+============================== 5 passed in 0.03s ===============================
+$ python scripts/review_readiness_guard.py
+Review readiness guard passed.
+$ python scripts/sdk_release_guard.py
+Release guard passed.
+$ python scripts/ci_tools_requirements_guard.py
+/home/user/agent47/.github/requirements/ci-tools.in direct pins support Python 3.9
+$ check_docs
+Documentation links and image alt text passed
+$ make lint
+All checks passed!
+$ bandit
+exit 0
+$ generate_pypi_readme --check
+exit 0
+platform: Linux 6.18.44-fc-v37, Python 3.11.15

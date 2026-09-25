@@ -78,6 +78,7 @@ def run_offline_demo(
     _print(out, f"Trace written to: {trace_path}")
     _print(out, f"View summary: agentguard report {rendered_trace_path}")
     _print(out, f"View incident report: agentguard incident {rendered_trace_path}")
+    _print(out, f"Share the stops: agentguard receipt {rendered_trace_path} --format markdown")
     _print(out, "")
     _print(out, "Next: add AgentGuard to a repo")
     next_commands = local_proof_commands()
