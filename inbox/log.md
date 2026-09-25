@@ -12,6 +12,13 @@
 
 ---
 
+## 2026-09-21 | Cursor
+
+- Merged PR `#761` (AG-03 / #732). Local reservation contract: reserve before send, commit real usage, cancel only if the request never left, otherwise keep the hold. Private model and tests. `BudgetGuard` still overshoots.
+- Decision: an unknown provider outcome cannot silently free funds. This is not an invoice cap.
+- Blocker: AG-04 / #733 is not started.
+- Sign-off: Cursor | Grok 4.7 | auto
+
 ## 2026-09-20 | Cursor
 
 - Merged PR `#759` (AG-02): honest activation evidence plus local `agentguard demo --feedback`. Page navigation is not an install. Guard activation is successful consented demo feedback only. Landing-page `install_intent` on 2026-09-18 is proven installs: 0.

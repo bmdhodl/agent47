@@ -1,0 +1,15 @@
+platform: linux
+exit: 0
+
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /workspace/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0, showwork-0.6.2, anyio-4.15.1
+collected 29 items
+
+sdk/tests/test_ci_guardrails.py ........                                 [ 27%]
+sdk/tests/test_review_readiness_guard.py ..............                  [ 75%]
+sdk/tests/test_ci_tools_requirements_guard.py .......                    [100%]
+
+============================== 29 passed in 0.18s ==============================
