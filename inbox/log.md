@@ -1,5 +1,55 @@
 # Inbox Log
 
+## 2026-09-25 | Claude Code | PR #775
+
+- Shipped: Recorded 1.4.0 as published: `memory/state.md`, `proof/v1.4.0/PUBLICATION.md` (PyPI attestations, clean install, Windows/macOS/Linux run 36190628659), roadmap and follow-ups.
+- Decisions: No docs-only release. The next release waits for an SDK change.
+- Blockers: `agentguard --version` exits 2 and needs owner approval to add.
+
+## 2026-09-25 | Claude Code | PR #774
+
+- Shipped: AG-17 repo slice. `publish.yml` dispatches `published-wheel.yml`, which runs the exact PyPI wheel offline on Windows, macOS, and Linux. First v1.4.0 run passed 4/4.
+- Decisions: Dispatch only, no schedule, so no recurring clone noise.
+- Blockers: Outside testers and a PowerShell walkthrough still need people.
+
+## 2026-09-25 | Claude Code | PR #773
+
+- Shipped: AG-19 repo slice. CONTRIBUTING has a one-session provider usage fixture path; a doc test runs its snippets.
+- Decisions: The example asserts token buckets and table cost, not only the source.
+- Blockers: Posts, 7/14-day readbacks, and outside reports need the owner.
+
+## 2026-09-25 | Claude Code | PR #764
+
+- Shipped: `next-ticket` skill for Claude, Cursor, Codex, and Copilot.
+- Decisions: It follows #729's ordered sequence and skips held tickets such as AG-06.
+- Blockers: None.
+
+## 2026-09-25 | Claude Code | PR #760
+
+- Shipped: Owner TLDR after every merge; inbox entries for #758 and #759.
+- Decisions: Process only.
+- Blockers: None.
+
+## 2026-09-25 | Claude Code | PR #762
+
+- Shipped: Inbox entry for the AG-03 merge (#761).
+- Decisions: Inbox only.
+- Blockers: None.
+
+## 2026-09-25 | Claude Code | PR #724
+
+- Shipped: Restored the ChromaDB advisory disclosure for the optional CrewAI extra in README, PyPI README, and the CrewAI guide.
+- Decisions: Base installs are unaffected; tracked in #644.
+- Blockers: PyPI shows it only after the next release.
+
+## 2026-09-25 | Claude Code | PR #728
+
+- Shipped: Scorecard fixes: pinned eval action, hashed MCP budget deps, Claude review diff over the GitHub API with visible CLI errors.
+- Decisions: CI now fails if `mcp-budget.in` drifts from `agentguard-mcp` deps.
+- Blockers: Fuzzing, CII, Signed-Releases remain; see FOLLOWUP.
+
+Also closed `#767`: #735 (AG-06) is open and held.
+
 ## 2026-09-25 - AgentGuard release distribution
 
 - Agent: OpenAI | GPT-6 | auto.
