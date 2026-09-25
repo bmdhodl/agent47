@@ -62,7 +62,7 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
    - Resolve the GitHub review thread once the fix is on the branch. Issue comments get an explicit reply; review threads get **Resolve conversation**.
    - Repeat until zero unresolved threads remain. A later comment restarts the loop.
    - Do not ask for merge while comments are still open.
-9. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits.
+9. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits. When the owner says to pull or work the next ticket, follow `.agents/skills/next-ticket/SKILL.md`.
 10. **Write only high-signal inbox updates.** If the cofounder agent should know about a material SDK blocker or milestone, append one concise entry to `inbox/log.md` after the merged PR instead of writing a long narrative.
 
 ## Commands

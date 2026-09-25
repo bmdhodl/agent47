@@ -1,5 +1,8 @@
 # AgentGuard Copilot Review Instructions
 
+When the owner says to pull or work the next ticket, follow
+`.agents/skills/next-ticket/SKILL.md`.
+
 Review this repo as a public SDK + MCP project, not as the private dashboard.
 
 Priorities:
