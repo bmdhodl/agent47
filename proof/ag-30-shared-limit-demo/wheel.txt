@@ -1,0 +1,6 @@
+command: .venv/ag30-wheel/bin/python -c import version
+version 1.4.0
+module /workspace/.venv/ag30-wheel/lib/python3.12/site-packages/agentguard/__init__.py
+platform Linux-6.12.94+-x86_64-with-glibc2.39
+python 3.12.3
+exit:0
