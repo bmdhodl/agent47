@@ -407,4 +407,5 @@ def test_site_patch_examples_pass_a_budget_guard():
                 depth += {"(": 1, ")": -1}.get(text[end], 0)
                 end += 1
             call = text[match.start():end]
+            assert depth == 0, f"{path.name}: unmatched parens in {call[:80]}"
             assert "budget_guard=" in call, f"{path.name}: {call}"
