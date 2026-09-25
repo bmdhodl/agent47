@@ -157,6 +157,7 @@ def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:
     assert "gh pr diff" not in text
     assert "--allow-escape-sequences" not in text
     assert "2>/tmp/review.err" in text
+    assert "| python .github/claude-review/filter_diff.py > /tmp/pr.diff" in text
 
 
 def test_github_actions_under_dot_github_are_pinned() -> None:
