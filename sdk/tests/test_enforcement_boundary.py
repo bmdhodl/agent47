@@ -403,7 +403,7 @@ def test_site_patch_examples_pass_a_budget_guard():
         text = _strip_tags(path.read_text(encoding="utf-8"))
         for match in re.finditer(r"patch_(?:openai|anthropic)\(", text):
             depth, end = 1, match.end()
-            while depth:
+            while depth and end < len(text):
                 depth += {"(": 1, ")": -1}.get(text[end], 0)
                 end += 1
             call = text[match.start():end]

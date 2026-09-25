@@ -55,7 +55,37 @@
     }
     </script>
 
-    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      (function() {
+        var host = window.location.hostname;
+        var isLocalHost =
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host === '::1' ||
+          window.location.protocol === 'file:';
+        var isAllowedHost =
+          host === 'agentguard47.com' ||
+          host === 'www.agentguard47.com' ||
+          host.endsWith('.vercel.app');
+
+        if (isLocalHost || !isAllowedHost) {
+          return;
+        }
+
+        function loadInsights() {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = '/_vercel/insights/script.js';
+          document.head.appendChild(script);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadInsights, { once: true });
+        } else {
+          loadInsights();
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
