@@ -1,5 +1,13 @@
 # Inbox Log
 
+## 2026-09-25 | Claude Code
+
+- Merged `#728` (CI/Scorecard pins, API diff for Claude review), `#724` (ChromaDB disclosure for the CrewAI extra), `#762`, `#760`, `#764` (next-ticket skill follows #729's order and skips held AG-06), `#773` (AG-19: one-session contributor fixture path), and `#774` (AG-17: published wheel runs on Windows, macOS, and Linux after each publish). Closed `#767`.
+- v1.4.0 is published and verified: PyPI attestations, clean install, and all four OS/Python matrix jobs pass. Receipts: `proof/v1.4.0/PUBLICATION.md`.
+- Decisions: no docs-only release. The next release waits for an SDK change. `agentguard --version` needs owner approval.
+- Blockers: AG-17 testers, AG-19 posts, and the AG-08 gate need people, not agents.
+- Sign-off: Claude Code | auto
+
 ## 2026-09-25 - AgentGuard release distribution
 
 - Agent: OpenAI | GPT-6 | auto.

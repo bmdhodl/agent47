@@ -12,5 +12,7 @@ exit=0
 
 Demo and report output is ASCII-only, so Windows cp1252 pipes cannot fail on encoding.
 
-Windows and macOS were not run from this environment. After merge, dispatch
-`published-wheel.yml` with `tag=v1.4.0` and record the run URL here.
+After merge (#774), `published-wheel.yml` was dispatched with `tag=v1.4.0`:
+run 36190628659 (https://github.com/bmdhodl/agent47/actions/runs/36190628659).
+All four jobs passed: windows-latest 3.12, macos-latest 3.12, ubuntu-latest
+3.12, ubuntu-latest 3.9.

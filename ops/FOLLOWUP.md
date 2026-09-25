@@ -5,10 +5,15 @@
   do not change SDK or MCP runtime code solely to chase that directory signal.
 - Apply [docs/guides/bmdpat-measurement-contract.md](../docs/guides/bmdpat-measurement-contract.md)
   in the bmdpat classifier so landing-page hits stop arriving as `install_intent`.
-- 1.4.0 candidate is the merged AG-01 through AG-05 slice. Do not tag it
-  from this prep branch until `make release-guard` is green and the owner
-  chooses the tag. AG-06 stays open: it needs an approved public API, and
-  the week-four gate has no external repeat user, so later adapters stay held.
+- 1.4.0 shipped 2026-09-24 (AG-01 through AG-05). AG-06 stays open: it
+  needs an approved public API, and the week-four gate has no external repeat
+  user, so later adapters stay held.
+- `agentguard --version` exits 2 on the published 1.4.0 wheel. It is a common
+  first command after install (AG-17). Adding the flag needs owner approval
+  because it is new CLI surface.
+- The v1.4.0 GitHub Release has an unsigned PNG asset
+  (`agentguard-1.4.0.png`), which keeps Scorecard Signed-Releases at 0. Host
+  release images outside release assets from now on.
 - AG-05 / #734 reserves store-backed streams on the AG-04 ledger. Windows was not executed for the stream spawn
   race; Linux was. The AG-04 non-stream race has the same Windows gap.
 - Claude PR review truncates `gh pr diff` at 200k bytes and `.showwork`
