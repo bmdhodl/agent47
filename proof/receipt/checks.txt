@@ -1,5 +1,5 @@
 $ pytest sdk/tests
-======================= 1215 passed, 6 skipped in 30.11s =======================
+======================= 1217 passed, 6 skipped in 29.12s =======================
 $ python scripts/sdk_preflight.py
 ============================== 5 passed in 0.03s ===============================
 $ python scripts/review_readiness_guard.py

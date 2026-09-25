@@ -1,0 +1,1 @@
+{"session": "receipt-review", "ts": "2026-09-25T23:52:42", "claim": "Receipt rows stay within width for long trace names; hook stops render", "severity": "RED", "check": {"type": "command", "argv": ["python", "proof/receipt/verify.py"], "expect_exit": 0, "stdout_contains": "receipt claims hold"}, "prev": "d1248cc1051364a0e8182823ecf4135bb826d8f860bbd160ee987996fde39fe9"}

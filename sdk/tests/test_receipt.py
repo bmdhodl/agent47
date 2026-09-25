@@ -86,3 +86,32 @@ def test_cli_receipt_empty_trace_exits(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["agentguard", "receipt", str(empty)])
     with pytest.raises(SystemExit, match="No events"):
         cli.main()
+
+
+def test_long_trace_name_stays_within_width(tmp_path):
+    path = tmp_path / ("a-very-long-trace-file-name-from-a-ci-job-" * 2 + ".jsonl")
+    path.write_text(json.dumps({"kind": "event", "name": "tool.call"}) + "\n", encoding="utf-8")
+    text = render(build_receipt(str(path)))
+    assert all(len(line) <= WIDTH for line in text.splitlines())
+    assert "trace ...-file-name-from-a-ci-job-.jsonl" in text
+
+
+def test_hook_stops_render_from_structured_data(tmp_path):
+    events = [
+        {"kind": "event", "name": "tool.call", "data": {"tool_name": "Bash"}},
+        {"kind": "event", "name": "guard.loop_detected",
+         "data": {"tool_name": "Bash(npm test)", "repeats": 2, "limit": 2}},
+        {"kind": "event", "name": "guard.retry_limit_exceeded",
+         "data": {"tool_name": "Bash(make)", "failures": 2, "limit": 2}},
+        {"kind": "event", "name": "guard.budget_exceeded",
+         "data": {"calls_used": 300, "limit_calls": 300}},
+    ]
+    receipt = build_receipt(str(_write(tmp_path, events)))
+    assert [s["detail"] for s in receipt["stops"]] == [
+        "Bash(npm test) x2, same args",
+        "Bash(make) failed 2x, limit 2",
+        "300 calls, limit 300",
+    ]
+    text = render(receipt)
+    assert "tool calls" in text and "llm calls" not in text
+    assert all(len(line) <= WIDTH for line in text.splitlines())

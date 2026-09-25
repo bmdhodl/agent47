@@ -15,8 +15,8 @@ STOPPED
 ----------------------------------------
 guard stops                            3
 
-▎▉▍▏▏▉▌▊▋▎▋▉▍▋▋▋▌▍▏▎▎▌▉▍▍▎▋█▉▎▌▋▊███▏▍▏▉
-          1628 8E35 C14E ACC4
+▎▊▏▎▌▌█▊▉▊█▌▏▍▏▊▋▍▎▍▍▋▍▏▉▋▍▍▉▌▋▎▌▋▎▎▏▎▎▉
+          9589 3375 E57B 020D
   sha256 of trace - agentguard47 1.4.1
 ```
 <sub>Recorded by [AgentGuard47](https://github.com/bmdhodl/agent47). Cost is what the trace recorded, not an invoice.</sub>
