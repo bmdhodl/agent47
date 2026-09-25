@@ -1,0 +1,4 @@
+# Hashed runtime deps for the CI mcp-budget job (Python 3.12).
+# Keep this file out of ci-tools.in; that lock must stay installable on Python 3.9.
+# pytest and ruff stay in ci-tools.txt and are installed first in the job.
+mcp>=1.23,<2

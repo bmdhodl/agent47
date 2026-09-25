@@ -1,0 +1,1 @@
+{"session": "pr728-mcp-manifest-drift", "ts": "2026-09-25T20:49:53", "claim": "CI guardrail ties mcp-budget.in to agentguard-mcp pyproject dependencies", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/tests/test_ci_guardrails.py", "pattern": "missing from mcp-budget.in"}, "prev": "dc126effdc59b75e0a2db1d3cc23e2632f0c6b23c9d6f7e50c0e0b10c4a76f4d"}

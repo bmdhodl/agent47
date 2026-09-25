@@ -48,9 +48,10 @@ mcp:
 # Test the Python MCP budget server package (requires Python 3.10+)
 mcp-budget:
 	python -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 'agentguard-mcp requires Python >=3.10')"
-	python -m pip install -e ./agentguard-mcp
-	cd agentguard-mcp && python -m ruff check agentguard_mcp tests
-	cd agentguard-mcp && python -m pytest
+	python -m pip install --require-hashes -r .github/requirements/ci-tools.txt
+	python -m pip install --require-hashes -r .github/requirements/mcp-budget.txt
+	cd agentguard-mcp && PYTHONPATH=. python -m ruff check agentguard_mcp tests
+	cd agentguard-mcp && PYTHONPATH=. python -m pytest
 
 # Security lint (bandit)
 security:

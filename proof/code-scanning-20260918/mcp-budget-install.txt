@@ -1,0 +1,47 @@
+hashed_install_ok
+Name: mcp
+Version: 1.30.0
+Summary: Model Context Protocol SDK
+Home-page: https://modelcontextprotocol.io
+Author: Anthropic, PBC.
+Author-email: 
+License: MIT
+Location: /workspace/.venv/mcp-ci/lib/python3.12/site-packages
+Requires: anyio, httpx, httpx-sse, jsonschema, pydantic, pydantic-settings, pyjwt, python-multipart, sse-starlette, starlette, typing-extensions, typing-inspection, uvicorn
+Required-by: 
+---
+Name: pytest
+Version: 8.4.2
+Summary: pytest: simple powerful testing with Python
+Home-page: https://docs.pytest.org/en/latest/
+Author: Holger Krekel, Bruno Oliveira, Ronny Pfannschmidt, Floris Bruynooghe, Brianna Laugher, Florian Bruhin, Others (See AUTHORS)
+Author-email: 
+License: MIT
+Location: /workspace/.venv/mcp-ci/lib/python3.12/site-packages
+Requires: iniconfig, packaging, pluggy, pygments
+Required-by: pytest-cov
+---
+Name: ruff
+Version: 0.15.13
+Summary: An extremely fast Python linter and code formatter, written in Rust.
+Home-page: https://docs.astral.sh/ruff
+Author: 
+Author-email: "Astral Software Inc." <hey@astral.sh>
+License-Expression: MIT
+Location: /workspace/.venv/mcp-ci/lib/python3.12/site-packages
+Requires: 
+Required-by: 
+---mcp tests---
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /workspace/agentguard-mcp
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1
+collected 19 items
+
+tests/test_server.py ...                                                 [ 15%]
+tests/test_storage.py ..........                                         [ 68%]
+tests/test_sync.py ......                                                [100%]
+
+============================== 19 passed in 1.33s ==============================

@@ -1,0 +1,1 @@
+{"session": "code-scanning-ruff", "ts": "2026-09-18T16:06:08", "claim": "Pinned-actions test prefixes unused unpack", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/tests/test_ci_guardrails.py", "pattern": "_action, _, ref = uses.partition"}, "prev": "1c01107b54722842eeb0cd45f3803c2f7ec56903b8a8273d7f224a19ca6e480e"}

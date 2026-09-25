@@ -21,6 +21,14 @@
 - Record explicit external adoption evidence from three repeat users or design
   partners before broadening the SDK feature surface. Use issues, PRs, or
   user-provided proof; do not add telemetry to manufacture this signal.
+- OpenSSF Scorecard remainder after the code-scanning workflow pass: Fuzzing
+  (no ClusterFuzzLite on purpose), CII Best Practices still InProgress,
+  Code-Review depends on human approvals, Signed-Releases is 0 because older
+  GitHub Releases (`v1.3.0`, `v1.3.1`) attached unsigned proof png/zip files
+  (`v1.3.2` is notes-only; PyPI attestations do not count), and the optional
+  CrewAI extra still carries unresolved ChromaDB advisories tracked in `#644`.
+  Do not add a fuzzer or a fake CrewAI bump to chase those scores. Do not
+  upload more unsigned GitHub Release assets.
 - Reviewed 2026-08-15: deferred issue `#686`'s optional OAA-signed local trace
   proposal. The external draft is not adopted yet, and its reference path uses
   `PyJWT` plus `cryptography`; adding it would require an explicit optional
