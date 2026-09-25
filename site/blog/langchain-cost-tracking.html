@@ -56,100 +56,12 @@
     </script>
 
     <script defer src="/_vercel/insights/script.js"></script>
-    <style>
-      :root {
-        --bg: #f7f4ee;
-        --ink: #1e1b16;
-        --accent: #1b6c4a;
-        --muted: #6c645a;
-        --card: #ffffff;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
-        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
-        color: var(--ink);
-      }
-      .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 60px; }
-      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
-      .nav { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 14px; flex-wrap: wrap; }
-      .nav a { color: var(--accent); text-decoration: none; }
-      .nav a:hover { text-decoration: underline; }
-      .nav .sep { color: var(--muted); }
-      .muted { color: var(--muted); }
-      .meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
-      h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px; }
-      h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; line-height: 1.3; }
-      h3 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
-      @media (min-width: 640px) { h1 { font-size: 38px; } h2 { font-size: 26px; } h3 { font-size: 20px; } }
-      p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; }
-      @media (min-width: 640px) { p { font-size: 18px; } }
-      ul, ol { font-size: 16px; line-height: 1.7; padding-left: 24px; margin: 0 0 16px; }
-      @media (min-width: 640px) { ul, ol { font-size: 18px; } }
-      li { margin-bottom: 8px; }
-      strong { color: var(--ink); }
-      a { color: var(--accent); }
-      a:hover { text-decoration: underline; }
-      code {
-        background: #e8e2d6; padding: 2px 6px; border-radius: 4px;
-        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 0.88em;
-      }
-
-      /* Code blocks */
-      .code {
-        background: #0f1115; color: #e2e8f0; padding: 16px; border-radius: 12px;
-        font-family: "IBM Plex Mono", "Fira Code", monospace; font-size: 12px;
-        line-height: 1.7; overflow-x: auto; white-space: pre; margin: 16px 0 24px;
-      }
-      @media (min-width: 640px) { .code { padding: 20px 24px; font-size: 14px; } }
-      .code .kw { color: #c084fc; }
-      .code .fn { color: #60a5fa; }
-      .code .str { color: #4ade80; }
-      .code .comment { color: #6b7280; }
-
-      /* Callout box */
-      .callout {
-        background: var(--card); border-left: 4px solid var(--accent);
-        padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0;
-      }
-      .callout p { margin: 0; font-size: 15px; }
-      @media (min-width: 640px) { .callout p { font-size: 16px; } }
-
-      /* Step cards */
-      .step-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 24px 0; }
-      @media (min-width: 640px) { .step-grid { grid-template-columns: repeat(2, 1fr); } }
-      .step-card {
-        background: var(--card); padding: 20px; border-radius: 12px;
-        border: 1px solid #e8e2d6;
-      }
-      .step-card strong { display: block; margin-bottom: 8px; font-size: 16px; }
-      .step-card p { font-size: 14px; margin: 0; }
-
-      /* CTA section */
-      .cta-section {
-        background: var(--card); border: 1px solid #e8e2d6; border-radius: 12px;
-        padding: 24px; margin: 40px 0; text-align: center;
-      }
-      .cta-section h2 { margin-top: 0; }
-      .btn {
-        display: inline-block;
-        background: var(--accent); color: #fff; border: none; padding: 12px 18px;
-        border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none;
-        font-size: 15px; text-align: center;
-      }
-      .btn:hover { opacity: 0.9; text-decoration: none; }
-      .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-      .btn.secondary:hover { background: var(--accent); color: #fff; }
-      .cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
-
-      footer { margin-top: 48px; font-size: 14px; color: var(--muted); text-align: center; }
-      .footer-links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
-      .footer-links a { color: var(--accent); text-decoration: none; }
-      .footer-links a:hover { text-decoration: underline; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="../assets/site.css" />
   </head>
-  <body>
+  <body class="post">
     <div class="wrap">
       <nav class="nav">
         <a href="/">AgentGuard</a>
@@ -230,7 +142,7 @@ result = agent.<span class="fn">invoke</span>(
           </div>
           <div class="step-card">
             <strong>How cost is calculated</strong>
-            <p class="muted">AgentGuard's built-in <code>estimate_cost()</code> uses per-model pricing tables for GPT-4, GPT-4o, Claude, Gemini, and more. Updated regularly.</p>
+            <p class="muted">AgentGuard's built-in <code>estimate_cost()</code> uses the price table shipped with the SDK, covering OpenAI, Anthropic, Google, Meta, and Mistral models. An unknown model records $0 and emits a warning.</p>
           </div>
           <div class="step-card">
             <strong>What gets guarded</strong>
@@ -386,7 +298,7 @@ llm = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4"</span>,
         <div class="cta-section">
           <h2>Add cost tracking to your LangChain agent</h2>
           <p class="muted">One callback handler. Zero hard dependencies. Recorded-budget limits on instrumented LangChain paths, not an invoice cap.</p>
-<pre class="code" style="text-align: left; margin: 16px 0 0;">pip install agentguard47[langchain]</pre>
+<pre class="code">pip install agentguard47[langchain]</pre>
           <div class="cta-buttons">
             <a class="btn" href="https://github.com/bmdhodl/agent47" target="_blank" rel="noopener noreferrer">View on GitHub</a>
             <a class="btn secondary" href="https://pypi.org/project/agentguard47/" target="_blank" rel="noopener noreferrer">PyPI Package</a>

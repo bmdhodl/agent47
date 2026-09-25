@@ -3,27 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AgentGuard47 | Runtime Guardrails for Coding Agents</title>
+    <title>AgentGuard47 | Runtime limits for Python agents</title>
     <meta
       name="description"
-      content="Local-first Python runtime guardrails that stop coding agents from looping, retrying forever, timing out, or burning through budget."
+      content="A zero-dependency Python SDK that stops an agent's next call when it hits a spend, loop, retry, or time limit. Runs locally. MIT."
     />
     <link rel="canonical" href="https://agentguard47.com/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://agentguard47.com/" />
-    <meta property="og:title" content="AgentGuard47 | Runtime Guardrails for Coding Agents" />
+    <meta property="og:title" content="AgentGuard47 | Runtime limits for Python agents" />
     <meta
       property="og:description"
-      content="Install the free SDK, run local proof in 60 seconds, and add hosted control only when a team needs retained incidents, alerts, and remote kill."
+      content="Set limits on spend, repeated tool calls, retries, and time. When one trips, the next call raises instead of going out. Local, MIT, no account."
     />
     <meta property="og:site_name" content="AgentGuard47" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AgentGuard47 | Runtime Guardrails for Coding Agents" />
+    <meta name="twitter:title" content="AgentGuard47 | Runtime limits for Python agents" />
     <meta
       name="twitter:description"
-      content="Stop the next instrumented call at a recorded limit. No account, API key, or dashboard required for the first proof."
+      content="The agent gets three tries, not thirty. A zero-dependency Python SDK that stops the next call at the limit you set."
     />
 
     <script type="application/ld+json">
@@ -33,21 +33,20 @@
       "name": "AgentGuard47",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Any",
-      "description": "Local-first Python runtime guardrails for coding agents. Enforce budgets, stop repeated tool loops, cap retries, and write local trace reports before adding hosted incident control.",
+      "description": "Zero-dependency Python SDK that stops an agent's next call at a spend, loop, retry, or time limit, and writes a local trace of why.",
       "url": "https://agentguard47.com",
       "downloadUrl": "https://pypi.org/project/agentguard47/",
-      "softwareVersion": "1.3.2",
       "author": {
         "@type": "Organization",
         "name": "BMD PAT LLC",
         "url": "https://agentguard47.com"
       },
       "featureList": [
-        "Runtime budget enforcement",
-        "Loop detection",
-        "Retry control",
-        "Timeout enforcement",
-        "Local JSONL trace reports",
+        "Spend, token, and call budgets",
+        "Repeated tool-call detection",
+        "Retry caps",
+        "Timeouts",
+        "Local JSONL traces and reports",
         "Optional hosted incidents, alerts, and remote kill"
       ]
     }
@@ -62,7 +61,15 @@
           "name": "Do I need an account to try AgentGuard47?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. The first proof is local. Install agentguard47, run doctor, run demo, generate a raw quickstart file, and inspect a local report."
+            "text": "No. Install agentguard47, run agentguard doctor and agentguard demo, and read the local report. Nothing is sent anywhere."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is AgentGuard47 an invoice cap?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It checks calls that go through code you instrument. A request already in flight can still finish. Provider billing limits stay with the provider."
           }
         },
         {
@@ -70,15 +77,7 @@
           "name": "What does the hosted dashboard add?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The hosted control plane adds retained incidents, alerts, team visibility, and remote kill. The SDK still owns local runtime enforcement."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is AgentGuard47 generic observability?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "No. AgentGuard47 is focused on runtime budget, loop, retry, and timeout guardrails. It is built to stop bad agent runs, not to become a general tracing platform."
+            "text": "Retained incidents, alerts, team visibility, and remote kill. The SDK works without it."
           }
         }
       ]
@@ -87,706 +86,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
-    <style>
-      :root {
-        --black: #080708;
-        --black-soft: #111012;
-        --white: #f7f3ec;
-        --paper: #e8e2d6;
-        --red: #b20f1b;
-        --red-bright: #e23a45;
-        --steel: #c8c3bb;
-        --muted: #a7a09a;
-        --muted-dark: #706861;
-        --green: #61d394;
-        --line: rgba(247, 243, 236, 0.14);
-        --line-strong: rgba(247, 243, 236, 0.28);
-        --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        margin: 0;
-        color: var(--white);
-        background: var(--black);
-        font-family: "Sora", "Aptos", "Segoe UI", sans-serif;
-        letter-spacing: 0;
-      }
-
-      a {
-        color: inherit;
-      }
-
-      code,
-      pre,
-      .mono {
-        font-family: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
-      }
-
-      .page {
-        min-height: 100vh;
-        overflow: hidden;
-        background:
-          linear-gradient(90deg, rgba(255, 255, 255, 0.034) 1px, transparent 1px) 0 0 / 42px 42px,
-          linear-gradient(180deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px) 0 0 / 42px 42px,
-          linear-gradient(180deg, #080708 0%, #111012 52%, #080708 100%);
-      }
-
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 20;
-        border-bottom: 1px solid rgba(247, 243, 236, 0.12);
-        background: rgba(8, 7, 8, 0.9);
-        backdrop-filter: blur(14px);
-      }
-
-      .nav,
-      .section,
-      .hero,
-      .footer {
-        width: min(1160px, calc(100% - 28px));
-        margin: 0 auto;
-      }
-
-      .nav {
-        min-height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        font-weight: 800;
-      }
-
-      .mark {
-        width: 34px;
-        height: 34px;
-        border: 1px solid rgba(247, 243, 236, 0.34);
-        border-radius: 8px;
-        display: grid;
-        place-items: center;
-        color: var(--black);
-        font-size: 12px;
-        line-height: 1;
-        background:
-          linear-gradient(90deg, transparent 42%, var(--red) 42% 58%, transparent 58%),
-          linear-gradient(180deg, var(--white) 0 74%, var(--black) 74%);
-      }
-
-      .brand span {
-        color: var(--red-bright);
-      }
-
-      .navlinks {
-        display: none;
-        align-items: center;
-        gap: 18px;
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .navlinks a {
-        text-decoration: none;
-      }
-
-      .navlinks a:hover {
-        color: var(--white);
-      }
-
-      .nav-cta,
-      .btn {
-        min-height: 42px;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 0 16px;
-        color: var(--black);
-        background: var(--white);
-        text-decoration: none;
-        font-weight: 800;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      .btn:hover,
-      .nav-cta:hover {
-        background: #ffffff;
-      }
-
-      .btn-red {
-        color: var(--white);
-        background: var(--red);
-      }
-
-      .btn-red:hover {
-        background: var(--red-bright);
-      }
-
-      .btn-secondary {
-        color: var(--white);
-        background: transparent;
-        border-color: var(--line-strong);
-      }
-
-      .btn-secondary:hover {
-        color: var(--black);
-        background: var(--steel);
-      }
-
-      .hero {
-        position: relative;
-        padding: 34px 0 24px;
-      }
-
-      .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0 -18px auto auto;
-        width: min(48vw, 520px);
-        height: 430px;
-        opacity: 0.14;
-        pointer-events: none;
-        transform: skewX(-10deg);
-        background:
-          repeating-linear-gradient(90deg, rgba(247, 243, 236, 0.75) 0 3px, transparent 3px 8px),
-          linear-gradient(180deg, rgba(178, 15, 27, 0.46), transparent);
-      }
-
-      .hero-grid {
-        position: relative;
-        display: grid;
-        gap: 24px;
-        align-items: center;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: 1px solid rgba(247, 243, 236, 0.2);
-        border-radius: 8px;
-        padding: 7px 10px;
-        color: var(--steel);
-        background: rgba(247, 243, 236, 0.06);
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      .pulse {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--red-bright);
-        box-shadow: 0 0 0 6px rgba(226, 58, 69, 0.14);
-      }
-
-      h1,
-      h2,
-      h3,
-      p {
-        margin-top: 0;
-        letter-spacing: 0;
-      }
-
-      h1 {
-        max-width: 880px;
-        margin: 18px 0 16px;
-        color: var(--white);
-        font-size: clamp(3rem, 8.7vw, 6.85rem);
-        line-height: 0.94;
-        font-weight: 800;
-      }
-
-      h2 {
-        margin-bottom: 14px;
-        color: var(--white);
-        font-size: clamp(1.75rem, 3vw, 3.05rem);
-        line-height: 1.04;
-      }
-
-      h3 {
-        margin-bottom: 10px;
-        color: var(--white);
-        font-size: 1.05rem;
-      }
-
-      .lead {
-        max-width: 690px;
-        color: var(--steel);
-        font-size: clamp(1.04rem, 1.5vw, 1.28rem);
-        line-height: 1.58;
-      }
-
-      .hero-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 22px 0 18px;
-      }
-
-      .install-line {
-        max-width: 700px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        overflow: hidden;
-        background: rgba(247, 243, 236, 0.07);
-      }
-
-      .install-line code {
-        padding: 15px 16px;
-        color: var(--white);
-        font-size: 14px;
-        white-space: nowrap;
-        overflow-x: auto;
-      }
-
-      .copy-install {
-        min-height: 100%;
-        border: 0;
-        border-left: 1px solid var(--line);
-        border-radius: 0;
-      }
-
-      .copy-install.copied {
-        color: var(--black);
-        background: var(--green);
-      }
-
-      .proof-scene {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: linear-gradient(180deg, #111012, #0a090a);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-      }
-
-      .scene-top {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 0 14px;
-        border-bottom: 1px solid var(--line);
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .lights {
-        display: flex;
-        gap: 6px;
-      }
-
-      .lights span {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: var(--muted-dark);
-      }
-
-      .lights span:first-child {
-        background: var(--red-bright);
-      }
-
-      .terminal {
-        padding: 18px;
-        color: var(--steel);
-        font-size: 12px;
-        line-height: 1.7;
-      }
-
-      .terminal .ok {
-        color: var(--green);
-      }
-
-      .terminal .bad {
-        color: var(--red-bright);
-      }
-
-      .terminal .white {
-        color: var(--white);
-      }
-
-      .trace-card {
-        border-top: 1px solid var(--line);
-        display: grid;
-        gap: 1px;
-        background: var(--line);
-      }
-
-      .trace-row {
-        min-height: 48px;
-        display: grid;
-        grid-template-columns: 110px 1fr auto;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 14px;
-        background: rgba(8, 7, 8, 0.94);
-        color: var(--steel);
-        font-size: 12px;
-      }
-
-      .trace-row strong {
-        color: var(--white);
-      }
-
-      .status {
-        min-width: 74px;
-        border-radius: 8px;
-        padding: 5px 7px;
-        text-align: center;
-        color: var(--black);
-        background: var(--green);
-        font-weight: 800;
-      }
-
-      .status.stop {
-        color: var(--white);
-        background: var(--red);
-      }
-
-      .proof-strip {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 18px;
-      }
-
-      .metric,
-      .card {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(247, 243, 236, 0.055);
-      }
-
-      .metric {
-        min-height: 86px;
-        padding: 14px;
-      }
-
-      .metric strong {
-        display: block;
-        color: var(--white);
-        font-size: 1.28rem;
-      }
-
-      .metric span,
-      .muted {
-        color: var(--muted);
-      }
-
-      .section {
-        padding: 62px 0 0;
-      }
-
-      .section-head {
-        max-width: 760px;
-        margin-bottom: 22px;
-      }
-
-      .proof-path {
-        display: grid;
-        gap: 10px;
-      }
-
-      .step {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        display: grid;
-        grid-template-columns: 42px 1fr;
-        gap: 12px;
-        align-items: start;
-        padding: 14px;
-        background: rgba(247, 243, 236, 0.055);
-      }
-
-      .step-num {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: grid;
-        place-items: center;
-        color: var(--white);
-        background: var(--red);
-        font-weight: 800;
-      }
-
-      .step code {
-        display: block;
-        margin: 4px 0 0;
-        color: var(--white);
-        font-size: 13px;
-        overflow-wrap: anywhere;
-      }
-
-      .grid {
-        display: grid;
-        gap: 12px;
-      }
-
-      .card {
-        padding: 18px;
-      }
-
-      .card p {
-        color: var(--muted);
-        line-height: 1.58;
-      }
-
-      .guard-list {
-        display: grid;
-        gap: 12px;
-      }
-
-      .guard {
-        border-left: 4px solid var(--red);
-      }
-
-      .compare {
-        display: grid;
-        gap: 12px;
-      }
-
-      .compare-row {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        display: grid;
-        gap: 1px;
-        overflow: hidden;
-        background: var(--line);
-      }
-
-      .compare-row > div {
-        padding: 14px;
-        background: rgba(8, 7, 8, 0.94);
-      }
-
-      .compare-row strong {
-        color: var(--white);
-      }
-
-      .compare-row p {
-        margin-bottom: 0;
-        color: var(--muted);
-        line-height: 1.55;
-      }
-
-      .final {
-        margin-top: 70px;
-        padding: 28px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background:
-          linear-gradient(90deg, rgba(178, 15, 27, 0.22), transparent 52%),
-          rgba(247, 243, 236, 0.06);
-      }
-
-      .email-form {
-        display: grid;
-        gap: 10px;
-        margin-top: 16px;
-      }
-
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      .email-form input {
-        min-height: 44px;
-        border: 1px solid var(--line-strong);
-        border-radius: 8px;
-        padding: 0 14px;
-        color: var(--white);
-        background: rgba(8, 7, 8, 0.72);
-        font: inherit;
-      }
-
-      .form-status {
-        min-height: 20px;
-        margin: 0;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .form-status.error {
-        color: var(--red-bright);
-      }
-
-      .form-status.success {
-        color: var(--green);
-      }
-
-      .footer {
-        padding: 42px 0 54px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .footer-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-bottom: 14px;
-      }
-
-      .footer-links a {
-        color: var(--steel);
-        text-decoration: none;
-      }
-
-      .footer-links a:hover {
-        color: var(--white);
-      }
-
-      @media (min-width: 760px) {
-        .navlinks {
-          display: flex;
-        }
-
-        .hero {
-          padding-top: 54px;
-        }
-
-        .hero-grid {
-          grid-template-columns: minmax(0, 1.04fr) minmax(380px, 0.72fr);
-          gap: 30px;
-        }
-
-        .proof-strip {
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-        }
-
-        .proof-path {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .grid.three {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .grid.two {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .compare-row {
-          grid-template-columns: 0.82fr 1fr 1fr;
-        }
-
-        .email-form {
-          max-width: 560px;
-          grid-template-columns: 1fr auto;
-        }
-      }
-
-      @media (max-width: 759px) {
-        .nav {
-          min-height: 58px;
-        }
-
-        .nav-cta {
-          display: none;
-        }
-
-        .hero {
-          padding: 20px 0 16px;
-        }
-
-        h1 {
-          margin-top: 14px;
-          margin-bottom: 12px;
-          font-size: clamp(2.35rem, 11.8vw, 3.45rem);
-          line-height: 0.95;
-        }
-
-        .lead {
-          font-size: 0.96rem;
-          line-height: 1.44;
-        }
-
-        .hero-actions {
-          display: grid;
-          grid-template-columns: 1fr;
-          margin: 16px 0 12px;
-        }
-
-        .hero .hero-actions .btn-secondary {
-          display: none;
-        }
-
-        .install-line {
-          grid-template-columns: 1fr auto;
-        }
-
-        .install-line code {
-          padding: 12px 12px;
-          font-size: 12px;
-        }
-
-        .copy-install {
-          min-height: 100%;
-          border-left: 1px solid var(--line);
-          border-top: 0;
-          padding: 0 12px;
-        }
-
-        .terminal {
-          padding: 12px;
-          font-size: 11px;
-          line-height: 1.55;
-        }
-
-        .trace-row {
-          grid-template-columns: 1fr;
-          align-items: start;
-        }
-
-        .status {
-          justify-self: start;
-        }
-
-        .proof-strip {
-          display: none;
-        }
-
-        .section {
-          padding-top: 46px;
-        }
-
-        .final {
-          margin-top: 52px;
-          padding: 20px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="assets/site.css" />
     <script>
       (function() {
         var host = window.location.hostname;
@@ -820,260 +121,185 @@
     </script>
   </head>
   <body data-ag-metric="page-navigation">
-    <div class="page">
-      <header class="topbar">
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/" aria-label="AgentGuard47 home">
+          <svg viewBox="0 0 34 18" aria-hidden="true"><rect x="0" width="2" height="18"/><rect x="4" width="1" height="18"/><rect x="7" width="3" height="18"/><rect x="12" width="1" height="18"/><rect x="15" width="2" height="18"/><rect x="19" width="1" height="18"/><rect x="22" width="3" height="18"/><rect x="27" width="1" height="18"/><rect x="30" width="2" height="18"/><rect x="33" width="1" height="18"/></svg>
+          <span>AgentGuard<b>47</b></span>
+        </a>
         <nav class="nav" aria-label="Primary">
-          <a class="brand" href="/">
-            <span class="mark">47</span>
-            <strong>AgentGuard<span>47</span></strong>
-          </a>
-          <div class="navlinks">
-            <a href="/enforcement.html">Bounds</a>
-            <a href="/activation.html">How we count</a>
-            <a href="/quickstart.html">Quickstart</a>
-            <a href="/compare.html">Compare</a>
-            <a href="/trust.html">Trust</a>
-            <a href="/compare.html#pricing">Pricing</a>
-            <a href="https://bmdpat.com/blog">Blog</a>
-            <a href="https://app.agentguard47.com/sign-in">Sign in</a>
-          </div>
-          <a class="nav-cta" href="#local-proof">Run local proof</a>
-        </nav>
-      </header>
-
-      <main>
-        <section class="hero" id="top">
-          <div class="hero-grid">
-            <div>
-              <span class="eyebrow"><span class="pulse"></span> Local-first runtime guardrails</span>
-              <h1>Stop the next instrumented call at a recorded limit.</h1>
-              <p class="lead">
-                AgentGuard47 is a zero-dependency Python SDK that checks recorded
-                budgets, loops, retries, and timeouts in code you instrument. No
-                account, API key, or dashboard required for the first proof. This
-                is not an invoice cap or a host-wide kill switch.
-              </p>
-              <div class="hero-actions">
-                <a class="btn btn-red" href="#local-proof">Run proof in 60 seconds</a>
-                <a class="btn btn-secondary" href="https://github.com/bmdhodl/agent47">Inspect GitHub</a>
-              </div>
-              <div class="install-line">
-                <code id="install-command">pip install agentguard47</code>
-                <button class="btn copy-install" type="button" data-ag-metric="install-intent-candidate" onclick="copyText('install-command', this)">Copy install</button>
-              </div>
-              <p class="muted">Viewing this page is not an install. See <a href="/activation.html">how we count use</a>.</p>
-            </div>
-
-            <aside class="proof-scene" aria-label="AgentGuard local proof terminal">
-              <div class="scene-top">
-                <div class="lights"><span></span><span></span><span></span></div>
-                <span>agentguard demo</span>
-              </div>
-              <div class="terminal">
-                <div><span class="white">$</span> agentguard doctor</div>
-                <div class="ok">OK install verified</div>
-                <div><span class="white">$</span> agentguard demo</div>
-                <div class="bad">BudgetExceeded: call budget exceeded</div>
-                <div class="bad">LoopDetected: repeated tool path stopped</div>
-                <div class="ok">traces written to .agentguard/traces.jsonl</div>
-              </div>
-              <div class="trace-card">
-                <div class="trace-row">
-                  <strong>budget</strong>
-                  <span>max_calls=2 stopped the third call</span>
-                  <span class="status stop">STOPPED</span>
-                </div>
-                <div class="trace-row">
-                  <strong>loop</strong>
-                  <span>same tool args repeated</span>
-                  <span class="status stop">STOPPED</span>
-                </div>
-                <div class="trace-row">
-                  <strong>report</strong>
-                  <span>local JSONL trace and summary</span>
-                  <span class="status">LOCAL</span>
-                </div>
-              </div>
-            </aside>
-          </div>
-
-          <div class="proof-strip" aria-label="Proof points">
-            <div class="metric"><strong>0</strong><span>SDK runtime dependencies</span></div>
-            <div class="metric"><strong>MIT</strong><span>free SDK license</span></div>
-            <div class="metric"><strong>1.3.2</strong><span>latest PyPI release</span></div>
-            <div class="metric"><strong>local</strong><span>first proof path</span></div>
-          </div>
-        </section>
-
-        <section class="section" id="bounds">
-          <div class="section-head">
-            <span class="eyebrow">Tested bounds</span>
-            <h2>Recorded-budget preflight, not an invoice cap.</h2>
-            <p class="muted">
-              OpenAI Chat Completions and Anthropic Messages patches refuse an
-              exhausted recorded budget before the next dispatch. Sync
-              non-streaming OpenAI calls, and streamed calls that share a local
-              store, reserve one call before send. In-memory and async non-stream
-              requests do not. Direct SDK clients, host tools, the Responses API,
-              and provider subscription quotas are unsupported.
-              Read the <a href="/enforcement.html">enforcement boundary</a>.
-            </p>
-          </div>
-        </section>
-
-        <section class="section" id="local-proof">
-          <div class="section-head">
-            <span class="eyebrow">No-signup conversion path</span>
-            <h2>Give the skeptical developer proof before asking for anything.</h2>
-            <p class="muted">
-              The homepage points non-signup users at a concrete local sequence they can
-              copy into a clean Python environment and inspect without talking to us.
-            </p>
-          </div>
-          <div class="proof-path">
-            <div class="step">
-              <span class="step-num">1</span>
-              <div>
-                <strong>Verify install</strong>
-                <code>agentguard doctor</code>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-num">2</span>
-              <div>
-                <strong>Trip a guard</strong>
-                <code>agentguard demo</code>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-num">3</span>
-              <div>
-                <strong>Copy into an agent loop</strong>
-                <code>agentguard quickstart --framework raw --write</code>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <div class="section-head">
-            <span class="eyebrow">What it kills</span>
-            <h2>Four failure modes, one small SDK.</h2>
-          </div>
-          <div class="grid two guard-list">
-            <div class="card guard">
-              <h3>Budget burn</h3>
-              <p>Set call, token, or dollar ceilings before a coding agent turns a bad loop into a bill.</p>
-            </div>
-            <div class="card guard">
-              <h3>Tool loops</h3>
-              <p>Stop repeated tool calls and repeated argument paths while the run is still live.</p>
-            </div>
-            <div class="card guard">
-              <h3>Retry storms</h3>
-              <p>Cap retry attempts when a tool, provider, or repo step keeps failing the same way.</p>
-            </div>
-            <div class="card guard">
-              <h3>Timeout drift</h3>
-              <p>Make long-running agent work fail clearly instead of hanging until the operator notices.</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <div class="section-head">
-            <span class="eyebrow">Positioning</span>
-            <h2>Start local. Add hosted control only when the work becomes shared.</h2>
-          </div>
-          <div class="compare">
-            <div class="compare-row">
-              <div><strong>Free SDK</strong><p>Best first action</p></div>
-              <div><p>Run `doctor`, `demo`, and a generated quickstart file locally.</p></div>
-              <div><p>No account, no dashboard, no network requirement.</p></div>
-            </div>
-            <div class="compare-row">
-              <div><strong>Hosted dashboard</strong><p>When it matters</p></div>
-              <div><p>Use retained incidents, alerts, team visibility, and remote kill.</p></div>
-              <div><p>Useful after a workflow has real runs worth operating.</p></div>
-            </div>
-            <div class="compare-row">
-              <div><strong>Not generic observability</strong><p>Boundary</p></div>
-              <div><p>AgentGuard47 focuses on runtime enforcement and incident control.</p></div>
-              <div><p>It is not prompt management, eval orchestration, or a trace warehouse.</p></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <div class="section-head">
-            <span class="eyebrow">Copy this shape</span>
-            <h2>The real integration is small.</h2>
-          </div>
-          <div class="grid two">
-            <div class="card">
-              <h3>Plain Python</h3>
-              <pre class="terminal">import agentguard
-
-tracer = agentguard.init(
-    service="repo-coder",
-    budget_usd=5.00,
-    trace_file="traces.jsonl",
-    local_only=True,
-)
-
-with tracer.trace("agent.run") as span:
-    span.event("tool.call", data={"tool": "edit"})</pre>
-            </div>
-            <div class="card">
-              <h3>After local proof</h3>
-              <p>Open the quickstart for OpenAI, Anthropic, LangChain, LangGraph, CrewAI, or raw Python. Then connect the hosted dashboard only when the trace needs to be retained or shared.</p>
-              <div class="hero-actions">
-                <a class="btn btn-red" href="/quickstart.html">Open quickstart</a>
-                <a class="btn btn-secondary" href="https://app.agentguard47.com/sign-up">Start hosted trial</a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <div class="final">
-            <span class="eyebrow">Low-friction close</span>
-            <h2>Run the local proof. Keep the dashboard optional.</h2>
-            <p class="muted">
-              Developers who are not ready to sign up still leave with a working install
-              path, a trace file, and a guard they can copy into a real coding-agent loop.
-            </p>
-            <div class="hero-actions">
-              <a class="btn btn-red" href="/quickstart.html">Run quickstart</a>
-              <a class="btn btn-secondary" href="https://pypi.org/project/agentguard47/">View PyPI</a>
-            </div>
-            <div class="email-cta">
-              <p class="muted">
-                Field notes on running agents in production: what breaks, what it
-                costs, and what actually stops a runaway agent. Only when there is
-                something worth sending.
-              </p>
-              <a class="btn" href="https://bmdpat.com/tools/agentguard?utm_source=agentguard47&amp;utm_medium=site&amp;utm_campaign=field-notes">Get the field notes</a>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer class="footer">
-        <div class="footer-links">
-          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
-          <a href="https://pypi.org/project/agentguard47/">PyPI</a>
-          <a href="/enforcement.html">Bounds</a>
           <a href="/quickstart.html">Quickstart</a>
+          <a href="/enforcement.html">Limits</a>
           <a href="/compare.html">Compare</a>
           <a href="/trust.html">Trust</a>
           <a href="/compare.html#pricing">Pricing</a>
-          <a href="https://bmdpat.com/blog">Blog</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
           <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="top">
+        <div class="wrap">
+          <div>
+            <p class="kicker">Python SDK &middot; MIT &middot; zero dependencies</p>
+            <h1>The agent gets three tries. <em>Not thirty.</em></h1>
+            <p class="lead">
+              Set limits on spend, repeated tool calls, retries, and time. When
+              one is hit, the agent's next call raises an exception instead of
+              going out.
+            </p>
+            <p>Runs in your process. No account, no API key, no proxy.</p>
+            <div class="install">
+              <code id="install-command">pip install agentguard47</code>
+              <button class="copy" type="button" data-ag-metric="install-intent-candidate" onclick="copyText('install-command', this)">Copy</button>
+            </div>
+            <div class="links">
+              <a href="#try">Try it offline</a>
+              <a href="/quickstart.html">Quickstart</a>
+              <a href="https://github.com/bmdhodl/agent47">Source on GitHub</a>
+            </div>
+            <p class="fine">Viewing this page is not an install. <a href="/activation.html">How we count use</a>.</p>
+          </div>
+
+          <figure class="receipt" aria-label="Receipt from an agentguard demo run">
+            <h3>AgentGuard47</h3>
+            <div class="sub">Run receipt &middot; agentguard demo</div>
+            <hr />
+            <div class="row"><span>budget cap</span><span>$1.00</span></div>
+            <div class="row"><span>warning at 84%</span><span>$0.84</span></div>
+            <div class="row"><span>call 9 &middot; $1.08</span><span class="stop">STOPPED</span></div>
+            <hr />
+            <div class="row"><span>tool.search &times;3, same args</span><span class="stop">STOPPED</span></div>
+            <div class="row"><span>fetch_docs retry 3 of 2</span><span class="stop">STOPPED</span></div>
+            <hr />
+            <div class="row total"><span>guard stops</span><span>3</span></div>
+            <div class="row"><span>network calls</span><span>0</span></div>
+            <div class="row"><span>trace</span><span>jsonl, local</span></div>
+            <svg viewBox="0 0 168 40" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="2" height="40"/><rect x="4" width="1" height="40"/><rect x="7" width="3" height="40"/><rect x="12" width="2" height="40"/><rect x="16" width="3" height="40"/><rect x="20" width="3" height="40"/><rect x="25" width="2" height="40"/><rect x="29" width="2" height="40"/><rect x="33" width="1" height="40"/><rect x="35" width="1" height="40"/><rect x="38" width="3" height="40"/><rect x="42" width="2" height="40"/><rect x="45" width="1" height="40"/><rect x="47" width="1" height="40"/><rect x="50" width="2" height="40"/><rect x="54" width="1" height="40"/><rect x="56" width="1" height="40"/><rect x="58" width="3" height="40"/><rect x="63" width="2" height="40"/><rect x="67" width="2" height="40"/><rect x="70" width="3" height="40"/><rect x="74" width="2" height="40"/><rect x="78" width="3" height="40"/><rect x="82" width="3" height="40"/><rect x="86" width="1" height="40"/><rect x="88" width="1" height="40"/><rect x="91" width="1" height="40"/><rect x="94" width="1" height="40"/><rect x="96" width="2" height="40"/><rect x="100" width="2" height="40"/><rect x="103" width="1" height="40"/><rect x="106" width="3" height="40"/><rect x="110" width="2" height="40"/><rect x="114" width="3" height="40"/><rect x="119" width="1" height="40"/><rect x="121" width="3" height="40"/><rect x="125" width="1" height="40"/><rect x="127" width="3" height="40"/><rect x="132" width="3" height="40"/><rect x="136" width="2" height="40"/><rect x="140" width="2" height="40"/><rect x="144" width="2" height="40"/><rect x="148" width="1" height="40"/><rect x="151" width="3" height="40"/><rect x="156" width="2" height="40"/><rect x="160" width="1" height="40"/><rect x="162" width="3" height="40"/><rect x="166" width="1" height="40"/></svg>
+            <div class="hash">E14B 254B 3AEA BAE3</div>
+            <div class="src">From the offline demo in agentguard47 1.4.0. Your hash will differ.</div>
+          </figure>
         </div>
-        <p>AgentGuard47 by BMD PAT LLC. MIT-licensed SDK. Hosted control plane when teams need retained incidents, alerts, and remote kill.</p>
-      </footer>
-    </div>
+      </section>
+
+      <section class="block" id="try">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">01</div>
+            <h2>Try it offline</h2>
+            <p>Three commands. No keys, no network, nothing sent anywhere.</p>
+          </div>
+          <div id="local-proof">
+<pre class="term"><span class="p">$</span> pip install agentguard47
+<span class="p">$</span> agentguard doctor      <span class="c"># checks the install and trace writing</span>
+<span class="p">$</span> agentguard demo        <span class="c"># trips budget, loop, and retry limits</span>
+<span class="r">  stopped on call 9: cost $1.08 exceeded $1.00</span>
+<span class="p">$</span> agentguard quickstart --framework raw --write</pre>
+            <p class="after">
+              The last command writes a starter file for your repo. Quickstarts
+              cover OpenAI, Anthropic, LangChain, LangGraph, and plain Python.
+              <a href="/quickstart.html">Open the quickstart</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">02</div>
+            <h2>What it stops</h2>
+            <p>Each limit raises its own exception. Catch it, log it, or let the run end.</p>
+          </div>
+          <ul class="stops">
+            <li><code>BudgetExceeded</code><p>Spend, tokens, or call count passed the cap you set.<small>A coding agent re-running the same failing test forty times.</small></p></li>
+            <li><code>LoopDetected</code><p>The same tool was called with the same arguments too many times.<small>search("python asyncio"), search("python asyncio"), search("python asyncio").</small></p></li>
+            <li><code>RetryLimitExceeded</code><p>A tool kept failing and kept getting retried.<small>An API that returns 500 and a retry loop with no ceiling.</small></p></li>
+            <li><code>TimeoutExceeded</code><p>The run took longer than you allowed.<small>A job that should take two minutes, still going at midnight.</small></p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">03</div>
+            <h2>Two lines around your client</h2>
+            <p>Patch the OpenAI or Anthropic client once. Every chat call after that counts against the limit.</p>
+          </div>
+<pre class="term">from agentguard import BudgetExceeded, BudgetGuard, Tracer, patch_openai
+from openai import OpenAI
+
+<span class="r">patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=20))</span>
+client = OpenAI()
+
+try:
+    while agent_wants_more():
+        client.chat.completions.create(model="gpt-4o-mini", messages=history)
+except BudgetExceeded as stop:
+    print(stop)  <span class="c"># call 21 was refused before it was sent</span></pre>
+        </div>
+      </section>
+
+      <section class="block" id="bounds">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">04</div>
+            <h2>What it won't do</h2>
+            <p>Written down so you don't find out in production.</p>
+          </div>
+          <div>
+            <ul class="nots">
+              <li class="yes">It checks calls that go through code you instrument: patched OpenAI and Anthropic clients, LangChain, LangGraph, or your own <code>check()</code> calls.</li>
+              <li>It is not a proxy and does not watch the whole machine. Calls that skip the SDK are not counted.</li>
+              <li>It is not an invoice cap. A dollar or token budget counts usage after each call returns, so the call that crosses the line can finish. With a shared local store, sync OpenAI calls and streams reserve before they are sent.</li>
+              <li>The OpenAI Responses API and Agents SDK are not supported yet.</li>
+            </ul>
+            <div class="more">
+              <a href="/enforcement.html">Full list of tested limits</a>
+              <a href="https://github.com/bmdhodl/agent47/blob/main/docs/compatibility.md">Version compatibility</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="team">
+        <div class="wrap">
+          <div>
+            <div class="num">05</div>
+            <h2>For teams</h2>
+            <p>
+              The hosted dashboard keeps incidents, sends alerts, and can stop a
+              run remotely. The SDK does not need it.
+            </p>
+          </div>
+          <div class="links">
+            <a class="btn red" href="https://app.agentguard47.com/sign-up">Start hosted trial</a>
+            <a class="btn" href="/compare.html#pricing">Pricing</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <div class="wrap">
+        <nav aria-label="Footer">
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="https://pypi.org/project/agentguard47/">PyPI</a>
+          <a href="/quickstart.html">Quickstart</a>
+          <a href="/enforcement.html">Limits</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Trust</a>
+          <a href="/activation.html">How we count use</a>
+          <a href="https://bmdpat.com/blog">Blog</a>
+          <a href="https://bmdpat.com/tools/agentguard?utm_source=agentguard47&amp;utm_medium=site&amp;utm_campaign=field-notes">Release notes by email</a>
+          <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+        </nav>
+        <p>AgentGuard47 by BMD PAT LLC. The SDK is MIT licensed.</p>
+      </div>
+    </footer>
 
     <script>
       function setButtonState(button, label) {

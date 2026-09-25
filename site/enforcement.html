@@ -3,81 +3,152 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Enforcement boundary — AgentGuard47</title>
-    <meta
-      name="description"
-      content="Tested AgentGuard bounds: recorded-budget preflight on patched Chat Completions and Messages. One store-backed OpenAI path reserves a call. Not an invoice cap or host interceptor."
-    />
+    <title>Limits | AgentGuard47</title>
+    <meta name="description" content="Tested AgentGuard bounds: recorded-budget preflight on patched Chat Completions and Messages. One store-backed OpenAI path reserves a call. Not an invoice cap or host interceptor." />
     <link rel="canonical" href="https://agentguard47.com/enforcement.html" />
-    <style>
-      :root {
-        --bg: #f7f4ee;
-        --ink: #1e1b16;
-        --accent: #1b6c4a;
-        --muted: #6c645a;
-        --card: #ffffff;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: "IBM Plex Sans", "Space Grotesk", "Avenir", sans-serif;
-        background: radial-gradient(circle at 20% 10%, #f0efe9 0%, var(--bg) 55%);
-        color: var(--ink);
-      }
-      .wrap { max-width: 860px; margin: 0 auto; padding: 32px 16px 60px; }
-      @media (min-width: 640px) { .wrap { padding: 56px 24px 80px; } }
-      a { color: var(--accent); }
-      h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; }
-      h2 { margin-top: 36px; font-size: 20px; }
-      p, li { font-size: 16px; line-height: 1.6; }
-      .muted { color: var(--muted); }
-      table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
-      th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e8e2d6; vertical-align: top; }
-      th { background: rgba(0,0,0,0.02); }
-      code { font-size: 0.92em; }
-    </style>
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://agentguard47.com/enforcement.html" />
+    <meta property="og:title" content="Limits | AgentGuard47" />
+    <meta property="og:description" content="Tested AgentGuard bounds: recorded-budget preflight on patched Chat Completions and Messages. One store-backed OpenAI path reserves a call. Not an invoice cap or host interceptor." />
+    <meta property="og:site_name" content="AgentGuard47" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script>
+      (function() {
+        var host = window.location.hostname;
+        var isLocalHost =
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host === '::1' ||
+          window.location.protocol === 'file:';
+        var isAllowedHost =
+          host === 'agentguard47.com' ||
+          host === 'www.agentguard47.com' ||
+          host.endsWith('.vercel.app');
+
+        if (isLocalHost || !isAllowedHost) {
+          return;
+        }
+
+        function loadInsights() {
+          var script = document.createElement('script');
+          script.async = false;
+          script.src = '/_vercel/insights/script.js';
+          document.head.appendChild(script);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadInsights, { once: true });
+        } else {
+          loadInsights();
+        }
+      })();
+    </script>
   </head>
   <body>
-    <div class="wrap">
-      <p><a href="/">← AgentGuard47</a></p>
-      <h1>Enforcement boundary</h1>
-      <p class="muted">
-        Recorded-budget preflight refuses the next instrumented call when stored
-        usage is already at a cap. Sync, non-streaming OpenAI Chat Completions
-        and store-backed streams that share a StateStore reserve one call before
-        send. In-memory and async non-stream paths do not reserve concurrent
-        in-flight requests. This does not predict the next response, intercept
-        host tools, or cap a provider subscription quota.
-      </p>
-      <h2>Classes</h2>
-      <table>
-        <tr><th>Class</th><th>Meaning</th></tr>
-        <tr><td>advisory</td><td>Reports or records after the fact. Does not refuse the action that just ran.</td></tr>
-        <tr><td>recorded-budget preflight</td><td>Refuses the next instrumented action at a recorded token/call/cost cap. <code>check()</code> does not reserve concurrent in-flight requests.</td></tr>
-        <tr><td>recorded-event preflight</td><td>Refuses the next instrumented action at a recorded loop, retry, timeout, or rate cap. Not a token budget.</td></tr>
-        <tr><td>reservation-backed</td><td>Holds capacity before in-flight work.</td></tr>
-        <tr><td>unsupported</td><td>Not intercepted. Do not advertise a stop here.</td></tr>
-      </table>
-      <h2>Supported vs remaining exposure</h2>
-      <ul>
-        <li>OpenAI Chat Completions with a shared StateStore, sync and non-streaming: reserves one call before send. Not an invoice cap.</li>
-        <li>OpenAI and Anthropic streams with a shared StateStore: reserve one call before send. Missing usage, an early stop, or a partial usage chunk under a token or dollar cap stays unresolved.</li>
-        <li>In-memory patches, async non-stream calls, and Anthropic non-stream calls: recorded-budget preflight.</li>
-        <li>LangChain LLM callbacks: advisory. Usage is recorded after the model returns.</li>
-        <li>LangChain tool callbacks: recorded-budget preflight for an exhausted <em>call</em> budget only.</li>
-        <li>LangGraph <code>guarded_node</code>: recorded-budget preflight via <code>consume(calls=1)</code> at node entry. A dollar-only guard does not fire.</li>
-        <li>CrewAI handler: advisory. The step callback runs after the step.</li>
-        <li>CLI <code>demo</code> budget path: advisory. It records <code>llm.result</code> then <code>consume()</code>.</li>
-        <li>Skillpacks and coding-agent hosts: unsupported as enforcement.</li>
-        <li>OpenAI Responses API: unsupported.</li>
-        <li>Provider subscription quota: unsupported.</li>
-      </ul>
-      <p>
-        Full map, tests, and reproductions:
-        <a href="https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md">docs/enforcement-boundary.md</a>.
-        How we count use:
-        <a href="/activation.html">activation.html</a>.
-      </p>
-    </div>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/" aria-label="AgentGuard47 home">
+          <svg viewBox="0 0 34 18" aria-hidden="true"><rect x="0" width="2" height="18"/><rect x="4" width="1" height="18"/><rect x="7" width="3" height="18"/><rect x="12" width="1" height="18"/><rect x="15" width="2" height="18"/><rect x="19" width="1" height="18"/><rect x="22" width="3" height="18"/><rect x="27" width="1" height="18"/><rect x="30" width="2" height="18"/><rect x="33" width="1" height="18"/></svg>
+          <span>AgentGuard<b>47</b></span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="/quickstart.html">Quickstart</a>
+          <a href="/enforcement.html" aria-current="page">Limits</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Trust</a>
+          <a href="/compare.html#pricing">Pricing</a>
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-head">
+        <div class="wrap">
+          <p class="kicker">Limits</p>
+          <h1>What each path stops</h1>
+          <p class="lead">Recorded-budget preflight refuses the next instrumented call once stored usage is at a cap. Sync, non-streaming OpenAI Chat Completions and store-backed streams that share a StateStore reserve one call before send. In-memory and async non-stream paths do not reserve concurrent in-flight requests. Nothing here predicts the next response, intercepts host tools, or caps a provider subscription quota.</p>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">01</div>
+            <h2>Classes</h2>
+            <p>Every path below is one of these.</p>
+          </div>
+          <div class="table-wrap">
+            <table class="plain stack">
+              <tbody>
+                <tr><td><span class="tag now">advisory</span></td><td>Reports or records after the fact. Does not refuse the action that just ran.</td></tr>
+                <tr><td><span class="tag now">recorded-budget preflight</span></td><td>Refuses the next instrumented action at a recorded token, call, or cost cap. <code>check()</code> does not reserve concurrent in-flight requests.</td></tr>
+                <tr><td><span class="tag now">recorded-event preflight</span></td><td>Refuses the next instrumented action at a recorded loop, retry, timeout, or rate cap. Not a token budget.</td></tr>
+                <tr><td><span class="tag now">reservation-backed</span></td><td>Holds capacity before the request is sent.</td></tr>
+                <tr><td><span class="tag now">unsupported</span></td><td>Not intercepted. We do not claim a stop here.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">02</div>
+            <h2>Path by path</h2>
+            <p>The full map lists the test behind each row.</p>
+          </div>
+          <div>
+            <div class="table-wrap">
+              <table class="plain stack">
+                <thead><tr><th>Path</th><th>Class</th><th>Notes</th></tr></thead>
+                <tbody>
+                <tr><td data-label="Path">OpenAI Chat Completions, sync, non-streaming, shared StateStore</td><td data-label="Class"><span class="tag now">reservation-backed</span></td><td data-label="Notes">Reserves one call before send. Not an invoice cap.</td></tr>
+                <tr><td data-label="Path">OpenAI and Anthropic streams, shared StateStore</td><td data-label="Class"><span class="tag now">reservation-backed</span></td><td data-label="Notes">Reserve one call before send. Missing usage, an early stop, or a partial usage chunk under a token or dollar cap stays unresolved.</td></tr>
+                <tr><td data-label="Path">In-memory patches, async non-stream calls, Anthropic non-stream calls</td><td data-label="Class"><span class="tag now">recorded-budget preflight</span></td><td data-label="Notes">The call that crosses the cap finishes. The next one is refused.</td></tr>
+                <tr><td data-label="Path">LangChain LLM callbacks</td><td data-label="Class"><span class="tag later">advisory</span></td><td data-label="Notes">Usage is recorded after the model returns.</td></tr>
+                <tr><td data-label="Path">LangChain tool callbacks</td><td data-label="Class"><span class="tag now">recorded-budget preflight</span></td><td data-label="Notes">Only for an exhausted <em>call</em> budget.</td></tr>
+                <tr><td data-label="Path">LangGraph <code>guarded_node</code></td><td data-label="Class"><span class="tag now">recorded-budget preflight</span></td><td data-label="Notes"><code>consume(calls=1)</code> at node entry. A dollar-only guard does not fire.</td></tr>
+                <tr><td data-label="Path">CrewAI handler</td><td data-label="Class"><span class="tag later">advisory</span></td><td data-label="Notes">The step callback runs after the step.</td></tr>
+                <tr><td data-label="Path">CLI <code>demo</code> budget path</td><td data-label="Class"><span class="tag later">advisory</span></td><td data-label="Notes">Records <code>llm.result</code>, then calls <code>consume()</code>.</td></tr>
+                <tr><td data-label="Path">Skillpacks and coding-agent hosts</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes">Not enforcement.</td></tr>
+                <tr><td data-label="Path">OpenAI Responses API</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes"></td></tr>
+                <tr><td data-label="Path">Provider subscription quota</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="more">
+              <a href="https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md">Full map with tests</a>
+              <a href="/activation.html">How we count use</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <div class="wrap">
+        <nav aria-label="Footer">
+          <a href="https://github.com/bmdhodl/agent47">GitHub</a>
+          <a href="https://pypi.org/project/agentguard47/">PyPI</a>
+          <a href="/quickstart.html">Quickstart</a>
+          <a href="/enforcement.html">Limits</a>
+          <a href="/compare.html">Compare</a>
+          <a href="/trust.html">Trust</a>
+          <a href="/activation.html">How we count use</a>
+          <a href="https://bmdpat.com/blog">Blog</a>
+          <a href="https://bmdpat.com/tools/agentguard?utm_source=agentguard47&amp;utm_medium=site&amp;utm_campaign=field-notes">Release notes by email</a>
+          <a href="https://app.agentguard47.com/sign-in">Sign in</a>
+        </nav>
+        <p>AgentGuard47 by BMD PAT LLC. The SDK is MIT licensed.</p>
+      </div>
+    </footer>
+
   </body>
 </html>
