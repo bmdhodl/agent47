@@ -24,8 +24,11 @@ def test_generated_pypi_readme_includes_current_release_notes() -> None:
     changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     release_notes = module.extract_release_notes(changelog, version)
 
+    rewritten_notes = module.rewrite_relative_links(release_notes, version, REPO_ROOT)
     assert f"## Latest Release Notes ({version})" in content
-    assert release_notes in content
+    assert rewritten_notes in content
+    assert "](docs/enforcement-boundary.md)" not in content
+    assert "https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md" in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/LICENSE" in content
     assert f"https://github.com/bmdhodl/agent47/blob/v{version}/CHANGELOG.md" in content
 
@@ -56,3 +59,12 @@ def test_committed_pypi_readme_is_in_sync() -> None:
     actual = (REPO_ROOT / "sdk" / "PYPI_README.md").read_text(encoding="utf-8")
 
     assert actual == expected
+
+
+def test_generated_pypi_readme_does_not_embed_unreleased_contract() -> None:
+    module = _load_generator_module()
+    content = module.build_pypi_readme(REPO_ROOT)
+    assert "docs/guides/reservation-contract.md" in module.UNRELEASED_PATHS
+    assert "Unknown provider outcome cannot silently free funds" not in content
+    assert "ReservationLedger" not in content
+    assert "This set does not copy file bodies" in SCRIPT_PATH.read_text(encoding="utf-8")

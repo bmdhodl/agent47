@@ -37,7 +37,7 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (release status tracked in `memory/state.md`; release candidate: v1.3.2)
+- **Package:** `agentguard47` on PyPI (release status tracked in `memory/state.md`; release candidate: v1.4.0)
 - **Landing page:** site/index.html (Vercel)
 
 ## Agent Contract (MANDATORY)
@@ -54,9 +54,16 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 4. **Structured output.** Every task must include: **plan → diff summary → tests → docs updates needed**.
 5. **Check staleness.** Run `git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md` and `git log -1 --format='%cr' -- ops/02-ARCHITECTURE.md`. If ROADMAP is >5 days old or ARCHITECTURE is >14 days old, warn the user before starting any task.
 6. **PR proof is required.** Every PR must include concrete proof that the change works: command output, targeted runtime evidence, screenshots when applicable, or saved artifacts under a local proof folder.
-7. **Always do the post-PR review loop.** After opening a PR: wait for CI, verify the relevant preview/deployment health, wait a few minutes for automated review, inspect the full PR timeline plus review comments/threads, address feedback, rerun checks, and only then call the PR ready.
-8. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits.
-9. **Write only high-signal inbox updates.** If the cofounder agent should know about a material SDK blocker or milestone, append one concise entry to `inbox/log.md` after the merged PR instead of writing a long narrative.
+7. **Open every PR ready for review. Never create a draft.** After opening: wait for CI, verify the relevant preview/deployment health, wait a few minutes for automated review, inspect the full PR timeline plus review comments/threads, address feedback, and rerun checks. Do not ask for merge while comments are still open.
+8. **Address and resolve EVERY comment. Every time.** This is not optional. After CI and after every new review wave:
+   - Read the full PR timeline: issue comments, review comments, review threads, and Bot/Bugbot/Claude notes.
+   - Fix the code or docs, or explain with evidence why the comment is already handled (exact SHA).
+   - Reply on the same thread. Do not leave a comment unanswered.
+   - Resolve the GitHub review thread once the fix is on the branch. Issue comments get an explicit reply; review threads get **Resolve conversation**.
+   - Repeat until zero unresolved threads remain. A later comment restarts the loop.
+   - Do not ask for merge while comments are still open.
+9. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits.
+10. **Write only high-signal inbox updates.** If the cofounder agent should know about a material SDK blocker or milestone, append one concise entry to `inbox/log.md` after the merged PR instead of writing a long narrative.
 
 ## Commands
 
@@ -197,7 +204,7 @@ Read .Codex/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** current SDK release candidate is 1.3.2. Read `memory/` for the
+**Current:** current SDK release candidate is 1.4.0. Read `memory/` for the
 public package state, blockers, decisions, and distribution priorities.
 
 ## Agent Navigation Guide
@@ -242,7 +249,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** current release candidate is 1.3.2. Check `sdk/pyproject.toml` for the branch version under preparation.
+- **Version:** current release candidate is 1.4.0. Check `sdk/pyproject.toml` for the branch version under preparation.
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)

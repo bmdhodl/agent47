@@ -41,3 +41,32 @@ Actions logs expose only counts. Provider acceptance is not delivery: inspect
 Unsubscribed, suppressed, and fixture addresses remain excluded. An empty cohort
 is a successful zero-recipient send. New subscribers are included on subsequent
 releases. This pipeline change does not backfill old release announcements.
+
+## Distribution from the release
+
+The email job first installs the exact published wheel into a temporary virtual
+environment and runs the offline demo plus the report command. All three guard
+stop events must be present. Failure blocks the email, including on manual
+retries. The check uses published code, not the checkout. Its Actions summary
+is the verification receipt. No new repository write permission is needed.
+
+The existing GitHub release remains the version-specific public page. Email
+links it to the [offline example guide](try-release.md) and asks for voluntary,
+reviewed feedback. One release produces one example path and one deduplicated
+email, without generating extra blog posts or personal-account posts.
+
+Run the gate locally without publishing or sending:
+
+```bash
+python scripts/verify_release_example.py --tag v1.4.0
+```
+
+The workflow's `email_dry_run=true` runs the package check and validates the
+audience, but sends nothing and skips announcements. Older versions that lack
+the demo or feedback command fail closed; do not bypass the gate to backfill.
+
+Measurement stays in existing systems: delivered emails in the subscriber
+delivery ledger, and voluntary feedback through replies or existing issues.
+Count reported successful demos separately from reported real integrations.
+Stars, downloads, and CI demos are not active-user counts. No tracking or
+subscriber database is added by this workflow.

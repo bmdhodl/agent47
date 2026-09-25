@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>How to Set Budget Limits on AI Agents | AgentGuard</title>
-    <meta name="description" content="Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python — from basic caps to auto-tracking." />
+    <meta name="description" content="Recorded-budget preflight for instrumented Python agents. Three patterns — not an invoice cap." />
     <meta name="keywords" content="ai agent budget limits, openai budget enforcement, agent cost control python, ai agent cost cap, budget guard python" />
     <meta name="author" content="AgentGuard Team" />
     <meta name="robots" content="index, follow" />
@@ -15,7 +15,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:url" content="https://agentguard47.com/blog/budget-limits-ai-agents.html" />
     <meta property="og:title" content="How to Set Budget Limits on AI Agents" />
-    <meta property="og:description" content="Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python — from basic caps to auto-tracking." />
+    <meta property="og:description" content="Recorded-budget preflight for instrumented Python agents. Three patterns — not an invoice cap." />
     <meta property="og:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
     <meta property="og:site_name" content="AgentGuard" />
     <meta property="article:published_time" content="2026-02-20T00:00:00Z" />
@@ -24,7 +24,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="How to Set Budget Limits on AI Agents" />
-    <meta name="twitter:description" content="Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python." />
+    <meta name="twitter:description" content="Recorded-budget preflight for instrumented Python agents. Three patterns — not an invoice cap." />
     <meta name="twitter:image" content="https://opengraph.githubassets.com/1/bmdhodl/agent47" />
 
     <!-- JSON-LD Structured Data -->
@@ -33,7 +33,7 @@
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       "headline": "How to Set Budget Limits on AI Agents",
-      "description": "Stop runaway AI agent costs with hard dollar limits. Three patterns for budget enforcement using Python — from basic caps to auto-tracking.",
+      "description": "Recorded-budget preflight for instrumented Python agents. Three patterns — not an invoice cap.",
       "url": "https://agentguard47.com/blog/budget-limits-ai-agents.html",
       "datePublished": "2026-02-20T00:00:00Z",
       "dateModified": "2026-02-20T00:00:00Z",
@@ -152,14 +152,15 @@
       <article>
         <h1>How to Set Budget Limits on AI Agents</h1>
         <div class="meta">By AgentGuard Team &middot; February 20, 2026 &middot; 6 min read</div>
+        <p><strong>Updated bounds:</strong> recorded-budget preflight is not an invoice cap. See the <a href="/enforcement.html">enforcement boundary</a>.</p>
 
         <p>AI agents are powerful, but they are also expensive and unpredictable. An autonomous agent with access to GPT-4 can burn through $50 in minutes if it gets stuck in a reasoning loop or decides to call an API 200 times to "be thorough." According to internal benchmarks, <strong>cost overruns on autonomous agent tasks average 340%</strong> above the expected budget.</p>
 
         <p>The problem is not that agents are expensive. The problem is that nothing stops them once they start spending. Most observability tools track costs after the fact. By the time you see the dashboard, the damage is done.</p>
 
-        <p>This guide shows three patterns for setting hard budget limits on AI agents using Python. Each pattern builds on the last, from manual caps to fully automatic cost tracking.</p>
+        <p>This guide shows three patterns for recorded-budget limits on instrumented Python agents. Each pattern builds on the last, from manual consume() calls to patch_openai auto-tracking. None of these is a provider invoice cap.</p>
 
-        <h2>Pattern 1: Hard Dollar Cap</h2>
+        <h2>Pattern 1: Recorded Dollar Cap</h2>
 
         <p>The simplest pattern. Create a <code>BudgetGuard</code> with a dollar limit and call <code>consume()</code> after each LLM call. When the limit is hit, it raises <code>BudgetExceeded</code> and your agent stops immediately.</p>
 
@@ -219,7 +220,7 @@ guard = <span class="fn">BudgetGuard</span>(
 <span class="comment"># After consuming $5.01:</span>
 <span class="comment"># raises BudgetExceeded</span></pre>
 
-        <p>The warning fires once. After that, the agent keeps running until it hits the hard cap. This gives you a two-stage system: warn at 80%, kill at 100%.</p>
+        <p>The warning fires once. After that, the agent keeps running until recorded usage exceeds the cap. This gives you a two-stage system: warn at 80%, refuse the next instrumented consume/check at 100%.</p>
 
         <div class="callout">
           <p><strong>Tip:</strong> Use the warning callback to switch to a cheaper model (GPT-4o-mini instead of GPT-4) when you are approaching the budget. This lets the agent finish its current task without blowing the cap.</p>
@@ -227,7 +228,7 @@ guard = <span class="fn">BudgetGuard</span>(
 
         <h2>Pattern 3: Auto-Tracking with patch_openai</h2>
 
-        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function eliminates this by automatically intercepting every OpenAI API call, extracting token usage from the response, and feeding it to the BudgetGuard.</p>
+        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function intercepts patched Chat Completions calls, extracts token usage from the response, and feeds it to the BudgetGuard. It does not patch the Responses API.</p>
 
 <pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, patch_openai
 
@@ -235,7 +236,7 @@ guard = <span class="fn">BudgetGuard</span>(
 budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>, warn_at_pct=<span class="str">0.8</span>)
 tracer = <span class="fn">Tracer</span>(service=<span class="str">"my-agent"</span>, guards=[budget])
 
-<span class="comment"># Patch OpenAI — every call is now auto-tracked</span>
+<span class="comment"># Patch OpenAI Chat Completions — Responses API is not patched</span>
 <span class="fn">patch_openai</span>(tracer, budget_guard=budget)
 
 <span class="comment"># Use OpenAI normally. No manual consume() calls needed.</span>
@@ -263,12 +264,12 @@ client = openai.<span class="fn">OpenAI</span>()
         <h2>Which Pattern Should You Use?</h2>
 
         <ul>
-          <li><strong>Pattern 1 (hard cap)</strong> -- Use when you want maximum control and are already tracking costs yourself. Good for custom agent frameworks.</li>
+          <li><strong>Pattern 1 (recorded cap)</strong> -- Use when you want maximum control and are already tracking costs yourself. Good for custom agent frameworks.</li>
           <li><strong>Pattern 2 (warning + cap)</strong> -- Use when your agent can degrade gracefully, like switching to a cheaper model or reducing output quality.</li>
           <li><strong>Pattern 3 (auto-tracking)</strong> -- Use for OpenAI and Anthropic workloads where you want zero-effort cost tracking. Best for most production deployments.</li>
         </ul>
 
-        <p>All three patterns can be combined. Use <code>patch_openai</code> for automatic tracking and add a <code>warn_at_pct</code> callback for early warnings. The hard cap is always enforced regardless of which pattern you choose.</p>
+        <p>All three patterns can be combined. Use <code>patch_openai</code> for automatic tracking and add a <code>warn_at_pct</code> callback for early warnings. The recorded cap still only applies to instrumented calls. Unpatched clients and in-flight responses can exceed it.</p>
 
         <h2>What Happens When the Budget Is Hit?</h2>
 

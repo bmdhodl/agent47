@@ -6,11 +6,15 @@ description: "Fail CI if your AI agent exceeds a dollar budget. A GitHub Actions
 canonical_url: https://github.com/bmdhodl/agent47/blob/main/docs/blog/003-ci-cost-gates-devto.md
 ---
 
+> Tested bounds (2026-09-18): a CI cost gate reads recorded traces after the
+> run. It is not a provider invoice cap. See
+> [enforcement-boundary.md](../enforcement-boundary.md).
+
 Your AI agent passes all your tests. Great. But did you check how much it *cost*?
 
 Most CI pipelines test for correctness — they don't test for cost. A single agent run can burn $5, $50, or $500 depending on model choice, tool loops, and context window size. In CI, this adds up fast: 10 PRs × 3 test runs × $5/run = $150/day in API costs.
 
-**AgentGuard adds cost gates to your CI pipeline.** If an agent run exceeds a dollar threshold, CI fails. No surprises on your OpenAI invoice.
+**AgentGuard adds cost gates to your CI pipeline.** If recorded trace cost exceeds a dollar threshold, CI fails. That is a local trace assertion, not an OpenAI invoice stop.
 
 ## The Problem
 
@@ -113,11 +117,11 @@ assertions: "no_errors,max_cost:5.00,max_duration:30,max_events:100"
 
 ## Why This Matters
 
-Every other agent observability tool (LangSmith, Langfuse, Portkey) shows you cost *after* the run. AgentGuard is the only tool that:
+Observability tools show you cost *after* the run. AgentGuard can also:
 
-1. **Kills the agent mid-run** when the budget is exceeded
-2. **Fails CI** if cost thresholds are breached
-3. **Does it with zero dependencies** — stdlib Python only
+1. **Refuse the next instrumented call** when recorded usage is already at a cap
+2. **Fail CI** if recorded trace cost exceeds a threshold
+3. **Do it with zero core dependencies** — stdlib Python only
 
 ## Try It
 

@@ -1,0 +1,15 @@
+{
+  "server": "http://127.0.0.1:8765",
+  "pages": [
+    {"page": "enforcement.html", "width": 375, "overflow": 0, "has_preflight": true, "file": "enforcement-375.png"},
+    {"page": "enforcement.html", "width": 768, "overflow": 0, "file": "enforcement-768.png"},
+    {"page": "enforcement.html", "width": 1440, "overflow": 0, "file": "enforcement-1440.png"},
+    {"page": "index.html", "width": 375, "overflow": 0, "hero": "Stop the next instrumented call at a recorded limit.", "file": "index-375.png"},
+    {"page": "index.html", "width": 768, "overflow": 0, "file": "index-768.png"},
+    {"page": "index.html", "width": 1440, "overflow": 0, "file": "index-1440.png"},
+    {"page": "quickstart.html", "width": 375, "overflow": 0, "file": "quickstart-375.png"},
+    {"page": "quickstart.html", "width": 768, "overflow": 0, "file": "quickstart-768.png"},
+    {"page": "quickstart.html", "width": 1440, "overflow": 0, "file": "quickstart-1440.png"}
+  ],
+  "notes": "Favicon 404 only. Horizontal overflow 0 at 375/768/1440."
+}

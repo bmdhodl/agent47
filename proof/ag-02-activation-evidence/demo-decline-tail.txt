@@ -1,0 +1,20 @@
+View incident report: agentguard incident agentguard_demo_traces.jsonl
+
+Next: add AgentGuard to a repo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli report agentguard_demo_traces.jsonl
+  python -m agentguard.cli incident agentguard_demo_traces.jsonl
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.
+
+Show your repo is guarded (and help others find it): agentguard badge
+If AgentGuard saved you a runaway run, star it so others find it: https://github.com/bmdhodl/agent47
+
+Optional: inspect a redacted feedback report (nothing is sent):
+  agentguard demo --feedback
+Decline by skipping that command.

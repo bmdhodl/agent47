@@ -1,0 +1,2 @@
+{"session": "ag-03-no-drafts", "ts": "2026-09-21T19:56:42", "claim": "AGENTS.md forbids draft PRs", "severity": "RED", "check": {"type": "file_contains", "path": "AGENTS.md", "pattern": "Never create a draft"}, "prev": "850a5147f289ac241b5e50893863ac50d238cdf867f71453e03db988adf6e453"}
+{"session": "ag-03-no-drafts", "ts": "2026-09-21T19:56:42", "claim": "CLAUDE.md forbids draft PRs", "severity": "RED", "check": {"type": "file_contains", "path": "CLAUDE.md", "pattern": "never create a draft"}, "prev": "255e90d5d121139eab4f2a6482aec9c0181789253292752ff281581d6c65a754"}

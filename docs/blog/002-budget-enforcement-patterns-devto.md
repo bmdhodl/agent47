@@ -2,9 +2,12 @@
 title: "3 Patterns for Enforcing AI Agent Budgets in Python"
 published: true
 tags: [ai, python, openai, budgets]
-description: "Hard dollar caps, warning callbacks, and auto-tracking — three patterns to stop runaway agent costs."
+description: "Recorded-budget preflight, warning callbacks, and auto-tracking — three patterns for instrumented Python agents. Not an invoice cap."
 canonical_url: https://github.com/bmdhodl/agent47/blob/main/docs/blog/002-budget-enforcement-patterns-devto.md
 ---
+
+> Tested bounds (2026-09-18): recorded-budget preflight is not an invoice cap.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
 
 "How do I stop my agent from spending more than $X?"
 

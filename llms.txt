@@ -6,8 +6,11 @@
 ## Read first
 
 - [README](https://github.com/bmdhodl/agent47/blob/main/README.md): Installation, runnable example, enforcement limits.
+- [Enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md): tested classes and remaining exposure.
 - [Documentation index](https://github.com/bmdhodl/agent47/blob/main/docs/README.md): Guides and references by task.
 - [Getting started](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md): Local trace and provider setup.
+- [Activation evidence](https://github.com/bmdhodl/agent47/blob/main/docs/guides/activation-metrics-design.md): Page views are not installs. Demo feedback is voluntary and local.
+- [Reservation contract](https://github.com/bmdhodl/agent47/blob/main/docs/guides/reservation-contract.md): Local reserve/commit/cancel/unresolved rules. Store-backed sync OpenAI Chat Completions only. Not an invoice cap.
 - [Contributing](https://github.com/bmdhodl/agent47/blob/main/CONTRIBUTING.md): Development setup and checks.
 - [Agent instructions](https://github.com/bmdhodl/agent47/blob/main/AGENTS.md): Repository contribution rules.
 
@@ -23,5 +26,7 @@
 
 Checks apply only where integrated. Budget preflight checks recorded usage;
 it does not reserve concurrent capacity or predict the next response's cost.
-Streaming totals are not yet tracked by provider patches. Guards are not a
+Streamed OpenAI and Anthropic calls record final usage once. Guards are not a
 sandbox. Local traces need no hosted account. Remote sinks are optional.
+The OpenAI Responses API, host tools, and provider invoices are unsupported.
+See [enforcement-boundary.md](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md).

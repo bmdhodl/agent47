@@ -18,10 +18,10 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 - [`sdk/`](sdk/): Python package source, tests, packaging metadata (`pyproject.toml`), the generated PyPI README snapshot ([`sdk/PYPI_README.md`](sdk/PYPI_README.md)), and `sdk/examples/`.
 - [`sdk/agentguard/`](sdk/agentguard/): core SDK modules. Highlights:
   - `tracing.py` / `atracing.py`: `Tracer` / `AsyncTracer`, `TraceContext` / `AsyncTraceContext`, plus the core `JsonlFileSink`, `StdoutSink`, and `TraceSink` base.
-  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`).
+  - `guards.py`: the guard family and their exceptions. `goal.py` adds task-level budgets (`BudgetGuard.goal(...)` per-goal caps + `warn_at_pct` hooks); `state.py` adds optional cross-process budget persistence (`StateStore` / `JsonFileStateStore`). `_reservation_contract.py` is the private reserve/commit/cancel model. `_reservation_path.py` wires it to sync, non-streaming OpenAI Chat Completions when `BudgetGuard` has a `StateStore`. `_reservation_stream.py` uses the same ledger for store-backed OpenAI and Anthropic streams. `check()` and `consume()` do not reserve.
   - `x402.py`: `X402SpendGuard`, spend caps for x402/USDC agent micropayments (total/per-endpoint/per-call, refuse-before-pay, reuses `BudgetExceeded`).
   - `setup.py`: `init()` / `get_tracer()` / `get_budget_guard()` / `shutdown()` convenience entrypoints.
-  - `instrument.py` / `instrument_stream.py`: provider patches and the private stream wrapper that bills final streamed usage once.
+  - `instrument.py` / `instrument_stream.py`: provider patches and the private stream wrapper that bills final streamed usage once. A `StateStore` reserves that stream before send.
   - `decision.py`, `evaluation.py`, `cost.py`, `usage.py`, `savings.py`, `escalation.py`, `schemas.py`, `profiles.py`, `repo_config.py`, `reporting.py`, `export.py`: instrumentation, decision tracing, eval, cost/usage accounting, Anthropic thinking-token accounting, and report surfaces.
   - `precision_cost.py` / `price_table.py`: maximum-precision billable cost resolution (`resolve_billable_cost`, `consume_billable`) over a versioned price table; STRICT mode fails loudly on the provider patch path instead of guessing prices.
   - `cli.py`, `__main__.py`, `doctor.py`, `demo.py`, `quickstart.py`, `skillpack.py`, `first_run.py`: the CLI and local proof surfaces. `__main__.py` makes `python -m agentguard` mirror the console script; `first_run.py` holds the bare-command welcome and the paste-able "Guarded by AgentGuard" badge used by `agentguard welcome` / `agentguard badge`.
@@ -79,7 +79,7 @@ The two MCP servers are independent: `mcp-server/` is a read-only window onto ho
 - `TraceContext` / `AsyncTraceContext`: the scoped unit of work inside a trace. Most runtime instrumentation, decision tracing, and examples build on these.
 - Guards (`guards.py`, `x402.py`): `LoopGuard`, `FuzzyLoopGuard`, `BudgetGuard`, `TimeoutGuard`, `RateLimitGuard`, `RetryGuard`, `X402SpendGuard`. Guards raise exceptions (`LoopDetected`, `BudgetExceeded`, `BudgetWarning`, `TimeoutExceeded`, `RetryLimitExceeded`, all under `AgentGuardError`) instead of returning booleans. `BudgetGuard.goal(...)` scopes hard caps and warning hooks to a named sub-task, with cost attribution propagated through `ThreadPoolExecutor.submit`.
 - Sinks: `JsonlFileSink` and `StdoutSink` (core, in `tracing.py`); `HttpSink` and `OtelTraceSink` (non-core, in `sinks/`). The `TraceSink` base is the boundary between runtime evidence and its destination.
-- Local proof surfaces: the `agentguard` CLI subcommands `doctor`, `demo`, `quickstart`, `report`, `incident`, `decisions`, `eval`, `summarize`, and `skillpack`, plus `EvalSuite` and checked-in starters. These are part of the product, not just internal tooling.
+- Local proof surfaces: the `agentguard` CLI subcommands `doctor`, `demo`, `quickstart`, `report`, `incident`, `decisions`, `eval`, `summarize`, and `skillpack`, plus `EvalSuite` and checked-in starters. `demo --feedback` prints a local redacted report and does not send it. These are part of the product, not just internal tooling.
 - MCP surfaces: the read-only TypeScript `mcp-server/` and the local-budget Python `agentguard-mcp/` are first-class adoption surfaces alongside the SDK.
 
 ## 6. Boundaries
@@ -129,4 +129,20 @@ the last raw git tag, because a tag can exist for a failed package publish.
 - 2026-09-08: Verified the 2026-07-18 -> 2026-09-06 window and re-dated. **No structural change.** 57 commits landed on `main` after the 2026-07-18 row. The only commit touching [`sdk/agentguard/`](sdk/agentguard/) in the range is `f961573` (#655, `X402SpendGuard`), dated 2026-07-18 and already recorded in the row above, so the public SDK surface this document describes did not move. The window was hardening and release work in four clusters. (1) Review-readiness hardening across `.github/workflows/claude-review.yml` and `scripts/review_readiness_guard.py`: run Claude review from a trusted base, lock the review CLI dependency, harden privileged-command detection, reject privileged review-tree mutations, bind review secrets to the trusted command path, and pin review checkout credentials and artifacts. (2) SDK v1.2.14 prepared, with skill-metadata version-sync guarding and broader OTel usage-receipt coverage. (3) `067e8285` added validation for optional sync URLs in `agentguard-mcp/agentguard_mcp/sync.py` - the only product-source change in the window. (4) #703 documented the chromadb advisory carried by the `[crewai]` extra. Two scope calls are recorded here so a later night does not re-litigate them. **CI and supply-chain hardening stay out of this document:** it has no CI section by design, because it describes the shipped artifact and its boundaries rather than the pipeline that ships it, and the release/CI story lives in `ops/`. **The sync-URL validation stays undocumented here:** it is input validation below architecture altitude, so section 3's existing description of `sync.py` and the `AGENTGUARD_SYNC_URL` opt-in stands unchanged.
 
 - 2026-09-12: Added `_budget_validation.py` and `sinks/_transport.py`. Budget callbacks run outside locks; X402 rollback is generation-scoped. HTTP connections use validated IPs with original-host TLS verification. LangChain dispatch propagates guard exceptions. No hard runtime dependencies added.
-- 2026-09-17: Added private `instrument_stream.py`. OpenAI/Anthropic patches wrap streamed responses and bill final usage once. No new public API or hard runtime dependencies.
+- 2026-09-18: Published the tested enforcement-boundary map. Public copy now
+  classifies each surface as advisory, recorded-budget preflight,
+  reservation-backed, or unsupported. No new public SDK API. Reservation for
+  `BudgetGuard` remains later work. See [docs/enforcement-boundary.md](docs/enforcement-boundary.md)
+  and GitHub #730 / #729.
+- 2026-09-20: Published the local reservation and reconciliation contract
+  (AG-03 / #732). Private model `_reservation_contract.py` is not a public
+  API and is not called by `BudgetGuard.check()` or `consume()`. See
+  [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
+- 2026-09-21: AG-04 wires that contract to one path. Sync non-streaming
+  OpenAI Chat Completions with a `StateStore` reserve before send, commit
+  provider usage, and keep the hold when the provider outcome is unknown.
+  No new public type. Not an invoice cap.
+- 2026-09-22: AG-05 uses the same private ledger for store-backed OpenAI and
+  Anthropic streams. Missing usage, an early stop, or a partial usage chunk
+  under a token or dollar cap stays unresolved. No new public type. Not an
+  invoice cap.

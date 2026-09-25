@@ -18,8 +18,9 @@ materialize them directly into a repo.
 The goal is always the same:
 - keep the first run local
 - keep the config auditable
-- stop loops, retries, and runaway spend
+- stop instrumented loops, retries, and recorded-budget overruns
 - avoid hidden network behavior
+- treat generated files as onboarding, not host enforcement ([enforcement-boundary.md](../enforcement-boundary.md))
 
 ## 1. Repo-local defaults
 

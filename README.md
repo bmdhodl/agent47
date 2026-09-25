@@ -27,6 +27,7 @@ agentguard demo
 `doctor` checks the installation and local trace writing. `demo` exercises
 budget, loop, and retry stops without provider keys or network access. Follow
 the trace path printed by the command to inspect its output.
+`agentguard demo --feedback` prints a local redacted report; nothing is sent.
 
 ### Stop before a third call
 
@@ -120,6 +121,10 @@ read the [guard source](sdk/agentguard/guards.py) and
   agent running on a provider's server.
 - Cost estimates are not invoices. Supply reported cost or use strict cost
   resolution when an estimate is insufficient.
+- Recorded-budget preflight refuses the next instrumented call when stored
+  usage is already at a cap. It does not reserve concurrent in-flight
+  requests, predict the next response, or cap a provider subscription.
+  See the [enforcement boundary](docs/enforcement-boundary.md).
 - The base SDK uses the standard library. Optional framework extras install
   third-party dependencies and need their own security review.
 - Trace content can contain application data. Review it before sharing or
@@ -152,6 +157,7 @@ describes the optional hosted service.
 
 | You want to | Start here |
 | --- | --- |
+| See which paths actually stop a call | [Enforcement boundary](docs/enforcement-boundary.md) |
 | Install and trace a first run | [Getting started](docs/guides/getting-started.md) |
 | Find guides and source references | [Documentation index](docs/README.md) |
 | Try a runnable example | [Examples](examples/) |

@@ -1,0 +1,1 @@
+{"session": "v140-pypi-links", "ts": "2026-09-24T20:13:13", "claim": "Release notes are rewritten before they are appended", "severity": "RED", "check": {"type": "file_contains", "path": "scripts/generate_pypi_readme.py", "pattern": "rewrite_relative_links\\(release_notes"}, "prev": "70880e150330b1ea02a6264c29a2c258cddb7d88a9ed74e046192d08aa1fb753"}

@@ -28,7 +28,7 @@ permissions:
 jobs:
   email:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
     concurrency:
       group: release-email-${{ github.event.inputs.tag || github.event.release.tag_name }}
@@ -44,6 +44,11 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Verify the published offline example
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.event.release.tag_name }}
+        run: python scripts/verify_release_example.py --tag "$RELEASE_TAG"
       - name: Email active AgentGuard subscribers
         env:
           GH_TOKEN: ${{ github.token }}

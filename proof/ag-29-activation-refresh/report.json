@@ -1,0 +1,101 @@
+{
+  "accepted_contribution": 0,
+  "as_of": "2026-09-25",
+  "consented_feedback_failure": 0,
+  "data_lag": {
+    "pypi": "series ends 2026-09-24; retrieved 2026-09-25; later days are lag, not zero"
+  },
+  "dedup": {
+    "pypi": "none; each download is a package event, not a unique user"
+  },
+  "demo_feedback_success": 0,
+  "downloads": {
+    "note": "package events, not unique users; release-day rows are annotated and not removed as CI",
+    "pypi_without_mirrors_30d": 537,
+    "pypi_without_mirrors_7d": 255,
+    "release_day_events": [
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-12",
+        "downloads": 145
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-15",
+        "downloads": 96
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-18",
+        "downloads": 85
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-24",
+        "downloads": 86
+      }
+    ]
+  },
+  "exclusions": {
+    "landing_page_install_intent": "a marketing-origin target never counts as install",
+    "mirrors": "PyPI counts use without_mirrors",
+    "publish_dates": [
+      "2026-09-12",
+      "2026-09-15",
+      "2026-09-18",
+      "2026-09-24"
+    ],
+    "simulated_reports": "a simulated report cannot count as demand"
+  },
+  "feedback_excluded": {
+    "duplicates": 0,
+    "internal": 0,
+    "simulated": 0
+  },
+  "guard_activation": 0,
+  "install": {
+    "note": "package events, not unique users",
+    "pypi_events_outside_publish_burst": "not computed; release days are annotated, not removed",
+    "pypi_without_mirrors_7d": 255
+  },
+  "install_intent_proven": "unknown",
+  "landing_page_never_counts_as_install": true,
+  "page_navigation": {
+    "ai_crawl_events": "unknown",
+    "bot_view_events": "unknown",
+    "cta_clicks": "unknown",
+    "misclassified_landing_install_intent": "unknown",
+    "view_events": "unknown"
+  },
+  "real_workflow_activation": "unknown",
+  "repeat_use": "unknown without a consented reporter",
+  "repository_visits": "unknown",
+  "retrieved_at": "2026-09-25T01:40:00Z",
+  "unknowns": [
+    "unique PyPI installers",
+    "repeat use without a consented reporter",
+    "repository visits; GitHub traffic was not retrieved",
+    "site events were not retrieved; 2026-09-18 landing-page install_intent rows stay navigation in that baseline and are not reused here",
+    "real-workflow activation; demo success is not production use",
+    "pypi missing days: 2026-08-29, 2026-08-30, 2026-09-01, 2026-09-02, 2026-09-04, 2026-09-05, 2026-09-06, 2026-09-09, 2026-09-14, 2026-09-25"
+  ],
+  "windows": {
+    "npm_30d": {
+      "end": "2026-09-25",
+      "query": "https://api.npmjs.org/downloads/point/2026-08-27:2026-09-25/@agentguard47/mcp-server",
+      "start": "2026-08-27"
+    },
+    "pypi_30d": {
+      "end": "2026-09-24",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-08-26"
+    },
+    "pypi_7d": {
+      "end": "2026-09-24",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-18"
+    }
+  }
+}

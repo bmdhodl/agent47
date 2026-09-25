@@ -11,6 +11,7 @@
 - [ ] No hardcoded absolute paths.
 - [ ] If `__init__.py` exports changed, it was intentional.
 - [ ] If the change ships user-visible behavior or release prep, docs and roadmap were reviewed for drift.
+- [ ] Every PR comment and review thread was addressed in code or with evidence, replied to on the thread, and resolved. Zero unresolved conversations.
 
 ## Cutting a release
 
@@ -25,7 +26,8 @@
       release artifacts.
 - [ ] Release notes link to the correct docs, repo, and package name.
 - [ ] The `email` job in `release-content.yml` succeeds for the stable release.
-      It verifies GitHub + PyPI publication, then emails active AgentGuard
+      It verifies GitHub + PyPI publication and the published offline example,
+      then emails active AgentGuard
       subscribers through bmdpat. Read the delivery receipt; acceptance is not
       delivery. Retry with the same tag, never a new campaign key.
       Setup and verification: [release email](../docs/guides/release-email.md).

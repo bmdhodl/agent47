@@ -6,6 +6,9 @@ description: "Multi-agent systems fail silently with tool loops. Here's how to c
 canonical_url: https://github.com/bmdhodl/agent47/blob/main/docs/blog/001-why-agents-loop.md
 ---
 
+> Tested bounds (2026-09-18): LoopGuard is recorded-event preflight, not a host kill switch.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
+
 Multi-agent systems fail in ways normal software does not. The most common failure mode? **Silent tool loops** — your agent calls the same tool with the same arguments over and over, burning tokens and returning garbage, while you see nothing in your logs.
 
 This happens because most observability tools track latency, not reasoning. They tell you a request took 3 seconds but not *why* your agent decided to call `search("capital of Atlantis")` five times in a row.

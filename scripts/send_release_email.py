@@ -51,12 +51,18 @@ def build_payload(tag, release, package):
         "campaign_key": f"agentguard-release:{tag}",
         "slug": f"agentguard-release-{version.replace('.', '-')}",
         "subject": f"AgentGuard {version} is out",
-        "preview": "Release notes and the command to upgrade.",
+        "preview": "An offline example and the command to upgrade.",
         "markdown": (
             f"I released AgentGuard {version}.\n\n"
             f"[Read what changed in {version}]({release_url}).\n\n"
             "## Upgrade\n\n"
             f"```bash\npip install --upgrade agentguard47=={version}\n```\n\n"
+            "## Try it without API keys\n\n"
+            "```bash\npython -m agentguard.cli demo --feedback\n```\n\n"
+            "[Follow the example and check the result]"
+            "(https://github.com/bmdhodl/agent47/blob/main/docs/guides/try-release.md).\n\n"
+            "The demo uses simulated work. It prints a local report and sends nothing. "
+            "Review it and reply with your result if you want to help improve AgentGuard.\n\n"
             f"[View the package on PyPI](https://pypi.org/project/agentguard47/{version}/).\n\n"
             "You signed up for AgentGuard updates. I'll send a note when a new stable version ships.\n\n"
             "Patrick"
