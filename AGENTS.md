@@ -19,6 +19,9 @@ Use `inbox/` to communicate concise SDK status to the cofounder agent.
 - Format each entry as: date, agent, what shipped, decisions made, blockers.
 - Keep it SDK-only and short.
 - Do not dump business-sensitive plans there.
+- After every merge, also send the owner a short user-facing TLDR (what
+  shipped, what did not, next only if already authorized). Do this even when
+  someone else merged the PR.
 
 Key constraints:
 - SDK stays free, MIT, zero-dependency. This is non-negotiable.
@@ -62,8 +65,9 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
    - Resolve the GitHub review thread once the fix is on the branch. Issue comments get an explicit reply; review threads get **Resolve conversation**.
    - Repeat until zero unresolved threads remain. A later comment restarts the loop.
    - Do not ask for merge while comments are still open.
-9. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits.
+9. **Use matching built-in skills by default.** When the task matches them, use `playwright` for browser automation and screenshot proof, `playwright-interactive` when persistent browser state helps, `gh-address-comments` for PR review/comment sweeps, and `vercel-deploy` for deployment work. Do not skip these when the task clearly fits. When the owner says to pull or work the next ticket, follow `.agents/skills/next-ticket/SKILL.md`.
 10. **Write only high-signal inbox updates.** If the cofounder agent should know about a material SDK blocker or milestone, append one concise entry to `inbox/log.md` after the merged PR instead of writing a long narrative.
+11. **After every merge, TLDR the owner.** As soon as a PR lands on `main`, send a short user-facing summary: what shipped, what did not, and next only if already authorized. Do this every time, including PRs merged by someone else. Then write the `inbox/log.md` entry. Do not start the next ticket unless the owner asked.
 
 ## Commands
 
