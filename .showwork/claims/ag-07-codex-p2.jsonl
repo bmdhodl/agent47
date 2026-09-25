@@ -1,0 +1,1 @@
+{"session": "ag-07-codex-p2", "ts": "2026-09-25T22:15:57", "claim": "Guardrail compares the compiled floor lock with every manifest pin", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/tests/test_ci_guardrails.py", "pattern": "compat-floor.txt is stale for"}, "prev": "4f832bdcbd283c627fa0bcc990017269ff7eb39b98d63bd7581547af9e172866"}

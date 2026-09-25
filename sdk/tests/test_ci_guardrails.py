@@ -224,6 +224,16 @@ def test_compat_floor_lock_matches_sdk_extra_floors() -> None:
         text = (repo_root / ".github" / "requirements" / lock).read_text(encoding="utf-8")
         assert "--hash=sha256:" in text
         assert "crewai==" not in text
+    # The compiled lock is what CI installs, so it must carry every manifest pin.
+    compiled = dict(
+        re.findall(
+            r"^([a-z0-9_.-]+)==(\S+) \\$",
+            (repo_root / ".github" / "requirements" / "compat-floor.txt").read_text(encoding="utf-8"),
+            re.M,
+        )
+    )
+    for name, version in re.findall(r"^([A-Za-z0-9_.-]+)==(\S+)$", manifest, re.M):
+        assert compiled.get(name.lower()) == version, f"compat-floor.txt is stale for {name}=={version}"
 
 
 def test_ci_compat_job_fails_instead_of_skipping() -> None:
