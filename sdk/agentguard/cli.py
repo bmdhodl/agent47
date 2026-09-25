@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter
 from typing import Optional
 
@@ -12,6 +13,7 @@ from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
 from agentguard.first_run import hosted_url, render_badge, render_welcome
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
+from agentguard.receipt import bars_supported, build_receipt, render
 from agentguard.reporting import render_incident_report
 from agentguard.savings import summarize_savings
 from agentguard.skillpack import TARGET_CHOICES, run_skillpack
@@ -267,6 +269,14 @@ def _eval(path: str, ci: bool = False) -> None:
         raise SystemExit(1)
 
 
+def _receipt(path: str, fmt: str) -> None:
+    receipt = build_receipt(path)
+    if not receipt["events"]:
+        raise SystemExit(f"No events in {path}")
+    ascii_only = not bars_supported(sys.stdout.encoding or "ascii")
+    print(render(receipt, fmt, ascii_only=ascii_only))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="agentguard",
@@ -307,6 +317,15 @@ def main() -> None:
         action="store_true",
         dest="json_output",
         help="Output machine-readable summary JSON (for CI pipelines)",
+    )
+
+    receipt = sub.add_parser("receipt", help="Print a shareable receipt of guard stops for a JSONL trace file")
+    receipt.add_argument("path")
+    receipt.add_argument(
+        "--format",
+        choices=["text", "markdown", "json"],
+        default="text",
+        help="text for terminals, markdown for PRs and issues, json for CI.",
     )
 
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
@@ -465,6 +484,8 @@ def main() -> None:
         _summarize(args.path)
     elif args.cmd == "report":
         _report(args.path, as_json=args.json_output)
+    elif args.cmd == "receipt":
+        _receipt(args.path, args.format)
     elif args.cmd == "eval":
         _eval(args.path, ci=args.ci)
     elif args.cmd == "incident":

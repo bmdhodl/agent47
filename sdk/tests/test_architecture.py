@@ -46,6 +46,7 @@ CORE_MODULES = [
     "instrument_stream.py",
     "profiles.py",
     "quickstart.py",
+    "receipt.py",
     "savings.py",
     "repo_config.py",
     "skillpack.py",
