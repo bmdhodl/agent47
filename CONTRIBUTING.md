@@ -119,17 +119,24 @@ API key, and the test sends nothing over the network.
    ```
 
 3. Import it in `sdk/tests/test_precision_cost.py`, then assert what
-   AgentGuard should record:
+   AgentGuard should record: the token buckets and the cost from the price
+   table, not only the source.
 
    ```python
    def test_anthropic_haiku_without_cache_fields_is_computed(self) -> None:
+       model = "claude-3-5-haiku-20241022"
        resolved = resolve_billable_cost(
            ANTHROPIC_HAIKU_NO_CACHE,
-           model="claude-3-5-haiku-20241022",
+           model=model,
            provider="anthropic",
            prices=DEFAULT_PRICE_TABLE,
        )
        self.assertEqual(resolved["source"], SOURCE_COMPUTED)
+       self.assertEqual(resolved["tokens"]["input"], 300)
+       self.assertEqual(resolved["tokens"]["output"], 120)
+       rates = DEFAULT_PRICE_TABLE["rates"][("anthropic", model)]
+       expected = (300 * rates["input_per_1m"] + 120 * rates["output_per_1m"]) / 1_000_000
+       self.assertAlmostEqual(resolved["cost_usd"], expected)
    ```
 
 4. Run `python -m pytest sdk/tests/test_precision_cost.py -q`.
