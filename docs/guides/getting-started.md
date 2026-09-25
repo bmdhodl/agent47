@@ -17,6 +17,11 @@ These checks run locally without provider credentials. The commands print
 their trace paths. Use those paths with `agentguard report <trace-path>` or
 `agentguard incident <trace-path>` to inspect what happened.
 
+`agentguard demo --feedback` prints a local redacted report with version,
+adapter, result, and reproduction. Nothing is sent. Decline by skipping that
+flag. Page views are not installs; see
+[activation metrics](activation-metrics-design.md).
+
 The [README budget example](../../README.md#stop-before-a-third-call) is a
 complete offline example with an assertion for the stopped call.
 
@@ -68,8 +73,19 @@ configure `patch_openai(tracer, budget_guard=budget)` as shown in the
 `patch_anthropic` helper.
 
 Provider patches check the recorded budget before dispatch. Response usage
-can exceed the remaining allowance; concurrent calls do not reserve capacity.
-Streaming totals are not yet tracked by these patches.
+can exceed the remaining allowance. In-memory guards do not reserve
+concurrent calls. Sync, non-streaming OpenAI Chat Completions reserve when
+`BudgetGuard` has a `StateStore`: one shared key, one remaining call, one
+dispatch. Store-backed OpenAI and Anthropic streams reserve the same way.
+Async non-stream calls and Anthropic non-stream calls stay on the recorded
+budget. OpenAI streams request `include_usage` unless the caller already set
+it. An in-memory stream that ends without usage counts as one call with zero
+tokens. A stored stream with a token or dollar cap keeps that hold instead of
+recording an authoritative zero. The OpenAI Responses API is not patched.
+Direct SDK clients you do not wrap are a bypass. Subscription quotas stay
+with the provider. See the
+[enforcement boundary](../enforcement-boundary.md) and the
+[reservation contract](reservation-contract.md).
 
 For tools, call `LoopGuard.check(tool_name, arguments)` before dispatch.
 With a tracer, emit the tool-call event before running the tool. A guard

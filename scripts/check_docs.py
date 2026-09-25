@@ -11,7 +11,7 @@ import re
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = ("README.md", "docs/README.md", "llms.txt", "docs/guides/getting-started.md")
+DOCS = ("README.md", "docs/README.md", "llms.txt", "docs/guides/getting-started.md", "docs/enforcement-boundary.md", "docs/guides/activation-metrics-design.md", "docs/guides/reservation-contract.md")
 LINK = re.compile(r"""(!?)\[([^\]\n]*)\]\(([^\s)]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)""")
 
 

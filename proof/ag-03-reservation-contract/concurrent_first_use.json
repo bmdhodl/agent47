@@ -1,0 +1,8 @@
+{
+  "limit_calls": 1,
+  "workers": 2,
+  "admitted": 1,
+  "blocked": 1,
+  "held_calls": 1,
+  "wired_into_budget_guard": false
+}

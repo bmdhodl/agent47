@@ -1,5 +1,8 @@
 # Budget Enforcement Patterns for OpenAI API Calls
 
+> Tested bounds (2026-09-18): recorded-budget preflight is not an invoice cap.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
+
 **Category:** Show and tell
 **Labels:** budget, cost-control, openai, guides
 

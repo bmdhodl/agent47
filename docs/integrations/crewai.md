@@ -1,6 +1,11 @@
 # CrewAI Integration
 
-AgentGuard integrates with CrewAI to trace crew task execution and agent interactions.
+The supported API is `AgentGuardCrewHandler`. There is no
+`AgentGuardCrewCallback`.
+
+`step_callback` runs **after** the agent step. Budget consume is advisory for
+the step that just ran. The next callback can raise `BudgetExceeded`. See
+[enforcement-boundary.md](../enforcement-boundary.md).
 
 ## Install
 
@@ -17,24 +22,33 @@ CVE-2026-45833. The audit found no fixed release at that time.
 [CVE-2026-45829](https://github.com/advisories/GHSA-f4j7-r4q5-qw2c) concerns
 code injection through the ChromaDB Python server. Review the upstream
 advisories and your deployment exposure before installing this extra.
-AgentGuard does not fix these dependencies. Base SDK installs do not include
+AgentGuard does not fix these dependencies; tracking issue:
+[#644](https://github.com/bmdhodl/agent47/issues/644). Base SDK installs do not include
 ChromaDB.
 
 ## Quick Start
 
 ```python
+from crewai import Agent
 from agentguard import Tracer, JsonlFileSink, LoopGuard, BudgetGuard
-from agentguard.integrations.crewai import AgentGuardCrewCallback
+from agentguard.integrations.crewai import AgentGuardCrewHandler
 
 tracer = Tracer(
     sink=JsonlFileSink("traces.jsonl"),
     service="my-crew",
 )
 
-callback = AgentGuardCrewCallback(
+handler = AgentGuardCrewHandler(
     tracer=tracer,
     loop_guard=LoopGuard(max_repeats=5),
     budget_guard=BudgetGuard(max_cost_usd=5.00),
+)
+
+agent = Agent(
+    role="researcher",
+    goal="Answer one short question clearly.",
+    backstory="You are concise and careful.",
+    step_callback=handler.step_callback,
 )
 ```
 
@@ -42,27 +56,10 @@ callback = AgentGuardCrewCallback(
 
 | CrewAI Event | AgentGuard Span/Event |
 |---|---|
-| Task execution | `task.<description>` span |
-| Agent action | `agent.<role>` span |
-| Tool use | `tool.<name>` event |
+| Agent step | `step.<tool>` or `step.thought` span |
+| Task callback | `task.complete` / related events |
 
-## With a Crew
-
-```python
-from crewai import Agent, Task, Crew
-
-researcher = Agent(role="Researcher", goal="...", backstory="...")
-writer = Agent(role="Writer", goal="...", backstory="...")
-
-task = Task(description="Research and write about X", agent=researcher)
-crew = Crew(agents=[researcher, writer], tasks=[task])
-
-result = crew.kickoff(callbacks=[callback])
-```
-
-## Budget Control for Multi-Agent Teams
-
-CrewAI crews can involve multiple agents making many LLM calls. BudgetGuard prevents runaway costs across the entire crew execution.
+## Viewing Traces
 
 ```bash
 agentguard report traces.jsonl

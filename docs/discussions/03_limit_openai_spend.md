@@ -1,15 +1,18 @@
 # How to Limit OpenAI API Spend Per Agent Run
 
+> Tested bounds (2026-09-18): recorded-budget preflight is not an invoice cap.
+> See [enforcement-boundary.md](../enforcement-boundary.md).
+
 **Category:** Show and tell
 **Labels:** openai, budget, cost-control
 
 ---
 
-If you're running autonomous agents with OpenAI, you've probably wondered: how do I set a hard dollar limit per agent run?
+If you're running autonomous agents with OpenAI, you've probably wondered: how do I stop the next patched Chat Completions call once recorded spend is already at a cap?
 
 OpenAI has account-level spend limits, but those are a kill switch for your entire organization. They don't help when one agent run out of 50 goes haywire.
 
-Here's how to set a per-run budget that kills the agent the moment it exceeds your limit.
+Here's how to set a per-run recorded budget that refuses the next patched call after usage already on the guard exceeds your limit.
 
 ## Setup
 

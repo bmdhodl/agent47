@@ -1,17 +1,17 @@
 ---
 name: agentguard
-description: Runtime guardrails for AI coding agents. Stop loops, budget overruns, retry storms, and timeouts before they burn money. Zero dependencies, local-first, MIT licensed.
+description: Runtime guardrails for AI coding agents. Recorded-budget preflight, loop, retry, and timeout checks in instrumented Python. Zero dependencies, local-first, MIT licensed.
 license: MIT
 compatibility: Requires Python 3.9+
 metadata:
   author: bmdhodl
-  version: "1.3.1"
+  version: "1.4.0"
   pypi: agentguard47
 ---
 
 # AgentGuard
 
-Runtime guardrails for coding agents. Stops loops, budget overruns, retry storms, and timeouts mid-run. Zero dependencies. Local-first.
+Runtime guardrails for coding agents. Recorded-budget preflight, loops, retries, and timeouts on instrumented Python paths. Zero dependencies. Local-first. This skill is onboarding, not host enforcement. See docs/enforcement-boundary.md.
 
 ## Install
 
@@ -33,7 +33,7 @@ from agentguard import Tracer, BudgetGuard, patch_openai
 budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
 tracer = Tracer(service="support-agent")
 patch_openai(tracer, budget_guard=budget)
-# OpenAI chat completions are now tracked. At $4 you get a warning. At $5 the agent stops.
+# Chat Completions are tracked. Exhausted recorded budget refuses the next dispatch.
 ```
 
 ## Guards
@@ -47,7 +47,7 @@ patch_openai(tracer, budget_guard=budget)
 | `RateLimitGuard` | Calls-per-minute throttling | `RateLimitGuard(max_calls_per_minute=60)` |
 | `RetryGuard` | Retry storms on flaky tools | `RetryGuard(max_retries=3)` |
 
-Guards raise exceptions (`BudgetExceeded`, `LoopDetected`, `TimeoutExceeded`, `RetryLimitExceeded`) to kill the agent immediately.
+Guards raise exceptions (`BudgetExceeded`, `LoopDetected`, `TimeoutExceeded`, `RetryLimitExceeded`) on instrumented paths. They do not intercept host tools or provider invoices.
 
 ## One-Liner Init with Defaults
 
@@ -120,4 +120,5 @@ agentguard incident traces.jsonl --format html  # postmortem report
 - PyPI: https://pypi.org/project/agentguard47/
 - GitHub: https://github.com/bmdhodl/agent47
 - Docs: https://github.com/bmdhodl/agent47/tree/main/docs
+- Enforcement boundary: https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md
 - Dashboard: https://app.agentguard47.com

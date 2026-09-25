@@ -53,7 +53,10 @@ Always:
 - keep changes minimal and product-facing
 - stop if the request conflicts with `memory/` or `ops/`
 - leave proof for every PR
+- open every PR ready for review; never create a draft
 - do the post-PR review loop: CI, automated review, comment sweep, fixes, rerun
+- address and resolve EVERY comment, every time: reply on the thread, fix or
+  cite the SHA, resolve the GitHub conversation, and repeat until none remain
 
 ## What Claude Should Optimize For Here
 
@@ -130,8 +133,8 @@ For this repo, the most relevant Claude-side assets are:
 - official MCP Registry listing: live
 - dashboard remains private
 
-Current release candidate: v1.3.1.
-<!-- release candidate is 1.3.1 -->
+Current release candidate: v1.4.0.
+<!-- release candidate is 1.4.0 -->
 
 Core message to preserve:
 

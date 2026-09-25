@@ -3,6 +3,18 @@
 - Recheck the Glama rendered listing and the "no recent usage" checklist item
   with the read key. The public API still returned `tools: []` on 2026-08-15;
   do not change SDK or MCP runtime code solely to chase that directory signal.
+- Apply [docs/guides/bmdpat-measurement-contract.md](../docs/guides/bmdpat-measurement-contract.md)
+  in the bmdpat classifier so landing-page hits stop arriving as `install_intent`.
+- 1.4.0 candidate is the merged AG-01 through AG-05 slice. Do not tag it
+  from this prep branch until `make release-guard` is green and the owner
+  chooses the tag. AG-06 stays open: it needs an approved public API, and
+  the week-four gate has no external repeat user, so later adapters stay held.
+- AG-05 / #734 reserves store-backed streams on the AG-04 ledger. Windows was not executed for the stream spawn
+  race; Linux was. The AG-04 non-stream race has the same Windows gap.
+- Claude PR review truncates `gh pr diff` at 200k bytes and `.showwork`
+  sorts first. Keep `.showwork/snapshots/*.json` as `text eol=lf -diff` so
+  SDK patches stay visible. Workflow changes on a PR do not apply until
+  merge (`pull_request_target` uses the base workflow).
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.

@@ -1,0 +1,12 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /workspace/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0, showwork-0.6.2, anyio-4.15.1
+collected 29 items
+
+sdk/tests/test_reservation_contract.py ...................               [ 65%]
+sdk/tests/test_architecture.py .........                                 [ 96%]
+sdk/tests/test_enforcement_boundary.py .                                 [100%]
+
+============================== 29 passed in 2.32s ==============================

@@ -1,0 +1,15 @@
+command: .venv/ag30-wheel/bin/python examples/shared_call_limit.py
+cwd: /workspace
+PYTHONPATH: unset
+--- run 1 ---
+Shared local limit: one simulated call was sent. The other worker was stopped before send.
+Boundary: one shared local key. Not a provider invoice cap. Not a cross-machine budget.
+Next: run this script again. It creates a fresh temporary store, so the last run does not block it.
+RESULT {"dispatched": 1, "results": ["sent", "stopped"], "stopped": 1, "settled_calls": 1, "reserved_calls": 0, "unresolved_calls": 0, "workers": 2, "start_method": "spawn", "exit_codes": [0, 0], "network_calls": 0, "provider": "simulated", "store": "fresh-temporary", "fixed": true}
+exit:0
+--- run 2 ---
+Shared local limit: one simulated call was sent. The other worker was stopped before send.
+Boundary: one shared local key. Not a provider invoice cap. Not a cross-machine budget.
+Next: run this script again. It creates a fresh temporary store, so the last run does not block it.
+RESULT {"dispatched": 1, "results": ["sent", "stopped"], "stopped": 1, "settled_calls": 1, "reserved_calls": 0, "unresolved_calls": 0, "workers": 2, "start_method": "spawn", "exit_codes": [0, 0], "network_calls": 0, "provider": "simulated", "store": "fresh-temporary", "fixed": true}
+exit:0

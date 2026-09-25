@@ -142,6 +142,14 @@ Before requesting review, run the smallest relevant checks plus `make preflight`
 or the direct equivalent. New behavior needs tests. Docs-only PRs should still
 run release/readme sync checks when they touch release-facing files.
 
+Open every PR ready for review. Do not open a draft.
+
+`.showwork/snapshots/*.json` is marked `-diff`. The patch shows
+`Binary files differ` instead of the JSON body, so a snapshot change is
+visible but not readable in `gh pr diff`. The session JSONL hash chain is
+the content check. This keeps the Claude review 200k cap from being filled
+by tree snapshots before SDK code.
+
 ## AI-Assisted Contributions
 
 AI-assisted contributions are welcome. The quality bar is unchanged.

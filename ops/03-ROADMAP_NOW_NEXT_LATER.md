@@ -3,11 +3,31 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-14
+**Last reviewed:** 2026-09-24
 
 ## Current Focus Notes
 
-- Provider patches reject exhausted recorded budgets before dispatch.
+- Planning authority for 2026 weekly work is
+  [GitHub #729](https://github.com/bmdhodl/agent47/issues/729) and
+  [Project 4](https://github.com/users/bmdhodl/projects/4). This file is the
+  SDK-now view. Do not treat the tables below as a second execution queue.
+- Honest enforcement claims (AG-01): recorded-budget preflight vs remaining
+  exposure. Canonical map:
+  [enforcement boundary](../docs/enforcement-boundary.md).
+- Activation evidence (AG-02): page views are not installs. Voluntary demo
+  feedback is local-only. Classifier:
+  [activation-metrics-design.md](../docs/guides/activation-metrics-design.md).
+- Local reservation (AG-03 contract, AG-04 one path, AG-05 streams):
+  sync non-streaming OpenAI Chat Completions and store-backed streams
+  reserve before send. Canonical:
+  [reservation-contract.md](../docs/guides/reservation-contract.md).
+  `check()` / `consume()` still overshoot.
+- Stable SDK releases automatically email active AgentGuard subscribers.
+  The release email is owner-authorized (2026-09-18) and uses the existing
+  subscriber service. See [release email](../docs/guides/release-email.md).
+
+- Provider patches record final streamed usage once and reject exhausted
+  recorded budgets before dispatch.
   See [release state](../memory/state.md) for publication evidence and
   [package metadata](../sdk/pyproject.toml) for the branch version.
 
@@ -40,6 +60,9 @@ they directly strengthen coding-agent adoption.
 
 | Item | Status |
 |------|--------|
+| Honest enforcement boundary (AG-01 / #730) | Done - 2026-09-20; map, examples, and copy repairs merged in #758 |
+| Activation evidence (AG-02 / #731) | Done - 2026-09-20; honest counts, local `demo --feedback`, and weekly classifier merged in #759 |
+| Provider patches record final streamed usage once | Done - 2026-09-17; OpenAI and Anthropic sync/async `stream=True` calls, plus Anthropic `messages.stream()`, bill the final usage payload once. OpenAI injects `include_usage` when unset. Exhausted-budget preflight is unchanged |
 | Clean-wheel activation proof | Done - 2026-08-15; an isolated venv installed the locally built candidate wheel and completed `python -m agentguard`, `doctor`, `demo`, raw `quickstart --write`, generated-starter execution, `report`, and `badge` without API keys or network |
 | Competitor Wedge Map consolidation | Done - README wedge map (WorkOS, Uber, Anthropic) refreshed on 2026-06-17 |
 | Eval assertion expansion | Done - `EvalSuite` now has >=12 built-in assertions |
@@ -70,17 +93,21 @@ they directly strengthen coding-agent adoption.
 
 | Item | Success Signal |
 |------|---------------|
-| External adoption proof | Obtain explicit evidence from at least three external repeat users or design partners before adding another broad SDK feature; do not add telemetry to satisfy this gate |
+| Honest enforcement boundary (AG-01 / #730) | Done in #758. Map: [enforcement-boundary.md](../docs/enforcement-boundary.md) |
+| Activation evidence (AG-02 / #731) | Done in #759. Landing-page navigation never counts as install; `demo --feedback` is local-only |
+| Local reservation contract (AG-03 / #732) | Transition table, native-first alternative, and private model in [reservation-contract.md](../docs/guides/reservation-contract.md); `check()` still overshoots |
+| One atomic reservation path (AG-04 / #733) | Store-backed sync OpenAI non-stream reserves before send. Barrier race dispatches once. Not an invoice cap. |
+| Stream reservation (AG-05 / #734) | Store-backed OpenAI and Anthropic streams reserve before send. Missing token or dollar usage stays unresolved. Not an invoice cap. |
+| 1.4.0 release candidate | Source version, changelog, and release-guard match `1.4.0`. Published PyPI stays `1.3.2` until the owner tags `v1.4.0`. AG-06 and later adapters stay held. |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |
-| Ops/doc freshness | Done on 2026-08-15; the freshness commands are now under the AGENTS.md thresholds and stale release claims are removed |
+| Ops/doc freshness | Reconciled 2026-09-18 with #729. Older dashboard-era hard-cap copy is replaced by the enforcement map |
 
 ## Next (next month)
 
 | Item | Success Signal |
 |------|---------------|
-| Streaming support in patches | `patch_openai` / `patch_anthropic` capture streamed responses without losing final token and cost totals |
 | Coding-agent profile v2 | Built-in coding-agent defaults cover streamed calls, fuzzy loop patterns, and stronger repo-local safety without increasing setup complexity |
 | Cost model alias cleanup | Common provider aliases map cleanly onto canonical model pricing entries without warning spam |
 | Release announcement reliability | Release-content automation handles missing GitHub Discussions categories without failing the package release path |

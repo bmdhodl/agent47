@@ -1,6 +1,11 @@
 # LangGraph Integration
 
-AgentGuard integrates with LangGraph to trace graph node execution with runtime guards.
+Wrap LangGraph node functions with tracing and runtime guards. The supported
+API is `guarded_node` / `guard_node`. There is no `AgentGuardLangGraphCallback`.
+
+`consume(calls=1)` runs at node entry. That is recorded-budget preflight for
+the **call** budget, not a dollar cap and not a patch of inner provider
+clients. See [enforcement-boundary.md](../enforcement-boundary.md).
 
 ## Install
 
@@ -12,18 +17,31 @@ pip install agentguard47[langgraph]
 
 ```python
 from agentguard import Tracer, JsonlFileSink, LoopGuard, BudgetGuard
-from agentguard.integrations.langgraph import AgentGuardLangGraphCallback
+from agentguard.integrations.langgraph import guarded_node
 
 tracer = Tracer(
     sink=JsonlFileSink("traces.jsonl"),
     service="my-graph-agent",
 )
+budget = BudgetGuard(max_calls=20)
 
-callback = AgentGuardLangGraphCallback(
+@guarded_node(
     tracer=tracer,
     loop_guard=LoopGuard(max_repeats=5),
-    budget_guard=BudgetGuard(max_cost_usd=2.00),
+    budget_guard=budget,
 )
+def research_node(state):
+    messages = list(state.get("messages", []))
+    messages.append("research complete")
+    return {"messages": messages}
+```
+
+Or wrap at graph construction time:
+
+```python
+from agentguard.integrations.langgraph import guard_node
+
+builder.add_node("research", guard_node(research_fn, tracer=tracer, budget_guard=budget))
 ```
 
 ## What Gets Traced
@@ -31,30 +49,13 @@ callback = AgentGuardLangGraphCallback(
 | LangGraph Event | AgentGuard Span/Event |
 |---|---|
 | Node execution | `node.<name>` span |
-| Edge traversal | `edge.<source>_to_<target>` event |
-| Graph start/end | `graph.<name>` span |
 
-## With StateGraph
-
-```python
-from langgraph.graph import StateGraph, END
-
-graph = StateGraph(AgentState)
-graph.add_node("research", research_node)
-graph.add_node("write", write_node)
-graph.add_edge("research", "write")
-graph.add_edge("write", END)
-
-app = graph.compile()
-result = app.invoke(
-    {"messages": [HumanMessage(content="...")]},
-    config={"callbacks": [callback]},
-)
-```
+Inner LLM calls are traced only if you also patch or wrap those clients.
 
 ## Guards in Graph Loops
 
-LangGraph graphs often have cycles (e.g., agent loops). AgentGuard's LoopGuard detects when the same node executes with identical state too many times, preventing infinite loops.
+`LoopGuard` detects when the same node runs with identical summarized state
+too many times.
 
 ```bash
 agentguard report traces.jsonl

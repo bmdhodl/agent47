@@ -144,6 +144,16 @@ class TestSkillpack(unittest.TestCase):
             ("all", "codex", "claude-code", "copilot", "cursor"),
         )
 
+    def test_skillpack_notes_are_onboarding_not_host_enforcement(self) -> None:
+        buf = io.StringIO()
+        result = run_skillpack(json_output=True, stream=buf)
+        self.assertEqual(result, 0)
+        payload = json.loads(buf.getvalue())
+        notes = " ".join(payload["notes"]).lower()
+        self.assertIn("onboarding", notes)
+        self.assertIn("not", notes)
+        self.assertTrue("host" in notes or "intercept" in notes)
+
 
 if __name__ == "__main__":
     unittest.main()

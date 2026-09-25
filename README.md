@@ -27,6 +27,7 @@ agentguard demo
 `doctor` checks the installation and local trace writing. `demo` exercises
 budget, loop, and retry stops without provider keys or network access. Follow
 the trace path printed by the command to inspect its output.
+`agentguard demo --feedback` prints a local redacted report; nothing is sent.
 
 ### Stop before a third call
 
@@ -74,9 +75,10 @@ patch_openai(tracer, budget_guard=budget)
 ```
 
 The patch checks recorded usage before dispatch and records response usage
-afterward. A response can exceed the remaining cost or token allowance.
-Concurrent requests do not reserve capacity. The patches do not yet track
-streaming totals. See the [getting started guide](docs/guides/getting-started.md)
+afterward, including streamed calls once the final usage arrives. A response
+can exceed the remaining cost or token allowance. Concurrent requests do not
+reserve capacity. OpenAI streams request `include_usage` unless the caller
+already set it. See the [getting started guide](docs/guides/getting-started.md)
 for setup, traces, and framework starters.
 
 ## How enforcement works
@@ -119,6 +121,10 @@ read the [guard source](sdk/agentguard/guards.py) and
   agent running on a provider's server.
 - Cost estimates are not invoices. Supply reported cost or use strict cost
   resolution when an estimate is insufficient.
+- Recorded-budget preflight refuses the next instrumented call when stored
+  usage is already at a cap. It does not reserve concurrent in-flight
+  requests, predict the next response, or cap a provider subscription.
+  See the [enforcement boundary](docs/enforcement-boundary.md).
 - The base SDK uses the standard library. Optional framework extras install
   third-party dependencies and need their own security review.
 - The optional `[crewai]` extra pulls ChromaDB. The
@@ -156,6 +162,7 @@ describes the optional hosted service.
 
 | You want to | Start here |
 | --- | --- |
+| See which paths actually stop a call | [Enforcement boundary](docs/enforcement-boundary.md) |
 | Install and trace a first run | [Getting started](docs/guides/getting-started.md) |
 | Find guides and source references | [Documentation index](docs/README.md) |
 | Try a runnable example | [Examples](examples/) |

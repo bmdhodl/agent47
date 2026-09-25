@@ -23,7 +23,7 @@
     <meta name="twitter:title" content="AgentGuard47 | Runtime Guardrails for Coding Agents" />
     <meta
       name="twitter:description"
-      content="Stop runaway coding agents before they spend. No account, API key, or dashboard required for the first proof."
+      content="Stop the next instrumented call at a recorded limit. No account, API key, or dashboard required for the first proof."
     />
 
     <script type="application/ld+json">
@@ -36,7 +36,7 @@
       "description": "Local-first Python runtime guardrails for coding agents. Enforce budgets, stop repeated tool loops, cap retries, and write local trace reports before adding hosted incident control.",
       "url": "https://agentguard47.com",
       "downloadUrl": "https://pypi.org/project/agentguard47/",
-      "softwareVersion": "1.2.13",
+      "softwareVersion": "1.3.2",
       "author": {
         "@type": "Organization",
         "name": "BMD PAT LLC",
@@ -819,7 +819,7 @@
       })();
     </script>
   </head>
-  <body>
+  <body data-ag-metric="page-navigation">
     <div class="page">
       <header class="topbar">
         <nav class="nav" aria-label="Primary">
@@ -828,6 +828,8 @@
             <strong>AgentGuard<span>47</span></strong>
           </a>
           <div class="navlinks">
+            <a href="/enforcement.html">Bounds</a>
+            <a href="/activation.html">How we count</a>
             <a href="/quickstart.html">Quickstart</a>
             <a href="/compare.html">Compare</a>
             <a href="/trust.html">Trust</a>
@@ -844,11 +846,12 @@
           <div class="hero-grid">
             <div>
               <span class="eyebrow"><span class="pulse"></span> Local-first runtime guardrails</span>
-              <h1>Stop runaway coding agents before they spend.</h1>
+              <h1>Stop the next instrumented call at a recorded limit.</h1>
               <p class="lead">
-                AgentGuard47 is a zero-dependency Python SDK that enforces budgets,
-                loops, retries, and timeouts while your agent is still running. No
-                account, API key, or dashboard required for the first proof.
+                AgentGuard47 is a zero-dependency Python SDK that checks recorded
+                budgets, loops, retries, and timeouts in code you instrument. No
+                account, API key, or dashboard required for the first proof. This
+                is not an invoice cap or a host-wide kill switch.
               </p>
               <div class="hero-actions">
                 <a class="btn btn-red" href="#local-proof">Run proof in 60 seconds</a>
@@ -856,8 +859,9 @@
               </div>
               <div class="install-line">
                 <code id="install-command">pip install agentguard47</code>
-                <button class="btn copy-install" type="button" onclick="copyText('install-command', this)">Copy install</button>
+                <button class="btn copy-install" type="button" data-ag-metric="install-intent-candidate" onclick="copyText('install-command', this)">Copy install</button>
               </div>
+              <p class="muted">Viewing this page is not an install. See <a href="/activation.html">how we count use</a>.</p>
             </div>
 
             <aside class="proof-scene" aria-label="AgentGuard local proof terminal">
@@ -896,8 +900,24 @@
           <div class="proof-strip" aria-label="Proof points">
             <div class="metric"><strong>0</strong><span>SDK runtime dependencies</span></div>
             <div class="metric"><strong>MIT</strong><span>free SDK license</span></div>
-            <div class="metric"><strong>1.2.13</strong><span>latest PyPI release</span></div>
+            <div class="metric"><strong>1.3.2</strong><span>latest PyPI release</span></div>
             <div class="metric"><strong>local</strong><span>first proof path</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="bounds">
+          <div class="section-head">
+            <span class="eyebrow">Tested bounds</span>
+            <h2>Recorded-budget preflight, not an invoice cap.</h2>
+            <p class="muted">
+              OpenAI Chat Completions and Anthropic Messages patches refuse an
+              exhausted recorded budget before the next dispatch. Sync
+              non-streaming OpenAI calls, and streamed calls that share a local
+              store, reserve one call before send. In-memory and async non-stream
+              requests do not. Direct SDK clients, host tools, the Responses API,
+              and provider subscription quotas are unsupported.
+              Read the <a href="/enforcement.html">enforcement boundary</a>.
+            </p>
           </div>
         </section>
 
@@ -1043,6 +1063,7 @@ with tracer.trace("agent.run") as span:
         <div class="footer-links">
           <a href="https://github.com/bmdhodl/agent47">GitHub</a>
           <a href="https://pypi.org/project/agentguard47/">PyPI</a>
+          <a href="/enforcement.html">Bounds</a>
           <a href="/quickstart.html">Quickstart</a>
           <a href="/compare.html">Compare</a>
           <a href="/trust.html">Trust</a>

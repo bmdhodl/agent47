@@ -1,15 +1,18 @@
 # SDK Distribution
 
-**Last Updated:** 2026-08-15
+**Last Updated:** 2026-09-18
 
 ## Core Message
-AgentGuard stops coding agents from looping, retrying forever, and burning
-budget before the next bad call lands.
+AgentGuard stops instrumented coding agents from looping, retrying forever,
+and continuing after a recorded budget is already exhausted. See
+[enforcement-boundary.md](../docs/enforcement-boundary.md) for the tested
+paths and remaining exposure.
 
 ## Audience
 - developers using coding agents
 - small teams shipping AI agents
-- teams worried about runaway spend and unsafe automation
+- teams who need an in-process stop at a Python dispatch boundary, not a
+  gateway or an invoice controller
 
 ## Channels
 - npm `@agentguard47/mcp-server`: latest `0.2.2`, modified 2026-05-04; matches

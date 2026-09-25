@@ -1,5 +1,86 @@
 # Changelog
 
+## 1.4.0
+
+### Stream reservation (AG-05)
+- Store-backed OpenAI and Anthropic streams reserve one call before send.
+  Final usage commits once. A dropped connection, a provider timeout, or a
+  stream that stops early keeps the hold, including after a partial usage
+  chunk. Missing usage under a token or dollar cap stays unresolved
+  instead of an authoritative zero. A calls-only cap settles one call.
+- Unknown model cost is an overestimate. Dated model ids use the owned alias
+  map. Cache and reasoning tokens follow the owned price table. Pass
+  `prices=` to `resolve_billable_cost` to override that table. No new public
+  export.
+- In-memory streams, async non-stream calls, and Anthropic non-stream calls
+  stay on recorded-budget preflight. Not an invoice cap.
+
+### One local reservation path (AG-04)
+- Sync, non-streaming OpenAI Chat Completions now reserve before send when
+  `BudgetGuard` has a `StateStore`. One shared key and one remaining call
+  produce one dispatch. Commit records provider usage. Cancel frees the hold
+  only if the request never left. Timeout, crash, and unknown outcomes keep
+  the hold.
+- `BudgetGuard.reservation_totals()` reports settled, reserved, and
+  unresolved amounts. `check()` and `consume()` are unchanged.
+  This slice left streaming, async, and Anthropic on recorded-budget
+  preflight. Store-backed streams are the AG-05 note above.
+- This is not an invoice cap. Token and dollar holds need `max_tokens` on
+  the request. The dollar bound is the owned high-water estimate.
+
+### Local reservation contract (AG-03)
+- Designed reserve / commit / cancel / unresolved semantics for a future
+  local `StateStore` path:
+  [docs/guides/reservation-contract.md](docs/guides/reservation-contract.md).
+- Executable private model: `sdk/agentguard/_reservation_contract.py`.
+  Unknown provider outcomes cannot silently free funds. No public type.
+  `BudgetGuard.check()` still does not reserve. AG-04 wires one OpenAI path.
+
+### Activation evidence (AG-02)
+- Landing-page navigation never counts as install or activation.
+- `agentguard demo --feedback` prints a local redacted report (`version`,
+  `adapter`, `result`, `reproduction`). Users inspect, `--omit`, or decline.
+  The demo still makes no network call.
+- Weekly classifier: `python scripts/activation_weekly_report.py
+  docs/guides/activation-baseline-2026-09-18.json`.
+- bmdpat `install_intent` follow-up:
+  [docs/guides/bmdpat-measurement-contract.md](docs/guides/bmdpat-measurement-contract.md).
+
+### Honest enforcement boundary (AG-01)
+- Published the tested surface map in
+  [docs/enforcement-boundary.md](docs/enforcement-boundary.md): advisory,
+  recorded-budget preflight, recorded-event preflight, reservation-backed,
+  or unsupported.
+- Replaced absolute bill-prevention copy with recorded-budget bounds.
+  Direct SDK bypass, in-flight spend, missing usage, concurrent overshoot,
+  and provider subscription quotas stay documented as remaining exposure.
+- Offline reproductions:
+  `examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py` and
+  `examples/enforcement_boundary/two_worker_overshoot.py`.
+
+## 1.3.2 (2026-09-17)
+
+### Record final usage on streamed provider calls
+- OpenAI and Anthropic patches now wrap `stream=True` responses and bill the
+  final usage payload once, for both sync and async clients. Anthropic
+  `messages.stream()` is included. Chunks without usage are ignored.
+- OpenAI streaming requests set `stream_options.include_usage=True` when the
+  caller did not set `include_usage`. An explicit `False` is left unchanged.
+- Anthropic `create(stream=True)` events split input usage on `message_start`
+  and output usage on `message_delta`; the wrapper now merges those fields
+  before billing. Stream wrappers are iterators (`next` / `anext`). A failed
+  stream closes the trace span with the exception so `assert_no_errors()`
+  sees it.
+- A stream that ends without usage still counts as one dispatched call with
+  zero tokens and zero cost. Exhausted budgets still refuse the request before
+  dispatch.
+- This does not reserve concurrent capacity, predict a response's cost, or
+  preflight goal-level caps. Mid-stream abort without a usage payload cannot
+  recover tokens from partial text.
+- Reproduce the before/after token counts without network calls with
+  `examples/streaming_usage_demo.py`. The provider is mocked; the installed
+  AgentGuard patch, stream wrapper, and budget consume path are real.
+
 ## 1.3.1 (2026-09-14)
 
 ### Stop exhausted-budget retries before provider dispatch

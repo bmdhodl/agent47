@@ -4,6 +4,10 @@ from __future__ import annotations
 import functools
 from typing import Any, Callable, Dict, Optional, TypeVar
 
+from agentguard.instrument_stream import (
+    run_traced_create,
+    run_traced_create_async,
+)
 from agentguard.usage import normalize_usage
 
 F = TypeVar("F", bound=Callable[..., Any])
@@ -170,6 +174,76 @@ def _emit_llm_result(
         _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
 
 
+def _emit_stream_final(
+    ctx: Any,
+    budget_guard: Any,
+    model: str,
+    provider: str,
+    usage: Any,
+    response: Any,
+) -> None:
+    from agentguard.instrument_stream import emit_stream_final
+
+    emit_stream_final(
+        ctx,
+        budget_guard,
+        model,
+        provider,
+        usage,
+        response,
+        _emit_llm_result,
+        _consume_budget,
+    )
+
+
+def _traced_provider_create(
+    original: Any,
+    tracer: Any,
+    budget_guard: Any,
+    provider: str,
+    args: tuple,
+    kwargs: Dict[str, Any],
+    *,
+    wrap_stream: bool,
+) -> Any:
+    return run_traced_create(
+        original,
+        tracer,
+        budget_guard,
+        provider,
+        args,
+        kwargs,
+        wrap_stream=wrap_stream,
+        check_budget=_check_budget_before_request,
+        emit_result=_emit_llm_result,
+        consume_budget=_consume_budget,
+    )
+
+
+async def _traced_provider_create_async(
+    original: Any,
+    tracer: Any,
+    budget_guard: Any,
+    provider: str,
+    args: tuple,
+    kwargs: Dict[str, Any],
+    *,
+    wrap_stream: bool,
+) -> Any:
+    return await run_traced_create_async(
+        original,
+        tracer,
+        budget_guard,
+        provider,
+        args,
+        kwargs,
+        wrap_stream=wrap_stream,
+        check_budget=_check_budget_before_request,
+        emit_result=_emit_llm_result,
+        consume_budget=_consume_budget,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Sync decorators
 # ---------------------------------------------------------------------------
@@ -334,15 +408,20 @@ def _patch_openai_instance(client: Any, tracer: Any, budget_guard: Any = None) -
 def _traced_openai_create(
     original: Any, tracer: Any, budget_guard: Any, *args: Any, **kwargs: Any
 ) -> Any:
-    """Shared traced wrapper for sync OpenAI create calls."""
-    model = str(kwargs.get("model", "unknown"))
-    with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
-        _check_budget_before_request(budget_guard, ctx, model)
-        result = original(*args, **kwargs)
-        _emit_llm_result(
-            ctx, budget_guard, model, "openai", getattr(result, "usage", None), response=result
-        )
-        return result
+    """Sync OpenAI create. A stored budget reserves before a non-stream send."""
+    if getattr(budget_guard, "_store", None) is not None and not kwargs.get("stream"):
+        from ._reservation_path import traced_openai_reserved
+
+        return traced_openai_reserved(original, tracer, budget_guard, args, kwargs)
+    return _traced_provider_create(
+        original,
+        tracer,
+        budget_guard,
+        "openai",
+        args,
+        kwargs,
+        wrap_stream=bool(kwargs.get("stream")),
+    )
 
 
 def unpatch_openai() -> None:
@@ -389,7 +468,7 @@ def patch_anthropic(tracer: Any, budget_guard: Any = None) -> None:
 
 
 def _patch_anthropic_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
-    """Patch a single Anthropic client instance's messages.create."""
+    """Patch a single Anthropic client instance's messages.create and stream."""
     messages = getattr(client, "messages", None)
     if messages is None:
         return
@@ -397,16 +476,34 @@ def _patch_anthropic_instance(client: Any, tracer: Any, budget_guard: Any = None
 
     @functools.wraps(original_create)
     def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = str(kwargs.get("model", "unknown"))
-        with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
-            _check_budget_before_request(budget_guard, ctx, model)
-            result = original_create(*args, **kwargs)
-            _emit_llm_result(
-                ctx, budget_guard, model, "anthropic", getattr(result, "usage", None), response=result
-            )
-            return result
+        return _traced_provider_create(
+            original_create,
+            tracer,
+            budget_guard,
+            "anthropic",
+            args,
+            kwargs,
+            wrap_stream=bool(kwargs.get("stream")),
+        )
 
     messages.create = traced_create  # type: ignore[attr-defined]
+    original_stream = getattr(messages, "stream", None)
+    if original_stream is None:
+        return
+
+    @functools.wraps(original_stream)
+    def traced_stream(*args: Any, **kwargs: Any) -> Any:
+        return _traced_provider_create(
+            original_stream,
+            tracer,
+            budget_guard,
+            "anthropic",
+            args,
+            kwargs,
+            wrap_stream=True,
+        )
+
+    messages.stream = traced_stream  # type: ignore[attr-defined]
 
 
 def unpatch_anthropic() -> None:
@@ -585,14 +682,15 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
 
     @functools.wraps(original_create)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = str(kwargs.get("model", "unknown"))
-        async with tracer.trace(f"llm.openai.{model}", data={"model": model, "provider": "openai"}) as ctx:
-            _check_budget_before_request(budget_guard, ctx, model)
-            result = await original_create(*args, **kwargs)
-            _emit_llm_result(
-                ctx, budget_guard, model, "openai", getattr(result, "usage", None), response=result
-            )
-            return result
+        return await _traced_provider_create_async(
+            original_create,
+            tracer,
+            budget_guard,
+            "openai",
+            args,
+            kwargs,
+            wrap_stream=bool(kwargs.get("stream")),
+        )
 
     completions.create = traced_create  # type: ignore[attr-defined]
 
@@ -638,7 +736,7 @@ def patch_anthropic_async(tracer: Any, budget_guard: Any = None) -> None:
 
 
 def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
-    """Patch a single AsyncAnthropic client instance."""
+    """Patch a single AsyncAnthropic client instance's messages.create and stream."""
     messages = getattr(client, "messages", None)
     if messages is None:
         return
@@ -646,16 +744,36 @@ def _patch_anthropic_async_instance(client: Any, tracer: Any, budget_guard: Any 
 
     @functools.wraps(original_create)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
-        model = str(kwargs.get("model", "unknown"))
-        async with tracer.trace(f"llm.anthropic.{model}", data={"model": model, "provider": "anthropic"}) as ctx:
-            _check_budget_before_request(budget_guard, ctx, model)
-            result = await original_create(*args, **kwargs)
-            _emit_llm_result(
-                ctx, budget_guard, model, "anthropic", getattr(result, "usage", None), response=result
-            )
-            return result
+        return await _traced_provider_create_async(
+            original_create,
+            tracer,
+            budget_guard,
+            "anthropic",
+            args,
+            kwargs,
+            wrap_stream=bool(kwargs.get("stream")),
+        )
 
     messages.create = traced_create  # type: ignore[attr-defined]
+    original_stream = getattr(messages, "stream", None)
+    if original_stream is None:
+        return
+
+    @functools.wraps(original_stream)
+    def traced_stream(*args: Any, **kwargs: Any) -> Any:
+        from agentguard.instrument_stream import open_provider_async_stream
+
+        return open_provider_async_stream(
+            original_stream,
+            tracer,
+            budget_guard,
+            args,
+            kwargs,
+            check_budget=_check_budget_before_request,
+            emit_final=_emit_stream_final,
+        )
+
+    messages.stream = traced_stream  # type: ignore[attr-defined]
 
 
 def unpatch_anthropic_async() -> None:

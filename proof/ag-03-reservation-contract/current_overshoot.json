@@ -1,0 +1,11 @@
+{
+  "limit_calls": 1,
+  "workers": 2,
+  "dispatched": 2,
+  "consume_succeeded": 1,
+  "consume_blocked": 1,
+  "recorded_calls": 2,
+  "overshoot": true,
+  "fixed": false,
+  "note": "check() does not reserve. consume() increments then raises, so recorded_calls can exceed limit_calls while consume_blocked is 1."
+}

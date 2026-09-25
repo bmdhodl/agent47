@@ -155,6 +155,42 @@ Expected boundary:
 Requires AGENTGUARD_API_KEY for retained hosted data. Does not add local runtime enforcement.
 ```
 
+## 8. Shared local call limit
+
+POSIX and PowerShell:
+
+```bash
+python -m pip install --upgrade "agentguard47==1.4.0"
+python examples/shared_call_limit.py
+```
+
+Proves:
+
+- two workers share one `JsonFileStateStore` key and `max_calls=1`
+- one simulated Chat Completions send is admitted and the other stops before send
+- the provider is simulated: no API key and no network call after install
+- each run uses a fresh temporary store
+
+Expected result:
+
+```text
+Shared local limit: one simulated call was sent. The other worker was stopped before send.
+Boundary: one shared local key. Not a provider invoice cap. Not a cross-machine budget.
+```
+
+## 9. Enforcement Boundary
+
+```bash
+python examples/enforcement_boundary/exhausted_budget_blocks_dispatch.py
+python examples/enforcement_boundary/two_worker_overshoot.py
+```
+
+Proves:
+
+- an exhausted recorded budget refuses the next mocked Chat Completions dispatch
+- two workers can both pass `check()` today; that overshoot is characterized, not claimed fixed
+- remaining exposure is documented in [enforcement-boundary.md](../enforcement-boundary.md)
+
 ## What To Share
 
 The most shareable public demo for the release train is the sticky agent proof:
