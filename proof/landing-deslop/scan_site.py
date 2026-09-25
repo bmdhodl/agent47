@@ -29,4 +29,4 @@ for path in sorted((ROOT / "site").rglob("*.html")):
     results[name] = result
     spans = [s.get("text") or s for s in result["spans"]]
     print(f"{name:40s} score={result['slop_score']:.3f} words={result['n_words']:5d} spans={spans}")
-(OUT / f"site-slop-{label}.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+(OUT / f"site-slop-{label}.json").write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")

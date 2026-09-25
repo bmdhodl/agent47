@@ -401,5 +401,10 @@ def test_site_patch_examples_pass_a_budget_guard():
     # patch_openai(tracer) alone records cost but never raises; compare.html once shipped it.
     for path in (ROOT / "site").rglob("*.html"):
         text = _strip_tags(path.read_text(encoding="utf-8"))
-        for line in re.findall(r"patch_(?:openai|anthropic)\(.*", text):
-            assert "budget_guard=" in line, f"{path.name}: {line}"
+        for match in re.finditer(r"patch_(?:openai|anthropic)\(", text):
+            depth, end = 1, match.end()
+            while depth:
+                depth += {"(": 1, ")": -1}.get(text[end], 0)
+                end += 1
+            call = text[match.start():end]
+            assert "budget_guard=" in call, f"{path.name}: {call}"
