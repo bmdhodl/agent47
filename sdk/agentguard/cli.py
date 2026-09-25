@@ -12,9 +12,12 @@ from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
 from agentguard.evaluation import _extract_cost, _load_events
 from agentguard.first_run import hosted_url, render_badge, render_welcome
+from agentguard.hooks import configure as configure_hook
+from agentguard.hooks import run as run_hook
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
 from agentguard.receipt import bars_supported, build_receipt, render
 from agentguard.reporting import render_incident_report
+from agentguard.runner import run as run_script
 from agentguard.savings import summarize_savings
 from agentguard.skillpack import TARGET_CHOICES, run_skillpack
 
@@ -328,6 +331,27 @@ def main() -> None:
         help="text for terminals, markdown for PRs and issues, json for CI.",
     )
 
+    run_cmd = sub.add_parser(
+        "run",
+        help="Run a Python script with AgentGuard patched in, no code changes",
+        description="Run SCRIPT (or -m MODULE) with OpenAI and Anthropic clients patched. "
+        "Options come before the script; everything after it goes to the script.",
+    )
+    run_cmd.add_argument("-m", dest="module", help="Run a module, like python -m.")
+    run_cmd.add_argument("--budget-usd", type=float, help="Dollar budget for patched LLM calls.")
+    run_cmd.add_argument("--service", help="Service name in the trace.")
+    run_cmd.add_argument("--trace-file", help="Local JSONL trace path.")
+    run_cmd.add_argument("--profile", help="Guard profile: default, coding-agent, or deployed-agent.")
+    run_cmd.add_argument("target", nargs=argparse.REMAINDER, help="script.py [args]")
+
+    hook = sub.add_parser("hook", help="Coding-agent hooks that refuse repeated calls and retry storms")
+    hook.add_argument("host", choices=["claude-code"])
+    hook.add_argument("--max-calls", type=int, help="Refuse tool calls after this many per session.")
+    hook.add_argument("--install", action="store_true", help="Preview hook settings for .claude/settings.local.json.")
+    hook.add_argument("--uninstall", action="store_true", help="Preview settings with AgentGuard hooks removed.")
+    hook.add_argument("--write", action="store_true", help="Save the --install or --uninstall result.")
+    hook.add_argument("--project-dir", default=".", help="Project root for --install/--uninstall.")
+
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
     eval_cmd.add_argument("path")
     eval_cmd.add_argument("--ci", action="store_true", help="CI mode: also assert no budget warnings")
@@ -486,6 +510,15 @@ def main() -> None:
         _report(args.path, as_json=args.json_output)
     elif args.cmd == "receipt":
         _receipt(args.path, args.format)
+    elif args.cmd == "run":
+        raise SystemExit(run_script(args.target, module=args.module, budget_usd=args.budget_usd,
+                                    service=args.service, trace_file=args.trace_file,
+                                    profile=args.profile))
+    elif args.cmd == "hook":
+        if args.install or args.uninstall:
+            raise SystemExit(configure_hook(args.project_dir, args.write, args.uninstall,
+                                            args.max_calls, sys.stdout))
+        raise SystemExit(run_hook(sys.stdin, sys.stderr, args.max_calls))
     elif args.cmd == "eval":
         _eval(args.path, ci=args.ci)
     elif args.cmd == "incident":

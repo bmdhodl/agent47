@@ -1,0 +1,5 @@
+$ .venv/compat/bin/python -m pytest sdk/tests/test_real_dispatch.py (openai, anthropic, langchain, langgraph, otel at compat-latest)
+sdk/tests/test_real_dispatch.py ...                                      [100%]
+
+======================= 3 passed, 4 deselected in 1.76s ========================
+openai 3.19.2

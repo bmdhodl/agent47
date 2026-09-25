@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #781
+
+- Shipped: `agentguard receipt <trace.jsonl>` prints each guard stop, recorded cost, and the trace SHA-256 as a barcode. `--format markdown` for PRs, `json` for CI. ASCII barcode when stdout cannot encode blocks.
+- Decisions: The hash identifies the trace; it is not a signature. The showwork join stays with AG-14 (#743). Guard events do not add cost.
+- Blockers: `agentguard report` still double-counts the tripping call's cost; queued separately.
+
 ## 2026-09-25 | Claude Code | PR #779
 
 - Shipped: Site redesign on one shared stylesheet. Copy scores 0.000 on the slop scan. The compare snippet now passes `budget_guard=`; the old one never stopped. A site test rejects any `patch_*` example without it.
