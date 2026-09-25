@@ -1,0 +1,2 @@
+{"session": "inbox-779", "ts": "2026-09-25T23:37:31", "claim": "Inbox entry for PR 779", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Claude Code \\| PR #779"}, "prev": "237fee5a3cff5f1569198880f2f1747dc9cad839165f4fbe756f379caacd5aee"}
+{"session": "inbox-779", "ts": "2026-09-25T23:37:31", "claim": "Inbox entry for PR 778", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Claude Code \\| PR #778"}, "prev": "0af384e513c96047325d415b0bb5cc3cf89da71456e8cded2781a11cfd3c29ba"}

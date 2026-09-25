@@ -1,5 +1,17 @@
 # Inbox Log
 
+## 2026-09-25 | Claude Code | PR #779
+
+- Shipped: Site redesign on one shared stylesheet. Copy scores 0.000 on the slop scan. The compare snippet now passes `budget_guard=`; the old one never stopped. A site test rejects any `patch_*` example without it.
+- Decisions: Removed the unsourced 340% stat, stale competitor pricing, and absolute trust claims. The hosted dashboard UI is in the private repo.
+- Blockers: Codex review errored twice on its side; Cursor Bugbot is over its usage limit.
+
+## 2026-09-25 | Claude Code | PR #778
+
+- Shipped: The Claude review diff omits generated lockfiles and showwork snapshots, and lists them by name.
+- Decisions: A section is dropped only when every path in it is generated.
+- Blockers: None.
+
 ## 2026-09-25 | Claude Code | PR #777
 
 - Shipped: AG-07 compat CI job. The full suite runs against real OpenAI, Anthropic, LangChain, LangGraph, and OTel packages at floor and latest; a missing package fails. `docs/compatibility.md` publishes the matrix and support policy.
