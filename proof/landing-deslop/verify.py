@@ -5,6 +5,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 # Nine pages ship in this PR; update the count when a page is added.
+# security.html is a meta-refresh redirect to trust.html with no styled content.
 pages = [p for p in (ROOT / "site").rglob("*.html") if p.name != "security.html"]
 assert len(pages) == 9, len(pages)
 for page in pages:
