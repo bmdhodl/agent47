@@ -102,3 +102,31 @@ def test_getting_started_trace_example(tmp_path, monkeypatch):
     events = [json.loads(line) for line in
               (tmp_path / ".agentguard/traces.jsonl").read_text().splitlines()]
     assert any(event.get("name") == "tool.result" for event in events)
+
+
+def test_contributing_fixture_example_runs():
+    import re
+    import textwrap
+    import unittest
+    from typing import Any, Dict
+
+    from agentguard import DEFAULT_PRICE_TABLE, resolve_billable_cost
+    from agentguard.precision_cost import SOURCE_COMPUTED
+
+    # The newcomer fixture path must stay copy-and-run against the real API.
+    doc = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    section = doc.split("## Add A Compatibility Fixture", 1)[1].split("\n## ", 1)[0]
+    fixture, test = (textwrap.dedent(b) for b in re.findall(r"```python\n(.*?)```", section, re.S))
+    namespace = {
+        "Any": Any,
+        "Dict": Dict,
+        "DEFAULT_PRICE_TABLE": DEFAULT_PRICE_TABLE,
+        "SOURCE_COMPUTED": SOURCE_COMPUTED,
+        "resolve_billable_cost": resolve_billable_cost,
+    }
+    exec(compile(fixture, "CONTRIBUTING.md", "exec"), namespace)
+    exec(compile(test, "CONTRIBUTING.md", "exec"), namespace)
+    namespace["test_anthropic_haiku_without_cache_fields_is_computed"](unittest.TestCase())
+    assert "sdk/tests/fixtures/usage_payloads.py" in section
+    assert (ROOT / "sdk/tests/fixtures/usage_payloads.py").exists()
+    assert "python -m pytest sdk/tests/test_precision_cost.py -q" in section

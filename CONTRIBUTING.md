@@ -10,6 +10,7 @@ Start with one of these small scopes:
 
 - improve an example without adding dependencies
 - add a focused test for an existing guard, CLI command, or helper
+- add a provider usage fixture ([Add A Compatibility Fixture](#add-a-compatibility-fixture))
 - clarify docs around local-first setup, MCP, or framework integration
 - add a minimal recipe for a real Python agent workflow
 - fix package metadata, release notes, or README link drift
@@ -97,6 +98,47 @@ cd mcp-server
 npm ci
 npm run build
 ```
+
+## Add A Compatibility Fixture
+
+If AgentGuard counts the wrong usage or cost for your provider response,
+a fixture is the fastest way to prove it. Plan on one session. You need no
+API key, and the test sends nothing over the network.
+
+1. Copy only the `model` and `usage` fields from one real response. Drop
+   prompts, outputs, request ids, and keys.
+2. Add that payload to `sdk/tests/fixtures/usage_payloads.py`. Name the
+   provider, SDK version, and date in a comment:
+
+   ```python
+   # Anthropic Messages, anthropic==<version>, <date>. No cache fields.
+   ANTHROPIC_HAIKU_NO_CACHE: Dict[str, Any] = {
+       "model": "claude-3-5-haiku-20241022",
+       "usage": {"input_tokens": 300, "output_tokens": 120},
+   }
+   ```
+
+3. Import it in `sdk/tests/test_precision_cost.py`, then assert what
+   AgentGuard should record:
+
+   ```python
+   def test_anthropic_haiku_without_cache_fields_is_computed(self) -> None:
+       resolved = resolve_billable_cost(
+           ANTHROPIC_HAIKU_NO_CACHE,
+           model="claude-3-5-haiku-20241022",
+           provider="anthropic",
+           prices=DEFAULT_PRICE_TABLE,
+       )
+       self.assertEqual(resolved["source"], SOURCE_COMPUTED)
+   ```
+
+4. Run `python -m pytest sdk/tests/test_precision_cost.py -q`.
+
+If the test passes, open a PR. The fixture keeps that shape covered. If it
+fails because AgentGuard is wrong, open a bug report with the payload and
+the failing assertion, or send the fix in the same PR. Do not weaken the
+assertion to make it pass. If AgentGuard counted the call correctly and the
+problem is elsewhere, say so in the issue. That still helps.
 
 ## Zero-Dependency Rule
 
