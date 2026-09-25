@@ -1,0 +1,10 @@
+$ python -m pytest sdk/tests/test_documentation.py sdk/tests/test_pypi_readme_sync.py -q  (Linux, Python 3.11.15, 7177f77)
+============================== 24 passed in 0.08s ==============================
+exit=0
+
+$ python scripts/generate_pypi_readme.py --check
+exit=0
+
+$ python scripts/sdk_release_guard.py
+Release guard passed.
+exit=0
