@@ -253,6 +253,104 @@ def test_activation_page_states_bounds():
         assert needle in html, needle
 
 
+def _classify(tmp_path, payload):
+    path = tmp_path / "snapshot.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, str(REPORT_SCRIPT), str(path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(proc.stdout)
+
+
+def test_weekly_report_empty_input_stays_unknown(tmp_path):
+    report = _classify(tmp_path, {})
+    assert report["downloads"]["pypi_without_mirrors_7d"] == "unknown"
+    assert report["repository_visits"] == "unknown"
+    assert report["install_intent_proven"] == "unknown"
+    assert report["demo_feedback_success"] == "unknown"
+    assert report["real_workflow_activation"] == "unknown"
+    assert report["repeat_use"].startswith("unknown")
+    assert report["guard_activation"] == "unknown"
+
+
+def test_weekly_report_unavailable_pypi_is_not_zero(tmp_path):
+    report = _classify(tmp_path, {"sources": {"pypi": {"status": "unavailable"}}, "pypi": {}})
+    assert report["downloads"]["pypi_without_mirrors_7d"] == "unknown"
+    assert report["install"]["pypi_without_mirrors_7d"] == "unknown"
+
+
+def test_weekly_report_records_missing_days(tmp_path):
+    raw = json.loads(BASELINE.read_text(encoding="utf-8"))
+    raw["pypi"]["missing_days"] = ["2026-09-25"]
+    report = _classify(tmp_path, raw)
+    assert any("2026-09-25" in item for item in report["unknowns"])
+
+
+def test_weekly_report_excludes_internal_duplicate_and_simulated(tmp_path):
+    report = _classify(
+        tmp_path,
+        {
+            "feedback_reports": [
+                {"id": "a", "result": "success"},
+                {"id": "a", "result": "success"},
+                {"id": "internal-1", "result": "success", "internal": True},
+                {"id": "sim", "result": "success", "simulated": True},
+            ]
+        },
+    )
+    assert report["demo_feedback_success"] == 1
+    assert report["guard_activation"] == 1
+    assert report["real_workflow_activation"] == "unknown"
+    assert report["feedback_excluded"]["duplicates"] == 1
+    assert report["feedback_excluded"]["internal"] == 1
+    assert report["feedback_excluded"]["simulated"] == 1
+    assert "simulated reports are not demand" in report["unknowns"]
+
+
+def test_refresh_from_fixtures_does_not_invent_users(tmp_path):
+    pypi = tmp_path / "pypi.json"
+    npm = tmp_path / "npm.json"
+    out = tmp_path / "snapshot.json"
+    pypi.write_text(
+        json.dumps(
+            [
+                {"category": "without_mirrors", "date": "2026-09-24", "downloads": 86},
+                {"category": "without_mirrors", "date": "2026-09-23", "downloads": 2},
+            ]
+        ),
+        encoding="utf-8",
+    )
+    npm.write_text(json.dumps({"downloads": 3, "start": "2026-08-26", "end": "2026-09-24"}), encoding="utf-8")
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "refresh_activation_snapshot.py"),
+            "--pypi-json",
+            str(pypi),
+            "--npm-json",
+            str(npm),
+            "--retrieved-at",
+            "2026-09-25T00:00:00Z",
+            "--out",
+            str(out),
+        ],
+        check=True,
+        cwd=ROOT,
+    )
+    snapshot = json.loads(out.read_text(encoding="utf-8"))
+    assert snapshot["sources"]["github_traffic"]["status"] == "unavailable"
+    assert snapshot["sources"]["site_events"]["status"] == "unavailable"
+    assert "site" not in snapshot
+    assert snapshot["pypi"]["without_mirrors_7d"] == 88
+    report = _classify(tmp_path, snapshot)
+    assert report["real_workflow_activation"] == "unknown"
+    assert report["repeat_use"].startswith("unknown")
+
+
 @pytest.mark.integration
 def test_feedback_runs_from_installed_distribution(tmp_path):
     target = tmp_path / "site-packages"

@@ -32,6 +32,7 @@ after the optional `pydantic-ai` package is installed.
 
 | File | Framework | What it shows |
 |------|-----------|---------------|
+| `shared_call_limit.py` | OpenAI patch (simulated) | Two workers share one local call. One send, one stop. Fresh store every run |
 | `enforcement_boundary/exhausted_budget_blocks_dispatch.py` | OpenAI patch (mocked) | Exhausted recorded budget blocks the next dispatch |
 | `enforcement_boundary/two_worker_overshoot.py` | Raw `BudgetGuard` | Two workers both pass `check()`; current overshoot, not a fix |
 | `local-first-template/` | Raw AgentGuard | Framework-free agent loop against a local llama.cpp/Ollama server with budget, rate-limit, and tool-allowlist guards + JSONL audit (runs offline, no GPU) |

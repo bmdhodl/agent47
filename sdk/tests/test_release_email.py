@@ -32,6 +32,9 @@ def test_stable_release_has_scoped_audience_and_repeatable_campaign():
     assert payload["audience"] == "agentguard"
     assert payload["campaign_key"] == "agentguard-release:v1.3.1"
     assert "agentguard47==1.3.1" in payload["markdown"]
+    assert "python -m agentguard.cli demo --feedback" in payload["markdown"]
+    assert "docs/guides/try-release.md" in payload["markdown"]
+    assert "reply with your result" in payload["markdown"]
     assert payload == sender.build_payload("v1.3.1", release(), package())
 
 

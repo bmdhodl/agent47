@@ -109,7 +109,8 @@ patch_anthropic(tracer, budget_guard=budget)
 These patches cover Chat Completions and Anthropic Messages, including
 streamed final usage. They check recorded usage before dispatch. The OpenAI
 Responses API is unsupported. A response can still exceed remaining tokens or
-cost. Concurrent requests do not reserve capacity.
+cost. In-memory requests do not reserve capacity. Store-backed sync OpenAI
+calls and store-backed streams do. That hold is not an invoice.
 
 ## LangChain / LangGraph / CrewAI
 

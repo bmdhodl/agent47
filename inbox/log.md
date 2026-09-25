@@ -1,4 +1,13 @@
 # Inbox Log
+
+## 2026-09-25 - AgentGuard release distribution
+
+- Agent: OpenAI | GPT-6 | auto.
+- Shipped: PR #772 verifies the published PyPI wheel demo and report before email; adds an offline example guide and voluntary feedback prompt.
+- Decisions: retain existing release page, subscriber service, campaign key, and read-only workflow token. No SDK version change or historical resend.
+- Validation: 1,178 SDK tests, 91.49% coverage; 11 MCP tests; published 1.4.0 example and three-width email rendering passed.
+- Blockers: none for the merged change. Optional Claude review failed before producing output; Codex review completed without findings, Cursor security and approval passed.
+
 **Format:** Newest first. One short entry after each merged PR.
 
 ---

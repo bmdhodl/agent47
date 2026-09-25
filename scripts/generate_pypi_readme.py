@@ -24,12 +24,15 @@ GITHUB_ABSOLUTE_LINK_RE = re.compile(
 COLAB_ABSOLUTE_LINK_RE = re.compile(
     rf"https://colab\.research\.google\.com/github/{REPO_OWNER}/{REPO_NAME}/blob/main/(?P<path>[^)#]+)"
 )
+# Paths whose GitHub links should use `main` instead of the release tag.
+# This set does not copy file bodies into sdk/PYPI_README.md.
 UNRELEASED_PATHS = {
     "docs/enforcement-boundary.md",
     "docs/cost-guardrails.md",
     "docs/guides/getting-started.md",
     "docs/guides/activation-metrics-design.md",
     "docs/guides/bmdpat-measurement-contract.md",
+    "docs/guides/reservation-contract.md",
     "llms.txt",
     "docs/competitive/agent-security-stack.md",
     "docs/examples/coding-agent-review-loop-incident.md",
@@ -146,6 +149,8 @@ def build_pypi_readme(repo_root: Path) -> str:
     readme = (repo_root / README_PATH).read_text(encoding="utf-8").strip()
     changelog = (repo_root / CHANGELOG_PATH).read_text(encoding="utf-8")
     release_notes = extract_release_notes(changelog, version)
+    release_notes = rewrite_relative_links(release_notes, version, repo_root)
+    release_notes = rewrite_repo_absolute_links(release_notes, version, repo_root)
 
     rewritten_readme = rewrite_relative_links(readme, version, repo_root)
     rewritten_readme = rewrite_repo_absolute_links(rewritten_readme, version, repo_root)

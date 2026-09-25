@@ -1,0 +1,14 @@
+AG-04 local proof (plain text, no terminal escapes)
+
+Race script: examples/enforcement_boundary/reserved_one_dispatch.py
+Result: dispatched=1 blocked=1 settled_calls=1 fixed=true start_method=spawn
+Saved: proof/ag-04-reservation-path/race.json
+
+pytest sdk/tests/test_reservation_path.py: 21 passed
+make check: 1127 passed, 1 skipped, coverage 91 percent
+ruff: All checks passed
+structural: 9 passed
+bandit: clean
+docs links: passed
+
+Windows was not executed. The race uses the spawn start method.

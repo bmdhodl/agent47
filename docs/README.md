@@ -6,6 +6,7 @@ Install `agentguard47`, import `agentguard`. The repository name is `agent47`.
 
 - [Getting started](guides/getting-started.md): install, run an offline check, and inspect a trace.
 - [Enforcement boundary](enforcement-boundary.md): which paths are advisory, recorded-budget preflight, reservation-backed, or unsupported.
+- [Reservation contract](guides/reservation-contract.md): local reserve/commit/cancel/unresolved rules. Wired for store-backed sync OpenAI Chat Completions and store-backed streams.
 - [Activation evidence](guides/activation-metrics-design.md): install, guard activation, repeat use, and contributions are separate. Landing-page navigation never counts as install.
 - [Runnable examples](../examples/README.md): copy a complete example into your project.
 

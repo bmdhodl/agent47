@@ -1,0 +1,3 @@
+command: python3 -m ruff check examples/shared_call_limit.py sdk/tests/test_enforcement_boundary.py
+All checks passed!
+exit:0
