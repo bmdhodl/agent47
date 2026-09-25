@@ -10,6 +10,6 @@ Generated files changed but omitted from this diff: .github/requirements/compat-
 file sections kept: 17 (all code, tests, docs, workflow)
 ```
 
-`python -m pytest sdk/tests/test_claude_review_filter.py -q`: 4 passed. The review-readiness guard and the CI guardrail tests pass.
+`python -m pytest sdk/tests/test_claude_review_filter.py -q`: 8 passed (after the Codex P2 fixes: spaced paths, renames, bounded notice; 3 of them fail on the first version). The review-readiness guard and the CI guardrail tests pass.
 
 The change takes effect after merge: `pull_request_target` runs the base branch workflow.
