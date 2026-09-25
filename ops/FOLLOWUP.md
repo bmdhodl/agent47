@@ -8,9 +8,9 @@
 - 1.4.0 shipped 2026-09-24 (AG-01 through AG-05). AG-06 stays open: it
   needs an approved public API, and the week-four gate has no external repeat
   user, so later adapters stay held.
-- `agentguard --version` exits 2 on the published 1.4.0 wheel. It is a common
-  first command after install (AG-17). Adding the flag needs owner approval
-  because it is new CLI surface.
+- 1.4.1 adds `agentguard --version` (owner-approved 2026-09-25). After the
+  tag, confirm the `published-wheel.yml` matrix and PyPI attestations and add
+  `proof/v1.4.1/PUBLICATION.md`.
 - The v1.4.0 GitHub Release has an unsigned PNG asset
   (`agentguard-1.4.0.png`), which keeps Scorecard Signed-Releases at 0. Host
   release images outside release assets from now on.

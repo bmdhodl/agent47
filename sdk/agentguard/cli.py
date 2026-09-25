@@ -5,6 +5,7 @@ import json
 from collections import Counter
 from typing import Optional
 
+from agentguard import __version__
 from agentguard.decision import extract_decision_events
 from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
@@ -282,6 +283,7 @@ def main() -> None:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = parser.add_subparsers(dest="cmd")
 
     sub.add_parser("welcome", help="Show the first-run welcome and 60-second local path")
