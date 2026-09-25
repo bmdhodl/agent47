@@ -98,7 +98,8 @@ Use the repo's existing proof discipline:
 - do not add one-off reports, work plans, or handoff notes to the repo root;
   archive any retained historical notes under `docs/archive/root-reports/`
 
-After a merged PR, add one short SDK-only entry to `inbox/log.md`.
+After a merged PR, TLDR the owner (what shipped, what did not, next only if
+already authorized), then add one short SDK-only entry to `inbox/log.md`.
 
 ## Architecture Notes That Matter For Claude
 
