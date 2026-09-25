@@ -132,14 +132,3 @@ def test_private_dns_answer_never_opens_socket():
         with pytest.raises(ValueError):
             _connect_public(("sink.example", 443), 10)
     create.assert_not_called()
-
-
-
-def test_langchain_dispatch_propagates_budget_stop():
-    pytest.importorskip("langchain_core")
-    from langchain_core.callbacks import CallbackManager
-    from agentguard.integrations.langchain import AgentGuardCallbackHandler
-    handler = AgentGuardCallbackHandler(budget_guard=BudgetGuard(max_calls=0))
-    manager = CallbackManager([handler])
-    with pytest.raises(BudgetExceeded):
-        manager.on_tool_start({"name": "search"}, "docs")

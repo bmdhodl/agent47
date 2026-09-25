@@ -1,0 +1,14 @@
+# Oldest supported versions, installed together for the CI compat job (AG-07).
+# Framework floors must match the extras in sdk/pyproject.toml; a CI guardrail
+# test enforces that. Provider SDK floors are the oldest releases verified
+# against the real patch path in sdk/tests/test_real_dispatch.py.
+# CrewAI is excluded until issue #644 has a clean resolution.
+langchain-core==1.6.3
+langgraph==1.2.11
+langgraph-checkpoint==4.2.0
+langgraph-sdk==0.4.4
+opentelemetry-api==1.44.0
+opentelemetry-sdk==1.44.0
+openai==1.40.0
+anthropic==0.34.0
+pytest==8.4.2

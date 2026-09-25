@@ -130,3 +130,17 @@ def test_contributing_fixture_example_runs():
     assert "sdk/tests/fixtures/usage_payloads.py" in section
     assert (ROOT / "sdk/tests/fixtures/usage_payloads.py").exists()
     assert "python -m pytest sdk/tests/test_precision_cost.py -q" in section
+
+
+def test_compatibility_doc_floors_match_compat_lock_manifest():
+    import re
+
+    # The published matrix must name the exact floors the compat CI job installs.
+    doc = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+    manifest = (ROOT / ".github/requirements/compat-floor.in").read_text(encoding="utf-8")
+    pins = re.findall(r"^([A-Za-z0-9_.-]+)==(\S+)$", manifest, re.M)
+    assert pins
+    for name, version in pins:
+        if name == "pytest":
+            continue
+        assert f"{name} {version}" in doc, f"docs/compatibility.md must list {name} {version}"

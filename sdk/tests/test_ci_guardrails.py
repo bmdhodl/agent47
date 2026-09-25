@@ -204,3 +204,42 @@ def test_proof_snapshots_are_not_live_pip_requirements() -> None:
         if path.is_file() and "requirements" in path.name.lower() and path.suffix == ".txt"
     )
     assert matches == [], matches
+
+
+def test_compat_floor_lock_matches_sdk_extra_floors() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    pyproject = (repo_root / "sdk" / "pyproject.toml").read_text(encoding="utf-8")
+    extras = re.search(r"^\[project\.optional-dependencies\](.*?)^\[", pyproject, re.M | re.S)
+    assert extras is not None
+    floors = {
+        name: version
+        for name, version in re.findall(r'"([A-Za-z0-9_.-]+)>=([^",]+)"', extras.group(1))
+        if name != "crewai"
+    }
+    assert floors
+    manifest = (repo_root / ".github" / "requirements" / "compat-floor.in").read_text(encoding="utf-8")
+    for name, version in floors.items():
+        assert f"{name}=={version}" in manifest, f"compat-floor.in must pin {name}=={version}"
+    for lock in ("compat-floor.txt", "compat-latest.txt"):
+        text = (repo_root / ".github" / "requirements" / lock).read_text(encoding="utf-8")
+        assert "--hash=sha256:" in text
+        assert "crewai==" not in text
+    # The compiled lock is what CI installs, so it must carry every manifest pin.
+    compiled = dict(
+        re.findall(
+            r"^([a-z0-9_.-]+)==(\S+) \\$",
+            (repo_root / ".github" / "requirements" / "compat-floor.txt").read_text(encoding="utf-8"),
+            re.M,
+        )
+    )
+    for name, version in re.findall(r"^([A-Za-z0-9_.-]+)==(\S+)$", manifest, re.M):
+        assert compiled.get(name.lower()) == version, f"compat-floor.txt is stale for {name}=={version}"
+
+
+def test_ci_compat_job_fails_instead_of_skipping() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    text = (repo_root / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    job = text.split("  compat:\n", 1)[1]
+    assert 'AGENTGUARD_REQUIRE_REAL_DEPS: "1"' in job
+    assert "lock: [floor, latest]" in job
+    assert "--require-hashes -r .github/requirements/compat-${{ matrix.lock }}.txt" in job

@@ -115,3 +115,29 @@ jobs:
         run: |
           ruff check agentguard_mcp tests
           python -m pytest
+
+  # AG-07: run the full suite with the real framework and provider packages,
+  # at the oldest supported versions and at current releases. Dependabot
+  # refreshes compat-latest.txt weekly, so an upstream break shows up as a red
+  # PR instead of silently disabling a guard.
+  compat:
+    name: compat (${{ matrix.lock }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: sdk
+      AGENTGUARD_REQUIRE_REAL_DEPS: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        lock: [floor, latest]
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Install pinned framework and provider packages
+        run: python -m pip install --require-hashes -r .github/requirements/compat-${{ matrix.lock }}.txt
+      - name: Full suite against real packages
+        run: python -m pytest sdk/tests/ -q

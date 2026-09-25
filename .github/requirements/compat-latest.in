@@ -1,0 +1,13 @@
+# Current releases for the CI compat job (AG-07). Dependabot refreshes the
+# compiled lock weekly; a red compat (latest) job on that PR means an upstream
+# release broke a supported path before users hit it.
+# CrewAI is excluded until issue #644 has a clean resolution.
+langchain-core
+langgraph
+langgraph-checkpoint
+langgraph-sdk
+opentelemetry-api
+opentelemetry-sdk
+openai
+anthropic
+pytest==8.4.2
