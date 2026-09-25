@@ -5,7 +5,7 @@ published `agentguard47` 1.4.0 wheel. It does not import the repository
 checkout. Each run creates a new temporary store.
 
 ```bash
-pip install agentguard47==1.4.0
+python -m pip install --upgrade "agentguard47==1.4.0"
 python examples/shared_call_limit.py
 ```
 

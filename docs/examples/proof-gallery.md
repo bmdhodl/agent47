@@ -160,7 +160,7 @@ Requires AGENTGUARD_API_KEY for retained hosted data. Does not add local runtime
 POSIX and PowerShell:
 
 ```bash
-pip install agentguard47
+python -m pip install --upgrade "agentguard47==1.4.0"
 python examples/shared_call_limit.py
 ```
 

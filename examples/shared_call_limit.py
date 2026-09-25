@@ -5,9 +5,11 @@ repository checkout. Each run uses a new temporary store, so a previous run
 cannot make this one fail.
 
 POSIX:
+    python -m pip install --upgrade "agentguard47==1.4.0"
     python examples/shared_call_limit.py
 
 PowerShell:
+    python -m pip install --upgrade "agentguard47==1.4.0"
     python examples/shared_call_limit.py
 
 The provider is simulated. No API key, billable request, or network call.
