@@ -1,0 +1,1 @@
+{"session": "openai-responses-docstring-r2", "ts": "2026-09-26T04:59:52", "claim": "_emit_llm_result docstring names the Responses patches", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/agentguard/_billing.py", "pattern": "OpenAI Chat Completions and Responses"}, "prev": "d82a298444e0c0dda270d1ad382df22be325ff2044d5f822db1788e0a748acda"}
