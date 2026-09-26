@@ -5,8 +5,8 @@
 ### Added
 - `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
   cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
-  PRs and issues; `--format json` is for CI. Guard events no longer count
-  toward the receipt's cost, so the call that tripped a budget is counted once.
+  PRs and issues; `--format json` is for CI. The receipt counts cost the same
+  way as `report`, so the call that tripped a budget is counted once.
 
 - `agentguard hook claude-code` is a Claude Code hook. It refuses the third
   identical tool call in a row, a call that already failed twice, and, with
