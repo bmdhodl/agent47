@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #786
+
+- Shipped: `patch_openai` / `patch_openai_async` (and `init()`, `run`) cover the OpenAI Responses API, so the Agents SDK `Runner` stops before its next model call once the budget is spent. Fixed every `AsyncOpenAI`/`AsyncAnthropic` call crashing after `init()`. Raw sync calls with a store reserve (Codex review).
+- Decisions: Responses API and Agents SDK are Experimental in the compatibility matrix; the openai floor (1.40.0) predates Responses. `openai-agents` joins the latest compat lock only. Hosted tools, `background=True`, and WebSocket stay unsupported.
+- Blockers: None. Reasoning tokens are still billed on top of output tokens; queued separately. `claude-review` hit its 300s timeout on three intermediate heads of this large diff.
+
 ## 2026-09-26 | Claude Code | PR #784
 
 - Shipped: Landing page rebuilt as a case file from the new `docs/site-design.md`: real `agentguard receipt` output in the hero, dossier cards for the four stops, three ways in, rules of engagement. Two color tokens raised to pass 4.5:1.
