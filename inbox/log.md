@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #783
+
+- Shipped: `report`, `summarize_trace`/`incident`, `assert_cost_under`, and `receipt` count the call that trips a budget once. `guard.budget_exceeded` echoes that call's cost in `data.cost_usd`; one rule (`_spend_cost`) now ignores that echo but keeps a top-level guard `cost_usd`. Real-client repro: report $7.50 -> $6.00, matching the guard.
+- Decisions: Guard events that repeat a cost must keep it in `data`; documented at `_billing._consume_budget` and asserted by `e2e_cost_guardrail.py`. Savings baselines skip guard events.
+- Blockers: None. Follow-up: `_extract_cost` docstring should point totals at `_spend_cost`.
+
 ## 2026-09-26 | Claude Code | PR #793
 
 - Shipped: The LangChain callback prices `on_llm_end` with the same resolver and table as the patched clients. Unknown models were recorded as $0, so a dollar budget never tripped on them; Anthropic cache reads went unbilled. Both fixed.
