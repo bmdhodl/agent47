@@ -43,7 +43,7 @@ set_tracing_disabled(True)
 Runner.run_sync(Agent(name="a", instructions="Reply with one word.", model="gpt-5-nano"),
                 "Say ok.", max_turns=2)
 
-events = [json.loads(line) for line in open(TRACE)]
+events = [json.loads(line) for line in open(TRACE, encoding="utf-8")]
 results = [e for e in events if e.get("name") == "llm.result"]
 print(f"{'model':14} {'in':>5} {'cached':>6} {'out':>5} {'recorded':>12} {'published':>12}  source")
 total = 0.0

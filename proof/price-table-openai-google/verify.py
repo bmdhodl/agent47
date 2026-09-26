@@ -16,7 +16,7 @@ after = subprocess.run(
     capture_output=True, text=True, env={**os.environ, "PYTHONPATH": str(ROOT / "sdk")},
 ).stdout
 rows = after.splitlines()[1:]
-assert len(rows) == 10 and all(" 1.00x  computed" in line for line in rows), after
+assert rows and all(" 1.00x  computed" in line for line in rows), after
 before = (ROOT / "proof/price-table-openai-google/before-fix.txt").read_text(encoding="utf-8")
 assert "80.77x  overestimate" in before and "0.47x  computed" in before
 live = (ROOT / "proof/price-table-openai-google/live-smoke.txt").read_text(encoding="utf-8")

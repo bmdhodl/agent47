@@ -229,3 +229,13 @@ def test_gemini_bills_cached_prompt_and_thoughts_as_google_counts_them():
     resolved = resolve_billable_cost(response, model="gemini-2.5-pro", provider="google")
     expected = (10_000 * 1.25 + 40_000 * 0.125 + 2_500 * 10.00) / 1_000_000
     assert resolved["cost_usd"] == pytest.approx(expected)
+
+
+def test_gemini_thinking_only_reply_ignores_a_fallback_output_count():
+    # candidates_token_count 0 is a count; output_tokens must not replace it.
+    response = {"usage_metadata": {
+        "prompt_token_count": 1_000, "candidates_token_count": 0,
+        "thoughts_token_count": 300, "output_tokens": 999_999,
+    }}
+    resolved = resolve_billable_cost(response, model="gemini-2.5-pro", provider="google")
+    assert resolved["cost_usd"] == pytest.approx((1_000 * 1.25 + 300 * 10.00) / 1_000_000)

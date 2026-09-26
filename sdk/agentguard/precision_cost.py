@@ -211,24 +211,24 @@ def _extract_usage_object(response: Any) -> Any:
     if usage_meta is not None:
         # Gemini counts like OpenAI: prompt_token_count includes the cached
         # tokens. Thoughts are counted outside candidates and bill as output.
-        thoughts = _get_attr_or_key(usage_meta, "thoughts_token_count") or 0
+        # A reported 0 is a count, not a missing field: a thinking-only reply
+        # has candidates_token_count 0.
+        def first(*keys: str) -> int:
+            for key in keys:
+                value = _get_attr_or_key(usage_meta, key)
+                if value is not None:
+                    return value
+            return 0
+
         return {
-            "prompt_tokens": _get_attr_or_key(usage_meta, "prompt_token_count")
-            or _get_attr_or_key(usage_meta, "input_tokens")
-            or 0,
-            "completion_tokens": (
-                _get_attr_or_key(usage_meta, "candidates_token_count")
-                or _get_attr_or_key(usage_meta, "output_tokens")
-                or 0
-            )
-            + thoughts,
-            "total_tokens": _get_attr_or_key(usage_meta, "total_token_count")
-            or _get_attr_or_key(usage_meta, "total_tokens")
-            or 0,
+            "prompt_tokens": first("prompt_token_count", "input_tokens"),
+            "completion_tokens": first("candidates_token_count", "output_tokens")
+            + first("thoughts_token_count"),
+            "total_tokens": first("total_token_count", "total_tokens"),
             "prompt_tokens_details": {
                 "cached_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count") or 0
             },
-            "completion_tokens_details": {"reasoning_tokens": thoughts},
+            "completion_tokens_details": {"reasoning_tokens": first("thoughts_token_count")},
         }
     # Bare usage payload passed as response
     if isinstance(response, Mapping):
