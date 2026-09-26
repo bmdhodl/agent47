@@ -265,6 +265,9 @@ The PyPI README is generated from this README and the changelog.
   $150 per million tokens. `sdk_release_guard.py --check-price-table-age`,
   run by the publish workflow, fails a release when any provider's prices are
   more than 90 days old.
+- Usage that reports only `total_tokens` was priced at $0 for a known model.
+  It is now priced at the model's output rate, or the high-water rate for an
+  unknown model.
 - Every `AsyncOpenAI` and `AsyncAnthropic` call failed with `AttributeError`
   after `agentguard.init()`, because the async patches expected an
   `AsyncTracer`. They now accept the `Tracer` that `init()` creates.

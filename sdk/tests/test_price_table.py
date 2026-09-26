@@ -9,6 +9,7 @@ from agentguard.precision_cost import (
     SOURCE_COMPUTED,
     SOURCE_OVERESTIMATE,
     _compute_from_table,
+    _prompt_tokens,
     resolve_billable_cost,
 )
 from agentguard.price_table import (
@@ -124,7 +125,7 @@ def test_ceiling_never_prices_below_a_listed_model(provider):
         top, _ = _compute_from_table(tokens, ceiling, provider=provider)
         for rate in rows:
             listed, _ = _compute_from_table(
-                tokens, apply_long_context(rate, tokens["input"] + tokens["cached"]),
+                tokens, apply_long_context(rate, _prompt_tokens(tokens, provider)),
                 provider=provider,
             )
             assert top >= listed - 1e-12
@@ -134,3 +135,14 @@ def test_every_tracked_provider_has_a_past_verification_date():
     verified = DEFAULT_PRICE_TABLE["verified"]
     assert set(verified) >= {"anthropic", "openai", "google"}
     assert all(date.fromisoformat(day) <= date.today() for day in verified.values())
+
+
+def test_total_only_usage_is_never_free():
+    # Some gateways report only total_tokens; the split between input and output is unknown.
+    usage = {"usage": {"total_tokens": 10_000}}
+    unknown = resolve_billable_cost(usage, model="gpt-next", provider="openai")
+    assert unknown["source"] == SOURCE_OVERESTIMATE
+    assert unknown["cost_usd"] == pytest.approx(10_000 * 150.0 / 1_000_000)
+    known = resolve_billable_cost(usage, model="gpt-4o", provider="openai")
+    # Every token at the output rate, the higher of the two.
+    assert known["cost_usd"] == pytest.approx(10_000 * 10.00 / 1_000_000)

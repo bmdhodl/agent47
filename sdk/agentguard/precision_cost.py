@@ -511,9 +511,11 @@ def resolve_billable_cost(
         return result
 
     has_usage = tokens["total"] > 0 or tokens["input"] > 0 or tokens["output"] > 0
+    # Usage that reports only a total cannot be priced per token kind.
+    has_split = any(tokens[k] for k in ("input", "output", "cached", "cache_write", "reasoning"))
 
     # C: compute from owned price table
-    if rate is not None and has_usage:
+    if rate is not None and has_split:
         rate = apply_long_context(rate, _prompt_tokens(tokens, provider))
         computed, parts = _compute_from_table(
             tokens,
@@ -536,12 +538,16 @@ def resolve_billable_cost(
     if has_usage:
         # Suppress UnknownModelWarning here: $0 from estimate is a miss and we
         # continue to overestimate/fail-loud (never silent under-count).
+        # A bare total is priced at the output rate, the higher of the two.
+        input_t, output_t = (
+            (tokens["input"] or tokens["total"], tokens["output"]) if has_split else (0, tokens["total"])
+        )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UnknownModelWarning)
             estimated = estimate_cost(
                 model,
-                input_tokens=tokens["input"] or tokens["total"],
-                output_tokens=tokens["output"],
+                input_tokens=input_t,
+                output_tokens=output_t,
                 provider=provider or None,
             )
         # estimate_cost returns 0 for unknown — treat 0 as miss
@@ -570,7 +576,7 @@ def resolve_billable_cost(
 
     # An unknown model from a provider whose rows are kept current is priced at
     # that provider's highest listed rates, not the flat high-water charge.
-    ceiling = provider_ceiling(price_table, provider) if has_usage else None
+    ceiling = provider_ceiling(price_table, provider) if has_split else None
     if ceiling is not None:
         computed, parts = _compute_from_table(
             tokens, ceiling, provider=provider, batch=batch, image_units=image_units

@@ -1,11 +1,10 @@
 ## make preflight
-sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_does_not_embed_unreleased_contract PASSED [100%]
 
-============================== 5 passed in 0.03s ===============================
+============================== 5 passed in 0.04s ===============================
 ## make lint
 All checks passed!
 ## make structural
-============================== 9 passed in 0.30s ===============================
+============================== 9 passed in 0.33s ===============================
 ## make security
 bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
 ## make release-guard
@@ -13,11 +12,11 @@ Release guard passed.
 ## release guard with price age
 Release guard passed.
 ## make test
-TOTAL                                       6162    489    92%
-====================== 1286 passed, 19 skipped in 34.73s =======================
+TOTAL                                       6164    483    92%
+====================== 1287 passed, 19 skipped in 32.76s =======================
 ## compat (latest) lock, real packages
-====================== 1305 passed, 6 warnings in 52.66s =======================
+====================== 1306 passed, 6 warnings in 46.22s =======================
 ## compat (floor) lock
-====================== 1293 passed, 12 skipped in 39.17s =======================
+====================== 1294 passed, 12 skipped in 39.59s =======================
 ## Python 3.9, changed tests
-============================== 88 passed in 0.62s ==============================
+============================== 89 passed in 0.35s ==============================
