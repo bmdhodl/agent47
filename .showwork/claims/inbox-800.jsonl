@@ -1,0 +1,1 @@
+{"session": "inbox-800", "ts": "2026-09-26T22:29:42", "claim": "Inbox logs PR #800", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Claude Code \\| PR #800"}, "prev": "5af656f9f4afe5f92f9d7a01ea679c63716866fde8f94173de7d8370328d602c"}
