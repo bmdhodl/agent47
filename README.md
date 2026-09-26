@@ -52,8 +52,8 @@ agentguard run --budget-usd 5 agent.py
 
 This patches the OpenAI and Anthropic clients, then runs `agent.py` in the same
 interpreter. Settings come from flags, then environment variables, then
-`.agentguard.json`. A guard stop exits 1 and prints the trace path for
-`agentguard receipt`. `agentguard run python -m mypkg` works too. The bounds are
+`.agentguard.json`. A guard stop exits 1. Every run ends with the trace path on
+stderr, ready for `agentguard receipt`. `agentguard run python -m mypkg` works too. The bounds are
 the same as patching the client yourself; see
 [enforcement boundary](docs/enforcement-boundary.md).
 

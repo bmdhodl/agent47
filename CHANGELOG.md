@@ -17,8 +17,8 @@
 
 - `agentguard run [--budget-usd N] agent.py` runs an unmodified script with the
   OpenAI and Anthropic clients patched. Flags, environment variables, and
-  `.agentguard.json` set the limits. A guard stop exits 1 and names the trace
-  for `agentguard receipt`.
+  `.agentguard.json` set the limits. A guard stop exits 1. Every run ends by
+  printing the trace path to stderr for `agentguard receipt`.
 
 ### Fixes
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
