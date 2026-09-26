@@ -24,9 +24,10 @@ except BudgetExceeded as exc:
     print("BudgetExceeded:", exc)
 unpatch_openai()
 print(f"guard cost_used: ${guard.state.cost_used:.2f}")
-for line in open(path):
-    e = json.loads(line)
-    if e["name"] in ("llm.result", "guard.budget_exceeded"):
-        print(e["name"], "top cost_usd=", e.get("cost_usd"), "data.cost_usd=", e.get("data", {}).get("cost_usd"))
+with open(path, encoding="utf-8") as f:
+    for line in f:
+        e = json.loads(line)
+        if e["name"] in ("llm.result", "guard.budget_exceeded"):
+            print(e["name"], "top cost_usd=", e.get("cost_usd"), "data.cost_usd=", e.get("data", {}).get("cost_usd"))
 sys.stdout.flush()
 subprocess.run([sys.executable, "-m", "agentguard", "report", path])

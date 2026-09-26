@@ -291,6 +291,8 @@ class TestSummarizeSavings(unittest.TestCase):
         savings = summarize_savings(
             [
                 {"name": "llm.result", "kind": "event", "trace_id": "t1", "cost_usd": 1.5},
+                # 9.0 differs from the llm.result on purpose: a baseline taken
+                # from the guard event would show up as 9.0.
                 {
                     "name": "guard.budget_exceeded",
                     "kind": "event",
