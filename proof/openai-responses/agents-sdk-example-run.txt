@@ -1,0 +1,30 @@
+$ OPENAI_BASE_URL=http://127.0.0.1:8767/v1 python examples/openai_agents_sdk_budget.py
+Error getting response
+AgentGuard stopped the run: Cost budget exceeded: $0.0600 > $0.0500 (this call added $0.0120)
+Recorded $0.0600 over 5 model calls
+--- mock server
+model call 1
+model call 2
+model call 3
+model call 4
+model call 5
+$ agentguard receipt agents_traces.jsonl
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace                agents_traces.jsonl
+events                                18
+llm calls                              5
+recorded cost                      $0.06
+budget warnings                        1
+----------------------------------------
+STOPPED
+  budget  Cost budget exceeded: $0.0600
+          > $0.0500 (this call added
+          $0.0120)
+----------------------------------------
+guard stops                            1
+
+▎▋██▎▋▋▉▋▎▍▋▉▌▌▋▎▋▏▊▊▉█▊▋▌▉▎▉▍▋▍▋▍█▉▋▌▍▋
+          9C7F 94C6 49AC EB34
+  sha256 of trace - agentguard47 1.4.1

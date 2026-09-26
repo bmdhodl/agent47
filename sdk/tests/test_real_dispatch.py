@@ -48,6 +48,10 @@ class _CountingTransport:
 
     def _handle(self, request: Any) -> Any:
         self.requests.append(request)
+        if isinstance(self._body, str):
+            return self._http.Response(
+                200, text=self._body, headers={"content-type": "text/event-stream"}
+            )
         return self._http.Response(200, json=self._body)
 
 
@@ -260,3 +264,287 @@ def test_agentguard_run_stops_an_unmodified_openai_script(tmp_path):
     assert "Cost budget exceeded: $6.0000 > $5.0000" in proc.stderr
     events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
     assert any(e["name"] == "guard.budget_exceeded" for e in events)
+
+
+# AG-06: the OpenAI Responses API and the Agents SDK.
+
+RESPONSES_USAGE = {
+    "input_tokens": 10,
+    "input_tokens_details": {"cached_tokens": 4},
+    "output_tokens": 5,
+    "output_tokens_details": {"reasoning_tokens": 2},
+    "total_tokens": 15,
+}
+
+
+def _response(output: List[Dict[str, Any]]) -> Dict[str, Any]:
+    return {
+        "id": "resp_compat",
+        "object": "response",
+        "created_at": 0,
+        "status": "completed",
+        "model": "gpt-4o-mini",
+        "output": output,
+        "parallel_tool_calls": True,
+        "tool_choice": "auto",
+        "tools": [],
+        "usage": RESPONSES_USAGE,
+    }
+
+
+MESSAGE_OUTPUT = [{
+    "type": "message", "id": "msg_1", "status": "completed", "role": "assistant",
+    "content": [{"type": "output_text", "text": "ok", "annotations": []}],
+}]
+TOOL_CALL_OUTPUT = [{
+    "type": "function_call", "id": "fc_1", "call_id": "call_1",
+    "name": "lookup", "arguments": "{}", "status": "completed",
+}]
+OPENAI_RESPONSE = _response(MESSAGE_OUTPUT)
+
+
+def _sse(body: Dict[str, Any]) -> str:
+    """response.created without usage, then response.completed with it."""
+    created = {**body, "status": "in_progress", "output": [], "usage": None}
+    events = [
+        {"type": "response.created", "sequence_number": 0, "response": created},
+        {"type": "response.completed", "sequence_number": 1, "response": body},
+    ]
+    return "".join(f"event: {e['type']}\ndata: {json.dumps(e)}\n\n" for e in events)
+
+
+@pytest.fixture
+def responses_sdk(openai_sdk):
+    if not hasattr(openai_sdk.OpenAI, "responses"):
+        pytest.skip("the Responses API needs openai>=1.66")
+    from agentguard.instrument import unpatch_openai_async
+
+    yield openai_sdk
+    unpatch_openai_async()
+
+
+def _chat_equivalent_cost() -> float:
+    from agentguard.precision_cost import resolve_billable_cost
+
+    usage = {
+        "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15,
+        "prompt_tokens_details": {"cached_tokens": 4},
+        "completion_tokens_details": {"reasoning_tokens": 2},
+    }
+    return resolve_billable_cost({"usage": usage}, model="gpt-4o-mini", provider="openai")["cost_usd"]
+
+
+def test_responses_create_counts_once_and_blocks_before_dispatch(responses_sdk):
+    transport = _CountingTransport(responses_sdk, OPENAI_RESPONSE)
+    guard = BudgetGuard(max_calls=1)
+    patch_openai(Tracer(), budget_guard=guard)
+    client = _client(responses_sdk, "OpenAI", transport)
+
+    response = client.responses.create(model="gpt-4o-mini", input="hi")
+    with pytest.raises(BudgetExceeded):
+        client.responses.create(model="gpt-4o-mini", input="hi")
+
+    assert isinstance(response, responses_sdk.types.responses.Response)
+    assert len(transport.requests) == 1
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 15
+    # Same bill as the Chat Completions shape: cached and reasoning tokens priced alike.
+    assert guard.state.cost_used == pytest.approx(_chat_equivalent_cost())
+    assert guard.state.cost_used > 0
+
+
+def test_responses_stream_counts_final_usage_once(responses_sdk):
+    transport = _CountingTransport(responses_sdk, _sse(OPENAI_RESPONSE))
+    guard = BudgetGuard(max_calls=2)
+    patch_openai(Tracer(), budget_guard=guard)
+    client = _client(responses_sdk, "OpenAI", transport)
+
+    with client.responses.create(model="gpt-4o-mini", input="hi", stream=True) as stream:
+        kinds = [event.type for event in stream]
+    with client.responses.stream(model="gpt-4o-mini", input="hi") as helper:
+        final = helper.get_final_response()
+    with pytest.raises(BudgetExceeded):
+        client.responses.create(model="gpt-4o-mini", input="hi", stream=True)
+
+    assert kinds == ["response.created", "response.completed"]
+    assert final.usage.total_tokens == 15
+    assert len(transport.requests) == 2
+    assert "stream_options" not in json.loads(transport.requests[0].content)
+    assert guard.state.calls_used == 2
+    assert guard.state.tokens_used == 30
+
+
+def test_responses_async_create_with_init_tracer(responses_sdk):
+    """init() hands the async patch a sync Tracer; calls must still go through."""
+    import asyncio
+
+    from agentguard.instrument import patch_openai_async
+
+    transport = _CountingTransport(responses_sdk, OPENAI_RESPONSE)
+    guard = BudgetGuard(max_calls=1)
+    patch_openai_async(Tracer(), budget_guard=guard)
+    client = responses_sdk.AsyncOpenAI(
+        api_key="sk-compat",
+        max_retries=0,
+        http_client=responses_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+    )
+
+    async def run() -> Any:
+        first = await client.responses.create(model="gpt-4o-mini", input="hi")
+        with pytest.raises(BudgetExceeded):
+            await client.responses.create(model="gpt-4o-mini", input="hi")
+        return first
+
+    assert isinstance(asyncio.run(run()), responses_sdk.types.responses.Response)
+    assert len(transport.requests) == 1
+    assert guard.state.tokens_used == 15
+
+
+def test_responses_async_streaming_response_counts_on_parse(responses_sdk):
+    """with_streaming_response is the path the Agents SDK streams through."""
+    import asyncio
+
+    from agentguard.instrument import patch_openai_async
+
+    transport = _CountingTransport(responses_sdk, _sse(OPENAI_RESPONSE))
+    guard = BudgetGuard(max_calls=5)
+    patch_openai_async(Tracer(), budget_guard=guard)
+    client = responses_sdk.AsyncOpenAI(
+        api_key="sk-compat",
+        max_retries=0,
+        http_client=responses_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+    )
+
+    async def run() -> List[str]:
+        create = client.responses.with_streaming_response.create
+        async with create(model="gpt-4o-mini", input="hi", stream=True) as raw:
+            assert raw.request_id is None or isinstance(raw.request_id, str)
+            return [event.type async for event in await raw.parse()]
+
+    assert asyncio.run(run()) == ["response.created", "response.completed"]
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 15
+
+
+def test_responses_provider_error_propagates_and_is_not_billed(responses_sdk):
+    class _Failing(_CountingTransport):
+        def _handle(self, request: Any) -> Any:
+            self.requests.append(request)
+            return self._http.Response(400, json={"error": {"message": "bad", "type": "x"}})
+
+    transport = _Failing(responses_sdk, {})
+    guard = BudgetGuard(max_calls=5)
+    patch_openai(Tracer(), budget_guard=guard)
+    client = _client(responses_sdk, "OpenAI", transport)
+
+    with pytest.raises(responses_sdk.BadRequestError):
+        client.responses.create(model="gpt-4o-mini", input="hi")
+    assert len(transport.requests) == 1
+    assert guard.state.calls_used == 0
+
+
+def test_responses_store_backed_dollar_cap_reserves_max_output_tokens(responses_sdk, tmp_path):
+    from agentguard._reservation_contract import MissingBound
+
+    transport = _CountingTransport(responses_sdk, OPENAI_RESPONSE)
+    store = JsonFileStateStore(tmp_path / "budget.json")
+    guard = BudgetGuard(max_cost_usd=5.0, store=store, key="responses")
+    patch_openai(Tracer(), budget_guard=guard)
+    client = _client(responses_sdk, "OpenAI", transport)
+
+    with pytest.raises(MissingBound):
+        client.responses.create(model="gpt-4o-mini", input="hi")
+    client.responses.create(model="gpt-4o-mini", input="hi", max_output_tokens=64)
+
+    assert len(transport.requests) == 1
+    assert guard.reservation_totals()["settled"]["calls"] == 1
+
+
+def _agent_transport(sdk: Any, turns: List[List[Dict[str, Any]]]) -> _CountingTransport:
+    """Answer each model call with the next scripted output, streamed when asked."""
+    transport = _CountingTransport(sdk, {})
+
+    def handle(request: Any) -> Any:
+        transport.requests.append(request)
+        body = _response(turns[min(len(transport.requests), len(turns)) - 1])
+        if json.loads(request.content).get("stream"):
+            return transport._http.Response(
+                200, text=_sse(body), headers={"content-type": "text/event-stream"}
+            )
+        return transport._http.Response(200, json=body)
+
+    transport.transport = transport._http.MockTransport(handle)
+    return transport
+
+
+@pytest.mark.parametrize("streamed", [False, True])
+def test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call(responses_sdk, streamed):
+    """The patch sits under the Agents SDK model call and composes with max_turns."""
+    import asyncio
+
+    agents = _require("agents")
+    from agentguard.instrument import patch_openai_async
+
+    agents.set_tracing_disabled(True)
+    guard = BudgetGuard(max_calls=3)
+    patch_openai_async(Tracer(), budget_guard=guard)
+    # The model asks for the same tool every turn: a loop.
+    transport = _agent_transport(responses_sdk, [TOOL_CALL_OUTPUT])
+    client = responses_sdk.AsyncOpenAI(
+        api_key="sk-compat",
+        max_retries=0,
+        http_client=responses_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+    )
+
+    @agents.function_tool
+    def lookup() -> str:
+        return "nothing yet"
+
+    agent = agents.Agent(
+        name="looper",
+        tools=[lookup],
+        model=agents.OpenAIResponsesModel("gpt-4o-mini", client),
+    )
+
+    async def run() -> None:
+        if streamed:
+            result = agents.Runner.run_streamed(agent, "hi", max_turns=10)
+            async for _ in result.stream_events():
+                pass
+        else:
+            await agents.Runner.run(agent, "hi", max_turns=10)
+
+    with pytest.raises(BudgetExceeded):
+        asyncio.run(run())
+    assert len(transport.requests) == 3
+    assert guard.state.calls_used == 3
+    assert guard.state.tokens_used == 45
+
+
+def test_agents_sdk_native_max_turns_still_applies(responses_sdk):
+    import asyncio
+
+    agents = _require("agents")
+    from agentguard.instrument import patch_openai_async
+
+    agents.set_tracing_disabled(True)
+    guard = BudgetGuard(max_calls=10)
+    patch_openai_async(Tracer(), budget_guard=guard)
+    transport = _agent_transport(responses_sdk, [TOOL_CALL_OUTPUT])
+    client = responses_sdk.AsyncOpenAI(
+        api_key="sk-compat",
+        max_retries=0,
+        http_client=responses_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+    )
+
+    @agents.function_tool
+    def lookup() -> str:
+        return "nothing yet"
+
+    agent = agents.Agent(
+        name="looper", tools=[lookup], model=agents.OpenAIResponsesModel("gpt-4o-mini", client)
+    )
+    with pytest.raises(agents.MaxTurnsExceeded):
+        asyncio.run(agents.Runner.run(agent, "hi", max_turns=2))
+    assert len(transport.requests) == 2
+    assert guard.state.calls_used == 2

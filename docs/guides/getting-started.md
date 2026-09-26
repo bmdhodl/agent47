@@ -81,7 +81,8 @@ Async non-stream calls and Anthropic non-stream calls stay on the recorded
 budget. OpenAI streams request `include_usage` unless the caller already set
 it. An in-memory stream that ends without usage counts as one call with zero
 tokens. A stored stream with a token or dollar cap keeps that hold instead of
-recording an authoritative zero. The OpenAI Responses API is not patched.
+recording an authoritative zero. The OpenAI Responses API and the Agents SDK
+are patched too; hosted tools and `background=True` responses are not.
 Direct SDK clients you do not wrap are a bypass. Subscription quotas stay
 with the provider. See the
 [enforcement boundary](../enforcement-boundary.md) and the

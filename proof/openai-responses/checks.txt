@@ -1,0 +1,21 @@
+## make preflight
+sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_links_docs_and_examples PASSED [ 60%]
+sdk/tests/test_pypi_readme_sync.py::test_committed_pypi_readme_is_in_sync PASSED [ 80%]
+sdk/tests/test_pypi_readme_sync.py::test_generated_pypi_readme_does_not_embed_unreleased_contract PASSED [100%]
+
+============================== 5 passed in 0.03s ===============================
+## make lint
+ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/review_readiness_guard.py
+All checks passed!
+## make structural
+
+============================== 9 passed in 0.26s ===============================
+## make security
+bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+## make release-guard
+python scripts/sdk_release_guard.py
+Release guard passed.
+## make test
+sdk/tests/test_release_example.py::test_failed_install_never_runs_demo PASSED [ 79%]
+TOTAL                                       6114    492    92%
+====================== 1260 passed, 16 skipped in 30.61s =======================

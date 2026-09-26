@@ -99,14 +99,19 @@ tracer = Tracer(
     sink=JsonlFileSink(".agentguard/traces.jsonl"),
 )
 patch_openai(tracer, budget_guard=budget)
-# Make your OpenAI chat.completions.create calls after this setup.
+# Make your OpenAI chat.completions.create or responses.create calls after this setup.
 ```
 
 The patch checks recorded usage before dispatch and records response usage
 afterward, including streamed calls once the final usage arrives. A response
 can exceed the remaining cost or token allowance. Concurrent requests do not
-reserve capacity. OpenAI streams request `include_usage` unless the caller
-already set it. See the [getting started guide](docs/guides/getting-started.md)
+reserve capacity. Chat Completions streams request `include_usage` unless the
+caller already set it.
+
+The OpenAI Agents SDK runs on `responses.create`, so `agentguard.init()` before
+the `Runner` puts every model call under the budget
+([example](examples/openai_agents_sdk_budget.py)). Hosted tools and
+`background=True` responses are not covered. See the [getting started guide](docs/guides/getting-started.md)
 for setup, traces, and framework starters.
 
 ## How enforcement works

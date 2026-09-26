@@ -166,8 +166,8 @@ for requests in flight across midnight, not a new database.
 
 ## Unsupported paths (unchanged)
 
-OpenAI Responses, unpatched clients, host tools, provider invoices, and
-HttpSink remote kill stay unsupported. See
+Unpatched clients, host tools, provider invoices, and HttpSink remote kill
+stay unsupported. See
 [enforcement-boundary.md](../enforcement-boundary.md).
 
 No new MCP tools. No new rendered site page. Viewport and host allow/deny
@@ -198,7 +198,8 @@ already use.
   `mark_reservation_unresolved`. The hold stays.
 - `recover_reservation` is the process-death path. It does not free funds.
 - Call holds are exact. A token cap requires `max_tokens` or
-  `max_completion_tokens` on the request. A dollar cap estimates an upper
+  `max_completion_tokens` on the request (`max_output_tokens` on the OpenAI
+  Responses API). A dollar cap estimates an upper
   bound from that token cap and the owned high-water price
   (`price_table` version `2026.07.15`). Missing either bound refuses the
   send. The estimate is not an invoice.
@@ -209,7 +210,7 @@ AG-05 covers store-backed streams. These stay off this non-stream slice:
 
 - In-memory `BudgetGuard`, `check()`, and `consume()`.
 - OpenAI async non-stream calls, and every Anthropic non-stream patch.
-- OpenAI Responses, unpatched clients, host tools, and `HttpSink` remote kill.
+- Unpatched clients, host tools, and `HttpSink` remote kill.
 - Mixed processes: an old `check()`/`consume()` worker can still overshoot
   a store that a new worker is reserving. `check()` does not see holds.
 - UTC day rollover. Unresolved rows stay on the reserve-day key.
@@ -280,7 +281,7 @@ not grow a public price argument.
 
 - In-memory streams, `check()`, and `consume()`.
 - Async non-stream calls and Anthropic non-stream calls.
-- OpenAI Responses, unpatched clients, host tools, and `HttpSink` remote kill.
+- Unpatched clients, host tools, and `HttpSink` remote kill.
 - A provider invoice. `can_claim_invoice_cap()` stays false.
 - Mixed processes: an old `check()`/`consume()` worker can still overshoot
   a store that a stream worker is reserving. `check()` does not see holds.

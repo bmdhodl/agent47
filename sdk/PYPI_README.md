@@ -101,14 +101,19 @@ tracer = Tracer(
     sink=JsonlFileSink(".agentguard/traces.jsonl"),
 )
 patch_openai(tracer, budget_guard=budget)
-# Make your OpenAI chat.completions.create calls after this setup.
+# Make your OpenAI chat.completions.create or responses.create calls after this setup.
 ```
 
 The patch checks recorded usage before dispatch and records response usage
 afterward, including streamed calls once the final usage arrives. A response
 can exceed the remaining cost or token allowance. Concurrent requests do not
-reserve capacity. OpenAI streams request `include_usage` unless the caller
-already set it. See the [getting started guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md)
+reserve capacity. Chat Completions streams request `include_usage` unless the
+caller already set it.
+
+The OpenAI Agents SDK runs on `responses.create`, so `agentguard.init()` before
+the `Runner` puts every model call under the budget
+([example](https://github.com/bmdhodl/agent47/blob/v1.4.1/examples/openai_agents_sdk_budget.py)). Hosted tools and
+`background=True` responses are not covered. See the [getting started guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md)
 for setup, traces, and framework starters.
 
 ## How enforcement works
@@ -236,7 +241,22 @@ The PyPI README is generated from this README and the changelog.
   `.agentguard.json` set the limits. A guard stop exits 1. Every run ends by
   printing the trace path to stderr for `agentguard receipt`.
 
+- `patch_openai` and `patch_openai_async` (and so `agentguard.init()` and
+  `agentguard run`) now cover the OpenAI Responses API: `responses.create`,
+  `responses.parse`, `responses.stream()`, and the raw and streaming response
+  wrappers. That puts the OpenAI Agents SDK under the budget: `Runner.run` and
+  `Runner.run_streamed` stop before the next model call once the budget is
+  spent. Store-backed guards reserve on `max_output_tokens`. Hosted tools,
+  `background=True`, and the WebSocket transport are not covered; see the
+  [enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md) and
+  `examples/openai_agents_sdk_budget.py`. Both are Experimental in the
+  [compatibility matrix](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/compatibility.md): CI runs them against the
+  current releases, and the openai floor (1.40.0) predates the Responses API.
+
 ### Fixes
+- Every `AsyncOpenAI` and `AsyncAnthropic` call failed with `AttributeError`
+  after `agentguard.init()`, because the async patches expected an
+  `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.
 
@@ -253,6 +273,7 @@ The PyPI README is generated from this README and the changelog.
   suite against the real OpenAI, Anthropic, LangChain, LangGraph, and
   OpenTelemetry packages at the oldest supported versions and at current
   releases. Missing packages fail the job instead of skipping. CrewAI stays
-  experimental (#644); the OpenAI Responses API stays unsupported (AG-06).
+  experimental (#644). The current-release job also runs the OpenAI Agents
+  SDK.
 
 Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.4.1/CHANGELOG.md)

@@ -38,6 +38,11 @@ def chunk_usage(chunk: Any) -> Any:
         message = getattr(chunk, "message", None)
         if message is not None:
             usage = getattr(message, "usage", None)
+    if usage is None:
+        # Responses API events carry usage on event.response (response.completed).
+        response = getattr(chunk, "response", None)
+        if response is not None:
+            usage = getattr(response, "usage", None)
     return usage
 
 
@@ -101,6 +106,52 @@ def merge_usage(current: Any, incoming: Any) -> Any:
     return merged
 
 
+async def _span_enter(cm: Any) -> Any:
+    if hasattr(cm, "__aenter__"):
+        return await cm.__aenter__()
+    return cm.__enter__()
+
+
+async def _span_exit(cm: Any, *exc_info: Any) -> None:
+    if hasattr(cm, "__aexit__"):
+        await cm.__aexit__(*exc_info)
+    else:
+        cm.__exit__(*exc_info)
+
+
+def is_raw_response_call(kwargs: Dict[str, Any]) -> bool:
+    """True for ``with_raw_response`` / ``with_streaming_response`` calls.
+
+    The OpenAI SDK marks them with a header, and they return an unparsed
+    response wrapper instead of the model object.
+    """
+    headers = kwargs.get("extra_headers")
+    return isinstance(headers, dict) and "X-Stainless-Raw-Response" in headers
+
+
+class RawStreamResponse:
+    """Raw response wrapper whose ``parse()`` returns the counted stream."""
+
+    def __init__(self, inner: Any, stream: "CountedStream", *, async_parse: bool) -> None:
+        self._inner = inner
+        self._stream = stream
+        self._async_parse = async_parse
+
+    def parse(self) -> Any:
+        if self._async_parse:
+            return self._aparse()
+        return self._stream
+
+    async def _aparse(self) -> Any:
+        return self._stream
+
+    def close(self) -> Any:
+        return self._stream.close()
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._inner, name)
+
+
 class CountedStream:
     """Proxy that records final usage once, then closes the held trace span."""
 
@@ -156,7 +207,7 @@ class CountedStream:
         if self._opened:
             return
         self._opened = True
-        ctx = await self._span_cm.__aenter__()
+        ctx = await _span_enter(self._span_cm)
         try:
             if self._on_open is not None:
                 self._on_open(ctx)
@@ -165,7 +216,7 @@ class CountedStream:
                 inner = await inner
             self._inner = inner
         except BaseException:
-            await self._span_cm.__aexit__(*sys.exc_info())
+            await _span_exit(self._span_cm, *sys.exc_info())
             self._span_cm = None
             self._done = True
             raise
@@ -219,10 +270,7 @@ class CountedStream:
             return
         cm, self._span_cm = self._span_cm, None
         info = (None, None, None) if exc_info is None else exc_info
-        if self._async_span:
-            await cm.__aexit__(*info)
-        else:
-            cm.__exit__(*info)
+        await _span_exit(cm, *info)
 
     def _finish(self, exc_info: Any = None) -> None:
         if not self._opened:
@@ -528,8 +576,6 @@ def run_traced_create(
 ) -> Any:
     """Sync provider call: preflight or reserve, then bill a response or wrap a stream."""
     model = str(kwargs.get("model", "unknown"))
-    if wrap_stream and provider == "openai":
-        kwargs = ensure_openai_stream_usage(kwargs)
     span_cm = tracer.trace(
         f"llm.{provider}.{model}",
         data={"model": model, "provider": provider},
@@ -549,8 +595,12 @@ def run_traced_create(
             _cancel_unsent_stream(budget_guard, reservation_id)
             span_cm.__exit__(*sys.exc_info())
             raise
+    raw = None
     try:
         result = original(*args, **kwargs)
+        if is_raw_response_call(kwargs):
+            # parse() is cached by the SDK, so the caller gets the same object.
+            raw, result = result, result.parse()
     except BaseException as exc:
         _fail_stream_dispatch(budget_guard, reservation_id, exc)
         span_cm.__exit__(*sys.exc_info())
@@ -568,7 +618,9 @@ def run_traced_create(
             )
 
         box["stream"] = CountedStream(result, on_final, span_cm, async_span=False)
-        return box["stream"]
+        if raw is None:
+            return box["stream"]
+        return RawStreamResponse(raw, box["stream"], async_parse=False)
     try:
         emit_result(
             ctx, budget_guard, model, provider, getattr(result, "usage", None), response=result
@@ -577,7 +629,7 @@ def run_traced_create(
         span_cm.__exit__(*sys.exc_info())
         raise
     span_cm.__exit__(None, None, None)
-    return result
+    return result if raw is None else raw
 
 
 async def run_traced_create_async(
@@ -596,34 +648,38 @@ async def run_traced_create_async(
 ) -> Any:
     """Async provider call: preflight or reserve, then bill a response or wrap a stream."""
     model = str(kwargs.get("model", "unknown"))
-    if wrap_stream and provider == "openai":
-        kwargs = ensure_openai_stream_usage(kwargs)
     span_cm = tracer.trace(
         f"llm.{provider}.{model}",
         data={"model": model, "provider": provider},
     )
-    ctx = await span_cm.__aenter__()
+    ctx = await _span_enter(span_cm)
     try:
         reservation_id = _prepare_stream_call(
             ctx, budget_guard, model, kwargs, wrap_stream, check_budget
         )
     except BaseException:
-        await span_cm.__aexit__(*sys.exc_info())
+        await _span_exit(span_cm, *sys.exc_info())
         raise
     if before_send is not None:
         try:
             before_send()
         except BaseException:
             _cancel_unsent_stream(budget_guard, reservation_id)
-            await span_cm.__aexit__(*sys.exc_info())
+            await _span_exit(span_cm, *sys.exc_info())
             raise
+    raw = None
     try:
         result = original(*args, **kwargs)
         if inspect.isawaitable(result):
             result = await result
+        if is_raw_response_call(kwargs):
+            raw, result = result, result.parse()
+            async_parse = inspect.isawaitable(result)
+            if async_parse:
+                result = await result
     except BaseException as exc:
         _fail_stream_dispatch(budget_guard, reservation_id, exc)
-        await span_cm.__aexit__(*sys.exc_info())
+        await _span_exit(span_cm, *sys.exc_info())
         raise
     if wrap_stream:
         box: Dict[str, Any] = {}
@@ -638,16 +694,18 @@ async def run_traced_create_async(
             )
 
         box["stream"] = CountedStream(result, on_final, span_cm, async_span=True)
-        return box["stream"]
+        if raw is None:
+            return box["stream"]
+        return RawStreamResponse(raw, box["stream"], async_parse=async_parse)
     try:
         emit_result(
             ctx, budget_guard, model, provider, getattr(result, "usage", None), response=result
         )
     except BaseException:
-        await span_cm.__aexit__(*sys.exc_info())
+        await _span_exit(span_cm, *sys.exc_info())
         raise
-    await span_cm.__aexit__(None, None, None)
-    return result
+    await _span_exit(span_cm, None, None, None)
+    return result if raw is None else raw
 
 
 def open_provider_async_stream(

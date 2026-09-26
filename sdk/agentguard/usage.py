@@ -61,12 +61,15 @@ def normalize_usage(usage: Any, provider: Optional[str] = None) -> Optional[Dict
             resolved_provider = "anthropic"
 
     if resolved_provider == "openai":
+        # The Responses API names the same counts input_/output_tokens.
         return _normalize_openai_usage(
-            prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens,
+            prompt_tokens=prompt_tokens or input_tokens,
+            completion_tokens=completion_tokens or output_tokens,
             total_tokens=total_tokens,
-            cached_tokens=cached_tokens,
-            reasoning_tokens=reasoning_tokens,
+            cached_tokens=cached_tokens
+            or _as_int(_nested_get(usage, "input_tokens_details", "cached_tokens")),
+            reasoning_tokens=reasoning_tokens
+            or _as_int(_nested_get(usage, "output_tokens_details", "reasoning_tokens")),
         )
 
     if resolved_provider == "anthropic":

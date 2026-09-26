@@ -216,7 +216,7 @@ tracer = <span class="fn">Tracer</span>(
         <p>Three things happen automatically:</p>
 
         <ol>
-          <li><strong>Patched OpenAI Chat Completions calls are intercepted.</strong> Token usage and cost are extracted from the response and fed to the BudgetGuard. The Responses API is not patched.</li>
+          <li><strong>Patched OpenAI Chat Completions calls are intercepted.</strong> Token usage and cost are extracted from the response and fed to the BudgetGuard. From 1.4.1 the Responses API is patched too.</li>
           <li><strong>Every tool call is checked for loops.</strong> The LoopGuard tracks the last N events and detects repeated patterns.</li>
           <li><strong>Exceptions propagate up.</strong> <code>BudgetExceeded</code> and <code>LoopDetected</code> are standard Python exceptions. They stop the agent cleanly, no matter what framework you use.</li>
         </ol>
