@@ -21,6 +21,7 @@ import uuid
 from typing import Any, Callable, Dict, Optional
 
 from ._reservation_contract import MissingBound, ReservationLedger
+from .instrument_stream import is_raw_response_call
 from .price_table import _DEFAULT_HIGH_WATER_PER_TOKEN, DEFAULT_PRICE_TABLE
 
 _RESERVED = "reserved"
@@ -232,6 +233,8 @@ def traced_openai_reserved(
         raise
     try:
         result = original(*args, **kwargs)
+        # with_raw_response: parse() is cached, so the caller gets the same object.
+        parsed = result.parse() if is_raw_response_call(kwargs) else result
     except BaseException:
         _best_effort(
             lambda: budget_guard.mark_reservation_unresolved(
@@ -241,7 +244,7 @@ def traced_openai_reserved(
         span_cm.__exit__(*sys.exc_info())
         raise
     try:
-        _commit_provider_result(budget_guard, ctx, reservation_id, model, result)
+        _commit_provider_result(budget_guard, ctx, reservation_id, model, parsed)
     except BaseException:
         if _still_holding(budget_guard, reservation_id):
             _best_effort(

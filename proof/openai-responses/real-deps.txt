@@ -1,21 +1,23 @@
 ## compat (latest) lock, AGENTGUARD_REQUIRE_REAL_DEPS=1, Python 3.12
-====================== 1276 passed, 5 warnings in 41.14s =======================
-sdk/tests/test_real_dispatch.py::test_openai_patch_stops_the_second_call_before_dispatch PASSED [  6%]
-sdk/tests/test_real_dispatch.py::test_openai_store_backed_reservation_dispatches_once PASSED [ 12%]
-sdk/tests/test_real_dispatch.py::test_anthropic_patch_stops_the_second_call_before_dispatch PASSED [ 18%]
-sdk/tests/test_real_dispatch.py::test_langchain_dispatch_propagates_budget_stop PASSED [ 25%]
-sdk/tests/test_real_dispatch.py::test_langgraph_node_budget_stops_the_graph PASSED [ 31%]
-sdk/tests/test_real_dispatch.py::test_otel_sink_exports_guard_spans PASSED [ 37%]
-sdk/tests/test_real_dispatch.py::test_agentguard_run_stops_an_unmodified_openai_script PASSED [ 43%]
-sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch PASSED [ 50%]
-sdk/tests/test_real_dispatch.py::test_responses_stream_counts_final_usage_once PASSED [ 56%]
-sdk/tests/test_real_dispatch.py::test_responses_async_create_with_init_tracer PASSED [ 62%]
-sdk/tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_on_parse PASSED [ 68%]
-sdk/tests/test_real_dispatch.py::test_responses_provider_error_propagates_and_is_not_billed PASSED [ 75%]
-sdk/tests/test_real_dispatch.py::test_responses_store_backed_dollar_cap_reserves_max_output_tokens PASSED [ 81%]
-sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[False] PASSED [ 87%]
-sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[True] PASSED [ 93%]
+====================== 1278 passed, 6 warnings in 40.62s =======================
+sdk/tests/test_real_dispatch.py::test_openai_patch_stops_the_second_call_before_dispatch PASSED [  5%]
+sdk/tests/test_real_dispatch.py::test_openai_store_backed_reservation_dispatches_once PASSED [ 11%]
+sdk/tests/test_real_dispatch.py::test_anthropic_patch_stops_the_second_call_before_dispatch PASSED [ 16%]
+sdk/tests/test_real_dispatch.py::test_langchain_dispatch_propagates_budget_stop PASSED [ 22%]
+sdk/tests/test_real_dispatch.py::test_langgraph_node_budget_stops_the_graph PASSED [ 27%]
+sdk/tests/test_real_dispatch.py::test_otel_sink_exports_guard_spans PASSED [ 33%]
+sdk/tests/test_real_dispatch.py::test_agentguard_run_stops_an_unmodified_openai_script PASSED [ 38%]
+sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch PASSED [ 44%]
+sdk/tests/test_real_dispatch.py::test_responses_stream_counts_final_usage_once PASSED [ 50%]
+sdk/tests/test_real_dispatch.py::test_responses_async_create_with_init_tracer PASSED [ 55%]
+sdk/tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_on_parse PASSED [ 61%]
+sdk/tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_when_left_unread PASSED [ 66%]
+sdk/tests/test_real_dispatch.py::test_responses_raw_response_reserves_with_a_store PASSED [ 72%]
+sdk/tests/test_real_dispatch.py::test_responses_provider_error_propagates_and_is_not_billed PASSED [ 77%]
+sdk/tests/test_real_dispatch.py::test_responses_store_backed_dollar_cap_reserves_max_output_tokens PASSED [ 83%]
+sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[False] PASSED [ 88%]
+sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[True] PASSED [ 94%]
 sdk/tests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies PASSED [100%]
 
 ## compat (floor) lock, openai 1.40.0
-======================= 1267 passed, 9 skipped in 33.33s =======================
+====================== 1267 passed, 11 skipped in 34.42s =======================

@@ -426,6 +426,68 @@ def test_responses_async_streaming_response_counts_on_parse(responses_sdk):
     assert guard.state.tokens_used == 15
 
 
+def test_responses_async_streaming_response_counts_when_left_unread(responses_sdk):
+    """Leaving the with_streaming_response block without reading still counts the call."""
+    import asyncio
+
+    from agentguard.instrument import patch_openai_async
+
+    transport = _CountingTransport(responses_sdk, _sse(OPENAI_RESPONSE))
+    guard = BudgetGuard(max_calls=5)
+    patch_openai_async(Tracer(), budget_guard=guard)
+    client = responses_sdk.AsyncOpenAI(
+        api_key="sk-compat",
+        max_retries=0,
+        http_client=responses_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+    )
+
+    async def run() -> None:
+        create = client.responses.with_streaming_response.create
+        async with create(model="gpt-4o-mini", input="hi", stream=True):
+            pass
+
+    asyncio.run(run())
+    assert len(transport.requests) == 1
+    assert guard.state.calls_used == 1
+
+
+def test_responses_raw_response_reserves_with_a_store(responses_sdk, tmp_path):
+    """Two workers race one stored call through with_raw_response; one is sent."""
+    import threading
+    import time
+
+    class _Slow(_CountingTransport):
+        def _handle(self, request: Any) -> Any:
+            time.sleep(0.3)  # both workers are past preflight before either records usage
+            return super()._handle(request)
+
+    transport = _Slow(responses_sdk, OPENAI_RESPONSE)
+    store = JsonFileStateStore(tmp_path / "budget.json")
+    patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=1, store=store, key="raw"))
+    clients = [_client(responses_sdk, "OpenAI", transport) for _ in range(2)]
+    barrier = threading.Barrier(2)
+    outcomes: List[str] = []
+
+    def worker(client: Any) -> None:
+        barrier.wait(5)
+        try:
+            raw = client.responses.with_raw_response.create(model="gpt-4o-mini", input="hi")
+            outcomes.append(str(raw.parse().usage.total_tokens))
+        except BudgetExceeded:
+            outcomes.append("blocked")
+
+    threads = [threading.Thread(target=worker, args=(c,)) for c in clients]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(10)
+
+    assert sorted(outcomes) == ["15", "blocked"]
+    assert len(transport.requests) == 1
+    settled = BudgetGuard(max_calls=1, store=store, key="raw").reservation_totals()["settled"]
+    assert settled["calls"] == 1 and settled["tokens"] == 15
+
+
 def test_responses_provider_error_propagates_and_is_not_billed(responses_sdk):
     class _Failing(_CountingTransport):
         def _handle(self, request: Any) -> Any:

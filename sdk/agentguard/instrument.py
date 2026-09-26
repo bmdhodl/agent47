@@ -12,7 +12,6 @@ from agentguard._billing import (
 )
 from agentguard.instrument_stream import (
     ensure_openai_stream_usage,
-    is_raw_response_call,
     run_traced_create,
     run_traced_create_async,
 )
@@ -269,11 +268,7 @@ def _traced_openai_call(
     original: Any, tracer: Any, budget_guard: Any, args: tuple, kwargs: Dict[str, Any]
 ) -> Any:
     """Sync OpenAI call. A stored budget reserves before a non-stream send."""
-    if (
-        getattr(budget_guard, "_store", None) is not None
-        and not kwargs.get("stream")
-        and not is_raw_response_call(kwargs)
-    ):
+    if getattr(budget_guard, "_store", None) is not None and not kwargs.get("stream"):
         from ._reservation_path import traced_openai_reserved
 
         return traced_openai_reserved(original, tracer, budget_guard, args, kwargs)

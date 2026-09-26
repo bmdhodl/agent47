@@ -148,6 +148,9 @@ class RawStreamResponse:
     def close(self) -> Any:
         return self._stream.close()
 
+    async def aclose(self) -> None:
+        await self._stream.aclose()
+
     def __getattr__(self, name: str) -> Any:
         return getattr(self._inner, name)
 
