@@ -264,7 +264,7 @@ guard stops                            3
           <div class="side">
             <div class="num">03</div>
             <h2>Evidence</h2>
-            <p>Every stop is written to a JSONL file on your disk. Nothing is sent anywhere.</p>
+            <p>The demo, <code>agentguard run</code>, and the hook write every stop to a JSONL file on your disk. In your own code, pass a <code>JsonlFileSink</code>.</p>
           </div>
           <div id="local-proof">
 <pre class="term"><span class="p">$</span> pip install agentguard47
@@ -294,7 +294,7 @@ guard stops                            3
               <li><b>It only sees what you point it at.</b> Patched OpenAI and Anthropic clients, LangChain, LangGraph, the Claude Code hook, or your own <code>check()</code> calls. Nothing else on the machine.</li>
               <li><b>It is not an invoice cap.</b> A dollar limit counts usage after each call returns, so the call that crosses the line has already been sent. With a shared local store, sync OpenAI calls and streams reserve before they go out.</li>
               <li><b>It is not a sandbox.</b> Code that skips the SDK is not counted, and anyone with the repo can remove the hook.</li>
-              <li><b>It does not phone home.</b> No telemetry. Traces leave your machine only if you give it a dashboard key.</li>
+              <li><b>It does not phone home.</b> No telemetry. Traces stay on your machine unless you set a dashboard key or configure an export sink, such as OpenTelemetry.</li>
               <li><b>Not yet:</b> the OpenAI Responses API and Agents SDK.</li>
             </ol>
             <div class="more">

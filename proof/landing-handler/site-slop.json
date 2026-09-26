@@ -70,11 +70,11 @@
     "slop_density": 0.0,
     "categories": {},
     "spans": [],
-    "n_words": 538,
+    "n_words": 551,
     "low_confidence": false,
     "lexicon_version": "ded58e3a0c4c",
     "threshold_provisional": true,
-    "input_sha256": "c04ebd24d5cb6862a4ecde7b7adf2824a5085946199dbe7b1ec6b4481c2f3ddd"
+    "input_sha256": "2e88cfd349fdbdf10e28e28307186c290427bfc0e75262850815c691e918854f"
   },
   "quickstart.html": {
     "slop_score": 0.0,

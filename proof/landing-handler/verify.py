@@ -10,9 +10,8 @@ for line in ("budget  $1.08 over $1.00", "loop    search x3, same args", "retry 
     assert line in receipt and line in index, line
 assert index.count('class="mark"') == 3
 assert index.count("new in 1.4.1") == 2
-assert all("score=0.000" in line for line in (ROOT / "proof/landing-handler/scan.txt").read_text().splitlines())
-widths = (ROOT / "proof/landing-handler/scrollwidth.txt").read_text().splitlines()
-assert all(line.split()[1] == line.split()[3] for line in widths), widths
+# Measure the current site, not the recorded artifacts.
+subprocess.run([sys.executable, str(ROOT / "proof/landing-handler/measure.py")], check=True)
 subprocess.run(
     [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
      "sdk/tests/test_enforcement_boundary.py", "sdk/tests/test_activation_evidence.py"],
