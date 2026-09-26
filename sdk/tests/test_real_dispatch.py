@@ -353,6 +353,21 @@ def test_responses_create_counts_once_and_blocks_before_dispatch(responses_sdk):
     assert guard.state.cost_used > 0
 
 
+def test_responses_parse_counts_once(responses_sdk):
+    """parse() is patched on its own; it must not also bill through create()."""
+    transport = _CountingTransport(responses_sdk, OPENAI_RESPONSE)
+    guard = BudgetGuard(max_calls=5)
+    patch_openai(Tracer(), budget_guard=guard)
+    client = _client(responses_sdk, "OpenAI", transport)
+
+    parsed = client.responses.parse(model="gpt-4o-mini", input="hi")
+
+    assert parsed.usage.total_tokens == 15
+    assert len(transport.requests) == 1
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 15
+
+
 def test_responses_stream_counts_final_usage_once(responses_sdk):
     transport = _CountingTransport(responses_sdk, _sse(OPENAI_RESPONSE))
     guard = BudgetGuard(max_calls=2)
