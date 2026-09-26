@@ -268,6 +268,11 @@ The PyPI README is generated from this README and the changelog.
 - Usage that reports only `total_tokens` was priced at $0 for a known model.
   It is now priced at the model's output rate, or the high-water rate for an
   unknown model.
+- The LangChain callback priced `on_llm_end` with `estimate_cost`, which
+  returns $0 for an unknown model and ignores cache tokens, so a dollar budget
+  never tripped on an unknown model. It now uses the same resolver as the
+  patched clients: unknown models are overestimated and Anthropic cache reads
+  are billed. `llm.end` events carry `source_of_cost`.
 - Every `AsyncOpenAI` and `AsyncAnthropic` call failed with `AttributeError`
   after `agentguard.init()`, because the async patches expected an
   `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
@@ -277,6 +282,11 @@ The PyPI README is generated from this README and the changelog.
   `EvalSuite.assert_cost_under` no longer count the call that tripped a
   budget twice. `guard.budget_exceeded` echoes that call's cost, which its
   `llm.result` already carries. Savings baselines skip guard events too.
+- Reasoning and thinking tokens were billed twice: once inside output tokens,
+  where OpenAI and Anthropic already count them, and again on top. That
+  overstated cost for o-series, gpt-5, and extended-thinking calls and could
+  stop a dollar budget early. They now bill once, at the output rate. A price
+  row with `reasoning_per_1m` reprices only that slice.
 
 ### Docs
 - The PyPI README again states that the optional `[crewai]` extra pulls

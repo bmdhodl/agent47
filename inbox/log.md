@@ -1,5 +1,17 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #793
+
+- Shipped: The LangChain callback prices `on_llm_end` with the same resolver and table as the patched clients. Unknown models were recorded as $0, so a dollar budget never tripped on them; Anthropic cache reads went unbilled. Both fixed.
+- Decisions: Under `STRICT_PRECISION`, an unpriceable LangChain call raises `CostResolutionError` after closing its span, as the patched clients do.
+- Blockers: None for LangChain. OpenAI and Google price rows still need their pricing pages (network access).
+
+## 2026-09-26 | Claude Code | PR #792
+
+- Shipped: One price table for `estimate_cost` and the patched clients. Claude rows match Anthropic's pricing page (2026-09-26); current Claude models were billed 8x to 137x high and a `gpt-5.5` long prompt at half price. Dated ids price as their base model; unknown Anthropic/OpenAI models price at the provider's top listed rate; total-only usage is never $0.
+- Decisions: Google keeps the flat high-water charge until its rows are refreshed. `publish.yml` fails a release when any provider's prices are over 90 days old; PR CI does not check dates.
+- Blockers: OpenAI and Google rows (last checked 2026-07-15) need their pricing pages, which the session network blocks; the publish gate fails after 2026-10-13.
+
 ## 2026-09-26 | Claude Code | PR #786
 
 - Shipped: `patch_openai` / `patch_openai_async` (and `init()`, `run`) cover the OpenAI Responses API, so the Agents SDK `Runner` stops before its next model call once the budget is spent. Fixed every `AsyncOpenAI`/`AsyncAnthropic` call crashing after `init()`. Raw sync calls with a store reserve (Codex review).
