@@ -213,7 +213,7 @@ def _extract_usage_object(response: Any) -> Any:
         # tokens. Thoughts are counted outside candidates and bill as output.
         # A reported 0 is a count, not a missing field: a thinking-only reply
         # has candidates_token_count 0.
-        def first(*keys: str) -> int:
+        def first(*keys: str) -> Any:
             for key in keys:
                 value = _get_attr_or_key(usage_meta, key)
                 if value is not None:
