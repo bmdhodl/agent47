@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter
 from typing import Optional
 
@@ -11,8 +12,12 @@ from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
 from agentguard.evaluation import _load_events, _sum_cost
 from agentguard.first_run import hosted_url, render_badge, render_welcome
+from agentguard.hooks import configure as configure_hook
+from agentguard.hooks import run as run_hook
 from agentguard.quickstart import FRAMEWORK_CHOICES, run_quickstart
+from agentguard.receipt import bars_supported, build_receipt, render
 from agentguard.reporting import render_incident_report
+from agentguard.runner import run as run_script
 from agentguard.savings import summarize_savings
 from agentguard.skillpack import TARGET_CHOICES, run_skillpack
 
@@ -264,6 +269,14 @@ def _eval(path: str, ci: bool = False) -> None:
         raise SystemExit(1)
 
 
+def _receipt(path: str, fmt: str) -> None:
+    receipt = build_receipt(path)
+    if not receipt["events"]:
+        raise SystemExit(f"No events in {path}")
+    ascii_only = not bars_supported(sys.stdout.encoding or "ascii")
+    print(render(receipt, fmt, ascii_only=ascii_only))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="agentguard",
@@ -305,6 +318,38 @@ def main() -> None:
         dest="json_output",
         help="Output machine-readable summary JSON (for CI pipelines)",
     )
+
+    receipt = sub.add_parser("receipt", help="Print a shareable receipt of guard stops for a JSONL trace file")
+    receipt.add_argument("path")
+    receipt.add_argument(
+        "--format",
+        choices=["text", "markdown", "json"],
+        default="text",
+        help="text for terminals, markdown for PRs and issues, json for CI.",
+    )
+
+    run_cmd = sub.add_parser(
+        "run",
+        help="Run a Python script with AgentGuard patched in, no code changes",
+        description="Run SCRIPT (or -m MODULE) with OpenAI and Anthropic clients patched. "
+        "Options come before the script; everything after it goes to the script.",
+    )
+    # Everything after -m MODULE belongs to the module, as with python -m.
+    run_cmd.add_argument("-m", dest="module", nargs=argparse.REMAINDER, help="Run a module, like python -m.")
+    run_cmd.add_argument("--budget-usd", type=float, help="Dollar budget for patched LLM calls.")
+    run_cmd.add_argument("--service", help="Service name in the trace.")
+    run_cmd.add_argument("--trace-file", help="Local JSONL trace path.")
+    run_cmd.add_argument("--profile", help="Guard profile: default, coding-agent, or deployed-agent.")
+    run_cmd.add_argument("target", nargs=argparse.REMAINDER, help="script.py [args]")
+
+    hook = sub.add_parser("hook", help="Coding-agent hooks that refuse repeated calls and retry storms")
+    hook.add_argument("host", choices=["claude-code"])
+    hook.add_argument("--max-calls", type=int, help="Refuse tool calls after this many per session.")
+    change = hook.add_mutually_exclusive_group()
+    change.add_argument("--install", action="store_true", help="Add hooks to .claude/settings.local.json. Previews unless --write.")
+    change.add_argument("--uninstall", action="store_true", help="Remove AgentGuard hooks. Previews unless --write.")
+    hook.add_argument("--write", action="store_true", help="Save the --install or --uninstall result.")
+    hook.add_argument("--project-dir", default=".", help="Project root for --install/--uninstall.")
 
     eval_cmd = sub.add_parser("eval", help="Run evaluation assertions on a trace")
     eval_cmd.add_argument("path")
@@ -462,6 +507,18 @@ def main() -> None:
         _summarize(args.path)
     elif args.cmd == "report":
         _report(args.path, as_json=args.json_output)
+    elif args.cmd == "receipt":
+        _receipt(args.path, args.format)
+    elif args.cmd == "run":
+        target = args.target if args.module is None else ["-m", *args.module]
+        raise SystemExit(run_script(target, budget_usd=args.budget_usd,
+                                    service=args.service, trace_file=args.trace_file,
+                                    profile=args.profile))
+    elif args.cmd == "hook":
+        if args.install or args.uninstall:
+            raise SystemExit(configure_hook(args.project_dir, args.write, args.uninstall,
+                                            args.max_calls, sys.stdout))
+        raise SystemExit(run_hook(sys.stdin, sys.stderr, args.max_calls))
     elif args.cmd == "eval":
         _eval(args.path, ci=args.ci)
     elif args.cmd == "incident":

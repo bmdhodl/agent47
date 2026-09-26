@@ -14,6 +14,7 @@ from __future__ import annotations
 import importlib
 import json
 import os
+from pathlib import Path
 from typing import Any, Dict, List
 
 import pytest
@@ -210,3 +211,52 @@ def test_otel_sink_exports_guard_spans():
     spans = exporter.get_finished_spans()
     assert [span.name for span in spans] == ["agent.run"]
     assert [event.name for event in spans[0].events] == ["tool.call"]
+
+
+UNMODIFIED_OPENAI_SCRIPT = '''
+import importlib
+import openai
+
+base = next(c for c in openai.DefaultHttpxClient.__mro__ if c.__name__ == "Client")
+http = importlib.import_module(base.__module__.split(".")[0])
+body = {
+    "id": "x", "object": "chat.completion", "created": 0, "model": "gpt-4o",
+    "choices": [{"index": 0, "message": {"role": "assistant", "content": "ok"},
+                 "finish_reason": "stop"}],
+    "usage": {"prompt_tokens": 200000, "completion_tokens": 100000, "total_tokens": 300000},
+}
+sent = []
+
+def handle(request):
+    sent.append(request)
+    return http.Response(200, json=body)
+
+client = openai.OpenAI(api_key="sk-compat", max_retries=0,
+                       http_client=openai.DefaultHttpxClient(transport=http.MockTransport(handle)))
+try:
+    for _ in range(10):
+        client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": "hi"}])
+finally:
+    print("dispatched", len(sent))
+'''
+
+
+def test_agentguard_run_stops_an_unmodified_openai_script(tmp_path):
+    _require("openai")
+    import subprocess
+    import sys
+
+    (tmp_path / "agent.py").write_text(UNMODIFIED_OPENAI_SCRIPT, encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, "-m", "agentguard.cli", "run", "--budget-usd", "5",
+         "--trace-file", "trace.jsonl", "python", "agent.py"],
+        cwd=tmp_path, capture_output=True, text=True,
+        env={**os.environ, "AGENTGUARD_API_KEY": "",
+             "PYTHONPATH": str(Path(__file__).resolve().parents[1])},
+    )
+    assert proc.returncode == 1, proc.stderr
+    # $1.50 per call: the fourth call returns, records $6.00, and raises. No fifth send.
+    assert "dispatched 4" in proc.stdout
+    assert "Cost budget exceeded: $6.0000 > $5.0000" in proc.stderr
+    events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
+    assert any(e["name"] == "guard.budget_exceeded" for e in events)

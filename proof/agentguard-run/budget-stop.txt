@@ -1,0 +1,8 @@
+$ agentguard run --budget-usd 5 python agent.py --flag
+argv ['--flag']
+call 1 ok
+call 2 ok
+call 3 ok
+agentguard: stopped the run. Cost budget exceeded: $6.0000 > $5.0000 (this call added $1.5000)
+agentguard: trace written to traces.jsonl. Read it with: agentguard receipt traces.jsonl
+exit 1

@@ -1,0 +1,47 @@
+Wrote AgentGuard hooks to .claude/settings.local.json
+Refusals are logged to .agentguard/claude-code/trace.jsonl
+2.1.283 (Claude Code)
+== loop: identical command four times
+**Results:**
+
+- **Run 1:** ✅ Succeeded - output: `agentguard-sentinel`
+- **Run 2:** ✅ Succeeded - output: `agentguard-sentinel`
+- **Run 3:** ❌ Refused
+- **Run 4:** ❌ Refused
+
+**Refusal message (runs 3 & 4):**
+```
+AgentGuard refused Bash(echo agentguard-sentinel): the same call just ran 2 times in a row (limit 2). Change the input or the approach.
+```
+
+A hook called "agentguard" is active in your environment that blocks the same Bash command from running more than 2 times consecutively.
+== retry: failing command with other calls between
+All five commands executed in order. Here's the refusal message from the final command:
+
+**Refusal message:**
+```
+AgentGuard refused Bash(ls /nonexistent-agentguard): the same call already failed 2 times (limit 2). Diagnose the failure before trying again.
+```
+
+The pattern shows that AgentGuard (a hook in your system) is monitoring repeated failed commands and refusing to run the same failing command after it fails twice.
+== receipt
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace                        trace.jsonl
+events                                27
+tool calls                             6
+----------------------------------------
+STOPPED
+  loop    Bash(echo agentguard-sentinel)
+          x2, same args
+  loop    Bash(echo agentguard-sentinel)
+          x2, same args
+  retry   Bash(ls /nonexistent-
+          agentguard) failed 2x, limit 2
+----------------------------------------
+guard stops                            3
+
+▉█▌█▊▋▊▍▋▊▏▉▏▍▉▏▉▋▍▏▉▋▍▊▌▌▊▉▊▉▊▏▍▎▌▊▎▍▋▎
+          67BF D45A 4D0E 0AE8
+  sha256 of trace - agentguard47 1.4.1

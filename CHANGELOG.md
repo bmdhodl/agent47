@@ -2,6 +2,24 @@
 
 ## 1.4.1
 
+### Added
+- `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
+  cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
+  PRs and issues; `--format json` is for CI. Guard events no longer count
+  toward the receipt's cost, so the call that tripped a budget is counted once.
+
+- `agentguard hook claude-code` is a Claude Code hook. It refuses the third
+  identical tool call in a row, a call that already failed twice, and, with
+  `--max-calls`, calls past a per-session cap. `--install --write` adds it to
+  `.claude/settings.local.json` and keeps existing hooks; `--uninstall` removes
+  only its own. Refusals are logged for `agentguard receipt`. See
+  [the guide](docs/guides/claude-code-hook.md).
+
+- `agentguard run [--budget-usd N] agent.py` runs an unmodified script with the
+  OpenAI and Anthropic clients patched. Flags, environment variables, and
+  `.agentguard.json` set the limits. A guard stop exits 1. Every run ends by
+  printing the trace path to stderr for `agentguard receipt`.
+
 ### Fixes
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.

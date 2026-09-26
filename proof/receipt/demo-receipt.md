@@ -1,0 +1,22 @@
+```text
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace       agentguard_demo_traces.jsonl
+events                                36
+llm calls                              9
+recorded cost                      $1.08
+budget warnings                        1
+----------------------------------------
+STOPPED
+  budget  $1.08 over $1.00
+  loop    search x3, same args
+  retry   fetch_docs 3 tries, limit 2
+----------------------------------------
+guard stops                            3
+
+▎▊▏▎▌▌█▊▉▊█▌▏▍▏▊▋▍▎▍▍▋▍▏▉▋▍▍▉▌▋▎▌▋▎▎▏▎▎▉
+          9589 3375 E57B 020D
+  sha256 of trace - agentguard47 1.4.1
+```
+<sub>Recorded by [AgentGuard47](https://github.com/bmdhodl/agent47). Cost is what the trace recorded, not an invoice.</sub>

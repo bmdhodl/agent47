@@ -1,0 +1,1 @@
+{"session": "hook-and-run-review-6", "ts": "2026-09-26T00:19:22", "claim": "run restores sys.argv and sys.path after the script", "severity": "RED", "check": {"type": "command", "argv": ["python", "proof/claude-code-hook/verify.py"], "expect_exit": 0, "stdout_contains": "hook and run claims hold"}, "prev": "42acec589781b303e1ef21d606b628b82b889cec9afac8c738c97b0348099202"}

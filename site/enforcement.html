@@ -117,7 +117,8 @@
                 <tr><td data-label="Path">LangGraph <code>guarded_node</code></td><td data-label="Class"><span class="tag now">recorded-budget preflight</span></td><td data-label="Notes"><code>consume(calls=1)</code> at node entry. A dollar-only guard does not fire.</td></tr>
                 <tr><td data-label="Path">CrewAI handler</td><td data-label="Class"><span class="tag later">advisory</span></td><td data-label="Notes">The step callback runs after the step.</td></tr>
                 <tr><td data-label="Path">CLI <code>demo</code> budget path</td><td data-label="Class"><span class="tag later">advisory</span></td><td data-label="Notes">Records <code>llm.result</code>, then calls <code>consume()</code>.</td></tr>
-                <tr><td data-label="Path">Skillpacks and coding-agent hosts</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes">Not enforcement.</td></tr>
+                <tr><td data-label="Path">Claude Code hook, <code>agentguard hook claude-code</code></td><td data-label="Class"><span class="tag now">recorded-event preflight</span></td><td data-label="Notes">By default, refuses the third identical tool call in a row and a call that already failed twice. Tool calls only, not tokens or subscription quota.</td></tr>
+                <tr><td data-label="Path">Skillpacks and other coding-agent hosts</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes">Not enforcement.</td></tr>
                 <tr><td data-label="Path">OpenAI Responses API</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes"></td></tr>
                 <tr><td data-label="Path">Provider subscription quota</td><td data-label="Class"><span class="tag later">unsupported</span></td><td data-label="Notes"></td></tr>
                 </tbody>

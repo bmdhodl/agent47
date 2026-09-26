@@ -14,6 +14,7 @@ Install `agentguard47`, import `agentguard`. The repository name is `agent47`.
 ## Complete a task
 
 - [Coding agents](guides/coding-agents.md)
+- [Claude Code hook](guides/claude-code-hook.md): refuse repeated tool calls, retry storms, and calls past a cap in Claude Code.
 - [Framework starters](../examples/starters/README.md)
 - [LangChain](integrations/langchain.md), [LangGraph](integrations/langgraph.md), [CrewAI](integrations/crewai.md)
 - [Decision tracing](guides/decision-tracing.md)
