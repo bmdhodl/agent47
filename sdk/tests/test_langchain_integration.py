@@ -260,12 +260,12 @@ class TestLangChainIntegration(unittest.TestCase):
         handler.on_chain_start({"name": "agent"}, {}, run_id=uuid.uuid4())
         llm_id = uuid.uuid4()
         handler.on_llm_start({}, ["prompt"], run_id=llm_id)
-        with mock.patch.dict("os.environ", {"STRICT_PRECISION": "1"}):
-            with self.assertRaises(CostResolutionError):
-                handler.on_llm_end(
-                    _MockResponseWithModel(model="gpt-next", input_t=100, output_t=10),
-                    run_id=llm_id,
-                )
+        with mock.patch.dict("os.environ", {"STRICT_PRECISION": "1"}), \
+                self.assertRaises(CostResolutionError):
+            handler.on_llm_end(
+                _MockResponseWithModel(model="gpt-next", input_t=100, output_t=10),
+                run_id=llm_id,
+            )
         ended = [e for e in self._read_events()
                  if e.get("kind") == "span" and e.get("phase") == "end" and e.get("error")]
         self.assertEqual(ended[0]["error"]["type"], "CostResolutionError")
