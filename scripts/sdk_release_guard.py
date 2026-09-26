@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import os
 import re
+import runpy
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
@@ -337,12 +337,10 @@ def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) ->
 
 def check_price_table_age(repo_root: Path, today: Optional[date] = None) -> List[Finding]:
     """Fail when a provider's rows were last checked more than PRICE_TABLE_MAX_AGE_DAYS ago."""
-    spec = importlib.util.spec_from_file_location("_price_table", repo_root / PRICE_TABLE_PATH)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    table = runpy.run_path(str(repo_root / PRICE_TABLE_PATH))["DEFAULT_PRICE_TABLE"]
     today = today or date.today()
     findings: List[Finding] = []
-    for provider, verified in sorted(module.DEFAULT_PRICE_TABLE["verified"].items()):
+    for provider, verified in sorted(table["verified"].items()):
         age = (today - date.fromisoformat(verified)).days
         if age > PRICE_TABLE_MAX_AGE_DAYS:
             findings.append(
