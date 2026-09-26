@@ -270,6 +270,25 @@ class TestLangChainIntegration(unittest.TestCase):
                  if e.get("kind") == "span" and e.get("phase") == "end" and e.get("error")]
         self.assertEqual(ended[0]["error"]["type"], "CostResolutionError")
 
+    def test_llm_end_bills_reasoning_tokens_once(self):
+        """completion_tokens already include reasoning_tokens."""
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        handler.on_chain_start({"name": "agent"}, {}, run_id=uuid.uuid4())
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        response = _MockResponseWithModel(model="o3-mini", input_t=0, output_t=0)
+        response.llm_output = {
+            "model_name": "o3-mini",
+            "token_usage": {"prompt_tokens": 1_000, "completion_tokens": 100_000,
+                            "total_tokens": 101_000,
+                            "completion_tokens_details": {"reasoning_tokens": 80_000}},
+        }
+        handler.on_llm_end(response, run_id=llm_id)
+
+        data = next(e for e in self._read_events() if e["name"] == "llm.end")["data"]
+        # o3-mini: $1.10 input, $4.40 output per 1M; reasoning is inside the 100k.
+        self.assertAlmostEqual(data["cost_usd"], (1_000 * 1.10 + 100_000 * 4.40) / 1e6)
+
     def test_llm_end_bills_anthropic_cache_reads(self):
         """Cache-read tokens sit outside Anthropic input_tokens and are billed at the cache rate."""
         handler = AgentGuardCallbackHandler(tracer=self.tracer)
