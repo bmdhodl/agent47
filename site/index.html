@@ -142,104 +142,143 @@
     <main>
       <section class="hero" id="top">
         <div class="wrap">
-          <div>
-            <p class="kicker">Python SDK &middot; MIT &middot; zero dependencies</p>
+          <div class="hero-copy">
+            <p class="kicker">Case file &middot; the runaway agent</p>
             <h1>The agent gets three tries. <em>Not thirty.</em></h1>
             <p class="lead">
-              Set limits on spend, repeated tool calls, retries, and time. When
-              one is hit, the agent's next call raises an exception instead of
-              going out.
+              AgentGuard sits inside your agent's process and watches its calls.
+              When one crosses your limit on spend, repeats, retries, or time,
+              the next call raises instead of going out. Then it hands you a
+              receipt.
             </p>
-            <p>Runs in your process. No account, no API key, no proxy.</p>
+            <p class="plain">Python. MIT. No dependencies, no account, no proxy.</p>
             <div class="install">
               <code id="install-command">pip install agentguard47</code>
               <button class="copy" type="button" data-ag-metric="install-intent-candidate" onclick="copyText('install-command', this)">Copy</button>
             </div>
             <div class="links">
-              <a href="#try">Try it offline</a>
+              <a href="#try">Run it offline</a>
               <a href="/quickstart.html">Quickstart</a>
-              <a href="https://github.com/bmdhodl/agent47">Source on GitHub</a>
+              <a href="https://github.com/bmdhodl/agent47">Source</a>
             </div>
             <p class="fine">Viewing this page is not an install. <a href="/activation.html">How we count use</a>.</p>
           </div>
 
-          <figure class="receipt" aria-label="Receipt from an agentguard demo run">
-            <h3>AgentGuard47</h3>
-            <div class="sub">Run receipt &middot; agentguard demo</div>
-            <hr />
-            <div class="row"><span>budget cap</span><span>$1.00</span></div>
-            <div class="row"><span>warning at 84%</span><span>$0.84</span></div>
-            <div class="row"><span>call 9 &middot; $1.08</span><span class="stop">STOPPED</span></div>
-            <hr />
-            <div class="row"><span>tool.search &times;3, same args</span><span class="stop">STOPPED</span></div>
-            <div class="row"><span>fetch_docs retry 3 of 2</span><span class="stop">STOPPED</span></div>
-            <hr />
-            <div class="row total"><span>guard stops</span><span>3</span></div>
-            <div class="row"><span>network calls</span><span>0</span></div>
-            <div class="row"><span>trace</span><span>jsonl, local</span></div>
-            <svg viewBox="0 0 168 40" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="2" height="40"/><rect x="4" width="1" height="40"/><rect x="7" width="3" height="40"/><rect x="12" width="2" height="40"/><rect x="16" width="3" height="40"/><rect x="20" width="3" height="40"/><rect x="25" width="2" height="40"/><rect x="29" width="2" height="40"/><rect x="33" width="1" height="40"/><rect x="35" width="1" height="40"/><rect x="38" width="3" height="40"/><rect x="42" width="2" height="40"/><rect x="45" width="1" height="40"/><rect x="47" width="1" height="40"/><rect x="50" width="2" height="40"/><rect x="54" width="1" height="40"/><rect x="56" width="1" height="40"/><rect x="58" width="3" height="40"/><rect x="63" width="2" height="40"/><rect x="67" width="2" height="40"/><rect x="70" width="3" height="40"/><rect x="74" width="2" height="40"/><rect x="78" width="3" height="40"/><rect x="82" width="3" height="40"/><rect x="86" width="1" height="40"/><rect x="88" width="1" height="40"/><rect x="91" width="1" height="40"/><rect x="94" width="1" height="40"/><rect x="96" width="2" height="40"/><rect x="100" width="2" height="40"/><rect x="103" width="1" height="40"/><rect x="106" width="3" height="40"/><rect x="110" width="2" height="40"/><rect x="114" width="3" height="40"/><rect x="119" width="1" height="40"/><rect x="121" width="3" height="40"/><rect x="125" width="1" height="40"/><rect x="127" width="3" height="40"/><rect x="132" width="3" height="40"/><rect x="136" width="2" height="40"/><rect x="140" width="2" height="40"/><rect x="144" width="2" height="40"/><rect x="148" width="1" height="40"/><rect x="151" width="3" height="40"/><rect x="156" width="2" height="40"/><rect x="160" width="1" height="40"/><rect x="162" width="3" height="40"/><rect x="166" width="1" height="40"/></svg>
-            <div class="hash">E14B 254B 3AEA BAE3</div>
-            <div class="src">From the offline demo in agentguard47 1.4.0. Your hash will differ.</div>
+          <figure class="evidence" aria-label="Receipt printed by agentguard receipt for the offline demo: three calls stopped">
+            <div class="paper">
+              <pre>              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace       agentguard_demo_traces.jsonl
+events                                36
+llm calls                              9
+recorded cost                      $1.08
+budget warnings                        1
+----------------------------------------
+<b class="red">STOPPED</b>
+  budget  $1.08 over $1.00
+  loop    search x3, same args
+  retry   fetch_docs 3 tries, limit 2
+----------------------------------------
+guard stops                            3
+
+</pre><svg class="bars" viewBox="0 0 320 40" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="2" height="40"/><rect x="8" width="6" height="40"/><rect x="16" width="1" height="40"/><rect x="24" width="2" height="40"/><rect x="32" width="4" height="40"/><rect x="40" width="4" height="40"/><rect x="48" width="8" height="40"/><rect x="56" width="6" height="40"/><rect x="64" width="7" height="40"/><rect x="72" width="6" height="40"/><rect x="80" width="8" height="40"/><rect x="88" width="4" height="40"/><rect x="96" width="1" height="40"/><rect x="104" width="3" height="40"/><rect x="112" width="1" height="40"/><rect x="120" width="6" height="40"/><rect x="128" width="5" height="40"/><rect x="136" width="3" height="40"/><rect x="144" width="2" height="40"/><rect x="152" width="3" height="40"/><rect x="160" width="3" height="40"/><rect x="168" width="5" height="40"/><rect x="176" width="3" height="40"/><rect x="184" width="1" height="40"/><rect x="192" width="7" height="40"/><rect x="200" width="5" height="40"/><rect x="208" width="3" height="40"/><rect x="216" width="3" height="40"/><rect x="224" width="7" height="40"/><rect x="232" width="4" height="40"/><rect x="240" width="5" height="40"/><rect x="248" width="2" height="40"/><rect x="256" width="4" height="40"/><rect x="264" width="5" height="40"/><rect x="272" width="2" height="40"/><rect x="280" width="2" height="40"/><rect x="288" width="1" height="40"/><rect x="296" width="2" height="40"/><rect x="304" width="2" height="40"/><rect x="312" width="7" height="40"/></svg><pre>
+          9589 3375 E57B 020D
+  sha256 of trace - agentguard47 1.4.1</pre>
+              <span class="crosshair" aria-hidden="true"></span>
+              <span class="stamp" aria-hidden="true">Stopped</span>
+            </div>
+            <figcaption>Real output of <code>agentguard receipt</code> on the offline demo, agentguard47 1.4.1. Your hash will differ.</figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section class="block" id="case-file">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">01</div>
+            <h2>Four ways an agent runs away</h2>
+            <p>Each one raises its own exception. Catch it, log it, or let the run end.</p>
+          </div>
+          <div class="files">
+            <article class="dossier">
+              <header><span>File 01</span><span>Spend</span></header>
+              <code>BudgetExceeded</code>
+              <p>Dollars, tokens, or calls pass the cap you set.</p>
+              <p class="seen">Demo: call 9 hit $1.08 against a $1.00 cap.</p>
+              <span class="mark">Stopped</span>
+            </article>
+            <article class="dossier">
+              <header><span>File 02</span><span>Loop</span></header>
+              <code>LoopDetected</code>
+              <p>The same tool, called with the same arguments, again.</p>
+              <p class="seen">Demo: search(&quot;python asyncio&quot;) three times.</p>
+              <span class="mark">Stopped</span>
+            </article>
+            <article class="dossier">
+              <header><span>File 03</span><span>Retry</span></header>
+              <code>RetryLimitExceeded</code>
+              <p>A failing tool, retried with no ceiling.</p>
+              <p class="seen">Demo: fetch_docs, three tries against a limit of two.</p>
+              <span class="mark">Stopped</span>
+            </article>
+            <article class="dossier">
+              <header><span>File 04</span><span>Time</span></header>
+              <code>TimeoutExceeded</code>
+              <p>A run that outlives the window you gave it.</p>
+              <p class="seen">Not in the demo. Set <code>TimeoutGuard(max_seconds=120)</code>.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" id="ways-in">
+        <div class="wrap">
+          <div class="side">
+            <div class="num">02</div>
+            <h2>Three ways in</h2>
+            <p>Pick the one closest to where your agent runs.</p>
+          </div>
+          <ol class="ways">
+            <li>
+              <h3>Claude Code <span class="ver">new in 1.4.1</span></h3>
+              <p>A hook that refuses the third identical tool call in a row and a call that already failed twice.</p>
+              <div class="cmd"><code id="way-hook">agentguard hook claude-code --install --write</code><button class="copy" type="button" onclick="copyText('way-hook', this)">Copy</button></div>
+            </li>
+            <li>
+              <h3>Any Python script <span class="ver">new in 1.4.1</span></h3>
+              <p>Runs your script unchanged with the OpenAI and Anthropic clients patched.</p>
+              <div class="cmd"><code id="way-run">agentguard run --budget-usd 5 agent.py</code><button class="copy" type="button" onclick="copyText('way-run', this)">Copy</button></div>
+            </li>
+            <li>
+              <h3>Your own code</h3>
+              <p>Patch the client once. Call 21 is refused before it is sent.</p>
+<pre class="term"><span class="r">patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=20))</span></pre>
+            </li>
+          </ol>
         </div>
       </section>
 
       <section class="block" id="try">
         <div class="wrap">
           <div class="side">
-            <div class="num">01</div>
-            <h2>Try it offline</h2>
-            <p>Three commands. No keys, no network, nothing sent anywhere.</p>
+            <div class="num">03</div>
+            <h2>Evidence</h2>
+            <p>Every stop is written to a JSONL file on your disk. Nothing is sent anywhere.</p>
           </div>
           <div id="local-proof">
 <pre class="term"><span class="p">$</span> pip install agentguard47
-<span class="p">$</span> agentguard doctor      <span class="c"># checks the install and trace writing</span>
-<span class="p">$</span> agentguard demo        <span class="c"># trips budget, loop, and retry limits</span>
+<span class="p">$</span> agentguard doctor     <span class="c"># checks the install</span>
+<span class="p">$</span> agentguard demo       <span class="c"># trips the spend, loop, and retry limits</span>
 <span class="r">  stopped on call 9: cost $1.08 exceeded $1.00</span>
-<span class="p">$</span> agentguard quickstart --framework raw --write</pre>
+<span class="p">$</span> agentguard receipt agentguard_demo_traces.jsonl --format markdown</pre>
             <p class="after">
-              The last command writes a starter file for your repo. Quickstarts
-              cover OpenAI, Anthropic, LangChain, LangGraph, and plain Python.
-              <a href="/quickstart.html">Open the quickstart</a>.
+              The receipt lists each stop, the cost the trace recorded, and the
+              trace's SHA-256 drawn as a barcode. Paste it into the pull request
+              that fixed the loop. The hash identifies the file; it is not a
+              signature. <code>agentguard receipt</code> ships in 1.4.1.
             </p>
           </div>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="wrap">
-          <div class="side">
-            <div class="num">02</div>
-            <h2>What it stops</h2>
-            <p>Each limit raises its own exception. Catch it, log it, or let the run end.</p>
-          </div>
-          <ul class="stops">
-            <li><code>BudgetExceeded</code><p>Spend, tokens, or call count passed the cap you set.<small>A coding agent re-running the same failing test forty times.</small></p></li>
-            <li><code>LoopDetected</code><p>The same tool was called with the same arguments too many times.<small>search("python asyncio"), search("python asyncio"), search("python asyncio").</small></p></li>
-            <li><code>RetryLimitExceeded</code><p>A tool kept failing and kept getting retried.<small>An API that returns 500 and a retry loop with no ceiling.</small></p></li>
-            <li><code>TimeoutExceeded</code><p>The run took longer than you allowed.<small>A job that should take two minutes, still going at midnight.</small></p></li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="wrap">
-          <div class="side">
-            <div class="num">03</div>
-            <h2>Two lines around your client</h2>
-            <p>Patch the OpenAI or Anthropic client once. Every chat call after that counts against the limit.</p>
-          </div>
-<pre class="term">from agentguard import BudgetExceeded, BudgetGuard, Tracer, patch_openai
-from openai import OpenAI
-
-<span class="r">patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=20))</span>
-client = OpenAI()
-
-try:
-    while agent_wants_more():
-        client.chat.completions.create(model="gpt-4o-mini", messages=history)
-except BudgetExceeded as stop:
-    print(stop)  <span class="c"># call 21 was refused before it was sent</span></pre>
         </div>
       </section>
 
@@ -247,18 +286,19 @@ except BudgetExceeded as stop:
         <div class="wrap">
           <div class="side">
             <div class="num">04</div>
-            <h2>What it won't do</h2>
-            <p>Written down so you don't find out in production.</p>
+            <h2>Rules of engagement</h2>
+            <p>What it will not do, so you do not learn it in production.</p>
           </div>
           <div>
-            <ul class="nots">
-              <li class="yes">It checks calls that go through code you instrument: patched OpenAI and Anthropic clients, LangChain, LangGraph, or your own <code>check()</code> calls.</li>
-              <li>It is not a proxy and does not watch the whole machine. Calls that skip the SDK are not counted.</li>
-              <li>It is not an invoice cap. A dollar or token budget counts usage after each call returns, so the call that crosses the line can finish. With a shared local store, sync OpenAI calls and streams reserve before they are sent.</li>
-              <li>The OpenAI Responses API and Agents SDK are not supported yet.</li>
-            </ul>
+            <ol class="rules">
+              <li><b>It only sees what you point it at.</b> Patched OpenAI and Anthropic clients, LangChain, LangGraph, the Claude Code hook, or your own <code>check()</code> calls. Nothing else on the machine.</li>
+              <li><b>It is not an invoice cap.</b> A dollar limit counts usage after each call returns, so the call that crosses the line has already been sent. With a shared local store, sync OpenAI calls and streams reserve before they go out.</li>
+              <li><b>It is not a sandbox.</b> Code that skips the SDK is not counted, and anyone with the repo can remove the hook.</li>
+              <li><b>It does not phone home.</b> No telemetry. Traces leave your machine only if you give it a dashboard key.</li>
+              <li><b>Not yet:</b> the OpenAI Responses API and Agents SDK.</li>
+            </ol>
             <div class="more">
-              <a href="/enforcement.html">Full list of tested limits</a>
+              <a href="/enforcement.html">Every tested limit</a>
               <a href="https://github.com/bmdhodl/agent47/blob/main/docs/compatibility.md">Version compatibility</a>
             </div>
           </div>
@@ -270,10 +310,7 @@ except BudgetExceeded as stop:
           <div>
             <div class="num">05</div>
             <h2>For teams</h2>
-            <p>
-              The hosted dashboard keeps incidents, sends alerts, and can stop a
-              run remotely. The SDK does not need it.
-            </p>
+            <p>The hosted dashboard keeps incidents, sends alerts, and can stop a run remotely. The SDK does not need it.</p>
           </div>
           <div class="links">
             <a class="btn red" href="https://app.agentguard47.com/sign-up">Start hosted trial</a>
