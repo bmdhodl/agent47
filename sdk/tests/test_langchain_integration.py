@@ -268,7 +268,7 @@ class TestLangChainIntegration(unittest.TestCase):
             )
         ended = [e for e in self._read_events()
                  if e.get("kind") == "span" and e.get("phase") == "end" and e.get("error")]
-        self.assertEqual(ended[0]["error"]["type"], "CostResolutionError")
+        self.assertEqual([e["error"]["type"] for e in ended], ["CostResolutionError"])
 
     def test_llm_end_bills_reasoning_tokens_once(self):
         """completion_tokens already include reasoning_tokens."""
