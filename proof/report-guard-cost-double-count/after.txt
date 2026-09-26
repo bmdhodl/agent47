@@ -1,0 +1,22 @@
+BudgetExceeded: Cost budget exceeded: $6.0000 > $5.0000 (this call added $1.5000)
+guard cost_used: $6.00
+llm.result top cost_usd= 1.5 data.cost_usd= None
+llm.result top cost_usd= 1.5 data.cost_usd= None
+llm.result top cost_usd= 1.5 data.cost_usd= None
+llm.result top cost_usd= 1.5 data.cost_usd= None
+guard.budget_exceeded top cost_usd= None data.cost_usd= 1.5
+AgentGuard report
+  Total events: 14
+  Spans: 8  Events: 5
+  Approx run time: 12.9 ms
+  Reasoning steps: 0
+  Tool results: 0
+  LLM results: 4
+  Estimated cost: $6.0000
+  Savings ledger: exact 0 tokens / $0.0000, estimated 15 tokens / $1.5000
+  Loop guard triggered: 0
+  Guard events:
+    guard.budget_exceeded: 1
+  Incident hint: rerun with `agentguard incident` for a shareable incident report
+
+Traced by AgentGuard | agentguard47.com

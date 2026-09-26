@@ -1,0 +1,3 @@
+============================== 9 passed in 0.31s ===============================
+==> security: SDK module edits should get a fast security scan before the full gate
+/usr/local/bin/python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q

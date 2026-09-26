@@ -47,6 +47,19 @@ def test_guard_events_do_not_add_cost(tmp_path):
     assert receipt["stops"] == [{"kind": "budget", "detail": "Cost budget exceeded: $6.0000 > $5.0000"}]
 
 
+def test_receipt_cost_matches_report_rule_for_top_level_guard_cost(tmp_path):
+    from agentguard.evaluation import summarize_trace
+
+    events = [
+        {"kind": "event", "name": "llm.result", "cost_usd": 1.5, "data": {}},
+        {"kind": "event", "name": "guard.budget_exceeded", "data": {"cost_usd": 1.5}},
+        {"kind": "event", "name": "guard.vendor_quota", "cost_usd": 0.75, "data": {}},
+    ]
+    receipt = build_receipt(str(_write(tmp_path, events)))
+    assert receipt["recorded_cost_usd"] == 2.25
+    assert summarize_trace(events)["cost_usd"] == 2.25
+
+
 def test_text_fits_width_and_ascii_fallback_encodes_cp1252(demo_trace):
     receipt = build_receipt(str(demo_trace))
     text = render(receipt)

@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from agentguard import __version__
-from agentguard.evaluation import _extract_cost
+from agentguard.evaluation import _spend_cost
 
 WIDTH = 40
 _BARS = "▏▎▍▌▋▊▉█"
@@ -76,8 +76,7 @@ def build_receipt(path: str) -> Dict[str, Any]:
             warnings += 1
         if name in _KINDS:
             stops.append({"kind": _KINDS[name], "detail": _stop_detail(_KINDS[name], data)})
-        # Guard events repeat the cost of the call that tripped them.
-        event_cost = None if str(name).startswith("guard.") else _extract_cost(event)
+        event_cost = _spend_cost(event)
         if event_cost is not None:
             cost += event_cost
     return {
