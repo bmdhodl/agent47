@@ -29,22 +29,22 @@ def _run(tmp_path, *args):
 
 
 @pytest.mark.parametrize(
-    "target, module, expected",
+    "target, expected",
     [
-        (["agent.py", "-x"], None, (None, ["agent.py", "-x"])),
-        (["--", "python", "agent.py"], None, (None, ["agent.py"])),
-        (["python3.12", "-m", "pkg.cli", "go"], None, ("pkg.cli", ["go"])),
-        (["go"], "pkg.cli", ("pkg.cli", ["go"])),
+        (["agent.py", "-x"], (None, ["agent.py", "-x"])),
+        (["--", "python", "agent.py"], (None, ["agent.py"])),
+        (["python3.12", "-m", "pkg.cli", "go"], ("pkg.cli", ["go"])),
+        (["-m", "pkg.cli", "--profile", "x"], ("pkg.cli", ["--profile", "x"])),
     ],
 )
-def test_split_target(target, module, expected):
-    assert split_target(target, module) == expected
+def test_split_target(target, expected):
+    assert split_target(target) == expected
 
 
-@pytest.mark.parametrize("target", [[], ["python"], ["python", "-m"]])
+@pytest.mark.parametrize("target", [[], ["python"], ["python", "-m"], ["-m"]])
 def test_split_target_needs_a_script(target):
     with pytest.raises(SystemExit):
-        split_target(target, None)
+        split_target(target)
 
 
 def test_budget_stop_ends_the_run(tmp_path):
@@ -78,10 +78,10 @@ def test_module_mode_runs_as_main(tmp_path):
     (pkg / "cli.py").write_text(
         "import sys\nif __name__ == '__main__':\n    print('main', sys.argv[1:])\n", encoding="utf-8"
     )
-    for args in (["-m", "mypkg.cli", "a"], ["python", "-m", "mypkg.cli", "a"]):
+    for args in (["-m", "mypkg.cli", "a", "--profile", "x"], ["python", "-m", "mypkg.cli", "a", "--profile", "x"]):
         proc = _run(tmp_path, *args)
         assert proc.returncode == 0, proc.stderr
-        assert "main ['a']" in proc.stdout
+        assert "main ['a', '--profile', 'x']" in proc.stdout
 
 
 def test_script_imports_its_own_directory(tmp_path):

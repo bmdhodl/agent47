@@ -13,4 +13,4 @@ echo "== retry: failing command with other calls between"
 claude -p "Use the Bash tool for each step, one call at a time, in this exact order, even if a call fails or is refused: 1) ls /nonexistent-agentguard  2) echo one  3) ls /nonexistent-agentguard  4) echo two  5) ls /nonexistent-agentguard . Then report verbatim any refusal messages." \
   --model claude-haiku-4-5-20251001 --allowedTools Bash --max-turns 14 < /dev/null
 echo "== receipt"
-"$py" -m agentguard.cli receipt .agentguard/claude-code.jsonl
+"$py" -m agentguard.cli receipt .agentguard/claude-code/trace.jsonl

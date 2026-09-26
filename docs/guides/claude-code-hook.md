@@ -32,7 +32,8 @@ agentguard hook claude-code --install --write
 This adds one handler to `PreToolUse`, `PostToolUse`, and `PostToolUseFailure`
 in `.claude/settings.local.json`. Existing hooks and settings are kept. The
 handler runs the Python interpreter that installed AgentGuard, so the file is
-per-machine; Claude Code keeps `settings.local.json` out of git.
+per-machine. Keep it out of git: add `.claude/settings.local.json` to
+`.gitignore` if your repo does not already ignore it.
 
 Add `--max-calls 300` to the install command to also cap tool calls per
 session.
@@ -47,14 +48,17 @@ Only AgentGuard's handlers are removed.
 
 ## What it writes
 
-- `.agentguard/claude-code-state.json`: per-session counts, keyed by Claude
+- `.agentguard/claude-code/state.json`: per-session counts, keyed by Claude
   Code's session id. A lock keeps parallel tool calls from losing counts.
-- `.agentguard/claude-code.jsonl`: one event per allowed call and per refusal.
+- `.agentguard/claude-code/trace.jsonl`: one event per allowed call and per
+  refusal. A refusal includes up to 60 characters of the command, path, or URL.
+- `.agentguard/claude-code/.gitignore`: ignores the directory, so none of this
+  is committed by accident.
 
 Print what it refused:
 
 ```bash
-agentguard receipt .agentguard/claude-code.jsonl
+agentguard receipt .agentguard/claude-code/trace.jsonl
 ```
 
 ## Limits

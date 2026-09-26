@@ -2,7 +2,8 @@
 
 Claude Code runs this as a command hook on PreToolUse, PostToolUse, and
 PostToolUseFailure. Each invocation is a fresh process, so per-session counts
-live in a JsonFileStateStore under ``.agentguard/`` in the project. A refused
+live in a JsonFileStateStore under ``.agentguard/claude-code/`` in the project,
+a directory that ignores itself in git. A refused
 PreToolUse exits 2; Claude Code blocks the call and shows the reason to the
 model. Refusals are written to a JSONL trace that ``agentguard receipt`` reads.
 
@@ -24,8 +25,9 @@ from agentguard.repo_config import load_repo_config
 from agentguard.state import JsonFileStateStore
 from agentguard.tracing import JsonlFileSink, Tracer
 
-STATE_FILE = "claude-code-state.json"
-TRACE_FILE = "claude-code.jsonl"
+HOOK_DIR = Path(".agentguard") / "claude-code"
+STATE_FILE = "state.json"
+TRACE_FILE = "trace.jsonl"
 SETTINGS_FILE = Path(".claude") / "settings.local.json"
 EVENTS = ("PreToolUse", "PostToolUse", "PostToolUseFailure")
 HOOK_ARGS = ["-m", "agentguard.cli", "hook", "claude-code"]
@@ -126,7 +128,12 @@ def run(stdin: TextIO, stderr: TextIO, max_calls: Optional[int] = None) -> int:
     if name not in EVENTS:
         return 0
     project_dir = os.environ.get("CLAUDE_PROJECT_DIR") or event.get("cwd") or os.getcwd()
-    root = Path(project_dir) / ".agentguard"
+    root = Path(project_dir) / HOOK_DIR
+    root.mkdir(parents=True, exist_ok=True)
+    # Session state and command snippets are machine-local; keep them out of git.
+    ignore = root / ".gitignore"
+    if not ignore.exists():
+        ignore.write_text("*\n", encoding="utf-8")
     store = JsonFileStateStore(root / STATE_FILE)
     tool_input = event.get("tool_input")
     sig = signature(tool_name, tool_input)
@@ -200,5 +207,6 @@ def configure(project_dir: str, write: bool, remove: bool, max_calls: Optional[i
     action = "Removed AgentGuard hooks from" if remove else "Wrote AgentGuard hooks to"
     out.write(f"{action} {path}\n")
     if not remove:
-        out.write(f"Refusals are logged to {Path(project_dir) / '.agentguard' / TRACE_FILE}\n")
+        out.write(f"Refusals are logged to {Path(project_dir) / HOOK_DIR / TRACE_FILE}\n")
+        out.write(f"{SETTINGS_FILE} holds this machine's Python path; keep it out of git.\n")
     return 0

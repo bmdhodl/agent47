@@ -19,25 +19,26 @@ _PYTHON = re.compile(r"python(\d+(\.\d+)?)?(\.exe)?", re.I)
 _STOPS = (BudgetExceeded, LoopDetected, RetryLimitExceeded, TimeoutExceeded)
 
 
-def split_target(target: List[str], module: Optional[str]) -> tuple:
+def split_target(target: List[str]) -> tuple:
     """Return (module or None, argv) from ``script.py args`` or ``python -m mod args``."""
     if target[:1] == ["--"]:
         target = target[1:]
     if target and _PYTHON.fullmatch(os.path.basename(target[0])):
         target = target[1:]
-    if module is None and target[:1] == ["-m"]:
-        module, target = (target[1] if len(target) > 1 else None), target[2:]
-        if module is None:
+    module = None
+    if target[:1] == ["-m"]:
+        if len(target) < 2:
             raise SystemExit("agentguard run: -m needs a module name")
+        module, target = target[1], target[2:]
     if module is None and not target:
         raise SystemExit("agentguard run: name a script, e.g. agentguard run agent.py")
     return module, target
 
 
-def run(target: List[str], *, module: Optional[str] = None, budget_usd: Optional[float] = None,
+def run(target: List[str], *, budget_usd: Optional[float] = None,
         service: Optional[str] = None, trace_file: Optional[str] = None,
         profile: Optional[str] = None, err: TextIO = sys.stderr) -> int:
-    module, argv = split_target(target, module)
+    module, argv = split_target(target)
     tracer = init(budget_usd=budget_usd, service=service, trace_file=trace_file, profile=profile)
     trace_path = getattr(tracer._sink, "_path", None)
     try:

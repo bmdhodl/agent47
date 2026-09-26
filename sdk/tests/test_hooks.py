@@ -99,7 +99,7 @@ def test_run_refuses_with_exit_2_and_logs_a_receipt(project):
     code, err = _run(project)
     assert code == 2
     assert "AgentGuard refused Bash(npm test)" in err
-    receipt = build_receipt(str(project / ".agentguard" / "claude-code.jsonl"))
+    receipt = build_receipt(str(project / ".agentguard" / "claude-code" / "trace.jsonl"))
     assert receipt["tool_calls"] == 2
     assert receipt["stops"] == [{"kind": "loop", "detail": "Bash(npm test) x2, same args"}]
 
@@ -122,7 +122,7 @@ def test_project_dir_env_wins_over_cwd(project, tmp_path_factory, monkeypatch):
     elsewhere = tmp_path_factory.mktemp("elsewhere")
     monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(elsewhere))
     _run(project)
-    assert (elsewhere / ".agentguard" / "claude-code-state.json").exists()
+    assert (elsewhere / ".agentguard" / "claude-code" / "state.json").exists()
     assert not (project / ".agentguard").exists()
 
 
@@ -154,7 +154,7 @@ def test_parallel_hook_processes_do_not_lose_counts(project):
 
     with ThreadPoolExecutor(max_workers=8) as pool:
         assert list(pool.map(call, range(8))) == [0] * 8
-    state = json.loads((project / ".agentguard" / "claude-code-state.json").read_text())
+    state = json.loads((project / ".agentguard" / "claude-code" / "state.json").read_text())
     assert state["s1"]["calls"] == 8
 
 
@@ -188,3 +188,16 @@ def test_cli_install_preview_then_write(project, capsys, monkeypatch):
         cli.main()
     written = json.loads((project / ".claude" / "settings.local.json").read_text())
     assert written["hooks"]["PreToolUse"][0]["hooks"][0]["command"] == sys.executable
+
+
+def test_hook_files_ignore_themselves_in_git(project):
+    import shutil
+
+    _run(project)
+    hook_dir = project / ".agentguard" / "claude-code"
+    assert (hook_dir / ".gitignore").read_text() == "*\n"
+    if shutil.which("git"):
+        subprocess.run(["git", "init", "-q"], cwd=project, check=True)
+        status = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all"],
+                                cwd=project, capture_output=True, text=True, check=True).stdout
+        assert ".agentguard" not in status

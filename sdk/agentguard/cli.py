@@ -337,7 +337,8 @@ def main() -> None:
         description="Run SCRIPT (or -m MODULE) with OpenAI and Anthropic clients patched. "
         "Options come before the script; everything after it goes to the script.",
     )
-    run_cmd.add_argument("-m", dest="module", help="Run a module, like python -m.")
+    # Everything after -m MODULE belongs to the module, as with python -m.
+    run_cmd.add_argument("-m", dest="module", nargs=argparse.REMAINDER, help="Run a module, like python -m.")
     run_cmd.add_argument("--budget-usd", type=float, help="Dollar budget for patched LLM calls.")
     run_cmd.add_argument("--service", help="Service name in the trace.")
     run_cmd.add_argument("--trace-file", help="Local JSONL trace path.")
@@ -511,7 +512,8 @@ def main() -> None:
     elif args.cmd == "receipt":
         _receipt(args.path, args.format)
     elif args.cmd == "run":
-        raise SystemExit(run_script(args.target, module=args.module, budget_usd=args.budget_usd,
+        target = args.target if args.module is None else ["-m", *args.module]
+        raise SystemExit(run_script(target, budget_usd=args.budget_usd,
                                     service=args.service, trace_file=args.trace_file,
                                     profile=args.profile))
     elif args.cmd == "hook":

@@ -41,7 +41,7 @@ agentguard hook claude-code --install --write
 
 This installs a Claude Code hook that refuses the third identical tool call in
 a row and a call that already failed twice. Refusals go to
-`.agentguard/claude-code.jsonl`. It checks tool calls, not tokens or
+`.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
 subscription quota. See the [Claude Code hook guide](docs/guides/claude-code-hook.md).
 
 ### Guard a script without editing it
