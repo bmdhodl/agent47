@@ -126,6 +126,10 @@ class TestGuardEventCost(unittest.TestCase):
     def test_summarize_trace_skips_guard_event_cost(self):
         self.assertEqual(summarize_trace(list(_GUARD_COST_EVENTS))["cost_usd"], 3.0)
 
+    def test_summarize_trace_counts_top_level_guard_event_cost(self):
+        events = [*_GUARD_COST_EVENTS, {"name": "guard.vendor_quota", "kind": "event", "cost_usd": 0.75}]
+        self.assertEqual(summarize_trace(events)["cost_usd"], 3.75)
+
     def test_assert_cost_under_skips_guard_event_cost(self):
         path = _write_trace(_GUARD_COST_EVENTS)
         result = EvalSuite(path).assert_cost_under(4.0).run()

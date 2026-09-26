@@ -5,7 +5,8 @@ Patched OpenAI/Anthropic calls emit `llm.result` (top-level `cost_usd`), then
 `_extract_cost` falls back to `data.cost_usd`, so every cost sum counted the
 tripping call twice.
 
-Fix: `evaluation._sum_cost` skips `guard.*` events. Used by `cli._report`,
+Fix: `evaluation._sum_cost` ignores `data.cost_usd` on `guard.*` events (a top-level
+`cost_usd` on a guard event still counts). Used by `cli._report`,
 `summarize_trace` (and therefore `incident`), and `assert_cost_under`.
 `savings` no longer picks a guard event as a savings baseline.
 

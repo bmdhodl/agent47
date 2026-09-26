@@ -475,16 +475,18 @@ def _is_guard_event(event: Dict[str, Any]) -> bool:
 def _sum_cost(events: List[Dict[str, Any]]) -> float:
     """Total spend across a trace.
 
-    All ``guard.*`` events are skipped. Guard events report on spend, they do
-    not add to it: ``guard.budget_exceeded`` echoes the cost of the call that
-    tripped it in ``data.cost_usd``, and that call already has its own
-    ``llm.result`` cost.
+    Guard events count only a top-level ``cost_usd``. Their ``data.cost_usd``
+    describes spend recorded elsewhere: ``guard.budget_exceeded`` echoes the
+    cost of the call that tripped it, and that call's ``llm.result`` already
+    carries it.
     """
     total = 0.0
     for event in events:
         if _is_guard_event(event):
-            continue
-        cost = _extract_cost(event)
+            cost = event.get("cost_usd")
+            cost = float(cost) if isinstance(cost, (int, float)) else None
+        else:
+            cost = _extract_cost(event)
         if cost is not None:
             total += cost
     return total
