@@ -57,5 +57,5 @@ def run(target: List[str], *, budget_usd: Optional[float] = None,
         shutdown()
         if trace_path:
             err.write(f"agentguard: trace written to {trace_path}. "
-                      f"See the stops with: agentguard receipt {trace_path}\n")
+                      f"Read it with: agentguard receipt {trace_path}\n")
     return 0

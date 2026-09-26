@@ -203,7 +203,10 @@ def configure(project_dir: str, write: bool, remove: bool, max_calls: Optional[i
         out.write(f"# Preview of {path}. Add --write to save it.\n{text}")
         return 0
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+    # Claude Code reads this file on every tool call; never leave it half-written.
+    tmp = path.with_name(path.name + ".agentguard.tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
     action = "Removed AgentGuard hooks from" if remove else "Wrote AgentGuard hooks to"
     out.write(f"{action} {path}\n")
     if not remove:
