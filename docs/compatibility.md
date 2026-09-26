@@ -1,6 +1,6 @@
 # Compatibility
 
-Checked 2026-09-25 against AgentGuard `1.4.1` source. A row is **Supported**
+Checked 2026-09-26 against AgentGuard `1.4.1` source. A row is **Supported**
 only when a CI job runs the real package, not a stand-in. Enforcement
 semantics for each path are in the [enforcement boundary](enforcement-boundary.md).
 
@@ -14,9 +14,10 @@ semantics for each path are in the [enforcement boundary](enforcement-boundary.m
 | LangChain callbacks (`[langchain]`) | Supported, Python 3.10+ | langchain-core 1.6.3 | `compat` job: a real `CallbackManager` propagates `BudgetExceeded`. |
 | LangGraph nodes (`[langgraph]`) | Supported, Python 3.10+ | langgraph 1.2.11, langgraph-checkpoint 4.2.0, langgraph-sdk 0.4.4 | `compat` job: a real `StateGraph` stops at the node budget. |
 | OpenTelemetry sink (`[otel]`) | Supported | opentelemetry-api 1.44.0, opentelemetry-sdk 1.44.0 | `compat` job: spans and events reach a real in-memory exporter. |
-| Async and streamed OpenAI/Anthropic calls | Tested with stand-ins only | n/a | Unit tests in `test_instrument_stream.py`, `test_async_patches.py`, and `test_reservation_stream.py` use stand-in clients, not the real SDK request pipeline. |
+| OpenAI Responses API, sync, async, and streamed (`patch_openai`, `patch_openai_async`) | Experimental | openai 3.19.2 | `compat (latest)` runs the real client over a mocked transport: `create`, `stream()`, `with_streaming_response`, provider errors, and a store-backed `max_output_tokens` hold. Not Supported yet: the floor, openai 1.40.0, predates the Responses API (1.66), so `compat (floor)` skips these tests. |
+| OpenAI Agents SDK (`Runner.run`, `Runner.run_streamed`) | Experimental | openai-agents 0.22.3 | `compat (latest)`: a real `Runner` with a looping function tool stops before the fourth model call, streamed and not, and `max_turns` still applies. Not in the floor lock. |
+| Async and streamed Chat Completions and Anthropic calls | Tested with stand-ins only | n/a | Unit tests in `test_instrument_stream.py`, `test_async_patches.py`, and `test_reservation_stream.py` use stand-in clients, not the real SDK request pipeline. |
 | CrewAI (`[crewai]`) | Experimental | crewai 1.15.21 | Not in the `compat` job. The extra resolves ChromaDB with unresolved advisories; see [#644](https://github.com/bmdhodl/agent47/issues/644) and the [CrewAI guide](integrations/crewai.md). |
-| OpenAI Responses API and Agents SDK | Unsupported | n/a | Held under AG-06 ([#735](https://github.com/bmdhodl/agent47/issues/735)). `patch_openai` does not wrap `responses.create`. |
 
 The `compat` job runs on Ubuntu with Python 3.12 only. Optional extras are not
 tested on Windows or macOS.

@@ -1,0 +1,1 @@
+{"session": "openai-responses-parse-test", "ts": "2026-09-26T05:04:46", "claim": "a real-SDK test asserts responses.parse bills once", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/tests/test_real_dispatch.py", "pattern": "def test_responses_parse_counts_once"}, "prev": "5f90189f29ea8e6a333e37460cbd151d10669e003d71adfd3fc8e07d41bdd6b7"}

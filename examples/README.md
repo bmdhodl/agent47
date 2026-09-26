@@ -45,6 +45,7 @@ after the optional `pydantic-ai` package is installed.
 | `langchain_rag_with_guards.py` | LangChain | RAG pipeline with loop detection + budget enforcement via callback handler |
 | `crewai_with_guards.py` | CrewAI | Multi-agent crew with auto-traced OpenAI calls and budget limits |
 | `openai_agents_with_guards.py` | OpenAI | Function-calling agent with LoopGuard, BudgetGuard, and structured tracing |
+| `openai_agents_sdk_budget.py` | OpenAI Agents SDK | `agentguard.init()` budget stops a `Runner` before its next model call; `max_turns` still applies |
 
 ## Quick Start
 

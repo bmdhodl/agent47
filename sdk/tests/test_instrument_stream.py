@@ -441,3 +441,109 @@ def test_async_anthropic_create_stream_merges_start_and_delta_usage():
     asyncio.run(body())
     assert guard.state.calls_used == 1
     assert guard.state.tokens_used == 20
+
+
+RESPONSES_USAGE = {
+    "input_tokens": 120,
+    "input_tokens_details": {"cached_tokens": 20},
+    "output_tokens": 80,
+    "output_tokens_details": {"reasoning_tokens": 30},
+    "total_tokens": 200,
+}
+
+
+def _responses_events():
+    done = SimpleNamespace(usage=RESPONSES_USAGE)
+    return [
+        SimpleNamespace(type="response.created", response=SimpleNamespace(usage=None)),
+        SimpleNamespace(type="response.output_text.delta", delta="ok"),
+        SimpleNamespace(type="response.completed", response=done),
+    ]
+
+
+def test_responses_usage_normalizes_like_chat_completions():
+    from agentguard.usage import normalize_usage
+
+    assert normalize_usage(RESPONSES_USAGE, provider="openai") == {
+        "input_tokens": 120,
+        "output_tokens": 80,
+        "total_tokens": 200,
+        "prompt_tokens": 120,
+        "completion_tokens": 80,
+        "cached_input_tokens": 20,
+        "reasoning_tokens": 30,
+    }
+
+
+def test_responses_stream_bills_completed_event_without_stream_options():
+    sent = []
+
+    def create(**kwargs):
+        sent.append(kwargs)
+        return SyncStream(_responses_events())
+
+    client = SimpleNamespace(responses=SimpleNamespace(create=create))
+    guard = BudgetGuard(max_calls=10)
+    instrument._patch_openai_instance(client, Tracer(sink=Sink()), guard)
+    assert len(list(client.responses.create(model="gpt-4o-mini", input="hi", stream=True))) == 3
+    assert "stream_options" not in sent[0]
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 200
+
+
+def test_async_patches_accept_the_sync_tracer_init_passes():
+    async def create(**kwargs):
+        return SimpleNamespace(usage=RESPONSES_USAGE)
+
+    client = SimpleNamespace(responses=SimpleNamespace(create=create))
+    guard = BudgetGuard(max_calls=10)
+    sink = Sink()
+    instrument._patch_openai_async_instance(client, Tracer(sink=sink), guard)
+    asyncio.run(client.responses.create(model="gpt-4o-mini", input="hi"))
+    assert guard.state.tokens_used == 200
+    assert [e["phase"] for e in sink.events if e.get("kind") == "span"] == ["start", "end"]
+
+
+def test_async_stream_closes_a_sync_tracer_span():
+    async def create(**kwargs):
+        return AsyncStream(_responses_events())
+
+    client = SimpleNamespace(responses=SimpleNamespace(create=create))
+    guard = BudgetGuard(max_calls=10)
+    sink = Sink()
+    instrument._patch_openai_async_instance(client, Tracer(sink=sink), guard)
+
+    async def body():
+        stream = await client.responses.create(model="gpt-4o-mini", input="hi", stream=True)
+        return [event async for event in stream]
+
+    assert len(asyncio.run(body())) == 3
+    assert guard.state.tokens_used == 200
+    assert [e["phase"] for e in sink.events if e.get("kind") == "span"] == ["start", "end"]
+
+
+def test_raw_streaming_response_survives_a_second_patch():
+    """with_streaming_response through two patch layers still parses async."""
+
+    class Raw:
+        async def parse(self):
+            return AsyncStream(_responses_events())
+
+    async def create(**kwargs):
+        return Raw()
+
+    client = SimpleNamespace(responses=SimpleNamespace(create=create))
+    guard = BudgetGuard(max_calls=10)
+    instrument._patch_openai_async_instance(client, Tracer(sink=Sink()), guard)
+    instrument._patch_openai_async_instance(client, Tracer(sink=Sink()), BudgetGuard(max_calls=10))
+
+    async def body():
+        raw = await client.responses.create(
+            model="gpt-4o-mini", input="hi", stream=True,
+            extra_headers={"X-Stainless-Raw-Response": "stream"},
+        )
+        return [event async for event in await raw.parse()]
+
+    assert len(asyncio.run(body())) == 3
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 200

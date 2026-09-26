@@ -20,7 +20,22 @@
   `.agentguard.json` set the limits. A guard stop exits 1. Every run ends by
   printing the trace path to stderr for `agentguard receipt`.
 
+- `patch_openai` and `patch_openai_async` (and so `agentguard.init()` and
+  `agentguard run`) now cover the OpenAI Responses API: `responses.create`,
+  `responses.parse`, `responses.stream()`, and the raw and streaming response
+  wrappers. That puts the OpenAI Agents SDK under the budget: `Runner.run` and
+  `Runner.run_streamed` stop before the next model call once the budget is
+  spent. Store-backed guards reserve on `max_output_tokens`. Hosted tools,
+  `background=True`, and the WebSocket transport are not covered; see the
+  [enforcement boundary](docs/enforcement-boundary.md) and
+  `examples/openai_agents_sdk_budget.py`. Both are Experimental in the
+  [compatibility matrix](docs/compatibility.md): CI runs them against the
+  current releases, and the openai floor (1.40.0) predates the Responses API.
+
 ### Fixes
+- Every `AsyncOpenAI` and `AsyncAnthropic` call failed with `AttributeError`
+  after `agentguard.init()`, because the async patches expected an
+  `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.
 - `agentguard report`, `summarize_trace`, `incident`, and
@@ -41,7 +56,8 @@
   suite against the real OpenAI, Anthropic, LangChain, LangGraph, and
   OpenTelemetry packages at the oldest supported versions and at current
   releases. Missing packages fail the job instead of skipping. CrewAI stays
-  experimental (#644); the OpenAI Responses API stays unsupported (AG-06).
+  experimental (#644). The current-release job also runs the OpenAI Agents
+  SDK.
 
 ## 1.4.0
 

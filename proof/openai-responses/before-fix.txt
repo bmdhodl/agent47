@@ -1,0 +1,9 @@
+FAILED sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch
+FAILED sdk/tests/test_real_dispatch.py::test_responses_stream_counts_final_usage_once
+FAILED sdk/tests/test_real_dispatch.py::test_responses_async_create_with_init_tracer
+FAILED sdk/tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_on_parse
+FAILED sdk/tests/test_real_dispatch.py::test_responses_store_backed_dollar_cap_reserves_max_output_tokens
+FAILED sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[False]
+FAILED sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[True]
+FAILED sdk/tests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies
+==================== 8 failed, 4 passed, 4 skipped in 2.98s ====================

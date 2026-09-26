@@ -295,7 +295,7 @@ guard stops                            3
               <li><b>It is not an invoice cap.</b> A dollar limit counts usage after each call returns, so the call that crosses the line has already been sent. With a shared local store, sync OpenAI calls and streams reserve before they go out.</li>
               <li><b>It is not a sandbox.</b> Code that skips the SDK is not counted, and anyone with the repo can remove the hook.</li>
               <li><b>It does not phone home.</b> No telemetry. Traces stay on your machine unless you set a dashboard key or configure an export sink, such as OpenTelemetry.</li>
-              <li><b>Not yet:</b> the OpenAI Responses API and Agents SDK.</li>
+              <li><b>Hosted tools run where it cannot see.</b> From 1.4.1 it patches the OpenAI Responses API and Agents SDK, but a web search or code interpreter call inside one response is not stopped, and background responses are not counted.</li>
             </ol>
             <div class="more">
               <a href="/enforcement.html">Every tested limit</a>
