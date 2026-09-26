@@ -17,7 +17,7 @@ Fix: `evaluation._sum_cost` ignores `data.cost_usd` on `guard.*` events (a top-l
 | `before.txt` | Guard $6.00, report $7.50 |
 | `after.txt` | Guard $6.00, report $6.00 |
 | `tests-before-fix.txt` | The 4 new regression tests fail against the unfixed SDK |
-| `make-check-sdk.txt` | `ci-tools-guard review-readiness lint test`: 1264 passed, 91.83% coverage (after merging main) |
+| `make-check-sdk.txt` | `ci-tools-guard review-readiness lint test`: 1278 passed, 92.10% coverage (after merging main through #786) |
 | `make-structural.txt`, `make-security.txt`, `make-preflight.txt`, `make-release-guard.txt` | Pass |
 | `make-mcp-env-failure.txt` | `make mcp` fails here on missing `mcp-server/node_modules`; identical on the clean tree. No MCP files changed. |
 
