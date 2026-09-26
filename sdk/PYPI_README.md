@@ -193,6 +193,10 @@ The PyPI README is generated from this README and the changelog.
 ### Fixes
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.
+- `agentguard report`, `summarize_trace`, `incident`, and
+  `EvalSuite.assert_cost_under` no longer count the call that tripped a
+  budget twice. `guard.budget_exceeded` echoes that call's cost, which its
+  `llm.result` already carries. Savings baselines skip guard events too.
 
 ### Docs
 - The PyPI README again states that the optional `[crewai]` extra pulls

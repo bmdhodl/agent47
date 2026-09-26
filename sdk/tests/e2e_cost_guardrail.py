@@ -182,11 +182,16 @@ def main():
         # ---- Phase 4: _extract_cost no double counting ----
         print("\nPhase 4: _extract_cost verification")
 
+        # Spend lives on llm.result. guard.budget_exceeded echoes the tripping
+        # call's cost in data.cost_usd and must not be counted again.
         total_cost = 0.0
-        for e in events:
+        for e in llm_events:
             cost = _extract_cost(e)
             if cost is not None:
                 total_cost += cost
+        guard_total = guard.state.cost_used + guard2.state.cost_used
+        check("llm.result sum matches guards", abs(guard_total - total_cost) < 0.0001,
+              f"guards={guard_total}, llm.result={total_cost}")
 
         # Compare with summarize_trace
         summary = summarize_trace(events)

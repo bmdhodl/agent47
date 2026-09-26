@@ -4,7 +4,7 @@
 
 - Public package: `agentguard47`, MIT, zero runtime dependencies, Python 3.9+.
 - Latest verified published SDK release: 1.4.0, published 2026-09-24 UTC. Store-backed sync OpenAI calls and store-backed streams reserve before send. PyPI wheel and sdist carry Trusted Publishing attestations from `publish.yml`; a clean install passes `doctor`, `demo`, `quickstart`, and `report`. Receipts: `proof/v1.4.0/PUBLICATION.md`. Earlier receipts: `proof/v1.3.2/PUBLICATION.md`, `proof/v1.3.1/PUBLICATION.md`.
-- Current source version: 1.4.1 candidate. It adds `agentguard --version` and ships the restored CrewAI/ChromaDB disclosure on PyPI. No other runtime change. PyPI stays 1.4.0 until `v1.4.1` is tagged.
+- Current source version: 1.4.1 candidate. It adds `agentguard --version`, stops `report`/`summarize_trace` double-counting the call that trips a budget, and ships the restored CrewAI/ChromaDB disclosure on PyPI. PyPI stays 1.4.0 until `v1.4.1` is tagged.
 - Each stable publish now dispatches `published-wheel.yml`, which runs the exact PyPI wheel offline on Windows, macOS, and Linux.
 - npm read-only MCP package remains 0.2.2; the local lockfile has been security-audited.
 - September audit fixes invalid budget caps, corrupt persisted budgets, callback deadlocks, cross-period payment rollback, DNS rebinding, credential redirects, and swallowed LangChain stops.

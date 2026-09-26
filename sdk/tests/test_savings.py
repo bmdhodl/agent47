@@ -287,6 +287,23 @@ class TestSummarizeSavings(unittest.TestCase):
         self.assertAlmostEqual(savings["estimated_usd_saved"], 0.0075, places=4)
         self.assertEqual(savings["reasons"][0]["kind"], "retry_storm_stopped")
 
+    def test_guard_event_is_not_a_savings_baseline(self):
+        savings = summarize_savings(
+            [
+                {"name": "llm.result", "kind": "event", "trace_id": "t1", "cost_usd": 1.5},
+                {
+                    "name": "guard.budget_exceeded",
+                    "kind": "event",
+                    "trace_id": "t1",
+                    "data": {"cost_usd": 9.0},
+                },
+                {"name": "guard.loop_detected", "kind": "event", "trace_id": "t1", "data": {}},
+            ]
+        )
+
+        self.assertEqual(savings["reasons"][0]["kind"], "loop_prevented")
+        self.assertAlmostEqual(savings["estimated_usd_saved"], 1.5, places=4)
+
     def test_ignores_malformed_usage_fields(self):
         savings = summarize_savings(
             [

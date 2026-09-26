@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from agentguard.evaluation import AssertionResult, EvalResult, EvalSuite
+from agentguard.evaluation import AssertionResult, EvalResult, EvalSuite, summarize_trace
 
 
 def _write_trace(events):
@@ -112,6 +112,25 @@ class TestEvalSuiteBudget(unittest.TestCase):
         result = EvalSuite(path).assert_budget_under(tokens=200).run()
         os.unlink(path)
         self.assertFalse(result.passed)
+
+
+_GUARD_COST_EVENTS = (
+    {"name": "llm.result", "kind": "event", "cost_usd": 1.5},
+    {"name": "llm.result", "kind": "event", "cost_usd": 1.5},
+    {"name": "guard.budget_exceeded", "kind": "event", "data": {"cost_usd": 1.5}},
+)
+
+
+class TestGuardEventCost(unittest.TestCase):
+
+    def test_summarize_trace_skips_guard_event_cost(self):
+        self.assertEqual(summarize_trace(list(_GUARD_COST_EVENTS))["cost_usd"], 3.0)
+
+    def test_assert_cost_under_skips_guard_event_cost(self):
+        path = _write_trace(_GUARD_COST_EVENTS)
+        result = EvalSuite(path).assert_cost_under(4.0).run()
+        os.unlink(path)
+        self.assertTrue(result.passed, result.assertions[0].message)
 
 
 class TestEvalSuiteCompletesWithin(unittest.TestCase):

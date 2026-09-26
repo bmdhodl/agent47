@@ -327,11 +327,7 @@ def _check_error_type_absent(events: List[Dict[str, Any]], error_type: str) -> A
 
 def _check_cost_under(events: List[Dict[str, Any]], max_cost_usd: float) -> AssertionResult:
     name = f"cost_under:${max_cost_usd}"
-    total_cost = 0.0
-    for e in events:
-        cost = _extract_cost(e)
-        if cost is not None:
-            total_cost += cost
+    total_cost = _sum_cost(events)
     if total_cost < max_cost_usd:
         return AssertionResult(name=name, passed=True, message=f"Cost ${total_cost:.4f} < ${max_cost_usd:.4f}")
     return AssertionResult(name=name, passed=False, message=f"Cost ${total_cost:.4f} >= ${max_cost_usd:.4f}")
@@ -402,7 +398,6 @@ def summarize_trace(
     total = len(events)
     spans = 0
     event_count = 0
-    total_cost = 0.0
     max_duration_ms = 0.0
     tool_calls = 0
     llm_calls = 0
@@ -421,11 +416,6 @@ def summarize_trace(
                     max_duration_ms = float(dur)
         elif kind == "event":
             event_count += 1
-
-        # Cost: prefer top-level, fall back to data (never sum both)
-        cost = _extract_cost(e)
-        if cost is not None:
-            total_cost += cost
 
         # Tool calls
         if name.startswith("tool.") and kind == "span" and e.get("phase") == "start":
@@ -447,7 +437,7 @@ def summarize_trace(
         "total_events": total,
         "spans": spans,
         "events": event_count,
-        "cost_usd": total_cost,
+        "cost_usd": _sum_cost(events),
         "duration_ms": max_duration_ms,
         "tool_calls": tool_calls,
         "llm_calls": llm_calls,
@@ -475,6 +465,28 @@ def _extract_cost(event: Dict[str, Any]) -> Optional[float]:
         if isinstance(data_cost, (int, float)):
             return float(data_cost)
     return None
+
+
+def _is_guard_event(event: Dict[str, Any]) -> bool:
+    name = event.get("name")
+    return isinstance(name, str) and name.startswith("guard.")
+
+
+def _sum_cost(events: List[Dict[str, Any]]) -> float:
+    """Total spend across a trace.
+
+    Guard events are skipped: ``guard.budget_exceeded`` echoes the cost of the
+    call that tripped it in ``data.cost_usd``, and that call already has its
+    own ``llm.result`` cost.
+    """
+    total = 0.0
+    for event in events:
+        if _is_guard_event(event):
+            continue
+        cost = _extract_cost(event)
+        if cost is not None:
+            total += cost
+    return total
 
 
 def _count_tool_calls(events: List[Dict[str, Any]], tool_name: str) -> int:
