@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
+from datetime import date
 from pathlib import Path
 from typing import List, Optional, Sequence
 
@@ -21,6 +23,8 @@ MCP_PACKAGE_PATH = Path("mcp-server/package.json")
 MCP_SERVER_JSON_PATH = Path("mcp-server/server.json")
 MCP_RUNTIME_INDEX_PATH = Path("mcp-server/src/index.ts")
 SKILL_METADATA_PATH = Path("skills/agentguard/SKILL.md")
+PRICE_TABLE_PATH = Path("sdk/agentguard/price_table.py")
+PRICE_TABLE_MAX_AGE_DAYS = 90
 RELEASE_MARKERS = (
     ("AGENTS.md", r"release candidate: v(?P<version>\d+\.\d+\.\d+)"),
     ("AGENTS.md", r"current SDK release candidate is (?P<version>\d+\.\d+\.\d+)"),
@@ -331,7 +335,33 @@ def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) ->
     return []
 
 
-def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Finding]:
+def check_price_table_age(repo_root: Path, today: Optional[date] = None) -> List[Finding]:
+    """Fail when a provider's rows were last checked more than PRICE_TABLE_MAX_AGE_DAYS ago."""
+    spec = importlib.util.spec_from_file_location("_price_table", repo_root / PRICE_TABLE_PATH)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    today = today or date.today()
+    findings: List[Finding] = []
+    for provider, verified in sorted(module.DEFAULT_PRICE_TABLE["verified"].items()):
+        age = (today - date.fromisoformat(verified)).days
+        if age > PRICE_TABLE_MAX_AGE_DAYS:
+            findings.append(
+                Finding(
+                    check="price-table-age",
+                    path=str(PRICE_TABLE_PATH),
+                    message=(
+                        f"{provider} prices were last checked {verified} ({age} days ago, "
+                        f"limit {PRICE_TABLE_MAX_AGE_DAYS}). Re-check them against the "
+                        "provider's pricing page and update 'verified'."
+                    ),
+                )
+            )
+    return findings
+
+
+def collect_findings(
+    repo_root: Path, check_mcp_npm: bool = False, check_price_age: bool = False
+) -> List[Finding]:
     version = load_version(repo_root)
     findings: List[Finding] = []
     findings.extend(check_release_tag(version))
@@ -342,6 +372,8 @@ def collect_findings(repo_root: Path, check_mcp_npm: bool = False) -> List[Findi
     findings.extend(check_mcp_metadata(repo_root))
     if check_mcp_npm:
         findings.extend(check_mcp_npm_package(repo_root))
+    if check_price_age:
+        findings.extend(check_price_table_age(repo_root))
     return findings
 
 
@@ -353,9 +385,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="Also verify the MCP package version is published as npm latest. Uses network.",
     )
+    parser.add_argument(
+        "--check-price-table-age",
+        action="store_true",
+        help=f"Also fail when any provider's prices are older than {PRICE_TABLE_MAX_AGE_DAYS} days.",
+    )
     args = parser.parse_args(argv)
 
-    findings = collect_findings(REPO_ROOT, check_mcp_npm=args.check_mcp_npm)
+    findings = collect_findings(
+        REPO_ROOT, check_mcp_npm=args.check_mcp_npm, check_price_age=args.check_price_table_age
+    )
     if args.json:
         print(json.dumps([asdict(finding) for finding in findings], indent=2))
     else:
