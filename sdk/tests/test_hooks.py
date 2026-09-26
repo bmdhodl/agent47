@@ -209,3 +209,23 @@ def test_uninstall_keeps_user_hooks_that_mention_agentguard():
     settings = {"hooks": {"PreToolUse": [{"matcher": "*", "hooks": [lookalike]}]}}
     installed = install_settings(json.loads(json.dumps(settings)), "/py", 10)
     assert uninstall_settings(installed) == settings
+
+
+def test_install_refuses_invalid_settings_without_overwriting(project):
+    from agentguard.hooks import configure
+
+    settings = project / ".claude" / "settings.local.json"
+    settings.parent.mkdir()
+    settings.write_text("{not json", encoding="utf-8")
+    with pytest.raises(SystemExit, match="not valid JSON"):
+        configure(str(project), True, False, None, io.StringIO())
+    assert settings.read_text(encoding="utf-8") == "{not json"
+
+
+def test_install_and_uninstall_together_is_an_error(monkeypatch):
+    from agentguard import cli
+
+    monkeypatch.setattr(sys, "argv", ["agentguard", "hook", "claude-code", "--install", "--uninstall"])
+    with pytest.raises(SystemExit) as exit_info:
+        cli.main()
+    assert exit_info.value.code == 2

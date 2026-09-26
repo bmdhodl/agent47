@@ -348,8 +348,9 @@ def main() -> None:
     hook = sub.add_parser("hook", help="Coding-agent hooks that refuse repeated calls and retry storms")
     hook.add_argument("host", choices=["claude-code"])
     hook.add_argument("--max-calls", type=int, help="Refuse tool calls after this many per session.")
-    hook.add_argument("--install", action="store_true", help="Add hooks to .claude/settings.local.json. Previews unless --write.")
-    hook.add_argument("--uninstall", action="store_true", help="Remove AgentGuard hooks. Previews unless --write.")
+    change = hook.add_mutually_exclusive_group()
+    change.add_argument("--install", action="store_true", help="Add hooks to .claude/settings.local.json. Previews unless --write.")
+    change.add_argument("--uninstall", action="store_true", help="Remove AgentGuard hooks. Previews unless --write.")
     hook.add_argument("--write", action="store_true", help="Save the --install or --uninstall result.")
     hook.add_argument("--project-dir", default=".", help="Project root for --install/--uninstall.")
 

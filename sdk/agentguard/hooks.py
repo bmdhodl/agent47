@@ -163,7 +163,7 @@ def _handler(entry: Dict[str, Any]) -> bool:
 
 
 def install_settings(settings: Dict[str, Any], python: str, max_calls: Optional[int]) -> Dict[str, Any]:
-    """Return settings with the AgentGuard handler on each event, keeping other hooks."""
+    """Add the AgentGuard handler to each event, keeping other hooks. Modifies and returns settings."""
     settings = uninstall_settings(settings)
     args = HOOK_ARGS + ([] if max_calls is None else ["--max-calls", str(max_calls)])
     hooks = settings.setdefault("hooks", {})
@@ -176,7 +176,7 @@ def install_settings(settings: Dict[str, Any], python: str, max_calls: Optional[
 
 
 def uninstall_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
-    """Remove only AgentGuard handlers; drop groups and events left empty."""
+    """Remove only AgentGuard handlers; drop groups and events left empty. Modifies and returns settings."""
     hooks = settings.get("hooks", {})
     for name in list(hooks):
         groups: List[Dict[str, Any]] = []
@@ -196,7 +196,10 @@ def uninstall_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
 def configure(project_dir: str, write: bool, remove: bool, max_calls: Optional[int],
               out: TextIO) -> int:
     path = Path(project_dir) / SETTINGS_FILE
-    current = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    try:
+        current = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"{path} is not valid JSON ({exc}). Fix it, then run this again.") from exc
     updated = (uninstall_settings(current) if remove
                else install_settings(current, sys.executable, max_calls))
     text = json.dumps(updated, indent=2) + "\n"
