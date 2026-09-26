@@ -6,6 +6,12 @@
 - Decisions: Guard events that repeat a cost must keep it in `data`; documented at `_billing._consume_budget` and asserted by `e2e_cost_guardrail.py`. Savings baselines skip guard events.
 - Blockers: None. Follow-up: `_extract_cost` docstring should point totals at `_spend_cost`.
 
+## 2026-09-26 | Claude Code | PR #791
+
+- Shipped: Reasoning and thinking tokens bill once, inside output. OpenAI and Anthropic output counts already include them, so o-series, gpt-5, and extended-thinking calls were billed high and could trip a dollar budget early. A row with `reasoning_per_1m` reprices only that slice.
+- Decisions: No clamp for reasoning > output; both provider SDKs guarantee reasoning ≤ output. `output_usd` in the breakdown is now the non-reasoning part.
+- Blockers: None. Gemini `thoughts_token_count` is never read, so Gemini thinking may be under-billed (in `ops/FOLLOWUP.md`).
+
 ## 2026-09-26 | Claude Code | PR #793
 
 - Shipped: The LangChain callback prices `on_llm_end` with the same resolver and table as the patched clients. Unknown models were recorded as $0, so a dollar budget never tripped on them; Anthropic cache reads went unbilled. Both fixed.
