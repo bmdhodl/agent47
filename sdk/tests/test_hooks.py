@@ -201,3 +201,11 @@ def test_hook_files_ignore_themselves_in_git(project):
         status = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all"],
                                 cwd=project, capture_output=True, text=True, check=True).stdout
         assert ".agentguard" not in status
+
+
+def test_uninstall_keeps_user_hooks_that_mention_agentguard():
+    lookalike = {"type": "command", "command": "python",
+                 "args": ["-m", "mylinter", "agentguard.cli", "claude-code"]}
+    settings = {"hooks": {"PreToolUse": [{"matcher": "*", "hooks": [lookalike]}]}}
+    installed = install_settings(json.loads(json.dumps(settings)), "/py", 10)
+    assert uninstall_settings(installed) == settings

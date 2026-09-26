@@ -157,8 +157,8 @@ def run(stdin: TextIO, stderr: TextIO, max_calls: Optional[int] = None) -> int:
 
 
 def _handler(entry: Dict[str, Any]) -> bool:
-    args = entry.get("args", [])
-    return "agentguard.cli" in args and "claude-code" in args
+    # Ours start with exactly HOOK_ARGS; --max-calls may follow.
+    return entry.get("args", [])[: len(HOOK_ARGS)] == HOOK_ARGS
 
 
 def install_settings(settings: Dict[str, Any], python: str, max_calls: Optional[int]) -> Dict[str, Any]:
