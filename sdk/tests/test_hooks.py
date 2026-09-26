@@ -122,7 +122,7 @@ def test_project_dir_env_wins_over_cwd(project, tmp_path_factory, monkeypatch):
     elsewhere = tmp_path_factory.mktemp("elsewhere")
     monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(elsewhere))
     _run(project)
-    assert (elsewhere / ".agentguard" / "claude-code" / "state.json").exists()
+    assert (elsewhere / ".agentguard" / "claude-code" / "sessions" / "s1.json").exists()
     assert not (project / ".agentguard").exists()
 
 
@@ -154,7 +154,7 @@ def test_parallel_hook_processes_do_not_lose_counts(project):
 
     with ThreadPoolExecutor(max_workers=8) as pool:
         assert list(pool.map(call, range(8))) == [0] * 8
-    state = json.loads((project / ".agentguard" / "claude-code" / "state.json").read_text())
+    state = json.loads((project / ".agentguard" / "claude-code" / "sessions" / "s1.json").read_text())
     assert state["s1"]["calls"] == 8
 
 

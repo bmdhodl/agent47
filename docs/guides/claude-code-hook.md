@@ -48,8 +48,9 @@ Only AgentGuard's handlers are removed.
 
 ## What it writes
 
-- `.agentguard/claude-code/state.json`: per-session counts, keyed by Claude
-  Code's session id. A lock keeps parallel tool calls from losing counts.
+- `.agentguard/claude-code/sessions/<session id>.json`: counts for one Claude
+  Code session. Each hook call reads only its own session file, and a lock
+  keeps parallel tool calls from losing counts.
 - `.agentguard/claude-code/trace.jsonl`: one event per allowed call and per
   refusal. A refusal includes up to 60 characters of the command, path, or URL.
 - `.agentguard/claude-code/.gitignore`: ignores the directory, so none of this

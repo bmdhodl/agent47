@@ -26,7 +26,7 @@ from agentguard.state import JsonFileStateStore
 from agentguard.tracing import JsonlFileSink, Tracer
 
 HOOK_DIR = Path(".agentguard") / "claude-code"
-STATE_FILE = "state.json"
+SESSIONS_DIR = "sessions"
 TRACE_FILE = "trace.jsonl"
 SETTINGS_FILE = Path(".claude") / "settings.local.json"
 EVENTS = ("PreToolUse", "PostToolUse", "PostToolUseFailure")
@@ -134,7 +134,8 @@ def run(stdin: TextIO, stderr: TextIO, max_calls: Optional[int] = None) -> int:
     ignore = root / ".gitignore"
     if not ignore.exists():
         ignore.write_text("*\n", encoding="utf-8")
-    store = JsonFileStateStore(root / STATE_FILE)
+    # One small file per session: a hook call reads only its own counts.
+    store = JsonFileStateStore(root / SESSIONS_DIR / f"{session}.json")
     tool_input = event.get("tool_input")
     sig = signature(tool_name, tool_input)
     if name != "PreToolUse":
