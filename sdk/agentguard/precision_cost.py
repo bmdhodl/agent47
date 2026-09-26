@@ -210,7 +210,9 @@ def _extract_usage_object(response: Any) -> Any:
     usage_meta = _get_attr_or_key(response, "usage_metadata")
     if usage_meta is not None:
         # Gemini counts like OpenAI: prompt_token_count includes the cached
-        # tokens. Thoughts are counted outside candidates and bill as output.
+        # tokens. Thoughts are counted outside candidates, so they are added to
+        # completion_tokens; reasoning_tokens marks that slice of it, which
+        # _compute_from_table bills once.
         # A reported 0 is a count, not a missing field: a thinking-only reply
         # has candidates_token_count 0.
         def first(*keys: str) -> Any:

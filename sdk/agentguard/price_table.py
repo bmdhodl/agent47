@@ -93,6 +93,8 @@ DEFAULT_PRICE_TABLE: PriceTable = {
         # OpenAI — Standard tier. Rows with a long_context tier bill the whole
         # request at 2x input and 1.5x output once the prompt passes 272k tokens.
         # Fast mode (2x) and the 10% data-residency uplift are not modelled.
+        # Rows without cached_input_per_1m (the pro models, gpt-4-turbo) have no
+        # cached rate on the page; cached tokens bill at the input rate.
         ("openai", "gpt-6-astra"): _rate(
             10.00, 50.00, cached_input_per_1m=1.00, cache_write_per_1m=12.50,
             long_context=(272_000, 2.0, 1.5),
