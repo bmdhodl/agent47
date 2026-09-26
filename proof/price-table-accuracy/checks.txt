@@ -1,0 +1,22 @@
+## make preflight
+
+============================== 5 passed in 0.04s ===============================
+## make lint
+All checks passed!
+## make structural
+============================== 9 passed in 0.33s ===============================
+## make security
+bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+## make release-guard
+Release guard passed.
+## release guard with price age
+Release guard passed.
+## make test
+TOTAL                                       6164    483    92%
+====================== 1287 passed, 19 skipped in 32.76s =======================
+## compat (latest) lock, real packages
+====================== 1306 passed, 6 warnings in 46.22s =======================
+## compat (floor) lock
+====================== 1294 passed, 12 skipped in 39.59s =======================
+## Python 3.9, changed tests
+============================== 89 passed in 0.35s ==============================

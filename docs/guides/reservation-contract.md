@@ -80,7 +80,7 @@ add a database, a distributed lease, or a payment rail.
       "calls": 1,
       "tokens_bound": 128000,
       "cost_bound": 0.05,
-      "price_table_version": "2026.07.15",
+      "price_table_version": "2026.09.26",
       "period_bucket": "fleet:2026-09-20",
       "tokens_settled": null,
       "cost_settled": null,
@@ -201,7 +201,7 @@ already use.
   `max_completion_tokens` on the request (`max_output_tokens` on the OpenAI
   Responses API). A dollar cap estimates an upper
   bound from that token cap and the owned high-water price
-  (`price_table` version `2026.07.15`). Missing either bound refuses the
+  (`price_table` version `2026.09.26`). Missing either bound refuses the
   send. The estimate is not an invoice.
 
 ### Still unsupported on the AG-04 path
@@ -253,7 +253,11 @@ repro.
 - No usage, calls-only cap: commit one call and zero tokens. The cap is a
   count, not a price.
 - Unknown models and usage objects with no token fields settle as
-  `overestimate` (owned high-water or the table minimum). They are not free.
+  `overestimate`. An unknown Anthropic or OpenAI model is priced at that
+  provider's highest listed rates; any other provider's unknown model at the
+  owned high-water rate; usage with no token fields at the table minimum.
+  They are not free. A model priced above every listed row is under-counted,
+  so the table is refreshed before each release.
   An explicit free rate row may settle `$0` with source `zero`.
 - `STRICT_PRECISION` that cannot price the call leaves the hold unresolved
   and raises. It does not commit `$0`.
@@ -261,11 +265,15 @@ repro.
 ### Price provenance
 
 Patched streams call `resolve_billable_cost` with the owned table
-(`price_table` version `2026.07.15`). Pass `prices=` to that function, or to
+(`price_table` version `2026.09.26`). Pass `prices=` to that function, or to
 the private settler, to replace the table for one settlement. The patch does
 not grow a public price argument.
 
-- Dated model ids use the alias map (`gpt-4o-2024-08-06` → `gpt-4o`).
+- Dated model ids price as their base model (`gpt-4o-2024-08-06` →
+  `gpt-4o`, `claude-opus-4-1-20250805` → `claude-opus-4-1`) unless the table
+  lists the snapshot itself.
+- A prompt above a row's long-context threshold reprices the whole call:
+  `gpt-5.5` above 272k input tokens bills 2x input and 1.5x output.
 - OpenAI `prompt_tokens` include cached tokens. The cached slice uses
   `cached_input_per_1m`; the rest uses the input rate.
 - Anthropic `input_tokens` exclude cache reads. Cache read and cache write
