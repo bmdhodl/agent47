@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #797
+
+- Shipped: `_extract_cost` docstring warns that on `guard.budget_exceeded` it returns the `data.cost_usd` echo of a cost already on the tripping call; trace totals must use `_sum_cost` (or `_spend_cost` per event). No behavior change.
+- Decisions: Docs only; closes the #783 follow-up.
+- Blockers: None.
+
 ## 2026-09-26 | Claude Code | PR #783
 
 - Shipped: `report`, `summarize_trace`/`incident`, `assert_cost_under`, and `receipt` count the call that trips a budget once. `guard.budget_exceeded` echoes that call's cost in `data.cost_usd`; one rule (`_spend_cost`) now ignores that echo but keeps a top-level guard `cost_usd`. Real-client repro: report $7.50 -> $6.00, matching the guard.
