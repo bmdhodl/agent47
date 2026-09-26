@@ -269,7 +269,9 @@ The PyPI README is generated from this README and the changelog.
   tokens are taken out of `prompt_token_count`, which includes them.
 - Dated model ids price as their base model. An unknown Anthropic or OpenAI
   model is priced at that provider's highest listed rates instead of a flat
-  $150 per million tokens. `sdk_release_guard.py --check-price-table-age`,
+  $150 per million tokens. For OpenAI that is o1-pro, $150 in and $600 out
+  per million, so an output-heavy call to an unknown OpenAI model can trip a
+  dollar budget sooner than in 1.4.0. `sdk_release_guard.py --check-price-table-age`,
   run by the publish workflow, fails a release when any provider's prices are
   more than 90 days old.
 - Usage that reports only `total_tokens` was priced at $0 for a known model.
