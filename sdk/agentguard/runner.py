@@ -41,6 +41,7 @@ def run(target: List[str], *, budget_usd: Optional[float] = None,
     module, argv = split_target(target)
     tracer = init(budget_usd=budget_usd, service=service, trace_file=trace_file, profile=profile)
     trace_path = getattr(tracer._sink, "_path", None)
+    saved_argv, saved_path = sys.argv[:], sys.path[:]
     try:
         if module:
             sys.argv = [module, *argv]
@@ -54,6 +55,7 @@ def run(target: List[str], *, budget_usd: Optional[float] = None,
         err.write(f"agentguard: stopped the run. {stop}\n")
         return 1
     finally:
+        sys.argv[:], sys.path[:] = saved_argv, saved_path
         shutdown()
         if trace_path:
             err.write(f"agentguard: trace written to {trace_path}. "

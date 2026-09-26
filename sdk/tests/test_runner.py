@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import subprocess
@@ -91,3 +92,14 @@ def test_script_imports_its_own_directory(tmp_path):
     proc = _run(tmp_path, "src/agent.py")
     assert proc.returncode == 0, proc.stderr
     assert "42" in proc.stdout
+
+
+def test_run_restores_argv_and_path(tmp_path, monkeypatch):
+    from agentguard.runner import run
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AGENTGUARD_API_KEY", "")
+    (tmp_path / "agent.py").write_text("import sys\nassert sys.argv == ['agent.py', 'x']\n", encoding="utf-8")
+    argv, path = sys.argv[:], sys.path[:]
+    assert run(["agent.py", "x"], trace_file=str(tmp_path / "t.jsonl"), err=io.StringIO()) == 0
+    assert sys.argv == argv and sys.path == path
