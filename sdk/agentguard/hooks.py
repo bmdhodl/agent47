@@ -77,7 +77,7 @@ def check_and_record(state: Optional[Dict[str, Any]], sig: str, label: str,
         raise Refusal("budget", f"AgentGuard refused {label}: this session already made "
                       f"{state['calls']} tool calls (limit {caps['max_calls']}). Stop and "
                       "report progress to the user.",
-                      {"calls_used": state["calls"], "limit_calls": caps["max_calls"]})
+                      {"calls_used": state["calls"], "calls_limit": caps["max_calls"]})
     streak = state["streak"] + 1 if state["last"] == sig else 1
     if caps["loop_max"] and streak >= caps["loop_max"]:
         raise Refusal("loop", f"AgentGuard refused {label}: the same call just ran "

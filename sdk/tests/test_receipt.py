@@ -104,7 +104,7 @@ def test_hook_stops_render_from_structured_data(tmp_path):
         {"kind": "event", "name": "guard.retry_limit_exceeded",
          "data": {"tool_name": "Bash(make)", "failures": 2, "limit": 2}},
         {"kind": "event", "name": "guard.budget_exceeded",
-         "data": {"calls_used": 300, "limit_calls": 300}},
+         "data": {"calls_used": 300, "calls_limit": 300}},
     ]
     receipt = build_receipt(str(_write(tmp_path, events)))
     assert [s["detail"] for s in receipt["stops"]] == [
@@ -115,3 +115,35 @@ def test_hook_stops_render_from_structured_data(tmp_path):
     text = render(receipt)
     assert "tool calls" in text and "llm calls" not in text
     assert all(len(line) <= WIDTH for line in text.splitlines())
+
+
+def test_langchain_trace_counts_llm_end_and_reads_error(tmp_path):
+    # Shapes from agentguard/integrations/langchain.py.
+    events = [
+        {"kind": "event", "name": "llm.end", "cost_usd": 0.5, "data": {}},
+        {"kind": "event", "name": "llm.end", "cost_usd": 0.5, "data": {}},
+        {"kind": "event", "name": "guard.budget_exceeded", "data": {
+            "tokens_used": 9000, "tokens_limit": 8000, "calls_used": 2, "calls_limit": None,
+            "error": "Token budget exceeded: 9000 > 8000"}},
+        {"kind": "event", "name": "guard.budget_exceeded", "data": {
+            "tokens_used": 10, "tokens_limit": None, "calls_used": 5, "calls_limit": 5,
+            "error": "Call budget exceeded: 5 > 4"}},
+        {"kind": "event", "name": "guard.loop_detected", "data": {
+            "tool_name": "search", "repeat_count": 3,
+            "error": "Loop detected: tool.search({}) repeated 3 times in last 6 calls."}},
+    ]
+    receipt = build_receipt(str(_write(tmp_path, events)))
+    assert receipt["llm_calls"] == 2
+    assert receipt["recorded_cost_usd"] == 1.0
+    assert [s["detail"] for s in receipt["stops"]] == [
+        "Token budget exceeded: 9000 > 8000",
+        "5 calls, limit 5",
+        "search x3, same args",
+    ]
+
+
+def test_hash_matches_the_bytes_summarized(tmp_path):
+    path = _write(tmp_path, [{"kind": "event", "name": "llm.result", "cost_usd": 0.25}])
+    receipt = build_receipt(str(path))
+    assert receipt["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+    assert receipt["events"] == 1

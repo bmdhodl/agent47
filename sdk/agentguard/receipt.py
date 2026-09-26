@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from agentguard import __version__
-from agentguard.evaluation import _extract_cost, _load_events
+from agentguard.evaluation import _extract_cost
 
 WIDTH = 40
 _BARS = "▏▎▍▌▋▊▉█"
@@ -28,12 +28,14 @@ _RETRY_RE = re.compile(r"attempted (\d+) times \(limit: (\d+)\)")
 
 
 def _stop_detail(kind: str, data: Dict[str, Any]) -> str:
-    message = str(data.get("message", ""))
+    # The LangChain integration stores the reason under "error".
+    message = str(data.get("message") or data.get("error") or "")
     tool = data.get("tool_name")
     if kind == "budget" and "cost_used" in data and "limit_usd" in data:
         return f"${data['cost_used']:.2f} over ${data['limit_usd']:.2f}"
-    if kind == "budget" and "calls_used" in data:
-        return f"{data['calls_used']} calls, limit {data['limit_calls']}"
+    limit = data.get("calls_limit")
+    if kind == "budget" and limit is not None and data.get("calls_used", 0) >= limit:
+        return f"{data['calls_used']} calls, limit {limit}"
     if kind == "loop" and tool:
         match = _LOOP_RE.search(message)
         repeats = data.get("repeats") or (match and match.group(1))
@@ -48,8 +50,15 @@ def _stop_detail(kind: str, data: Dict[str, Any]) -> str:
 
 def build_receipt(path: str) -> Dict[str, Any]:
     """Summarize one trace file into receipt fields."""
+    # One read feeds both the hash and the summary, so they describe the same bytes
+    # even while a sink is still appending.
     raw = Path(path).read_bytes()
-    events = _load_events(path)
+    events = []
+    for line in raw.decode("utf-8").splitlines():
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
     stops: List[Dict[str, str]] = []
     warnings = 0
     llm_calls = 0
@@ -58,7 +67,8 @@ def build_receipt(path: str) -> Dict[str, Any]:
     for event in events:
         name = event.get("name")
         data = event.get("data") if isinstance(event.get("data"), dict) else {}
-        if name == "llm.result":
+        # Patched clients emit llm.result; the LangChain callback emits llm.end.
+        if name in ("llm.result", "llm.end"):
             llm_calls += 1
         if name == "tool.call":
             tool_calls += 1
