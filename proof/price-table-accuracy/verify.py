@@ -1,4 +1,5 @@
 """Re-checks the price-table claims. Exit 0 means all hold."""
+import os
 import pathlib
 import subprocess
 import sys
@@ -12,7 +13,7 @@ subprocess.run(
 )
 after = subprocess.run(
     [sys.executable, "proof/price-table-accuracy/compare.py"], cwd=ROOT, check=True,
-    capture_output=True, text=True, env={"PYTHONPATH": str(ROOT / "sdk")},
+    capture_output=True, text=True, env={**os.environ, "PYTHONPATH": str(ROOT / "sdk")},
 ).stdout
 rows = [line for line in after.splitlines()[1:] if "unknown" not in line]
 assert rows and all(" 1.00x " in line for line in rows), after
