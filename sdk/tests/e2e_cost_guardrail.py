@@ -174,6 +174,7 @@ def main():
             check("exceeded event has message", "message" in exc_data)
             check("exceeded event has model", "model" in exc_data)
             check("exceeded event has cost_usd", "cost_usd" in exc_data)
+            check("exceeded event cost stays out of top level", exceeded_events[0].get("cost_usd") is None)
 
         # Check warning events
         warning_events = [e for e in events if e.get("name") == "guard.budget_warning"]

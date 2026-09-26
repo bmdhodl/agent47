@@ -479,6 +479,10 @@ def _spend_cost(event: Dict[str, Any]) -> Optional[float]:
     describes spend recorded elsewhere: ``guard.budget_exceeded`` echoes the
     cost of the call that tripped it, and that call's ``llm.result`` already
     carries it.
+
+    Emitters must keep that split: a guard event that repeats a cost already
+    on another event puts it in ``data.cost_usd``, never in the top-level
+    ``cost_usd``.
     """
     if _is_guard_event(event):
         cost = event.get("cost_usd")

@@ -46,6 +46,8 @@ def _consume_budget(
     try:
         budget_guard.consume(tokens=tokens, calls=calls, cost_usd=cost_usd)
     except BudgetExceeded as exc:
+        # The call's cost is already on its llm.result. Keep this echo in data,
+        # not top-level cost_usd, or trace totals count it twice (_spend_cost).
         ctx.event("guard.budget_exceeded", data={
             "message": str(exc),
             "model": model,
