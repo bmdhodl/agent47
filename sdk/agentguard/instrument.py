@@ -4,196 +4,22 @@ from __future__ import annotations
 import functools
 from typing import Any, Callable, Dict, Optional, TypeVar
 
+from agentguard._billing import (
+    _check_budget_before_request,
+    _consume_budget,
+    _emit_llm_result,
+    _emit_stream_final,
+)
 from agentguard.instrument_stream import (
+    ensure_openai_stream_usage,
     run_traced_create,
     run_traced_create_async,
 )
-from agentguard.usage import normalize_usage
 
 F = TypeVar("F", bound=Callable[..., Any])
 
 # Store originals for unpatch support
 _originals: Dict[str, Any] = {}
-
-
-def _check_budget_before_request(budget_guard: Any, ctx: Any, model: str) -> None:
-    """Reject exhausted budgets before crossing the provider boundary."""
-    from agentguard.guards import BudgetExceeded
-
-    if budget_guard is None:
-        return
-    try:
-        budget_guard.check()
-    except BudgetExceeded as exc:
-        ctx.event("guard.budget_exceeded", data={
-            "message": str(exc), "model": model, "request_sent": False,
-        })
-        raise
-
-
-def _consume_budget(
-    budget_guard: Any,
-    ctx: Any,
-    tokens: int,
-    calls: int,
-    cost_usd: float,
-    model: str,
-) -> None:
-    """Feed consumption into BudgetGuard, emitting trace events for warnings/exceeded."""
-    from agentguard.guards import BudgetExceeded
-
-    was_warned = getattr(budget_guard, "_warned", False)
-    try:
-        budget_guard.consume(tokens=tokens, calls=calls, cost_usd=cost_usd)
-    except BudgetExceeded as exc:
-        ctx.event("guard.budget_exceeded", data={
-            "message": str(exc),
-            "model": model,
-            "cost_usd": cost_usd,
-            "tokens": tokens,
-        })
-        raise
-    if not was_warned and getattr(budget_guard, "_warned", False):
-        state = getattr(budget_guard, "state", None)
-        ctx.event("guard.budget_warning", data={
-            "model": model,
-            "tokens_used": getattr(state, "tokens_used", 0) if state else 0,
-            "calls_used": getattr(state, "calls_used", 0) if state else 0,
-            "cost_used": getattr(state, "cost_used", 0.0) if state else 0.0,
-        })
-
-
-def _emit_llm_result(
-    ctx: Any,
-    budget_guard: Any,
-    model: str,
-    provider: str,
-    usage: Any,
-    response: Any = None,
-) -> None:
-    """Extract usage from an LLM response and emit llm.result event + budget consume.
-
-    Shared by all 4 patch variants (OpenAI sync/async, Anthropic sync/async).
-
-    Cost uses ``resolve_billable_cost`` (provider fields → owned table → estimate
-    → overestimate). Call once per provider hit with the *final* usage/response
-    so streaming chunks are not double-counted. Do not also call
-    ``consume_billable`` for the same event — that would double-consume.
-    """
-    from agentguard.precision_cost import (
-        CostResolutionError,
-        log_consume_event,
-        resolve_billable_cost,
-    )
-
-    # Prefer full response when available so provider cost fields are visible.
-    billable_payload = response if response is not None else usage
-    usage_data = normalize_usage(usage, provider=provider)
-    if usage_data is None and billable_payload is None:
-        return
-
-    try:
-        # strict=False still honors STRICT_PRECISION=1 via resolve_billable_cost.
-        resolved = resolve_billable_cost(
-            billable_payload if billable_payload is not None else {"usage": usage_data},
-            model=model,
-            provider=provider,
-            strict=False,
-        )
-    except CostResolutionError:
-        # Fail-loud under STRICT_PRECISION: never silently under-count as $0.
-        raise
-    except Exception:
-        # Unexpected resolver bugs must not under-count. Prefer a conservative
-        # overestimate (via non-strict re-resolve on usage-only) over $0.
-        if usage_data is None:
-            raise
-        try:
-            resolved = resolve_billable_cost(
-                {"usage": usage_data},
-                model=model,
-                provider=provider,
-                strict=False,
-            )
-        except CostResolutionError:
-            raise
-        except Exception:
-            # Last resort: force overestimate source with high-water charge.
-            from agentguard.precision_cost import (
-                DEFAULT_PRICE_TABLE,
-                SOURCE_OVERESTIMATE,
-                _overestimate_cost,
-                extract_tokens,
-            )
-
-            tokens_fb = extract_tokens(
-                {"usage": usage_data}, provider=provider
-            )
-            over = _overestimate_cost(tokens_fb, DEFAULT_PRICE_TABLE)
-            resolved = {
-                "cost_usd": float(over),
-                "tokens": tokens_fb,
-                "source": SOURCE_OVERESTIMATE,
-                "breakdown": {"reason": "resolver_exception_overestimate"},
-            }
-
-    tokens = resolved.get("tokens") or {}
-    total_tokens = int(tokens.get("total", 0) or (usage_data or {}).get("total_tokens", 0) or 0)
-    cost = float(resolved.get("cost_usd", 0.0) or 0.0)
-    source = str(resolved.get("source", "estimate"))
-    request_id = resolved.get("request_id")
-
-    log_consume_event(
-        model=model,
-        provider=provider,
-        tokens=tokens if tokens else {
-            "input": (usage_data or {}).get("input_tokens", 0),
-            "output": (usage_data or {}).get("output_tokens", 0),
-            "cached": (usage_data or {}).get("cached_input_tokens", 0),
-            "total": total_tokens,
-        },
-        cost_usd=cost,
-        source_of_cost=source,
-        request_id=request_id if isinstance(request_id, str) else None,
-    )
-
-    event_data: Dict[str, Any] = {
-        "model": model,
-        "provider": provider,
-        "usage": usage_data,
-        "source_of_cost": source,
-    }
-    if request_id:
-        event_data["request_id"] = request_id
-    ctx.event(
-        "llm.result",
-        data=event_data,
-        cost_usd=cost if cost > 0 else None,
-    )
-    if budget_guard is not None:
-        _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
-
-
-def _emit_stream_final(
-    ctx: Any,
-    budget_guard: Any,
-    model: str,
-    provider: str,
-    usage: Any,
-    response: Any,
-) -> None:
-    from agentguard.instrument_stream import emit_stream_final
-
-    emit_stream_final(
-        ctx,
-        budget_guard,
-        model,
-        provider,
-        usage,
-        response,
-        _emit_llm_result,
-        _consume_budget,
-    )
 
 
 def _traced_provider_create(
@@ -389,7 +215,8 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
 
 
 def _patch_openai_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
-    """Patch a single OpenAI client instance's chat.completions.create."""
+    """Patch a single OpenAI client's chat.completions.create and Responses API."""
+    _patch_openai_responses(client, _traced_responses_method, tracer, budget_guard)
     chat = getattr(client, "chat", None)
     if chat is None:
         return
@@ -405,10 +232,42 @@ def _patch_openai_instance(client: Any, tracer: Any, budget_guard: Any = None) -
     completions.create = traced_create  # type: ignore[attr-defined]
 
 
+def _patch_openai_responses(client: Any, wrap: Any, tracer: Any, budget_guard: Any) -> None:
+    """Patch responses.create and responses.parse (openai>=1.66).
+
+    responses.stream() and with_streaming_response / with_raw_response call
+    the patched create, so they are counted too.
+    """
+    responses = getattr(client, "responses", None)
+    if responses is None:
+        return
+    for name in ("create", "parse"):
+        original = getattr(responses, name, None)
+        if original is not None:
+            setattr(responses, name, wrap(original, tracer, budget_guard))
+
+
+def _traced_responses_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+    @functools.wraps(original)
+    def traced(*args: Any, **kwargs: Any) -> Any:
+        return _traced_openai_call(original, tracer, budget_guard, args, kwargs)
+
+    return traced
+
+
 def _traced_openai_create(
     original: Any, tracer: Any, budget_guard: Any, *args: Any, **kwargs: Any
 ) -> Any:
-    """Sync OpenAI create. A stored budget reserves before a non-stream send."""
+    """Sync Chat Completions create. Streams ask for a final usage chunk."""
+    return _traced_openai_call(
+        original, tracer, budget_guard, args, ensure_openai_stream_usage(kwargs)
+    )
+
+
+def _traced_openai_call(
+    original: Any, tracer: Any, budget_guard: Any, args: tuple, kwargs: Dict[str, Any]
+) -> Any:
+    """Sync OpenAI call. A stored budget reserves before a non-stream send."""
     if getattr(budget_guard, "_store", None) is not None and not kwargs.get("stream"):
         from ._reservation_path import traced_openai_reserved
 
@@ -672,6 +531,7 @@ def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
 
 def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
     """Patch a single AsyncOpenAI client instance."""
+    _patch_openai_responses(client, _traced_async_openai_method, tracer, budget_guard)
     chat = getattr(client, "chat", None)
     if chat is None:
         return
@@ -679,11 +539,20 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
     if completions is None:
         return
     original_create = completions.create
+    traced = _traced_async_openai_method(original_create, tracer, budget_guard)
 
     @functools.wraps(original_create)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
+        return await traced(*args, **ensure_openai_stream_usage(kwargs))
+
+    completions.create = traced_create  # type: ignore[attr-defined]
+
+
+def _traced_async_openai_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+    @functools.wraps(original)
+    async def traced(*args: Any, **kwargs: Any) -> Any:
         return await _traced_provider_create_async(
-            original_create,
+            original,
             tracer,
             budget_guard,
             "openai",
@@ -692,7 +561,7 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
             wrap_stream=bool(kwargs.get("stream")),
         )
 
-    completions.create = traced_create  # type: ignore[attr-defined]
+    return traced
 
 
 def unpatch_openai_async() -> None:

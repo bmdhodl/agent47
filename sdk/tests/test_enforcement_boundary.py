@@ -301,13 +301,12 @@ def test_product_docs_reject_invoice_guarantees():
         )
 
 
-def test_openai_responses_is_unsupported():
+def test_openai_responses_unpatched_paths_are_named():
     source = (ROOT / "sdk" / "agentguard" / "instrument.py").read_text(encoding="utf-8")
-    assert "chat.completions" in source
-    assert "responses.create" not in source
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "chat.completions.create" in readme
-    assert "Responses API" in MAP.read_text(encoding="utf-8")
+    assert 'for name in ("create", "parse")' in source
+    text = MAP.read_text(encoding="utf-8")
+    for needle in ("Hosted tool calls", "background=True", "responses.retrieve", "WebSocket"):
+        assert needle in text, needle
 
 
 def test_skillpack_is_not_host_enforcement():

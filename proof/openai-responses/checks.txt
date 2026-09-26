@@ -1,0 +1,14 @@
+## make preflight
+==> security: SDK module edits should get a fast security scan before the full gate
+/home/user/agent47/.venv/bin/python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+## make lint
+All checks passed!
+## make structural
+============================== 9 passed in 0.25s ===============================
+## make security
+bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+## make release-guard
+Release guard passed.
+## make test
+TOTAL                                       6118    496    92%
+====================== 1260 passed, 18 skipped in 28.97s =======================

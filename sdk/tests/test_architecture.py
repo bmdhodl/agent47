@@ -43,6 +43,7 @@ CORE_MODULES = [
     "export.py",
     "guards.py",
     "hooks.py",
+    "_billing.py",
     "instrument.py",
     "instrument_stream.py",
     "profiles.py",

@@ -11,3 +11,4 @@ opentelemetry-sdk
 openai
 anthropic
 pytest==8.4.2
+openai-agents

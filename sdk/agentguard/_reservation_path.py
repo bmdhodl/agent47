@@ -21,6 +21,7 @@ import uuid
 from typing import Any, Callable, Dict, Optional
 
 from ._reservation_contract import MissingBound, ReservationLedger
+from .instrument_stream import is_raw_response_call
 from .price_table import _DEFAULT_HIGH_WATER_PER_TOKEN, DEFAULT_PRICE_TABLE
 
 _RESERVED = "reserved"
@@ -232,6 +233,8 @@ def traced_openai_reserved(
         raise
     try:
         result = original(*args, **kwargs)
+        # with_raw_response: parse() is cached, so the caller gets the same object.
+        parsed = result.parse() if is_raw_response_call(kwargs) else result
     except BaseException:
         _best_effort(
             lambda: budget_guard.mark_reservation_unresolved(
@@ -241,7 +244,7 @@ def traced_openai_reserved(
         span_cm.__exit__(*sys.exc_info())
         raise
     try:
-        _commit_provider_result(budget_guard, ctx, reservation_id, model, result)
+        _commit_provider_result(budget_guard, ctx, reservation_id, model, parsed)
     except BaseException:
         if _still_holding(budget_guard, reservation_id):
             _best_effort(
@@ -256,14 +259,17 @@ def traced_openai_reserved(
 
 
 def _openai_bounds(guard: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    token_cap = kwargs.get("max_completion_tokens", kwargs.get("max_tokens"))
+    # Chat Completions: max_completion_tokens / max_tokens. Responses API: max_output_tokens.
+    token_cap = kwargs.get(
+        "max_output_tokens", kwargs.get("max_completion_tokens", kwargs.get("max_tokens"))
+    )
     tokens_bound = _positive_int_bound(token_cap)
     cost_bound = None
     version = None
     if guard.max_cost_usd is not None:
         if tokens_bound is None:
             raise MissingBound(
-                "Cannot claim a dollar stop without max_tokens on the request"
+                "Cannot claim a dollar stop without max_tokens or max_output_tokens on the request"
             )
         over = DEFAULT_PRICE_TABLE.get("overestimate") or {}
         per_token = float(over.get("high_water_per_token", _DEFAULT_HIGH_WATER_PER_TOKEN))
@@ -274,7 +280,7 @@ def _openai_bounds(guard: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
     # a token cap on its own.
     if guard.max_tokens is not None and held_tokens is None:
         raise MissingBound(
-            "Cannot claim a token stop without max_tokens on the request"
+            "Cannot claim a token stop without max_tokens or max_output_tokens on the request"
         )
     return {
         "calls": 1,
@@ -288,7 +294,7 @@ def _positive_int_bound(value: Any) -> Optional[int]:
     if value is None:
         return None
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
-        raise MissingBound("max_tokens must be a positive integer to reserve a bound")
+        raise MissingBound("max_tokens or max_output_tokens must be a positive integer to reserve a bound")
     return value
 
 

@@ -1,6 +1,6 @@
 # Enforcement boundary
 
-Checked 2026-09-24 against AgentGuard `1.4.0` source. This is the tested
+Checked 2026-09-26 against AgentGuard `1.4.1` source. This is the tested
 promise. It is not an invoice cap, a host-wide kill switch, or a savings
 guarantee.
 
@@ -9,7 +9,8 @@ This document closes [AG-01 / #730](https://github.com/bmdhodl/agent47/issues/73
 
 ## What a first-time reader should remember
 
-On **OpenAI Chat Completions** and **Anthropic Messages** patches, an exhausted
+On **OpenAI Chat Completions**, **OpenAI Responses**, and **Anthropic Messages**
+patches, an exhausted
 **recorded** budget refuses the **next** dispatch. That check reads usage
 already stored on `BudgetGuard`. It does **not** reserve concurrent in-flight
 calls, predict the next response's tokens or dollars, intercept a direct SDK
@@ -56,10 +57,12 @@ paths are marked `unsupported`.
 | CLI `skillpack` / `skills/agentguard` | advisory | `sdk/tests/test_skillpack.py::test_skillpack_notes_are_onboarding_not_host_enforcement` | Generated instructions. Not Cursor, Claude Code, Copilot, or Codex enforcement. |
 | CLI `hook claude-code` loop and retry checks | recorded-event preflight | `sdk/tests/test_hooks.py::test_run_refuses_with_exit_2_and_logs_a_receipt` | Claude Code tool calls that fire `PreToolUse`, in a project where the hook is installed. Refuses the `loop_max`-th identical call in a row and a call that already failed `retry_max` times. Checks tool calls, not model tokens, subagent-internal work, or subscription quota. Unreadable hook input is a non-blocking error; the call proceeds. A user can remove the hook. Run against Claude Code 2.1.283 on Linux; Windows and macOS were not executed. |
 | CLI `hook claude-code --max-calls` | recorded-budget preflight | `sdk/tests/test_hooks.py::test_parallel_hook_processes_do_not_lose_counts` | Per-session tool-call count in a locked `JsonFileStateStore`; parallel hook processes do not lose counts. A call count, not a token or dollar budget. |
-| CLI `run` | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_agentguard_run_stops_an_unmodified_openai_script` | Calls `init()`, which patches OpenAI Chat Completions and Anthropic Messages, then runs the script in the same interpreter. Same bounds as those patch rows: the call that crosses a dollar cap is already sent. Subprocesses the script starts are not patched. |
+| CLI `run` | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_agentguard_run_stops_an_unmodified_openai_script` | Calls `init()`, which patches OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages, then runs the script in the same interpreter. Same bounds as those patch rows: the call that crosses a dollar cap is already sent. Subprocesses the script starts are not patched. |
 | npm `@agentguard47/mcp-server` | advisory | `mcp-server/src/__tests__/tools.test.ts` | Read-only hosted traces, alerts, usage, costs, and event-quota health. `check_budget` is hosted event quota, not `BudgetGuard` and not a provider invoice. Mutating budget tools are denied. |
 | Python `agentguard-mcp` `record_call` | reservation-backed | `agentguard-mcp/tests/test_storage.py::test_concurrent_record_call_never_exceeds_budget` | SQLite `BEGIN IMMEDIATE` for clients that call this server. Does not intercept other MCP servers. Unpublished checkout package. |
-| OpenAI Responses API | unsupported | `sdk/tests/test_enforcement_boundary.py::test_openai_responses_is_unsupported` | Not patched. Use Chat Completions or wrap the call yourself with `check()` / `consume()`. |
+| OpenAI Responses API patch (`responses.create`, `responses.parse`, `responses.stream()`; sync, async, stream) | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch` | Needs openai 1.66 or later. Bills `response.usage`, or the usage on the `response.completed` stream event. `with_raw_response` and `with_streaming_response` count when the response is parsed. Store-backed sync non-stream calls and store-backed streams reserve like Chat Completions; token and dollar holds need `max_output_tokens`. In-flight responses can exceed remaining tokens or cost. |
+| OpenAI Agents SDK (`Runner.run`, `Runner.run_streamed`) on `OpenAIResponsesModel` | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call` | Refuses the next model call and `BudgetExceeded` leaves `Runner.run`. Tool calls and handoffs are not guard points; each model call they lead to is. Patch before the SDK builds its client (`agentguard.init()` at startup). Native `max_turns` still applies. `OpenAIChatCompletionsModel` follows the Chat Completions row. |
+| OpenAI Responses paths outside the patch | unsupported | `sdk/tests/test_enforcement_boundary.py::test_openai_responses_unpatched_paths_are_named` | Hosted tool calls (web search, file search, code interpreter, computer use) run inside one response: AgentGuard cannot stop one mid-response, and per-call tool fees are not in `usage`. `background=True` returns before usage exists: it counts as one call and zero tokens, and the spend that follows is not recorded. Resuming a stream by `response_id`, `responses.retrieve`, `cancel`, `compact`, and the Realtime and WebSocket transports are not patched. |
 | Host tools in Cursor, Claude Code, Copilot, Codex | unsupported | `sdk/tests/test_enforcement_boundary.py::test_skillpack_is_not_host_enforcement` | Package install is not a hook. Prefer native host caps when they already cover the workflow. |
 | Provider subscription quota / invoice cap | unsupported | `sdk/tests/test_enforcement_boundary.py::test_product_docs_reject_invoice_guarantees` | Native billing limits stay with the provider. AgentGuard estimates are not invoices. |
 | `HttpSink` remote kill | unsupported | `sdk/tests/test_enforcement_boundary.py::test_httpsink_does_not_claim_remote_kill` | Local guards are authoritative. `HttpSink` mirrors events; it does not execute dashboard kill signals. |
