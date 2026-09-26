@@ -270,9 +270,10 @@ not grow a public price argument.
   `cached_input_per_1m`; the rest uses the input rate.
 - Anthropic `input_tokens` exclude cache reads. Cache read and cache write
   are added. They are not subtracted from input.
-- Reasoning or thinking tokens use `reasoning_per_1m` when the row has it,
-  otherwise the output rate, in addition to output tokens. There is no
-  universal tokenizer and no automatic budget increase.
+- OpenAI `completion_tokens` and `output_tokens` include reasoning tokens.
+  Anthropic `output_tokens` include thinking tokens. They bill once, at the
+  output rate. A row with `reasoning_per_1m` reprices only that slice.
+  There is no universal tokenizer and no automatic budget increase.
 - The dollar hold is still the high-water estimate from the request
   `max_tokens`. It is not an invoice. Usage above the hold is
   `estimate_overrun` and is stored as reported.

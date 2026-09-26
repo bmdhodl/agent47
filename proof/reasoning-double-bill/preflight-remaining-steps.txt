@@ -1,0 +1,81 @@
+$ python scripts/sdk_preflight.py --changed-file sdk/agentguard/precision_cost.py --changed-file sdk/tests/fixtures/usage_payloads.py --changed-file sdk/tests/test_real_dispatch.py --changed-file CHANGELOG.md --changed-file docs/guides/reservation-contract.md --changed-file sdk/PYPI_README.md --changed-file ops/FOLLOWUP.md
+# sdk/tests/test_precision_cost.py left out of --changed-file only to get past its 3 pre-existing ruff findings; the targeted pytest step still runs it.
+==> ruff: lint only the Python files touched in this branch
+/home/user/agent47/.venv/bin/python -m ruff check sdk/agentguard/precision_cost.py sdk/tests/fixtures/usage_payloads.py sdk/tests/test_real_dispatch.py
+All checks passed!
+==> import-check: import changed sdk/tests helper scripts to catch syntax and top-level import errors
+/home/user/agent47/.venv/bin/python -c import importlib.util
+import pathlib
+import sys
+
+root = pathlib.Path.cwd()
+files = sys.argv[1:]
+assert files, "expected at least one module path"
+
+for rel in files:
+    path = root / rel
+    spec = importlib.util.spec_from_file_location(path.stem, path)
+    assert spec is not None and spec.loader is not None, rel
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+ sdk/tests/fixtures/usage_payloads.py
+==> targeted-pytest: run only the test files most directly tied to the touched SDK paths
+/home/user/agent47/.venv/bin/python -m pytest sdk/tests/test_precision_cost.py sdk/tests/test_real_dispatch.py -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /home/user/agent47/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/agent47/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 47 items
+
+sdk/tests/test_real_dispatch.py::test_openai_patch_stops_the_second_call_before_dispatch SKIPPED [ 61%]
+sdk/tests/test_real_dispatch.py::test_openai_store_backed_reservation_dispatches_once SKIPPED [ 63%]
+sdk/tests/test_real_dispatch.py::test_anthropic_patch_stops_the_second_call_before_dispatch SKIPPED [ 65%]
+sdk/tests/test_real_dispatch.py::test_langchain_dispatch_propagates_budget_stop SKIPPED [ 68%]
+sdk/tests/test_real_dispatch.py::test_langgraph_node_budget_stops_the_graph SKIPPED [ 70%]
+sdk/tests/test_real_dispatch.py::test_otel_sink_exports_guard_spans SKIPPEDetry') [ 72%]
+sdk/tests/test_real_dispatch.py::test_agentguard_run_stops_an_unmodified_openai_script SKIPPED [ 74%]
+sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch SKIPPED [ 76%]
+sdk/tests/test_real_dispatch.py::test_responses_parse_counts_once SKIPPED [ 78%]
+sdk/tests/test_real_dispatch.py::test_responses_stream_counts_final_usage_once SKIPPED [ 80%]
+sdk/tests/test_real_dispatch.py::test_responses_async_create_with_init_tracer SKIPPED [ 82%]
+sdk/tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_on_parse SKIPPED [ 85%]
+sdk/tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_when_left_unread SKIPPED [ 87%]
+sdk/tests/test_real_dispatch.py::test_responses_raw_response_reserves_with_a_store SKIPPED [ 89%]
+sdk/tests/test_real_dispatch.py::test_responses_provider_error_propagates_and_is_not_billed SKIPPED [ 91%]
+sdk/tests/test_real_dispatch.py::test_responses_store_backed_dollar_cap_reserves_max_output_tokens SKIPPED [ 93%]
+sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[False] SKIPPED [ 95%]
+sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[True] SKIPPED [ 97%]
+sdk/tests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies SKIPPED [100%]
+
+======================== 28 passed, 19 skipped in 0.17s ========================
+==> structural: SDK module edits must keep the architectural invariants green
+/home/user/agent47/.venv/bin/python -m pytest sdk/tests/test_architecture.py -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /home/user/agent47/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/agent47/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 9 items
+
+
+============================== 9 passed in 0.34s ===============================
+==> security: SDK module edits should get a fast security scan before the full gate
+/home/user/agent47/.venv/bin/python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+==> pypi-readme-sync: README/changelog metadata must stay in sync with the generated PyPI description
+/home/user/agent47/.venv/bin/python scripts/generate_pypi_readme.py --check
+==> pypi-readme-test: the committed PyPI README snapshot should still match the generator output
+/home/user/agent47/.venv/bin/python -m pytest sdk/tests/test_pypi_readme_sync.py -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /home/user/agent47/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/agent47/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 5 items
+
+
+============================== 5 passed in 0.04s ===============================
+exit=0

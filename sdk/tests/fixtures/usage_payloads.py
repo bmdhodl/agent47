@@ -19,6 +19,40 @@ OPENAI_GPT4O_USAGE: Dict[str, Any] = {
     },
 }
 
+# OpenAI Chat Completions: completion_tokens include reasoning_tokens
+OPENAI_CHAT_REASONING_USAGE: Dict[str, Any] = {
+    "model": "gpt-4o-mini",
+    "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 5,
+        "total_tokens": 15,
+        "prompt_tokens_details": {"cached_tokens": 4},
+        "completion_tokens_details": {"reasoning_tokens": 2},
+    },
+}
+
+# The same call through the OpenAI Responses API: output_tokens include reasoning_tokens
+OPENAI_RESPONSES_REASONING_USAGE: Dict[str, Any] = {
+    "model": "gpt-4o-mini",
+    "usage": {
+        "input_tokens": 10,
+        "input_tokens_details": {"cached_tokens": 4},
+        "output_tokens": 5,
+        "output_tokens_details": {"reasoning_tokens": 2},
+        "total_tokens": 15,
+    },
+}
+
+# Anthropic extended thinking: output_tokens include thinking_tokens
+ANTHROPIC_THINKING_USAGE: Dict[str, Any] = {
+    "model": "claude-sonnet-4-5",
+    "usage": {
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "output_tokens_details": {"thinking_tokens": 30},
+    },
+}
+
 # OpenAI with provider-reported cost preferred over table compute
 OPENAI_WITH_PROVIDER_COST: Dict[str, Any] = {
     "id": "chatcmpl-fixture-openai-cost",

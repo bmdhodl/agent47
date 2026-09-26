@@ -1,0 +1,50 @@
+$ PATH=.venv/bin:$PATH PYTHONPATH=sdk make check
+# Per-test PASSED/SKIPPED lines, per-file coverage rows, and MCP TAP detail removed. Summaries kept.
+python scripts/ci_tools_requirements_guard.py
+/home/user/agent47/.github/requirements/ci-tools.in direct pins support Python 3.9
+python scripts/review_readiness_guard.py
+Review readiness guard passed.
+ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/review_readiness_guard.py
+All checks passed!
+python -m pytest sdk/tests/ -v \
+	--cov=agentguard \
+	--cov-report=term-missing \
+	--cov-fail-under=80
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /home/user/agent47/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/agent47/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 1282 items
+
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.11.15-final-0 _______________
+
+Name                                       Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+TOTAL                                       6118    496    92%
+Required test coverage of 80% reached. Total coverage: 91.89%
+====================== 1263 passed, 19 skipped in 32.54s =======================
+npm --prefix mcp-server test
+
+> @agentguard47/mcp-server@0.2.2 test
+> npm run build && node --test dist/__tests__/*.test.js
+
+
+> @agentguard47/mcp-server@0.2.2 build
+> tsc
+
+TAP version 13
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 189.489208
+exit=0

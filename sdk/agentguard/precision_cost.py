@@ -383,6 +383,11 @@ def _compute_from_table(
     - Anthropic / Google: ``input_tokens`` *excludes* cache reads → bill
       ``input * in + cache_read * cached_in + cache_write * write`` with no
       subtraction (subtracting would silently under-count).
+
+    Reasoning and thinking tokens are a slice of output (OpenAI
+    ``completion_tokens`` / ``output_tokens``, Anthropic ``output_tokens``).
+    That slice bills at ``reasoning_per_1m`` (default: the output rate) and
+    the rest at the output rate, so reasoning is never billed twice.
     """
     if rate.get("free"):
         return 0.0, {"free": 0.0}
@@ -412,7 +417,7 @@ def _compute_from_table(
 
     breakdown: Dict[str, Any] = {
         "input_usd": uncached_input * in_price / 1_000_000,
-        "output_usd": output_t * out_price / 1_000_000,
+        "output_usd": (output_t - reasoning_t) * out_price / 1_000_000,
         "cached_input_usd": cached_t * cached_price / 1_000_000,
         "cache_write_usd": cache_write_t * cache_write_price / 1_000_000,
         "reasoning_usd": reasoning_t * reasoning_price / 1_000_000,

@@ -1,0 +1,81 @@
+$ make preflight
+python scripts/sdk_preflight.py
+==> ruff: lint only the Python files touched in this branch
+/home/user/agent47/.venv/bin/python -m ruff check sdk/agentguard/precision_cost.py sdk/tests/fixtures/usage_payloads.py sdk/tests/test_precision_cost.py sdk/tests/test_real_dispatch.py
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk/tests/test_precision_cost.py:6:1
+   |
+ 4 |   directly — no re-implementation of cost math inside the tests.
+ 5 |   """
+ 6 | / from __future__ import annotations
+ 7 | |
+ 8 | | import os
+ 9 | | import unittest
+10 | | from typing import Any, Dict, List
+11 | | from unittest import mock
+12 | |
+13 | | from agentguard import (
+14 | |     ALLOWED_SOURCES,
+15 | |     DEFAULT_PRICE_TABLE,
+16 | |     BudgetExceeded,
+17 | |     BudgetGuard,
+18 | |     CostResolutionError,
+19 | |     consume_billable,
+20 | |     get_default_prices,
+21 | |     resolve_billable_cost,
+22 | | )
+23 | | from agentguard.precision_cost import SOURCE_COMPUTED, SOURCE_OVERESTIMATE, SOURCE_PROVIDER, SOURCE_ZERO
+24 | |
+25 | | from tests.fixtures.usage_payloads import (
+26 | |     ANTHROPIC_SONNET_USAGE,
+27 | |     ANTHROPIC_THINKING_USAGE,
+28 | |     FAILED_WITH_USAGE,
+29 | |     GATEWAY_BILLED_COST,
+30 | |     MISSING_USAGE,
+31 | |     OPENAI_CHAT_REASONING_USAGE,
+32 | |     OPENAI_GPT4O_USAGE,
+33 | |     OPENAI_RESPONSES_REASONING_USAGE,
+34 | |     OPENAI_WITH_PROVIDER_COST,
+35 | |     STREAMING_FINAL_USAGE,
+36 | | )
+   | |_^
+   |
+help: Organize imports
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> sdk/tests/test_precision_cost.py:158:9
+    |
+156 |               }
+157 |           }
+158 | /         with mock.patch.dict(os.environ, {"STRICT_PRECISION": "1"}):
+159 | |             with self.assertRaises(CostResolutionError):
+    | |________________________________________________________^
+160 |                   resolve_billable_cost(
+161 |                       payload,
+    |
+help: Combine `with` statements
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> sdk/tests/test_precision_cost.py:516:9
+    |
+514 |               },
+515 |           }
+516 | /         with mock.patch.dict(os.environ, {"STRICT_PRECISION": "1"}):
+517 | |             with self.assertRaises(CostResolutionError):
+    | |________________________________________________________^
+518 |                   _emit_llm_result(
+519 |                       _Ctx(),
+    |
+help: Combine `with` statements
+
+Found 3 errors.
+[*] 1 fixable with the `--fix` option.
+make: *** [Makefile:32: preflight] Error 1
+exit=2
+
+# Same ruff check on HEAD's sdk/tests/test_precision_cost.py (copied to a temp name):
+sdk/tests/_head_copy.py:6:1: I001 [*] Import block is un-sorted or un-formatted
+sdk/tests/_head_copy.py:155:9: SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+sdk/tests/_head_copy.py:477:9: SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+Found 3 errors.
+[*] 1 fixable with the `--fix` option.

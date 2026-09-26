@@ -38,6 +38,11 @@
   `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.
+- Reasoning and thinking tokens were billed twice: once inside output tokens,
+  where OpenAI and Anthropic already count them, and again on top. That
+  overstated cost for o-series, gpt-5, and extended-thinking calls and could
+  stop a dollar budget early. They now bill once, at the output rate. A price
+  row with `reasoning_per_1m` reprices only that slice.
 
 ### Docs
 - The PyPI README again states that the optional `[crewai]` extra pulls

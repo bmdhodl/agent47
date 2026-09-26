@@ -1,0 +1,13 @@
+# New tests against the pre-fix precision_cost.py (HEAD 7c1ed78). Expect failures.
+$ PYTHONPATH=sdk AGENTGUARD_REQUIRE_REAL_DEPS=1 .venv/compat/bin/python -m pytest sdk/tests/test_precision_cost.py::TestReasoningTokensBilledOnce sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch -q -p no:cacheprovider
+E   AssertionError: 0.0015 != 0.00105 within 12 places (0.0004500000000000001 difference)
+E   AssertionError: 8.999999999999999e-06 != 7.8e-06 within 12 places (1.1999999999999987e-06 difference)
+E   AssertionError: 5.399999999999999e-06 != 4.2e-06 within 12 places (1.1999999999999995e-06 difference)
+    assert guard.state.cost_used == pytest.approx(4.2e-6)
+E   assert 5.399999999999999e-06 == 4.2e-06 ± 4.2e-12
+E     comparison failed
+FAILED sdk/tests/test_precision_cost.py::TestReasoningTokensBilledOnce::test_anthropic_thinking_tokens_are_not_billed_on_top_of_output
+FAILED sdk/tests/test_precision_cost.py::TestReasoningTokensBilledOnce::test_distinct_reasoning_rate_charges_only_the_difference
+FAILED sdk/tests/test_precision_cost.py::TestReasoningTokensBilledOnce::test_openai_reasoning_tokens_are_not_billed_on_top_of_output
+FAILED sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch
+============================== 4 failed in 0.70s ===============================
