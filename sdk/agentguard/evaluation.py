@@ -454,6 +454,10 @@ def _extract_cost(event: Dict[str, Any]) -> Optional[float]:
 
     Returns the cost as a float, or None if not present.
     Never sums both locations — prevents double-counting.
+
+    Does not know about guard-event echoes: on ``guard.budget_exceeded`` it
+    returns the ``data.cost_usd`` echo of a cost already on another event.
+    Sum trace spend with ``_sum_cost`` (or ``_spend_cost`` per event).
     """
     cost = event.get("cost_usd")
     if isinstance(cost, (int, float)):
