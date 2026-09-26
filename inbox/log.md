@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #784
+
+- Shipped: Landing page rebuilt as a case file from the new `docs/site-design.md`: real `agentguard receipt` output in the hero, dossier cards for the four stops, three ways in, rules of engagement. Two color tokens raised to pass 4.5:1.
+- Decisions: Owner merged before the 1.4.1 release; `hook`, `run`, and `receipt` are labeled "new in 1.4.1". Privacy and JSONL copy qualified after Codex review.
+- Blockers: None. Page and PyPI differ until 1.4.1 ships.
+
 ## 2026-09-26 | Claude Code | PR #782
 
 - Shipped: `agentguard hook claude-code` refuses the third identical tool call in a row, a call that already failed twice, and calls past `--max-calls`; tested against real Claude Code 2.1.283. `agentguard run` runs an unmodified script with OpenAI/Anthropic patched. Receipt fixes for LangChain traces from Codex review on #781.
