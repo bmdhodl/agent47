@@ -165,7 +165,8 @@ def test_install_keeps_user_hooks_and_is_idempotent():
     twice = install_settings(json.loads(json.dumps(once)), "/py", 50)
     assert twice["model"] == "x"
     assert twice["hooks"]["PreToolUse"][0] == user_hook
-    ours = [g for g in twice["hooks"]["PreToolUse"] if g is not user_hook][1:]
+    assert twice["hooks"]["PreToolUse"].count(user_hook) == 1
+    ours = [g for g in twice["hooks"]["PreToolUse"] if g != user_hook]
     assert len(ours) == 1
     assert ours[0]["hooks"][0]["args"][-2:] == ["--max-calls", "50"]
     assert set(twice["hooks"]) == {"PreToolUse", "PostToolUse", "PostToolUseFailure"}
