@@ -1,6 +1,6 @@
 # SDK State
 
-**Last Updated:** 2026-09-25
+**Last Updated:** 2026-09-26
 
 - Public package: `agentguard47`, MIT, zero runtime dependencies, Python 3.9+.
 - Latest verified published SDK release: 1.4.0, published 2026-09-24 UTC. Store-backed sync OpenAI calls and store-backed streams reserve before send. PyPI wheel and sdist carry Trusted Publishing attestations from `publish.yml`; a clean install passes `doctor`, `demo`, `quickstart`, and `report`. Receipts: `proof/v1.4.0/PUBLICATION.md`. Earlier receipts: `proof/v1.3.2/PUBLICATION.md`, `proof/v1.3.1/PUBLICATION.md`.
