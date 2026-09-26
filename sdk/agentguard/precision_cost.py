@@ -37,9 +37,9 @@ from agentguard.price_table import (
     PriceTable,
     apply_long_context,
     get_default_prices,
+    lookup_rate,
     provider_ceiling,
 )
-from agentguard.price_table import lookup_rate as _lookup_rate
 from agentguard.usage import normalize_usage
 
 logger = logging.getLogger("agentguard.precision_cost")
@@ -482,7 +482,7 @@ def resolve_billable_cost(
         return result
 
     # Local/free rate row
-    rate = _lookup_rate(price_table, provider, model)
+    rate = lookup_rate(price_table, provider, model)
     if rate is not None and rate.get("free"):
         result = {
             "cost_usd": 0.0,

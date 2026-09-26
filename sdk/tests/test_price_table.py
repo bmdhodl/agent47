@@ -146,3 +146,9 @@ def test_total_only_usage_is_never_free():
     known = resolve_billable_cost(usage, model="gpt-4o", provider="openai")
     # Every token at the output rate, the higher of the two.
     assert known["cost_usd"] == pytest.approx(10_000 * 10.00 / 1_000_000)
+
+
+def test_every_alias_points_at_a_rate_row():
+    # lookup_rate follows one alias hop; an alias to another alias would price as unknown.
+    rates = DEFAULT_PRICE_TABLE["rates"]
+    assert [a for a, target in DEFAULT_PRICE_TABLE["aliases"].items() if target not in rates] == []
