@@ -4,6 +4,7 @@ from datetime import date
 
 import pytest
 
+from agentguard import price_table
 from agentguard.cost import estimate_cost
 from agentguard.precision_cost import (
     SOURCE_COMPUTED,
@@ -45,6 +46,69 @@ def test_claude_rows_match_the_pricing_page(model, rates):
     rate = lookup_rate(DEFAULT_PRICE_TABLE, "anthropic", model)
     assert (rate["input_per_1m"], rate["output_per_1m"], rate["cached_input_per_1m"],
             rate["cache_write_per_1m"]) == rates
+
+
+@pytest.mark.parametrize("model, rates", [
+    # developers.openai.com/api/docs/pricing, Standard tier, read 2026-09-26:
+    # (input, output, cached input, cache write) per 1M tokens; None = not listed.
+    ("gpt-6-astra", (10.00, 50.00, 1.00, 12.50)),
+    ("gpt-6-sol", (2.00, 10.00, 0.20, 2.50)),
+    ("gpt-6-luna", (0.10, 0.50, 0.01, 0.125)),
+    ("gpt-5.6-sol", (4.00, 20.00, 0.40, 5.00)),
+    ("gpt-5.6-terra", (2.00, 12.00, 0.20, 2.50)),
+    ("gpt-5.5", (5.00, 30.00, 0.50, None)),
+    ("gpt-5.5-pro", (30.00, 180.00, None, None)),
+    ("gpt-5.4", (2.50, 15.00, 0.25, None)),
+    ("gpt-5.4-mini", (0.75, 4.50, 0.075, None)),
+    ("gpt-5-nano", (0.05, 0.40, 0.005, None)),
+    ("gpt-4.1", (2.00, 8.00, 0.50, None)),
+    ("o1-pro", (150.00, 600.00, None, None)),
+    ("o4-mini", (1.10, 4.40, 0.275, None)),
+    ("gpt-4-0613", (30.00, 60.00, None, None)),
+    ("gpt-daybreak-blue-latest", (4.00, 20.00, 0.40, 5.00)),
+])
+def test_openai_rows_match_the_pricing_page(model, rates):
+    rate = lookup_rate(DEFAULT_PRICE_TABLE, "openai", model)
+    assert (rate["input_per_1m"], rate["output_per_1m"], rate.get("cached_input_per_1m"),
+            rate.get("cache_write_per_1m")) == rates
+
+
+@pytest.mark.parametrize("model, rates", [
+    # ai.google.dev/gemini-api/docs/pricing, paid Standard tier, read 2026-09-26:
+    # (input, output, context caching) per 1M text tokens.
+    ("gemini-3.5-flash", (1.50, 9.00, 0.15)),
+    ("gemini-3.5-flash-lite", (0.30, 2.50, 0.03)),
+    ("gemini-3.1-flash-lite", (0.25, 1.50, 0.025)),
+    ("gemini-3.1-pro-preview", (2.00, 12.00, 0.20)),
+    ("gemini-3.1-pro-preview-customtools", (2.00, 12.00, 0.20)),
+    ("gemini-2.5-pro", (1.25, 10.00, 0.125)),
+    ("gemini-2.5-flash", (0.30, 2.50, 0.03)),
+    ("gemini-2.5-flash-lite", (0.10, 0.40, 0.01)),
+])
+def test_gemini_rows_match_the_pricing_page(model, rates):
+    rate = lookup_rate(DEFAULT_PRICE_TABLE, "google", model)
+    assert (rate["input_per_1m"], rate["output_per_1m"], rate["cached_input_per_1m"]) == rates
+
+
+@pytest.mark.parametrize("model", ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.8-flash"])
+def test_gemini_flash_doubles_on_2027_01_01(model):
+    def rates(day):
+        rate = lookup_rate(DEFAULT_PRICE_TABLE, "google", model, today=day)
+        return rate["input_per_1m"], rate["output_per_1m"], rate["cached_input_per_1m"]
+
+    assert rates(date(2026, 12, 31)) == (0.75, 3.75, 0.075)
+    assert rates(date(2027, 1, 1)) == (1.50, 7.50, 0.15)
+
+
+def test_a_scheduled_rise_counts_in_the_ceiling_before_it_starts(monkeypatch):
+    monkeypatch.setattr(price_table, "CEILING_PROVIDERS", ("google",))
+    ceiling = provider_ceiling(DEFAULT_PRICE_TABLE, "google")
+    # gemini-3.1-pro-preview above 200k: $4 in, $18 out; no row rises above that.
+    assert (ceiling["input_per_1m"], ceiling["output_per_1m"]) == (4.00, 18.00)
+    table = {"rates": {("google", "flash"): price_table._rate(
+        1.00, 5.00, rises_on=("2099-01-01", 3.0))}}
+    ceiling = provider_ceiling(table, "google")
+    assert (ceiling["input_per_1m"], ceiling["output_per_1m"]) == (3.00, 15.00)
 
 
 @pytest.mark.parametrize("provider, model, base", [
@@ -95,9 +159,8 @@ def test_unknown_model_is_priced_at_the_provider_ceiling():
     resolved = resolve_billable_cost(_usage(10_000, 500), model="gpt-next", provider="openai")
     assert resolved["source"] == SOURCE_OVERESTIMATE
     assert resolved["breakdown"]["reason"] == "unknown_model_provider_ceiling"
-    assert resolved["cost_usd"] == pytest.approx((10_000 * 30.00 + 500 * 180.00) / 1_000_000)
-    # The flat high-water charge it replaces: $150 per 1M tokens of any kind.
-    assert resolved["cost_usd"] < 10_500 * 150.0 / 1_000_000
+    # o1-pro is OpenAI's highest listed row: $150 in, $600 out per 1M.
+    assert resolved["cost_usd"] == pytest.approx((10_000 * 150.00 + 500 * 600.00) / 1_000_000)
 
 
 @pytest.mark.parametrize("provider", ["google", "azure", "some-gateway"])
@@ -153,3 +216,16 @@ def test_every_alias_points_at_a_rate_row():
     # lookup_rate follows one alias hop; an alias to another alias would price as unknown.
     rates = DEFAULT_PRICE_TABLE["rates"]
     assert [a for a, target in DEFAULT_PRICE_TABLE["aliases"].items() if target not in rates] == []
+
+
+def test_gemini_bills_cached_prompt_and_thoughts_as_google_counts_them():
+    # ai.google.dev/api/generate-content: promptTokenCount includes the cached
+    # content; totalTokenCount = prompt + thoughts + candidates.
+    response = {"usage_metadata": {
+        "prompt_token_count": 50_000, "cached_content_token_count": 40_000,
+        "candidates_token_count": 500, "thoughts_token_count": 2_000,
+        "total_token_count": 52_500,
+    }}
+    resolved = resolve_billable_cost(response, model="gemini-2.5-pro", provider="google")
+    expected = (10_000 * 1.25 + 40_000 * 0.125 + 2_500 * 10.00) / 1_000_000
+    assert resolved["cost_usd"] == pytest.approx(expected)

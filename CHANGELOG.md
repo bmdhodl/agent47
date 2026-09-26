@@ -37,8 +37,15 @@
   rows. Before, the patched clients billed a `gpt-5.5` prompt over 272k
   tokens at half its price, and priced every Claude 5 model, `claude-haiku-4-5`,
   and the real Claude Opus 4 id (`claude-opus-4-20250514`) as unknown, 8x to
-  137x too high. Claude rows match Anthropic's pricing page as of 2026-09-26;
-  OpenAI and Google rows were last checked 2026-07-15.
+  137x too high. Claude, OpenAI, and Gemini rows match each provider's
+  pricing page as of 2026-09-26. Cached-input rates for gpt-5.5, gpt-5.4,
+  and Gemini 2.5 were 2x to 5x too high. GPT-6, GPT-5.6, GPT-5.2, gpt-5,
+  gpt-4.1, o3, o4-mini, o1-pro, and Gemini 3.x were priced as unknown; they
+  now have rows. Gemini 3.6, 3.7, and 3.8 Flash double on 2027-01-01 as
+  Google has published. Retired Gemini 1.5 and 2.0 rows are removed.
+- Gemini thinking tokens were not billed, and Gemini cache reads were billed at
+  the full input rate. `thoughts_token_count` now bills as output, and cached
+  tokens are taken out of `prompt_token_count`, which includes them.
 - Dated model ids price as their base model. An unknown Anthropic or OpenAI
   model is priced at that provider's highest listed rates instead of a flat
   $150 per million tokens. `sdk_release_guard.py --check-price-table-age`,

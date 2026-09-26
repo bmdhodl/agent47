@@ -8,19 +8,13 @@
 - 1.4.0 shipped 2026-09-24 (AG-01 through AG-05). AG-06 stays open: it
   needs an approved public API, and the week-four gate has no external repeat
   user, so later adapters stay held.
-- Refresh the OpenAI and Google rows in `sdk/agentguard/price_table.py`
-  from developers.openai.com and ai.google.dev (last checked 2026-07-15;
-  GPT-5.6, GPT-6, and Gemini 3.1 are missing and priced as unknown). Both
-  pages are blocked by the session network policy. The publish workflow's
-  price-age gate fails after 2026-10-13.
+- The price table prices OpenAI and Gemini text at the Standard tier. Not
+  modelled: OpenAI Fast mode (2x), the 10% data-residency and FedRAMP uplift,
+  Batch/Flex discounts, and Gemini audio and image rates. GPT-5.6 Sol is at a
+  promotional price "at least through November 21, 2026"; recheck it then.
 - 1.4.1 adds `agentguard --version` (owner-approved 2026-09-25). After the
   tag, confirm the `published-wheel.yml` matrix and PyPI attestations and add
   `proof/v1.4.1/PUBLICATION.md`.
-- Gemini thinking may be under-billed. `resolve_billable_cost` reads
-  `usage_metadata.candidates_token_count` as output and never reads
-  `thoughts_token_count`, which Google reports outside candidates and bills
-  at the output rate. Confirm with a real payload fixture before changing
-  `_extract_usage_object`.
 - The v1.4.0 GitHub Release has an unsigned PNG asset
   (`agentguard-1.4.0.png`), which keeps Scorecard Signed-Releases at 0. Host
   release images outside release assets from now on.
