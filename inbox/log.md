@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #800
+
+- Shipped: OpenAI and Gemini rows match their pricing pages (read 2026-09-26). GPT-6, GPT-5.6, gpt-5, gpt-4.1, o3, o4-mini, o1-pro and Gemini 3.x now have rows (they were overestimated 15x to 81x); cached-input rates for gpt-5.5, gpt-5.4 and Gemini 2.5 fixed. Gemini 3.6-3.8 Flash double on 2027-01-01. Gemini thinking is billed as output, and Gemini cache reads come out of the prompt count. Four live OpenAI calls (Responses, stream, Chat Completions, Agents SDK) recorded the published price exactly.
+- Decisions: o1-pro ($150 / $600) is now the ceiling for unknown OpenAI models (fail-closed). Google stays off the ceiling because its image output ($120/1M) is above every text row.
+- Blockers: None. Not modelled: OpenAI Fast mode, the residency/FedRAMP uplift, Batch/Flex, Gemini audio/image, and GPT-5.6 Sol after its promo (in `ops/FOLLOWUP.md`).
+
 ## 2026-09-26 | Claude Code | PR #797
 
 - Shipped: `_extract_cost` docstring warns that on `guard.budget_exceeded` it returns the `data.cost_usd` echo of a cost already on the tripping call; trace totals must use `_sum_cost` (or `_spend_cost` per event). No behavior change.
