@@ -35,6 +35,30 @@ the trace path printed by the command to inspect its output.
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
 
+### Guard a Claude Code session
+
+```bash
+agentguard hook claude-code --install --write
+```
+
+This installs a Claude Code hook that refuses the third identical tool call in
+a row and a call that already failed twice. Refusals go to
+`.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
+subscription quota. See the [Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/guides/claude-code-hook.md).
+
+### Guard a script without editing it
+
+```bash
+agentguard run --budget-usd 5 agent.py
+```
+
+This patches the OpenAI and Anthropic clients, then runs `agent.py` in the same
+interpreter. Settings come from flags, then environment variables, then
+`.agentguard.json`. A guard stop exits 1. Every run ends with the trace path on
+stderr, ready for `agentguard receipt`. `agentguard run python -m mypkg` works too. The bounds are
+the same as patching the client yourself; see
+[enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md).
+
 ### Stop before a third call
 
 Save this as `budget_demo.py` and run `python budget_demo.py`. It makes no
@@ -199,6 +223,18 @@ The PyPI README is generated from this README and the changelog.
   cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
   PRs and issues; `--format json` is for CI. Guard events no longer count
   toward the receipt's cost, so the call that tripped a budget is counted once.
+
+- `agentguard hook claude-code` is a Claude Code hook. It refuses the third
+  identical tool call in a row, a call that already failed twice, and, with
+  `--max-calls`, calls past a per-session cap. `--install --write` adds it to
+  `.claude/settings.local.json` and keeps existing hooks; `--uninstall` removes
+  only its own. Refusals are logged for `agentguard receipt`. See
+  [the guide](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/guides/claude-code-hook.md).
+
+- `agentguard run [--budget-usd N] agent.py` runs an unmodified script with the
+  OpenAI and Anthropic clients patched. Flags, environment variables, and
+  `.agentguard.json` set the limits. A guard stop exits 1. Every run ends by
+  printing the trace path to stderr for `agentguard receipt`.
 
 ### Fixes
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0

@@ -33,6 +33,30 @@ the trace path printed by the command to inspect its output.
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
 
+### Guard a Claude Code session
+
+```bash
+agentguard hook claude-code --install --write
+```
+
+This installs a Claude Code hook that refuses the third identical tool call in
+a row and a call that already failed twice. Refusals go to
+`.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
+subscription quota. See the [Claude Code hook guide](docs/guides/claude-code-hook.md).
+
+### Guard a script without editing it
+
+```bash
+agentguard run --budget-usd 5 agent.py
+```
+
+This patches the OpenAI and Anthropic clients, then runs `agent.py` in the same
+interpreter. Settings come from flags, then environment variables, then
+`.agentguard.json`. A guard stop exits 1. Every run ends with the trace path on
+stderr, ready for `agentguard receipt`. `agentguard run python -m mypkg` works too. The bounds are
+the same as patching the client yourself; see
+[enforcement boundary](docs/enforcement-boundary.md).
+
 ### Stop before a third call
 
 Save this as `budget_demo.py` and run `python budget_demo.py`. It makes no
