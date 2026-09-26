@@ -1,0 +1,12 @@
+# origin/main 53bfa13
+case                                   recorded   expected   ratio  source
+gpt-6-sol                            $   0.3900 $   0.0250  15.60x  overestimate
+gpt-5.6-terra                        $   0.3900 $   0.0260  15.00x  overestimate
+gpt-5                                $   0.3900 $   0.0175  22.29x  overestimate
+o3                                   $   0.3900 $   0.0240  16.25x  overestimate
+gpt-5.5, 40k cached of 50k           $   0.1650 $   0.0850   1.94x  computed
+gpt-5.4, 40k cached of 50k           $   0.0825 $   0.0425   1.94x  computed
+gemini-3.5-flash                     $   1.5750 $   0.0195  80.77x  overestimate
+gemini-3.1-pro-preview               $   1.5750 $   0.0260  60.58x  overestimate
+gemini-2.5-pro, 2k thinking tokens   $   0.0175 $   0.0375   0.47x  computed
+gemini-2.5-pro, 40k cached of 50k    $   0.0675 $   0.0225   3.00x  computed

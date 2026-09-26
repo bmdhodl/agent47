@@ -1,0 +1,19 @@
+== make preflight
+exit 0
+============================== 9 passed in 0.37s ===============================
+============================== 5 passed in 0.03s ===============================
+== make check
+exit 0
+All checks passed!
+====================== 1329 passed, 19 skipped in 33.84s =======================
+== make structural
+exit 0
+============================== 9 passed in 0.33s ===============================
+== make security
+exit 0
+== make release-guard
+exit 0
+Release guard passed.
+== ruff proof
+All checks passed!
+Release guard passed.

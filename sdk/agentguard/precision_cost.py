@@ -209,18 +209,28 @@ def _extract_usage_object(response: Any) -> Any:
         return usage
     usage_meta = _get_attr_or_key(response, "usage_metadata")
     if usage_meta is not None:
-        # Google generative AI style → normalize later via generic fields
+        # Gemini counts like OpenAI: prompt_token_count includes the cached
+        # tokens. Thoughts are counted outside candidates, so they are added to
+        # completion_tokens; reasoning_tokens marks that slice of it, which
+        # _compute_from_table bills once.
+        # A reported 0 is a count, not a missing field: a thinking-only reply
+        # has candidates_token_count 0.
+        def first(*keys: str) -> Any:
+            for key in keys:
+                value = _get_attr_or_key(usage_meta, key)
+                if value is not None:
+                    return value
+            return 0
+
         return {
-            "input_tokens": _get_attr_or_key(usage_meta, "prompt_token_count")
-            or _get_attr_or_key(usage_meta, "input_tokens")
-            or 0,
-            "output_tokens": _get_attr_or_key(usage_meta, "candidates_token_count")
-            or _get_attr_or_key(usage_meta, "output_tokens")
-            or 0,
-            "total_tokens": _get_attr_or_key(usage_meta, "total_token_count")
-            or _get_attr_or_key(usage_meta, "total_tokens")
-            or 0,
-            "cached_input_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count") or 0,
+            "prompt_tokens": first("prompt_token_count", "input_tokens"),
+            "completion_tokens": first("candidates_token_count", "output_tokens")
+            + first("thoughts_token_count"),
+            "total_tokens": first("total_token_count", "total_tokens"),
+            "prompt_tokens_details": {
+                "cached_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count") or 0
+            },
+            "completion_tokens_details": {"reasoning_tokens": first("thoughts_token_count")},
         }
     # Bare usage payload passed as response
     if isinstance(response, Mapping):
@@ -304,14 +314,9 @@ def _find_provider_cost(response: Any, usage: Any) -> Optional[float]:
 
 
 # Providers whose input_tokens already exclude cache-read tokens (bill input +
-# cache_read separately). OpenAI-family includes cached tokens inside
-# prompt_tokens and must subtract to avoid double-billing the cached slice.
-_CACHE_EXCLUSIVE_INPUT_PROVIDERS = frozenset(
-    {
-        "anthropic",
-        "google",
-    }
-)
+# cache_read separately). OpenAI-family and Gemini include cached tokens inside
+# the prompt count and must subtract to avoid double-billing the cached slice.
+_CACHE_EXCLUSIVE_INPUT_PROVIDERS = frozenset({"anthropic"})
 
 
 def _input_includes_cached(provider: str) -> bool:
@@ -330,9 +335,9 @@ def _compute_from_table(
     """Compute USD from usage and a rate dict (prices per 1M tokens).
 
     Provider-aware cache handling:
-    - OpenAI / Azure / most gateways: ``prompt_tokens`` *includes* cached
-      tokens → bill ``(input - cached) * in + cached * cached_in``.
-    - Anthropic / Google: ``input_tokens`` *excludes* cache reads → bill
+    - OpenAI / Azure / Google / most gateways: the prompt count *includes*
+      cached tokens → bill ``(input - cached) * in + cached * cached_in``.
+    - Anthropic: ``input_tokens`` *excludes* cache reads → bill
       ``input * in + cache_read * cached_in + cache_write * write`` with no
       subtraction (subtracting would silently under-count).
 
@@ -354,7 +359,7 @@ def _compute_from_table(
         uncached_input = input_t - cached_t
         input_cache_mode = "inclusive"
     else:
-        # Exclusive (Anthropic/Google) or no cache / cache > input edge case
+        # Exclusive (Anthropic) or no cache / cache > input edge case
         uncached_input = input_t
         input_cache_mode = (
             "exclusive" if not _input_includes_cached(provider) else "inclusive_no_subtract"
