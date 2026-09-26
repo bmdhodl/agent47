@@ -35,7 +35,10 @@ from agentguard.price_table import (
     DEFAULT_PRICE_TABLE,
     PriceRate,
     PriceTable,
+    apply_long_context,
     get_default_prices,
+    lookup_rate,
+    provider_ceiling,
 )
 from agentguard.usage import normalize_usage
 
@@ -300,57 +303,6 @@ def _find_provider_cost(response: Any, usage: Any) -> Optional[float]:
     return None
 
 
-def _lookup_rate(
-    prices: PriceTable,
-    provider: str,
-    model: str,
-) -> Optional[PriceRate]:
-    rates: Mapping[Any, Any] = prices.get("rates") or {}
-    aliases: Mapping[Any, Any] = prices.get("aliases") or {}
-    provider_l = (provider or "").strip().lower()
-    model_id = (model or "").strip()
-
-    # Exact match
-    key = (provider_l, model_id)
-    if key in rates:
-        return dict(rates[key])
-
-    # Alias exact
-    if key in aliases:
-        target = aliases[key]
-        if isinstance(target, tuple) and target in rates:
-            return dict(rates[target])
-
-    # Normalized model (lower, strip date-ish suffix partially handled by aliases)
-    model_l = model_id.lower()
-    key_l = (provider_l, model_l)
-    if key_l in rates:
-        return dict(rates[key_l])
-    if key_l in aliases:
-        target = aliases[key_l]
-        if isinstance(target, tuple) and target in rates:
-            return dict(rates[target])
-
-    # Scan rates for case-insensitive model match under provider
-    for (p, m), rate in rates.items():
-        if str(p).lower() == provider_l and str(m).lower() == model_l:
-            return dict(rate)
-
-    # Alias scan
-    for (p, m), target in aliases.items():
-        if str(p).lower() == provider_l and str(m).lower() == model_l:
-            if isinstance(target, tuple) and target in rates:
-                return dict(rates[target])
-            # target may need re-lookup
-            if isinstance(target, tuple):
-                return _lookup_rate(
-                    {"rates": rates, "aliases": {}},
-                    str(target[0]),
-                    str(target[1]),
-                )
-    return None
-
-
 # Providers whose input_tokens already exclude cache-read tokens (bill input +
 # cache_read separately). OpenAI-family includes cached tokens inside
 # prompt_tokens and must subtract to avoid double-billing the cached slice.
@@ -433,6 +385,14 @@ def _compute_from_table(
         total *= discount
         breakdown["batch_discount"] = discount
     return total, breakdown
+
+
+def _prompt_tokens(tokens: Mapping[str, int], provider: str) -> int:
+    """Prompt size as the provider counts it for long-context thresholds."""
+    prompt = int(tokens.get("input", 0) or 0)
+    if not _input_includes_cached(provider):
+        prompt += int(tokens.get("cached", 0) or 0) + int(tokens.get("cache_write", 0) or 0)
+    return prompt
 
 
 def _overestimate_cost(
@@ -522,7 +482,7 @@ def resolve_billable_cost(
         return result
 
     # Local/free rate row
-    rate = _lookup_rate(price_table, provider, model)
+    rate = lookup_rate(price_table, provider, model)
     if rate is not None and rate.get("free"):
         result = {
             "cost_usd": 0.0,
@@ -551,9 +511,12 @@ def resolve_billable_cost(
         return result
 
     has_usage = tokens["total"] > 0 or tokens["input"] > 0 or tokens["output"] > 0
+    # Usage that reports only a total cannot be priced per token kind.
+    has_split = any(tokens[k] for k in ("input", "output", "cached", "cache_write", "reasoning"))
 
     # C: compute from owned price table
-    if rate is not None and has_usage:
+    if rate is not None and has_split:
+        rate = apply_long_context(rate, _prompt_tokens(tokens, provider))
         computed, parts = _compute_from_table(
             tokens,
             rate,
@@ -575,12 +538,16 @@ def resolve_billable_cost(
     if has_usage:
         # Suppress UnknownModelWarning here: $0 from estimate is a miss and we
         # continue to overestimate/fail-loud (never silent under-count).
+        # A bare total is priced at the output rate, the higher of the two.
+        input_t, output_t = (
+            (tokens["input"] or tokens["total"], tokens["output"]) if has_split else (0, tokens["total"])
+        )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UnknownModelWarning)
             estimated = estimate_cost(
                 model,
-                input_tokens=tokens["input"] or tokens["total"],
-                output_tokens=tokens["output"],
+                input_tokens=input_t,
+                output_tokens=output_t,
                 provider=provider or None,
             )
         # estimate_cost returns 0 for unknown — treat 0 as miss
@@ -606,6 +573,28 @@ def resolve_billable_cost(
             "STRICT_PRECISION refuses silent $0. Pass provider cost, a price row, "
             "or disable strict and accept a conservative overestimate."
         )
+
+    # An unknown model from a provider whose rows are kept current is priced at
+    # that provider's highest listed rates, not the flat high-water charge.
+    ceiling = provider_ceiling(price_table, provider) if has_split else None
+    if ceiling is not None:
+        computed, parts = _compute_from_table(
+            tokens, ceiling, provider=provider, batch=batch, image_units=image_units
+        )
+        result = {
+            "cost_usd": float(computed),
+            "tokens": tokens,
+            "source": SOURCE_OVERESTIMATE,
+            "breakdown": {
+                **base_breakdown,
+                **parts,
+                "rate": ceiling,
+                "reason": "unknown_model_provider_ceiling",
+            },
+        }
+        if request_id:
+            result["request_id"] = request_id
+        return result
 
     over = _overestimate_cost(tokens, price_table)
     result = {

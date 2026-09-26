@@ -553,7 +553,8 @@ def test_unknown_model_cost_is_overestimate_not_free(tmp_path):
     list(client.chat.completions.create(model="not-a-real-model", stream=True))
     totals = guard.reservation_totals()
     assert totals["settled"]["calls"] == 1
-    assert totals["settled"]["cost"] == pytest.approx(200 * 150.0 / 1_000_000)
+    # Priced at OpenAI's highest listed rates: $30 in, $180 out per 1M.
+    assert totals["settled"]["cost"] == pytest.approx((120 * 30.0 + 80 * 180.0) / 1_000_000)
     assert totals["settled"]["cost"] > 0
     results = [event for event in sink.events if event.get("name") == "llm.result"]
     assert results[-1]["data"]["source_of_cost"] == SOURCE_OVERESTIMATE

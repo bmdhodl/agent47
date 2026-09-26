@@ -33,6 +33,20 @@
   current releases, and the openai floor (1.40.0) predates the Responses API.
 
 ### Fixes
+- One price table. `estimate_cost` and the patched clients now read the same
+  rows. Before, the patched clients billed a `gpt-5.5` prompt over 272k
+  tokens at half its price, and priced every Claude 5 model, `claude-haiku-4-5`,
+  and the real Claude Opus 4 id (`claude-opus-4-20250514`) as unknown, 8x to
+  137x too high. Claude rows match Anthropic's pricing page as of 2026-09-26;
+  OpenAI and Google rows were last checked 2026-07-15.
+- Dated model ids price as their base model. An unknown Anthropic or OpenAI
+  model is priced at that provider's highest listed rates instead of a flat
+  $150 per million tokens. `sdk_release_guard.py --check-price-table-age`,
+  run by the publish workflow, fails a release when any provider's prices are
+  more than 90 days old.
+- Usage that reports only `total_tokens` was priced at $0 for a known model.
+  It is now priced at the model's output rate, or the high-water rate for an
+  unknown model.
 - Every `AsyncOpenAI` and `AsyncAnthropic` call failed with `AttributeError`
   after `agentguard.init()`, because the async patches expected an
   `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
