@@ -226,8 +226,8 @@ The PyPI README is generated from this README and the changelog.
 ### Added
 - `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
   cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
-  PRs and issues; `--format json` is for CI. Guard events no longer count
-  toward the receipt's cost, so the call that tripped a budget is counted once.
+  PRs and issues; `--format json` is for CI. The receipt counts cost the same
+  way as `report`, so the call that tripped a budget is counted once.
 
 - `agentguard hook claude-code` is a Claude Code hook. It refuses the third
   identical tool call in a row, a call that already failed twice, and, with
@@ -278,6 +278,10 @@ The PyPI README is generated from this README and the changelog.
   `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.
+- `agentguard report`, `summarize_trace`, `incident`, and
+  `EvalSuite.assert_cost_under` no longer count the call that tripped a
+  budget twice. `guard.budget_exceeded` echoes that call's cost, which its
+  `llm.result` already carries. Savings baselines skip guard events too.
 - Reasoning and thinking tokens were billed twice: once inside output tokens,
   where OpenAI and Anthropic already count them, and again on top. That
   overstated cost for o-series, gpt-5, and extended-thinking calls and could

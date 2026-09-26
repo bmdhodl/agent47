@@ -1,0 +1,6 @@
+    self.assertTrue(result.passed, result.assertions[0].message)
+FAILED tests/test_cli_report.py::TestCliReport::test_report_does_not_count_budget_exceeded_cost_twice
+FAILED tests/test_evaluation.py::TestGuardEventCost::test_assert_cost_under_skips_guard_event_cost
+FAILED tests/test_evaluation.py::TestGuardEventCost::test_summarize_trace_skips_guard_event_cost
+FAILED tests/test_savings.py::TestSummarizeSavings::test_guard_event_is_not_a_savings_baseline
+========================= 4 failed, 51 passed in 0.15s =========================
