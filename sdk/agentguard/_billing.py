@@ -63,7 +63,8 @@ def _emit_llm_result(
 ) -> None:
     """Extract usage from an LLM response and emit llm.result event + budget consume.
 
-    Shared by all 4 patch variants (OpenAI sync/async, Anthropic sync/async).
+    Shared by every provider patch: OpenAI Chat Completions and Responses, and
+    Anthropic Messages, sync and async.
 
     Cost uses ``resolve_billable_cost`` (provider fields → owned table → estimate
     → overestimate). Call once per provider hit with the *final* usage/response
