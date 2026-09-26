@@ -1,0 +1,1 @@
+{"session": "state-1-4-1", "ts": "2026-09-26T01:37:31", "claim": "memory/state.md lists 1.4.1 commands", "severity": "RED", "check": {"type": "file_contains", "path": "memory/state.md", "pattern": "agentguard hook claude-code"}, "prev": "f58fd3bc705145a14aa0eac7e333f298217882c4235fa2c8fd58285efb524791"}

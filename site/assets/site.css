@@ -6,9 +6,9 @@
   --paper: #ebe5d8;
   --ink: #1a1718;
   --tie: #b3121d;
-  --tie-bright: #e0323d;
+  --tie-bright: #ea4049;
   --steel: #a39c95;
-  --steel-dark: #6f6862;
+  --steel-dark: #8a827c;
   --rule: rgba(242, 238, 230, 0.14);
   --rule-strong: rgba(242, 238, 230, 0.32);
   --cond: "Archivo", "Arial Narrow", sans-serif;
@@ -79,24 +79,72 @@ h3 { font-size: 18px; margin: 0 0 6px; }
 .page-head .lead { max-width: 760px; }
 .page-head .install { margin-top: 30px; }
 
-/* Receipt */
-.receipt {
-  position: relative; max-width: 380px; width: 100%; margin: 0; justify-self: end;
-  padding: 26px 26px 34px; background: var(--paper); color: var(--ink);
-  font: 13px/1.55 var(--mono); transform: rotate(1.2deg); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+/* Hero: case file with the evidence pinned on the right */
+.hero { position: relative; overflow: hidden; }
+.hero::before {
+  content: "47"; position: absolute; right: -3vw; top: 50%; transform: translateY(-50%);
+  font: 900 clamp(260px, 40vw, 560px)/0.8 var(--cond); font-stretch: 62%;
+  color: transparent; -webkit-text-stroke: 1px var(--rule); pointer-events: none;
+}
+.hero .wrap { position: relative; }
+.hero .plain { margin: 12px 0 0; color: var(--steel); }
+
+.evidence { position: relative; margin: 0; justify-self: end; width: 100%; max-width: 400px; }
+.evidence .paper {
+  position: relative; padding: 22px 20px 30px; background: var(--paper); color: var(--ink); transform: rotate(1.4deg);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 10px repeat-x;
           mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 10px repeat-x;
 }
-.receipt h3 { margin: 0; font: 800 22px/1 var(--cond); font-stretch: 70%; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
-.receipt .sub { text-align: center; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px; }
-.receipt hr { border: 0; border-top: 1px dashed rgba(26, 23, 24, 0.45); margin: 14px 0; }
-.receipt .row { display: flex; justify-content: space-between; gap: 12px; }
-.receipt .row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.receipt .stop { color: var(--tie); font-weight: 600; }
-.receipt .total { font-weight: 600; font-size: 14px; }
-.receipt svg { display: block; width: 100%; height: 44px; margin: 16px 0 6px; fill: var(--ink); }
-.receipt .hash { text-align: center; font-size: 11px; letter-spacing: 0.2em; }
-.receipt .src { margin-top: 10px; text-align: center; font-size: 10px; color: #6b6361; }
+.evidence pre { margin: 0; font: 500 12px/1.5 var(--mono); white-space: pre; overflow: hidden; }
+.evidence pre .red { color: var(--tie); font-weight: 700; }
+.evidence .bars { display: block; width: 100%; height: 40px; margin: 6px 0; fill: var(--ink); }
+.evidence figcaption { margin-top: 22px; font-size: 12px; color: var(--steel-dark); }
+.evidence figcaption code { font-size: 11px; }
+
+.stamp {
+  position: absolute; bottom: 64px; right: 16px; padding: 6px 14px 4px;
+  border: 3px solid var(--tie); color: var(--tie); background: rgba(235, 229, 216, 0.72);
+  font: 700 22px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+  transform: rotate(-9deg); animation: stamp 180ms ease-out 400ms both;
+}
+@keyframes stamp { from { opacity: 0; transform: rotate(-9deg) scale(1.5); } to { opacity: 1; transform: rotate(-9deg) scale(1); } }
+
+.crosshair {
+  position: absolute; top: 148px; left: 0; width: 90px; height: 90px;
+  border: 1px solid var(--tie-bright); border-radius: 50%; pointer-events: none; opacity: 0.8;
+}
+.crosshair::before, .crosshair::after { content: ""; position: absolute; background: var(--tie-bright); }
+.crosshair::before { left: 50%; top: -14px; bottom: -14px; width: 1px; }
+.crosshair::after { top: 50%; left: -14px; right: -14px; height: 1px; }
+
+/* Case file */
+.files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.dossier { position: relative; padding: 18px 20px 50px; background: var(--paper); color: var(--ink); }
+.dossier header { display: flex; justify-content: space-between; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font: 500 11px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.dossier > code { display: block; font: 700 18px var(--mono); color: var(--ink); background: none; border: 0; padding: 0; }
+.dossier p { margin: 8px 0 0; font-size: 15px; }
+.dossier .seen { font: 12.5px/1.5 var(--mono); color: #4d4643; }
+.dossier .seen code { font-size: 12px; color: var(--ink); background: none; border: 0; padding: 0; }
+.dossier .mark {
+  position: absolute; right: 14px; bottom: 14px; padding: 3px 8px 2px; border: 2px solid var(--tie); color: var(--tie);
+  font: 700 11px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; transform: rotate(-6deg);
+}
+
+/* Three ways in */
+.ways { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); counter-reset: way; }
+.ways li { counter-increment: way; position: relative; padding: 24px 0 26px 56px; border-bottom: 1px solid var(--rule); }
+.ways li::before { content: counter(way, decimal-leading-zero); position: absolute; left: 0; top: 27px; font: 500 13px var(--mono); color: var(--tie-bright); }
+.ways h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 19px; }
+.ways p { margin: 0 0 14px; color: var(--steel); }
+.ways .term { padding: 16px 18px; font-size: 13.5px; }
+.ver { font: 500 11px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tie-bright); }
+
+/* Rules of engagement */
+.rules { margin: 0 0 12px; padding: 0; list-style: none; counter-reset: rule; }
+.rules li { counter-increment: rule; position: relative; padding: 0 0 20px 44px; color: var(--steel); }
+.rules li::before { content: counter(rule, decimal-leading-zero); position: absolute; left: 0; top: 2px; font: 500 12px var(--mono); color: var(--tie-bright); }
+.rules b { color: var(--shirt); font-weight: 600; }
 
 /* Numbered sections */
 section.block { padding: 88px 0; border-bottom: 1px solid var(--rule); }
@@ -175,7 +223,9 @@ footer.site a:hover { color: var(--shirt); }
   .top .nav { order: 2; width: 100%; margin: 0; padding: 0 0 14px; overflow-x: auto; white-space: nowrap; }
   .hero { padding: 48px 0 64px; }
   .hero .wrap, section.block > .wrap { grid-template-columns: minmax(0, 1fr); gap: 40px; }
-  .receipt { justify-self: start; transform: rotate(0.6deg); }
+  .evidence { justify-self: start; }
+  .files { grid-template-columns: minmax(0, 1fr); }
+  .hero::before { font-size: 70vw; top: 18%; }
   section.block { padding: 64px 0; }
   .stops li { grid-template-columns: minmax(0, 1fr); gap: 6px; }
 }
@@ -191,5 +241,9 @@ footer.site a:hover { color: var(--shirt); }
   .install code { font-size: 13px; padding: 13px 12px; }
   .copy { padding: 0 14px; }
   .term, .post .code { font-size: 12.5px; padding: 18px 16px; }
+  .evidence pre { font-size: 10.5px; }
+  .stamp { font-size: 17px; bottom: 68px; }
+  .crosshair { width: 76px; height: 76px; top: 134px; left: 4px; }
+  .ways li, .rules li { padding-left: 38px; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .stamp { animation: none; } }
