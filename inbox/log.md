@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-26 | Claude Code | PR #792
+
+- Shipped: One price table for `estimate_cost` and the patched clients. Claude rows match Anthropic's pricing page (2026-09-26); current Claude models were billed 8x to 137x high and a `gpt-5.5` long prompt at half price. Dated ids price as their base model; unknown Anthropic/OpenAI models price at the provider's top listed rate; total-only usage is never $0.
+- Decisions: Google keeps the flat high-water charge until its rows are refreshed. `publish.yml` fails a release when any provider's prices are over 90 days old; PR CI does not check dates.
+- Blockers: OpenAI and Google rows (last checked 2026-07-15) need their pricing pages, which the session network blocks; the publish gate fails after 2026-10-13.
+
 ## 2026-09-26 | Claude Code | PR #786
 
 - Shipped: `patch_openai` / `patch_openai_async` (and `init()`, `run`) cover the OpenAI Responses API, so the Agents SDK `Runner` stops before its next model call once the budget is spent. Fixed every `AsyncOpenAI`/`AsyncAnthropic` call crashing after `init()`. Raw sync calls with a store reserve (Codex review).

@@ -117,9 +117,10 @@ def test_ceiling_never_prices_below_a_listed_model(provider):
         tokens = {
             "input": rng.randint(0, 1_000_000),
             "output": rng.randint(0, 128_000),
-            "reasoning": rng.randint(0, 64_000),
             "cache_write": rng.randint(0, 200_000),
         }
+        # Reasoning is a slice of output, as providers report it.
+        tokens["reasoning"] = rng.randint(0, tokens["output"])
         tokens["cached"] = rng.randint(0, tokens["input"])
         tokens["total"] = sum(tokens.values())
         top, _ = _compute_from_table(tokens, ceiling, provider=provider)

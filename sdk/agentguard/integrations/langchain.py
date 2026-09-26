@@ -140,11 +140,20 @@ class AgentGuardCallbackHandler(_Base):  # type: ignore[misc]
                 payload["provider"] = provider
             payload["model"] = model_name
             if input_t or output_t:
-                from agentguard.cost import estimate_cost
+                # Same resolver as the patched clients: cached tokens are billed and an
+                # unknown model is overestimated, never $0.
+                from agentguard.precision_cost import CostResolutionError, resolve_billable_cost
 
-                cost = estimate_cost(model_name, input_t, output_t, provider=provider)
-                if cost > 0:
-                    payload["cost_usd"] = cost
+                try:
+                    resolved = resolve_billable_cost(
+                        {"usage": usage}, model=model_name, provider=provider or ""
+                    )
+                except CostResolutionError as exc:
+                    with self._lock:
+                        self._exit_span(ctx, type(exc), exc, exc.__traceback__)
+                    raise
+                payload["cost_usd"] = resolved["cost_usd"]
+                payload["source_of_cost"] = resolved["source"]
             if self._budget_guard and "total_tokens" in usage:
                 try:
                     consume_kwargs: Dict[str, Any] = {"tokens": usage["total_tokens"]}

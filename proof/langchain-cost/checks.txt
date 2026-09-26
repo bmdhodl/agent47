@@ -1,0 +1,18 @@
+## make preflight
+python scripts/sdk_preflight.py
+No SDK-relevant changes detected; preflight has nothing to run.
+## make lint
+All checks passed!
+## make structural
+============================== 9 passed in 0.31s ===============================
+## make security
+bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+## make release-guard
+Release guard passed.
+## make test
+TOTAL                                       6168    490    92%
+====================== 1290 passed, 19 skipped in 32.73s =======================
+## compat (latest) lock, real packages incl. langchain-core
+====================== 1309 passed, 6 warnings in 47.36s =======================
+## compat (floor) lock
+====================== 1297 passed, 12 skipped in 36.32s =======================
