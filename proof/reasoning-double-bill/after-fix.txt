@@ -1,0 +1,5 @@
+# Same tests with the fix.
+$ PYTHONPATH=sdk AGENTGUARD_REQUIRE_REAL_DEPS=1 .venv/compat/bin/python -m pytest sdk/tests/test_precision_cost.py sdk/tests/test_real_dispatch.py -q -p no:cacheprovider
+sdk/tests/test_real_dispatch.py ...................                      [100%]
+
+============================== 47 passed in 5.69s ==============================
