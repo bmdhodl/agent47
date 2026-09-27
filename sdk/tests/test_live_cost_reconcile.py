@@ -79,14 +79,27 @@ def test_cost_drift_beyond_tolerance_fails_gate():
     assert [line.split()[:2] for line in lines if "MISMATCH" in line] == [["gpt-5-nano", "cost_usd"]]
 
 
-def test_same_model_traffic_in_window_fails_gate():
+def test_same_model_traffic_in_window_fails_gate_without_publishing_org_totals():
     get, _ = replay("usage/completions", "1m")
     openai = rec.usage_totals(get, 0, 60)
     totals, costs = rec.recorded_totals(TRACE)
-    openai["gpt-4o-mini"]["requests"] += 1
+    openai["gpt-4o-mini"] = {"requests": 7, "input": 9000, "cached": 0, "output": 400}
     ok, lines = rec.compare(totals, costs, openai)
     assert not ok
-    assert any(line.split()[:2] == ["gpt-4o-mini", "requests"] and "MISMATCH" in line for line in lines)
+    mini = [line for line in lines if line.startswith("gpt-4o-mini")]
+    assert mini[0].split() == ["gpt-4o-mini", "requests", "2", ">2", "MISMATCH"]
+    assert mini[-1].split()[-2:] == ["redacted", "MISMATCH"]
+    assert not any(n in line.split() for line in mini for n in ("7", "9000", "400"))
+
+
+def test_miscount_with_equal_requests_shows_openai_values():
+    get, _ = replay("usage/completions", "1m")
+    openai = rec.usage_totals(get, 0, 60)
+    totals, costs = rec.recorded_totals(TRACE)
+    openai["gpt-5-nano"]["output"] += 3
+    ok, lines = rec.compare(totals, costs, openai)
+    assert not ok
+    assert ["gpt-5-nano", "output", "19", "22", "MISMATCH"] in [line.split() for line in lines]
 
 
 def test_models_only_openai_saw_are_listed_not_gated():
@@ -96,7 +109,8 @@ def test_models_only_openai_saw_are_listed_not_gated():
     openai["gpt-unlisted-9"] = {"requests": 2, "input": 5, "cached": 0, "output": 1}
     ok, lines = rec.compare(totals, costs, openai)
     assert ok, "\n".join(lines)
-    assert lines[-1].split()[0] == "gpt-unlisted-9" and lines[-1].endswith("other traffic, not gated")
+    assert lines[-1] == "other traffic in window on 1 model(s), not gated"
+    assert "gpt-unlisted-9" not in "\n".join(lines)
 
 
 def test_unpriced_recorded_model_fails_gate_without_crashing():
@@ -156,7 +170,7 @@ def test_cost_report_prints_ratio_per_model_and_total():
     lines = rec.cost_report(get, datetime(2026, 9, 25, tzinfo=timezone.utc))
     assert lines[0].startswith("Costs API vs usage x price table, 2026-09-25 UTC")
     assert lines[-1].startswith("TOTAL")
-    assert len(lines[-1].split()) == 4
+    assert len(lines[-1].split()) == 2
 
 
 def test_cost_report_handles_unpriced_line_items():
@@ -170,6 +184,8 @@ def test_cost_report_handles_unpriced_line_items():
 
     lines = rec.cost_report(get, datetime(2026, 9, 25, tzinfo=timezone.utc))
     assert "n/a" in lines[-1]
+    # Org-wide dollars never reach the public log.
+    assert not any(re.search(r"\d\.\d{6}", line) for line in lines)
 
 
 def test_base_model_strips_snapshot_date_only():

@@ -130,26 +130,36 @@ def compare(recorded: Totals, recorded_cost: Mapping[str, float], openai: Totals
     for model in sorted(recorded):
         ours = recorded[model]
         theirs = openai.get(model, dict.fromkeys(FIELDS, 0))
+        # More requests than the run sent means other org traffic in the window.
+        # Its totals would publish org usage in a public log, so show only that
+        # OpenAI saw more; the gate still fails.
+        foreign = theirs["requests"] > ours["requests"]
         for field in FIELDS:
             match = ours[field] == theirs[field]
             ok &= match
-            lines.append(f"{model:16} {field:9} {ours[field]:>14} {theirs[field]:>14}  "
+            shown = f">{ours[field]}" if foreign and theirs[field] > ours[field] else str(theirs[field])
+            lines.append(f"{model:16} {field:9} {ours[field]:>14} {shown:>14}  "
                          f"{'ok' if match else 'MISMATCH'}")
         priced = lookup_rate(get_default_prices(), "openai", model) is not None
         expected = table_cost(model, theirs) if priced else float("nan")
         got = recorded_cost.get(model, 0.0)
         match = priced and abs(got - expected) <= COST_TOLERANCE
         ok &= match
-        lines.append(f"{model:16} {'cost_usd':9} {got:>14.10f} {expected:>14.10f}  "
+        shown = "redacted" if foreign else f"{expected:.10f}"
+        lines.append(f"{model:16} {'cost_usd':9} {got:>14.10f} {shown:>14}  "
                      f"{'ok' if match else 'MISMATCH'}")
-    for model in sorted(set(openai) - set(recorded)):
-        lines.append(f"{model:16} {'requests':9} {'-':>14} {openai[model]['requests']:>14}  "
-                     "other traffic, not gated")
+    other = set(openai) - set(recorded)
+    if other:
+        # Count only: naming the org's other models would publish them in the log.
+        lines.append(f"other traffic in window on {len(other)} model(s), not gated")
     return ok, lines
 
 
 def cost_report(get: Getter, day: datetime) -> list[str]:
-    """Report-only: billed cost for one UTC day vs that day's usage x the price table."""
+    """Report-only: billed cost for one UTC day vs that day's usage x the price table.
+
+    Covers the whole org, and the logs of a public repo are public, so only
+    ratios are printed, never dollars."""
     start = int(day.timestamp())
     end = start + 86400
     billed: dict[str, float] = {}
@@ -159,7 +169,7 @@ def cost_report(get: Getter, day: datetime) -> list[str]:
         billed[model] = billed.get(model, 0.0) + float(r["amount"]["value"])
     usage = usage_totals(get, start, end, bucket_width="1d")
     lines = [f"Costs API vs usage x price table, {day.date()} UTC (report only; costs lag and round)",
-             f"{'model':24} {'billed':>12} {'table':>12} {'ratio':>8}"]
+             f"{'model':24} {'billed/table':>12}"]
     total_billed = total_table = 0.0
     for model in sorted(set(billed) | set(usage)):
         if model in usage and lookup_rate(get_default_prices(), "openai", model) is not None:
@@ -170,9 +180,9 @@ def cost_report(get: Getter, day: datetime) -> list[str]:
         total_billed += paid
         total_table += table
         ratio = f"{paid / table:.4f}" if table else "n/a"
-        lines.append(f"{model:24} {paid:>12.6f} {table:>12.6f} {ratio:>8}")
+        lines.append(f"{model:24} {ratio:>12}")
     ratio = f"{total_billed / total_table:.4f}" if total_table else "n/a"
-    lines.append(f"{'TOTAL':24} {total_billed:>12.6f} {total_table:>12.6f} {ratio:>8}")
+    lines.append(f"{'TOTAL':24} {ratio:>12}")
     return lines
 
 
