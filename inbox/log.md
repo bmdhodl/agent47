@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-27 | Claude Code | PR #804
+
+- Shipped: the public live-cost logs no longer show org-wide OpenAI spend. The D-2 report prints billed/table ratios only; other models in the window print as a count; same-model org traffic shows as `>N` with the cost redacted; the artifact carries only the report and this run's trace. First CI run with secrets (dispatch on main) passed the gate on all three models.
+- Decisions: the gate still fails on same-model org traffic, since it cannot be told apart from a miscount.
+- Blockers: None.
+
 ## 2026-09-27 | Claude Code | PR #802
 
 - Shipped: `scripts/live_cost_reconcile.py` and the nightly `live-cost-check.yml` make 6 real OpenAI calls (Chat, Responses, stream, gpt-5-nano minimal, a cached prompt twice) and gate on OpenAI's Usage API. Per model, requests and input/cached/output tokens matched exactly, and recorded cost equals OpenAI's counts x the price table within 1e-9. No SDK change needed.
