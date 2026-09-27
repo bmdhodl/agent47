@@ -172,7 +172,7 @@ def test_cost_report_handles_unpriced_line_items():
     lines = rec.cost_report(get, datetime(2026, 9, 25, tzinfo=timezone.utc))
     assert "n/a" in lines[-1]
     # Org-wide dollars never reach the public log.
-    assert not any("0.01" in line for line in lines)
+    assert not any(re.search(r"\d\.\d{6}", line) for line in lines)
 
 
 def test_base_model_strips_snapshot_date_only():
