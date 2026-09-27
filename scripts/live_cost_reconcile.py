@@ -130,17 +130,23 @@ def compare(recorded: Totals, recorded_cost: Mapping[str, float], openai: Totals
     for model in sorted(recorded):
         ours = recorded[model]
         theirs = openai.get(model, dict.fromkeys(FIELDS, 0))
+        # More requests than the run sent means other org traffic in the window.
+        # Its totals would publish org usage in a public log, so show only that
+        # OpenAI saw more; the gate still fails.
+        foreign = theirs["requests"] > ours["requests"]
         for field in FIELDS:
             match = ours[field] == theirs[field]
             ok &= match
-            lines.append(f"{model:16} {field:9} {ours[field]:>14} {theirs[field]:>14}  "
+            shown = f">{ours[field]}" if foreign and theirs[field] > ours[field] else str(theirs[field])
+            lines.append(f"{model:16} {field:9} {ours[field]:>14} {shown:>14}  "
                          f"{'ok' if match else 'MISMATCH'}")
         priced = lookup_rate(get_default_prices(), "openai", model) is not None
         expected = table_cost(model, theirs) if priced else float("nan")
         got = recorded_cost.get(model, 0.0)
         match = priced and abs(got - expected) <= COST_TOLERANCE
         ok &= match
-        lines.append(f"{model:16} {'cost_usd':9} {got:>14.10f} {expected:>14.10f}  "
+        shown = "redacted" if foreign else f"{expected:.10f}"
+        lines.append(f"{model:16} {'cost_usd':9} {got:>14.10f} {shown:>14}  "
                      f"{'ok' if match else 'MISMATCH'}")
     other = set(openai) - set(recorded)
     if other:

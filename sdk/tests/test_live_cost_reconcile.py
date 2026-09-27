@@ -79,14 +79,27 @@ def test_cost_drift_beyond_tolerance_fails_gate():
     assert [line.split()[:2] for line in lines if "MISMATCH" in line] == [["gpt-5-nano", "cost_usd"]]
 
 
-def test_same_model_traffic_in_window_fails_gate():
+def test_same_model_traffic_in_window_fails_gate_without_publishing_org_totals():
     get, _ = replay("usage/completions", "1m")
     openai = rec.usage_totals(get, 0, 60)
     totals, costs = rec.recorded_totals(TRACE)
-    openai["gpt-4o-mini"]["requests"] += 1
+    openai["gpt-4o-mini"] = {"requests": 7, "input": 9000, "cached": 0, "output": 400}
     ok, lines = rec.compare(totals, costs, openai)
     assert not ok
-    assert any(line.split()[:2] == ["gpt-4o-mini", "requests"] and "MISMATCH" in line for line in lines)
+    mini = [line for line in lines if line.startswith("gpt-4o-mini")]
+    assert mini[0].split() == ["gpt-4o-mini", "requests", "2", ">2", "MISMATCH"]
+    assert mini[-1].split()[-2:] == ["redacted", "MISMATCH"]
+    assert not any(n in line.split() for line in mini for n in ("7", "9000", "400"))
+
+
+def test_miscount_with_equal_requests_shows_openai_values():
+    get, _ = replay("usage/completions", "1m")
+    openai = rec.usage_totals(get, 0, 60)
+    totals, costs = rec.recorded_totals(TRACE)
+    openai["gpt-5-nano"]["output"] += 3
+    ok, lines = rec.compare(totals, costs, openai)
+    assert not ok
+    assert ["gpt-5-nano", "output", "19", "22", "MISMATCH"] in [line.split() for line in lines]
 
 
 def test_models_only_openai_saw_are_listed_not_gated():
