@@ -168,6 +168,9 @@ def test_base_model_strips_snapshot_date_only():
     assert rec.base_model("gpt-4o-mini-2024-07-18") == "gpt-4o-mini"
     assert rec.base_model("gpt-5-nano") == "gpt-5-nano"
     assert rec.base_model("gpt-4.1-nano-2025-04-14") == "gpt-4.1-nano"
+    # A snapshot with its own, higher price row keeps its id.
+    assert rec.base_model("gpt-4o-2024-05-13") == "gpt-4o-2024-05-13"
+    assert rec.table_cost("gpt-4o-2024-05-13", {"input": 1_000_000, "cached": 0, "output": 0}) == 5.0
 
 
 def test_scrub_drops_identifiers():

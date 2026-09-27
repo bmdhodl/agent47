@@ -49,7 +49,10 @@ Totals = dict[str, dict[str, int]]
 
 
 def base_model(model: str) -> str:
-    """OpenAI reports the dated snapshot (gpt-4o-mini-2024-07-18); key by the alias."""
+    """OpenAI reports the dated snapshot (gpt-4o-mini-2024-07-18); key by the alias,
+    unless the snapshot has its own price row (gpt-4o-2024-05-13)."""
+    if ("openai", model) in get_default_prices()["rates"]:
+        return model
     return _DATED.sub("", model)
 
 
