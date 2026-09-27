@@ -1,0 +1,25 @@
+calls 6 | guard cost $0.00028560 | window 2026-09-27T04:12Z +2m
+TIMEOUT after 900s: OpenAI usage never covered every call
+
+model            field         agentguard         openai  result
+gpt-4.1-nano     requests               3              0  MISMATCH
+gpt-4.1-nano     input               4119              0  MISMATCH
+gpt-4.1-nano     cached              1920              0  MISMATCH
+gpt-4.1-nano     output                 5              0  MISMATCH
+gpt-4.1-nano     cost_usd    0.0002699000   0.0000000000  MISMATCH
+gpt-4o-mini      requests               2              2  ok
+gpt-4o-mini      input                 26             26  ok
+gpt-4o-mini      cached                 0              0  ok
+gpt-4o-mini      output                 6              6  ok
+gpt-4o-mini      cost_usd    0.0000075000   0.0000075000  ok
+gpt-5-nano       requests               1              1  ok
+gpt-5-nano       input                 12             12  ok
+gpt-5-nano       cached                 0              0  ok
+gpt-5-nano       output                19             19  ok
+gpt-5-nano       cost_usd    0.0000082000   0.0000082000  ok
+
+GATE FAIL: AgentGuard's record does not match OpenAI's
+
+Costs API vs usage x price table, 2026-09-25 UTC (report only; costs lag and round)
+model                          billed        table    ratio
+TOTAL                        0.000000     0.000000      n/a

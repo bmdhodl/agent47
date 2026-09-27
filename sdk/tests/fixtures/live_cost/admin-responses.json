@@ -1,0 +1,164 @@
+[
+ {
+  "path": "usage/completions",
+  "params": {
+   "start_time": 1790484780,
+   "end_time": 1790484900,
+   "bucket_width": "1m",
+   "group_by": [
+    "model"
+   ],
+   "limit": 1440
+  },
+  "body": {
+   "object": "page",
+   "data": [
+    {
+     "object": "bucket",
+     "end_time": 1790484840,
+     "end_time_iso": "2026-09-27T04:54:00+00:00",
+     "results": [
+      {
+       "object": "organization.usage.completions.result",
+       "project_id": null,
+       "num_model_requests": 3,
+       "user_id": null,
+       "api_key_id": null,
+       "model": "gpt-4.1-nano-2025-04-14",
+       "batch": null,
+       "service_tier": null,
+       "input_tokens": 4119,
+       "output_tokens": 5,
+       "input_cached_tokens": 1920,
+       "input_cache_write_tokens": 0,
+       "input_uncached_tokens": 2199,
+       "input_text_tokens": 2199,
+       "output_text_tokens": 5,
+       "input_cached_text_tokens": 1920,
+       "input_audio_tokens": 0,
+       "input_cached_audio_tokens": 0,
+       "output_audio_tokens": 0,
+       "input_image_tokens": 0,
+       "input_cached_image_tokens": 0,
+       "output_image_tokens": 0
+      },
+      {
+       "object": "organization.usage.completions.result",
+       "project_id": null,
+       "num_model_requests": 2,
+       "user_id": null,
+       "api_key_id": null,
+       "model": "gpt-4o-mini-2024-07-18",
+       "batch": null,
+       "service_tier": null,
+       "input_tokens": 26,
+       "output_tokens": 6,
+       "input_cached_tokens": 0,
+       "input_cache_write_tokens": 0,
+       "input_uncached_tokens": 26,
+       "input_text_tokens": 26,
+       "output_text_tokens": 6,
+       "input_cached_text_tokens": 0,
+       "input_audio_tokens": 0,
+       "input_cached_audio_tokens": 0,
+       "output_audio_tokens": 0,
+       "input_image_tokens": 0,
+       "input_cached_image_tokens": 0,
+       "output_image_tokens": 0
+      },
+      {
+       "object": "organization.usage.completions.result",
+       "project_id": null,
+       "num_model_requests": 1,
+       "user_id": null,
+       "api_key_id": null,
+       "model": "gpt-5-nano-2025-08-07",
+       "batch": null,
+       "service_tier": null,
+       "input_tokens": 12,
+       "output_tokens": 19,
+       "input_cached_tokens": 0,
+       "input_cache_write_tokens": 0,
+       "input_uncached_tokens": 12,
+       "input_text_tokens": 12,
+       "output_text_tokens": 19,
+       "input_cached_text_tokens": 0,
+       "input_audio_tokens": 0,
+       "input_cached_audio_tokens": 0,
+       "output_audio_tokens": 0,
+       "input_image_tokens": 0,
+       "input_cached_image_tokens": 0,
+       "output_image_tokens": 0
+      }
+     ],
+     "start_time": 1790484780,
+     "start_time_iso": "2026-09-27T04:53:00+00:00"
+    },
+    {
+     "object": "bucket",
+     "end_time": 1790484900,
+     "end_time_iso": "2026-09-27T04:55:00+00:00",
+     "results": [],
+     "start_time": 1790484840,
+     "start_time_iso": "2026-09-27T04:54:00+00:00"
+    }
+   ],
+   "has_more": false,
+   "next_page": null
+  }
+ },
+ {
+  "path": "costs",
+  "params": {
+   "start_time": 1790294400,
+   "end_time": 1790380800,
+   "bucket_width": "1d",
+   "group_by": [
+    "line_item"
+   ],
+   "limit": 1
+  },
+  "body": {
+   "object": "page",
+   "data": [
+    {
+     "object": "bucket",
+     "end_time": 1790380800,
+     "end_time_iso": "2026-09-26T00:00:00+00:00",
+     "results": [],
+     "start_time": 1790294400,
+     "start_time_iso": "2026-09-25T00:00:00+00:00"
+    }
+   ],
+   "has_more": false,
+   "next_page": null
+  }
+ },
+ {
+  "path": "usage/completions",
+  "params": {
+   "start_time": 1790294400,
+   "end_time": 1790380800,
+   "bucket_width": "1d",
+   "group_by": [
+    "model"
+   ],
+   "limit": 31
+  },
+  "body": {
+   "object": "page",
+   "data": [
+    {
+     "object": "bucket",
+     "end_time": 1790380800,
+     "end_time_iso": "2026-09-26T00:00:00+00:00",
+     "results": [],
+     "start_time": 1790294400,
+     "start_time_iso": "2026-09-25T00:00:00+00:00"
+    }
+   ],
+   "has_more": false,
+   "next_page": null
+  }
+ }
+]
