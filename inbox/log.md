@@ -1,5 +1,11 @@
 # Inbox Log
 
+## 2026-09-27 | Claude Code | PR #802
+
+- Shipped: `scripts/live_cost_reconcile.py` and the nightly `live-cost-check.yml` make 6 real OpenAI calls (Chat, Responses, stream, gpt-5-nano minimal, a cached prompt twice) and gate on OpenAI's Usage API. Per model, requests and input/cached/output tokens matched exactly, and recorded cost equals OpenAI's counts x the price table within 1e-9. No SDK change needed.
+- Decisions: the job waits up to 60 min (timeout 75) because OpenAI usage for one run's gpt-4.1-nano calls lagged ~55 min. Isolation is by the run's own minute window, gating only the models the run called. The D-2 Costs API check is report-only; this org's cost rows all read $0.00.
+- Blockers: the nightly job skips until the owner adds the `OPENAI_API_KEY` and `OPENAI_ADMIN_KEY` Actions secrets.
+
 ## 2026-09-26 | Claude Code | PR #800
 
 - Shipped: OpenAI and Gemini rows match their pricing pages (read 2026-09-26). GPT-6, GPT-5.6, gpt-5, gpt-4.1, o3, o4-mini and Gemini 3.x now have rows (they were overestimated 15x to 81x); o1-pro ($150 / $600) was under-billed about 5x at the old $30 / $180 ceiling and now has its own row; cached-input rates for gpt-5.5, gpt-5.4 and Gemini 2.5 fixed. Gemini 3.6-3.8 Flash double on 2027-01-01. Gemini thinking is billed as output, and Gemini cache reads come out of the prompt count. Four live OpenAI calls (Responses, stream, Chat Completions, Agents SDK) recorded the published price exactly.
