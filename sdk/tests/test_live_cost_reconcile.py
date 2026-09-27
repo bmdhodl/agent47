@@ -79,24 +79,32 @@ def test_cost_drift_beyond_tolerance_fails_gate():
     assert [line.split()[:2] for line in lines if "MISMATCH" in line] == [["gpt-5-nano", "cost_usd"]]
 
 
-def test_other_traffic_in_window_shows_as_openai_surplus():
+def test_same_model_traffic_in_window_fails_gate():
     get, _ = replay("usage/completions", "1m")
     openai = rec.usage_totals(get, 0, 60)
     totals, costs = rec.recorded_totals(TRACE)
-    openai["gpt-4o"] = {"requests": 1, "input": 10, "cached": 0, "output": 2}
+    openai["gpt-4o-mini"]["requests"] += 1
     ok, lines = rec.compare(totals, costs, openai)
     assert not ok
-    assert any(line.startswith("gpt-4o ") and "MISMATCH" in line for line in lines)
+    assert any(line.split()[:2] == ["gpt-4o-mini", "requests"] and "MISMATCH" in line for line in lines)
 
 
-def test_unpriced_model_in_window_is_a_mismatch_not_a_crash():
+def test_models_only_openai_saw_are_listed_not_gated():
+    get, _ = replay("usage/completions", "1m")
+    openai = rec.usage_totals(get, 0, 60)
     totals, costs = rec.recorded_totals(TRACE)
-    openai = {m: dict(t) for m, t in totals.items()}
-    openai["gpt-unlisted-9"] = {"requests": 1, "input": 5, "cached": 0, "output": 1}
+    openai["gpt-unlisted-9"] = {"requests": 2, "input": 5, "cached": 0, "output": 1}
     ok, lines = rec.compare(totals, costs, openai)
+    assert ok, "\n".join(lines)
+    assert lines[-1].split()[0] == "gpt-unlisted-9" and lines[-1].endswith("other traffic, not gated")
+
+
+def test_unpriced_recorded_model_fails_gate_without_crashing():
+    usage = {"requests": 1, "input": 5, "cached": 0, "output": 1}
+    ok, lines = rec.compare({"gpt-unlisted-9": dict(usage)}, {"gpt-unlisted-9": 0.001},
+                            {"gpt-unlisted-9": dict(usage)})
     assert not ok
-    assert any(line.startswith("gpt-unlisted-9") and "cost_usd" in line and "nan" in line
-               and line.endswith("MISMATCH") for line in lines)
+    assert "nan" in lines[-1] and lines[-1].endswith("MISMATCH")
 
 
 def test_not_covered_until_every_request_lands():

@@ -119,18 +119,22 @@ def covered(recorded: Totals, openai: Totals) -> bool:
 
 
 def compare(recorded: Totals, recorded_cost: Mapping[str, float], openai: Totals) -> tuple[bool, list[str]]:
-    """Gate result and a diff table (one line per model and field)."""
+    """Gate result and a diff table (one line per called model and field).
+
+    Only models this run called are gated. Another caller on the same model in
+    the window cannot be told apart from a miscount, so it fails; models only
+    OpenAI saw are listed as other traffic and not gated.
+    """
     lines = [f"{'model':16} {'field':9} {'agentguard':>14} {'openai':>14}  result"]
     ok = True
-    for model in sorted(set(recorded) | set(openai)):
-        ours = recorded.get(model, dict.fromkeys(FIELDS, 0))
+    for model in sorted(recorded):
+        ours = recorded[model]
         theirs = openai.get(model, dict.fromkeys(FIELDS, 0))
         for field in FIELDS:
             match = ours[field] == theirs[field]
             ok &= match
             lines.append(f"{model:16} {field:9} {ours[field]:>14} {theirs[field]:>14}  "
                          f"{'ok' if match else 'MISMATCH'}")
-        # Other traffic in the window can bring a model the table does not price.
         priced = lookup_rate(get_default_prices(), "openai", model) is not None
         expected = table_cost(model, theirs) if priced else float("nan")
         got = recorded_cost.get(model, 0.0)
@@ -138,6 +142,9 @@ def compare(recorded: Totals, recorded_cost: Mapping[str, float], openai: Totals
         ok &= match
         lines.append(f"{model:16} {'cost_usd':9} {got:>14.10f} {expected:>14.10f}  "
                      f"{'ok' if match else 'MISMATCH'}")
+    for model in sorted(set(openai) - set(recorded)):
+        lines.append(f"{model:16} {'requests':9} {'-':>14} {openai[model]['requests']:>14}  "
+                     "other traffic, not gated")
     return ok, lines
 
 
