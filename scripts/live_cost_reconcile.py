@@ -127,9 +127,11 @@ def compare(recorded: Totals, recorded_cost: Mapping[str, float], openai: Totals
             ok &= match
             lines.append(f"{model:16} {field:9} {ours[field]:>14} {theirs[field]:>14}  "
                          f"{'ok' if match else 'MISMATCH'}")
-        expected = table_cost(model, theirs)
+        # Other traffic in the window can bring a model the table does not price.
+        priced = lookup_rate(get_default_prices(), "openai", model) is not None
+        expected = table_cost(model, theirs) if priced else float("nan")
         got = recorded_cost.get(model, 0.0)
-        match = abs(got - expected) <= COST_TOLERANCE
+        match = priced and abs(got - expected) <= COST_TOLERANCE
         ok &= match
         lines.append(f"{model:16} {'cost_usd':9} {got:>14.10f} {expected:>14.10f}  "
                      f"{'ok' if match else 'MISMATCH'}")

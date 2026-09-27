@@ -89,6 +89,16 @@ def test_other_traffic_in_window_shows_as_openai_surplus():
     assert any(line.startswith("gpt-4o ") and "MISMATCH" in line for line in lines)
 
 
+def test_unpriced_model_in_window_is_a_mismatch_not_a_crash():
+    totals, costs = rec.recorded_totals(TRACE)
+    openai = {m: dict(t) for m, t in totals.items()}
+    openai["gpt-unlisted-9"] = {"requests": 1, "input": 5, "cached": 0, "output": 1}
+    ok, lines = rec.compare(totals, costs, openai)
+    assert not ok
+    assert any(line.startswith("gpt-unlisted-9") and "cost_usd" in line and "nan" in line
+               and line.endswith("MISMATCH") for line in lines)
+
+
 def test_not_covered_until_every_request_lands():
     totals, _ = rec.recorded_totals(TRACE)
     partial = {m: dict(t) for m, t in totals.items()}
