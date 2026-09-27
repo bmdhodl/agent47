@@ -18,7 +18,7 @@ structural:
 
 # Lint SDK source
 lint:
-	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/review_readiness_guard.py
+	ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/review_readiness_guard.py scripts/live_cost_reconcile.py
 
 # Lint + auto-fix
 fix:

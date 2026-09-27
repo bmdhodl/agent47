@@ -41,7 +41,7 @@ AgentGuard is the public SDK wedge in the BMD PAT LLC portfolio: a zero-dependen
 - [`site/`](site/): static public landing/docs pages describing the public SDK surface only; not the source of truth for private dashboard behavior.
 - [`memory/`](memory/): SDK-only ground truth for current state, blockers, decisions, and distribution priorities. Per `CLAUDE.md`, `memory/` wins over older repo docs on conflict.
 - [`ops/`](ops/): operating docs — north star, SDK scope, roadmap, definition of done, and a secondary architecture note (`ops/02-ARCHITECTURE.md`).
-- [`scripts/`](scripts/): release guards, preflight logic, generated-readme tooling, and maintenance automation.
+- [`scripts/`](scripts/): release guards, preflight logic, generated-readme tooling, and maintenance automation. `live_cost_reconcile.py` (nightly `live-cost-check.yml`) makes a few real OpenAI calls through the patched client and gates on AgentGuard's recorded tokens and cost matching OpenAI's organization Usage API.
 - [`proof/`](proof/): saved artifacts that demonstrate local proof for specific PRs or flows.
 - [`inbox/`](inbox/): short SDK-only cofounder handoff log appended after merged PRs.
 - [`benchmarks/`](benchmarks/): reproducible local-LLM benchmark script (`bench_ollama.py`, stdlib only) + README; produces one CSV row per run in the published report schema on any consumer NVIDIA GPU.

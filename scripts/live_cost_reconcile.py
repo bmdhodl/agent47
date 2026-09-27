@@ -13,6 +13,9 @@ Report only: the D-2 Costs API total against D-2 usage x the price table.
 Needs OPENAI_API_KEY (model calls) and OPENAI_ADMIN_KEY (/v1/organization/*).
 Spend per run is well under $0.01; a BudgetGuard caps it at $0.02.
 
+Usage can lag close to an hour for one model while others land in minutes
+(observed 2026-09-27), so the default wait is 60 minutes.
+
 Isolation: the Usage API window is the run's own minutes, grouped by model.
 Other traffic on the same models inside those minutes shows up as OpenAI > AgentGuard.
 """
@@ -218,8 +221,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", type=Path, default=Path(".pytest_cache/live-cost-reconcile"),
                         help="directory for trace.jsonl, report.txt and scrubbed admin responses")
-    parser.add_argument("--timeout", type=int, default=900, help="seconds to wait for usage to land")
-    parser.add_argument("--poll", type=int, default=30, help="seconds between usage polls")
+    parser.add_argument("--timeout", type=int, default=3600, help="seconds to wait for usage to land")
+    parser.add_argument("--poll", type=int, default=60, help="seconds between usage polls")
     args = parser.parse_args(argv)
 
     args.out.mkdir(parents=True, exist_ok=True)

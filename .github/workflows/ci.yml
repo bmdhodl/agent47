@@ -76,7 +76,7 @@ jobs:
       - name: Check release metadata sync
         run: python scripts/sdk_release_guard.py
       - name: Lint (ruff)
-        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py
+        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/live_cost_reconcile.py
       - name: Security lint (bandit)
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
 
