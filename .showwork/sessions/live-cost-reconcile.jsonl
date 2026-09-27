@@ -1,0 +1,1 @@
+{"event": "session.start", "session": "live-cost-reconcile", "ts": "2026-09-27T04:08:06", "agent": "claude-code", "tree_snapshot": {"count": 848, "sha256": "16e128e40cbdd7210d237e906f113a3c093da1b27e18215c4a3dfc356d8aace5"}, "verifier_version": "0.6.4", "prev": "5ad98370d7ad43988757b303e83778f6cdab83cf6cd19cee9c0ff7b651ed259f"}
