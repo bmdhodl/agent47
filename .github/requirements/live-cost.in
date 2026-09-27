@@ -1,0 +1,3 @@
+# Nightly live cost reconciliation (scripts/live_cost_reconcile.py). The SDK
+# itself installs from the checkout; this lock only carries the OpenAI client.
+openai
