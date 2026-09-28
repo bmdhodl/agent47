@@ -22,7 +22,7 @@ def run_gate(payload):
 def test_every_required_job_must_pass():
     result = run_gate(json.dumps({name: {"result": "success"} for name in JOBS}))
     assert result.returncode == 0
-    assert "All five CI job groups passed" in result.stdout
+    assert "All 5 CI job groups passed" in result.stdout
 
 
 @pytest.mark.parametrize("result", ["failure", "cancelled", "skipped", None, "unknown"])

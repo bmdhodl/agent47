@@ -21,7 +21,7 @@ def main():
     if failed:
         print("CI did not pass: " + ", ".join(sorted(failed)), file=sys.stderr)
         return 1
-    print("All five CI job groups passed")
+    print(f"All {len(REQUIRED)} CI job groups passed")
     return 0
 
 
