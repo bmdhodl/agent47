@@ -14,8 +14,20 @@ from typing import Any
 from urllib.request import Request, urlopen
 
 PYPI_URL = "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false"
+PYTHON_MINOR_URL = "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false"
 NPM_PACKAGE = "@agentguard47/mcp-server"
 RELEASE_DATES = ("2026-09-12", "2026-09-15", "2026-09-18", "2026-09-24")
+OFF_PUBLISH_METHOD = (
+    "Off-publish-day figures sum without_mirrors downloads on the window days whose "
+    "date is not in exclusions.publish_dates, divided by the count of those days; "
+    "publish-day rows stay in the data, annotated, and are never deleted. The "
+    "real-interpreter figures read python_minor?mirrors=false and count only rows "
+    "whose category is not null."
+)
+INTERPRETER_CAVEAT = (
+    "a null interpreter almost always means tooling rather than a person, and a real "
+    "interpreter still does not prove a distinct person"
+)
 
 
 def _window(rows: list[dict[str, Any]], end: date, days: int) -> tuple[str, str, int, list[str]]:
@@ -35,6 +47,53 @@ def _window(rows: list[dict[str, Any]], end: date, days: int) -> tuple[str, str,
     return start.isoformat(), end.isoformat(), total, missing
 
 
+def _off_publish(
+    rows: list[dict[str, Any]], start: str, end: str, publish_dates: tuple[str, ...]
+) -> dict[str, Any]:
+    """Downloads on window days that are not publish days, and the per-day mean.
+
+    Publish-day rows are skipped in the sum, not removed from the data.
+    """
+    publish = sorted(day for day in publish_dates if start <= day <= end)
+    skip = set(publish)
+    downloads = sum(
+        int(row["downloads"])
+        for row in rows
+        if start <= row["date"] <= end and row["date"] not in skip
+    )
+    day_count = 0
+    cursor = date.fromisoformat(start)
+    last = date.fromisoformat(end)
+    while cursor <= last:
+        if cursor.isoformat() not in skip:
+            day_count += 1
+        cursor += timedelta(days=1)
+    return {
+        "downloads": downloads,
+        "day_count": day_count,
+        "mean_per_day": round(downloads / day_count, 1) if day_count else 0.0,
+        "publish_dates_excluded": publish,
+    }
+
+
+def _real_interpreter_rows(python_minor_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Keep only rows that report an actual Python minor version.
+
+    pypistats returns the string "null" for an unknown interpreter.
+    """
+    kept = []
+    for row in python_minor_rows:
+        category = row.get("category")
+        if category is None or str(category).strip().lower() == "null":
+            continue
+        kept.append({"date": row["date"], "downloads": int(row["downloads"])})
+    return kept
+
+
+def _window_total(rows: list[dict[str, Any]], start: str, end: str) -> int:
+    return sum(int(row["downloads"]) for row in rows if start <= row["date"] <= end)
+
+
 def build_snapshot(
     *,
     retrieved_at: str,
@@ -43,6 +102,8 @@ def build_snapshot(
     feedback_reports: list[dict[str, Any]] | None,
     pypi_error: str | None = None,
     npm_error: str | None = None,
+    python_minor_rows: list[dict[str, Any]] | None = None,
+    python_minor_error: str | None = None,
 ) -> dict[str, Any]:
     retrieved = datetime.fromisoformat(retrieved_at.replace("Z", "+00:00")).date()
     sources: dict[str, Any] = {
@@ -67,6 +128,7 @@ def build_snapshot(
             "repository visits; GitHub traffic was not retrieved",
             "site events were not retrieved; 2026-09-18 landing-page install_intent rows stay navigation in that baseline and are not reused here",
             "real-workflow activation; demo success is not production use",
+            INTERPRETER_CAVEAT,
         ],
         "exclusions": {
             "publish_dates": list(RELEASE_DATES),
@@ -107,6 +169,41 @@ def build_snapshot(
                 if start30 <= day <= end30
             ],
         }
+        interpreter_rows = _real_interpreter_rows(list(python_minor_rows or []))
+        interpreter_available = not python_minor_error and python_minor_rows is not None
+        off_publish: dict[str, Any] = {"method": OFF_PUBLISH_METHOD, "caveat": INTERPRETER_CAVEAT}
+        for label, (w_start, w_end, w_total) in {
+            "window_7d": (start7, end7, total7),
+            "window_30d": (start30, end30, total30),
+        }.items():
+            block = _off_publish(rows, w_start, w_end, RELEASE_DATES)
+            block["window"] = {"start": w_start, "end": w_end}
+            block["window_downloads"] = w_total
+            if interpreter_available:
+                real = _off_publish(interpreter_rows, w_start, w_end, RELEASE_DATES)
+                real["window_downloads"] = _window_total(interpreter_rows, w_start, w_end)
+                real["source"] = PYTHON_MINOR_URL
+                block["real_interpreter"] = real
+            else:
+                block["real_interpreter"] = {
+                    "status": "unavailable",
+                    "reason": python_minor_error or "not supplied",
+                    "source": PYTHON_MINOR_URL,
+                }
+            off_publish[label] = block
+        snapshot["pypi"]["off_publish_days"] = off_publish
+        if interpreter_available:
+            sources["pypi_python_minor"] = {
+                "status": "ok",
+                "url": PYTHON_MINOR_URL,
+                "retrieved_at": retrieved_at,
+            }
+        else:
+            sources["pypi_python_minor"] = {
+                "status": "unavailable",
+                "url": PYTHON_MINOR_URL,
+                "reason": python_minor_error or "not supplied",
+            }
         snapshot["windows"] = {
             "pypi_7d": {"start": start7, "end": end7, "query": PYPI_URL, "note": "calendar window, without_mirrors"},
             "pypi_30d": {"start": start30, "end": end30, "query": PYPI_URL, "note": "calendar window, without_mirrors"},
@@ -138,12 +235,16 @@ def _get_json(url: str) -> dict[str, Any]:
 
 
 def fetch_public(retrieved_at: str) -> dict[str, Any]:
-    pypi_error = npm_error = None
-    pypi_rows = npm = None
+    pypi_error = npm_error = python_minor_error = None
+    pypi_rows = npm = python_minor_rows = None
     try:
         pypi_rows = list(_get_json(PYPI_URL).get("data") or [])
     except Exception as exc:
         pypi_error = type(exc).__name__
+    try:
+        python_minor_rows = list(_get_json(PYTHON_MINOR_URL).get("data") or [])
+    except Exception as exc:
+        python_minor_error = type(exc).__name__
     retrieved = datetime.fromisoformat(retrieved_at.replace("Z", "+00:00")).date()
     start = (retrieved - timedelta(days=29)).isoformat()
     end = retrieved.isoformat()
@@ -159,6 +260,8 @@ def fetch_public(retrieved_at: str) -> dict[str, Any]:
         feedback_reports=[],
         pypi_error=pypi_error,
         npm_error=npm_error,
+        python_minor_rows=python_minor_rows,
+        python_minor_error=python_minor_error,
     )
 
 
@@ -168,6 +271,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--fetch-public", action="store_true")
     parser.add_argument("--pypi-json", type=Path)
     parser.add_argument("--npm-json", type=Path)
+    parser.add_argument("--python-minor-json", type=Path)
     parser.add_argument("--feedback-json", type=Path)
     parser.add_argument("--retrieved-at", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
     args = parser.parse_args(argv)
@@ -178,11 +282,17 @@ def main(argv: list[str] | None = None) -> int:
     else:
         pypi_rows = json.loads(args.pypi_json.read_text(encoding="utf-8")) if args.pypi_json else None
         npm = json.loads(args.npm_json.read_text(encoding="utf-8")) if args.npm_json else None
+        python_minor_rows = (
+            json.loads(args.python_minor_json.read_text(encoding="utf-8"))
+            if args.python_minor_json
+            else None
+        )
         snapshot = build_snapshot(
             retrieved_at=args.retrieved_at,
             pypi_rows=pypi_rows,
             npm=npm,
             feedback_reports=feedback,
+            python_minor_rows=python_minor_rows,
         )
     args.out.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return 0

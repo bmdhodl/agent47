@@ -351,6 +351,109 @@ def test_refresh_from_fixtures_does_not_invent_users(tmp_path):
     assert report["repeat_use"].startswith("unknown")
 
 
+def _off_publish_fixture(tmp_path):
+    """The 2026-09-20..2026-09-26 window from the AG-29 focus review.
+
+    It holds one publish day (09-24) and two 100%-null interpreter days
+    (09-20, 09-21), which is why figure two matters more than figure one.
+    """
+    overall = [
+        {"category": "without_mirrors", "date": "2026-09-20", "downloads": 51},
+        {"category": "without_mirrors", "date": "2026-09-21", "downloads": 18},
+        {"category": "without_mirrors", "date": "2026-09-22", "downloads": 5},
+        {"category": "without_mirrors", "date": "2026-09-23", "downloads": 10},
+        {"category": "without_mirrors", "date": "2026-09-24", "downloads": 86},
+        {"category": "without_mirrors", "date": "2026-09-25", "downloads": 12},
+        {"category": "without_mirrors", "date": "2026-09-26", "downloads": 8},
+    ]
+    python_minor = [
+        {"category": "null", "date": "2026-09-20", "downloads": 51},
+        {"category": "null", "date": "2026-09-21", "downloads": 18},
+        {"category": "3.12", "date": "2026-09-22", "downloads": 3},
+        {"category": "null", "date": "2026-09-22", "downloads": 2},
+        {"category": "3.11", "date": "2026-09-23", "downloads": 4},
+        {"category": "null", "date": "2026-09-23", "downloads": 6},
+        {"category": "3.12", "date": "2026-09-24", "downloads": 16},
+        {"category": "null", "date": "2026-09-24", "downloads": 70},
+        {"category": "3.13", "date": "2026-09-25", "downloads": 3},
+        {"category": "null", "date": "2026-09-25", "downloads": 9},
+        {"category": "3.12", "date": "2026-09-26", "downloads": 2},
+        {"category": "null", "date": "2026-09-26", "downloads": 6},
+    ]
+    pypi = tmp_path / "pypi.json"
+    minor = tmp_path / "python_minor.json"
+    out = tmp_path / "snapshot.json"
+    pypi.write_text(json.dumps(overall), encoding="utf-8")
+    minor.write_text(json.dumps(python_minor), encoding="utf-8")
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "refresh_activation_snapshot.py"),
+            "--pypi-json",
+            str(pypi),
+            "--python-minor-json",
+            str(minor),
+            "--retrieved-at",
+            "2026-09-27T00:00:00Z",
+            "--out",
+            str(out),
+        ],
+        check=True,
+        cwd=ROOT,
+    )
+    return json.loads(out.read_text(encoding="utf-8"))
+
+
+def test_off_publish_downloads_are_numeric_in_the_snapshot(tmp_path):
+    snapshot = _off_publish_fixture(tmp_path)
+    week = snapshot["pypi"]["off_publish_days"]["window_7d"]
+    assert week["window"] == {"start": "2026-09-20", "end": "2026-09-26"}
+    assert week["window_downloads"] == 190
+    # 190 total less the 86 on the 09-24 publish day, over the other six days.
+    assert isinstance(week["downloads"], int)
+    assert week["downloads"] == 104
+    assert week["day_count"] == 6
+    assert week["mean_per_day"] == 17.3
+    assert week["publish_dates_excluded"] == ["2026-09-24"]
+
+    real = week["real_interpreter"]
+    # 28 of the 190 name an interpreter; 16 of those land on the publish day.
+    assert isinstance(real["downloads"], int)
+    assert real["window_downloads"] == 28
+    assert real["downloads"] == 12
+    assert real["day_count"] == 6
+    assert real["mean_per_day"] == 2.0
+
+    # Release-day rows stay in the data, annotated.
+    assert {row["date"] for row in snapshot["pypi"]["release_day_events"]} >= {"2026-09-24"}
+    assert all(row["annotated_not_removed"] for row in snapshot["pypi"]["release_day_events"])
+    assert any("null interpreter" in note for note in snapshot["unknowns"])
+
+
+def test_off_publish_downloads_are_numeric_in_the_classifier(tmp_path):
+    snapshot = _off_publish_fixture(tmp_path)
+    report = _classify(tmp_path, snapshot)
+    install = report["install"]
+    assert install["pypi_events_outside_publish_burst"] == 104
+    assert install["pypi_events_outside_publish_burst_day_count"] == 6
+    assert install["pypi_events_outside_publish_burst_mean_per_day"] == 17.3
+    assert install["pypi_real_interpreter_events_outside_publish_burst"] == 12
+    assert install["pypi_real_interpreter_events_outside_publish_burst_day_count"] == 6
+    assert install["pypi_real_interpreter_events_outside_publish_burst_mean_per_day"] == 2.0
+    assert install["publish_dates_excluded"] == ["2026-09-24"]
+    for key, value in install.items():
+        assert "not computed" not in str(value), key
+    assert "publish_dates" in str(install["off_publish_method"])
+    assert any("null interpreter" in note for note in report["unknowns"])
+
+
+def test_off_publish_stays_unknown_without_the_interpreter_feed(tmp_path):
+    """An older snapshot must not turn a missing figure into a silent zero."""
+    report = _classify(tmp_path, {})
+    assert report["install"]["pypi_events_outside_publish_burst"] == "unknown"
+    assert "not computed" not in json.dumps(report["install"])
+
+
 @pytest.mark.integration
 def test_feedback_runs_from_installed_distribution(tmp_path):
     target = tmp_path / "site-packages"
