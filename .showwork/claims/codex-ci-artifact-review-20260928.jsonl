@@ -1,0 +1,1 @@
+{"session": "codex-ci-artifact-review-20260928", "ts": "2026-09-28T11:34:39", "claim": "CI documentation states the nightly verification cadence.", "severity": "RED", "check": {"type": "file_contains", "path": "CONTRIBUTING.md", "pattern": "nightly at 08:49 UTC"}, "prev": "78ca029cd240d703f7fd92fa6c85fa4f8fd0677b55057c718621a9683902e65b"}
