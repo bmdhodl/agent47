@@ -2,9 +2,11 @@ name: Published wheel - OS matrix
 
 # Installs the exact PyPI wheel for a stable tag into a fresh venv on each
 # supported OS and runs the offline demo with sockets refused. Dispatched by
-# publish.yml after a release; run it by hand to recheck an older tag. No
-# schedule, so it adds no recurring checkouts to clone traffic.
+# publish.yml after a release; run it by hand to recheck an older tag. Nightly
+# runs recheck the latest stable release against current hosted OS images.
 on:
+  schedule:
+    - cron: "49 8 * * *"
   workflow_dispatch:
     inputs:
       tag:
@@ -16,11 +18,37 @@ permissions:
   contents: read
 
 concurrency:
-  group: published-wheel-${{ inputs.tag }}
+  group: published-wheel-${{ github.event_name }}-${{ inputs.tag || 'latest' }}
   cancel-in-progress: false
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - name: Resolve one stable release for the whole matrix
+        id: release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          REQUESTED_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          tag="$REQUESTED_TAG"
+          if [ -z "$tag" ]; then
+            tag="$(gh api "repos/$GH_REPO/releases/latest" --jq '.tag_name')"
+          fi
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo 'Expected a stable release tag' >&2
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
   offline-example:
+    needs: release
     name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
@@ -45,5 +73,5 @@ jobs:
       - name: Install the published wheel and run the offline example
         shell: bash
         env:
-          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
         run: python scripts/verify_release_example.py --tag "$RELEASE_TAG" --wheel-only

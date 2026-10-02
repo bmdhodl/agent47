@@ -5,7 +5,6 @@ import threading
 import unittest
 import uuid
 
-from agentguard.cost import UnknownModelWarning
 from agentguard.guards import BudgetExceeded, BudgetGuard, LoopDetected, LoopGuard
 from agentguard.integrations.langchain import AgentGuardCallbackHandler
 from agentguard.tracing import JsonlFileSink, Tracer
@@ -221,26 +220,92 @@ class TestLangChainIntegration(unittest.TestCase):
         self.assertEqual(data["token_usage"]["output_tokens"], 500)
         self.assertEqual(data["token_usage"]["total_tokens"], 1500)
 
-    def test_llm_end_no_cost_for_unknown_model(self):
-        """on_llm_end with an unknown model should not have cost_usd."""
+    def test_llm_end_prices_unknown_model_as_overestimate(self):
+        """An unknown model is charged, not recorded as free."""
         handler = AgentGuardCallbackHandler(tracer=self.tracer)
         chain_id = uuid.uuid4()
         handler.on_chain_start({"name": "agent"}, {}, run_id=chain_id)
 
         llm_id = uuid.uuid4()
         handler.on_llm_start({}, ["prompt"], run_id=llm_id)
-        with self.assertWarns(UnknownModelWarning):
-            handler.on_llm_end(
-                _MockResponseWithModel(model="totally-fake-model-xyz", input_t=100, output_t=50),
-                run_id=llm_id,
-            )
+        handler.on_llm_end(
+            _MockResponseWithModel(model="totally-fake-model-xyz", input_t=100, output_t=50),
+            run_id=llm_id,
+        )
         handler.on_chain_end({}, run_id=chain_id)
 
         events = self._read_events()
-        llm_end_events = [e for e in events if e["name"] == "llm.end"]
-        self.assertTrue(len(llm_end_events) >= 1)
-        data = llm_end_events[0].get("data", {})
-        self.assertNotIn("cost_usd", data)
+        data = next(e for e in events if e["name"] == "llm.end").get("data", {})
+        self.assertGreater(data["cost_usd"], 0)
+        self.assertEqual(data["source_of_cost"], "overestimate")
+
+    def test_unknown_model_trips_a_dollar_budget(self):
+        guard = BudgetGuard(max_cost_usd=0.01)
+        handler = AgentGuardCallbackHandler(tracer=self.tracer, budget_guard=guard)
+        handler.on_chain_start({"name": "agent"}, {}, run_id=uuid.uuid4())
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        with self.assertRaises(BudgetExceeded):
+            handler.on_llm_end(
+                _MockResponseWithModel(model="gpt-next", input_t=100_000, output_t=1_000),
+                run_id=llm_id,
+            )
+
+    def test_strict_precision_raises_and_closes_the_llm_span(self):
+        from unittest import mock
+
+        from agentguard.precision_cost import CostResolutionError
+
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        handler.on_chain_start({"name": "agent"}, {}, run_id=uuid.uuid4())
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        with mock.patch.dict("os.environ", {"STRICT_PRECISION": "1"}), \
+                self.assertRaises(CostResolutionError):
+            handler.on_llm_end(
+                _MockResponseWithModel(model="gpt-next", input_t=100, output_t=10),
+                run_id=llm_id,
+            )
+        ended = [e for e in self._read_events()
+                 if e.get("kind") == "span" and e.get("phase") == "end" and e.get("error")]
+        self.assertEqual([e["error"]["type"] for e in ended], ["CostResolutionError"])
+
+    def test_llm_end_bills_reasoning_tokens_once(self):
+        """completion_tokens already include reasoning_tokens."""
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        handler.on_chain_start({"name": "agent"}, {}, run_id=uuid.uuid4())
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        response = _MockResponseWithModel(model="o3-mini", input_t=0, output_t=0)
+        response.llm_output = {
+            "model_name": "o3-mini",
+            "token_usage": {"prompt_tokens": 1_000, "completion_tokens": 100_000,
+                            "total_tokens": 101_000,
+                            "completion_tokens_details": {"reasoning_tokens": 80_000}},
+        }
+        handler.on_llm_end(response, run_id=llm_id)
+
+        data = next(e for e in self._read_events() if e["name"] == "llm.end")["data"]
+        # o3-mini: $1.10 input, $4.40 output per 1M; reasoning is inside the 100k.
+        self.assertAlmostEqual(data["cost_usd"], (1_000 * 1.10 + 100_000 * 4.40) / 1e6)
+
+    def test_llm_end_bills_anthropic_cache_reads(self):
+        """Cache-read tokens sit outside Anthropic input_tokens and are billed at the cache rate."""
+        handler = AgentGuardCallbackHandler(tracer=self.tracer)
+        handler.on_chain_start({"name": "agent"}, {}, run_id=uuid.uuid4())
+        llm_id = uuid.uuid4()
+        handler.on_llm_start({}, ["prompt"], run_id=llm_id)
+        response = _MockResponseWithModel(model="claude-sonnet-4-6", input_t=0, output_t=0)
+        response.llm_output = {
+            "model_name": "claude-sonnet-4-6",
+            "usage": {"input_tokens": 1_000, "output_tokens": 100,
+                      "cache_read_input_tokens": 50_000},
+        }
+        handler.on_llm_end(response, run_id=llm_id)
+
+        data = next(e for e in self._read_events() if e["name"] == "llm.end")["data"]
+        # $3 input, $0.30 cache read, $15 output per 1M.
+        self.assertAlmostEqual(data["cost_usd"], (1_000 * 3 + 50_000 * 0.30 + 100 * 15) / 1e6)
 
     def test_llm_end_normalizes_anthropic_usage(self):
         handler = AgentGuardCallbackHandler(tracer=self.tracer)

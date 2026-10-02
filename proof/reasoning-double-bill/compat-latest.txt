@@ -1,0 +1,6 @@
+# compat (latest) job equivalent: real openai 3.19.2, anthropic 1.8.0, openai-agents 0.22.3; Python 3.11 locally, CI uses 3.12
+$ PYTHONPATH=sdk AGENTGUARD_REQUIRE_REAL_DEPS=1 .venv/compat/bin/python -m pytest sdk/tests/ -q -p no:cacheprovider
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 1282 passed, 6 warnings in 44.94s =======================

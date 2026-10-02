@@ -1,0 +1,70 @@
+python scripts/sdk_preflight.py
+==> ruff: lint only the Python files touched in this branch
+/home/user/agent47/.venv/bin/python -m ruff check sdk/agentguard/evaluation.py
+All checks passed!
+==> targeted-pytest: run only the test files most directly tied to the touched SDK paths
+/home/user/agent47/.venv/bin/python -m pytest sdk/tests/test_evaluation.py -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /home/user/agent47/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/agent47/sdk
+configfile: pyproject.toml
+plugins: showwork-0.6.4, cov-7.1.0
+collecting ... collected 31 items
+
+sdk/tests/test_evaluation.py::TestEvalSuiteNoLoops::test_fails_when_loops_present PASSED [  3%]
+sdk/tests/test_evaluation.py::TestEvalSuiteNoLoops::test_passes_when_no_loops PASSED [  6%]
+sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_counts_trace_tool_span_once_with_result_event PASSED [  9%]
+sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_fails_when_tool_called_over_limit PASSED [ 12%]
+sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_fails_when_tool_not_called_enough PASSED [ 16%]
+sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_ignores_unrelated_tool_result_events PASSED [ 19%]
+sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_passes_when_tool_called_at_most_limit PASSED [ 22%]
+sdk/tests/test_evaluation.py::TestEvalSuiteToolCalled::test_passes_when_tool_called_enough PASSED [ 25%]
+sdk/tests/test_evaluation.py::TestEvalSuiteBudget::test_fails_over_budget PASSED [ 29%]
+sdk/tests/test_evaluation.py::TestEvalSuiteBudget::test_passes_under_budget PASSED [ 32%]
+sdk/tests/test_evaluation.py::TestGuardEventCost::test_assert_cost_under_skips_guard_event_cost PASSED [ 35%]
+sdk/tests/test_evaluation.py::TestGuardEventCost::test_summarize_trace_counts_top_level_guard_event_cost PASSED [ 38%]
+sdk/tests/test_evaluation.py::TestGuardEventCost::test_summarize_trace_skips_guard_event_cost PASSED [ 41%]
+sdk/tests/test_evaluation.py::TestEvalSuiteCompletesWithin::test_fails_slow_trace PASSED [ 45%]
+sdk/tests/test_evaluation.py::TestEvalSuiteCompletesWithin::test_passes_fast_trace PASSED [ 48%]
+sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_fails_when_event_missing PASSED [ 51%]
+sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_fails_when_span_missing PASSED [ 54%]
+sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_passes_when_event_found PASSED [ 58%]
+sdk/tests/test_evaluation.py::TestEvalSuiteEventExists::test_passes_when_span_found PASSED [ 61%]
+sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_fails_when_error_type_present PASSED [ 64%]
+sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_fails_with_errors PASSED [ 67%]
+sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_passes_no_errors PASSED [ 70%]
+sdk/tests/test_evaluation.py::TestEvalSuiteNoErrors::test_passes_when_error_type_absent PASSED [ 74%]
+sdk/tests/test_evaluation.py::TestEvalSuiteBudgetEvents::test_fails_when_budget_exceeded PASSED [ 77%]
+sdk/tests/test_evaluation.py::TestEvalSuiteBudgetEvents::test_passes_when_budget_not_exceeded PASSED [ 80%]
+sdk/tests/test_evaluation.py::TestEvalSuiteTotalEvents::test_fails_when_total_events_hits_limit PASSED [ 83%]
+sdk/tests/test_evaluation.py::TestEvalSuiteTotalEvents::test_passes_when_total_events_under_limit PASSED [ 87%]
+sdk/tests/test_evaluation.py::TestEvalSuiteChaining::test_multiple_assertions_chained PASSED [ 90%]
+sdk/tests/test_evaluation.py::TestEvalSuiteEdgeCases::test_empty_trace PASSED [ 93%]
+sdk/tests/test_evaluation.py::TestEvalSuiteEdgeCases::test_malformed_jsonl PASSED [ 96%]
+sdk/tests/test_evaluation.py::TestEvalResult::test_summary_format PASSED [100%]
+
+============================== 31 passed in 0.11s ==============================
+==> structural: SDK module edits must keep the architectural invariants green
+/home/user/agent47/.venv/bin/python -m pytest sdk/tests/test_architecture.py -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /home/user/agent47/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/agent47/sdk
+configfile: pyproject.toml
+plugins: showwork-0.6.4, cov-7.1.0
+collecting ... collected 9 items
+
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_core_modules_stdlib_only PASSED [ 11%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_core_does_not_import_integrations PASSED [ 22%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_module_exceeds_line_limit PASSED [ 33%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_public_exports_have_docstrings PASSED [ 44%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_public_naming_conventions PASSED [ 55%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_hardcoded_absolute_paths PASSED [ 66%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_thread_safe_classes_have_lock PASSED [ 77%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_guard_check_methods_raise_not_return PASSED [ 88%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_sinks_implement_emit PASSED [100%]
+
+============================== 9 passed in 0.27s ===============================
+==> security: SDK module edits should get a fast security scan before the full gate
+/home/user/agent47/.venv/bin/python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q

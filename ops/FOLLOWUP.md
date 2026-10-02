@@ -8,6 +8,10 @@
 - 1.4.0 shipped 2026-09-24 (AG-01 through AG-05). AG-06 stays open: it
   needs an approved public API, and the week-four gate has no external repeat
   user, so later adapters stay held.
+- The price table prices OpenAI and Gemini text at the Standard tier. Not
+  modelled: OpenAI Fast mode (2x), the 10% data-residency and FedRAMP uplift,
+  Batch/Flex discounts, and Gemini audio and image rates. GPT-5.6 Sol is at a
+  promotional price "at least through November 21, 2026"; recheck it then.
 - 1.4.1 adds `agentguard --version` (owner-approved 2026-09-25). After the
   tag, confirm the `published-wheel.yml` matrix and PyPI attestations and add
   `proof/v1.4.1/PUBLICATION.md`.

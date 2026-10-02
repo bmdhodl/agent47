@@ -5,8 +5,8 @@
 ### Added
 - `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
   cost, and the trace's SHA-256 as a barcode. `--format markdown` wraps it for
-  PRs and issues; `--format json` is for CI. Guard events no longer count
-  toward the receipt's cost, so the call that tripped a budget is counted once.
+  PRs and issues; `--format json` is for CI. The receipt counts cost the same
+  way as `report`, so the call that tripped a budget is counted once.
 
 - `agentguard hook claude-code` is a Claude Code hook. It refuses the third
   identical tool call in a row, a call that already failed twice, and, with
@@ -33,11 +33,48 @@
   current releases, and the openai floor (1.40.0) predates the Responses API.
 
 ### Fixes
+- One price table. `estimate_cost` and the patched clients now read the same
+  rows. Before, the patched clients billed a `gpt-5.5` prompt over 272k
+  tokens at half its price, and priced every Claude 5 model, `claude-haiku-4-5`,
+  and the real Claude Opus 4 id (`claude-opus-4-20250514`) as unknown, 8x to
+  137x too high. Claude, OpenAI, and Gemini rows match each provider's
+  pricing page as of 2026-09-26. Cached-input rates for gpt-5.5, gpt-5.4,
+  and Gemini 2.5 were 2x to 5x too high. GPT-6, GPT-5.6, GPT-5.2, gpt-5,
+  gpt-4.1, o3, o4-mini, o1-pro, and Gemini 3.x were priced as unknown; they
+  now have rows. Gemini 3.6, 3.7, and 3.8 Flash double on 2027-01-01 as
+  Google has published. Retired Gemini 1.5 and 2.0 rows are removed.
+- Gemini thinking tokens were not billed, and Gemini cache reads were billed at
+  the full input rate. `thoughts_token_count` now bills as output, and cached
+  tokens are taken out of `prompt_token_count`, which includes them.
+- Dated model ids price as their base model. An unknown Anthropic or OpenAI
+  model is priced at that provider's highest listed rates instead of a flat
+  $150 per million tokens. For OpenAI that is o1-pro, $150 in and $600 out
+  per million, so an output-heavy call to an unknown OpenAI model can trip a
+  dollar budget sooner than in 1.4.0. `sdk_release_guard.py --check-price-table-age`,
+  run by the publish workflow, fails a release when any provider's prices are
+  more than 90 days old.
+- Usage that reports only `total_tokens` was priced at $0 for a known model.
+  It is now priced at the model's output rate, or the high-water rate for an
+  unknown model.
+- The LangChain callback priced `on_llm_end` with `estimate_cost`, which
+  returns $0 for an unknown model and ignores cache tokens, so a dollar budget
+  never tripped on an unknown model. It now uses the same resolver as the
+  patched clients: unknown models are overestimated and Anthropic cache reads
+  are billed. `llm.end` events carry `source_of_cost`.
 - Every `AsyncOpenAI` and `AsyncAnthropic` call failed with `AttributeError`
   after `agentguard.init()`, because the async patches expected an
   `AsyncTracer`. They now accept the `Tracer` that `init()` creates.
 - `agentguard --version` prints the installed version and exits 0. In 1.4.0
   it exited 2, often on the first command after install.
+- `agentguard report`, `summarize_trace`, `incident`, and
+  `EvalSuite.assert_cost_under` no longer count the call that tripped a
+  budget twice. `guard.budget_exceeded` echoes that call's cost, which its
+  `llm.result` already carries. Savings baselines skip guard events too.
+- Reasoning and thinking tokens were billed twice: once inside output tokens,
+  where OpenAI and Anthropic already count them, and again on top. That
+  overstated cost for o-series, gpt-5, and extended-thinking calls and could
+  stop a dollar budget early. They now bill once, at the output rate. A price
+  row with `reasoning_per_1m` reprices only that slice.
 
 ### Docs
 - The PyPI README again states that the optional `[crewai]` extra pulls

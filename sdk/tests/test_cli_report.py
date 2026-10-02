@@ -97,6 +97,37 @@ class TestCliReport(unittest.TestCase):
             output = buf.getvalue()
             self.assertIn("Estimated cost: $0.0225", output)
 
+    def test_report_does_not_count_budget_exceeded_cost_twice(self) -> None:
+        # Patched providers emit llm.result with the call's cost, then
+        # guard.budget_exceeded echoing that same cost in data.cost_usd.
+        events = [
+            {"kind": "event", "name": "llm.result", "trace_id": "t1", "cost_usd": 1.5, "data": {}}
+            for _ in range(4)
+        ]
+        events.append(
+            {
+                "kind": "event",
+                "name": "guard.budget_exceeded",
+                "trace_id": "t1",
+                "data": {"message": "Cost budget exceeded", "cost_usd": 1.5},
+            }
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, "traces.jsonl")
+            with open(path, "w", encoding="utf-8") as f:
+                for event in events:
+                    f.write(json.dumps(event) + "\n")
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._report(path)
+            self.assertIn("Estimated cost: $6.0000", buf.getvalue())
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                cli._report(path, as_json=True)
+            self.assertEqual(json.loads(buf.getvalue())["estimated_cost_usd"], 6.0)
+
     def test_report_lists_guard_events(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = os.path.join(tmpdir, "traces.jsonl")

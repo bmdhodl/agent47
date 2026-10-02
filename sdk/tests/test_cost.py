@@ -132,7 +132,7 @@ class TestEstimateCostEdgeCases(unittest.TestCase):
         self.assertGreater(cost, 0)
 
     def test_gemini_model(self) -> None:
-        cost = estimate_cost("gemini-1.5-pro", input_tokens=1000, output_tokens=500, provider="google")
+        cost = estimate_cost("gemini-2.5-pro", input_tokens=1000, output_tokens=500, provider="google")
         self.assertGreater(cost, 0)
 
     def test_mistral_model(self) -> None:

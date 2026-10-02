@@ -1,0 +1,3 @@
+TOTAL                                       6174    471    92%
+Required test coverage of 80% reached. Total coverage: 92.37%
+======= 1313 passed, 7 skipped, 3 warnings, 30 subtests passed in 41.01s =======

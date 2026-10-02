@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List, Optional, Tuple
 
 from agentguard.cost import UnknownModelWarning, estimate_cost
-from agentguard.evaluation import _extract_cost, _load_events
+from agentguard.evaluation import _extract_cost, _is_guard_event, _load_events
 from agentguard.usage import infer_provider, normalize_usage
 
 _OPENAI_CACHED_INPUT_PRICES_PER_1K: Dict[str, float] = {
@@ -111,6 +111,8 @@ def _estimate_guard_trace_savings(events: List[Dict[str, Any]]) -> Tuple[Optiona
 
     for idx in range(guard_index - 1, -1, -1):
         baseline_event = events[idx]
+        if _is_guard_event(baseline_event):
+            continue
         usage = extract_normalized_usage(baseline_event)
         tokens_saved = usage.get("total_tokens", 0) if usage else 0
         usd_saved = _extract_cost(baseline_event)

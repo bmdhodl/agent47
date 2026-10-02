@@ -1,0 +1,1 @@
+{"session": "live-cost-reconcile-gate", "ts": "2026-09-27T05:11:23", "claim": "Live reconcile gate passed and ships with workflow and tests", "severity": "RED", "check": {"type": "file_contains", "path": "proof/live-cost-reconcile/run2-live.txt", "pattern": "GATE PASS"}, "prev": "b9a521aace0e97ae07ff9470ffd596b3840bde5ce4b1e4388b92ebada7c393ad"}
