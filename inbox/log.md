@@ -466,3 +466,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-09-12 | OpenAI GPT-6 auto | Merged #710: restored generated README checks and moved price-age reminders out of deterministic tests. SDK audit and security release in progress.
 
 2026-10-02 | OpenAI GPT-6 auto | PR review 2026-10-02: merged #807 (82a59fa), complete CI gate and nightly published-wheel verification. Current-head Actions green; local SDK 1380 passed, 3 optional skips, 92.32% coverage; 41 focused and 11 MCP tests passed. Other open PRs remain under review.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #808 (b6cb0c2), ip-address 10.7.2 lockfile update. Fresh full CI and 11 local MCP tests passed. Existing fast-uri moderate advisory remains in the unchanged dependency tree.
