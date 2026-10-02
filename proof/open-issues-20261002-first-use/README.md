@@ -12,10 +12,13 @@ Checks after the documentation fix:
 
 - `python -m pytest sdk/tests/test_documentation.py sdk/tests/test_release_example.py sdk/tests/test_pypi_readme_sync.py -q`: exit 0, 39 passed.
 - `python -m pytest -p pytest_cov <checkout>/sdk/tests -q --cov=agentguard --cov-fail-under=80 --basetemp <isolated-test-directory>/pytest`: exit 0, 1392 passed, 3 optional Agents SDK skips, 3 runtime warnings, **92.40% coverage**. Windows/Python 3.13.2; raw output in `sdk-tests.txt`. Structural tests are part of this full suite.
-- Ruff, `sdk_release_guard.py`, `check_docs.py --repository agent47`, generated README checks and `git diff --check`: exit 0.
+- Ruff, `sdk_release_guard.py`, `check_docs.py --repository agent47` and generated README checks: exit 0.
+- The initial working-tree `git diff --check` missed newly added proof files. Review found terminal trailing spaces in `sdk-tests.txt`. Those spaces were stripped without changing test results; the complete staged PR diff was then checked with `git diff --cached --check origin/main`: exit 0.
 - The repository's configured Bandit command, `python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q`: exit 0. Its existing exclusions were unchanged.
 
 All evidence above was regenerated after the documentation fix. The earlier PR review proof explains this checkout's Windows junction; logical and physical paths can differ in unedited output. These artifact receipts do not certify external adoption.
+
+Review follow-up: the README generator now routes both first-use guides to `main`, so the candidate description does not need an unpublished tag. A regression failed before the fix (1 failed, 5 passed); all six generator tests passed after the fix. The original complete SDK run remains in `sdk-tests.txt`, with terminal trailing spaces stripped. Review identified its three existing async-mock warnings; this documentation change does not fix them.
 
 ## Upstream readback
 

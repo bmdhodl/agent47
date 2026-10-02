@@ -234,22 +234,22 @@ E:\C-Offload\github\agent47-review-20261002\sdk\agentguard\x402.py              
 ----------------------------------------------------------------------------------------------------------
 TOTAL                                                                                   6194    471    92%
 Required test coverage of 80% reached. Total coverage: 92.40%
-Test 
+Test
 tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n
-ext_model_call[False] was skipped. Reason: 
+ext_model_call[False] was skipped. Reason:
 ('C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\sdk\\tests\\tes
-t_real_dispatch.py', 34, "Skipped: could not import 'agents': No module named 
+t_real_dispatch.py', 34, "Skipped: could not import 'agents': No module named
 'agents'")
-Test 
+Test
 tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n
-ext_model_call[True] was skipped. Reason: 
+ext_model_call[True] was skipped. Reason:
 ('C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\sdk\\tests\\tes
-t_real_dispatch.py', 34, "Skipped: could not import 'agents': No module named 
+t_real_dispatch.py', 34, "Skipped: could not import 'agents': No module named
 'agents'")
-Test 
+Test
 tests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies was
-skipped. Reason: 
+skipped. Reason:
 ('C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\sdk\\tests\\tes
-t_real_dispatch.py', 34, "Skipped: could not import 'agents': No module named 
+t_real_dispatch.py', 34, "Skipped: could not import 'agents': No module named
 'agents'")
 =========== 1392 passed, 3 skipped, 3 warnings in 94.25s (0:01:34) ============

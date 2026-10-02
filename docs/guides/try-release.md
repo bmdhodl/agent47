@@ -23,6 +23,8 @@ This walkthrough uses the published 1.4.0 wheel, checked on October 2, 2026.
 Run it from a directory where `agentguard-first-run` does not already exist.
 Use Python 3.9 or newer. The commands call the virtual environment's Python
 directly, so they need no activation script or PowerShell policy change.
+The pinned package has no runtime dependencies, so `--no-deps` is safe for
+this version.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
