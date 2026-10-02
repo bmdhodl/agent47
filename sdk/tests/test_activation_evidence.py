@@ -1,6 +1,7 @@
 """AG-02: activation evidence and voluntary demo feedback."""
 from __future__ import annotations
 
+import importlib.util
 import io
 import json
 import os
@@ -452,6 +453,74 @@ def test_off_publish_stays_unknown_without_the_interpreter_feed(tmp_path):
     report = _classify(tmp_path, {})
     assert report["install"]["pypi_events_outside_publish_burst"] == "unknown"
     assert "not computed" not in json.dumps(report["install"])
+
+
+def _refresh_module():
+    spec = importlib.util.spec_from_file_location(
+        "refresh_activation_snapshot", ROOT / "scripts/refresh_activation_snapshot.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _mock_public_feeds(monkeypatch, module, releases):
+    def get_json(url):
+        if url == "https://pypi.org/pypi/agentguard47/json":
+            if isinstance(releases, Exception):
+                raise releases
+            return releases
+        if url == module.PYPI_URL:
+            return {"data": [
+                {"category": "without_mirrors", "date": "2026-09-30", "downloads": 6},
+                {"category": "without_mirrors", "date": "2026-10-01", "downloads": 100},
+            ]}
+        if url == module.PYTHON_MINOR_URL:
+            return {"data": [
+                {"category": "3.12", "date": "2026-09-30", "downloads": 2},
+                {"category": "3.12", "date": "2026-10-01", "downloads": 50},
+            ]}
+        return {"downloads": 0, "start": "2026-09-03", "end": "2026-10-02"}
+    monkeypatch.setattr(module, "_get_json", get_json)
+
+
+def test_release_metadata_excludes_a_future_publish_day(monkeypatch, tmp_path):
+    module = _refresh_module()
+    _mock_public_feeds(monkeypatch, module, {"releases": {
+        "1.4.0": [{"upload_time_iso_8601": "2026-09-24T12:00:00Z"}],
+        "1.4.1": [
+            {"upload_time_iso_8601": "2026-10-01T23:30:00Z"},
+            {"upload_time_iso_8601": "2026-10-02T00:01:00Z"},
+        ],
+        "1.4.2": [],
+    }})
+    snapshot = module.fetch_public("2026-10-02T08:00:00Z")
+    week = snapshot["pypi"]["off_publish_days"]["window_7d"]
+    assert snapshot["exclusions"]["publish_dates"] == ["2026-09-24", "2026-10-01"]
+    assert week["downloads"] == 6
+    assert week["day_count"] == 6
+    assert week["real_interpreter"]["downloads"] == 2
+    assert week["publish_dates_excluded"] == ["2026-10-01"]
+    assert _classify(tmp_path, snapshot)["install"]["pypi_events_outside_publish_burst"] == 6
+
+
+@pytest.mark.parametrize("metadata", [
+    OSError("release endpoint unavailable"), {}, {"releases": {}},
+    {"releases": {"1.4.1": [{}]}},
+    {"releases": {"1.4.1": [{"upload_time_iso_8601": "invalid"}]}},
+])
+def test_release_metadata_unavailable_keeps_off_publish_unknown(monkeypatch, tmp_path, metadata):
+    module = _refresh_module()
+    _mock_public_feeds(monkeypatch, module, metadata)
+    snapshot = module.fetch_public("2026-10-02T08:00:00Z")
+    report = _classify(tmp_path, snapshot)
+    assert snapshot["pypi"]["without_mirrors_7d"] == 106
+    assert snapshot["sources"]["pypi_releases"]["status"] == "unavailable"
+    assert report["install"]["pypi_events_outside_publish_burst"] == "unknown"
+
+
+def test_empty_report_has_no_interpreter_caveat(tmp_path):
+    assert not any("null interpreter" in note for note in _classify(tmp_path, {})["unknowns"])
 
 
 @pytest.mark.integration

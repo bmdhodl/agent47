@@ -10,6 +10,13 @@ python scripts/activation_weekly_report.py docs/guides/activation-snapshot-2026-
 
 `report.json` is that classifier stdout.
 
+Review follow-up, 2026-10-02: public refreshes now derive publish dates from the
+first artifact upload per release in the PyPI JSON API. If that metadata is
+unavailable or malformed, download totals remain available but off-publish
+figures stay unknown. Offline fixtures can supply `--pypi-releases-json`; the
+historical fixture baseline does not drive public refreshes. The dated numbers
+below remain the original 2026-09-28 observation.
+
 AG-29 annotated the publish days and then stopped, so
 `pypi_events_outside_publish_burst` read `not computed`. It is a number now, in
 the snapshot and in the classifier, for the 7-day and the 30-day window.

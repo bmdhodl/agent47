@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build an activation snapshot from public counts or local fixtures.
 
-Offline unless --fetch-public is set. That flag reads PyPI Stats and the npm
-downloads API only. It does not read identities, subscribers, or site events.
+Offline unless --fetch-public is set. That flag reads PyPI release metadata,
+PyPI Stats and the npm downloads API. It does not read identities or site events.
 """
 from __future__ import annotations
 
@@ -15,7 +15,9 @@ from urllib.request import Request, urlopen
 
 PYPI_URL = "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false"
 PYTHON_MINOR_URL = "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false"
+PYPI_RELEASES_URL = "https://pypi.org/pypi/agentguard47/json"
 NPM_PACKAGE = "@agentguard47/mcp-server"
+# Historical offline fixture baseline. Public refreshes always read PyPI metadata.
 RELEASE_DATES = ("2026-09-12", "2026-09-15", "2026-09-18", "2026-09-24")
 OFF_PUBLISH_METHOD = (
     "Off-publish-day figures sum without_mirrors downloads on the window days whose "
@@ -94,6 +96,34 @@ def _window_total(rows: list[dict[str, Any]], start: str, end: str) -> int:
     return sum(int(row["downloads"]) for row in rows if start <= row["date"] <= end)
 
 
+def _publish_dates(metadata: dict[str, Any]) -> tuple[str, ...]:
+    """Use the first artifact upload in each release, in UTC."""
+    releases = metadata.get("releases")
+    if not isinstance(releases, dict):
+        raise ValueError("missing PyPI release inventory")
+    days = set()
+    for files in releases.values():
+        if not isinstance(files, list):
+            raise ValueError("invalid PyPI release files")
+        if not files:
+            continue
+        uploads = []
+        for file in files:
+            if not isinstance(file, dict):
+                raise ValueError("invalid PyPI artifact")
+            timestamp = file.get("upload_time_iso_8601")
+            if not isinstance(timestamp, str):
+                raise ValueError("missing PyPI upload timestamp")
+            uploaded = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+            if uploaded.tzinfo is None:
+                raise ValueError("PyPI upload timestamp needs a timezone")
+            uploads.append(uploaded.astimezone(timezone.utc))
+        days.add(min(uploads).date().isoformat())
+    if not days:
+        raise ValueError("no PyPI release uploads found")
+    return tuple(sorted(days))
+
+
 def build_snapshot(
     *,
     retrieved_at: str,
@@ -104,6 +134,8 @@ def build_snapshot(
     npm_error: str | None = None,
     python_minor_rows: list[dict[str, Any]] | None = None,
     python_minor_error: str | None = None,
+    release_dates: tuple[str, ...] | None = RELEASE_DATES,
+    releases_error: str | None = None,
 ) -> dict[str, Any]:
     retrieved = datetime.fromisoformat(retrieved_at.replace("Z", "+00:00")).date()
     sources: dict[str, Any] = {
@@ -131,7 +163,7 @@ def build_snapshot(
             INTERPRETER_CAVEAT,
         ],
         "exclusions": {
-            "publish_dates": list(RELEASE_DATES),
+            "publish_dates": list(release_dates) if release_dates is not None else None,
             "mirrors": "PyPI counts use without_mirrors",
             "landing_page_install_intent": "a marketing-origin target never counts as install",
             "simulated_reports": "a simulated report cannot count as demand",
@@ -165,7 +197,7 @@ def build_snapshot(
             "missing_days": missing30 + [day for day in lag_days if day not in missing30],
             "release_day_events": [
                 {"date": day, "downloads": by_date.get(day, 0), "annotated_not_removed": True}
-                for day in RELEASE_DATES
+                for day in (release_dates or ())
                 if start30 <= day <= end30
             ],
         }
@@ -176,11 +208,13 @@ def build_snapshot(
             "window_7d": (start7, end7, total7),
             "window_30d": (start30, end30, total30),
         }.items():
-            block = _off_publish(rows, w_start, w_end, RELEASE_DATES)
+            if release_dates is None:
+                continue
+            block = _off_publish(rows, w_start, w_end, release_dates)
             block["window"] = {"start": w_start, "end": w_end}
             block["window_downloads"] = w_total
             if interpreter_available:
-                real = _off_publish(interpreter_rows, w_start, w_end, RELEASE_DATES)
+                real = _off_publish(interpreter_rows, w_start, w_end, release_dates)
                 real["window_downloads"] = _window_total(interpreter_rows, w_start, w_end)
                 real["source"] = PYTHON_MINOR_URL
                 block["real_interpreter"] = real
@@ -192,6 +226,10 @@ def build_snapshot(
                 }
             off_publish[label] = block
         snapshot["pypi"]["off_publish_days"] = off_publish
+        if release_dates is None:
+            off_publish["status"] = "unavailable"
+            off_publish["reason"] = releases_error or "release dates not supplied"
+            snapshot["unknowns"].append("off-publish downloads: release dates unavailable")
         if interpreter_available:
             sources["pypi_python_minor"] = {
                 "status": "ok",
@@ -237,6 +275,12 @@ def _get_json(url: str) -> dict[str, Any]:
 def fetch_public(retrieved_at: str) -> dict[str, Any]:
     pypi_error = npm_error = python_minor_error = None
     pypi_rows = npm = python_minor_rows = None
+    release_dates = None
+    releases_error = None
+    try:
+        release_dates = _publish_dates(_get_json(PYPI_RELEASES_URL))
+    except Exception as exc:
+        releases_error = type(exc).__name__
     try:
         pypi_rows = list(_get_json(PYPI_URL).get("data") or [])
     except Exception as exc:
@@ -253,7 +297,7 @@ def fetch_public(retrieved_at: str) -> dict[str, Any]:
         npm = _get_json(npm_url)
     except Exception as exc:
         npm_error = type(exc).__name__
-    return build_snapshot(
+    snapshot = build_snapshot(
         retrieved_at=retrieved_at,
         pypi_rows=pypi_rows,
         npm=npm,
@@ -262,7 +306,15 @@ def fetch_public(retrieved_at: str) -> dict[str, Any]:
         npm_error=npm_error,
         python_minor_rows=python_minor_rows,
         python_minor_error=python_minor_error,
+        release_dates=release_dates,
+        releases_error=releases_error,
     )
+    snapshot["sources"]["pypi_releases"] = {
+        "status": "unavailable" if releases_error else "ok",
+        "url": PYPI_RELEASES_URL,
+        **({"reason": releases_error} if releases_error else {"retrieved_at": retrieved_at}),
+    }
+    return snapshot
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -272,6 +324,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--pypi-json", type=Path)
     parser.add_argument("--npm-json", type=Path)
     parser.add_argument("--python-minor-json", type=Path)
+    parser.add_argument("--pypi-releases-json", type=Path, help="Offline PyPI release metadata")
     parser.add_argument("--feedback-json", type=Path)
     parser.add_argument("--retrieved-at", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
     args = parser.parse_args(argv)
@@ -293,6 +346,10 @@ def main(argv: list[str] | None = None) -> int:
             npm=npm,
             feedback_reports=feedback,
             python_minor_rows=python_minor_rows,
+            release_dates=(
+                _publish_dates(json.loads(args.pypi_releases_json.read_text(encoding="utf-8")))
+                if args.pypi_releases_json else RELEASE_DATES
+            ),
         )
     args.out.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return 0

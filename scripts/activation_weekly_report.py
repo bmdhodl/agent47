@@ -19,7 +19,6 @@ INTERPRETER_CAVEAT = (
     "a null interpreter almost always means tooling rather than a person, and a real "
     "interpreter still does not prove a distinct person"
 )
-NOT_COMPUTED = "not computed; release days are annotated, not removed"
 
 
 def is_install_intent_target(target: str) -> bool:
@@ -223,7 +222,7 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         repeat_use = "unknown without a consented reporter"
 
     unknowns = list(snapshot.get("unknowns") or [])
-    if INTERPRETER_CAVEAT not in unknowns:
+    if pypi is not None and INTERPRETER_CAVEAT not in unknowns:
         unknowns.append(INTERPRETER_CAVEAT)
     if undifferentiated and UNDIFFERENTIATED_FEEDBACK not in unknowns:
         unknowns.append(UNDIFFERENTIATED_FEEDBACK)
