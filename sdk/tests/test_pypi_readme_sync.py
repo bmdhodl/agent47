@@ -52,6 +52,15 @@ def test_generated_pypi_readme_links_docs_and_examples() -> None:
     assert "examples" in content
 
 
+def test_candidate_first_use_guides_do_not_need_an_unpublished_tag() -> None:
+    module = _load_generator_module()
+    content = module.build_pypi_readme(REPO_ROOT)
+
+    for guide in ("try-release.md", "claude-code-hook.md"):
+        path = f"docs/guides/{guide}"
+        assert f"https://github.com/bmdhodl/agent47/blob/main/{path}" in content
+
+
 def test_committed_pypi_readme_is_in_sync() -> None:
     module = _load_generator_module()
 

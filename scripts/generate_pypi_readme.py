@@ -30,6 +30,8 @@ UNRELEASED_PATHS = {
     "docs/enforcement-boundary.md",
     "docs/cost-guardrails.md",
     "docs/guides/getting-started.md",
+    "docs/guides/try-release.md",
+    "docs/guides/claude-code-hook.md",
     "docs/guides/activation-metrics-design.md",
     "docs/guides/bmdpat-measurement-contract.md",
     "docs/guides/reservation-contract.md",

@@ -31,11 +31,20 @@ budget, loop, and retry stops without provider keys or network access. Follow
 the trace path printed by the command to inspect its output.
 `agentguard demo --feedback` prints a local redacted report; nothing is sent.
 
+For a fresh PowerShell install and a runnable raw starter, follow the
+[published-release walkthrough](https://github.com/bmdhodl/agent47/blob/main/docs/guides/try-release.md#windows-powershell).
+
+### Share a stop receipt (1.4.1 candidate)
+
+The published package is 1.4.0. The `receipt`, `hook`, `run`, and `--version`
+commands below exist in the 1.4.1 candidate source and are not published yet.
+With 1.4.0, use `agentguard report agentguard_demo_traces.jsonl` to inspect stops.
+
 `agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
 
-### Guard a Claude Code session
+### Guard a Claude Code session (1.4.1 candidate)
 
 ```bash
 agentguard hook claude-code --install --write
@@ -44,9 +53,9 @@ agentguard hook claude-code --install --write
 This installs a Claude Code hook that refuses the third identical tool call in
 a row and a call that already failed twice. Refusals go to
 `.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
-subscription quota. See the [Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/guides/claude-code-hook.md).
+subscription quota. See the [Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/claude-code-hook.md).
 
-### Guard a script without editing it
+### Guard a script without editing it (1.4.1 candidate)
 
 ```bash
 agentguard run --budget-usd 5 agent.py
@@ -234,7 +243,7 @@ The PyPI README is generated from this README and the changelog.
   `--max-calls`, calls past a per-session cap. `--install --write` adds it to
   `.claude/settings.local.json` and keeps existing hooks; `--uninstall` removes
   only its own. Refusals are logged for `agentguard receipt`. See
-  [the guide](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/guides/claude-code-hook.md).
+  [the guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/claude-code-hook.md).
 
 - `agentguard run [--budget-usd N] agent.py` runs an unmodified script with the
   OpenAI and Anthropic clients patched. Flags, environment variables, and

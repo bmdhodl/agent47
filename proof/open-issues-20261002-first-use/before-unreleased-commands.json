@@ -1,0 +1,53 @@
+{
+  "package": "agentguard47==1.4.0",
+  "platform": "Windows / Python 3.11",
+  "results": [
+    {
+      "command": [
+        "python",
+        "-I",
+        "-m",
+        "agentguard",
+        "receipt",
+        "--help"
+      ],
+      "exit_code": 2,
+      "stderr": "usage: agentguard [-h]\n                  {welcome,badge,summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack}\n                  ...\nagentguard: error: argument cmd: invalid choice: 'receipt' (choose from 'welcome', 'badge', 'summarize', 'report', 'eval', 'incident', 'decisions', 'demo', 'doctor', 'quickstart', 'skillpack')\n"
+    },
+    {
+      "command": [
+        "python",
+        "-I",
+        "-m",
+        "agentguard",
+        "hook",
+        "--help"
+      ],
+      "exit_code": 2,
+      "stderr": "usage: agentguard [-h]\n                  {welcome,badge,summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack}\n                  ...\nagentguard: error: argument cmd: invalid choice: 'hook' (choose from 'welcome', 'badge', 'summarize', 'report', 'eval', 'incident', 'decisions', 'demo', 'doctor', 'quickstart', 'skillpack')\n"
+    },
+    {
+      "command": [
+        "python",
+        "-I",
+        "-m",
+        "agentguard",
+        "run",
+        "--help"
+      ],
+      "exit_code": 2,
+      "stderr": "usage: agentguard [-h]\n                  {welcome,badge,summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack}\n                  ...\nagentguard: error: argument cmd: invalid choice: 'run' (choose from 'welcome', 'badge', 'summarize', 'report', 'eval', 'incident', 'decisions', 'demo', 'doctor', 'quickstart', 'skillpack')\n"
+    },
+    {
+      "command": [
+        "python",
+        "-I",
+        "-m",
+        "agentguard",
+        "--version"
+      ],
+      "exit_code": 2,
+      "stderr": "usage: agentguard [-h]\n                  {welcome,badge,summarize,report,eval,incident,decisions,demo,doctor,quickstart,skillpack}\n                  ...\nagentguard: error: unrecognized arguments: --version\n"
+    }
+  ]
+}

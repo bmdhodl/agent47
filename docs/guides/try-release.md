@@ -17,7 +17,57 @@ python -m agentguard.cli demo --feedback
 python -m agentguard.cli report agentguard_demo_traces.jsonl
 ```
 
-The trace should contain all three events:
+## Windows PowerShell
+
+This walkthrough uses the published 1.4.0 wheel, checked on October 2, 2026.
+Run it from a directory where `agentguard-first-run` does not already exist.
+Use Python 3.9 or newer. The commands call the virtual environment's Python
+directly, so they need no activation script or PowerShell policy change.
+The pinned package has no runtime dependencies, so `--no-deps` is safe for
+this version.
+
+```powershell
+$ErrorActionPreference = 'Stop'
+New-Item -ItemType Directory -Path agentguard-first-run | Out-Null
+Set-Location -LiteralPath agentguard-first-run
+python -m venv .venv
+if ($LASTEXITCODE -ne 0) { throw 'Virtual environment creation failed.' }
+& .\.venv\Scripts\python.exe -I -m pip --isolated install --index-url https://pypi.org/simple --only-binary=:all: --no-deps agentguard47==1.4.0
+if ($LASTEXITCODE -ne 0) { throw 'Package installation failed.' }
+& .\.venv\Scripts\python.exe -I -m agentguard doctor
+if ($LASTEXITCODE -ne 0) { throw 'The installation check failed.' }
+& .\.venv\Scripts\python.exe -I -m agentguard demo --feedback
+if ($LASTEXITCODE -ne 0) { throw 'The offline demo failed.' }
+& .\.venv\Scripts\python.exe -I -m agentguard report agentguard_demo_traces.jsonl
+if ($LASTEXITCODE -ne 0) { throw 'The demo report failed.' }
+& .\.venv\Scripts\python.exe -I -m agentguard quickstart --framework raw --write
+if ($LASTEXITCODE -ne 0) { throw 'Starter creation failed.' }
+& .\.venv\Scripts\python.exe -I agentguard_raw_quickstart.py
+if ($LASTEXITCODE -ne 0) { throw 'The raw starter failed.' }
+& .\.venv\Scripts\python.exe -I -m agentguard report .agentguard/traces.jsonl
+if ($LASTEXITCODE -ne 0) { throw 'The starter report failed.' }
+```
+
+The demo must show budget, loop, and retry stops. The raw starter writes a
+separate trace, then the last command shows its report. These are local
+simulations, not proof of external adoption or a provider invoice cap.
+
+If `python` is absent, install a supported Python version from
+[python.org](https://www.python.org/downloads/windows/) before this walkthrough.
+If a command fails, stop at that command. Include its error and the package
+version in a voluntary report. To read the installed version without a newer
+CLI command, run:
+
+```powershell
+& .\.venv\Scripts\python.exe -I -c "import importlib.metadata; print(importlib.metadata.version('agentguard47'))"
+```
+
+Version 1.4.0 does not have `receipt`, `hook`, `run`, or `--version`. Those
+commands are in the unpublished 1.4.1 candidate. This walkthrough needs no
+provider key or optional framework package. Keep any trace private until you
+have checked its contents.
+
+The demo trace, `agentguard_demo_traces.jsonl`, should contain all three events:
 
 | Event | What happened in this example |
 | --- | --- |
