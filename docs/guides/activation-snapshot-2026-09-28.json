@@ -1,0 +1,171 @@
+{
+  "accepted_external_contributions": 0,
+  "as_of": "2026-09-28",
+  "data_lag": {
+    "pypi": "series ends 2026-09-27; retrieved 2026-09-28; later days are lag, not zero"
+  },
+  "dedup": {
+    "pypi": "none; each download is a package event, not a unique user"
+  },
+  "exclusions": {
+    "landing_page_install_intent": "a marketing-origin target never counts as install",
+    "mirrors": "PyPI counts use without_mirrors",
+    "publish_dates": [
+      "2026-09-12",
+      "2026-09-15",
+      "2026-09-18",
+      "2026-09-24"
+    ],
+    "simulated_reports": "a simulated report cannot count as demand"
+  },
+  "feedback_reports": [],
+  "npm": {
+    "downloads_window": 119
+  },
+  "pypi": {
+    "missing_days": [
+      "2026-08-29",
+      "2026-08-30",
+      "2026-09-01",
+      "2026-09-02",
+      "2026-09-04",
+      "2026-09-05",
+      "2026-09-06",
+      "2026-09-09",
+      "2026-09-14",
+      "2026-09-28"
+    ],
+    "off_publish_days": {
+      "caveat": "a null interpreter almost always means tooling rather than a person, and a real interpreter still does not prove a distinct person",
+      "method": "Off-publish-day figures sum without_mirrors downloads on the window days whose date is not in exclusions.publish_dates, divided by the count of those days; publish-day rows stay in the data, annotated, and are never deleted. The real-interpreter figures read python_minor?mirrors=false and count only rows whose category is not null.",
+      "window_30d": {
+        "day_count": 26,
+        "downloads": 155,
+        "mean_per_day": 6.0,
+        "publish_dates_excluded": [
+          "2026-09-12",
+          "2026-09-15",
+          "2026-09-18",
+          "2026-09-24"
+        ],
+        "real_interpreter": {
+          "day_count": 26,
+          "downloads": 17,
+          "mean_per_day": 0.7,
+          "publish_dates_excluded": [
+            "2026-09-12",
+            "2026-09-15",
+            "2026-09-18",
+            "2026-09-24"
+          ],
+          "source": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false",
+          "window_downloads": 72
+        },
+        "window": {
+          "end": "2026-09-27",
+          "start": "2026-08-29"
+        },
+        "window_downloads": 567
+      },
+      "window_7d": {
+        "day_count": 6,
+        "downloads": 56,
+        "mean_per_day": 9.3,
+        "publish_dates_excluded": [
+          "2026-09-24"
+        ],
+        "real_interpreter": {
+          "day_count": 6,
+          "downloads": 12,
+          "mean_per_day": 2.0,
+          "publish_dates_excluded": [
+            "2026-09-24"
+          ],
+          "source": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false",
+          "window_downloads": 28
+        },
+        "window": {
+          "end": "2026-09-27",
+          "start": "2026-09-21"
+        },
+        "window_downloads": 142
+      }
+    },
+    "release_day_events": [
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-12",
+        "downloads": 145
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-15",
+        "downloads": 96
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-18",
+        "downloads": 85
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-24",
+        "downloads": 86
+      }
+    ],
+    "without_mirrors_30d": 567,
+    "without_mirrors_7d": 142
+  },
+  "retrieved_at": "2026-09-28T08:16:02Z",
+  "sources": {
+    "github_traffic": {
+      "reason": "GitHub traffic API is not available to this refresh",
+      "status": "unavailable"
+    },
+    "npm": {
+      "retrieved_at": "2026-09-28T08:16:02Z",
+      "status": "ok"
+    },
+    "pypi": {
+      "retrieved_at": "2026-09-28T08:16:02Z",
+      "status": "ok",
+      "url": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false"
+    },
+    "pypi_python_minor": {
+      "retrieved_at": "2026-09-28T08:16:02Z",
+      "status": "ok",
+      "url": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false"
+    },
+    "site_events": {
+      "reason": "no fresh site-event export was retrieved",
+      "status": "unavailable"
+    }
+  },
+  "unknowns": [
+    "unique PyPI installers",
+    "repeat use without a consented reporter",
+    "repository visits; GitHub traffic was not retrieved",
+    "site events were not retrieved; 2026-09-18 landing-page install_intent rows stay navigation in that baseline and are not reused here",
+    "real-workflow activation; demo success is not production use",
+    "a null interpreter almost always means tooling rather than a person, and a real interpreter still does not prove a distinct person"
+  ],
+  "windows": {
+    "npm_30d": {
+      "end": "2026-09-28",
+      "query": "https://api.npmjs.org/downloads/point/2026-08-30:2026-09-28/@agentguard47/mcp-server",
+      "start": "2026-08-30"
+    },
+    "pypi_30d": {
+      "end": "2026-09-27",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-08-29"
+    },
+    "pypi_7d": {
+      "end": "2026-09-27",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-21"
+    }
+  }
+}
