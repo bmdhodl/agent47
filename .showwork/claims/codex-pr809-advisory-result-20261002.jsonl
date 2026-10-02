@@ -1,0 +1,1 @@
+{"session": "codex-pr809-advisory-result-20261002", "ts": "2026-10-02T17:35:09", "claim": "Advisory scanner workflow requires completion outputs and JSON/SARIF files", "severity": "RED", "check": {"type": "file_contains", "path": ".github/workflows/trustabl.yml", "pattern": "Require a completed scan"}, "prev": "6d571e789857a59bfdea4e5fe5ddf1913d76674b194182a4f6a77558c03df2a7"}
