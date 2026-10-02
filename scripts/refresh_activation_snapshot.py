@@ -55,6 +55,8 @@ def _off_publish(
     """Downloads on window days that are not publish days, and the per-day mean.
 
     Publish-day rows are skipped in the sum, not removed from the data.
+    Callers select the overall no-mirror category or real-interpreter rows first;
+    multiple interpreter categories on one date are intentionally aggregated.
     """
     publish = sorted(day for day in publish_dates if start <= day <= end)
     skip = set(publish)
@@ -163,7 +165,7 @@ def build_snapshot(
             INTERPRETER_CAVEAT,
         ],
         "exclusions": {
-            "publish_dates": list(release_dates) if release_dates is not None else None,
+            "publish_dates": list(release_dates or ()),
             "mirrors": "PyPI counts use without_mirrors",
             "landing_page_install_intent": "a marketing-origin target never counts as install",
             "simulated_reports": "a simulated report cannot count as demand",
@@ -280,7 +282,7 @@ def fetch_public(retrieved_at: str) -> dict[str, Any]:
     try:
         release_dates = _publish_dates(_get_json(PYPI_RELEASES_URL))
     except Exception as exc:
-        releases_error = type(exc).__name__
+        releases_error = f"{type(exc).__name__}: {exc}"
     try:
         pypi_rows = list(_get_json(PYPI_URL).get("data") or [])
     except Exception as exc:

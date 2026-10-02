@@ -516,6 +516,8 @@ def test_release_metadata_unavailable_keeps_off_publish_unknown(monkeypatch, tmp
     report = _classify(tmp_path, snapshot)
     assert snapshot["pypi"]["without_mirrors_7d"] == 106
     assert snapshot["sources"]["pypi_releases"]["status"] == "unavailable"
+    assert snapshot["exclusions"]["publish_dates"] == []
+    assert ": " in snapshot["sources"]["pypi_releases"]["reason"]
     assert report["install"]["pypi_events_outside_publish_burst"] == "unknown"
 
 
