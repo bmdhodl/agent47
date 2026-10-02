@@ -525,6 +525,16 @@ def test_empty_report_has_no_interpreter_caveat(tmp_path):
     assert not any("null interpreter" in note for note in _classify(tmp_path, {})["unknowns"])
 
 
+@pytest.mark.parametrize("rows,error", [(None, None), ([], "OSError")])
+def test_empty_pypi_refresh_has_no_interpreter_caveat(tmp_path, rows, error):
+    snapshot = _refresh_module().build_snapshot(
+        retrieved_at="2026-10-02T08:00:00Z", pypi_rows=rows, pypi_error=error,
+        npm=None, feedback_reports=[],
+    )
+    assert not any("null interpreter" in note for note in snapshot["unknowns"])
+    assert not any("null interpreter" in note for note in _classify(tmp_path, snapshot)["unknowns"])
+
+
 @pytest.mark.integration
 def test_feedback_runs_from_installed_distribution(tmp_path):
     target = tmp_path / "site-packages"

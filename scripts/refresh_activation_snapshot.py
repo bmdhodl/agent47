@@ -162,7 +162,6 @@ def build_snapshot(
             "repository visits; GitHub traffic was not retrieved",
             "site events were not retrieved; 2026-09-18 landing-page install_intent rows stay navigation in that baseline and are not reused here",
             "real-workflow activation; demo success is not production use",
-            INTERPRETER_CAVEAT,
         ],
         "exclusions": {
             "publish_dates": list(release_dates or ()),
@@ -176,6 +175,7 @@ def build_snapshot(
         sources["pypi"] = {"status": "unavailable", "url": PYPI_URL, "reason": pypi_error or "not supplied"}
         snapshot["data_lag"] = {"pypi": "unavailable"}
     else:
+        snapshot["unknowns"].append(INTERPRETER_CAVEAT)
         rows = sorted(
             (
                 {"date": row["date"], "downloads": int(row["downloads"])}
