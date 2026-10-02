@@ -1,0 +1,13 @@
+{
+  "variant": "current",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+  "test_source_sha256": "30701eaa7d4986dbaebd096fd0c51821c5277e16e4a05eadf4988d9ec8bccc82",
+  "installed_import": "venv/Lib/site-packages/agentguard/__init__.py",
+  "selected": 12,
+  "passed": 12,
+  "skipped": 0,
+  "exit": 0,
+  "network": "real SDK HTTP transports replaced with mocks; tracing disabled",
+  "provider_credentials": "removed from child environment"
+}

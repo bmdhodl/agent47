@@ -315,8 +315,14 @@ def _sse(body: Dict[str, Any]) -> str:
 
 @pytest.fixture
 def responses_sdk(openai_sdk):
-    if not hasattr(openai_sdk.OpenAI, "responses"):
-        pytest.skip("the Responses API needs openai>=1.66")
+    # Early Responses releases attach resources in __init__, not on the class.
+    # Use the SDK's explicit transport, as the dispatch tests do; older client
+    # constructors can otherwise pass removed proxy options to newer httpx.
+    with openai_sdk.OpenAI(
+        api_key="sk-compat", http_client=openai_sdk.DefaultHttpxClient()
+    ) as probe:
+        if not hasattr(probe, "responses"):
+            pytest.skip("the Responses API needs openai>=1.66")
     from agentguard.instrument import unpatch_openai_async
 
     yield openai_sdk
@@ -571,14 +577,15 @@ def test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call(responses_s
         tools=[lookup],
         model=agents.OpenAIResponsesModel("gpt-4o-mini", client),
     )
+    run_config = agents.RunConfig(model_provider=agents.OpenAIProvider(openai_client=client))
 
     async def run() -> None:
         if streamed:
-            result = agents.Runner.run_streamed(agent, "hi", max_turns=10)
+            result = agents.Runner.run_streamed(agent, "hi", max_turns=10, run_config=run_config)
             async for _ in result.stream_events():
                 pass
         else:
-            await agents.Runner.run(agent, "hi", max_turns=10)
+            await agents.Runner.run(agent, "hi", max_turns=10, run_config=run_config)
 
     with pytest.raises(BudgetExceeded):
         asyncio.run(run())
@@ -610,7 +617,8 @@ def test_agents_sdk_native_max_turns_still_applies(responses_sdk):
     agent = agents.Agent(
         name="looper", tools=[lookup], model=agents.OpenAIResponsesModel("gpt-4o-mini", client)
     )
+    run_config = agents.RunConfig(model_provider=agents.OpenAIProvider(openai_client=client))
     with pytest.raises(agents.MaxTurnsExceeded):
-        asyncio.run(agents.Runner.run(agent, "hi", max_turns=2))
+        asyncio.run(agents.Runner.run(agent, "hi", max_turns=2, run_config=run_config))
     assert len(transport.requests) == 2
     assert guard.state.calls_used == 2

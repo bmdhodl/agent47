@@ -480,3 +480,7 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | Merged #806 after fixing dynamic PyPI publish dates, unavailable metadata, list-schema preservation and empty-feed caveats. All 30 activation tests and fresh complete CI passed; review findings resolved. #809 awaits its final updated-head scan/CI.
 
 2026-10-02 | OpenAI GPT-6 auto | Merged #809 (6239a69), pinned advisory scanner with least privilege, telemetry disabled and visible execution errors. Seven wrapper cases, final PR scan and main scan passed. All eight reviewed PRs are merged; final SDK validation: 1392 passed, 3 optional skips, 92.32% coverage. Durable proof: proof/pr-review-20261002/. No review blockers; scanner rule coverage remains limited. No package release performed.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #811 (ca17961), durable PR-review proof and final handoff. Complete hosted CI and configured local checks passed. No package release or outside adoption claim.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #812 (2258413), published-version first-use correction and tested Windows PowerShell guide. SDK 1392 passed, 3 optional skips, 92.40% coverage; 40 focused tests and complete current-head CI passed. Review fixes include candidate guide links and redacted proof paths. Outside tester observations remain unknown; #644 still waits on a compatible upstream security fix. All 25 issues remain open.
