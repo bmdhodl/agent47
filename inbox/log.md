@@ -464,3 +464,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 - None for `v1.2.10`; PyPI Trusted Publishing remains a known follow-up.
 
 2026-09-12 | OpenAI GPT-6 auto | Merged #710: restored generated README checks and moved price-age reminders out of deterministic tests. SDK audit and security release in progress.
+
+2026-10-02 | OpenAI GPT-6 auto | PR review 2026-10-02: merged #807 (82a59fa), complete CI gate and nightly published-wheel verification. Current-head Actions green; local SDK 1380 passed, 3 optional skips, 92.32% coverage; 41 focused and 11 MCP tests passed. Other open PRs remain under review.
