@@ -1,0 +1,126 @@
+{
+  "captured_at": "2026-10-02T22:46:09.692396+00:00",
+  "repository": "bmdhodl/agent47",
+  "reviewed_pr_count": 8,
+  "reviewed_prs": [
+    {
+      "headRefOid": "6b0d70dd64706702030197db00f8407de9e9ea63",
+      "mergeCommit": {
+        "oid": "82a59faa8958f02c19de1eaa24618c3d67e25cbc"
+      },
+      "mergedAt": "2026-10-02T22:06:39Z",
+      "number": 807,
+      "state": "MERGED",
+      "title": "Require complete CI results and verify published wheels nightly",
+      "url": "https://github.com/bmdhodl/agent47/pull/807"
+    },
+    {
+      "headRefOid": "b3093a2af5b2c009320831e0af4c3de5a9d48aae",
+      "mergeCommit": {
+        "oid": "b6cb0c2d5eab4cf700a9cba816dc925be7f7a21b"
+      },
+      "mergedAt": "2026-10-02T22:15:26Z",
+      "number": 808,
+      "state": "MERGED",
+      "title": "chore(deps): bump ip-address from 10.4.0 to 10.7.2 in /mcp-server",
+      "url": "https://github.com/bmdhodl/agent47/pull/808"
+    },
+    {
+      "headRefOid": "cdd11f9e1b88a9c94faea6736606b32b602129dd",
+      "mergeCommit": {
+        "oid": "3294f456ce2baaf89bd31329f4b892a4902884b8"
+      },
+      "mergedAt": "2026-10-02T22:18:32Z",
+      "number": 789,
+      "state": "MERGED",
+      "title": "chore(deps): bump github/codeql-action/upload-sarif from 4.38.0 to 4.38.1",
+      "url": "https://github.com/bmdhodl/agent47/pull/789"
+    },
+    {
+      "headRefOid": "e15961a10e65d707ad05fecd44c8bd98e8ab625f",
+      "mergeCommit": {
+        "oid": "ee14ca43fc6017b6a6b00c838bf1c00a00e3dc5d"
+      },
+      "mergedAt": "2026-10-02T22:23:22Z",
+      "number": 810,
+      "state": "MERGED",
+      "title": "chore(deps): bump fast-uri from 3.1.7 to 3.1.8 in /mcp-server",
+      "url": "https://github.com/bmdhodl/agent47/pull/810"
+    },
+    {
+      "headRefOid": "4872f834251178b6dc2998e25b1eceb4546d076d",
+      "mergeCommit": {
+        "oid": "6fdd55f7948bc2ac85538a5cd4cca9ded5601d29"
+      },
+      "mergedAt": "2026-10-02T22:28:23Z",
+      "number": 788,
+      "state": "MERGED",
+      "title": "chore(deps): bump github/codeql-action/init from 4.38.0 to 4.38.2",
+      "url": "https://github.com/bmdhodl/agent47/pull/788"
+    },
+    {
+      "headRefOid": "e4b4b37ab506c5ffacb02a4332e422da68b66e27",
+      "mergeCommit": {
+        "oid": "4872f834251178b6dc2998e25b1eceb4546d076d"
+      },
+      "mergedAt": "2026-10-02T22:28:25Z",
+      "number": 790,
+      "state": "MERGED",
+      "title": "chore(deps): bump github/codeql-action/analyze from 4.38.0 to 4.38.2",
+      "url": "https://github.com/bmdhodl/agent47/pull/790"
+    },
+    {
+      "headRefOid": "9b99fda096f7a4e1464b5a7535a7aa0852ab0255",
+      "mergeCommit": {
+        "oid": "e701666d8541af73352e6f13aad86215c33e5c31"
+      },
+      "mergedAt": "2026-10-02T22:38:50Z",
+      "number": 806,
+      "state": "MERGED",
+      "title": "feat(activation): compute the off-publish-day download figures",
+      "url": "https://github.com/bmdhodl/agent47/pull/806"
+    },
+    {
+      "headRefOid": "f4e245d8cf8a1dc9436bab77959745c017368b45",
+      "mergeCommit": {
+        "oid": "6239a69aeca42976d6deda8ac3424b6391a9b635"
+      },
+      "mergedAt": "2026-10-02T22:44:01Z",
+      "number": 809,
+      "state": "MERGED",
+      "title": "Add Trustabl Agent Scanner to CI",
+      "url": "https://github.com/bmdhodl/agent47/pull/809"
+    }
+  ],
+  "verification": {
+    "sdk": {
+      "command": "python -m pytest -p pytest_cov sdk/tests -q --cov=agentguard --cov-fail-under=80 --basetemp <isolated-task-temp>",
+      "exit_code": 0,
+      "platform": "Windows / Python 3.13.2",
+      "source_commit": "e701666d8541af73352e6f13aad86215c33e5c31",
+      "passed": 1392,
+      "skipped": 3,
+      "warnings": 3,
+      "coverage_percent": 92.32,
+      "raw_output": "sdk-tests.txt",
+      "after_activation_review_fixes": true
+    },
+    "mcp": {
+      "passed": 11,
+      "npm_audit_vulnerabilities": 0,
+      "reviewed_dependency_pr": 810
+    },
+    "scanner_wrapper": {
+      "cases_passed": 7,
+      "final_pr_run": "https://github.com/bmdhodl/agent47/actions/runs/37073609433",
+      "main_scan_run": "https://github.com/bmdhodl/agent47/actions/runs/37074050873",
+      "scope": "Completed scans with findings remain advisory; execution errors or missing reports fail."
+    },
+    "limits": [
+      "Three optional OpenAI Agents SDK tests were skipped locally because the integration was not installed; hosted compatibility jobs passed.",
+      "Scanner findings are advisory; its report includes a Claude SDK rules coverage gap.",
+      "No new SDK or MCP package was released."
+    ]
+  },
+  "signoff": "OpenAI | GPT-6 | auto"
+}

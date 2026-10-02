@@ -478,3 +478,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | Verified #790 is MERGED through #788, preserving the reviewed current head in main. Both CodeQL actions now match 4.38.2; actual combined CodeQL analysis passed.
 
 2026-10-02 | OpenAI GPT-6 auto | Merged #806 after fixing dynamic PyPI publish dates, unavailable metadata, list-schema preservation and empty-feed caveats. All 30 activation tests and fresh complete CI passed; review findings resolved. #809 awaits its final updated-head scan/CI.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #809 (6239a69), pinned advisory scanner with least privilege, telemetry disabled and visible execution errors. Seven wrapper cases, final PR scan and main scan passed. All eight reviewed PRs are merged; final SDK validation: 1392 passed, 3 optional skips, 92.32% coverage. Durable proof: proof/pr-review-20261002/. No review blockers; scanner rule coverage remains limited. No package release performed.
