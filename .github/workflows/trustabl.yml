@@ -1,0 +1,51 @@
+name: Trustabl Agent Scanner
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Minimal top-level permissions; write grants are scoped to the scan job only.
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: trustabl-${{ github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      security-events: write
+    env:
+      TRUSTABL_TELEMETRY: "0"
+    # Findings are advisory; an execution error must remain visible.
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: trustabl/trustabl-action@973f666d20b5fbb2e6a4511bd3846e965a08c28b # v0.4.1
+        id: trustabl
+        continue-on-error: true
+        with:
+          version: v0.1.6
+          rules-ref: v0.2.0 # 97918c43909166334a2df941cff64d9f63acb115
+          comment-on-pr: "false"
+      - name: Require a completed scan
+        if: ${{ always() }}
+        shell: bash
+        env:
+          SCAN_OUTCOME: ${{ steps.trustabl.outcome }}
+          SCAN_EXIT: ${{ steps.trustabl.outputs.exit-code }}
+        run: |
+          set -euo pipefail
+          case "$SCAN_EXIT" in
+            0) test "$SCAN_OUTCOME" = success ;;
+            1) echo 'Scanner completed; findings remain advisory.' ;;
+            *) echo 'Scanner did not complete successfully.' >&2; exit 1 ;;
+          esac
+          test -s trustabl.json
+          test -s trustabl.sarif
