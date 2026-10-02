@@ -164,4 +164,4 @@ Traced by AgentGuard | agentguard47.com
 STDERR:
 
 [notice] A new release of pip is available: 24.0 -> 26.2.1
-[notice] To update, run: C:\Users\patri\.codex\tmp\agent47-powershell-walkthrough-20261002\agentguard-first-run\.venv\Scripts\python.exe -m pip install --upgrade pip
+[notice] To update, run: [USER_HOME]\.codex\tmp\agent47-powershell-walkthrough-20261002\agentguard-first-run\.venv\Scripts\python.exe -m pip install --upgrade pip

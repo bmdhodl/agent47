@@ -67,7 +67,7 @@ commands are in the unpublished 1.4.1 candidate. This walkthrough needs no
 provider key or optional framework package. Keep any trace private until you
 have checked its contents.
 
-The trace should contain all three events:
+The demo trace, `agentguard_demo_traces.jsonl`, should contain all three events:
 
 | Event | What happened in this example |
 | --- | --- |
