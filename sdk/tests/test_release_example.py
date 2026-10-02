@@ -72,6 +72,9 @@ def test_published_wheel_matrix_runs_after_each_publish():
     assert "--wheel-only" in workflow
     assert "permissions:\n  contents: read" in workflow
     assert "secrets." not in workflow
-    assert "schedule:" not in workflow
+    assert 'cron: "49 8 * * *"' in workflow
+    assert 'repos/$GH_REPO/releases/latest' in workflow
+    assert "needs: release" in workflow
+    assert "RELEASE_TAG: ${{ needs.release.outputs.tag }}" in workflow
     publish = (ROOT / ".github/workflows/publish.yml").read_text()
     assert 'gh workflow run published-wheel.yml -f tag="$TAG"' in publish
