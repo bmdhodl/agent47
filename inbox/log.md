@@ -474,3 +474,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | Merged #810 (ee14ca4), fast-uri 3.1.8 security patch. Fresh complete CI and 11 local MCP tests passed; npm audit now reports zero vulnerabilities in the MCP dependency tree.
 
 2026-10-02 | OpenAI GPT-6 auto | Merged #788 (6fdd55f), paired CodeQL init/analyze 4.38.2 after reconciling Dependabot updates. Verified upstream tag and fresh actionlint, CodeQL analysis, complete CI. #790 head history is included; final PR state reconciliation pending.
+
+2026-10-02 | OpenAI GPT-6 auto | Verified #790 is MERGED through #788, preserving the reviewed current head in main. Both CodeQL actions now match 4.38.2; actual combined CodeQL analysis passed.
