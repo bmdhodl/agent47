@@ -476,3 +476,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | Merged #788 (6fdd55f), paired CodeQL init/analyze 4.38.2 after reconciling Dependabot updates. Verified upstream tag and fresh actionlint, CodeQL analysis, complete CI. #790 head history is included; final PR state reconciliation pending.
 
 2026-10-02 | OpenAI GPT-6 auto | Verified #790 is MERGED through #788, preserving the reviewed current head in main. Both CodeQL actions now match 4.38.2; actual combined CodeQL analysis passed.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #806 after fixing dynamic PyPI publish dates, unavailable metadata, list-schema preservation and empty-feed caveats. All 30 activation tests and fresh complete CI passed; review findings resolved. #809 awaits its final updated-head scan/CI.
