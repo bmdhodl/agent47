@@ -30,5 +30,5 @@ jobs:
       - uses: trustabl/trustabl-action@973f666d20b5fbb2e6a4511bd3846e965a08c28b # v0.4.1
         with:
           version: v0.1.6
-          rules-ref: 97918c43909166334a2df941cff64d9f63acb115
+          rules-ref: v0.2.0 # 97918c43909166334a2df941cff64d9f63acb115
           comment-on-pr: "false"

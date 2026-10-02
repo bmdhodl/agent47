@@ -1,0 +1,1 @@
+{"session": "codex-pr809-rules-tag-20261002", "ts": "2026-10-02T17:26:23", "claim": "Use the verified rules tag supported by the scanner loader", "severity": "RED", "check": {"type": "file_contains", "path": ".github/workflows/trustabl.yml", "pattern": "rules-ref: v0.2.0"}, "prev": "2e98b8bea2f8dc9f39e6a1cd0f7374d20664593b33a75f1b3fc2edc42a6d82d7"}
