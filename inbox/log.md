@@ -470,3 +470,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | Merged #808 (b6cb0c2), ip-address 10.7.2 lockfile update. Fresh full CI and 11 local MCP tests passed. Existing fast-uri moderate advisory remains in the unchanged dependency tree.
 
 2026-10-02 | OpenAI GPT-6 auto | Merged #789 (3294f45), verified CodeQL upload-sarif 4.38.1 pin. Fresh actionlint, CodeQL and complete CI passed. Paired init/analyze update remains under validation; newly opened #810 addresses the fast-uri advisory.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #810 (ee14ca4), fast-uri 3.1.8 security patch. Fresh complete CI and 11 local MCP tests passed; npm audit now reports zero vulnerabilities in the MCP dependency tree.
