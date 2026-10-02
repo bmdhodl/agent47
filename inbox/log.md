@@ -468,3 +468,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | PR review 2026-10-02: merged #807 (82a59fa), complete CI gate and nightly published-wheel verification. Current-head Actions green; local SDK 1380 passed, 3 optional skips, 92.32% coverage; 41 focused and 11 MCP tests passed. Other open PRs remain under review.
 
 2026-10-02 | OpenAI GPT-6 auto | Merged #808 (b6cb0c2), ip-address 10.7.2 lockfile update. Fresh full CI and 11 local MCP tests passed. Existing fast-uri moderate advisory remains in the unchanged dependency tree.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #789 (3294f45), verified CodeQL upload-sarif 4.38.1 pin. Fresh actionlint, CodeQL and complete CI passed. Paired init/analyze update remains under validation; newly opened #810 addresses the fast-uri advisory.
