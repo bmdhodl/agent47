@@ -24,10 +24,13 @@ from agentguard.precision_cost import SOURCE_COMPUTED, SOURCE_OVERESTIMATE, SOUR
 
 from tests.fixtures.usage_payloads import (
     ANTHROPIC_SONNET_USAGE,
+    ANTHROPIC_THINKING_USAGE,
     FAILED_WITH_USAGE,
     GATEWAY_BILLED_COST,
     MISSING_USAGE,
+    OPENAI_CHAT_REASONING_USAGE,
     OPENAI_GPT4O_USAGE,
+    OPENAI_RESPONSES_REASONING_USAGE,
     OPENAI_WITH_PROVIDER_COST,
     STREAMING_FINAL_USAGE,
 )
@@ -402,6 +405,42 @@ class TestGoldenFixtures(unittest.TestCase):
         )
         self.assertEqual(r["source"], SOURCE_PROVIDER)
         self.assertAlmostEqual(r["cost_usd"], 0.055, places=6)
+
+
+class TestReasoningTokensBilledOnce(unittest.TestCase):
+    """Reasoning and thinking tokens are already inside output tokens."""
+
+    def test_openai_reasoning_tokens_are_not_billed_on_top_of_output(self) -> None:
+        # gpt-4o-mini: (10-4)*0.15 + 4*0.075 + 5*0.60 = 4.2 per 1M.
+        # Double billing added 2*0.60 for 5.4 per 1M.
+        for payload in (OPENAI_CHAT_REASONING_USAGE, OPENAI_RESPONSES_REASONING_USAGE):
+            with self.subTest(usage=payload["usage"]):
+                r = resolve_billable_cost(payload, model="gpt-4o-mini", provider="openai")
+                self.assertEqual(r["source"], SOURCE_COMPUTED)
+                self.assertEqual(r["tokens"]["output"], 5)
+                self.assertEqual(r["tokens"]["reasoning"], 2)
+                self.assertAlmostEqual(r["cost_usd"], 4.2e-6, places=12)
+
+    def test_anthropic_thinking_tokens_are_not_billed_on_top_of_output(self) -> None:
+        # claude-sonnet-4-5: 100*3.00 + 50*15.00 = 1050 per 1M.
+        # Double billing added 30*15.00 for 1500 per 1M.
+        r = resolve_billable_cost(
+            ANTHROPIC_THINKING_USAGE, model="claude-sonnet-4-5", provider="anthropic"
+        )
+        self.assertEqual(r["source"], SOURCE_COMPUTED)
+        self.assertEqual(r["tokens"]["output"], 50)
+        self.assertEqual(r["tokens"]["reasoning"], 30)
+        self.assertAlmostEqual(r["cost_usd"], 1.05e-3, places=12)
+
+    def test_distinct_reasoning_rate_charges_only_the_difference(self) -> None:
+        prices = get_default_prices()
+        row = prices["rates"][("openai", "gpt-4o-mini")]
+        prices["rates"][("openai", "gpt-4o-mini")] = {**row, "reasoning_per_1m": 2.40}
+        r = resolve_billable_cost(
+            OPENAI_CHAT_REASONING_USAGE, model="gpt-4o-mini", provider="openai", prices=prices
+        )
+        # 4.2 per 1M, plus 2 reasoning tokens * (2.40 - 0.60) = 7.8 per 1M.
+        self.assertAlmostEqual(r["cost_usd"], 7.8e-6, places=12)
 
 
 class TestConsumeLogFields(unittest.TestCase):

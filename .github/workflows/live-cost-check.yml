@@ -1,0 +1,69 @@
+name: Live Cost Check
+
+# Makes six tiny real OpenAI calls through the patched client and gates on
+# AgentGuard's recorded tokens and cost matching OpenAI's Usage API.
+# Spend: well under $0.01 per run, capped by BudgetGuard(max_cost_usd=0.02).
+on:
+  schedule:
+    - cron: '37 9 * * *'   # Daily 09:37 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-cost-check
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - name: Check secrets
+        id: secrets
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_ADMIN_KEY: ${{ secrets.OPENAI_ADMIN_KEY }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ] || [ -z "$OPENAI_ADMIN_KEY" ]; then
+            echo "::notice::Skipped: add OPENAI_API_KEY and OPENAI_ADMIN_KEY under Settings > Secrets and variables > Actions."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          python -m pip install --require-hashes -r .github/requirements/live-cost.txt
+          python -m pip install --no-deps -e ./sdk
+
+      - name: Reconcile against OpenAI usage
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_ADMIN_KEY: ${{ secrets.OPENAI_ADMIN_KEY }}
+        run: python scripts/live_cost_reconcile.py --out live-cost-reconcile --timeout 3600
+
+      - name: Upload report
+        if: always() && steps.secrets.outputs.ready == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: live-cost-reconcile
+          # Raw admin responses hold org-wide usage; public-repo artifacts are public.
+          path: |
+            live-cost-reconcile/report.txt
+            live-cost-reconcile/trace.jsonl
+          retention-days: 30
+          if-no-files-found: ignore

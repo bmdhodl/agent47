@@ -7,7 +7,9 @@ caller-owned default you can replace via `prices=` on resolve_billable_cost.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple
+import re
+from datetime import date
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 # Default high-water overestimate: ~$150 / 1M tokens (covers frontier output rates).
 _DEFAULT_HIGH_WATER_PER_TOKEN = 150.0 / 1_000_000
@@ -19,8 +21,8 @@ _DEFAULT_MIN_CHARGE_USD = 0.001
 # ---------------------------------------------------------------------------
 # Rates are USD per 1_000_000 tokens unless noted. Never use a single global
 # $/token for all models — each (provider, model_id) has its own rates.
-# last_updated tracks when this table was last hand-verified against public
-# list prices. It is still NOT invoice data.
+# "verified" records, per provider, the day its rows were last checked against
+# that provider's published price page. It is still NOT invoice data.
 
 PriceRate = Dict[str, float]
 PriceKey = Tuple[str, str]
@@ -36,8 +38,13 @@ def _rate(
     reasoning_per_1m: Optional[float] = None,
     batch_discount: Optional[float] = None,
     image_per_unit: Optional[float] = None,
+    long_context: Optional[Tuple[int, float, float]] = None,
+    rises_on: Optional[Tuple[str, float]] = None,
     free: bool = False,
 ) -> PriceRate:
+    """One model's rates. ``long_context`` is (prompt tokens above which the
+    whole request is repriced, input multiplier, output multiplier).
+    ``rises_on`` is (ISO date, multiplier) for a published price change."""
     rate: PriceRate = {
         "input_per_1m": float(input_per_1m),
         "output_per_1m": float(output_per_1m),
@@ -52,6 +59,15 @@ def _rate(
         rate["batch_discount"] = float(batch_discount)
     if image_per_unit is not None:
         rate["image_per_unit"] = float(image_per_unit)
+    if long_context is not None:
+        above, input_multiplier, output_multiplier = long_context
+        rate["long_context_above"] = float(above)
+        rate["long_context_input_multiplier"] = float(input_multiplier)
+        rate["long_context_output_multiplier"] = float(output_multiplier)
+    if rises_on is not None:
+        day, multiplier = rises_on
+        rate["rises_on_ordinal"] = float(date.fromisoformat(day).toordinal())
+        rate["rise_multiplier"] = float(multiplier)
     if free:
         rate["free"] = 1.0
     return rate
@@ -60,30 +76,148 @@ def _rate(
 # Built from public list prices (approximate). Prefer provider-reported cost when
 # available. Multiply legacy estimate_cost per-1k rates by 1000 for per-1m.
 DEFAULT_PRICE_TABLE: PriceTable = {
-    "version": "2026.07.15",
-    "last_updated": "2026-07-15",
+    "version": "2026.09.26",
+    "last_updated": "2026-09-26",
+    # Read 2026-09-26: platform.claude.com/docs/en/about-claude/pricing,
+    # developers.openai.com/api/docs/pricing, ai.google.dev/gemini-api/docs/pricing.
+    "verified": {
+        "anthropic": "2026-09-26",
+        "openai": "2026-09-26",
+        "google": "2026-09-26",
+    },
     "overestimate": {
         "min_charge_usd": _DEFAULT_MIN_CHARGE_USD,
         "high_water_per_token": _DEFAULT_HIGH_WATER_PER_TOKEN,
     },
     "rates": {
-        # OpenAI — standard in/out; cached input typically ~50% of input
+        # OpenAI — Standard tier. Rows with a long_context tier bill the whole
+        # request at 2x input and 1.5x output once the prompt passes 272k tokens.
+        # Fast mode (2x) and the 10% data-residency uplift are not modelled.
+        # Rows without cached_input_per_1m (the pro models, gpt-4-turbo) have no
+        # cached rate on the page; cached tokens bill at the input rate.
+        ("openai", "gpt-6-astra"): _rate(
+            10.00, 50.00, cached_input_per_1m=1.00, cache_write_per_1m=12.50,
+            long_context=(272_000, 2.0, 1.5),
+        ),
+        ("openai", "gpt-6-sol"): _rate(
+            2.00, 10.00, cached_input_per_1m=0.20, cache_write_per_1m=2.50,
+            long_context=(272_000, 2.0, 1.5),
+        ),
+        ("openai", "gpt-6-luna"): _rate(
+            0.10, 0.50, cached_input_per_1m=0.01, cache_write_per_1m=0.125,
+            long_context=(272_000, 2.0, 1.5),
+        ),
+        # gpt-5.6-sol is at a promotional price "at least through November 21, 2026".
+        ("openai", "gpt-5.6-sol"): _rate(
+            4.00, 20.00, cached_input_per_1m=0.40, cache_write_per_1m=5.00,
+            long_context=(272_000, 2.0, 1.5),
+        ),
+        ("openai", "gpt-5.6-cyber"): _rate(
+            12.50, 75.00, cached_input_per_1m=1.25, cache_write_per_1m=15.625
+        ),
+        ("openai", "gpt-5.6-terra"): _rate(
+            2.00, 12.00, cached_input_per_1m=0.20, cache_write_per_1m=2.50
+        ),
+        ("openai", "gpt-5.6-luna"): _rate(
+            0.20, 1.20, cached_input_per_1m=0.02, cache_write_per_1m=0.25
+        ),
+        ("openai", "gpt-5.5"): _rate(
+            5.00, 30.00, cached_input_per_1m=0.50, long_context=(272_000, 2.0, 1.5)
+        ),
+        ("openai", "gpt-5.5-pro"): _rate(30.00, 180.00, long_context=(272_000, 2.0, 1.5)),
+        ("openai", "gpt-5.4"): _rate(
+            2.50, 15.00, cached_input_per_1m=0.25, long_context=(272_000, 2.0, 1.5)
+        ),
+        ("openai", "gpt-5.4-mini"): _rate(0.75, 4.50, cached_input_per_1m=0.075),
+        ("openai", "gpt-5.4-nano"): _rate(0.20, 1.25, cached_input_per_1m=0.02),
+        ("openai", "gpt-5.4-pro"): _rate(30.00, 180.00, long_context=(272_000, 2.0, 1.5)),
+        ("openai", "gpt-5.3-codex"): _rate(1.75, 14.00, cached_input_per_1m=0.175),
+        ("openai", "gpt-5.2"): _rate(1.75, 14.00, cached_input_per_1m=0.175),
+        ("openai", "gpt-5.2-pro"): _rate(21.00, 168.00),
+        ("openai", "gpt-5.1"): _rate(1.25, 10.00, cached_input_per_1m=0.125),
+        ("openai", "gpt-5"): _rate(1.25, 10.00, cached_input_per_1m=0.125),
+        ("openai", "gpt-5-mini"): _rate(0.25, 2.00, cached_input_per_1m=0.025),
+        ("openai", "gpt-5-nano"): _rate(0.05, 0.40, cached_input_per_1m=0.005),
+        ("openai", "gpt-5-pro"): _rate(15.00, 120.00),
+        ("openai", "chat-latest"): _rate(5.00, 30.00, cached_input_per_1m=0.50),
+        ("openai", "gpt-rosalind-research"): _rate(5.00, 25.00, cached_input_per_1m=0.50),
+        ("openai", "gpt-4.1"): _rate(2.00, 8.00, cached_input_per_1m=0.50),
+        ("openai", "gpt-4.1-mini"): _rate(0.40, 1.60, cached_input_per_1m=0.10),
+        ("openai", "gpt-4.1-nano"): _rate(0.10, 0.40, cached_input_per_1m=0.025),
         ("openai", "gpt-4o"): _rate(2.50, 10.00, cached_input_per_1m=1.25),
         ("openai", "gpt-4o-mini"): _rate(0.15, 0.60, cached_input_per_1m=0.075),
-        ("openai", "gpt-4-turbo"): _rate(10.00, 30.00, cached_input_per_1m=5.00),
+        # Older snapshot priced above the gpt-4o alias; dated ids otherwise fall
+        # back to their base model.
+        ("openai", "gpt-4o-2024-05-13"): _rate(5.00, 15.00),
+        ("openai", "o1-pro"): _rate(150.00, 600.00),
+        ("openai", "o1"): _rate(15.00, 60.00, cached_input_per_1m=7.50),
+        # o1-mini is no longer on the pricing page; its last row is kept as an overestimate.
+        ("openai", "o1-mini"): _rate(3.00, 12.00, cached_input_per_1m=1.50),
+        ("openai", "o3-pro"): _rate(20.00, 80.00),
+        ("openai", "o3"): _rate(2.00, 8.00, cached_input_per_1m=0.50),
+        ("openai", "o4-mini"): _rate(1.10, 4.40, cached_input_per_1m=0.275),
+        ("openai", "o3-mini"): _rate(1.10, 4.40, cached_input_per_1m=0.55),
+        ("openai", "gpt-4-turbo"): _rate(10.00, 30.00),
         ("openai", "gpt-4"): _rate(30.00, 60.00),
         ("openai", "gpt-3.5-turbo"): _rate(0.50, 1.50),
-        ("openai", "o1"): _rate(15.00, 60.00, cached_input_per_1m=7.50),
-        ("openai", "o1-mini"): _rate(3.00, 12.00, cached_input_per_1m=1.50),
-        ("openai", "o3-mini"): _rate(1.10, 4.40, cached_input_per_1m=0.55),
-        ("openai", "gpt-5.5"): _rate(5.00, 30.00, cached_input_per_1m=2.50),
-        ("openai", "gpt-5.5-pro"): _rate(30.00, 180.00, cached_input_per_1m=15.00),
-        ("openai", "gpt-5.4"): _rate(2.50, 15.00, cached_input_per_1m=1.25),
-        ("openai", "gpt-5.4-mini"): _rate(0.75, 4.50, cached_input_per_1m=0.375),
-        ("openai", "gpt-5.4-nano"): _rate(0.20, 1.25, cached_input_per_1m=0.10),
+        ("openai", "gpt-3.5-turbo-1106"): _rate(1.00, 2.00),
+        ("openai", "gpt-3.5-turbo-instruct"): _rate(1.50, 2.00),
         ("openai", "text-embedding-3-small"): _rate(0.02, 0.0),
         ("openai", "text-embedding-3-large"): _rate(0.13, 0.0),
-        # Anthropic — cache read ~10% of input; cache write ~1.25x input
+        ("openai", "text-embedding-ada-002"): _rate(0.10, 0.0),
+        # Anthropic — 5-minute cache write 1.25x input; cache read 0.1x input,
+        # except Fable 5.1 / Mythos 5.1 (0.025x) and Opus 5.5 (0.05x).
+        ("anthropic", "claude-fable-5-1"): _rate(
+            10.00, 50.00, cached_input_per_1m=0.25, cache_write_per_1m=12.50
+        ),
+        ("anthropic", "claude-mythos-5-1"): _rate(
+            10.00, 50.00, cached_input_per_1m=0.25, cache_write_per_1m=12.50
+        ),
+        ("anthropic", "claude-fable-5"): _rate(
+            10.00, 50.00, cached_input_per_1m=1.00, cache_write_per_1m=12.50
+        ),
+        ("anthropic", "claude-mythos-5"): _rate(
+            10.00, 50.00, cached_input_per_1m=1.00, cache_write_per_1m=12.50
+        ),
+        ("anthropic", "claude-opus-5-5"): _rate(
+            4.00, 20.00, cached_input_per_1m=0.20, cache_write_per_1m=5.00
+        ),
+        ("anthropic", "claude-opus-5"): _rate(
+            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
+        ),
+        ("anthropic", "claude-opus-4-8"): _rate(
+            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
+        ),
+        ("anthropic", "claude-opus-4-7"): _rate(
+            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
+        ),
+        ("anthropic", "claude-opus-4-6"): _rate(
+            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
+        ),
+        ("anthropic", "claude-opus-4-5"): _rate(
+            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
+        ),
+        ("anthropic", "claude-opus-4-1"): _rate(
+            15.00, 75.00, cached_input_per_1m=1.50, cache_write_per_1m=18.75
+        ),
+        ("anthropic", "claude-opus-4-20250514"): _rate(
+            15.00, 75.00, cached_input_per_1m=1.50, cache_write_per_1m=18.75
+        ),
+        ("anthropic", "claude-sonnet-5"): _rate(
+            2.00, 10.00, cached_input_per_1m=0.20, cache_write_per_1m=2.50
+        ),
+        ("anthropic", "claude-sonnet-4-6"): _rate(
+            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        ),
+        ("anthropic", "claude-sonnet-4-5"): _rate(
+            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        ),
+        ("anthropic", "claude-sonnet-4-20250514"): _rate(
+            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        ),
+        ("anthropic", "claude-haiku-4-5"): _rate(
+            1.00, 5.00, cached_input_per_1m=0.10, cache_write_per_1m=1.25
+        ),
         ("anthropic", "claude-3-5-sonnet-20241022"): _rate(
             3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
         ),
@@ -93,40 +227,30 @@ DEFAULT_PRICE_TABLE: PriceTable = {
         ("anthropic", "claude-3-opus-20240229"): _rate(
             15.00, 75.00, cached_input_per_1m=1.50, cache_write_per_1m=18.75
         ),
-        ("anthropic", "claude-sonnet-4-20250514"): _rate(
-            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        # Google — paid Standard tier, text rates; audio and image rates are higher
+        # and not modelled. Long-context rows reprice prompts over 200k tokens.
+        ("google", "gemini-3.8-flash"): _rate(
+            0.75, 3.75, cached_input_per_1m=0.075, rises_on=("2027-01-01", 2.0)
         ),
-        ("anthropic", "claude-sonnet-4-5-20250929"): _rate(
-            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        ("google", "gemini-3.7-flash"): _rate(
+            0.75, 3.75, cached_input_per_1m=0.075, rises_on=("2027-01-01", 2.0)
         ),
-        ("anthropic", "claude-sonnet-4-5"): _rate(
-            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        ("google", "gemini-3.6-flash"): _rate(
+            0.75, 3.75, cached_input_per_1m=0.075, rises_on=("2027-01-01", 2.0)
         ),
-        ("anthropic", "claude-sonnet-4-6"): _rate(
-            3.00, 15.00, cached_input_per_1m=0.30, cache_write_per_1m=3.75
+        ("google", "gemini-3.5-flash"): _rate(1.50, 9.00, cached_input_per_1m=0.15),
+        ("google", "gemini-3.5-flash-lite"): _rate(0.30, 2.50, cached_input_per_1m=0.03),
+        ("google", "gemini-3.1-flash-lite"): _rate(0.25, 1.50, cached_input_per_1m=0.025),
+        ("google", "gemini-3.1-pro-preview"): _rate(
+            2.00, 12.00, cached_input_per_1m=0.20, long_context=(200_000, 2.0, 1.5)
         ),
-        ("anthropic", "claude-haiku-4-5-20251001"): _rate(
-            1.00, 5.00, cached_input_per_1m=0.10, cache_write_per_1m=1.25
+        ("google", "gemini-3-flash-preview"): _rate(0.50, 3.00, cached_input_per_1m=0.05),
+        ("google", "gemini-omni-1.1-flash"): _rate(1.50, 9.00),
+        ("google", "gemini-2.5-pro"): _rate(
+            1.25, 10.00, cached_input_per_1m=0.125, long_context=(200_000, 2.0, 1.5)
         ),
-        ("anthropic", "claude-opus-4-20250515"): _rate(
-            15.00, 75.00, cached_input_per_1m=1.50, cache_write_per_1m=18.75
-        ),
-        ("anthropic", "claude-opus-4-6"): _rate(
-            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
-        ),
-        ("anthropic", "claude-opus-4-5"): _rate(
-            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
-        ),
-        ("anthropic", "claude-opus-4-7"): _rate(
-            5.00, 25.00, cached_input_per_1m=0.50, cache_write_per_1m=6.25
-        ),
-        # Google
-        ("google", "gemini-1.5-pro"): _rate(1.25, 5.00, cached_input_per_1m=0.3125),
-        ("google", "gemini-1.5-flash"): _rate(0.075, 0.30, cached_input_per_1m=0.01875),
-        ("google", "gemini-2.0-flash"): _rate(0.10, 0.40, cached_input_per_1m=0.025),
-        ("google", "gemini-2.5-pro"): _rate(1.25, 10.00, cached_input_per_1m=0.3125),
-        ("google", "gemini-2.5-flash"): _rate(0.30, 2.50, cached_input_per_1m=0.075),
-        ("google", "gemini-2.5-flash-lite"): _rate(0.10, 0.40, cached_input_per_1m=0.025),
+        ("google", "gemini-2.5-flash"): _rate(0.30, 2.50, cached_input_per_1m=0.03),
+        ("google", "gemini-2.5-flash-lite"): _rate(0.10, 0.40, cached_input_per_1m=0.01),
         # Azure OpenAI — same list family; prefer Azure billed cost when present
         ("azure", "gpt-4o"): _rate(2.50, 10.00, cached_input_per_1m=1.25),
         ("azure", "gpt-4o-mini"): _rate(0.15, 0.60, cached_input_per_1m=0.075),
@@ -147,8 +271,16 @@ DEFAULT_PRICE_TABLE: PriceTable = {
         ("openai", "gpt-4o-2024-08-06"): ("openai", "gpt-4o"),
         ("openai", "gpt-4o-2024-11-20"): ("openai", "gpt-4o"),
         ("openai", "gpt-4o-mini-2024-07-18"): ("openai", "gpt-4o-mini"),
+        ("openai", "gpt-4-0613"): ("openai", "gpt-4"),
+        ("openai", "gpt-3.5-turbo-0125"): ("openai", "gpt-3.5-turbo"),
+        ("openai", "gpt-daybreak-blue-latest"): ("openai", "gpt-5.6-sol"),
+        ("openai", "gpt-daybreak-red-latest"): ("openai", "gpt-5.6-cyber"),
+        ("google", "gemini-3.1-pro-preview-customtools"): ("google", "gemini-3.1-pro-preview"),
+        ("google", "gemini-2.5-computer-use-preview-10-2025"): ("google", "gemini-2.5-pro"),
         ("anthropic", "claude-3-5-sonnet-latest"): ("anthropic", "claude-3-5-sonnet-20241022"),
         ("anthropic", "claude-3-5-haiku-latest"): ("anthropic", "claude-3-5-haiku-20241022"),
+        ("anthropic", "claude-opus-4-0"): ("anthropic", "claude-opus-4-20250514"),
+        ("anthropic", "claude-sonnet-4-0"): ("anthropic", "claude-sonnet-4-20250514"),
         ("azure_openai", "gpt-4o"): ("azure", "gpt-4o"),
         ("azure-openai", "gpt-4o"): ("azure", "gpt-4o"),
     },
@@ -162,3 +294,107 @@ def get_default_prices() -> PriceTable:
     table["aliases"] = dict(DEFAULT_PRICE_TABLE["aliases"])
     table["overestimate"] = dict(DEFAULT_PRICE_TABLE["overestimate"])
     return table
+
+
+# A trailing release date: gpt-4o-2024-08-06, claude-opus-4-1-20250805,
+# claude-opus-4-5@20251101 (Vertex).
+_SNAPSHOT_SUFFIX = re.compile(r"^(.+?)[-@](\d{4}-\d{2}-\d{2}|\d{8})$")
+
+# An unknown model from one of these providers is priced at that provider's
+# highest listed rates. Google is left out: its rows are text rates, and its
+# image output ($120 per 1M on gemini-3-pro-image) is above all of them.
+CEILING_PROVIDERS = ("anthropic", "openai")
+
+_INPUT_SIDE = ("input_per_1m", "cached_input_per_1m", "cache_write_per_1m")
+_OUTPUT_SIDE = ("output_per_1m", "reasoning_per_1m")
+
+
+def _apply_rise(rate: Mapping[str, float], today: date) -> PriceRate:
+    """Rates in force on ``today`` for a row with a scheduled price change."""
+    risen = dict(rate)
+    ordinal = risen.pop("rises_on_ordinal", None)
+    multiplier = risen.pop("rise_multiplier", 1.0)
+    if ordinal is not None and today.toordinal() >= ordinal:
+        for key in _INPUT_SIDE + _OUTPUT_SIDE:
+            if key in risen:
+                risen[key] *= multiplier
+    return risen
+
+
+def _find(rates: Mapping[Any, Any], aliases: Mapping[Any, Any], provider: str, model: str):
+    for key in ((provider, model), (provider, model.lower())):
+        if key in rates:
+            return rates[key]
+        target = aliases.get(key)
+        if isinstance(target, tuple) and target in rates:
+            return rates[target]
+    model_l = model.lower()
+    for (p, m), rate in rates.items():
+        if str(p).lower() == provider and str(m).lower() == model_l:
+            return rate
+    for (p, m), target in aliases.items():
+        if str(p).lower() == provider and str(m).lower() == model_l and target in rates:
+            return rates[target]
+    return None
+
+
+def lookup_rate(
+    prices: PriceTable, provider: str, model: str, today: Optional[date] = None
+) -> Optional[PriceRate]:
+    """Rate row for (provider, model) in force on ``today``: exact, alias, then
+    the undated base model."""
+    rates: Mapping[Any, Any] = prices.get("rates") or {}
+    aliases: Mapping[Any, Any] = prices.get("aliases") or {}
+    provider_l = (provider or "").strip().lower()
+    model_id = (model or "").strip()
+    rate = _find(rates, aliases, provider_l, model_id)
+    if rate is None:
+        snapshot = _SNAPSHOT_SUFFIX.match(model_id)
+        if snapshot:
+            rate = _find(rates, aliases, provider_l, snapshot.group(1))
+    return _apply_rise(rate, today or date.today()) if rate is not None else None
+
+
+def _full_rate(rate: Mapping[str, float]) -> Dict[str, float]:
+    """Fill the defaults _compute_from_table applies to missing cache/reasoning rates."""
+    full = dict(rate)
+    full.setdefault("cached_input_per_1m", full["input_per_1m"])
+    full.setdefault("cache_write_per_1m", full["input_per_1m"] * 1.25)
+    full.setdefault("reasoning_per_1m", full["output_per_1m"])
+    return full
+
+
+def apply_long_context(rate: PriceRate, prompt_tokens: int) -> PriceRate:
+    """Reprice the whole request when its prompt exceeds the row's long-context threshold."""
+    above = rate.get("long_context_above")
+    if above is None or prompt_tokens <= above:
+        return rate
+    adjusted = _full_rate(rate)
+    for key in _INPUT_SIDE:
+        adjusted[key] *= rate["long_context_input_multiplier"]
+    for key in _OUTPUT_SIDE:
+        adjusted[key] *= rate["long_context_output_multiplier"]
+    return adjusted
+
+
+def provider_ceiling(prices: PriceTable, provider: str) -> Optional[PriceRate]:
+    """Highest listed rate of each kind across a provider's rows, long-context included.
+
+    Returns None for providers outside CEILING_PROVIDERS or without rows. A model
+    priced above every listed row is still under-counted; keep rows current.
+    """
+    provider_l = (provider or "").strip().lower()
+    if provider_l not in CEILING_PROVIDERS:
+        return None
+    ceiling: Dict[str, float] = {}
+    for (p, _m), rate in (prices.get("rates") or {}).items():
+        if str(p).lower() != provider_l or rate.get("free"):
+            continue
+        # Scheduled rises count now: the ceiling must not drop below them later.
+        full = apply_long_context(
+            _apply_rise(rate, date.max), int(rate.get("long_context_above", 0)) + 1
+        )
+        for key, value in _full_rate(full).items():
+            if key in _INPUT_SIDE or key in _OUTPUT_SIDE:
+                ceiling[key] = max(ceiling.get(key, 0.0), value)
+    return ceiling or None

@@ -1,5 +1,53 @@
 # Inbox Log
 
+## 2026-09-27 | Claude Code | PR #804
+
+- Shipped: the public live-cost logs no longer show org-wide OpenAI spend. The D-2 report prints billed/table ratios only; other models in the window print as a count; same-model org traffic shows as `>N` with the cost redacted; the artifact carries only the report and this run's trace. First CI run with secrets (dispatch on main) passed the gate on all three models.
+- Decisions: the gate still fails on same-model org traffic, since it cannot be told apart from a miscount.
+- Blockers: None.
+
+## 2026-09-27 | Claude Code | PR #802
+
+- Shipped: `scripts/live_cost_reconcile.py` and the nightly `live-cost-check.yml` make 6 real OpenAI calls (Chat, Responses, stream, gpt-5-nano minimal, a cached prompt twice) and gate on OpenAI's Usage API. Per model, requests and input/cached/output tokens matched exactly, and recorded cost equals OpenAI's counts x the price table within 1e-9. No SDK change needed.
+- Decisions: the job waits up to 60 min (timeout 75) because OpenAI usage for one run's gpt-4.1-nano calls lagged ~55 min. Isolation is by the run's own minute window, gating only the models the run called. The D-2 Costs API check is report-only; this org's cost rows all read $0.00.
+- Blockers: the nightly job skips until the owner adds the `OPENAI_API_KEY` and `OPENAI_ADMIN_KEY` Actions secrets.
+
+## 2026-09-26 | Claude Code | PR #800
+
+- Shipped: OpenAI and Gemini rows match their pricing pages (read 2026-09-26). GPT-6, GPT-5.6, gpt-5, gpt-4.1, o3, o4-mini and Gemini 3.x now have rows (they were overestimated 15x to 81x); o1-pro ($150 / $600) was under-billed about 5x at the old $30 / $180 ceiling and now has its own row; cached-input rates for gpt-5.5, gpt-5.4 and Gemini 2.5 fixed. Gemini 3.6-3.8 Flash double on 2027-01-01. Gemini thinking is billed as output, and Gemini cache reads come out of the prompt count. Four live OpenAI calls (Responses, stream, Chat Completions, Agents SDK) recorded the published price exactly.
+- Decisions: o1-pro ($150 / $600) is now the ceiling for unknown OpenAI models (fail-closed). Google stays off the ceiling because its image output ($120/1M) is above every text row.
+- Blockers: None. Not modelled: OpenAI Fast mode, the residency/FedRAMP uplift, Batch/Flex, Gemini audio/image, and GPT-5.6 Sol after its promo (in `ops/FOLLOWUP.md`).
+
+## 2026-09-26 | Claude Code | PR #797
+
+- Shipped: `_extract_cost` docstring warns that on `guard.budget_exceeded` it returns the `data.cost_usd` echo of a cost already on the tripping call; trace totals must use `_sum_cost` (or `_spend_cost` per event). No behavior change.
+- Decisions: Docs only; closes the #783 follow-up.
+- Blockers: None.
+
+## 2026-09-26 | Claude Code | PR #783
+
+- Shipped: `report`, `summarize_trace`/`incident`, `assert_cost_under`, and `receipt` count the call that trips a budget once. `guard.budget_exceeded` echoes that call's cost in `data.cost_usd`; one rule (`_spend_cost`) now ignores that echo but keeps a top-level guard `cost_usd`. Real-client repro: report $7.50 -> $6.00, matching the guard.
+- Decisions: Guard events that repeat a cost must keep it in `data`; documented at `_billing._consume_budget` and asserted by `e2e_cost_guardrail.py`. Savings baselines skip guard events.
+- Blockers: None. Follow-up: `_extract_cost` docstring should point totals at `_spend_cost`.
+
+## 2026-09-26 | Claude Code | PR #791
+
+- Shipped: Reasoning and thinking tokens bill once, inside output. OpenAI and Anthropic output counts already include them, so o-series, gpt-5, and extended-thinking calls were billed high and could trip a dollar budget early. A row with `reasoning_per_1m` reprices only that slice.
+- Decisions: No clamp for reasoning > output; both provider SDKs guarantee reasoning ≤ output. `output_usd` in the breakdown is now the non-reasoning part.
+- Blockers: None. Gemini `thoughts_token_count` is never read, so Gemini thinking may be under-billed (in `ops/FOLLOWUP.md`).
+
+## 2026-09-26 | Claude Code | PR #793
+
+- Shipped: The LangChain callback prices `on_llm_end` with the same resolver and table as the patched clients. Unknown models were recorded as $0, so a dollar budget never tripped on them; Anthropic cache reads went unbilled. Both fixed.
+- Decisions: Under `STRICT_PRECISION`, an unpriceable LangChain call raises `CostResolutionError` after closing its span, as the patched clients do.
+- Blockers: None for LangChain. OpenAI and Google price rows still need their pricing pages (network access).
+
+## 2026-09-26 | Claude Code | PR #792
+
+- Shipped: One price table for `estimate_cost` and the patched clients. Claude rows match Anthropic's pricing page (2026-09-26); current Claude models were billed 8x to 137x high and a `gpt-5.5` long prompt at half price. Dated ids price as their base model; unknown Anthropic/OpenAI models price at the provider's top listed rate; total-only usage is never $0.
+- Decisions: Google keeps the flat high-water charge until its rows are refreshed. `publish.yml` fails a release when any provider's prices are over 90 days old; PR CI does not check dates.
+- Blockers: OpenAI and Google rows (last checked 2026-07-15) need their pricing pages, which the session network blocks; the publish gate fails after 2026-10-13.
+
 ## 2026-09-26 | Claude Code | PR #786
 
 - Shipped: `patch_openai` / `patch_openai_async` (and `init()`, `run`) cover the OpenAI Responses API, so the Agents SDK `Runner` stops before its next model call once the budget is spent. Fixed every `AsyncOpenAI`/`AsyncAnthropic` call crashing after `init()`. Raw sync calls with a store reserve (Codex review).

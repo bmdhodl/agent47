@@ -323,17 +323,6 @@ def responses_sdk(openai_sdk):
     unpatch_openai_async()
 
 
-def _chat_equivalent_cost() -> float:
-    from agentguard.precision_cost import resolve_billable_cost
-
-    usage = {
-        "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15,
-        "prompt_tokens_details": {"cached_tokens": 4},
-        "completion_tokens_details": {"reasoning_tokens": 2},
-    }
-    return resolve_billable_cost({"usage": usage}, model="gpt-4o-mini", provider="openai")["cost_usd"]
-
-
 def test_responses_create_counts_once_and_blocks_before_dispatch(responses_sdk):
     transport = _CountingTransport(responses_sdk, OPENAI_RESPONSE)
     guard = BudgetGuard(max_calls=1)
@@ -348,9 +337,9 @@ def test_responses_create_counts_once_and_blocks_before_dispatch(responses_sdk):
     assert len(transport.requests) == 1
     assert guard.state.calls_used == 1
     assert guard.state.tokens_used == 15
-    # Same bill as the Chat Completions shape: cached and reasoning tokens priced alike.
-    assert guard.state.cost_used == pytest.approx(_chat_equivalent_cost())
-    assert guard.state.cost_used > 0
+    # gpt-4o-mini: 6 uncached + 4 cached input, 5 output. The 2 reasoning tokens
+    # are inside the 5 output tokens, so they are not billed again.
+    assert guard.state.cost_used == pytest.approx(4.2e-6)
 
 
 def test_responses_parse_counts_once(responses_sdk):

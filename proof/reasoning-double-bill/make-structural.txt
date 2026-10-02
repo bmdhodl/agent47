@@ -1,0 +1,10 @@
+$ make structural
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_public_exports_have_docstrings PASSED [ 44%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_public_naming_conventions PASSED [ 55%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_hardcoded_absolute_paths PASSED [ 66%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_thread_safe_classes_have_lock PASSED [ 77%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_guard_check_methods_raise_not_return PASSED [ 88%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_sinks_implement_emit PASSED [100%]
+
+============================== 9 passed in 0.33s ===============================
+exit=0

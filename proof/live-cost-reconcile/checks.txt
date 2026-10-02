@@ -1,0 +1,12 @@
+$ make structural
+============================== 9 passed in 0.31s ===============================
+exit 0
+$ make security
+bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+exit 0
+$ make release-guard
+Release guard passed.
+exit 0
+$ pytest sdk/tests/test_live_cost_reconcile.py
+============================== 13 passed in 0.04s ==============================
+exit 0

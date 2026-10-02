@@ -1,0 +1,3 @@
+$ make security
+bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+exit=0

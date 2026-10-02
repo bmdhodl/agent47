@@ -35,7 +35,10 @@ from agentguard.price_table import (
     DEFAULT_PRICE_TABLE,
     PriceRate,
     PriceTable,
+    apply_long_context,
     get_default_prices,
+    lookup_rate,
+    provider_ceiling,
 )
 from agentguard.usage import normalize_usage
 
@@ -206,18 +209,28 @@ def _extract_usage_object(response: Any) -> Any:
         return usage
     usage_meta = _get_attr_or_key(response, "usage_metadata")
     if usage_meta is not None:
-        # Google generative AI style → normalize later via generic fields
+        # Gemini counts like OpenAI: prompt_token_count includes the cached
+        # tokens. Thoughts are counted outside candidates, so they are added to
+        # completion_tokens; reasoning_tokens marks that slice of it, which
+        # _compute_from_table bills once.
+        # A reported 0 is a count, not a missing field: a thinking-only reply
+        # has candidates_token_count 0.
+        def first(*keys: str) -> Any:
+            for key in keys:
+                value = _get_attr_or_key(usage_meta, key)
+                if value is not None:
+                    return value
+            return 0
+
         return {
-            "input_tokens": _get_attr_or_key(usage_meta, "prompt_token_count")
-            or _get_attr_or_key(usage_meta, "input_tokens")
-            or 0,
-            "output_tokens": _get_attr_or_key(usage_meta, "candidates_token_count")
-            or _get_attr_or_key(usage_meta, "output_tokens")
-            or 0,
-            "total_tokens": _get_attr_or_key(usage_meta, "total_token_count")
-            or _get_attr_or_key(usage_meta, "total_tokens")
-            or 0,
-            "cached_input_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count") or 0,
+            "prompt_tokens": first("prompt_token_count", "input_tokens"),
+            "completion_tokens": first("candidates_token_count", "output_tokens")
+            + first("thoughts_token_count"),
+            "total_tokens": first("total_token_count", "total_tokens"),
+            "prompt_tokens_details": {
+                "cached_tokens": _get_attr_or_key(usage_meta, "cached_content_token_count") or 0
+            },
+            "completion_tokens_details": {"reasoning_tokens": first("thoughts_token_count")},
         }
     # Bare usage payload passed as response
     if isinstance(response, Mapping):
@@ -300,66 +313,10 @@ def _find_provider_cost(response: Any, usage: Any) -> Optional[float]:
     return None
 
 
-def _lookup_rate(
-    prices: PriceTable,
-    provider: str,
-    model: str,
-) -> Optional[PriceRate]:
-    rates: Mapping[Any, Any] = prices.get("rates") or {}
-    aliases: Mapping[Any, Any] = prices.get("aliases") or {}
-    provider_l = (provider or "").strip().lower()
-    model_id = (model or "").strip()
-
-    # Exact match
-    key = (provider_l, model_id)
-    if key in rates:
-        return dict(rates[key])
-
-    # Alias exact
-    if key in aliases:
-        target = aliases[key]
-        if isinstance(target, tuple) and target in rates:
-            return dict(rates[target])
-
-    # Normalized model (lower, strip date-ish suffix partially handled by aliases)
-    model_l = model_id.lower()
-    key_l = (provider_l, model_l)
-    if key_l in rates:
-        return dict(rates[key_l])
-    if key_l in aliases:
-        target = aliases[key_l]
-        if isinstance(target, tuple) and target in rates:
-            return dict(rates[target])
-
-    # Scan rates for case-insensitive model match under provider
-    for (p, m), rate in rates.items():
-        if str(p).lower() == provider_l and str(m).lower() == model_l:
-            return dict(rate)
-
-    # Alias scan
-    for (p, m), target in aliases.items():
-        if str(p).lower() == provider_l and str(m).lower() == model_l:
-            if isinstance(target, tuple) and target in rates:
-                return dict(rates[target])
-            # target may need re-lookup
-            if isinstance(target, tuple):
-                return _lookup_rate(
-                    {"rates": rates, "aliases": {}},
-                    str(target[0]),
-                    str(target[1]),
-                )
-    return None
-
-
 # Providers whose input_tokens already exclude cache-read tokens (bill input +
-# cache_read separately). OpenAI-family includes cached tokens inside
-# prompt_tokens and must subtract to avoid double-billing the cached slice.
-_CACHE_EXCLUSIVE_INPUT_PROVIDERS = frozenset(
-    {
-        "anthropic",
-        "google",
-    }
-)
+# cache_read separately). OpenAI-family and Gemini include cached tokens inside
+# the prompt count and must subtract to avoid double-billing the cached slice.
+_CACHE_EXCLUSIVE_INPUT_PROVIDERS = frozenset({"anthropic"})
 
 
 def _input_includes_cached(provider: str) -> bool:
@@ -378,11 +335,16 @@ def _compute_from_table(
     """Compute USD from usage and a rate dict (prices per 1M tokens).
 
     Provider-aware cache handling:
-    - OpenAI / Azure / most gateways: ``prompt_tokens`` *includes* cached
-      tokens → bill ``(input - cached) * in + cached * cached_in``.
-    - Anthropic / Google: ``input_tokens`` *excludes* cache reads → bill
+    - OpenAI / Azure / Google / most gateways: the prompt count *includes*
+      cached tokens → bill ``(input - cached) * in + cached * cached_in``.
+    - Anthropic: ``input_tokens`` *excludes* cache reads → bill
       ``input * in + cache_read * cached_in + cache_write * write`` with no
       subtraction (subtracting would silently under-count).
+
+    Reasoning and thinking tokens are a slice of output (OpenAI
+    ``completion_tokens`` / ``output_tokens``, Anthropic ``output_tokens``).
+    That slice bills at ``reasoning_per_1m`` (default: the output rate) and
+    the rest at the output rate, so reasoning is never billed twice.
     """
     if rate.get("free"):
         return 0.0, {"free": 0.0}
@@ -397,7 +359,7 @@ def _compute_from_table(
         uncached_input = input_t - cached_t
         input_cache_mode = "inclusive"
     else:
-        # Exclusive (Anthropic/Google) or no cache / cache > input edge case
+        # Exclusive (Anthropic) or no cache / cache > input edge case
         uncached_input = input_t
         input_cache_mode = (
             "exclusive" if not _input_includes_cached(provider) else "inclusive_no_subtract"
@@ -412,7 +374,7 @@ def _compute_from_table(
 
     breakdown: Dict[str, Any] = {
         "input_usd": uncached_input * in_price / 1_000_000,
-        "output_usd": output_t * out_price / 1_000_000,
+        "output_usd": (output_t - reasoning_t) * out_price / 1_000_000,
         "cached_input_usd": cached_t * cached_price / 1_000_000,
         "cache_write_usd": cache_write_t * cache_write_price / 1_000_000,
         "reasoning_usd": reasoning_t * reasoning_price / 1_000_000,
@@ -433,6 +395,14 @@ def _compute_from_table(
         total *= discount
         breakdown["batch_discount"] = discount
     return total, breakdown
+
+
+def _prompt_tokens(tokens: Mapping[str, int], provider: str) -> int:
+    """Prompt size as the provider counts it for long-context thresholds."""
+    prompt = int(tokens.get("input", 0) or 0)
+    if not _input_includes_cached(provider):
+        prompt += int(tokens.get("cached", 0) or 0) + int(tokens.get("cache_write", 0) or 0)
+    return prompt
 
 
 def _overestimate_cost(
@@ -522,7 +492,7 @@ def resolve_billable_cost(
         return result
 
     # Local/free rate row
-    rate = _lookup_rate(price_table, provider, model)
+    rate = lookup_rate(price_table, provider, model)
     if rate is not None and rate.get("free"):
         result = {
             "cost_usd": 0.0,
@@ -551,9 +521,12 @@ def resolve_billable_cost(
         return result
 
     has_usage = tokens["total"] > 0 or tokens["input"] > 0 or tokens["output"] > 0
+    # Usage that reports only a total cannot be priced per token kind.
+    has_split = any(tokens[k] for k in ("input", "output", "cached", "cache_write", "reasoning"))
 
     # C: compute from owned price table
-    if rate is not None and has_usage:
+    if rate is not None and has_split:
+        rate = apply_long_context(rate, _prompt_tokens(tokens, provider))
         computed, parts = _compute_from_table(
             tokens,
             rate,
@@ -575,12 +548,16 @@ def resolve_billable_cost(
     if has_usage:
         # Suppress UnknownModelWarning here: $0 from estimate is a miss and we
         # continue to overestimate/fail-loud (never silent under-count).
+        # A bare total is priced at the output rate, the higher of the two.
+        input_t, output_t = (
+            (tokens["input"] or tokens["total"], tokens["output"]) if has_split else (0, tokens["total"])
+        )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UnknownModelWarning)
             estimated = estimate_cost(
                 model,
-                input_tokens=tokens["input"] or tokens["total"],
-                output_tokens=tokens["output"],
+                input_tokens=input_t,
+                output_tokens=output_t,
                 provider=provider or None,
             )
         # estimate_cost returns 0 for unknown — treat 0 as miss
@@ -606,6 +583,28 @@ def resolve_billable_cost(
             "STRICT_PRECISION refuses silent $0. Pass provider cost, a price row, "
             "or disable strict and accept a conservative overestimate."
         )
+
+    # An unknown model from a provider whose rows are kept current is priced at
+    # that provider's highest listed rates, not the flat high-water charge.
+    ceiling = provider_ceiling(price_table, provider) if has_split else None
+    if ceiling is not None:
+        computed, parts = _compute_from_table(
+            tokens, ceiling, provider=provider, batch=batch, image_units=image_units
+        )
+        result = {
+            "cost_usd": float(computed),
+            "tokens": tokens,
+            "source": SOURCE_OVERESTIMATE,
+            "breakdown": {
+                **base_breakdown,
+                **parts,
+                "rate": ceiling,
+                "reason": "unknown_model_provider_ceiling",
+            },
+        }
+        if request_id:
+            result["request_id"] = request_id
+        return result
 
     over = _overestimate_cost(tokens, price_table)
     result = {

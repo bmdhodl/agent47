@@ -1,0 +1,10 @@
+## main (7c1ed78)
+case                                           recorded   expected   ratio  source
+gpt-5.5, 300k prompt (long-context tier)     $   1.5300    $3.0450   0.50x  computed
+gpt-5.5 dated snapshot                       $   1.5750    $0.0650  24.23x  overestimate
+claude-opus-5                                $   1.5750    $0.0625  25.20x  overestimate
+claude-sonnet-5                              $   1.5750    $0.0250  63.00x  overestimate
+claude-fable-5-1, 50k cache read             $   7.8750    $0.0575 136.96x  overestimate
+claude-opus-4-20250514 (real Opus 4 id)      $   1.5750    $0.1875   8.40x  overestimate
+claude-haiku-4-5 alias                       $   1.5750    $0.0125 126.00x  overestimate
+unknown OpenAI model (no true price)         $   1.5750          -       -  overestimate

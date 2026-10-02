@@ -283,3 +283,39 @@ class TestReleaseGuardCli(unittest.TestCase):
 
         payload = json.loads(result.stdout)
         self.assertEqual(payload, [])
+
+
+class TestPriceTableAge(unittest.TestCase):
+    def _repo(self, tmp, verified):
+        repo_root = pathlib.Path(tmp)
+        path = repo_root / "sdk" / "agentguard" / "price_table.py"
+        path.parent.mkdir(parents=True)
+        path.write_text(f"DEFAULT_PRICE_TABLE = {{'verified': {verified!r}}}\n", encoding="utf-8")
+        return repo_root
+
+    def test_stale_provider_is_a_finding(self):
+        from datetime import date
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = self._repo(tmp, {"openai": "2026-01-01", "anthropic": "2026-09-01"})
+            findings = sdk_release_guard.check_price_table_age(repo_root, today=date(2026, 9, 26))
+        self.assertEqual([f.check for f in findings], ["price-table-age"])
+        self.assertIn("openai prices were last checked 2026-01-01", findings[0].message)
+
+    def test_current_repo_table_was_within_the_limit_when_edited(self):
+        # Pinned to the table's own edit date: the suite must not start failing
+        # on unrelated PRs once the rows age. Only publish.yml checks today.
+        from datetime import date
+
+        from agentguard.price_table import DEFAULT_PRICE_TABLE
+
+        edited = date.fromisoformat(DEFAULT_PRICE_TABLE["last_updated"])
+        self.assertEqual(
+            sdk_release_guard.check_price_table_age(sdk_release_guard.REPO_ROOT, today=edited), []
+        )
+
+    def test_age_check_runs_only_when_asked(self):
+        with patch.object(sdk_release_guard, "check_price_table_age", return_value=["stale"]) as check:
+            findings = sdk_release_guard.collect_findings(sdk_release_guard.REPO_ROOT)
+        check.assert_not_called()
+        self.assertNotIn("stale", findings)
