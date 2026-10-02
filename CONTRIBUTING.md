@@ -32,6 +32,25 @@ memory/       SDK-specific state and decisions for agent contributors
 
 The hosted dashboard is not developed in this public repository.
 
+## CI coverage
+
+Every PR runs the existing SDK floor/current tests with an 80% coverage floor,
+lint/security, both MCP suites and real floor/latest dependency compatibility.
+The `ci-required` summary fails if any job group fails, is cancelled, is skipped,
+or is missing. It reports on documentation-only PRs too, so branch protection
+does not wait for a path-filtered workflow that never started. Main pushes keep
+the full supported Python matrix. There is no hourly full-suite rerun.
+
+The published-wheel workflow runs after publishing, on manual dispatch, and
+nightly at 08:49 UTC. A nightly run resolves the latest stable release once,
+then installs that exact PyPI wheel on Linux, Windows and macOS, plus the Python
+3.9 floor on Linux. The example refuses network calls and checks budget, loop
+and retry stop events. Scheduled runs are operational verification, not user
+adoption. They do not publish packages or make paid provider calls.
+
+Repository maintainers require `ci-required` after its first verified run.
+Existing review requirements remain in force.
+
 ## Local Setup
 
 Prerequisites:

@@ -10,11 +10,6 @@ on:
       - "proof/**"
   pull_request:
     branches: [main]
-    paths-ignore:
-      - "inbox/**"
-      - "memory/**"
-      - "ops/**"
-      - "proof/**"
   workflow_dispatch:
 
 permissions:
@@ -25,6 +20,24 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  ci-required:
+    name: ci-required
+    if: ${{ always() }}
+    needs: [test, lint, mcp, mcp-budget, compat]
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Require every job group to pass
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: python scripts/check_ci_results.py
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -76,7 +89,7 @@ jobs:
       - name: Check release metadata sync
         run: python scripts/sdk_release_guard.py
       - name: Lint (ruff)
-        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/live_cost_reconcile.py
+        run: ruff check sdk/agentguard/ scripts/generate_pypi_readme.py scripts/sdk_preflight.py scripts/sdk_release_guard.py scripts/ci_tools_requirements_guard.py scripts/live_cost_reconcile.py scripts/check_ci_results.py sdk/tests/test_ci_results.py
       - name: Security lint (bandit)
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
 
