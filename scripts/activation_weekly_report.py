@@ -15,6 +15,10 @@ INSTALL_COPY = "pip install agentguard47"
 UNDIFFERENTIATED_FEEDBACK = (
     "consented_feedback total is not result=success; not counted as guard activation"
 )
+INTERPRETER_CAVEAT = (
+    "a null interpreter almost always means tooling rather than a person, and a real "
+    "interpreter still does not prove a distinct person"
+)
 
 
 def is_install_intent_target(target: str) -> bool:
@@ -101,6 +105,55 @@ def _section(snapshot: Mapping[str, Any], key: str) -> Mapping[str, Any] | None:
     return value if isinstance(value, Mapping) else None
 
 
+def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
+    """Read the snapshot's computed off-publish-day figures for the 7-day window.
+
+    An older snapshot has no such block, so the fields stay explicitly unknown
+    rather than becoming a silent zero.
+    """
+    unknown: dict[str, Any] = {
+        "pypi_events_outside_publish_burst": "unknown",
+        "pypi_events_outside_publish_burst_day_count": "unknown",
+        "pypi_events_outside_publish_burst_mean_per_day": "unknown",
+        "pypi_real_interpreter_events_outside_publish_burst": "unknown",
+        "pypi_real_interpreter_events_outside_publish_burst_day_count": "unknown",
+        "pypi_real_interpreter_events_outside_publish_burst_mean_per_day": "unknown",
+        "publish_dates_excluded": [],
+        "off_publish_method": "unknown",
+    }
+    block = (pypi or {}).get("off_publish_days")
+    if not isinstance(block, Mapping):
+        return unknown
+    window = block.get("window_7d")
+    if not isinstance(window, Mapping):
+        return unknown
+    fields: dict[str, Any] = {
+        "pypi_events_outside_publish_burst": int(window.get("downloads") or 0),
+        "pypi_events_outside_publish_burst_day_count": int(window.get("day_count") or 0),
+        "pypi_events_outside_publish_burst_mean_per_day": float(window.get("mean_per_day") or 0.0),
+        "publish_dates_excluded": list(window.get("publish_dates_excluded") or []),
+        "off_publish_method": block.get("method") or "unknown",
+    }
+    real = window.get("real_interpreter")
+    if isinstance(real, Mapping) and "downloads" in real:
+        fields["pypi_real_interpreter_events_outside_publish_burst"] = int(real.get("downloads") or 0)
+        fields["pypi_real_interpreter_events_outside_publish_burst_day_count"] = int(
+            real.get("day_count") or 0
+        )
+        fields["pypi_real_interpreter_events_outside_publish_burst_mean_per_day"] = float(
+            real.get("mean_per_day") or 0.0
+        )
+    else:
+        reason = real.get("reason") if isinstance(real, Mapping) else "not supplied"
+        for key in (
+            "pypi_real_interpreter_events_outside_publish_burst",
+            "pypi_real_interpreter_events_outside_publish_burst_day_count",
+            "pypi_real_interpreter_events_outside_publish_burst_mean_per_day",
+        ):
+            fields[key] = f"unavailable; {reason}"
+    return fields
+
+
 def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     site = _section(snapshot, "site")
     if site is None:
@@ -139,14 +192,11 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     if pypi is None or pypi_source.get("status") == "unavailable":
         downloads_7d: int | str = "unknown"
         downloads_30d: int | str = "unknown"
-        outside_burst: int | str = "unknown"
+        off_publish: dict[str, Any] = _off_publish_fields(None)
     else:
         downloads_7d = int(pypi.get("without_mirrors_7d") or 0)
         downloads_30d = int(pypi.get("without_mirrors_30d") or 0)
-        if pypi.get("burst_downloads_in_7d") is None:
-            outside_burst = "not computed; release days are annotated, not removed"
-        else:
-            outside_burst = max(downloads_7d - int(pypi.get("burst_downloads_in_7d") or 0), 0)
+        off_publish = _off_publish_fields(pypi)
 
     github = _section(snapshot, "github")
     traffic = sources.get("github_traffic") if isinstance(sources.get("github_traffic"), Mapping) else {}
@@ -172,6 +222,8 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         repeat_use = "unknown without a consented reporter"
 
     unknowns = list(snapshot.get("unknowns") or [])
+    if pypi is not None and INTERPRETER_CAVEAT not in unknowns:
+        unknowns.append(INTERPRETER_CAVEAT)
     if undifferentiated and UNDIFFERENTIATED_FEEDBACK not in unknowns:
         unknowns.append(UNDIFFERENTIATED_FEEDBACK)
     if excluded["simulated"] and "simulated reports are not demand" not in unknowns:
@@ -193,12 +245,13 @@ def classify(snapshot: Mapping[str, Any]) -> dict[str, Any]:
             "pypi_without_mirrors_7d": downloads_7d,
             "pypi_without_mirrors_30d": downloads_30d if pypi is not None else "unknown",
             "release_day_events": list((pypi or {}).get("release_day_events") or []) if pypi else [],
+            "off_publish_days": (pypi or {}).get("off_publish_days", "unknown") if pypi else "unknown",
             "note": "package events, not unique users; release-day rows are annotated and not removed as CI",
         },
         "repository_visits": repository_visits,
         "install": {
             "pypi_without_mirrors_7d": downloads_7d,
-            "pypi_events_outside_publish_burst": outside_burst,
+            **off_publish,
             "note": "package events, not unique users",
         },
         "install_intent_proven": proven_intent,
