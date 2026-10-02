@@ -1,0 +1,152 @@
+[
+  {
+    "number": 644,
+    "title": "deps: unresolved CrewAI / ChromaDB advisories after September audit",
+    "url": "https://github.com/bmdhodl/agent47/issues/644",
+    "updatedAt": "2026-09-25T21:58:19Z"
+  },
+  {
+    "number": 729,
+    "title": "AgentGuard weekly growth plan: verified limits, portable evidence, and adoption",
+    "url": "https://github.com/bmdhodl/agent47/issues/729",
+    "updatedAt": "2026-09-25T00:31:02Z"
+  },
+  {
+    "number": 735,
+    "title": "AG-06: Add a supported OpenAI Responses and Agents SDK integration",
+    "url": "https://github.com/bmdhodl/agent47/issues/735",
+    "updatedAt": "2026-09-24T21:26:57Z"
+  },
+  {
+    "number": 736,
+    "title": "AG-07: Publish a real compatibility matrix and optional-extra support policy",
+    "url": "https://github.com/bmdhodl/agent47/issues/736",
+    "updatedAt": "2026-09-25T22:36:08Z"
+  },
+  {
+    "number": 737,
+    "title": "AG-08: Run the week-four activation and native-alternative decision gate",
+    "url": "https://github.com/bmdhodl/agent47/issues/737",
+    "updatedAt": "2026-09-25T00:30:58Z"
+  },
+  {
+    "number": 738,
+    "title": "AG-09: Ship an opt-in Claude Code runtime adapter with honest limits",
+    "url": "https://github.com/bmdhodl/agent47/issues/738",
+    "updatedAt": "2026-09-18T16:12:26Z"
+  },
+  {
+    "number": 739,
+    "title": "AG-10: Ship the equivalent Cursor adapter and cross-host contract tests",
+    "url": "https://github.com/bmdhodl/agent47/issues/739",
+    "updatedAt": "2026-09-18T16:12:29Z"
+  },
+  {
+    "number": 740,
+    "title": "AG-11: Clarify and package the local MCP inspection surface",
+    "url": "https://github.com/bmdhodl/agent47/issues/740",
+    "updatedAt": "2026-09-18T16:12:32Z"
+  },
+  {
+    "number": 741,
+    "title": "AG-12: Prove one enforced MCP tool-call path through a trusted host adapter",
+    "url": "https://github.com/bmdhodl/agent47/issues/741",
+    "updatedAt": "2026-09-18T16:12:34Z"
+  },
+  {
+    "number": 742,
+    "title": "AG-13: Explain every stop to both a human and an agent",
+    "url": "https://github.com/bmdhodl/agent47/issues/742",
+    "updatedAt": "2026-09-18T16:12:38Z"
+  },
+  {
+    "number": 743,
+    "title": "AG-14: Join AgentGuard runtime evidence to optional showwork verification",
+    "url": "https://github.com/bmdhodl/agent47/issues/743",
+    "updatedAt": "2026-09-18T16:12:41Z"
+  },
+  {
+    "number": 744,
+    "title": "AG-15: Design the optional BMD Limits and deployment-evidence handoff",
+    "url": "https://github.com/bmdhodl/agent47/issues/744",
+    "updatedAt": "2026-09-18T16:12:43Z"
+  },
+  {
+    "number": 745,
+    "title": "AG-16: Run the week-eight repeat-use and suite-value decision gate",
+    "url": "https://github.com/bmdhodl/agent47/issues/745",
+    "updatedAt": "2026-09-18T16:12:45Z"
+  },
+  {
+    "number": 746,
+    "title": "AG-17: Make the first ten minutes useful on Windows, macOS and Linux",
+    "url": "https://github.com/bmdhodl/agent47/issues/746",
+    "updatedAt": "2026-09-25T21:18:24Z"
+  },
+  {
+    "number": 747,
+    "title": "AG-18: Publish a small reproducible agent-failure corpus and comparison",
+    "url": "https://github.com/bmdhodl/agent47/issues/747",
+    "updatedAt": "2026-09-24T23:30:26Z"
+  },
+  {
+    "number": 748,
+    "title": "AG-19: Build an ethical feedback and contributor growth loop",
+    "url": "https://github.com/bmdhodl/agent47/issues/748",
+    "updatedAt": "2026-09-25T21:08:04Z"
+  },
+  {
+    "number": 749,
+    "title": "AG-20: Package tested skills and hooks for Claude and Cursor",
+    "url": "https://github.com/bmdhodl/agent47/issues/749",
+    "updatedAt": "2026-09-18T16:12:56Z"
+  },
+  {
+    "number": 750,
+    "title": "AG-21: Automate weekly release-candidate preparation",
+    "url": "https://github.com/bmdhodl/agent47/issues/750",
+    "updatedAt": "2026-09-18T16:13:01Z"
+  },
+  {
+    "number": 751,
+    "title": "AG-22: Exercise release failure recovery and delivery confirmation",
+    "url": "https://github.com/bmdhodl/agent47/issues/751",
+    "updatedAt": "2026-09-18T16:13:04Z"
+  },
+  {
+    "number": 752,
+    "title": "AG-23: Evaluate constrained automatic patch releases",
+    "url": "https://github.com/bmdhodl/agent47/issues/752",
+    "updatedAt": "2026-09-18T16:13:06Z"
+  },
+  {
+    "number": 753,
+    "title": "AG-24: Run the twelve-week continue, narrow or hold decision",
+    "url": "https://github.com/bmdhodl/agent47/issues/753",
+    "updatedAt": "2026-09-18T16:13:09Z"
+  },
+  {
+    "number": 754,
+    "title": "AG-25: Conditional: TypeScript support from shared conformance fixtures",
+    "url": "https://github.com/bmdhodl/agent47/issues/754",
+    "updatedAt": "2026-09-18T16:13:14Z"
+  },
+  {
+    "number": 755,
+    "title": "AG-26: Conditional: shared task budgets across machines",
+    "url": "https://github.com/bmdhodl/agent47/issues/755",
+    "updatedAt": "2026-09-18T16:13:16Z"
+  },
+  {
+    "number": 756,
+    "title": "AG-27: Conditional: improve loop detection from measured false stops",
+    "url": "https://github.com/bmdhodl/agent47/issues/756",
+    "updatedAt": "2026-09-18T16:13:19Z"
+  },
+  {
+    "number": 757,
+    "title": "AG-28: Conditional: interoperable MCP enforcement instead of another proxy platform",
+    "url": "https://github.com/bmdhodl/agent47/issues/757",
+    "updatedAt": "2026-09-18T16:13:22Z"
+  }
+]
