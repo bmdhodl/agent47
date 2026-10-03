@@ -1,0 +1,15 @@
+{
+  "source_commit": "d38d0160f5c8654443ebc0fbdb0b9ca81e5c76ed",
+  "git_blob_sha256": {
+    ".github/workflows/ci.yml": "f1964f9dd39b45bf0ed70f92faef48ca7b34c53f670f44be6bd7b10eb57c5bdb",
+    ".github/requirements/compat-responses-floor.in": "c6f95337dff2f00cc2c72a65c6edfd2da9b9a291d4ecb1253d69b411a89354ce",
+    ".github/requirements/compat-responses-floor.txt": "6c38b8dcb2685743ffc1bf6c30cda977750f3d5a3a094d38cc813d9cf6e26b26",
+    "scripts/check_ci_results.py": "6b3989ce07f6a409d8db3b6cfb435f08ab1d5aa6a123f5ad8fe2a389f76fcec6",
+    "sdk/tests/test_ci_results.py": "c5c6c81db9e624d38676ed6f5ef235bdcaf1d591b257fd763c8269ecf96e8282",
+    "docs/compatibility.md": "2c67ff83302f1017bcae66996dd0a2947ca7fa23b34dcbc4190f7d52fdd431f4",
+    "memory/decisions.md": "5c5830a42246167664cc268188717fcc23c14be876852b341e8cb89695246d46",
+    "inbox/log.md": "f83a1c1ab91998b57df6018651ec74577fa5aa00ddb1fda552d51d3618413e1a"
+  },
+  "sdk_runtime_modules_unchanged_from_main": 51,
+  "existing_installed_wheel_evidence": "proof/free-local-clients-817/review-r3/README.md"
+}

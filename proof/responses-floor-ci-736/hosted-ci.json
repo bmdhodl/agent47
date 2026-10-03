@@ -1,0 +1,66 @@
+{
+  "repository": "bmdhodl/agent47",
+  "head_commit": "c3985a4d269bc0924cea22fe69fbc837ce18ccc6",
+  "source_commit": "d38d0160f5c8654443ebc0fbdb0b9ca81e5c76ed",
+  "bound_source_files_identical_to_tested_head": true,
+  "ci_run": 37108470268,
+  "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268",
+  "conclusion": "success",
+  "floor_job": 111161524605,
+  "platform": "Ubuntu/Python 3.12.14",
+  "openai": "1.66.3",
+  "openai_agents": "0.0.3",
+  "real_responses_agents_tests": 21,
+  "free_client_tests": 71,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "warnings": 0,
+  "jobs": [
+    {
+      "name": "test (3.9)",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524513"
+    },
+    {
+      "name": "responses-floor",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524605"
+    },
+    {
+      "name": "compat (floor)",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524639"
+    },
+    {
+      "name": "test (3.12)",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524673"
+    },
+    {
+      "name": "lint",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524684"
+    },
+    {
+      "name": "mcp-budget",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524699"
+    },
+    {
+      "name": "compat (latest)",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524735"
+    },
+    {
+      "name": "mcp",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161524736"
+    },
+    {
+      "name": "ci-required",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37108470268/job/111161704041"
+    }
+  ]
+}

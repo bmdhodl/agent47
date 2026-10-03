@@ -1,0 +1,25 @@
+{
+  "sha256": {
+    "aggregate-green.txt": "f3b26c69c6864dc144260c8c00883b7043b93bf1d4f4ac77a6d52fb34fed82e4",
+    "aggregate-green.xml": "ed2da2df11e86324eb21d24851131a219af972d335fd3cd146135a7bd001738c",
+    "aggregate-red.txt.gz": "509d5099deebfd2fc87b79ec3d3e1ab77bcf3480dac8f80e1abbe999a6ef7ac6",
+    "check-bandit.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-ci-tools.txt": "2cbb9109384606ea7f60a71f16d9dd209a7ab8caa4bb69e985fdfe6bf3668b78",
+    "check-docs.txt": "8469324240d7e577b6086321f5cd40a2fcc9903ad0b8ae269377ddc98c0c11e3",
+    "check-mcp.txt": "1e2fc57f9562695938eb94ec7d5abe4e30f3fc89677c7865f8680a268961ed5d",
+    "check-pypi-readme.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-release-guard.txt": "d8e9e68244f4000fc83476c883a71b36377022e51cbe4654d036c2873b7ad6b8",
+    "check-review-readiness.txt": "a3423a8c4a1ce188965d72be6ca889ec5f439e61f6404e29dffa4f099be47f58",
+    "check-ruff.txt": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "checks.json": "1495ff517e11fcdb3ca8e0d6a80247c0c1b07c326561f760f891fb9bfde20237",
+    "hosted-ci.json": "cf41e176c1699c722b7cfa1f7b85e429e93ea81464897f55948223754dce247a",
+    "hosted-floor.log.gz": "a3b66646eddbddce8f0bb3808b9831bcceb6669877e8a6ebf8b6f6ce586ab270",
+    "README.local.md": "d04334bbf5b42105efe15577ee6081a34e529c6acfa75d8a5961dfb3eb4d1c3e",
+    "README.md": "952a6480452b2fc9a3024b73fb7606695bcdb8e894a2747ecdbba07704f5aa0f",
+    "source-binding.json": "b6153d90a6e19d698690228b8c8ce148781b54f7246a1e2a24ecfa464222cfcf",
+    "suite-local.txt.gz": "bda55645c7da4cd879e73ed40b0e16a215d2b81b6c3a39ac6a8534a4004f51dd",
+    "suite-local.xml.gz": "2126e4db19cf90a4d7da6ca45bcd500fdf22520e60f6e058388bd071a8d4393a",
+    "workflow-validation.json": "4769b842b03393504fcb93ad8f25b8f58ac3146ef15a7d2990b422bba437d3c6"
+  },
+  "line_endings": "UTF-8 LF text; exact gzip bytes"
+}

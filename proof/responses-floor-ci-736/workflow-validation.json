@@ -1,0 +1,90 @@
+{
+  "yaml_parsed": true,
+  "existing_triggers_permissions_compat_unchanged": true,
+  "required_inventory_matches_workflow": true,
+  "hash_enforced_floor": true,
+  "both_real_test_files_selected": true,
+  "junit_guard_cases": [
+    {
+      "position": 1,
+      "case": "pass",
+      "exit": 0
+    },
+    {
+      "position": 1,
+      "case": "skip",
+      "exit": 1
+    },
+    {
+      "position": 1,
+      "case": "failure",
+      "exit": 1
+    },
+    {
+      "position": 1,
+      "case": "error",
+      "exit": 1
+    },
+    {
+      "position": 1,
+      "case": "empty",
+      "exit": 1
+    },
+    {
+      "position": 1,
+      "case": "malformed",
+      "exit": 1
+    },
+    {
+      "position": 1,
+      "case": "invalid-count",
+      "exit": 1
+    },
+    {
+      "position": 1,
+      "case": "missing",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "pass",
+      "exit": 0
+    },
+    {
+      "position": 2,
+      "case": "skip",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "failure",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "error",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "empty",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "malformed",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "invalid-count",
+      "exit": 1
+    },
+    {
+      "position": 2,
+      "case": "missing",
+      "exit": 1
+    }
+  ],
+  "linux_execution": "pending actual PR CI"
+}

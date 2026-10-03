@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-JOBS = ("test", "lint", "mcp", "mcp-budget", "compat")
+JOBS = ("test", "lint", "mcp", "mcp-budget", "compat", "responses-floor")
 
 
 def run_gate(payload):
@@ -22,16 +22,17 @@ def run_gate(payload):
 def test_every_required_job_must_pass():
     result = run_gate(json.dumps({name: {"result": "success"} for name in JOBS}))
     assert result.returncode == 0
-    assert "All 5 CI job groups passed" in result.stdout
+    assert "All 6 CI job groups passed" in result.stdout
 
 
+@pytest.mark.parametrize("job", JOBS)
 @pytest.mark.parametrize("result", ["failure", "cancelled", "skipped", None, "unknown"])
-def test_non_success_result_blocks_merge(result):
+def test_non_success_result_blocks_merge(job, result):
     payload = {name: {"result": "success"} for name in JOBS}
-    payload["compat"]["result"] = result
+    payload[job]["result"] = result
     checked = run_gate(json.dumps(payload))
     assert checked.returncode == 1
-    assert "compat" in checked.stderr
+    assert job in checked.stderr
 
 
 @pytest.mark.parametrize("payload", ["", "{}", "null", "[]", '{"test": "success"}', "invalid"])
@@ -53,4 +54,11 @@ def test_job_inventory_must_match_required_groups(change):
         del payload["compat"]
     else:
         payload["surprise"] = {"result": "success"}
+    assert run_gate(json.dumps(payload)).returncode == 1
+
+
+@pytest.mark.parametrize("missing_job", JOBS)
+def test_missing_required_group_blocks_merge(missing_job):
+    payload = {name: {"result": "success"} for name in JOBS}
+    del payload[missing_job]
     assert run_gate(json.dumps(payload)).returncode == 1

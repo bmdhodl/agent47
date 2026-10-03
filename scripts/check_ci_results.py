@@ -4,7 +4,7 @@ import os
 import sys
 
 # Keep this inventory aligned with ci-required.needs in .github/workflows/ci.yml.
-REQUIRED = frozenset({"test", "lint", "mcp", "mcp-budget", "compat"})
+REQUIRED = frozenset({"test", "lint", "mcp", "mcp-budget", "compat", "responses-floor"})
 
 
 def main():

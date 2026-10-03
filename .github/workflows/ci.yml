@@ -23,7 +23,7 @@ jobs:
   ci-required:
     name: ci-required
     if: ${{ always() }}
-    needs: [test, lint, mcp, mcp-budget, compat]
+    needs: [test, lint, mcp, mcp-budget, compat, responses-floor]
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -154,3 +154,38 @@ jobs:
         run: python -m pip install --require-hashes -r .github/requirements/compat-${{ matrix.lock }}.txt
       - name: Full suite against real packages
         run: python -m pytest sdk/tests/ -q
+
+  # Keep the Chat Completions 1.40.0 floor; Responses first appears at 1.66.3.
+  responses-floor:
+    name: responses-floor
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: sdk
+      AGENTGUARD_REQUIRE_REAL_DEPS: "1"
+      OPENAI_AGENTS_DISABLE_TRACING: "1"
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Install pinned Responses and Agents floor
+        run: python -m pip install --require-hashes -r .github/requirements/compat-responses-floor.txt
+      - name: Real Responses and Agents floor tests without skips
+        run: |
+          python -m pytest sdk/tests/test_real_dispatch.py -q -k "responses or agents_sdk" --junitxml=responses-floor.xml
+          python -m pytest sdk/tests/test_free_local_clients.py -q --junitxml=free-local-floor.xml
+          python - responses-floor.xml free-local-floor.xml <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+          for path in sys.argv[1:]:
+              suites = list(ET.parse(path).getroot().iter("testsuite"))
+              counts = {name: sum(int(suite.get(name, "0")) for suite in suites)
+                        for name in ("tests", "skipped", "failures", "errors")}
+              if counts["tests"] < 1 or any(counts[name] for name in ("skipped", "failures", "errors")):
+                  raise SystemExit(f"Responses floor did not run cleanly: {path}: {counts}")
+              print(f'{path}: {counts["tests"]} tests, zero skips/failures/errors')
+          PY

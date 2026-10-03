@@ -1,0 +1,11 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [VALIDATION]\sdk
+configfile: pyproject.toml
+collected 49 items
+
+[SDK_CHECKOUT]\sdk\tests\test_ci_results.py . [  2%]
+................................................                         [100%]
+
+- generated xml file: [VALIDATION]\agent47-responses-floor-ci-736-aggregate-green\tests.xml -
+============================= 49 passed in 4.97s ==============================
