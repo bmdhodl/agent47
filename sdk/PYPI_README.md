@@ -113,6 +113,13 @@ patch_openai(tracer, budget_guard=budget)
 # Make your OpenAI chat.completions.create or responses.create calls after this setup.
 ```
 
+Standard OpenAI clients created earlier are covered too, including resource
+objects obtained before the patch. Activate the patch before sending requests
+or saving bound methods and raw/streaming response helpers. Those saved
+references can retain the original callable; recreate them after activation.
+`patch_openai_async()` covers async clients, and `agentguard.init()` enables
+both. See the [enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md).
+
 The patch checks recorded usage before dispatch and records response usage
 afterward, including streamed calls once the final usage arrives. A response
 can exceed the remaining cost or token allowance. Concurrent requests do not
@@ -263,6 +270,12 @@ The PyPI README is generated from this README and the changelog.
   current releases, and the openai floor (1.40.0) predates the Responses API.
 
 ### Fixes
+- OpenAI clients created before `patch_openai()`, `patch_openai_async()`, or
+  `init()` now trace and enforce their budget through shared resource methods.
+  Previously these calls silently bypassed both. Methods and raw/streaming
+  helpers saved before activation still need to be recreated; see the
+  [enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md).
+
 - One price table. `estimate_cost` and the patched clients now read the same
   rows. Before, the patched clients billed a `gpt-5.5` prompt over 272k
   tokens at half its price, and priced every Claude 5 model, `claude-haiku-4-5`,

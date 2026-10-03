@@ -111,6 +111,13 @@ patch_openai(tracer, budget_guard=budget)
 # Make your OpenAI chat.completions.create or responses.create calls after this setup.
 ```
 
+Standard OpenAI clients created earlier are covered too, including resource
+objects obtained before the patch. Activate the patch before sending requests
+or saving bound methods and raw/streaming response helpers. Those saved
+references can retain the original callable; recreate them after activation.
+`patch_openai_async()` covers async clients, and `agentguard.init()` enables
+both. See the [enforcement boundary](docs/enforcement-boundary.md).
+
 The patch checks recorded usage before dispatch and records response usage
 afterward, including streamed calls once the final usage arrives. A response
 can exceed the remaining cost or token allowance. Concurrent requests do not
