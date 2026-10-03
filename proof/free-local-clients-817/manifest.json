@@ -1,0 +1,30 @@
+{
+  "sha256": {
+    "baseline.txt.gz": "112cf961f5861443f8bd2f93dd5b46c492bbba2660fdb096c2ac5bf55285a243",
+    "check-bandit.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-ci-tools.txt": "2cbb9109384606ea7f60a71f16d9dd209a7ab8caa4bb69e985fdfe6bf3668b78",
+    "check-docs.txt": "8469324240d7e577b6086321f5cd40a2fcc9903ad0b8ae269377ddc98c0c11e3",
+    "check-mcp.txt": "ac149c7fa95da2c968e04cb6fd7fed02affc662ca6aa2a7b16a54358d3d6d443",
+    "check-pypi-readme.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-release-guard.txt": "d8e9e68244f4000fc83476c883a71b36377022e51cbe4654d036c2873b7ad6b8",
+    "check-review-readiness.txt": "a3423a8c4a1ce188965d72be6ca889ec5f439e61f6404e29dffa4f099be47f58",
+    "check-ruff.txt": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "checks.json": "1495ff517e11fcdb3ca8e0d6a80247c0c1b07c326561f760f891fb9bfde20237",
+    "focused-green.txt": "6ecc58c24d920d805e91c8cdc5c2f719df331a08da46fa5ca95c87d73c02c9a9",
+    "installed-chat39.json": "8021534a44b8aabe1fa8e2fccbb391867ae3d4b74059fc3e7bae5fd428706af2",
+    "installed-chat39.txt": "2ab4ddfa1287e4d8f895c3ebfaba22ee9dd8fcb55f2435fe54c3e7eb5087e1e7",
+    "installed-chat39.xml": "491fc27aec93d4bc1298da2b3a7170b754741fa0bdeb13d467399892140f481d",
+    "installed-current313.json": "06c3690503bf79a3de14e1346b7951df46d332829f2f4d93ce9f7ee617e006aa",
+    "installed-current313.txt": "07ca66d1f558ba5fb148246220e7ac982d107c35c2102d781ec247c8e14463f0",
+    "installed-current313.xml": "707fc0dc89db966186ea251d32215fa279e6bd7cde21da24e4b77ca4dd81bab4",
+    "installed-responses39.json": "f8df25b6b45ce953f8848beb11d91f630ede7e029f803716a580ea934c434a51",
+    "installed-responses39.txt": "86cd0159eb94601b93695cd2794cf1d250adfd8d47a16e821e4a279b63b67487",
+    "installed-responses39.xml": "8e21bb5a63279eb778898951b0d0cbd5d769265c95f275dcf06f732993506094",
+    "README.md": "cf44de6626a15721336e5666982e755006e3fe4deb78e5dc476431239dc78d2d",
+    "red.txt.gz": "e0b7e185396842e10a6381eb84e43f35c258f5155f8341e17b82422791b065ae",
+    "source-binding.json": "9151176b5b331a34a4756155591f33b7f3c2f1e26bcfe955d3ff676e7489cfbe",
+    "suite-1.txt.gz": "6290deeeca552c6298ac6b1228397bd1f1ae8029766952eca254b713fc79428c",
+    "wheel.json": "ecdd6e7c5677c3b07805bbfeb27cc3c8e09fbe791008374ea78e2d1874fbf43f"
+  },
+  "line_endings": "UTF-8 LF text; exact gzip bytes"
+}
