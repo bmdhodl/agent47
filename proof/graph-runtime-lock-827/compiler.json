@@ -1,0 +1,20 @@
+{
+  "compiler": {
+    "python": "3.10.11",
+    "pip_tools": "7.6.1"
+  },
+  "command": "python -I -m piptools compile --generate-hashes --reuse-hashes --no-upgrade --index-url=https://pypi.org/simple --no-emit-index-url --pip-args=\"--isolated --no-input\" --output-file=.github/requirements/ci-tools.txt .github/requirements/ci-tools.in",
+  "compiler_header_override": "Exact executed command; avoids pip-tools false --no-index rendering; interpreter header generated normally",
+  "before_sha256": "4455b8dd745565da6b5dbe41864b37c71d48df3bd6a274d3fe75ca32969a46cc",
+  "after_sha256": "f1e030849607944eb1e2eccf152fbd2305ecb934fe8b34fd4407e1d8e286b43d",
+  "existing_pins_and_hashes_preserved": 21,
+  "added": {
+    "colorama": {
+      "version": "0.4.6",
+      "hashes": [
+        "08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
+        "4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"
+      ]
+    }
+  }
+}

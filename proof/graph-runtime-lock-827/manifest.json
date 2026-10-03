@@ -1,0 +1,32 @@
+{
+  "sha256": {
+    "check-bandit.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "check-ci-tools.log.gz": "a280c64cd9f0c3e719a0f3d587a82826de70161444c9207a6113664f7651bd1b",
+    "check-docs.log.gz": "912b5cb8426c142f0c71961412bbd017ea531fc329234bb86793c07a2c668ff5",
+    "check-mcp.log.gz": "f156fd501fbff5c228fdc2e356dd8d0e98e91153cb7299d8599d49a6da4883b5",
+    "check-pypi-readme.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "check-release-guard.log.gz": "22d960a1aed9e72e5c07ce45aa851d639f9f41d42228daad7b6e3b8b2ac8d590",
+    "check-review-readiness.log.gz": "26b44cb5e9ba47633744208304c2e21fce5767d59fb4c414a4de35e39cd5b013",
+    "check-ruff.log.gz": "f3af4d142827f5aad2eb0c72d556d325488a57fb6219aac10afeb51085667d53",
+    "compiler.json": "7b4848feff5c206b8bdc39d5e75941cc641abff55f8557ca5251e3c4f751ea1d",
+    "compiler.log.gz": "330d2b66e36052ab84bfda450e0fdd388630af823405e24d25b94ee3e91387e9",
+    "python39-direct-pin-guard.log.gz": "a280c64cd9f0c3e719a0f3d587a82826de70161444c9207a6113664f7651bd1b",
+    "python39-hashed-install.log.gz": "5c38e6304c164a89fb9807cb36369a45decd06b59cb0fab9dcac6c7ab2abe47a",
+    "python39-pip-check.log.gz": "d0006d55a76ff922a7bd8ede27963017b3c139da1adc5bce8f5c66c374ff859b",
+    "python39-sdk-demo.log.gz": "7c9506d8a6ab13f21e581c7fd3bae3625cd7813b60cda1b00040b3a08675a64e",
+    "python39-sdk-doctor.log.gz": "9f640b1881b18bacbe086f13c2075c2df03ad22e209b6acfb027d32cbee70f91",
+    "python39-sdk-install.log.gz": "f076b3f464531c70e89758ac230cfe6bdb8b37830087a3952f1d598656943016",
+    "python39-sdk-pip-check.log.gz": "d0006d55a76ff922a7bd8ede27963017b3c139da1adc5bce8f5c66c374ff859b",
+    "python39-tests.log.gz": "49b7ff9a09cd8476872e52f0f2f319e0d582ed8fa0dde0cbdea1bef308d2a8c0",
+    "python39.json": "c86b635b906754cc4410cb02937e45408ae940cffbcc63e7128aa7e5c37f5956",
+    "python39.junit.xml.gz": "ed7635b54221b9d9f860a8c0c2d7057a836b3272a6364634dd2c286f8d11f298",
+    "README.md": "f24a78c0a89032bfe086eaa78bf482400a467f23435f5cae2918473479d521a2",
+    "regression-green.junit.xml.gz": "f4bd55641904c75f6e932214df37d70f53234f89118f1d42750fe04ef539ca5f",
+    "regression-green.log.gz": "52f62a4d90cfaa24e1f291e352dcaafef804878e27364cac233f4a0e9af9bb88",
+    "regression-red.junit.xml.gz": "f73069ac976e49c82df5e226f3466b18d9f7ecc20b8eb58cda213b3ff5c1e740",
+    "regression-red.log.gz": "985ceb4382775a0378d523b307d0f70274d4e298d1f876e55541c684bf00a26e",
+    "suite1.junit.xml.gz": "5e478c158f06fcc6817fa99620e2e25934f7d6d5acb6114a546d84663afcaa12",
+    "suite1.log.gz": "a40975904e3b49a24509f14490d1d5d766e83dc9940ab50f6dd5882de7ade641",
+    "validation.json": "b5d02cbfaad0972f9be3fa74febc8190e175cc9427c714cffba9a86d3c291867"
+  }
+}
