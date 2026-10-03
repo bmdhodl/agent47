@@ -1,0 +1,7 @@
+agentguard47 @ file:///[VALIDATION]/agent47-early-clients-816-wheel-final/agentguard47-1.4.1-py3-none-any.whl#sha256=24817796814f57b6d08ece52a27921b839a90e49bfbb6b9ee906741cbef2afdd
+colorama==0.4.6
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+pytest==8.4.2

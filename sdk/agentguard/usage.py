@@ -99,6 +99,21 @@ def normalize_usage(usage: Any, provider: Optional[str] = None) -> Optional[Dict
             thinking_tokens=thinking_tokens,
         )
 
+    native_input = _nested_get(usage, "prompt_eval_count")
+    native_output = _nested_get(usage, "eval_count")
+    if native_input is not None or native_output is not None:
+        input_count = _as_int(native_input)
+        output_count = _as_int(native_output)
+        normalized = {
+            "input_tokens": input_count,
+            "output_tokens": output_count,
+            "total_tokens": input_count + output_count,
+        }
+        cached_input = _as_int(_nested_get(usage, "prompt_eval_cached_count"))
+        if cached_input:
+            normalized["cached_input_tokens"] = cached_input
+        return normalized
+
     if isinstance(usage, dict):
         generic_total = _as_int(usage.get("total_tokens"))
         generic_input = _as_int(usage.get("input_tokens"))

@@ -1,0 +1,93 @@
+{
+  "line_endings": "LF",
+  "files": [
+    {
+      "path": "baseline313/installed-tests.txt",
+      "sha256": "80684389a56b2f342648c1ed6d911da2f7aeb94b982aaf122c111b355e61e83a"
+    },
+    {
+      "path": "baseline313/receipt.json",
+      "sha256": "1d10a198f1c8447463ac0ad662f53c091fe7b7ae825c6073b03454e7d3c96e12"
+    },
+    {
+      "path": "baseline313/versions.txt",
+      "sha256": "5bdcfda4c2284e28a36b7d82b1acad058280bc9fbefac24f5cff89ec969f216a"
+    },
+    {
+      "path": "checks/bandit.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "checks/ci-tools.txt",
+      "sha256": "ea47001c5d708dd1b1e9a6d46183b74f48d1920c8ba308093fb8f95e10347e36"
+    },
+    {
+      "path": "checks/docs.txt",
+      "sha256": "8469324240d7e577b6086321f5cd40a2fcc9903ad0b8ae269377ddc98c0c11e3"
+    },
+    {
+      "path": "checks/mcp.txt",
+      "sha256": "e4feab280d8c04a80e257f9a9a1f15910335b1d6c0d911da4ef8d97836b39f82"
+    },
+    {
+      "path": "checks/pypi-readme.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "checks/release-guard.txt",
+      "sha256": "d8e9e68244f4000fc83476c883a71b36377022e51cbe4654d036c2873b7ad6b8"
+    },
+    {
+      "path": "checks/results.json",
+      "sha256": "1495ff517e11fcdb3ca8e0d6a80247c0c1b07c326561f760f891fb9bfde20237"
+    },
+    {
+      "path": "checks/review-readiness.txt",
+      "sha256": "a3423a8c4a1ce188965d72be6ca889ec5f439e61f6404e29dffa4f099be47f58"
+    },
+    {
+      "path": "checks/ruff-final.txt",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "checks/ruff.txt",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "focused-green.txt",
+      "sha256": "6ff0a17c3dda2dbe9ae4bee8b6aadc7060b4ffb0eca0affdb432d19f6482d3fc"
+    },
+    {
+      "path": "py313/installed-tests.txt",
+      "sha256": "87075893c33fd5d09a5686104f370650aa64d339f66e14cacff9787c2cd14b51"
+    },
+    {
+      "path": "py313/receipt.json",
+      "sha256": "246e040a3ec8f1553535bdb20aa2bb81c83ad05c275e8c84aabf6b6f3fab5f30"
+    },
+    {
+      "path": "py313/versions.txt",
+      "sha256": "88dfaef289924c44fdada4d685f2691c2530087c45ff588e8112b8fd495105b1"
+    },
+    {
+      "path": "py39/installed-tests.txt",
+      "sha256": "e21ed72aa5adc511d9df9430ba1472f03d756e7e29330d33306d7a9f371c1680"
+    },
+    {
+      "path": "py39/receipt.json",
+      "sha256": "6314998a144f0df8a3e0b79c3bd8c62bbf0a4622803034d3281fbb8893a61f53"
+    },
+    {
+      "path": "py39/versions.txt",
+      "sha256": "28d82e9e58d33ee3737b6f6079deb30e6604d429ec200a60ea1e810dd8227d93"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5a7f9ab3b164fd75666ebbcce5b45b988d19e6cd05e71f0bfbdd62fdc2058485"
+    },
+    {
+      "path": "source-suite.txt",
+      "sha256": "ce9a50802d5463a1143f69a49c273c03b6f674bd724ab66cfde5a8ef49d734df"
+    }
+  ]
+}
