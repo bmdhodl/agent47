@@ -1,0 +1,17 @@
+{
+  "profile": "published313",
+  "wheel_sha256": "ca8efaacff03cc373a30610c7fa7d9797a87fe140f56ece344e782df8b0435fa",
+  "installed_files_still_equal_wheel": 45,
+  "metadata_still_equal_wheel": true,
+  "counts": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "warnings": 0,
+  "isolated_python": true,
+  "optional_providers_absent": true,
+  "test_sha256": "f60a4e868d1966b4c6d1a1f16b24e48a5f270a9d57d40ed13528cc16c34cbb8e",
+  "guide_sha256": "92c868ac15e7722a75909c4b3c45f2298445b7d4ff2b7fa3c894b079c72ec42e"
+}

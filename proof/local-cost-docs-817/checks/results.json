@@ -1,0 +1,47 @@
+{
+  "initial": [
+    {
+      "name": "ruff",
+      "exit": 1
+    },
+    {
+      "name": "bandit",
+      "exit": 0
+    },
+    {
+      "name": "docs",
+      "exit": 0
+    },
+    {
+      "name": "ci-tools",
+      "exit": 0
+    },
+    {
+      "name": "review-readiness",
+      "exit": 0
+    },
+    {
+      "name": "release-guard",
+      "exit": 0
+    },
+    {
+      "name": "pypi-readme",
+      "exit": 0
+    },
+    {
+      "name": "mcp",
+      "exit": 0
+    }
+  ],
+  "ruff_after_import_spacing_fix": {
+    "exit": 0
+  },
+  "all_final_checks_pass": true,
+  "source_suite": {
+    "passed": 1481,
+    "skipped": 3,
+    "warnings": 0,
+    "coverage_percent": 92.36
+  },
+  "source_suite_limit": "The test import-spacing fix landed while this run was active; behavior is unchanged. Final installed and hosted checks use the formatted test."
+}

@@ -1,0 +1,12 @@
+{
+  "sha256": {
+    "candidate313-receipt.json": "9f3f1fc40cb56509c096712a801fe2f8f522dd6d1d72475e566501eaac533790",
+    "candidate313-tests.txt": "bc2fd082d14b871fb07382cb544cc56a7b36edeb0ea0593c95fea0292c7278e0",
+    "candidate39-receipt.json": "a34f4d7727f7b967f1e8ba72b313d4fd981e125ff7a360f3a8f1ec6aba57108d",
+    "candidate39-tests.txt": "4db6ba59ccab9689d35a445dfada138bbc08d2cb601150ef8287618e34862b34",
+    "published313-receipt.json": "0de9d7937445a3ffa74a80a383d13b704888f3f1f4d7372acb9fd5286873b179",
+    "published313-tests.txt": "813fca75a8f13d63ddec545a5992d2132e214a3b9268e85de1a8629553bedab7",
+    "README.md": "6220f3810acb893f1ef628ac9d1e7bbaaaaf58a3cf3b88616c88a0d7d8c4b8be"
+  },
+  "line_endings": "UTF-8 LF"
+}

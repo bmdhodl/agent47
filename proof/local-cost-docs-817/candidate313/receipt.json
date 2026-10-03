@@ -1,0 +1,32 @@
+{
+  "profile": "candidate313",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "3671cd33312a4c8dcffec8db8a4459a175ebe5cc9b16c0074c23d1c1aa3ba009",
+  "published_pypi_digest_verified": false,
+  "candidate_source_files_equal_wheel": 49,
+  "installed": {
+    "version": "1.4.1",
+    "python": "3.13.2",
+    "system": "Windows",
+    "installed_files_equal_archive": 49,
+    "installed_metadata_equal_archive": true,
+    "optional_providers_absent": true
+  },
+  "counts": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "warnings": 0,
+  "isolated_python": true,
+  "owner_provider_environment_scrubbed": true,
+  "pytest_plugin_autoload_disabled": true,
+  "agentguard_absent_before_install": true,
+  "actual_cli_report_zero": true,
+  "actual_cli_incident_zero": true,
+  "next_manual_dispatch_refused": true,
+  "no_model_requests": true,
+  "test_sha256": "debea5b38af8741957d6fc83567f93dbb326e104cbdb0531f004bb6a0297fc03",
+  "guide_sha256": "92c868ac15e7722a75909c4b3c45f2298445b7d4ff2b7fa3c894b079c72ec42e"
+}

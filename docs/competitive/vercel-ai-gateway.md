@@ -1,52 +1,94 @@
 # AgentGuard vs Vercel AI Gateway
 
-This is a living positioning doc. It compares AgentGuard (in-process Python SDK) with Vercel AI Gateway (hosted proxy layer). Last updated: 2026-04-13.
+This compares AgentGuard's in-process Python checks with Vercel's managed AI
+Gateway. Last checked: 2026-10-03.
 
 ## Why this comparison exists
 
-Vercel launched AI Gateway as a proxy that sits between your app and LLM providers. It offers budgets, routing, caching, and rate limiting for AI calls routed through Vercel's infrastructure.
+Vercel AI Gateway routes requests to supported providers and records usage.
+Applications can call it from local infrastructure or another cloud; they do
+not need to run on Vercel. See the [official overview](https://vercel.com/docs/ai-gateway).
 
-AgentGuard does budget enforcement and loop detection too. But it runs inside your process, not as a network hop. The architectures are fundamentally different and the right choice depends on where your agent runs and what you control.
-
-Vercel reported that 30% of deployments on their platform are now agent-initiated, with Claude Code accounting for 75% of those. Their AI Gateway explicitly advertises "budgets and routing" as features. This is the same problem space AgentGuard operates in.
+AgentGuard checks usage inside Python code you instrument. Its recorded-budget
+preflight is not an invoice cap or automatic interception of a coding-agent
+host. Read the [enforcement boundary](../enforcement-boundary.md).
 
 ## Comparison
 
 | Axis | AgentGuard | Vercel AI Gateway |
 |------|-----------|-------------------|
 | **Deployment model** | In-process Python SDK. Runs in the same process as your agent. | Gateway proxy. All LLM calls route through Vercel's infrastructure. |
-| **Provider lock-in** | None. Works with any LLM provider, any model, any inference endpoint. `patch_openai()`, `patch_anthropic()`, or manual `consume()` calls. | Routes through Vercel's backend. Works with providers Vercel supports. Your billing relationship is with Vercel. |
-| **Local-first** | Yes. Runs on your laptop, your RTX 5070 Ti, your on-prem server, your CI runner. No network calls required. | Cloud-only. Requires Vercel deployment. Cannot run on local hardware or air-gapped environments. |
-| **Latency overhead** | Zero. Guards execute in-process. No extra network hop. | One additional round-trip per LLM call through the gateway proxy. |
+| **Provider coverage** | Supported OpenAI/Anthropic patches, or manual accounting for other calls. Coverage follows the enforcement boundary. | Routes requests to supported providers; system credentials and BYOK have different billing boundaries. |
+| **Local-first** | Checks and JSONL can stay local; a provider call may still use the network. | The client can run locally, but Gateway requests use a managed network service. |
+| **Latency overhead** | In-process checks add work; overhead is not measured here. No SDK-added proxy hop. | Calls route through the managed gateway. No latency benchmark is claimed here. |
 | **Governance** | You own the audit log. JSONL traces on your filesystem. Export to your own storage. | Vercel hosts the audit log. You access it through their dashboard and API. |
-| **Dependencies** | `pip install agentguard47`. Zero runtime dependencies. Python stdlib only. | Vercel account, team, billing relationship, and deployment infrastructure. |
-| **Price** | Free. MIT license. Forever. | Usage-based Vercel pricing on top of LLM provider costs. |
+| **Dependencies** | `pip install agentguard47`. Zero required runtime dependencies. Provider SDKs are optional. | Gateway access and network connectivity; application hosting on Vercel is optional. |
+| **Price** | Free, MIT license. Provider charges are separate. | Check [current Gateway pricing](https://vercel.com/docs/ai-gateway/pricing). |
 
-## Worked scenario: Claude Code with local Ollama fallback
+## Worked scenario: a Python agent with local Ollama fallback
 
-You run Claude Code on Vercel for production workloads. For development and testing, you run Ollama locally on a consumer GPU to save money.
+Your Python agent calls a hosted provider for some work and a local Ollama
+endpoint for other work. Direct requests to `localhost:11434` do not route
+through Vercel AI Gateway. They need their own accounting path.
 
-**With Vercel AI Gateway:** Your production calls route through the gateway and get budget tracking. Your local Ollama calls do not go through the gateway. You have two different enforcement models, or you skip enforcement locally.
+Gateway budgets cover system-credential spend. BYOK spend is metered separately;
+it does not count toward those budgets. They are soft caps: a crossing request
+can finish above the limit. See [Gateway budgets](https://vercel.com/docs/ai-gateway/observability-and-spend/budgets)
+and [BYOK](https://vercel.com/docs/ai-gateway/authentication-and-byok/byok).
 
-**With AgentGuard:**
+**AgentGuard's local-cost limit:** `patch_openai()` currently classifies an
+OpenAI-compatible local endpoint as OpenAI. Unknown model prices use a
+conservative estimate, so a dollar cap can stop a free local run and reports
+can show phantom cost. A loopback URL alone does not prove a call is free.
+The patch has no per-client free-local option yet; that fix is tracked in
+[#817](https://github.com/bmdhodl/agent47/issues/817). Token/call caps through
+the patch still work, but they do not remove that estimated cost from traces.
 
+Use the existing manual helper for calls you know are free. This offline
+example represents one completed OpenAI-compatible response. It does not run
+a model or patch a client. The runnable file is
+[`examples/local_cost_manual.py`](../../examples/local_cost_manual.py):
+
+<!-- local-cost-example:start -->
 ```python
-from agentguard import Tracer, BudgetGuard, JsonlFileSink, patch_anthropic, patch_openai
+from agentguard import BudgetGuard, JsonlFileSink, Tracer, consume_billable
 
-budget = BudgetGuard(max_cost_usd=5.00, warn_at_pct=0.8)
+budget = BudgetGuard(max_tokens=3000, max_calls=1)
 tracer = Tracer(sink=JsonlFileSink(".agentguard/traces.jsonl"))
 
-# Same guards work for both providers
-# Production: patch_anthropic(tracer, budget_guard=budget) for Claude
-# Dev: patch_openai(tracer, budget_guard=budget) for local Ollama via OpenAI-compatible API
+budget.check()  # before the request you own
+response = {
+    "model": "qwen3.5:4b",
+    "usage": {"prompt_tokens": 2000, "completion_tokens": 500, "total_tokens": 2500},
+}
+with tracer.trace("local.call") as span:
+    resolved = consume_billable(
+        budget, response, model=response["model"], provider="ollama", free_local=True,
+    )
+    span.event("llm.result", data=resolved["consume_log"], cost_usd=resolved["cost_usd"])
+assert budget.state.tokens_used == 2500
+assert budget.state.cost_used == 0
 ```
+<!-- local-cost-example:end -->
 
-One SDK. Same budget enforcement whether the call goes to Claude's API or to localhost:11434. Same trace format. Same audit log. The guard does not care where the model lives.
+The next `budget.check()` raises `BudgetExceeded` at the one-call cap. Only set
+`free_local=True` when you know the model call is free; it excludes electricity
+and hardware costs. A dollar-only cap cannot bound a free loop. Manual
+accounting happens after the response and can overshoot a token cap; it does
+not reserve concurrent requests. Do not manually count the same call that a
+patch already counts. The explicit event writes JSONL; `consume_billable`
+does not emit trace events by itself. For native `/api/chat` and `/api/generate`
+responses, see the [native Ollama guide](../cost-guardrails.md#native-ollama-responses),
+including the unpublished 1.4.1 candidate's token-field support.
 
 ## When Vercel AI Gateway is the right choice
 
-If your entire stack already runs on Vercel and you want centralized LLM routing with caching, Vercel AI Gateway is a reasonable choice. It handles provider failover and response caching at the infrastructure layer without touching your application code. Teams that are all-in on Vercel's platform and do not need local enforcement or on-prem support will find the gateway convenient. AgentGuard is the better fit when you need runtime enforcement that works everywhere your code runs, not just on one platform.
+Use a managed gateway when centralized routing and supported-provider failover
+fit your workflow. Use local checks when you own the Python dispatch path and
+need limits on recorded work, including calls made directly to a local endpoint.
+Both need an explicit accounting contract for paid and free calls.
 
 ## Summary
 
-AgentGuard and Vercel AI Gateway solve overlapping problems from different layers. AI Gateway is infrastructure. AgentGuard is application-level runtime safety. They can coexist. But if you need guards that work on your laptop, in CI, on bare metal, and in the cloud with zero vendor lock-in, AgentGuard is the tool that runs everywhere your agent does.
+These tools can coexist. Check the actual dispatch and billing boundary before
+treating either budget as a hard spend limit.

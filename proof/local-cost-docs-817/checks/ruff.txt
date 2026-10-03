@@ -1,0 +1,21 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> sdk\tests\test_local_cost_docs.py:2:1
+   |
+ 1 |   """Exercise the local-accounting example that users copy from the guide."""
+ 2 | / from __future__ import annotations
+ 3 | |
+ 4 | | import json
+ 5 | | import re
+ 6 | | from pathlib import Path
+ 7 | |
+ 8 | | import pytest
+ 9 | |
+10 | | from agentguard import BudgetExceeded, resolve_billable_cost
+11 | | from agentguard.cli import _report
+12 | | from agentguard.reporting import render_incident_report
+   | |_______________________________________________________^
+   |
+help: Organize imports
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.
