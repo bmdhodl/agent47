@@ -1,0 +1,22 @@
+{
+  "url": "https://pypi.org/pypi/pywin32/312/json",
+  "version": "312",
+  "requires_python": ">=3.9",
+  "file": {
+    "filename": "pywin32-312-cp313-cp313-win_amd64.whl",
+    "url": "https://files.pythonhosted.org/packages/ba/db/36a78e3403099d31d9746d13fdcde5accc43c1155f375a34d15983a479a7/pywin32-312-cp313-cp313-win_amd64.whl",
+    "digests": {
+      "blake2b_256": "badb36a78e3403099d31d9746d13fdcde5accc43c1155f375a34d15983a479a7",
+      "md5": "7f0768870dd48f8539ceb3b26e0eeedf",
+      "sha256": "c53e878d15a1c44788082bfe712a905433473aa38f86375b7cf8b45e3acbaaf9"
+    },
+    "requires_python": ">=3.9"
+  },
+  "mcp": {
+    "url": "https://pypi.org/pypi/mcp/2.2.0/json",
+    "version": "2.2.0",
+    "windows_dependencies": [
+      "pywin32>=311; sys_platform == \"win32\""
+    ]
+  }
+}
