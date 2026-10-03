@@ -401,6 +401,7 @@ def test_free_partial_stream_keeps_its_token_hold(sdk, tmp_path, asynchronous):
     assert totals["settled"]["calls"] == 0
     assert _results(path)[0]["data"]["reason"] == "usage_missing"
     assert _results(path)[0]["cost_usd"] == 0
+    assert _results(path)[0]["data"]["source_of_cost"] == "zero"
 
 
 def test_async_repeated_patch_and_unpatch_restore_paid_defaults(sdk, tmp_path):
@@ -446,6 +447,7 @@ def test_completed_free_stream_without_usage_records_zero_and_keeps_unknown_hold
     assert result["cost_usd"] == 0
     assert result["data"]["provider"] == "local"
     assert result["data"]["usage"] is None
+    assert result["data"]["source_of_cost"] == "zero"
     assert len(transport.requests) == 1
     totals = guard.reservation_totals()
     if cap == "calls":
