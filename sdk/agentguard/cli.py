@@ -10,7 +10,7 @@ from agentguard import __version__
 from agentguard.decision import extract_decision_events
 from agentguard.demo import run_offline_demo
 from agentguard.doctor import run_doctor
-from agentguard.evaluation import _load_events, _sum_cost
+from agentguard.evaluation import _load_events, _sum_cost, _trace_duration_ms
 from agentguard.first_run import hosted_url, render_badge, render_welcome
 from agentguard.hooks import configure as configure_hook
 from agentguard.hooks import run as run_hook
@@ -77,17 +77,8 @@ def _report(path: str, as_json: bool = False) -> None:
     )
     loop_hits = names.get("guard.loop_detected", 0)
 
-    span_durations: list[float] = []
-    for e in events:
-        if e.get("kind") == "span" and e.get("phase") == "end":
-            dur = e.get("duration_ms")
-            if isinstance(dur, (int, float)):
-                span_durations.append(float(dur))
     total_cost = _sum_cost(events)
-
-    total_ms: Optional[float] = None
-    if span_durations:
-        total_ms = max(span_durations)
+    total_ms = _trace_duration_ms(events)
 
     savings = summarize_savings(events)
 

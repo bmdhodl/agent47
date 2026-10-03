@@ -1,0 +1,773 @@
+FFFFFF...FFFFFF......FFF...FFF.....                                      [100%]
+================================== FAILURES ===================================
+_________ test_elapsed_duration_consumers[sequential-no-root-summary] _________
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}, {'duration_ms': 153.0, 'kind': 'span', 'name': 'call...'start', 'ts': 0.3021}, {'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}]
+expected_ms = 446.6, consumer = 'summary'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer0')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607C927380>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+>           assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 153.0 == 446.6 ± 4.5e-04
+E             
+E             comparison failed
+E             Obtained: 153.0
+E             Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:52: AssertionError
+_________ test_elapsed_duration_consumers[sequential-no-root-report] __________
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}, {'duration_ms': 153.0, 'kind': 'span', 'name': 'call...'start', 'ts': 0.3021}, {'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}]
+expected_ms = 446.6, consumer = 'report'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer1')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607C96C550>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+>               assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+E               assert 153.0 == 446.6 ± 4.5e-04
+E                 
+E                 comparison failed
+E                 Obtained: 153.0
+E                 Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:59: AssertionError
+________ test_elapsed_duration_consumers[sequential-no-root-incident] _________
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}, {'duration_ms': 153.0, 'kind': 'span', 'name': 'call...'start', 'ts': 0.3021}, {'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}]
+expected_ms = 446.6, consumer = 'incident'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer2')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607EC1B610>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+                assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+            _report(str(path))
+            text = capsys.readouterr().out
+            if expected_ms is None:
+                assert "Approx run time" not in text
+            else:
+                assert f"Approx run time: {expected_ms:.1f} ms" in text
+        else:
+            incident = json.loads(render_incident_report(str(path), output_format="json"))
+>           assert incident["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 153.0 == 446.6 ± 4.5e-04
+E             
+E             comparison failed
+E             Obtained: 153.0
+E             Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:68: AssertionError
+____ test_elapsed_duration_consumers[overlapping-no-double-count-summary] _____
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 1}, {'duration_ms': 399.9999999999999, 'kind': 'span', '...': 'start', 'ts': 1.2}, {'duration_ms': 300.00000000000006, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}]
+expected_ms = 500, consumer = 'summary'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer3')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607EC6E060>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+>           assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 399.9999999999999 == 500 ± 5.0e-04
+E             
+E             comparison failed
+E             Obtained: 399.9999999999999
+E             Expected: 500 ± 5.0e-04
+
+test_report_duration.py:52: AssertionError
+_____ test_elapsed_duration_consumers[overlapping-no-double-count-report] _____
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 1}, {'duration_ms': 399.9999999999999, 'kind': 'span', '...': 'start', 'ts': 1.2}, {'duration_ms': 300.00000000000006, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}]
+expected_ms = 500, consumer = 'report'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer4')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607EC6E650>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+>               assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+E               assert 399.9999999999999 == 500 ± 5.0e-04
+E                 
+E                 comparison failed
+E                 Obtained: 399.9999999999999
+E                 Expected: 500 ± 5.0e-04
+
+test_report_duration.py:59: AssertionError
+____ test_elapsed_duration_consumers[overlapping-no-double-count-incident] ____
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 1}, {'duration_ms': 399.9999999999999, 'kind': 'span', '...': 'start', 'ts': 1.2}, {'duration_ms': 300.00000000000006, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}]
+expected_ms = 500, consumer = 'incident'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer5')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F08E330>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+                assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+            _report(str(path))
+            text = capsys.readouterr().out
+            if expected_ms is None:
+                assert "Approx run time" not in text
+            else:
+                assert f"Approx run time: {expected_ms:.1f} ms" in text
+        else:
+            incident = json.loads(render_incident_report(str(path), output_format="json"))
+>           assert incident["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 399.9999999999999 == 500 ± 5.0e-04
+E             
+E             comparison failed
+E             Obtained: 399.9999999999999
+E             Expected: 500 ± 5.0e-04
+
+test_report_duration.py:68: AssertionError
+___________ test_elapsed_duration_consumers[unordered-file-summary] ___________
+
+events = [{'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}, {'kind': 'span', 'nam...nd': 'span', 'name': 'call.one', 'phase': 'end', ...}, {'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}]
+expected_ms = 446.6, consumer = 'summary'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer9')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607ED15C50>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+>           assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 153.0 == 446.6 ± 4.5e-04
+E             
+E             comparison failed
+E             Obtained: 153.0
+E             Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:52: AssertionError
+___________ test_elapsed_duration_consumers[unordered-file-report] ____________
+
+events = [{'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}, {'kind': 'span', 'nam...nd': 'span', 'name': 'call.one', 'phase': 'end', ...}, {'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}]
+expected_ms = 446.6, consumer = 'report'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer10')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F0A28A0>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+>               assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+E               assert 153.0 == 446.6 ± 4.5e-04
+E                 
+E                 comparison failed
+E                 Obtained: 153.0
+E                 Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:59: AssertionError
+__________ test_elapsed_duration_consumers[unordered-file-incident] ___________
+
+events = [{'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}, {'kind': 'span', 'nam...nd': 'span', 'name': 'call.one', 'phase': 'end', ...}, {'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}]
+expected_ms = 446.6, consumer = 'incident'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer11')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F0A2210>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+                assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+            _report(str(path))
+            text = capsys.readouterr().out
+            if expected_ms is None:
+                assert "Approx run time" not in text
+            else:
+                assert f"Approx run time: {expected_ms:.1f} ms" in text
+        else:
+            incident = json.loads(render_incident_report(str(path), output_format="json"))
+>           assert incident["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 153.0 == 446.6 ± 4.5e-04
+E             
+E             comparison failed
+E             Obtained: 153.0
+E             Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:68: AssertionError
+__________ test_elapsed_duration_consumers[timestamps-only-summary] ___________
+
+events = [{'duration_ms': None, 'kind': 'span', 'name': 'call', 'phase': 'start', ...}, {'duration_ms': None, 'kind': 'span', 'name': 'call', 'phase': 'end', ...}]
+expected_ms = 2500, consumer = 'summary'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer12')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F0CF770>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+>           assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 0.0 == 2500 ± 0.0025
+E             
+E             comparison failed
+E             Obtained: 0.0
+E             Expected: 2500 ± 0.0025
+
+test_report_duration.py:52: AssertionError
+___________ test_elapsed_duration_consumers[timestamps-only-report] ___________
+
+events = [{'duration_ms': None, 'kind': 'span', 'name': 'call', 'phase': 'start', ...}, {'duration_ms': None, 'kind': 'span', 'name': 'call', 'phase': 'end', ...}]
+expected_ms = 2500, consumer = 'report'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer13')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F108590>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+>               assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+E               assert None == 2500 ± 0.0025
+E                 
+E                 comparison failed
+E                 Obtained: None
+E                 Expected: 2500 ± 0.0025
+
+test_report_duration.py:59: AssertionError
+__________ test_elapsed_duration_consumers[timestamps-only-incident] __________
+
+events = [{'duration_ms': None, 'kind': 'span', 'name': 'call', 'phase': 'start', ...}, {'duration_ms': None, 'kind': 'span', 'name': 'call', 'phase': 'end', ...}]
+expected_ms = 2500, consumer = 'incident'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer14')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F119300>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+                assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+            _report(str(path))
+            text = capsys.readouterr().out
+            if expected_ms is None:
+                assert "Approx run time" not in text
+            else:
+                assert f"Approx run time: {expected_ms:.1f} ms" in text
+        else:
+            incident = json.loads(render_incident_report(str(path), output_format="json"))
+>           assert incident["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 0.0 == 2500 ± 0.0025
+E             
+E             comparison failed
+E             Obtained: 0.0
+E             Expected: 2500 ± 0.0025
+
+test_report_duration.py:68: AssertionError
+________ test_elapsed_duration_consumers[ignore-point-events-summary] _________
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}, {'duration_ms': 153.0, 'kind': 'span', 'name': 'call...t', 'ts': 0.3021}, {'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}, ...]
+expected_ms = 446.6, consumer = 'summary'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer21')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F0C1FD0>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+>           assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 153.0 == 446.6 ± 4.5e-04
+E             
+E             comparison failed
+E             Obtained: 153.0
+E             Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:52: AssertionError
+_________ test_elapsed_duration_consumers[ignore-point-events-report] _________
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}, {'duration_ms': 153.0, 'kind': 'span', 'name': 'call...t', 'ts': 0.3021}, {'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}, ...]
+expected_ms = 446.6, consumer = 'report'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer22')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F144450>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+>               assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+E               assert 153.0 == 446.6 ± 4.5e-04
+E                 
+E                 comparison failed
+E                 Obtained: 153.0
+E                 Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:59: AssertionError
+________ test_elapsed_duration_consumers[ignore-point-events-incident] ________
+
+events = [{'kind': 'span', 'name': 'call.one', 'phase': 'start', 'ts': 0}, {'duration_ms': 153.0, 'kind': 'span', 'name': 'call...t', 'ts': 0.3021}, {'duration_ms': 144.50000000000003, 'kind': 'span', 'name': 'call.three', 'phase': 'end', ...}, ...]
+expected_ms = 446.6, consumer = 'incident'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer23')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F144350>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+                assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+            _report(str(path))
+            text = capsys.readouterr().out
+            if expected_ms is None:
+                assert "Approx run time" not in text
+            else:
+                assert f"Approx run time: {expected_ms:.1f} ms" in text
+        else:
+            incident = json.loads(render_incident_report(str(path), output_format="json"))
+>           assert incident["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert 153.0 == 446.6 ± 4.5e-04
+E             
+E             comparison failed
+E             Obtained: 153.0
+E             Expected: 446.6 ± 4.5e-04
+
+test_report_duration.py:68: AssertionError
+______ test_elapsed_duration_consumers[invalid-nonfinite-timing-summary] ______
+
+events = [{'kind': 'span', 'name': 'call', 'phase': 'start', 'ts': 1}, {'duration_ms': 399.9999999999999, 'kind': 'span', 'name... 'invalid', 'phase': 'start', 'ts': nan}, {'duration_ms': inf, 'kind': 'span', 'name': 'invalid', 'phase': 'end', ...}]
+expected_ms = 400, consumer = 'summary'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer27')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F145550>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+>           assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert inf == 400 ± 4.0e-04
+E             
+E             comparison failed
+E             Obtained: inf
+E             Expected: 400 ± 4.0e-04
+
+test_report_duration.py:52: AssertionError
+______ test_elapsed_duration_consumers[invalid-nonfinite-timing-report] _______
+
+events = [{'kind': 'span', 'name': 'call', 'phase': 'start', 'ts': 1}, {'duration_ms': 399.9999999999999, 'kind': 'span', 'name... 'invalid', 'phase': 'start', 'ts': nan}, {'duration_ms': inf, 'kind': 'span', 'name': 'invalid', 'phase': 'end', ...}]
+expected_ms = 400, consumer = 'report'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer28')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F145FD0>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+>               assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+E               assert inf == 400 ± 4.0e-04
+E                 
+E                 comparison failed
+E                 Obtained: inf
+E                 Expected: 400 ± 4.0e-04
+
+test_report_duration.py:59: AssertionError
+_____ test_elapsed_duration_consumers[invalid-nonfinite-timing-incident] ______
+
+events = [{'kind': 'span', 'name': 'call', 'phase': 'start', 'ts': 1}, {'duration_ms': 399.9999999999999, 'kind': 'span', 'name... 'invalid', 'phase': 'start', 'ts': nan}, {'duration_ms': inf, 'kind': 'span', 'name': 'invalid', 'phase': 'end', ...}]
+expected_ms = 400, consumer = 'incident'
+tmp_path = WindowsPath('[VALIDATION]/agent47-duration-820-baseline313/pytest/test_elapsed_duration_consumer29')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001607F1456D0>
+
+    @pytest.mark.parametrize("consumer", ["summary", "report", "incident"])
+    @pytest.mark.parametrize("events, expected_ms", [
+        pytest.param(_SEQUENTIAL, 446.6, id="sequential-no-root"),
+        pytest.param(_OVERLAP, 500, id="overlapping-no-double-count"),
+        pytest.param(_NESTED, 3000, id="nested-root"),
+        pytest.param(list(reversed(_SEQUENTIAL)), 446.6, id="unordered-file"),
+        pytest.param([dict(event, duration_ms=None) for event in _span("call", 1, 3.5)], 2500, id="timestamps-only"),
+        pytest.param(_LEGACY, 500, id="legacy-duration-only"),
+        pytest.param([dict(event, ts=10) for event in _LEGACY], 500, id="end-only"),
+        pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
+        pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+        pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
+    ])
+    def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):
+        """REGRESSION: reports must show the elapsed span timeline, not its slowest call."""
+        path = tmp_path / "trace.jsonl"
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+        if consumer == "summary":
+            assert summarize_trace(str(path))["duration_ms"] == pytest.approx(expected_ms or 0)
+        elif consumer == "report":
+            _report(str(path), as_json=True)
+            report = json.loads(capsys.readouterr().out)
+            if expected_ms is None:
+                assert report["approx_run_time_ms"] is None
+            else:
+                assert report["approx_run_time_ms"] == pytest.approx(expected_ms)
+            _report(str(path))
+            text = capsys.readouterr().out
+            if expected_ms is None:
+                assert "Approx run time" not in text
+            else:
+                assert f"Approx run time: {expected_ms:.1f} ms" in text
+        else:
+            incident = json.loads(render_incident_report(str(path), output_format="json"))
+>           assert incident["duration_ms"] == pytest.approx(expected_ms or 0)
+E           assert inf == 400 ± 4.0e-04
+E             
+E             comparison failed
+E             Obtained: inf
+E             Expected: 400 ± 4.0e-04
+
+test_report_duration.py:68: AssertionError
+- generated xml file: [VALIDATION]\agent47-duration-820-baseline313\installed-tests.xml -
+=========================== short test summary info ===========================
+FAILED test_report_duration.py::test_elapsed_duration_consumers[sequential-no-root-summary]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[sequential-no-root-report]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[sequential-no-root-incident]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[overlapping-no-double-count-summary]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[overlapping-no-double-count-report]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[overlapping-no-double-count-incident]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[unordered-file-summary]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[unordered-file-report]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[unordered-file-incident]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[timestamps-only-summary]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[timestamps-only-report]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[timestamps-only-incident]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[ignore-point-events-summary]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[ignore-point-events-report]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[ignore-point-events-incident]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[invalid-nonfinite-timing-summary]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[invalid-nonfinite-timing-report]
+FAILED test_report_duration.py::test_elapsed_duration_consumers[invalid-nonfinite-timing-incident]
+18 failed, 17 passed in 0.69s

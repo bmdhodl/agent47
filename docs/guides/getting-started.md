@@ -58,6 +58,16 @@ agentguard report .agentguard/traces.jsonl
 agentguard incident .agentguard/traces.jsonl
 ```
 
+In the 1.4.1 candidate, report "Approx run time" and incident "Duration" cover
+the earliest span start through the latest span end in the supplied file.
+Sequential calls include the gaps between them; parallel or nested spans are
+not added together. A file containing multiple runs includes the gaps between
+those runs too. This is an approximation from recorded wall-clock timestamps.
+Legacy files without usable start/end timestamps fall back to the longest
+recorded span duration. Missing timing stays unknown in the CLI report and
+zero in the trace/incident summary. `EvalSuite.assert_completes_within()` still
+checks the longest individual span.
+
 Only the events you instrument appear in the trace. Review their contents
 before sharing a report.
 

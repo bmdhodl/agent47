@@ -1,0 +1,40 @@
+# AgentGuard Incident Report
+
+Status: **ok**
+Severity: **healthy**
+Primary cause: **healthy**
+
+## Summary
+
+- Total events: 6
+- Spans: 6
+- Events: 0
+- Duration: 153.0 ms
+- Estimated cost: $0.0000
+- Guard events: 0
+- Errors: 0
+- Exact savings: $0.0000
+- Estimated savings: $0.0000
+
+## Savings Ledger
+
+- Exact tokens saved: 0
+- Estimated tokens saved: 0
+- Exact dollars saved: $0.0000
+- Estimated dollars saved: $0.0000
+
+## Recommended Next Steps
+
+- Keep this trace as a baseline and add CI assertions to hold the budget line.
+- Review the trace timeline to confirm the failure path before widening limits.
+- Keep one-off investigations local; add HttpSink only when future incidents need retained history, alerts, or team-visible follow-up.
+
+## Upgrade Path
+
+Keep this report local if it is a one-off investigation. Add hosted ingest only when future incidents need retained history, alerts, spend trends, or team-visible follow-up:
+
+```python
+from agentguard import Tracer, HttpSink
+
+tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api_key="ag_..."))
+```

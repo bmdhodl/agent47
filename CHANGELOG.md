@@ -33,6 +33,12 @@
   current releases, and the openai floor (1.40.0) predates the Responses API.
 
 ### Fixes
+- `report`, `incident`, and `summarize_trace()` now calculate elapsed time
+  across the recorded span timeline instead of labelling the longest single
+  span as the whole run. Sequential gaps are included; overlapping or nested
+  spans are not summed. Duration-only legacy traces keep the longest-span
+  fallback. `EvalSuite.assert_completes_within()` keeps its existing contract.
+
 - Native Ollama `/api/chat` and `/api/generate` responses now contribute
   `prompt_eval_count` and `eval_count` to `resolve_billable_cost()` and
   `consume_billable()`, including response objects with attributes. Cached

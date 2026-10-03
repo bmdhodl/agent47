@@ -1,0 +1,7 @@
+agentguard47 @ file:///[VALIDATION]/agent47-ollama-818-wheel/agentguard47-1.4.1-py3-none-any.whl#sha256=193d5d5cd5ff75222d89e6d29953d510608f44acd499b3e4a8ea96512eb38188
+colorama==0.4.6
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+pytest==8.4.2

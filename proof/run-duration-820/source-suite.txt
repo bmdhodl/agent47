@@ -1,0 +1,226 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [SDK_CHECKOUT]\sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collected 1476 items
+
+[SDK_CHECKOUT]\sdk\tests\test_activation_evidence.py . [  0%]
+.............................                                            [  2%]
+[SDK_CHECKOUT]\sdk\tests\test_architecture.py . [  2%]
+........                                                                 [  2%]
+[SDK_CHECKOUT]\sdk\tests\test_async_patches.py . [  2%]
+.........                                                                [  3%]
+[SDK_CHECKOUT]\sdk\tests\test_atracing.py . [  3%]
+.......................                                                  [  4%]
+[SDK_CHECKOUT]\sdk\tests\test_budget_preflight.py . [  5%]
+......................                                                   [  6%]
+[SDK_CHECKOUT]\sdk\tests\test_ci_guardrails.py . [  6%]
+.........                                                                [  7%]
+[SDK_CHECKOUT]\sdk\tests\test_ci_results.py . [  7%]
+.................                                                        [  8%]
+[SDK_CHECKOUT]\sdk\tests\test_ci_tools_requirements_guard.py . [  8%]
+......                                                                   [  8%]
+[SDK_CHECKOUT]\sdk\tests\test_claude_review_filter.py . [  8%]
+.......                                                                  [  9%]
+[SDK_CHECKOUT]\sdk\tests\test_cli_report.py . [  9%]
+.........                                                                [ 10%]
+[SDK_CHECKOUT]\sdk\tests\test_concurrency.py . [ 10%]
+.......                                                                  [ 10%]
+[SDK_CHECKOUT]\sdk\tests\test_cost.py . [ 10%]
+......................                                                   [ 12%]
+[SDK_CHECKOUT]\sdk\tests\test_cost_guardrail.py . [ 12%]
+..................................                                       [ 14%]
+[SDK_CHECKOUT]\sdk\tests\test_coverage_gaps.py . [ 14%]
+.............................................                            [ 17%]
+[SDK_CHECKOUT]\sdk\tests\test_crewai_integration.py . [ 17%]
+.........                                                                [ 18%]
+[SDK_CHECKOUT]\sdk\tests\test_dashboard_handoff_docs.py . [ 18%]
+.                                                                        [ 18%]
+[SDK_CHECKOUT]\sdk\tests\test_decision_trace.py . [ 18%]
+............                                                             [ 19%]
+[SDK_CHECKOUT]\sdk\tests\test_demo.py . [ 19%]
+..                                                                       [ 19%]
+[SDK_CHECKOUT]\sdk\tests\test_doctor.py . [ 19%]
+.........                                                                [ 20%]
+[SDK_CHECKOUT]\sdk\tests\test_documentation.py . [ 20%]
+....................                                                     [ 21%]
+[SDK_CHECKOUT]\sdk\tests\test_dx.py . [ 21%]
+............................................                             [ 24%]
+[SDK_CHECKOUT]\sdk\tests\test_e2e_pipeline.py . [ 24%]
+...                                                                      [ 25%]
+[SDK_CHECKOUT]\sdk\tests\test_enforcement_boundary.py . [ 25%]
+...................                                                      [ 26%]
+[SDK_CHECKOUT]\sdk\tests\test_evaluation.py . [ 26%]
+..............................                                           [ 28%]
+[SDK_CHECKOUT]\sdk\tests\test_example_starters.py . [ 28%]
+..........                                                               [ 29%]
+[SDK_CHECKOUT]\sdk\tests\test_export.py . [ 29%]
+..........                                                               [ 29%]
+[SDK_CHECKOUT]\sdk\tests\test_exports.py . [ 30%]
+..............                                                           [ 30%]
+[SDK_CHECKOUT]\sdk\tests\test_first_run.py . [ 31%]
+..........................                                               [ 32%]
+[SDK_CHECKOUT]\sdk\tests\test_goal.py . [ 32%]
+.............................                                            [ 34%]
+[SDK_CHECKOUT]\sdk\tests\test_guard_persistence.py . [ 34%]
+.........                                                                [ 35%]
+[SDK_CHECKOUT]\sdk\tests\test_guards.py . [ 35%]
+........................................................................ [ 40%]
+.......................                                                  [ 42%]
+[SDK_CHECKOUT]\sdk\tests\test_hardening.py . [ 42%]
+..........................................                               [ 44%]
+[SDK_CHECKOUT]\sdk\tests\test_hooks.py . [ 44%]
+.....................                                                    [ 46%]
+[SDK_CHECKOUT]\sdk\tests\test_hosted_ingest_contract.py . [ 46%]
+...                                                                      [ 46%]
+[SDK_CHECKOUT]\sdk\tests\test_http_sink.py . [ 46%]
+......................                                                   [ 48%]
+[SDK_CHECKOUT]\sdk\tests\test_init.py . [ 48%]
+.................................................                        [ 51%]
+[SDK_CHECKOUT]\sdk\tests\test_instrument.py . [ 51%]
+...........                                                              [ 52%]
+[SDK_CHECKOUT]\sdk\tests\test_instrument_patch.py . [ 52%]
+.........                                                                [ 53%]
+[SDK_CHECKOUT]\sdk\tests\test_instrument_stream.py . [ 53%]
+....................                                                     [ 54%]
+[SDK_CHECKOUT]\sdk\tests\test_integration_cost_guardrail.py . [ 54%]
+                                                                         [ 54%]
+[SDK_CHECKOUT]\sdk\tests\test_integration_dashboard_script.py . [ 54%]
+..........                                                               [ 55%]
+[SDK_CHECKOUT]\sdk\tests\test_langchain_integration.py . [ 55%]
+.......................                                                  [ 56%]
+[SDK_CHECKOUT]\sdk\tests\test_langgraph_integration.py . [ 57%]
+.............                                                            [ 57%]
+[SDK_CHECKOUT]\sdk\tests\test_live_cost_reconcile.py . [ 57%]
+...............                                                          [ 59%]
+[SDK_CHECKOUT]\sdk\tests\test_local_first_template.py . [ 59%]
+.....                                                                    [ 59%]
+[SDK_CHECKOUT]\sdk\tests\test_mcp_registry_metadata.py . [ 59%]
+....                                                                     [ 59%]
+[SDK_CHECKOUT]\sdk\tests\test_ollama_usage.py . [ 59%]
+.................                                                        [ 60%]
+[SDK_CHECKOUT]\sdk\tests\test_otel_sink.py . [ 61%]
+...........                                                              [ 61%]
+[SDK_CHECKOUT]\sdk\tests\test_precision_cost.py . [ 61%]
+...........................                                              [ 63%]
+[SDK_CHECKOUT]\sdk\tests\test_price_table.py . [ 63%]
+.....................................................                    [ 67%]
+[SDK_CHECKOUT]\sdk\tests\test_production.py . [ 67%]
+...............                                                          [ 68%]
+[SDK_CHECKOUT]\sdk\tests\test_pypi_readme_sync.py . [ 68%]
+.....                                                                    [ 68%]
+[SDK_CHECKOUT]\sdk\tests\test_quickstart.py . [ 68%]
+.............                                                            [ 69%]
+[SDK_CHECKOUT]\sdk\tests\test_real_dispatch.py . [ 69%]
+........................................sss                              [ 72%]
+[SDK_CHECKOUT]\sdk\tests\test_real_dispatch_capabilities.py . [ 72%]
+.                                                                        [ 72%]
+[SDK_CHECKOUT]\sdk\tests\test_receipt.py . [ 72%]
+...........                                                              [ 73%]
+[SDK_CHECKOUT]\sdk\tests\test_release_audit.py . [ 73%]
+.....................................................                    [ 77%]
+[SDK_CHECKOUT]\sdk\tests\test_release_discussion_category.py . [ 77%]
+....                                                                     [ 77%]
+[SDK_CHECKOUT]\sdk\tests\test_release_email.py . [ 77%]
+.....................                                                    [ 79%]
+[SDK_CHECKOUT]\sdk\tests\test_release_example.py . [ 79%]
+............                                                             [ 80%]
+[SDK_CHECKOUT]\sdk\tests\test_repo_config.py . [ 80%]
+...........                                                              [ 80%]
+[SDK_CHECKOUT]\sdk\tests\test_report_duration.py . [ 80%]
+..................................                                       [ 83%]
+[SDK_CHECKOUT]\sdk\tests\test_reporting.py . [ 83%]
+.......                                                                  [ 83%]
+[SDK_CHECKOUT]\sdk\tests\test_reservation_contract.py . [ 83%]
+....................                                                     [ 85%]
+[SDK_CHECKOUT]\sdk\tests\test_reservation_path.py . [ 85%]
+.......................                                                  [ 86%]
+[SDK_CHECKOUT]\sdk\tests\test_reservation_stream.py . [ 86%]
+....................................                                     [ 89%]
+[SDK_CHECKOUT]\sdk\tests\test_review_readiness_guard.py . [ 89%]
+.............                                                            [ 90%]
+[SDK_CHECKOUT]\sdk\tests\test_richard_task_budget_scenarios.py . [ 90%]
+..                                                                       [ 90%]
+[SDK_CHECKOUT]\sdk\tests\test_runner.py . [ 90%]
+.............                                                            [ 91%]
+[SDK_CHECKOUT]\sdk\tests\test_savings.py . [ 91%]
+..............                                                           [ 92%]
+[SDK_CHECKOUT]\sdk\tests\test_schemas.py . [ 92%]
+.......................                                                  [ 94%]
+[SDK_CHECKOUT]\sdk\tests\test_sdk_preflight.py . [ 94%]
+..........                                                               [ 94%]
+[SDK_CHECKOUT]\sdk\tests\test_sdk_release_guard.py . [ 94%]
+................                                                         [ 96%]
+[SDK_CHECKOUT]\sdk\tests\test_skillpack.py . [ 96%]
+..........                                                               [ 96%]
+[SDK_CHECKOUT]\sdk\tests\test_smoke.py . [ 96%]
+                                                                         [ 96%]
+[SDK_CHECKOUT]\sdk\tests\test_sticky_agent_proof.py . [ 96%]
+.                                                                        [ 96%]
+[SDK_CHECKOUT]\sdk\tests\test_touchpoints.py . [ 97%]
+......                                                                   [ 97%]
+[SDK_CHECKOUT]\sdk\tests\test_tracing.py . [ 97%]
+.............                                                            [ 98%]
+[SDK_CHECKOUT]\sdk\tests\test_v1_coverage.py . [ 98%]
+............                                                             [ 99%]
+[SDK_CHECKOUT]\sdk\tests\test_x402.py . [ 99%]
+..........                                                               [100%]
+
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.13.2-final-0 _______________
+
+Name                                                                                   Stmts   Miss  Cover
+----------------------------------------------------------------------------------------------------------
+[SDK_CHECKOUT]\sdk\agentguard\__init__.py                    57      1    98%
+[SDK_CHECKOUT]\sdk\agentguard\__main__.py                     1      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\_billing.py                    60     12    80%
+[SDK_CHECKOUT]\sdk\agentguard\_budget_validation.py          48      4    92%
+[SDK_CHECKOUT]\sdk\agentguard\_reservation_contract.py      176      4    98%
+[SDK_CHECKOUT]\sdk\agentguard\_reservation_path.py          194      7    96%
+[SDK_CHECKOUT]\sdk\agentguard\_reservation_stream.py         82      5    94%
+[SDK_CHECKOUT]\sdk\agentguard\_trace_naming.py               16      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\atracing.py                    72      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\cli.py                        230      6    97%
+[SDK_CHECKOUT]\sdk\agentguard\cost.py                        46      1    98%
+[SDK_CHECKOUT]\sdk\agentguard\decision.py                   214     30    86%
+[SDK_CHECKOUT]\sdk\agentguard\demo.py                       121      6    95%
+[SDK_CHECKOUT]\sdk\agentguard\doctor.py                     135     11    92%
+[SDK_CHECKOUT]\sdk\agentguard\escalation.py                 225     23    90%
+[SDK_CHECKOUT]\sdk\agentguard\evaluation.py                 290      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\export.py                      31      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\feedback.py                    27      2    93%
+[SDK_CHECKOUT]\sdk\agentguard\first_run.py                   55      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\goal.py                       189     13    93%
+[SDK_CHECKOUT]\sdk\agentguard\guards.py                     341      4    99%
+[SDK_CHECKOUT]\sdk\agentguard\hooks.py                      139      2    99%
+[SDK_CHECKOUT]\sdk\agentguard\instrument.py                 345     41    88%
+[SDK_CHECKOUT]\sdk\agentguard\instrument_stream.py          525     71    86%
+[SDK_CHECKOUT]\sdk\agentguard\integrations\__init__.py        4      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\integrations\crewai.py         79      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\integrations\langchain.py     233     46    80%
+[SDK_CHECKOUT]\sdk\agentguard\integrations\langgraph.py      43      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\precision_cost.py             250     38    85%
+[SDK_CHECKOUT]\sdk\agentguard\price_table.py                108      5    95%
+[SDK_CHECKOUT]\sdk\agentguard\profiles.py                    15      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\quickstart.py                 172      2    99%
+[SDK_CHECKOUT]\sdk\agentguard\receipt.py                    101      2    98%
+[SDK_CHECKOUT]\sdk\agentguard\repo_config.py                 81      6    93%
+[SDK_CHECKOUT]\sdk\agentguard\reporting.py                  129      7    95%
+[SDK_CHECKOUT]\sdk\agentguard\runner.py                      44      6    86%
+[SDK_CHECKOUT]\sdk\agentguard\savings.py                    140      7    95%
+[SDK_CHECKOUT]\sdk\agentguard\schemas.py                     96     11    89%
+[SDK_CHECKOUT]\sdk\agentguard\setup.py                      101      4    96%
+[SDK_CHECKOUT]\sdk\agentguard\sinks\__init__.py               3      0   100%
+[SDK_CHECKOUT]\sdk\agentguard\sinks\_transport.py            48     13    73%
+[SDK_CHECKOUT]\sdk\agentguard\sinks\http.py                 193     15    92%
+[SDK_CHECKOUT]\sdk\agentguard\sinks\otel.py                  98      8    92%
+[SDK_CHECKOUT]\sdk\agentguard\skillpack.py                  128      4    97%
+[SDK_CHECKOUT]\sdk\agentguard\state.py                      136     31    77%
+[SDK_CHECKOUT]\sdk\agentguard\tracing.py                    228     12    95%
+[SDK_CHECKOUT]\sdk\agentguard\usage.py                      106     15    86%
+[SDK_CHECKOUT]\sdk\agentguard\x402.py                       120      4    97%
+----------------------------------------------------------------------------------------------------------
+TOTAL                                                                                   6275    479    92%
+Required test coverage of 80% reached. Total coverage: 92.37%
+================= 1473 passed, 3 skipped in 121.85s (0:02:01) =================
