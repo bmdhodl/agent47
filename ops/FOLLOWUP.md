@@ -18,8 +18,12 @@
 - The v1.4.0 GitHub Release has an unsigned PNG asset
   (`agentguard-1.4.0.png`), which keeps Scorecard Signed-Releases at 0. Host
   release images outside release assets from now on.
-- AG-05 / #734 reserves store-backed streams on the AG-04 ledger. Windows was not executed for the stream spawn
-  race; Linux was. The AG-04 non-stream race has the same Windows gap.
+- AG-04 / AG-05 Windows spawn races were spot-checked on 2026-10-02 with
+  the published 1.4.0 wheel and Python 3.11.9: two repeats each for non-stream,
+  stream and the public-patch shared-call demo dispatched once and refused
+  the other worker. See [dated proof](../proof/windows-reservation-20261002/README.md).
+  Providers were simulated; this is not all Windows configurations or real
+  provider-version compatibility. Earlier Linux receipts remain historical.
 - Claude PR review caps the diff at 200k bytes. The GitHub API diff ignores
   the `-diff` gitattribute, so `.github/claude-review/filter_diff.py` drops
   pip-compile locks, `.showwork` snapshots, and `package-lock.json` sections

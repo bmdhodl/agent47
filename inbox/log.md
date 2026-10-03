@@ -484,3 +484,5 @@ Also closed `#767`: #735 (AG-06) is open and held.
 2026-10-02 | OpenAI GPT-6 auto | Merged #811 (ca17961), durable PR-review proof and final handoff. Complete hosted CI and configured local checks passed. No package release or outside adoption claim.
 
 2026-10-02 | OpenAI GPT-6 auto | Merged #812 (2258413), published-version first-use correction and tested Windows PowerShell guide. SDK 1392 passed, 3 optional skips, 92.40% coverage; 40 focused tests and complete current-head CI passed. Review fixes include candidate guide links and redacted proof paths. Outside tester observations remain unknown; #644 still waits on a compatible upstream security fix. All 25 issues remain open.
+
+2026-10-02 | OpenAI GPT-6 auto | Merged #813 (b4d0b61), real Responses instance detection and isolated missing-provider mocks. Two clean installed candidate-wheel profiles passed 13 cases each; full SDK 1396 passed, 3 optional skips, zero warnings, 92.33% coverage; complete CI and independent review passed. Proof: proof/responses-floor-20261002/. Both rows stay Experimental pending automatic floor checks; Chat floor stays 1.40.0. No release or outside-adoption claim.
