@@ -1,0 +1,255 @@
+{
+  "checked": "2026-10-02",
+  "source_commit": "b4d0b61a4601b7ce372016f09cd3c7127df12b29",
+  "published_metadata": "https://pypi.org/pypi/agentguard47/1.4.0/json",
+  "wheel": "agentguard47-1.4.0-py3-none-any.whl",
+  "wheel_url": "https://files.pythonhosted.org/packages/cf/e3/7bbd7bb3a573a79887e7f9d4bb16cdadb873cbdb3824d4ecb3474fe87958/agentguard47-1.4.0-py3-none-any.whl",
+  "wheel_sha256": "ca8efaacff03cc373a30610c7fa7d9797a87fe140f56ece344e782df8b0435fa",
+  "agentguard_absent_before_install": true,
+  "installed": {
+    "version": "1.4.0",
+    "import_origin": "venv/Lib/site-packages/agentguard/__init__.py",
+    "direct_url": {
+      "archive_info": {
+        "hash": "sha256=ca8efaacff03cc373a30610c7fa7d9797a87fe140f56ece344e782df8b0435fa",
+        "hashes": {
+          "sha256": "ca8efaacff03cc373a30610c7fa7d9797a87fe140f56ece344e782df8b0435fa"
+        }
+      },
+      "url": "file:///[PUBLISHED_WHEEL]/agentguard47-1.4.0-py3-none-any.whl"
+    },
+    "requirements": [
+      "langchain-core>=1.6.3; extra == \"langchain\"",
+      "langgraph>=1.2.11; extra == \"langgraph\"",
+      "langgraph-checkpoint>=4.2.0; extra == \"langgraph\"",
+      "langgraph-sdk>=0.4.4; extra == \"langgraph\"",
+      "crewai>=1.15.21; extra == \"crewai\"",
+      "opentelemetry-api>=1.44.0; extra == \"otel\"",
+      "opentelemetry-sdk>=1.44.0; extra == \"otel\""
+    ],
+    "system": "Windows",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9"
+  },
+  "isolated_python": true,
+  "examples_copied_without_modification": true,
+  "credentials_scrubbed": true,
+  "mock_provider_only": true,
+  "race_runs_passed": 6,
+  "legacy_overshoot_runs_passed": 2,
+  "cases": [
+    {
+      "example": "examples/enforcement_boundary/reserved_one_dispatch.py",
+      "source_sha256": "1975c0796967794b9947d925a0baf1921a1cab45588c171be61fc6166a31117e",
+      "iteration": 1,
+      "stdout": "reserved_one_dispatch-1.txt",
+      "stdout_sha256": "c2572ae3fa8fbe52a7eea9a40561d59283950a8671536192048891f9b6c648c4",
+      "exit": 0,
+      "payload": {
+        "dispatched": 1,
+        "results": [
+          "dispatched",
+          "blocked"
+        ],
+        "blocked": 1,
+        "settled_calls": 1,
+        "reserved_calls": 0,
+        "unresolved_calls": 0,
+        "workers": 2,
+        "start_method": "spawn",
+        "exit_codes": [
+          0,
+          0
+        ],
+        "network_calls": 0,
+        "path": "openai-sync-non-stream-statestore",
+        "fixed": true
+      }
+    },
+    {
+      "example": "examples/enforcement_boundary/reserved_one_dispatch.py",
+      "source_sha256": "1975c0796967794b9947d925a0baf1921a1cab45588c171be61fc6166a31117e",
+      "iteration": 2,
+      "stdout": "reserved_one_dispatch-2.txt",
+      "stdout_sha256": "c2572ae3fa8fbe52a7eea9a40561d59283950a8671536192048891f9b6c648c4",
+      "exit": 0,
+      "payload": {
+        "dispatched": 1,
+        "results": [
+          "dispatched",
+          "blocked"
+        ],
+        "blocked": 1,
+        "settled_calls": 1,
+        "reserved_calls": 0,
+        "unresolved_calls": 0,
+        "workers": 2,
+        "start_method": "spawn",
+        "exit_codes": [
+          0,
+          0
+        ],
+        "network_calls": 0,
+        "path": "openai-sync-non-stream-statestore",
+        "fixed": true
+      }
+    },
+    {
+      "example": "examples/enforcement_boundary/reserved_stream_dispatch.py",
+      "source_sha256": "c6288642bc7d07a5ddfb486e8a9f4a84614bf49d7affc6c5a49d0b84fa0cfdd9",
+      "iteration": 1,
+      "stdout": "reserved_stream_dispatch-1.txt",
+      "stdout_sha256": "73d023be98ff51e164a3ce5aeb240c2cd3800c8382a0417adafb9a09198a7529",
+      "exit": 0,
+      "payload": {
+        "dispatched": 1,
+        "results": [
+          "dispatched",
+          "blocked"
+        ],
+        "blocked": 1,
+        "settled_calls": 1,
+        "reserved_calls": 0,
+        "unresolved_calls": 0,
+        "workers": 2,
+        "start_method": "spawn",
+        "exit_codes": [
+          0,
+          0
+        ],
+        "network_calls": 0,
+        "path": "openai-sync-stream-statestore",
+        "fixed": true
+      }
+    },
+    {
+      "example": "examples/enforcement_boundary/reserved_stream_dispatch.py",
+      "source_sha256": "c6288642bc7d07a5ddfb486e8a9f4a84614bf49d7affc6c5a49d0b84fa0cfdd9",
+      "iteration": 2,
+      "stdout": "reserved_stream_dispatch-2.txt",
+      "stdout_sha256": "73d023be98ff51e164a3ce5aeb240c2cd3800c8382a0417adafb9a09198a7529",
+      "exit": 0,
+      "payload": {
+        "dispatched": 1,
+        "results": [
+          "dispatched",
+          "blocked"
+        ],
+        "blocked": 1,
+        "settled_calls": 1,
+        "reserved_calls": 0,
+        "unresolved_calls": 0,
+        "workers": 2,
+        "start_method": "spawn",
+        "exit_codes": [
+          0,
+          0
+        ],
+        "network_calls": 0,
+        "path": "openai-sync-stream-statestore",
+        "fixed": true
+      }
+    },
+    {
+      "example": "examples/shared_call_limit.py",
+      "source_sha256": "b3349e2c7e11b00e47d7c7a084898ac8dedf7fe88af0c1b24ead9b182932be01",
+      "iteration": 1,
+      "stdout": "shared_call_limit-1.txt",
+      "stdout_sha256": "494e3945065963d147f4352212f097bad3624e3e3c277b628cdb01c1e51bc307",
+      "exit": 0,
+      "payload": {
+        "dispatched": 1,
+        "results": [
+          "sent",
+          "stopped"
+        ],
+        "stopped": 1,
+        "settled_calls": 1,
+        "reserved_calls": 0,
+        "unresolved_calls": 0,
+        "workers": 2,
+        "start_method": "spawn",
+        "exit_codes": [
+          0,
+          0
+        ],
+        "network_calls": 0,
+        "provider": "simulated",
+        "store": "fresh-temporary",
+        "fixed": true
+      }
+    },
+    {
+      "example": "examples/shared_call_limit.py",
+      "source_sha256": "b3349e2c7e11b00e47d7c7a084898ac8dedf7fe88af0c1b24ead9b182932be01",
+      "iteration": 2,
+      "stdout": "shared_call_limit-2.txt",
+      "stdout_sha256": "494e3945065963d147f4352212f097bad3624e3e3c277b628cdb01c1e51bc307",
+      "exit": 0,
+      "payload": {
+        "dispatched": 1,
+        "results": [
+          "sent",
+          "stopped"
+        ],
+        "stopped": 1,
+        "settled_calls": 1,
+        "reserved_calls": 0,
+        "unresolved_calls": 0,
+        "workers": 2,
+        "start_method": "spawn",
+        "exit_codes": [
+          0,
+          0
+        ],
+        "network_calls": 0,
+        "provider": "simulated",
+        "store": "fresh-temporary",
+        "fixed": true
+      }
+    },
+    {
+      "example": "examples/enforcement_boundary/two_worker_overshoot.py",
+      "source_sha256": "b4b5eab34ca293016f58c3cebd5c264a3a2bfe8adad1d8158a94d80b0dac527c",
+      "iteration": 1,
+      "stdout": "two_worker_overshoot-1.txt",
+      "stdout_sha256": "0cbbe8f21355e0ef0b6689e0659f591f6b036ccf6a52e7a529451b5e57640d21",
+      "exit": 0,
+      "payload": {
+        "limit_calls": 1,
+        "workers": 2,
+        "dispatched": 2,
+        "consume_succeeded": 1,
+        "consume_blocked": 1,
+        "recorded_calls": 2,
+        "overshoot": true,
+        "fixed": false,
+        "note": "check() does not reserve. consume() increments then raises, so recorded_calls can exceed limit_calls while consume_blocked is 1."
+      }
+    },
+    {
+      "example": "examples/enforcement_boundary/two_worker_overshoot.py",
+      "source_sha256": "b4b5eab34ca293016f58c3cebd5c264a3a2bfe8adad1d8158a94d80b0dac527c",
+      "iteration": 2,
+      "stdout": "two_worker_overshoot-2.txt",
+      "stdout_sha256": "0cbbe8f21355e0ef0b6689e0659f591f6b036ccf6a52e7a529451b5e57640d21",
+      "exit": 0,
+      "payload": {
+        "limit_calls": 1,
+        "workers": 2,
+        "dispatched": 2,
+        "consume_succeeded": 1,
+        "consume_blocked": 1,
+        "recorded_calls": 2,
+        "overshoot": true,
+        "fixed": false,
+        "note": "check() does not reserve. consume() increments then raises, so recorded_calls can exceed limit_calls while consume_blocked is 1."
+      }
+    }
+  ],
+  "stdout_transformations": [
+    "LF line endings",
+    "terminal trailing whitespace removed",
+    "local installation paths replaced by [PROOF_ENV]"
+  ]
+}

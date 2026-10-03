@@ -26,6 +26,13 @@ evidence. It does not cover the other optional extras or satisfy the automated
 floor/current support policy. The tested wheel is an unpublished 1.4.1 candidate;
 published 1.4.0 does not include these Responses patches.
 
+The published 1.4.0 wheel also has a dated [Windows reservation spot-check](../proof/windows-reservation-20261002/README.md)
+on Python 3.11.9. Copied non-stream, stream and public-patch examples each ran
+twice with two spawned processes sharing one local key: one simulated call
+dispatched, one was refused, and no hold remained after normal completion.
+The in-memory example still overshoots. These stand-ins verify local locking;
+they do not add real-provider compatibility or promote the matrix rows.
+
 ## How versions are chosen
 
 - **Oldest tested** comes from

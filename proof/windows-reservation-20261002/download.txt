@@ -1,0 +1,8 @@
+Collecting agentguard47==1.4.0
+  Using cached agentguard47-1.4.0-py3-none-any.whl.metadata (13 kB)
+Using cached agentguard47-1.4.0-py3-none-any.whl (132 kB)
+Saved [PROOF_ENV]\wheels\agentguard47-1.4.0-py3-none-any.whl
+Successfully downloaded agentguard47
+
+[notice] A new release of pip is available: 24.0 -> 26.2.1
+[notice] To update, run: [PROOF_ENV]\venv\Scripts\python.exe -m pip install --upgrade pip
