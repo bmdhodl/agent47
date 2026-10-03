@@ -1,0 +1,444 @@
+[
+  {
+    "number": 830,
+    "url": "https://github.com/bmdhodl/agent47/pull/830",
+    "head_sha": "e31cea1069145ec35928231b17eb73e9c28508ab",
+    "merge_sha": "bb965103680421dd25c5de335041ac18e873f96c",
+    "merged_at": "2026-10-03T16:24:49Z",
+    "current_head_checks": [
+      {
+        "name": "ci-required",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "copilot",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "trustabl",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "Cursor Bugbot",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "lint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mcp",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mcp-budget",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (3.12)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compat (floor)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "analyze",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compat (latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (3.9)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "docs-consistency",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "scan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "responses-floor",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "claude-review",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Cursor Approval Agent: Pull Request Router and Approver",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "Cursor Security Agent: Security Reviewer",
+        "status": "completed",
+        "conclusion": "neutral"
+      }
+    ],
+    "main_runs": [
+      {
+        "id": 37136755793,
+        "name": "Trustabl Agent Scanner",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37136755793",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37136755769,
+        "name": "Docs Consistency",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37136755769",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37136755787,
+        "name": "OpenSSF Scorecard",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37136755787",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37136755776,
+        "name": "CI",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37136755776",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37136755786,
+        "name": "CodeQL",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37136755786",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  {
+    "number": 828,
+    "url": "https://github.com/bmdhodl/agent47/pull/828",
+    "head_sha": "884a370383df178d1035be5d556278f5ca219e4d",
+    "merge_sha": "d67c06039e6632701a30000616c98e126aac41ef",
+    "merged_at": "2026-10-03T16:32:35Z",
+    "current_head_checks": [
+      {
+        "name": "ci-required",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "trustabl",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "mcp-budget",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "lint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (3.9)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (3.12)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compat (latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compat (floor)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "responses-floor",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mcp",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "claude-review",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "scan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "actionlint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "analyze",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Cursor Approval Agent: Pull Request Router and Approver",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "Cursor Security Agent: Security Reviewer",
+        "status": "completed",
+        "conclusion": "neutral"
+      }
+    ],
+    "main_runs": [
+      {
+        "id": 37137236406,
+        "name": "Actionlint",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137236406",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137236393,
+        "name": "Trustabl Agent Scanner",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137236393",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137236385,
+        "name": "OpenSSF Scorecard",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137236385",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137236365,
+        "name": "CodeQL",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137236365",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137236343,
+        "name": "CI",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137236343",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "main_changed_action_log": {
+      "raw_sha256": "094c0f081f9b71cd1080dbf323c2b9cdcad54442eb15cc5d35b5d275442fbf4d",
+      "retained_sha256": "094c0f081f9b71cd1080dbf323c2b9cdcad54442eb15cc5d35b5d275442fbf4d",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "main_changed_action_run": 37137236385,
+    "changed_action_log_markers": [
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.5228871Z 737574503653: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.5300700Z 8029962f461f: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.5393851Z 5b3013706a46: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.5735694Z 9cd8e28f1c22: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.5795221Z 9d2753d762cc: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.5877223Z 2780920e5dbf: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.6707330Z 52630fc75a18: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.6709106Z 3214acf345c0: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.6711421Z 7c12895b777b: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.7207787Z b839dfae01f6: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.7216413Z dd64bf2dd177: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.7254083Z 411e1c946a02: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.7655258Z 77964957095d: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.7948664Z 71f0f831b11e: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.8169125Z 6c174cbb5f6c: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.8420946Z b62c759db193: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.8616019Z 2264f289269f: Download complete",
+      "analysis\tPull ghcr.io/ossf/scorecard-action:v2.4.4\t2026-10-03T16:32:42.9951762Z c22151a07876: Download complete",
+      "analysis\tRun github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2\t2026-10-03T16:33:04.0984738Z Successfully uploaded results"
+    ]
+  },
+  {
+    "number": 829,
+    "url": "https://github.com/bmdhodl/agent47/pull/829",
+    "head_sha": "b14e0434aeaf6c525e146650468ca4bbf2144c6b",
+    "merge_sha": "0376b581c355ad6399a741ade903666648cf6ed1",
+    "merged_at": "2026-10-03T16:35:54Z",
+    "current_head_checks": [
+      {
+        "name": "ci-required",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "trustabl",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "lint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compat (latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (3.12)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mcp",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compat (floor)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (3.9)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mcp-budget",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "responses-floor",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "scan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "actionlint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "analyze",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "claude-review",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Cursor Approval Agent: Pull Request Router and Approver",
+        "status": "completed",
+        "conclusion": "neutral"
+      },
+      {
+        "name": "Cursor Security Agent: Security Reviewer",
+        "status": "completed",
+        "conclusion": "neutral"
+      }
+    ],
+    "main_runs": [
+      {
+        "id": 37137439731,
+        "name": "Trustabl Agent Scanner",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137439731",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137439789,
+        "name": "Actionlint",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137439789",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137439659,
+        "name": "OpenSSF Scorecard",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137439659",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137439717,
+        "name": "CodeQL",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137439717",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 37137439722,
+        "name": "CI",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37137439722",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "main_changed_action_log": {
+      "raw_sha256": "8bf28edc5e7154735c277ff4e8b90705a508993ff41b7d174999c67e304cdd30",
+      "retained_sha256": "8bf28edc5e7154735c277ff4e8b90705a508993ff41b7d174999c67e304cdd30",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "main_changed_action_run": 37137439731,
+    "changed_action_log_markers": [
+      "scan\tRequire a completed scan\t2026-10-03T16:36:10.9881787Z ^[[36;1m  1) echo 'Scanner completed; findings remain advisory.' ;;^[[0m",
+      "scan\tRequire a completed scan\t2026-10-03T16:36:11.0243555Z Scanner completed; findings remain advisory."
+    ]
+  }
+]
