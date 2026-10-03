@@ -39,6 +39,15 @@ candidate artifact. The existing compatibility jobs automatically run those
 tests on Ubuntu/Python 3.12. This does not verify live provider billing or other
 optional extras on Windows/macOS. Async non-stream calls still do not reserve.
 
+An additional [Windows/Python 3.9.6 floor check](../proof/windows-py39-floor-20261002/README.md)
+uses the same installed candidate wheel: 12 Chat/Anthropic cases at OpenAI
+1.40.0 / Anthropic 0.34.0 and 13 Responses/Agents cases at OpenAI 1.66.3 /
+Agents 0.0.3 passed without skips or warnings. This is local floor evidence;
+the Responses/Agents automated floor is still missing. Base SDK support for
+Python 3.9 does not establish current-provider installability: OpenAI 3.19.2,
+Anthropic 1.8.0 and Agents 0.22.3 declare Python 3.10+ in their package metadata.
+Current-provider CI remains on Python 3.12.
+
 ## How versions are chosen
 
 - **Oldest tested** comes from
