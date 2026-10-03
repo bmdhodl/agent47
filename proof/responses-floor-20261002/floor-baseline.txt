@@ -1,0 +1,14 @@
+ssssssssssss                                                             [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] test_baseline_dispatch.py:326: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:345: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:360: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:381: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:407: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:433: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:458: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:495: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:512: the Responses API needs openai>=1.66
+SKIPPED [2] test_baseline_dispatch.py:546: the Responses API needs openai>=1.66
+SKIPPED [1] test_baseline_dispatch.py:590: the Responses API needs openai>=1.66
+12 skipped, 7 deselected in 0.92s

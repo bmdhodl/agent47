@@ -1,0 +1,24 @@
+{
+  "variant": "floor",
+  "openai": "1.66.3",
+  "openai-agents": "0.0.3",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+  "agentguard_absent_before_install": true,
+  "direct_url": {
+    "archive_info": {
+      "hash": "sha256=04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+      "hashes": {
+        "sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d"
+      }
+    },
+    "url": "file:///[CANDIDATE_WHEEL]/agentguard47-1.4.1-py3-none-any.whl"
+  },
+  "test_source_sha256": "2a027f0c7ac5d72b0a70720cc8f14dec0beb12ef59b11228c5865802fe54c2ea",
+  "installed_import": "venv/Lib/site-packages/agentguard/__init__.py",
+  "selected": 13,
+  "passed": 13,
+  "skipped": 0,
+  "exit": 0,
+  "real_async_file_billing": true
+}

@@ -1,0 +1,237 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [CHECKOUT]\sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collected 1398 items
+
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_activation_evidence.py . [  0%]
+.............................                                            [  2%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_architecture.py . [  2%]
+........                                                                 [  2%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_async_patches.py . [  2%]
+.........                                                                [  3%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_atracing.py . [  3%]
+.......................                                                  [  5%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_budget_preflight.py . [  5%]
+......................                                                   [  6%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_ci_guardrails.py . [  6%]
+.........                                                                [  7%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_ci_results.py . [  7%]
+.................                                                        [  8%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_ci_tools_requirements_guard.py . [  8%]
+......                                                                   [  9%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_claude_review_filter.py . [  9%]
+.......                                                                  [  9%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_cli_report.py . [ 10%]
+.........                                                                [ 10%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_concurrency.py . [ 10%]
+.......                                                                  [ 11%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_cost.py . [ 11%]
+......................                                                   [ 12%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_cost_guardrail.py . [ 12%]
+..................................                                       [ 15%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_coverage_gaps.py . [ 15%]
+.............................................                            [ 18%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_crewai_integration.py . [ 18%]
+.........                                                                [ 19%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_dashboard_handoff_docs.py . [ 19%]
+.                                                                        [ 19%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_decision_trace.py . [ 19%]
+............                                                             [ 20%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_demo.py . [ 20%]
+..                                                                       [ 20%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_doctor.py . [ 20%]
+.........                                                                [ 21%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_documentation.py . [ 21%]
+....................                                                     [ 22%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_dx.py . [ 22%]
+............................................                             [ 26%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_e2e_pipeline.py . [ 26%]
+...                                                                      [ 26%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_enforcement_boundary.py . [ 26%]
+...................                                                      [ 27%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_evaluation.py . [ 27%]
+..............................                                           [ 30%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_example_starters.py . [ 30%]
+..........                                                               [ 30%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_export.py . [ 30%]
+..........                                                               [ 31%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_exports.py . [ 31%]
+..............                                                           [ 32%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_first_run.py . [ 32%]
+..........................                                               [ 34%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_goal.py . [ 34%]
+.............................                                            [ 36%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_guard_persistence.py . [ 36%]
+.........                                                                [ 37%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_guards.py . [ 37%]
+........................................................................ [ 42%]
+.......................                                                  [ 44%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_hardening.py . [ 44%]
+..........................................                               [ 47%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_hooks.py . [ 47%]
+.....................                                                    [ 48%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_hosted_ingest_contract.py . [ 49%]
+...                                                                      [ 49%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_http_sink.py . [ 49%]
+......................                                                   [ 50%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_init.py . [ 51%]
+.................................................                        [ 54%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_instrument.py . [ 54%]
+...........                                                              [ 55%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_instrument_patch.py . [ 55%]
+.........                                                                [ 56%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_instrument_stream.py . [ 56%]
+....................                                                     [ 57%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_integration_cost_guardrail.py . [ 57%]
+                                                                         [ 57%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_integration_dashboard_script.py . [ 57%]
+..........                                                               [ 58%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_langchain_integration.py . [ 58%]
+.......................                                                  [ 60%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_langgraph_integration.py . [ 60%]
+.............                                                            [ 61%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_live_cost_reconcile.py . [ 61%]
+...............                                                          [ 62%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_local_first_template.py . [ 62%]
+.....                                                                    [ 62%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_mcp_registry_metadata.py . [ 62%]
+....                                                                     [ 63%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_otel_sink.py . [ 63%]
+...........                                                              [ 63%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_precision_cost.py . [ 64%]
+...........................                                              [ 65%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_price_table.py . [ 66%]
+.....................................................                    [ 69%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_production.py . [ 69%]
+...............                                                          [ 70%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_pypi_readme_sync.py . [ 71%]
+.....                                                                    [ 71%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_quickstart.py . [ 71%]
+.............                                                            [ 72%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_real_dispatch.py . [ 72%]
+...............sss                                                       [ 73%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_real_dispatch_capabilities.py . [ 73%]
+.                                                                        [ 73%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_receipt.py . [ 73%]
+...........                                                              [ 74%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_release_audit.py . [ 74%]
+.....................................................                    [ 78%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_release_discussion_category.py . [ 78%]
+....                                                                     [ 78%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_release_email.py . [ 79%]
+.....................                                                    [ 80%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_release_example.py . [ 80%]
+............                                                             [ 81%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_repo_config.py . [ 81%]
+...........                                                              [ 82%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_reporting.py . [ 82%]
+.......                                                                  [ 82%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_reservation_contract.py . [ 82%]
+....................                                                     [ 84%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_reservation_path.py . [ 84%]
+.......................                                                  [ 86%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_reservation_stream.py . [ 86%]
+....................................                                     [ 88%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_review_readiness_guard.py . [ 88%]
+.............                                                            [ 89%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_richard_task_budget_scenarios.py . [ 89%]
+..                                                                       [ 89%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_runner.py . [ 90%]
+.............                                                            [ 90%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_savings.py . [ 91%]
+..............                                                           [ 92%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_schemas.py . [ 92%]
+.......................                                                  [ 93%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_sdk_preflight.py . [ 93%]
+..........                                                               [ 94%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_sdk_release_guard.py . [ 94%]
+................                                                         [ 95%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_skillpack.py . [ 95%]
+..........                                                               [ 96%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_smoke.py . [ 96%]
+                                                                         [ 96%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_sticky_agent_proof.py . [ 96%]
+.                                                                        [ 96%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_touchpoints.py . [ 96%]
+......                                                                   [ 97%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_tracing.py . [ 97%]
+.............                                                            [ 98%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_v1_coverage.py . [ 98%]
+............                                                             [ 99%]
+..\..\..\Documents\GitHub\agent47-review-20261002\sdk\tests\test_x402.py . [ 99%]
+..........                                                               [100%]
+
+============================== warnings summary ===============================
+tests/test_real_dispatch.py::test_responses_async_create_with_init_tracer
+tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_on_parse
+  [CHECKOUT]\sdk\agentguard\_billing.py:161: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    ctx.event(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_real_dispatch.py::test_responses_async_streaming_response_counts_when_left_unread
+  [CHECKOUT]\sdk\agentguard\instrument_stream.py:476: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    ctx.event(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.13.2-final-0 _______________
+
+Name                                                                                   Stmts   Miss  Cover
+----------------------------------------------------------------------------------------------------------
+[CHECKOUT]\sdk\agentguard\__init__.py                    57      1    98%
+[CHECKOUT]\sdk\agentguard\__main__.py                     1      0   100%
+[CHECKOUT]\sdk\agentguard\_billing.py                    60     12    80%
+[CHECKOUT]\sdk\agentguard\_budget_validation.py          48      4    92%
+[CHECKOUT]\sdk\agentguard\_reservation_contract.py      176      4    98%
+[CHECKOUT]\sdk\agentguard\_reservation_path.py          194      7    96%
+[CHECKOUT]\sdk\agentguard\_reservation_stream.py         82      5    94%
+[CHECKOUT]\sdk\agentguard\_trace_naming.py               16      0   100%
+[CHECKOUT]\sdk\agentguard\atracing.py                    72      0   100%
+[CHECKOUT]\sdk\agentguard\cli.py                        238      6    97%
+[CHECKOUT]\sdk\agentguard\cost.py                        46      1    98%
+[CHECKOUT]\sdk\agentguard\decision.py                   214     30    86%
+[CHECKOUT]\sdk\agentguard\demo.py                       121      6    95%
+[CHECKOUT]\sdk\agentguard\doctor.py                     135     11    92%
+[CHECKOUT]\sdk\agentguard\escalation.py                 225     23    90%
+[CHECKOUT]\sdk\agentguard\evaluation.py                 271      0   100%
+[CHECKOUT]\sdk\agentguard\export.py                      31      0   100%
+[CHECKOUT]\sdk\agentguard\feedback.py                    27      2    93%
+[CHECKOUT]\sdk\agentguard\first_run.py                   55      0   100%
+[CHECKOUT]\sdk\agentguard\goal.py                       189     13    93%
+[CHECKOUT]\sdk\agentguard\guards.py                     341      4    99%
+[CHECKOUT]\sdk\agentguard\hooks.py                      139      2    99%
+[CHECKOUT]\sdk\agentguard\instrument.py                 287     37    87%
+[CHECKOUT]\sdk\agentguard\instrument_stream.py          525     71    86%
+[CHECKOUT]\sdk\agentguard\integrations\__init__.py        4      0   100%
+[CHECKOUT]\sdk\agentguard\integrations\crewai.py         79      0   100%
+[CHECKOUT]\sdk\agentguard\integrations\langchain.py     233     46    80%
+[CHECKOUT]\sdk\agentguard\integrations\langgraph.py      43      0   100%
+[CHECKOUT]\sdk\agentguard\precision_cost.py             248     38    85%
+[CHECKOUT]\sdk\agentguard\price_table.py                108      5    95%
+[CHECKOUT]\sdk\agentguard\profiles.py                    15      0   100%
+[CHECKOUT]\sdk\agentguard\quickstart.py                 172      2    99%
+[CHECKOUT]\sdk\agentguard\receipt.py                    101      2    98%
+[CHECKOUT]\sdk\agentguard\repo_config.py                 81      6    93%
+[CHECKOUT]\sdk\agentguard\reporting.py                  129      7    95%
+[CHECKOUT]\sdk\agentguard\runner.py                      44      6    86%
+[CHECKOUT]\sdk\agentguard\savings.py                    140      7    95%
+[CHECKOUT]\sdk\agentguard\schemas.py                     96     11    89%
+[CHECKOUT]\sdk\agentguard\setup.py                      101      4    96%
+[CHECKOUT]\sdk\agentguard\sinks\__init__.py               3      0   100%
+[CHECKOUT]\sdk\agentguard\sinks\_transport.py            48     13    73%
+[CHECKOUT]\sdk\agentguard\sinks\http.py                 193     15    92%
+[CHECKOUT]\sdk\agentguard\sinks\otel.py                  98      8    92%
+[CHECKOUT]\sdk\agentguard\skillpack.py                  128      4    97%
+[CHECKOUT]\sdk\agentguard\state.py                      136     31    77%
+[CHECKOUT]\sdk\agentguard\tracing.py                    228     12    95%
+[CHECKOUT]\sdk\agentguard\usage.py                       96     15    84%
+[CHECKOUT]\sdk\agentguard\x402.py                       120      4    97%
+----------------------------------------------------------------------------------------------------------
+TOTAL                                                                                   6194    475    92%
+Required test coverage of 80% reached. Total coverage: 92.33%
+=========== 1395 passed, 3 skipped, 3 warnings in 121.94s (0:02:01) ===========

@@ -1,0 +1,2 @@
+[USER_HOME]\.codex\tmp\agent47-clean-wheel-floor-20261002\venv\Lib\site-packages\agentguard\__init__.py
+{"archive_info": {"hash": "sha256=04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d", "hashes": {"sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d"}}, "url": "file:///[USER_HOME]/.codex/tmp/agent47-responses-floor-20261002/wheels/agentguard47-1.4.1-py3-none-any.whl"}

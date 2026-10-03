@@ -1,0 +1,9 @@
+{
+  "wheel_sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+  "archive_crc_errors": false,
+  "source_package_files_verified": 49,
+  "comparison": "every .py file and py.typed in sdk/agentguard equals the wheel entry byte-for-byte",
+  "mandatory_runtime_requirements": 0,
+  "version": "1.4.1",
+  "published": false
+}

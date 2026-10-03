@@ -1,0 +1,6 @@
+Processing [USER_HOME]\.codex\tmp\agent47-responses-floor-20261002\wheels\agentguard47-1.4.1-py3-none-any.whl
+Installing collected packages: agentguard47
+Successfully installed agentguard47-1.4.1
+
+[notice] A new release of pip is available: 24.0 -> 26.2.1
+[notice] To update, run: [USER_HOME]\.codex\tmp\agent47-clean-wheel-floor-20261002\venv\Scripts\python.exe -m pip install --upgrade pip
