@@ -1,0 +1,77 @@
+{
+  "review_parent": "593c9a1b6592ea8ca3beeb17fd2a488a9f2f281c",
+  "tested_verifier_lf_sha256": "31343ca724fdf1acafd43386a56882b0829030cb0b57f0b485f8162f84f4478e",
+  "artifact_verifier_rechecked_after_review": true,
+  "executions": [
+    {
+      "case": "lf",
+      "argv": [
+        "C:\\Python313\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\lf\\verify.py"
+      ],
+      "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\lf",
+      "utc": "2026-10-03T17:59:23.646306+00:00",
+      "verifier_lf_sha256": "31343ca724fdf1acafd43386a56882b0829030cb0b57f0b485f8162f84f4478e",
+      "checks_json_raw_sha256": "1495ff517e11fcdb3ca8e0d6a80247c0c1b07c326561f760f891fb9bfde20237",
+      "checks_json_crlf_count": 0,
+      "checks_json_lf_count": 34,
+      "input_manifest_sha256": "1339b2d98898aa8aa44ceff8ad288436ca6aa62941c15cfa4c1454be72b6feca",
+      "exit": 0,
+      "log_sha256": "41a2ad913ff1527f9692cce9f0f64143a810fe90519cc38fa34bf7700e35e8cd"
+    },
+    {
+      "case": "crlf",
+      "argv": [
+        "C:\\Python313\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\crlf\\verify.py"
+      ],
+      "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\crlf",
+      "utc": "2026-10-03T17:59:23.967637+00:00",
+      "verifier_lf_sha256": "31343ca724fdf1acafd43386a56882b0829030cb0b57f0b485f8162f84f4478e",
+      "checks_json_raw_sha256": "86f97900fe186637a835b7f9173e3233513260feadd21c0694a19231c2d8588c",
+      "checks_json_crlf_count": 34,
+      "checks_json_lf_count": 34,
+      "input_manifest_sha256": "49501acfa2b9b2a6c97d52e1aaad12c96e726564e7737e6ef82bb36bf0d5590c",
+      "exit": 0,
+      "log_sha256": "41a2ad913ff1527f9692cce9f0f64143a810fe90519cc38fa34bf7700e35e8cd"
+    },
+    {
+      "case": "changed-text",
+      "argv": [
+        "C:\\Python313\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\crlf\\verify.py"
+      ],
+      "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\crlf",
+      "utc": "2026-10-03T17:59:24.240907+00:00",
+      "verifier_lf_sha256": "31343ca724fdf1acafd43386a56882b0829030cb0b57f0b485f8162f84f4478e",
+      "checks_json_raw_sha256": "86f97900fe186637a835b7f9173e3233513260feadd21c0694a19231c2d8588c",
+      "checks_json_crlf_count": 34,
+      "checks_json_lf_count": 34,
+      "input_manifest_sha256": "49501acfa2b9b2a6c97d52e1aaad12c96e726564e7737e6ef82bb36bf0d5590c",
+      "exit": 1,
+      "log_sha256": "d0a5b70e8f2aa9b2d799df923317f4ac1154f42f70111f1630bc38dfb1b7626e"
+    },
+    {
+      "case": "changed-wheel",
+      "argv": [
+        "C:\\Python313\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\crlf\\verify.py"
+      ],
+      "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows736-checkouts-review-r2\\crlf",
+      "utc": "2026-10-03T17:59:24.423754+00:00",
+      "verifier_lf_sha256": "31343ca724fdf1acafd43386a56882b0829030cb0b57f0b485f8162f84f4478e",
+      "checks_json_raw_sha256": "86f97900fe186637a835b7f9173e3233513260feadd21c0694a19231c2d8588c",
+      "checks_json_crlf_count": 34,
+      "checks_json_lf_count": 34,
+      "input_manifest_sha256": "49501acfa2b9b2a6c97d52e1aaad12c96e726564e7737e6ef82bb36bf0d5590c",
+      "exit": 1,
+      "log_sha256": "71ee54dc7e372ffdefb07d7c2271abaadf168ca122d51dcc535a72e2982ba5b3"
+    }
+  ],
+  "lf_exit": 0,
+  "crlf_exit": 0,
+  "corruption_exit": 1,
+  "wheel_corruption_exit": 1,
+  "raw_checkout_text_hashes_distinct": true,
+  "runtime_runner_changed": false
+}
