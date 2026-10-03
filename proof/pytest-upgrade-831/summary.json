@@ -1,0 +1,41 @@
+{
+  "pr": 831,
+  "original_pr_head": "9b39701fadee4c30fc9cbd907fc7fb0a4537ef51",
+  "approved_review_utc": "2026-10-03T22:35:08Z",
+  "tested_source_sha": "27c31c11499fc49f2418dc8235561fd97971cd5e",
+  "sdk_tree": "d1ce2840f0eeace9c9fc211d84a265b0bff2d1d7",
+  "sdk_tree_matches_main_45c4d54": true,
+  "identity": {
+    "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.26200-SP0",
+    "pytest": "9.0.3"
+  },
+  "original_windows_hash_install_exit": 1,
+  "repaired_windows_hash_install_exit": 0,
+  "pip_check_exit": 0,
+  "existing_pins_and_hashes_preserved": 21,
+  "restored_windows_pin": {
+    "colorama": {
+      "version": "0.4.6",
+      "hashes": [
+        "08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
+        "4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"
+      ]
+    }
+  },
+  "tests_passed": 1473,
+  "tests_skipped": 114,
+  "skip_reasons": {
+    "could not import 'openai': No module named 'openai'": 105,
+    "could not import 'anthropic': No module named 'anthropic'": 6,
+    "could not import 'langchain_core': No module named 'langchain_core'": 1,
+    "could not import 'langgraph': No module named 'langgraph'": 1,
+    "could not import 'opentelemetry.sdk.trace': No module named 'opentelemetry'": 1
+  },
+  "tests_failed": 0,
+  "tests_errored": 0,
+  "coverage_percent": 91.3,
+  "pytest_warning_count": 0,
+  "support_policy": "Unchanged >=3.9; owner policy choice pending. Python 3.9 default guard still correctly rejects pytest 9.0.3.",
+  "scope": "Repair Windows CI-tool lock independently of the unresolved Python support decision; source tests, not an installed SDK or optional framework claim."
+}

@@ -1,0 +1,117 @@
+[
+  {
+    "name": "ruff",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "sdk/agentguard/",
+      "scripts/generate_pypi_readme.py",
+      "scripts/sdk_preflight.py",
+      "scripts/sdk_release_guard.py",
+      "scripts/ci_tools_requirements_guard.py",
+      "scripts/review_readiness_guard.py",
+      "scripts/live_cost_reconcile.py",
+      "scripts/check_ci_results.py",
+      "sdk/tests/test_ci_results.py",
+      "sdk/tests/test_ci_guardrails.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "bandit",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "-m",
+      "bandit",
+      "-r",
+      "sdk/agentguard/",
+      "-s",
+      "B101,B110,B112,B311",
+      "-q"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "docs",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "scripts/check_docs.py",
+      "--repository",
+      "agent47"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "ci-tools-python310",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "scripts/ci_tools_requirements_guard.py",
+      "--min-python",
+      "3.10"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "ci-tools-current-python39-policy",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "scripts/ci_tools_requirements_guard.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 1,
+    "expected_exit": 1
+  },
+  {
+    "name": "review-readiness",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "scripts/review_readiness_guard.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "release-guard",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "scripts/sdk_release_guard.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "pypi-readme",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "scripts/generate_pypi_readme.py",
+      "--check"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "mcp",
+    "argv": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "--prefix",
+      "mcp-server",
+      "test"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected_exit": 0
+  }
+]

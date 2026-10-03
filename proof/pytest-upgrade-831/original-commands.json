@@ -1,0 +1,38 @@
+[
+  {
+    "name": "venv",
+    "argv": [
+      "py",
+      "-3.10",
+      "-m",
+      "venv",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification\\venv"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification",
+    "started_utc": "2026-10-03T22:41:39.686137+00:00",
+    "finished_utc": "2026-10-03T22:41:55.779873+00:00",
+    "exit_code": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "install",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification\\venv\\Scripts\\python.exe",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--require-hashes",
+      "--index-url",
+      "https://pypi.org/simple",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification\\pr-ci-tools.txt"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification",
+    "started_utc": "2026-10-03T22:41:55.780652+00:00",
+    "finished_utc": "2026-10-03T22:42:04.420445+00:00",
+    "exit_code": 1,
+    "log_sha256": "6ecead359869d8b9fb0caa6e31f8ba56b6f55b30d41372df8d89a287380113c9"
+  }
+]
