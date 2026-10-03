@@ -52,6 +52,11 @@ trailing whitespace and replace local installation paths with `[PROOF_ENV]`.
 Their hashes in the receipt refer to those public copies. Raw local output is
 retained separately.
 
+The public source-suite log also replaces absolute and relative pytest
+checkout prefixes with `[REVIEW_CHECKOUT]`. Its relative node paths were
+redacted after Codex review; test output and counts were unchanged. The proof
+bundle was checked again for user paths and the local checkout basename.
+
 ## Limits
 
 These providers are simulated. The stream example invokes the existing

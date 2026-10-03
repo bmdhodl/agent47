@@ -18,6 +18,12 @@ terminal transcript.
   their files; example byte hashes matched the unchanged Windows checkout.
 - Public proof copies contained no local user or checkout paths.
 
+Codex review found relative checkout node paths in the initial SDK log.
+The public copy was regenerated from retained raw output with those prefixes
+redacted. All proof files were then checked again for local user paths and the
+checkout basename; the example stdout hashes still matched. No runtime or
+test behavior changed, so the same completed suite output remains the evidence.
+
 The full SDK suite and architecture assertions are recorded separately in
 `sdk-tests.txt`. Published 1.4.0 example results are in the eight named example
 logs and `receipt.json`; the SDK suite tests the current 1.4.1 source candidate.
