@@ -11,20 +11,32 @@ request pipeline into an ``httpx.MockTransport`` that counts dispatches.
 """
 from __future__ import annotations
 
+import asyncio
 import importlib
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import pytest
 
-from agentguard import BudgetExceeded, BudgetGuard, JsonFileStateStore, Tracer
+from agentguard import (
+    AsyncTracer,
+    BudgetExceeded,
+    BudgetGuard,
+    JsonFileStateStore,
+    JsonlFileSink,
+    Tracer,
+)
 from agentguard.instrument import (
     patch_anthropic,
+    patch_anthropic_async,
     patch_openai,
+    patch_openai_async,
     unpatch_anthropic,
+    unpatch_anthropic_async,
     unpatch_openai,
+    unpatch_openai_async,
 )
 
 
@@ -37,7 +49,7 @@ def _require(module: str) -> Any:
 class _CountingTransport:
     """Mock transport, built from the httpx flavor the SDK itself uses."""
 
-    def __init__(self, sdk: Any, body: Dict[str, Any]) -> None:
+    def __init__(self, sdk: Any, body: Union[Dict[str, Any], str]) -> None:
         # anthropic 1.8 moved to httpx2 and rejects httpx objects, so take the
         # transport module from the SDK's own default client class.
         client_base = next(c for c in sdk.DefaultHttpxClient.__mro__ if c.__name__ == "Client")
@@ -86,12 +98,14 @@ ANTHROPIC_MESSAGE = {
 def openai_sdk():
     yield _require("openai")
     unpatch_openai()
+    unpatch_openai_async()
 
 
 @pytest.fixture
 def anthropic_sdk():
     yield _require("anthropic")
     unpatch_anthropic()
+    unpatch_anthropic_async()
 
 
 def _client(sdk: Any, client_cls: str, transport: _CountingTransport) -> Any:
@@ -153,6 +167,168 @@ def test_anthropic_patch_stops_the_second_call_before_dispatch(anthropic_sdk):
     assert len(transport.requests) == 1
     assert guard.state.calls_used == 1
     assert guard.state.tokens_used == 15
+
+
+def _chat_sse() -> str:
+    base = {
+        "id": "chatcmpl-compat", "object": "chat.completion.chunk",
+        "created": 0, "model": "gpt-4o-mini",
+    }
+    chunks = [
+        {**base, "choices": [{"index": 0, "delta": {"content": "ok"}, "finish_reason": None}]},
+        {**base, "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}]},
+        {**base, "choices": [], "usage": OPENAI_COMPLETION["usage"]},
+    ]
+    return "".join(f"data: {json.dumps(chunk)}\n\n" for chunk in chunks) + "data: [DONE]\n\n"
+
+
+def _anthropic_sse() -> str:
+    message = {**ANTHROPIC_MESSAGE, "content": [], "stop_reason": None,
+               "usage": {"input_tokens": 10, "output_tokens": 0}}
+    events = [
+        {"type": "message_start", "message": message},
+        {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}},
+        {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "ok"}},
+        {"type": "content_block_stop", "index": 0},
+        {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence": None},
+         "usage": {"output_tokens": 5}},
+        {"type": "message_stop"},
+    ]
+    return "".join(f"event: {event['type']}\ndata: {json.dumps(event)}\n\n" for event in events)
+
+
+def _assert_billed_once(guard: BudgetGuard, path: Path, transport: _CountingTransport) -> None:
+    assert len(transport.requests) == 1
+    assert guard.state.calls_used == 1
+    assert guard.state.tokens_used == 15
+    events = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+    billing = [event for event in events if event["name"] == "llm.result"]
+    assert len(billing) == 1
+    assert billing[0]["cost_usd"] > 0
+    assert guard.state.cost_used == pytest.approx(billing[0]["cost_usd"])
+
+
+def _assert_stream_settled(guard: BudgetGuard) -> None:
+    totals = guard.reservation_totals()
+    assert totals["settled"]["calls"] == 1
+    assert totals["reserved"]["calls"] == totals["unresolved"]["calls"] == 0
+
+
+def test_openai_chat_stream_bills_once_and_blocks_next_dispatch(openai_sdk, tmp_path):
+    path = tmp_path / "chat-stream.jsonl"
+    transport = _CountingTransport(openai_sdk, _chat_sse())
+    guard = BudgetGuard(max_calls=1, store=JsonFileStateStore(tmp_path / "budget.json"), key="compat")
+    patch_openai(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+    kwargs = {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}], "stream": True}
+
+    with _client(openai_sdk, "OpenAI", transport) as client:
+        with client.chat.completions.create(**kwargs) as stream:
+            chunks = list(stream)
+        assert isinstance(chunks[-1], openai_sdk.types.chat.ChatCompletionChunk)
+        assert chunks[-1].usage.total_tokens == 15
+        with pytest.raises(BudgetExceeded):
+            client.chat.completions.create(**kwargs)
+
+    assert json.loads(transport.requests[0].content)["stream_options"]["include_usage"] is True
+    _assert_billed_once(guard, path, transport)
+    _assert_stream_settled(guard)
+
+
+@pytest.mark.parametrize("method", ["create", "stream"])
+def test_anthropic_stream_bills_once_and_blocks_next_dispatch(anthropic_sdk, tmp_path, method):
+    path = tmp_path / "anthropic-stream.jsonl"
+    transport = _CountingTransport(anthropic_sdk, _anthropic_sse())
+    guard = BudgetGuard(max_calls=1, store=JsonFileStateStore(tmp_path / "budget.json"), key="compat")
+    patch_anthropic(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+    kwargs = {"model": ANTHROPIC_MESSAGE["model"], "max_tokens": 16,
+              "messages": [{"role": "user", "content": "hi"}]}
+    if method == "create":
+        kwargs["stream"] = True
+
+    with _client(anthropic_sdk, "Anthropic", transport) as client:
+        dispatch = getattr(client.messages, method)
+        with dispatch(**kwargs) as stream:
+            if method == "stream":
+                assert list(stream.text_stream) == ["ok"]
+                assert stream.get_final_message().usage.output_tokens == 5
+            else:
+                assert [event.type for event in stream][-1] == "message_stop"
+        with pytest.raises(BudgetExceeded), dispatch(**kwargs):
+            pass
+
+    _assert_billed_once(guard, path, transport)
+    _assert_stream_settled(guard)
+
+
+@pytest.mark.parametrize("streamed", [False, True])
+def test_openai_chat_async_bills_once_and_blocks_next_dispatch(openai_sdk, tmp_path, streamed):
+    path = tmp_path / "async-chat.jsonl"
+    transport = _CountingTransport(openai_sdk, _chat_sse() if streamed else OPENAI_COMPLETION)
+    guard = BudgetGuard(max_calls=1, store=JsonFileStateStore(tmp_path / "budget.json"), key="compat")
+    patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+    kwargs = {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}], "stream": streamed}
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            result = await client.chat.completions.create(**kwargs)
+            if streamed:
+                async with result as stream:
+                    chunks = [chunk async for chunk in stream]
+                assert isinstance(chunks[-1], openai_sdk.types.chat.ChatCompletionChunk)
+                assert chunks[-1].usage.total_tokens == 15
+            else:
+                assert isinstance(result, openai_sdk.types.chat.ChatCompletion)
+            with pytest.raises(BudgetExceeded):
+                await client.chat.completions.create(**kwargs)
+
+    asyncio.run(run())
+    _assert_billed_once(guard, path, transport)
+    if streamed:
+        assert json.loads(transport.requests[0].content)["stream_options"]["include_usage"] is True
+        _assert_stream_settled(guard)
+
+
+@pytest.mark.parametrize("method", ["non_stream", "stream_create", "stream_helper"])
+def test_anthropic_async_bills_once_and_blocks_next_dispatch(anthropic_sdk, tmp_path, method):
+    streamed = method != "non_stream"
+    path = tmp_path / "async-anthropic.jsonl"
+    transport = _CountingTransport(anthropic_sdk, _anthropic_sse() if streamed else ANTHROPIC_MESSAGE)
+    guard = BudgetGuard(max_calls=1, store=JsonFileStateStore(tmp_path / "budget.json"), key="compat")
+    patch_anthropic_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+    kwargs = {"model": ANTHROPIC_MESSAGE["model"], "max_tokens": 16,
+              "messages": [{"role": "user", "content": "hi"}]}
+    if method == "stream_create":
+        kwargs["stream"] = True
+
+    async def run():
+        async with anthropic_sdk.AsyncAnthropic(
+            api_key="sk-compat", max_retries=0,
+            http_client=anthropic_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            if method == "stream_helper":
+                async with client.messages.stream(**kwargs) as stream:
+                    assert [text async for text in stream.text_stream] == ["ok"]
+                    assert (await stream.get_final_message()).usage.output_tokens == 5
+                with pytest.raises(BudgetExceeded):
+                    async with client.messages.stream(**kwargs):
+                        pass
+            else:
+                result = await client.messages.create(**kwargs)
+                if streamed:
+                    async with result as stream:
+                        assert [event.type async for event in stream][-1] == "message_stop"
+                else:
+                    assert result.usage.input_tokens == 10
+                with pytest.raises(BudgetExceeded):
+                    await client.messages.create(**kwargs)
+
+    asyncio.run(run())
+    _assert_billed_once(guard, path, transport)
+    if streamed:
+        _assert_stream_settled(guard)
 
 
 def test_langchain_dispatch_propagates_budget_stop():

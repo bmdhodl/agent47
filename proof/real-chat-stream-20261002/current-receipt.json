@@ -1,0 +1,36 @@
+{
+  "profile": "current",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+  "archive_crc_valid": true,
+  "package_files_equal_checkout": 49,
+  "mandatory_runtime_requirements": 0,
+  "agentguard_absent_before_install": true,
+  "installed": {
+    "version": "1.4.1",
+    "origin": "venv/Lib/site-packages/agentguard/__init__.py",
+    "direct_url": {
+      "archive_info": {
+        "hash": "sha256=04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+        "hashes": {
+          "sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d"
+        }
+      },
+      "url": "file:///[CANDIDATE_WHEEL]/agentguard47-1.4.1-py3-none-any.whl"
+    },
+    "python": "3.11.9",
+    "system": "Windows",
+    "openai": "3.19.2",
+    "anthropic": "1.8.0"
+  },
+  "test_checkout_bytes_sha256": "2c43797afbb10d617f2b4a1b47ffe0a01f242af61c00a50fb6a1e0a35566bff5",
+  "selection": "chat_stream or chat_async or anthropic_stream or anthropic_async",
+  "passed": 8,
+  "skipped": 0,
+  "warnings": 0,
+  "exit": 0,
+  "isolated_python": true,
+  "pytest_plugin_autoload_disabled": true,
+  "owner_provider_credentials_scrubbed": true,
+  "real_sdk_mock_http_only": true
+}
