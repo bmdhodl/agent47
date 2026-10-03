@@ -48,6 +48,14 @@ Python 3.9 does not establish current-provider installability: OpenAI 3.19.2,
 Anthropic 1.8.0 and Agents 0.22.3 declare Python 3.10+ in their package metadata.
 Current-provider CI remains on Python 3.12.
 
+The [existing-client regression check](../proof/early-openai-clients-816/review-r2/README.md)
+uses a new candidate wheel containing the #816 fix. On Windows/Python 3.11,
+20 provider cases passed at the Chat/Anthropic floor, and 41 passed at both the
+Responses/Agents floor and current versions. This includes activation after
+client construction, cached resource exports, and restoration by `unpatch`. Saved callables/helpers
+remain outside the activation contract. These are local results; the existing
+CI jobs run the added regressions without changing the support classifications.
+
 ## How versions are chosen
 
 - **Oldest tested** comes from

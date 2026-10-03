@@ -237,6 +237,13 @@ patch_openai(tracer)
 patch_anthropic(tracer)
 ```
 
+`patch_openai()` covers standard OpenAI clients created before or after the
+patch. `patch_openai_async()` does the same for async clients; `init()` enables
+both. Activate instrumentation before sending requests or saving bound methods
+and raw/streaming response helpers. Previously saved references can retain the
+original callable and must be recreated after activation. Anthropic clients
+must still be created after their patch.
+
 ## Async Support
 
 ```python

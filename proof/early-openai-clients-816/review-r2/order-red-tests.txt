@@ -1,0 +1,108 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-8.4.2, pluggy-1.6.0
+rootdir: [REVIEW_CHECKOUT]\sdk
+configfile: pyproject.toml
+collected 143 items / 24 deselected / 119 selected
+
+[REVIEW_CHECKOUT]\sdk\tests\test_async_patches.py ..........
+[REVIEW_CHECKOUT]\sdk\tests\test_init.py ..................................................
+[REVIEW_CHECKOUT]\sdk\tests\test_instrument.py ............
+[REVIEW_CHECKOUT]\sdk\tests\test_instrument_patch.py ..........
+[REVIEW_CHECKOUT]\sdk\tests\test_instrument_stream.py ...................
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py {"kind": "meta", "message": "Traced by AgentGuard | agentguard47.com", "name": "watermark", "service": "app", "ts": 1790998773.314721}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": null, "error": null, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "start", "service": "app", "span_id": "2c4537ac8d534fe3ac1a5d1bf878a675", "trace_id": "447778349bb54578b5aa62b76614364d", "ts": 1790998773.314721}
+{"cost_usd": 4.5e-06, "data": {"model": "gpt-4o-mini", "provider": "openai", "request_id": "chatcmpl-compat", "source_of_cost": "computed", "usage": {"completion_tokens": 5, "input_tokens": 10, "output_tokens": 5, "prompt_tokens": 10, "total_tokens": 15}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "app", "span_id": "2c4537ac8d534fe3ac1a5d1bf878a675", "trace_id": "447778349bb54578b5aa62b76614364d", "ts": 1790998773.366592}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": 51.880399987567216, "error": null, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "end", "service": "app", "span_id": "2c4537ac8d534fe3ac1a5d1bf878a675", "trace_id": "447778349bb54578b5aa62b76614364d", "ts": 1790998773.366592}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": null, "error": null, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "start", "service": "app", "span_id": "b24418499b8f4a2395d7e55f6af83290", "trace_id": "8579e9a9da8e421eb40175337d27511b", "ts": 1790998773.366592}
+{"data": {"message": "Call budget exhausted: 1 >= 1; request not sent", "model": "gpt-4o-mini", "request_sent": false}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.budget_exceeded", "parent_id": null, "phase": "emit", "service": "app", "span_id": "b24418499b8f4a2395d7e55f6af83290", "trace_id": "8579e9a9da8e421eb40175337d27511b", "ts": 1790998773.366592}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": 0.03860000288113952, "error": {"message": "Call budget exhausted: 1 >= 1; request not sent", "type": "BudgetExceeded"}, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "end", "service": "app", "span_id": "b24418499b8f4a2395d7e55f6af83290", "trace_id": "8579e9a9da8e421eb40175337d27511b", "ts": 1790998773.366592}
+.{"kind": "meta", "message": "Traced by AgentGuard | agentguard47.com", "name": "watermark", "service": "app", "ts": 1790998773.3696501}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": null, "error": null, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "start", "service": "app", "span_id": "2d794bbc5e8948e588a64a2c18c62f65", "trace_id": "744f65f924124deeb909564698a6179e", "ts": 1790998773.3696501}
+{"cost_usd": 4.5e-06, "data": {"estimate_overrun": false, "model": "gpt-4o-mini", "provider": "openai", "reservation_id": "be5aac5a-ac65-4266-b0fa-25e98b20b228", "source_of_cost": "computed", "usage": {"total_tokens": 15}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "app", "span_id": "2d794bbc5e8948e588a64a2c18c62f65", "trace_id": "744f65f924124deeb909564698a6179e", "ts": 1790998773.3832033}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": 13.767500000540167, "error": null, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "end", "service": "app", "span_id": "2d794bbc5e8948e588a64a2c18c62f65", "trace_id": "744f65f924124deeb909564698a6179e", "ts": 1790998773.3832033}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": null, "error": null, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "start", "service": "app", "span_id": "ae53305381be401593a3ce3b1d3c464b", "trace_id": "96f0af6d32b44727a50e8159bc2b3bb0", "ts": 1790998773.3837085}
+{"data": {"message": "Call budget exhausted: held+settled would exceed 1; request not sent", "model": "gpt-4o-mini", "request_sent": false}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.budget_exceeded", "parent_id": null, "phase": "emit", "service": "app", "span_id": "ae53305381be401593a3ce3b1d3c464b", "trace_id": "96f0af6d32b44727a50e8159bc2b3bb0", "ts": 1790998773.389234}
+{"data": {"model": "gpt-4o-mini", "provider": "openai"}, "duration_ms": 5.873400019481778, "error": {"message": "Call budget exhausted: held+settled would exceed 1; request not sent", "type": "BudgetExceeded"}, "kind": "span", "name": "llm.openai.gpt-4o-mini", "parent_id": null, "phase": "end", "service": "app", "span_id": "ae53305381be401593a3ce3b1d3c464b", "trace_id": "96f0af6d32b44727a50e8159bc2b3bb0", "ts": 1790998773.389234}
+.{"kind": "meta", "message": "Traced by AgentGuard | agentguard47.com", "name": "watermark", "service": "app", "ts": 1790998773.3927462}
+{"data": {"model": "claude-haiku-4-5-20251001", "provider": "anthropic"}, "duration_ms": null, "error": null, "kind": "span", "name": "llm.anthropic.claude-haiku-4-5-20251001", "parent_id": null, "phase": "start", "service": "app", "span_id": "6bc5ffaa95104abe83ccfebdfe73fa14", "trace_id": "4801822772b74d53bbce1a6979bf1e2f", "ts": 1790998773.3927462}
+{"cost_usd": 3.5000000000000004e-05, "data": {"model": "claude-haiku-4-5-20251001", "provider": "anthropic", "request_id": "msg_compat", "source_of_cost": "computed", "usage": {"input_tokens": 10, "output_tokens": 5, "total_tokens": 15}}, "duration_ms": null, "error": null, "kind": "event", "name": "llm.result", "parent_id": null, "phase": "emit", "service": "app", "span_id": "6bc5ffaa95104abe83ccfebdfe73fa14", "trace_id": "4801822772b74d53bbce1a6979bf1e2f", "ts": 1790998773.3957515}
+{"data": {"model": "claude-haiku-4-5-20251001", "provider": "anthropic"}, "duration_ms": 3.8184000295586884, "error": null, "kind": "span", "name": "llm.anthropic.claude-haiku-4-5-20251001", "parent_id": null, "phase": "end", "service": "app", "span_id": "6bc5ffaa95104abe83ccfebdfe73fa14", "trace_id": "4801822772b74d53bbce1a6979bf1e2f", "ts": 1790998773.3957515}
+{"data": {"model": "claude-haiku-4-5-20251001", "provider": "anthropic"}, "duration_ms": null, "error": null, "kind": "span", "name": "llm.anthropic.claude-haiku-4-5-20251001", "parent_id": null, "phase": "start", "service": "app", "span_id": "7dc7b9667df94f87be23e5fdad7f27c9", "trace_id": "18e355cd0a4747ce9484e2426762a2ca", "ts": 1790998773.3967664}
+{"data": {"message": "Call budget exhausted: 1 >= 1; request not sent", "model": "claude-haiku-4-5-20251001", "request_sent": false}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.budget_exceeded", "parent_id": null, "phase": "emit", "service": "app", "span_id": "7dc7b9667df94f87be23e5fdad7f27c9", "trace_id": "18e355cd0a4747ce9484e2426762a2ca", "ts": 1790998773.3967664}
+{"data": {"model": "claude-haiku-4-5-20251001", "provider": "anthropic"}, "duration_ms": 0.04449998959898949, "error": {"message": "Call budget exhausted: 1 >= 1; request not sent", "type": "BudgetExceeded"}, "kind": "span", "name": "llm.anthropic.claude-haiku-4-5-20251001", "parent_id": null, "phase": "end", "service": "app", "span_id": "7dc7b9667df94f87be23e5fdad7f27c9", "trace_id": "18e355cd0a4747ce9484e2426762a2ca", "ts": 1790998773.3967664}
+.OBSERVE test_openai_existing_client_is_guarded[chat] resources None chat None completions None originals []
+FOBSERVE test_openai_existing_async_client_is_guarded[chat] resources None chat None completions None originals []
+FFFOBSERVE test_openai_unpatch_restores_existing_client[chat-False] resources None chat None completions None originals []
+FOBSERVE test_openai_unpatch_restores_existing_client[chat-True] resources None chat None completions None originals []
+F.........
+
+================================== FAILURES ===================================
+________________ test_openai_existing_client_is_guarded[chat] _________________
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:235: in test_openai_existing_client_is_guarded
+    with pytest.raises(BudgetExceeded):
+E   Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+_____________ test_openai_existing_async_client_is_guarded[chat] ______________
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:273: in test_openai_existing_async_client_is_guarded
+    asyncio.run(run())
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:268: in run
+    with pytest.raises(BudgetExceeded):
+E   Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+___________ test_init_guards_an_existing_openai_client[chat-False] ____________
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:309: in test_init_guards_an_existing_openai_client
+    with pytest.raises(BudgetExceeded):
+E   Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+____________ test_init_guards_an_existing_openai_client[chat-True] ____________
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:304: in test_init_guards_an_existing_openai_client
+    asyncio.run(run())
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:300: in run
+    with pytest.raises(BudgetExceeded):
+E   Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+__________ test_openai_unpatch_restores_existing_client[chat-False] ___________
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:349: in test_openai_unpatch_restores_existing_client
+    assert resource.create.__func__ is not original
+E   assert <function Completions.create at 0x000001E71C17E2A0> is not <function Completions.create at 0x000001E71C17E2A0>
+E    +  where <function Completions.create at 0x000001E71C17E2A0> = create.__func__
+E    +    where create = <openai.resources.chat.completions.Completions object at 0x000001E71C668C10>.create
+___________ test_openai_unpatch_restores_existing_client[chat-True] ___________
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:343: in test_openai_unpatch_restores_existing_client
+    asyncio.run(run())
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+[REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py:339: in run
+    assert resource.create.__func__ is not original
+E   assert <function AsyncCompletions.create at 0x000001E71C50B7E0> is not <function AsyncCompletions.create at 0x000001E71C50B7E0>
+E    +  where <function AsyncCompletions.create at 0x000001E71C50B7E0> = create.__func__
+E    +    where create = <openai.resources.chat.completions.AsyncCompletions object at 0x000001E71C5DC390>.create
+=========================== short test summary info ===========================
+FAILED [REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py::test_openai_existing_client_is_guarded[chat]
+FAILED [REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py::test_openai_existing_async_client_is_guarded[chat]
+FAILED [REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py::test_init_guards_an_existing_openai_client[chat-False]
+FAILED [REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py::test_init_guards_an_existing_openai_client[chat-True]
+FAILED [REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py::test_openai_unpatch_restores_existing_client[chat-False]
+FAILED [REVIEW_CHECKOUT]\sdk\tests\test_real_dispatch.py::test_openai_unpatch_restores_existing_client[chat-True]
+================ 6 failed, 113 passed, 24 deselected in 3.65s =================

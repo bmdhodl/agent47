@@ -1,6 +1,6 @@
 # Enforcement boundary
 
-Checked 2026-09-26 against AgentGuard `1.4.1` source. This is the tested
+Checked 2026-10-02 against AgentGuard `1.4.1` source. This is the tested
 promise. It is not an invoice cap, a host-wide kill switch, or a savings
 guarantee.
 
@@ -14,10 +14,21 @@ patches, an exhausted
 **recorded** budget refuses the **next** dispatch. That check reads usage
 already stored on `BudgetGuard`. It does **not** reserve concurrent in-flight
 calls, predict the next response's tokens or dollars, intercept a direct SDK
-client you never patched, or cap a provider subscription quota.
+callable outside the patch, or cap a provider subscription quota.
 
 Installing `agentguard47` does nothing to Cursor, Claude Code, Copilot, or
 Codex until your code (or a generated starter) calls the SDK.
+
+`patch_openai()` and `patch_openai_async()` instrument the standard OpenAI
+resource classes shared by existing and new clients. `init()` activates both.
+An existing `client.chat.completions` or `client.responses` resource is covered
+when its method is looked up after activation. A bound method or a
+`with_raw_response` / `with_streaming_response` helper saved before activation
+can retain the original callable: recreate that reference after activation.
+Instance-level overrides and custom SDK resource classes are outside this
+promise. Activate patches before requests and helper construction. Anthropic
+clients still need to be created after their patch. Real-client regressions
+and installed-wheel results are in [the #816 proof](../proof/early-openai-clients-816/review-r2/README.md).
 
 ## Classes
 
@@ -61,7 +72,7 @@ paths are marked `unsupported`.
 | npm `@agentguard47/mcp-server` | advisory | `mcp-server/src/__tests__/tools.test.ts` | Read-only hosted traces, alerts, usage, costs, and event-quota health. `check_budget` is hosted event quota, not `BudgetGuard` and not a provider invoice. Mutating budget tools are denied. |
 | Python `agentguard-mcp` `record_call` | reservation-backed | `agentguard-mcp/tests/test_storage.py::test_concurrent_record_call_never_exceeds_budget` | SQLite `BEGIN IMMEDIATE` for clients that call this server. Does not intercept other MCP servers. Unpublished checkout package. |
 | OpenAI Responses API patch (`responses.create`, `responses.parse`, `responses.stream()`; sync, async, stream) | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch` | Needs openai 1.66 or later. Bills `response.usage`, or the usage on the `response.completed` stream event. `with_raw_response` and `with_streaming_response` count when the response is parsed. Store-backed sync non-stream calls and store-backed streams reserve like Chat Completions; token and dollar holds need `max_output_tokens`. In-flight responses can exceed remaining tokens or cost. |
-| OpenAI Agents SDK (`Runner.run`, `Runner.run_streamed`) on `OpenAIResponsesModel` | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call` | Refuses the next model call and `BudgetExceeded` leaves `Runner.run`. Tool calls and handoffs are not guard points; each model call they lead to is. Patch before the SDK builds its client (`agentguard.init()` at startup). Native `max_turns` still applies. `OpenAIChatCompletionsModel` follows the Chat Completions row. |
+| OpenAI Agents SDK (`Runner.run`, `Runner.run_streamed`) on `OpenAIResponsesModel` | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call` | Refuses the next model call and `BudgetExceeded` leaves `Runner.run`. Tool calls and handoffs are not guard points; each model call they lead to is. Activate before model calls and helper construction (`agentguard.init()` at startup); standard clients created earlier are covered too. Native `max_turns` still applies. `OpenAIChatCompletionsModel` follows the Chat Completions row. |
 | OpenAI Responses paths outside the patch | unsupported | `sdk/tests/test_enforcement_boundary.py::test_openai_responses_unpatched_paths_are_named` | Hosted tool calls (web search, file search, code interpreter, computer use) run inside one response: AgentGuard cannot stop one mid-response, and per-call tool fees are not in `usage`. `background=True` returns before usage exists: it counts as one call and zero tokens, and the spend that follows is not recorded. Resuming a stream by `response_id`, `responses.retrieve`, `cancel`, `compact`, and the Realtime and WebSocket transports are not patched. |
 | Host tools in Cursor, Claude Code, Copilot, Codex | unsupported | `sdk/tests/test_enforcement_boundary.py::test_skillpack_is_not_host_enforcement` | Package install is not a hook. Prefer native host caps when they already cover the workflow. |
 | Provider subscription quota / invoice cap | unsupported | `sdk/tests/test_enforcement_boundary.py::test_product_docs_reject_invoice_guarantees` | Native billing limits stay with the provider. AgentGuard estimates are not invoices. |
@@ -69,7 +80,8 @@ paths are marked `unsupported`.
 
 ## Remaining exposure
 
-- **Direct SDK bypass.** Any client you do not patch or wrap can spend.
+- **Direct SDK bypass.** Unpatched providers, custom resource overrides, and
+  callables or raw/streaming helpers saved before activation can spend.
 - **In-flight spend.** A request that passed `check()` can still return more
   tokens or dollars than remain.
 - **Missing usage.** An in-memory stream or response without usage still

@@ -1,0 +1,1 @@
+{"session": "codex-py39-merge-handoff-20261002", "ts": "2026-10-02T22:00:41", "claim": "SDK inbox records merged minimum-Python proof and remaining gates", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Merged #819"}, "prev": "1744bbe0924e91644a13aa13ee82b72171b5a56ed116ed856858b0bd80a7551e"}

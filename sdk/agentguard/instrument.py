@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import functools
+import importlib
 from typing import Any, Callable, Dict, Optional, TypeVar
 
 from agentguard._billing import (
@@ -169,6 +170,8 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
     """Monkey-patch OpenAI client to auto-trace chat completions.
 
     Works with openai >= 1.0 (instance-based client) and < 1.0 (module-based).
+    Standard modern clients created before activation are covered too. Bound
+    methods and raw/streaming helpers saved earlier must be recreated.
     Safe to call even if openai is not installed — silently returns.
 
     Args:
@@ -178,6 +181,9 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
     try:
         import openai
     except ImportError:
+        return
+
+    if _patch_openai_resources(openai, tracer, budget_guard):
         return
 
     client_cls = getattr(openai, "OpenAI", None)
@@ -212,6 +218,78 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
         return _traced_openai_create(_original, tracer, budget_guard, *args, **kwargs)
 
     chat.create = traced_create  # type: ignore[attr-defined]
+
+
+def _patch_openai_resources(
+    sdk: Any, tracer: Any, budget_guard: Any, *, asynchronous: bool = False
+) -> bool:
+    """Patch standard resource methods shared by old and new SDK clients."""
+    key = "openai_async_resources" if asynchronous else "openai_resources"
+    if key in _originals:
+        # Idempotent: unpatch before replacing the tracer or guard.
+        return True
+    resources = getattr(sdk, "resources", None)
+    chat = getattr(getattr(resources, "chat", None), "completions", None)
+    prefix = "Async" if asynchronous else ""
+    completions = getattr(chat, prefix + "Completions", None)
+    if not isinstance(completions, type) or not callable(getattr(completions, "create", None)):
+        if getattr(sdk, "__path__", None) is None:
+            return False
+        # A re-imported SDK can lack resource re-exports when its submodules
+        # remain cached. Resolve the real shared class instead of falling back
+        # to constructors and silently missing existing clients again.
+        try:
+            chat_module = importlib.import_module("openai.resources.chat.completions")
+        except ModuleNotFoundError as exc:
+            if exc.name not in {
+                "openai.resources", "openai.resources.chat", "openai.resources.chat.completions"
+            }:
+                raise
+            return False
+        completions = getattr(chat_module, prefix + "Completions", None)
+        if not isinstance(completions, type) or not callable(getattr(completions, "create", None)):
+            return False
+
+    chat_wrap = _traced_async_chat_method if asynchronous else _traced_chat_method
+    response_wrap = _traced_async_openai_method if asynchronous else _traced_responses_method
+    targets = [(completions, "create", chat_wrap)]
+    responses = getattr(resources, prefix + "Responses", None)
+    if responses is None and getattr(sdk, "__path__", None) is not None:
+        # New SDK releases no longer re-export Responses from resources.
+        # Only absence of this optional API is allowed; dependency errors fail.
+        try:
+            response_module = importlib.import_module("openai.resources.responses.responses")
+        except ModuleNotFoundError as exc:
+            if exc.name not in {
+                "openai.resources.responses", "openai.resources.responses.responses"
+            }:
+                raise
+        else:
+            responses = getattr(response_module, prefix + "Responses", None)
+    if isinstance(responses, type):
+        targets.extend((responses, name, response_wrap) for name in ("create", "parse"))
+
+    originals = []
+    for owner, name, wrap in targets:
+        original = getattr(owner, name, None)
+        if callable(original):
+            originals.append((owner, name, original))
+            setattr(owner, name, wrap(original, tracer, budget_guard))
+    _originals[key] = originals
+    return True
+
+
+def _restore_openai_resources(key: str) -> None:
+    for owner, name, original in _originals.pop(key, []):
+        setattr(owner, name, original)
+
+
+def _traced_chat_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+    @functools.wraps(original)
+    def traced(*args: Any, **kwargs: Any) -> Any:
+        return _traced_openai_create(original, tracer, budget_guard, *args, **kwargs)
+
+    return traced
 
 
 def _patch_openai_instance(client: Any, tracer: Any, budget_guard: Any = None) -> None:
@@ -285,6 +363,7 @@ def _traced_openai_call(
 
 def unpatch_openai() -> None:
     """Restore original OpenAI client, undoing patch_openai()."""
+    _restore_openai_resources("openai_resources")
     if "openai_init" in _originals:
         cls = _originals.pop("openai_cls")
         cls.__init__ = _originals.pop("openai_init")
@@ -499,6 +578,8 @@ def _async_trace_context(tracer: Any, span_name: str, decorator_name: str) -> An
 def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
     """Monkey-patch OpenAI AsyncOpenAI client to auto-trace async completions.
 
+    Standard clients created before activation are covered too. Bound methods
+    and raw/streaming helpers saved earlier must be recreated.
     Safe to call even if openai is not installed — silently returns.
 
     Args:
@@ -508,6 +589,9 @@ def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
     try:
         import openai
     except ImportError:
+        return
+
+    if _patch_openai_resources(openai, tracer, budget_guard, asynchronous=True):
         return
 
     client_cls = getattr(openai, "AsyncOpenAI", None)
@@ -539,13 +623,17 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
     if completions is None:
         return
     original_create = completions.create
-    traced = _traced_async_openai_method(original_create, tracer, budget_guard)
+    completions.create = _traced_async_chat_method(original_create, tracer, budget_guard)
 
-    @functools.wraps(original_create)
+
+def _traced_async_chat_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+    traced = _traced_async_openai_method(original, tracer, budget_guard)
+
+    @functools.wraps(original)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
         return await traced(*args, **ensure_openai_stream_usage(kwargs))
 
-    completions.create = traced_create  # type: ignore[attr-defined]
+    return traced_create
 
 
 def _traced_async_openai_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
@@ -566,6 +654,7 @@ def _traced_async_openai_method(original: Any, tracer: Any, budget_guard: Any) -
 
 def unpatch_openai_async() -> None:
     """Restore original AsyncOpenAI client."""
+    _restore_openai_resources("openai_async_resources")
     if "openai_async_init" in _originals:
         cls = _originals.pop("openai_async_cls")
         cls.__init__ = _originals.pop("openai_async_init")

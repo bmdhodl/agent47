@@ -33,6 +33,12 @@
   current releases, and the openai floor (1.40.0) predates the Responses API.
 
 ### Fixes
+- OpenAI clients created before `patch_openai()`, `patch_openai_async()`, or
+  `init()` now trace and enforce their budget through shared resource methods.
+  Previously these calls silently bypassed both. Methods and raw/streaming
+  helpers saved before activation still need to be recreated; see the
+  [enforcement boundary](docs/enforcement-boundary.md).
+
 - One price table. `estimate_cost` and the patched clients now read the same
   rows. Before, the patched clients billed a `gpt-5.5` prompt over 272k
   tokens at half its price, and priced every Claude 5 model, `claude-haiku-4-5`,

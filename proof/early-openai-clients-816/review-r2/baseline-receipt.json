@@ -1,0 +1,13 @@
+{
+  "baseline_wheel_sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+  "openai": "3.19.2",
+  "test_checkout_bytes_sha256": "3e7a670967737d9c70872ef662630853ac2c64546955b9c35270b26b196130a2",
+  "selection": "existing_client or existing_async_client or existing_openai_client",
+  "exit": 1,
+  "expected_failures": {
+    "tests": 16,
+    "failures": 16,
+    "errors": 0,
+    "skipped": 0
+  }
+}
