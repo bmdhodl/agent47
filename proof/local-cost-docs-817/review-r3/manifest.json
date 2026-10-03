@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "candidate313-receipt.json": "1b13582998e9771958a2e0a2450215d0a5e473cf75accbf886fa95aa33d6b8b5",
+    "candidate313-tests.txt": "4c415e65224183bf10816ea65a617368edecbd0a2171c092a338b98b2b24fc6d",
+    "candidate39-receipt.json": "65eaeb9d928e75ff33b02e4d7068a513fd534da7855088b9076e65bdeff3f078",
+    "candidate39-tests.txt": "9b016311c47f7b6376cd3494531ab032b17ba38c64119821f978a7329d923333",
+    "focused-green.txt": "9286d8fe8fdfec735316514a0185bbdfe6eb0c27fa3c7391c2c7ce05877b98a1",
+    "published313-receipt.json": "305f7620091a799c8331115265b11d93b599991c32e539baaec48d6a69276661",
+    "published313-tests.txt": "ecd611fa6e9ed91f8895690dd974286368569550562809ad22429ee0957e35c4",
+    "README.md": "d43d441cdbd4176d1c53d8627d56ee318f84dd83d157062797b43c0b02564198",
+    "source-suite.txt.gz": "91e24b1a1cc1fd7eb5bc4fa81540891a7f6abee96fc3b7216a61e674a1b1c146"
+  },
+  "line_endings": "UTF-8 LF; raw source gzip bytes"
+}

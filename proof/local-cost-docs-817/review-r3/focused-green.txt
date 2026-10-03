@@ -1,0 +1,9 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [VALIDATION]\sdk
+configfile: pyproject.toml
+collected 2 items
+
+sdk\tests\test_local_cost_docs.py ..                                     [100%]
+
+============================== 2 passed in 0.37s ==============================

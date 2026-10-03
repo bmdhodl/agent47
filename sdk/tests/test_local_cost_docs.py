@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+import runpy
 from pathlib import Path
 
 import pytest
@@ -17,11 +18,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 def test_local_cost_guide_example_records_free_usage_and_refuses_next_call(tmp_path, monkeypatch, capsys):
     """REGRESSION: the guide must demonstrate real local accounting, not patch promises."""
     guide = (REPO_ROOT / "docs/competitive/vercel-ai-gateway.md").read_text(encoding="utf-8")
-    snippets = re.findall(r"```python\n(.*?)\n```", guide, flags=re.DOTALL)
-    assert len(snippets) == 1
+    snippet = re.search(
+        r"<!-- local-cost-example:start -->\s*```python\n(.*?)\n```\s*<!-- local-cost-example:end -->",
+        guide, flags=re.DOTALL,
+    )
+    assert snippet is not None, "Missing marked local-accounting example"
+    example = REPO_ROOT / "examples/local_cost_manual.py"
+    assert snippet.group(1) == example.read_text(encoding="utf-8").rstrip()
     monkeypatch.chdir(tmp_path)
-    namespace = {}
-    exec(compile(snippets[0], "local-cost-guide", "exec"), namespace)
+    namespace = runpy.run_path(str(example))
 
     budget = namespace["budget"]
     assert budget.state.tokens_used == 2500

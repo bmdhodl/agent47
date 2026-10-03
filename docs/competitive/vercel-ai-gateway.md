@@ -46,8 +46,10 @@ the patch still work, but they do not remove that estimated cost from traces.
 
 Use the existing manual helper for calls you know are free. This offline
 example represents one completed OpenAI-compatible response. It does not run
-a model or patch a client:
+a model or patch a client. The runnable file is
+[`examples/local_cost_manual.py`](../../examples/local_cost_manual.py):
 
+<!-- local-cost-example:start -->
 ```python
 from agentguard import BudgetGuard, JsonlFileSink, Tracer, consume_billable
 
@@ -67,6 +69,7 @@ with tracer.trace("local.call") as span:
 assert budget.state.tokens_used == 2500
 assert budget.state.cost_used == 0
 ```
+<!-- local-cost-example:end -->
 
 The next `budget.check()` raises `BudgetExceeded` at the one-call cap. Only set
 `free_local=True` when you know the model call is free; it excludes electricity
