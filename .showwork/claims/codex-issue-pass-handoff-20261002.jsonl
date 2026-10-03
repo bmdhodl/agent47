@@ -1,0 +1,1 @@
+{"session": "codex-issue-pass-handoff-20261002", "ts": "2026-10-02T19:19:53", "claim": "SDK-only handoff records merged #813 and the remaining Experimental support gate", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Merged #813"}, "prev": "3a5138b1b0d50cc9f52858091657d1416d10447da2782a85a19fa85dca0abebb"}
