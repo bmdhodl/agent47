@@ -35,12 +35,8 @@ are replaced. `validation.json` binds source Git blobs, results and log hashes.
 The manifest binds the retained files; artifact verification does not certify
 test adequacy or a successful hosted submission.
 
-The actual generated Dependency Graph submission succeeded on main at
-`bb965103680421dd25c5de335041ac18e873f96c` in run
-[37136759166](https://github.com/bmdhodl/agent47/actions/runs/37136759166).
-It selected Python 3.10.20 and received HTTP 204 for all six CI input manifests.
-`hosted-graph.json` and the complete log retain exact revision/run evidence.
-The original local-only README is preserved in README.local.md. The
+GitHub's actual generated Dependency Graph submission remains pending until
+the manifest reaches main. The issue stays open for that verification. The
 [original failure](https://github.com/bmdhodl/agent47/actions/runs/37109111613)
 cannot be retried; successful SDK-directory scans do not validate this directory.
 Workflow files, repository security settings and provider locks are unchanged.

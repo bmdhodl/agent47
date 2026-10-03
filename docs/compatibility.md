@@ -22,7 +22,14 @@ semantics for each path are in the [enforcement boundary](enforcement-boundary.m
 The `compat` and `responses-floor` jobs run on Ubuntu with Python 3.12 only.
 Other optional extras have no Windows or macOS CI coverage.
 The dated Responses/Agents spot-check above is additional local Windows
-evidence. It does not cover the other optional extras. The separate required
+evidence. A separate [installed-framework check](../proof/windows-frameworks-736/README.md)
+on 2026-10-03 adds three cases each for LangChain, LangGraph, and OpenTelemetry
+at the minimum versions on Windows/Python 3.10.11 and current locked versions
+on Windows/Python 3.13.2. Each profile passed all three cases without skips or
+warnings using the unchanged 1.4.1 candidate wheel. The current Ubuntu lock
+needed a proof-only hash-pinned `pywin32` supplement for MCP's Windows dependency;
+it is not a standalone Windows lock. These local results do not add macOS or
+Windows CI coverage. The separate required
 `responses-floor` job supplies automated minimum-version evidence; `compat
 (latest)` supplies current-version evidence. The tested wheel is an unpublished 1.4.1 candidate;
 published 1.4.0 does not include these Responses patches.

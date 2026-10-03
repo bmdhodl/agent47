@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - uses: trustabl/trustabl-action@973f666d20b5fbb2e6a4511bd3846e965a08c28b # v0.4.1
+      - uses: trustabl/trustabl-action@d97575c864814bf4965fa2c72c044224d372723a # v0.4.3
         id: trustabl
         continue-on-error: true
         with:

@@ -1,0 +1,32 @@
+[
+  {
+    "repository": "github/codeql-action",
+    "tag": "v4.38.2",
+    "verified_commit": "2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2",
+    "tag_object_sha": "88585263c0627ee42c0e1c5143a112c8d6f4aa18",
+    "tag_url": "https://github.com/github/codeql-action/tree/v4.38.2",
+    "compare_url": "https://github.com/github/codeql-action/compare/v4.38.1...v4.38.2",
+    "upstream_comparison_sha256": "145be0d0cff468d4a2ca81a8e4f81930835c91aa49fcdaadc3f7ddafa8e656fa"
+  },
+  {
+    "repository": "trustabl/trustabl-action",
+    "tag": "v0.4.3",
+    "verified_commit": "d97575c864814bf4965fa2c72c044224d372723a",
+    "tag_object_sha": "d1ccbd975fa8bbf6ed5c093fc4a02b456fd8ee6e",
+    "tag_url": "https://github.com/trustabl/trustabl-action/tree/v0.4.3",
+    "compare_url": "https://github.com/trustabl/trustabl-action/compare/v0.4.1...v0.4.3",
+    "upstream_comparison_sha256": "438edc65ee28f3d3316de2bef21961d2da0beebec1ae5862d67a4b0163cbce9f",
+    "retained_source_downloads_sha256": {
+      "973f666-action.yml": "32b0aa047fdb2fb140c68c35185a7f3c6dbd5ea9d872de35215881efd8e06419",
+      "973f666-dist-index.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "973f666-src-install.ts": "ba63b6630fc8e65bced0b97582c3a92323c7c7ef5bdfeceaadc3f3d807297685",
+      "d97575c-action.yml": "2b325b644e98a89cf3f7b9ba80aad9e3dfce20f8bfebc9abf084e3e4cb40d04d",
+      "d97575c-dist-index.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "d97575c-src-install.ts": "c77858496c908df6b750447b5615e8ed4fbcaed4f6919615d1fa4b9b1af1808a"
+    },
+    "renamed_engine_repository_id": 1246292540,
+    "intermediate_v042_included": true,
+    "engine_version_preserved": "v0.1.6",
+    "rules_version_preserved": "v0.2.0"
+  }
+]

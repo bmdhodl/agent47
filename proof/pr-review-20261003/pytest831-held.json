@@ -1,0 +1,140 @@
+{
+  "pr": 831,
+  "head_sha": "9b39701fadee4c30fc9cbd907fc7fb0a4537ef51",
+  "pytest_target": "9.0.3",
+  "requires_python": ">=3.10",
+  "latest_published_pytest8": "8.4.2",
+  "advisory": {
+    "ghsa_id": "GHSA-6w46-j5rx-g56g",
+    "cve_id": "CVE-2025-71176",
+    "severity": "medium",
+    "html_url": "https://github.com/advisories/GHSA-6w46-j5rx-g56g",
+    "updated_at": "2026-04-13T16:38:47Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "pip",
+          "name": "pytest"
+        },
+        "vulnerable_version_range": "< 9.0.3",
+        "first_patched_version": "9.0.3",
+        "vulnerable_functions": []
+      }
+    ]
+  },
+  "candidate_input_sha256": "0e7c551b2a7095a23b3bfe8bbfcd3d8c345f4989e2517926f49d826140f4c498",
+  "local_floor_guard_exit": 1,
+  "fresh_python39_install_exit": 1,
+  "resolution": "Held: current update breaks required Python 3.9; no compatible published patched 8.x release found; no SDK-floor change or advisory exception authorized.",
+  "floor-guard_log": {
+    "raw_sha256": "d675cf71e4f05af0c220b1742551c4ad6cb0c6b8ecceee9a1603d0216f4580d8",
+    "retained_sha256": "d675cf71e4f05af0c220b1742551c4ad6cb0c6b8ecceee9a1603d0216f4580d8",
+    "gzip_roundtrip": true,
+    "private_paths_redacted": true
+  },
+  "python39-refusal_log": {
+    "raw_sha256": "515047de5f24bb04fa7f68f71b30c56853b308ac9a12d7d3e05297f4d99d15cc",
+    "retained_sha256": "0777d549eacff026234eaf6b8fc68ddb488639273f13199295fecff19d932e50",
+    "gzip_roundtrip": true,
+    "private_paths_redacted": true
+  },
+  "hosted_checks": [
+    {
+      "name": "copilot",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37137644901/job/111245329070"
+    },
+    {
+      "name": "ci-required",
+      "conclusion": "failure",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243611893"
+    },
+    {
+      "name": "CodeQL",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/runs/111243579586"
+    },
+    {
+      "name": "trustabl",
+      "conclusion": "neutral",
+      "url": "https://github.com/bmdhodl/agent47/runs/111243444921"
+    },
+    {
+      "name": "responses-floor",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243418019"
+    },
+    {
+      "name": "compat (floor)",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243418000"
+    },
+    {
+      "name": "mcp-budget",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243417977"
+    },
+    {
+      "name": "compat (latest)",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243417975"
+    },
+    {
+      "name": "test (3.9)",
+      "conclusion": "failure",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243417974"
+    },
+    {
+      "name": "test (3.12)",
+      "conclusion": "cancelled",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243417959"
+    },
+    {
+      "name": "lint",
+      "conclusion": "failure",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243417928"
+    },
+    {
+      "name": "docs-consistency",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988577/job/111243417907"
+    },
+    {
+      "name": "mcp",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988573/job/111243417813"
+    },
+    {
+      "name": "scan",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988522/job/111243417654"
+    },
+    {
+      "name": "analyze",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136988546/job/111243417621"
+    },
+    {
+      "name": "claude-review",
+      "conclusion": "success",
+      "url": "https://github.com/bmdhodl/agent47/actions/runs/37136987340/job/111243414729"
+    },
+    {
+      "name": "Cursor Approval Agent: Pull Request Router and Approver",
+      "conclusion": "neutral",
+      "url": "https://github.com/bmdhodl/agent47/runs/111243411915"
+    },
+    {
+      "name": "Cursor Security Agent: Security Reviewer",
+      "conclusion": "neutral",
+      "url": "https://github.com/bmdhodl/agent47/runs/111243411005"
+    }
+  ],
+  "hosted_failed_log": {
+    "raw_sha256": "7bda4abb4fb076b900dffed01dfaf7d9ff1447c954e880050def8ee43af0eb6a",
+    "retained_sha256": "7bda4abb4fb076b900dffed01dfaf7d9ff1447c954e880050def8ee43af0eb6a",
+    "gzip_roundtrip": true,
+    "private_paths_redacted": true
+  },
+  "hosted_run_id": 37136988573
+}

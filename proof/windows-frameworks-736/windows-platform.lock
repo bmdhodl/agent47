@@ -1,0 +1,5 @@
+# Proof-only Windows supplement for the unchanged Ubuntu compat-latest lock.
+# mcp 2.2.0 requires pywin32>=311 on Windows. No CI manifest changes.
+# PyPI artifact: pywin32-312-cp313-cp313-win_amd64.whl
+pywin32==312 ; sys_platform == "win32" \
+    --hash=sha256:c53e878d15a1c44788082bfe712a905433473aa38f86375b7cf8b45e3acbaaf9

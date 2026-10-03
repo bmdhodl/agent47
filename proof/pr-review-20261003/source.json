@@ -1,0 +1,12 @@
+{
+  "code_commit": "0376b581c355ad6399a741ade903666648cf6ed1",
+  "source_blob_sha256": {
+    ".github/workflows/scorecard.yml": "8f843ed38aeabddad5e8ff3f3a0c34123498b63d3a7abbf1c0e180641b9a909f",
+    ".github/workflows/trustabl.yml": "da169496010b39cfa88c2e9d66beada6b601bf0f0db8f0555ae11e6f2eeee9e9",
+    ".github/requirements/ci-tools.txt": "f1e030849607944eb1e2eccf152fbd2305ecb934fe8b34fd4407e1d8e286b43d",
+    "sdk/tests/test_ci_guardrails.py": "867807a8f959eeb343792ac683bee77aa47874da7e9930f2f7f70acaa4ff9285",
+    "sdk/pyproject.toml": "1a4315f940243f4850bf3a1bf219b39d4d24202ffd3e48786ec25554c5e5bb65"
+  },
+  "outcome": "Three PRs merged with actual main readbacks; #827 closed; #831 reviewed and held with reproducible failures; no release or outside-user claim",
+  "signoff": "OpenAI | GPT-6 | auto"
+}

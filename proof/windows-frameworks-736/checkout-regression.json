@@ -1,0 +1,12 @@
+{
+  "source_commit": "a095995d0295b94e328e07d7d17fa1616d47df87",
+  "original_normal_windows_checkout_exit": 1,
+  "original_failure": "checks.json CRLF versus Git LF digest",
+  "lf_exit": 0,
+  "crlf_exit": 0,
+  "corruption_exit": 1,
+  "wheel_corruption_exit": 1,
+  "runtime_runner_changed": false,
+  "installed_runtime_tests_rerun": false,
+  "artifact_verifier_rechecked_after_review": false
+}
