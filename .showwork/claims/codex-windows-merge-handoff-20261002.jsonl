@@ -1,0 +1,1 @@
+{"session": "codex-windows-merge-handoff-20261002", "ts": "2026-10-02T19:51:42", "claim": "SDK-only handoff records merged #814 and narrow Windows reservation evidence", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Merged #814"}, "prev": "572e718903a59630bb14543f61aa38dfcdbb23f9c63a904d7aec8ee6d94c04ae"}
