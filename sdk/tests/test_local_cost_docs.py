@@ -28,11 +28,8 @@ def test_local_cost_guide_example_records_free_usage_and_refuses_next_call(tmp_p
     assert budget.state.calls_used == 1
     assert budget.state.cost_used == 0
     assert namespace["resolved"]["source"] == "zero"
-    dispatched = []
     with pytest.raises(BudgetExceeded):
         budget.check()
-        dispatched.append("second request")
-    assert dispatched == []
 
     trace = tmp_path / ".agentguard/traces.jsonl"
     events = [json.loads(line) for line in trace.read_text(encoding="utf-8").splitlines()]
