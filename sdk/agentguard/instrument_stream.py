@@ -6,6 +6,15 @@ import sys
 import threading
 from typing import Any, Callable, Dict
 
+from agentguard._instrument_stream_budget import (
+    _cancel_unsent_stream,
+    _fail_stream_dispatch,
+    _finish_stream,
+    _prepare_stream_call,
+    _store_backed_stream,
+)
+from agentguard._instrument_stream_budget import emit_stream_final as emit_stream_final
+
 OnFinal = Callable[[Any, Any], None]
 
 
@@ -449,120 +458,6 @@ class CountedStream:
             await self._afinish()
 
 
-def emit_stream_final(
-    ctx: Any,
-    budget_guard: Any,
-    model: str,
-    provider: str,
-    usage: Any,
-    response: Any,
-    emit_result: Callable[..., None],
-    consume_budget: Callable[..., None],
-) -> None:
-    """Bill a completed stream once. Count the dispatched call if usage is missing."""
-    resolved_usage = usage
-    if resolved_usage is None and response is not None:
-        resolved_usage = getattr(response, "usage", None)
-    if resolved_usage is not None:
-        emit_result(
-            ctx,
-            budget_guard,
-            model,
-            provider,
-            resolved_usage,
-            response={"usage": resolved_usage},
-        )
-        return
-    ctx.event(
-        "llm.result",
-        data={"model": model, "provider": provider, "usage": None, "stream": True},
-    )
-    if budget_guard is not None:
-        consume_budget(budget_guard, ctx, 0, 1, 0.0, model)
-
-
-def _store_backed_stream(budget_guard: Any, wrap_stream: bool) -> bool:
-    return bool(
-        wrap_stream
-        and budget_guard is not None
-        and getattr(budget_guard, "_store", None) is not None
-    )
-
-
-def _prepare_stream_call(
-    ctx: Any,
-    budget_guard: Any,
-    model: str,
-    kwargs: Dict[str, Any],
-    wrap_stream: bool,
-    check_budget: Callable[..., None],
-) -> Any:
-    """Reserve a stored stream, or preflight an in-memory budget."""
-    if not _store_backed_stream(budget_guard, wrap_stream):
-        check_budget(budget_guard, ctx, model)
-        return None
-    from ._reservation_stream import begin_stream_reservation, note_not_sent
-
-    try:
-        return begin_stream_reservation(budget_guard, kwargs)
-    except BaseException as exc:
-        note_not_sent(ctx, exc, model)
-        raise
-
-
-def _fail_stream_dispatch(budget_guard: Any, reservation_id: Any, exc: BaseException) -> None:
-    if reservation_id is None:
-        return
-    from ._reservation_stream import abandon_stream_reservation, dispatch_failure_reason
-
-    abandon_stream_reservation(
-        budget_guard, reservation_id, reason=dispatch_failure_reason(exc)
-    )
-
-
-def _cancel_unsent_stream(budget_guard: Any, reservation_id: Any) -> None:
-    if reservation_id is None:
-        return
-    from ._reservation_stream import cancel_unsent_stream_reservation
-
-    cancel_unsent_stream_reservation(budget_guard, reservation_id)
-
-
-def _finish_stream(
-    ctx: Any,
-    budget_guard: Any,
-    model: str,
-    provider: str,
-    usage: Any,
-    response: Any,
-    reservation_id: Any,
-    emit_result: Callable[..., None],
-    consume_budget: Callable[..., None],
-    *,
-    completed: bool = True,
-    error: Any = None,
-) -> None:
-    if reservation_id is None:
-        emit_stream_final(
-            ctx, budget_guard, model, provider, usage, response,
-            emit_result, consume_budget,
-        )
-        return
-    from ._reservation_stream import settle_stream_reservation
-
-    settle_stream_reservation(
-        budget_guard,
-        ctx,
-        reservation_id,
-        model,
-        provider,
-        usage,
-        response,
-        completed=completed,
-        error=error,
-    )
-
-
 def run_traced_create(
     original: Any,
     tracer: Any,
@@ -576,6 +471,7 @@ def run_traced_create(
     emit_result: Callable[..., None],
     consume_budget: Callable[..., None],
     before_send: Any = None,
+    free_local: bool = False,
 ) -> Any:
     """Sync provider call: preflight or reserve, then bill a response or wrap a stream."""
     model = str(kwargs.get("model", "unknown"))
@@ -586,7 +482,7 @@ def run_traced_create(
     ctx = span_cm.__enter__()
     try:
         reservation_id = _prepare_stream_call(
-            ctx, budget_guard, model, kwargs, wrap_stream, check_budget
+            ctx, budget_guard, model, kwargs, wrap_stream, check_budget, free_local=free_local
         )
     except BaseException:
         span_cm.__exit__(*sys.exc_info())
@@ -618,6 +514,7 @@ def run_traced_create(
                 reservation_id, emit_result, consume_budget,
                 completed=stream._completed,
                 error=stream._finish_error,
+                free_local=free_local,
             )
 
         box["stream"] = CountedStream(result, on_final, span_cm, async_span=False)
@@ -648,6 +545,7 @@ async def run_traced_create_async(
     emit_result: Callable[..., None],
     consume_budget: Callable[..., None],
     before_send: Any = None,
+    free_local: bool = False,
 ) -> Any:
     """Async provider call: preflight or reserve, then bill a response or wrap a stream."""
     model = str(kwargs.get("model", "unknown"))
@@ -658,7 +556,7 @@ async def run_traced_create_async(
     ctx = await _span_enter(span_cm)
     try:
         reservation_id = _prepare_stream_call(
-            ctx, budget_guard, model, kwargs, wrap_stream, check_budget
+            ctx, budget_guard, model, kwargs, wrap_stream, check_budget, free_local=free_local
         )
     except BaseException:
         await _span_exit(span_cm, *sys.exc_info())
@@ -694,6 +592,7 @@ async def run_traced_create_async(
                 reservation_id, emit_result, consume_budget,
                 completed=stream._completed,
                 error=stream._finish_error,
+                free_local=free_local,
             )
 
         box["stream"] = CountedStream(result, on_final, span_cm, async_span=True)

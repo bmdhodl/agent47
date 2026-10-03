@@ -30,7 +30,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 logger = logging.getLogger("agentguard")
 
@@ -54,6 +54,7 @@ def init(
     auto_patch: bool = True,
     watermark: bool = True,
     local_only: bool = False,
+    free_local_clients: Iterable[Any] = (),
 ) -> Any:
     """Initialize AgentGuard with one call.
 
@@ -84,6 +85,9 @@ def init(
         local_only: Force local file output. Ignores any dashboard API key from
             the environment and raises if an explicit api_key is provided.
             Default: False.
+        free_local_clients: Exact OpenAI/AsyncOpenAI clients declared free,
+            supplied only at runtime. Requires auto_patch=True. Unnamed clients
+            keep paid estimates. No URL inference or saved configuration.
 
     Returns:
         The configured Tracer instance.
@@ -100,6 +104,11 @@ def init(
         )
 
     # --- Validate inputs ---
+    from agentguard._openai_local import split_free_local_clients
+
+    sync_free, async_free = split_free_local_clients(free_local_clients)
+    if (sync_free or async_free) and not auto_patch:
+        raise ValueError("free_local_clients requires auto_patch=True")
     if warn_pct is not None and not (0.0 <= warn_pct <= 1.0):
         raise ValueError(f"warn_pct must be between 0.0 and 1.0, got {warn_pct}")
     if local_only and api_key:
@@ -220,7 +229,7 @@ def init(
 
     # --- Auto-patch LLM clients ---
     if auto_patch:
-        _auto_patch(_tracer, _budget_guard)
+        _auto_patch(_tracer, _budget_guard, sync_free=sync_free, async_free=async_free)
 
     _initialized = True
 
@@ -236,7 +245,7 @@ def init(
     return _tracer
 
 
-def _auto_patch(tracer: Any, budget_guard: Optional[Any]) -> None:
+def _auto_patch(tracer: Any, budget_guard: Optional[Any], *, sync_free: tuple = (), async_free: tuple = ()) -> None:
     """Auto-patch OpenAI and Anthropic clients if importable."""
     from agentguard.instrument import (
         patch_anthropic,
@@ -249,10 +258,12 @@ def _auto_patch(tracer: Any, budget_guard: Optional[Any]) -> None:
     try:
         import openai  # noqa: F401
 
-        patch_openai(tracer, budget_guard=budget_guard)
-        patch_openai_async(tracer, budget_guard=budget_guard)
+        patch_openai(tracer, budget_guard=budget_guard, free_local_clients=sync_free)
+        patch_openai_async(tracer, budget_guard=budget_guard, free_local_clients=async_free)
         logger.debug("Auto-patched OpenAI (sync + async)")
     except ImportError:
+        if sync_free or async_free:
+            raise
         pass
 
     # Anthropic sync + async

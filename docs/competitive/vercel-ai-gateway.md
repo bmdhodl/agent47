@@ -36,13 +36,14 @@ it does not count toward those budgets. They are soft caps: a crossing request
 can finish above the limit. See [Gateway budgets](https://vercel.com/docs/ai-gateway/observability-and-spend/budgets)
 and [BYOK](https://vercel.com/docs/ai-gateway/authentication-and-byok/byok).
 
-**AgentGuard's local-cost limit:** `patch_openai()` currently classifies an
+**AgentGuard's local-cost limit:** published 1.4.0's `patch_openai()` classifies an
 OpenAI-compatible local endpoint as OpenAI. Unknown model prices use a
 conservative estimate, so a dollar cap can stop a free local run and reports
 can show phantom cost. A loopback URL alone does not prove a call is free.
-The patch has no per-client free-local option yet; that fix is tracked in
-[#817](https://github.com/bmdhodl/agent47/issues/817). Token/call caps through
-the patch still work, but they do not remove that estimated cost from traces.
+The unpublished 1.4.1 candidate adds
+[`free_local_clients=[client]`](../guides/free-local-clients.md) for exact clients
+you declare free. It keeps paid-client estimates and token/call limits. On
+published 1.4.0, token/call caps do not remove phantom cost from patched traces.
 
 Use the existing manual helper for calls you know are free. This offline
 example represents one completed OpenAI-compatible response. It does not run

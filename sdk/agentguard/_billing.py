@@ -62,6 +62,7 @@ def _emit_llm_result(
     provider: str,
     usage: Any,
     response: Any = None,
+    *, free_local: bool = False,
 ) -> None:
     """Extract usage from an LLM response and emit llm.result event + budget consume.
 
@@ -92,11 +93,14 @@ def _emit_llm_result(
             model=model,
             provider=provider,
             strict=False,
+            free_local=free_local,
         )
     except CostResolutionError:
         # Fail-loud under STRICT_PRECISION: never silently under-count as $0.
         raise
     except Exception:
+        if free_local:
+            raise
         # Unexpected resolver bugs must not under-count. Prefer a conservative
         # overestimate (via non-strict re-resolve on usage-only) over $0.
         if usage_data is None:
@@ -161,7 +165,7 @@ def _emit_llm_result(
     ctx.event(
         "llm.result",
         data=event_data,
-        cost_usd=cost if cost > 0 else None,
+        cost_usd=cost if cost > 0 or free_local else None,
     )
     if budget_guard is not None:
         _consume_budget(budget_guard, ctx, total_tokens, 1, cost, model)
