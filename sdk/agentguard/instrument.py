@@ -226,9 +226,21 @@ def _patch_openai_resources(
     """Patch standard resource methods shared by old and new SDK clients."""
     key = "openai_async_resources" if asynchronous else "openai_resources"
     if key in _originals:
+        # Idempotent: unpatch before replacing the tracer or guard.
         return True
     resources = getattr(sdk, "resources", None)
     chat = getattr(getattr(resources, "chat", None), "completions", None)
+    if chat is None and getattr(sdk, "__path__", None) is not None:
+        # A re-imported SDK can lack resource re-exports when its submodules
+        # remain cached. Resolve the real shared class instead of falling back
+        # to constructors and silently missing existing clients again.
+        try:
+            chat = importlib.import_module("openai.resources.chat.completions")
+        except ModuleNotFoundError as exc:
+            if exc.name not in {
+                "openai.resources", "openai.resources.chat", "openai.resources.chat.completions"
+            }:
+                raise
     prefix = "Async" if asynchronous else ""
     completions = getattr(chat, prefix + "Completions", None)
     if not isinstance(completions, type) or not callable(getattr(completions, "create", None)):

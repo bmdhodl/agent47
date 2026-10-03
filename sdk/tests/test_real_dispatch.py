@@ -215,7 +215,8 @@ def _assert_stream_settled(guard: BudgetGuard) -> None:
 
 
 @pytest.mark.parametrize("api", ["chat", "responses"])
-def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, api):
+@pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
     """REGRESSION: a resource obtained before patching must enforce the budget."""
     if api == "responses" and not _has_responses(openai_sdk):
         pytest.skip("the Responses API needs openai>=1.66")
@@ -227,6 +228,10 @@ def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, api):
     guard = BudgetGuard(max_calls=1)
     with _client(openai_sdk, "OpenAI", transport) as early:
         resource = early.responses if api == "responses" else early.chat.completions
+        if not resource_export:
+            # REGRESSION: cached resource submodules can outlive the root SDK
+            # module, so a re-import need not restore openai.resources.
+            monkeypatch.delattr(openai_sdk, "resources", raising=False)
         patch_openai(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
         patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=0))
         resource.create(**kwargs)
@@ -240,7 +245,8 @@ def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, api):
 
 
 @pytest.mark.parametrize("api", ["chat", "responses"])
-def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, api):
+@pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
     """REGRESSION: AsyncOpenAI import order must not bypass tracing or refusal."""
     if api == "responses" and not _has_responses(openai_sdk):
         pytest.skip("the Responses API needs openai>=1.66")
@@ -257,6 +263,8 @@ def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, api):
             http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
         ) as early:
             resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
             patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
             patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
             await resource.create(**kwargs)
