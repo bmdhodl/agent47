@@ -1,0 +1,18 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [SDK_CHECKOUT]\sdk
+configfile: pyproject.toml
+collected 2 items
+
+sdk\tests\test_local_cost_docs.py F.                                     [100%]
+
+================================== FAILURES ===================================
+___ test_local_cost_guide_example_records_free_usage_and_refuses_next_call ____
+[SDK_CHECKOUT]\sdk\tests\test_local_cost_docs.py:28: in test_local_cost_guide_example_records_free_usage_and_refuses_next_call
+    assert budget.state.tokens_used == 2500
+E   assert 0 == 2500
+E    +  where 0 = BudgetState(tokens_used=0, calls_used=0, cost_used=0.0).tokens_used
+E    +    where BudgetState(tokens_used=0, calls_used=0, cost_used=0.0) = BudgetGuard(max_cost_usd=5.0).state
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_local_cost_docs.py::test_local_cost_guide_example_records_free_usage_and_refuses_next_call
+========================= 1 failed, 1 passed in 0.47s =========================

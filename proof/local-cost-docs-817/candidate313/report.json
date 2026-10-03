@@ -1,0 +1,1 @@
+{"total_events": 4, "spans": 2, "events": 1, "approx_run_time_ms": 2.817869186401367, "reasoning_steps": 0, "tool_results": 0, "llm_results": 1, "estimated_cost_usd": 0.0, "loop_guard_triggered": 0, "guard_events": {}, "savings": {"exact_tokens_saved": 0, "estimated_tokens_saved": 0, "exact_usd_saved": 0.0, "estimated_usd_saved": 0.0, "reasons": []}}
