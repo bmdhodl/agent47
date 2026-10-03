@@ -1,0 +1,213 @@
+{
+  "source_commit": "2f24271f6f7a499d1093cffbeaf0b28f6af1375a",
+  "parent_commit": "4cabcbf96ec4789814a9772707df461862026894",
+  "source_blob_sha256": {
+    ".github/requirements/ci-tools.txt": "f1e030849607944eb1e2eccf152fbd2305ecb934fe8b34fd4407e1d8e286b43d",
+    "sdk/tests/test_ci_guardrails.py": "867807a8f959eeb343792ac683bee77aa47874da7e9930f2f7f70acaa4ff9285",
+    ".github/requirements/ci-tools.in": "a73b662803692689b2036d82df1fb33c2004b714d409130ab6be6306094f7bac",
+    ".github/requirements/.python-version": "7a41a41354ab8049091ef1a00253ca00567f5a1d3f9aef5502c0b4b5ce9ae707",
+    "sdk/pyproject.toml": "1a4315f940243f4850bf3a1bf219b39d4d24202ffd3e48786ec25554c5e5bb65"
+  },
+  "commands": {
+    "suite": "python -m pytest sdk/tests -p pytest_cov --cov=agentguard --cov-fail-under=80",
+    "python39_tools": "python -I -m pip --isolated install --require-hashes --index-url https://pypi.org/simple -r .github/requirements/ci-tools.txt",
+    "python39_tests": "python -I -m pytest sdk/tests/test_ci_guardrails.py sdk/tests/test_ci_tools_requirements_guard.py -q",
+    "checks": [
+      {
+        "name": "ruff",
+        "exit": 0
+      },
+      {
+        "name": "bandit",
+        "exit": 0
+      },
+      {
+        "name": "docs",
+        "exit": 0
+      },
+      {
+        "name": "ci-tools",
+        "exit": 0
+      },
+      {
+        "name": "review-readiness",
+        "exit": 0
+      },
+      {
+        "name": "release-guard",
+        "exit": 0
+      },
+      {
+        "name": "pypi-readme",
+        "exit": 0
+      },
+      {
+        "name": "mcp",
+        "exit": 0
+      }
+    ]
+  },
+  "test_results": {
+    "regression_red": "1 failed, 10 passed",
+    "regression_green": "11 passed",
+    "python39_guard_tests": "18 passed",
+    "suite_passed": 1584,
+    "suite_existing_optional_skips": [
+      "test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[False]",
+      "test_agents_sdk_run_stops_a_tool_loop_before_the_next_model_call[True]",
+      "test_agents_sdk_native_max_turns_still_applies"
+    ],
+    "coverage_percent": 92.56,
+    "mcp_passed": 11
+  },
+  "evidence": {
+    "regression-red.log.gz": {
+      "source_sha256": "ac4917c00a02d2dfa30bb082bad8c3da1dd11b0c3efd157b91490524bebd894f",
+      "retained_sha256": "9f88aa45a355ea9644c1c94ea903b00ca80e4df54131b3b2928d1c453c1f7396",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "regression-red.junit.xml.gz": {
+      "source_sha256": "21518d5afcaa092759e8d26bca561bdff06564b67598404bd7cecd96153cac54",
+      "retained_sha256": "21518d5afcaa092759e8d26bca561bdff06564b67598404bd7cecd96153cac54",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "regression-green.log.gz": {
+      "source_sha256": "e2e62900f54e52eb3a6e9357e5cd3a9796853da179995de4bacfa797f1e1ea3f",
+      "retained_sha256": "bad1763588ae6313a61df93ee783fd5711bedd5857dfd0b76f16c99b70d92e1b",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "regression-green.junit.xml.gz": {
+      "source_sha256": "63f8c669c86a95e509786e7437bdab25f8aa4ffe2b0202ee900b01338a4dd0cc",
+      "retained_sha256": "63f8c669c86a95e509786e7437bdab25f8aa4ffe2b0202ee900b01338a4dd0cc",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "suite1.log.gz": {
+      "source_sha256": "094b28ecfcdbd7b320d09632a0a40766cbd8876bdc813e4aa82234ed224cc8c0",
+      "retained_sha256": "f8b674d33e339852efeae5d24bd694d2ce90cb62bdf55e3a99b1881d1302a29b",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "suite1.junit.xml.gz": {
+      "source_sha256": "5b3049173aa622f8d2045b009ae1c373d44d55a717db848d91ae80349019ecc9",
+      "retained_sha256": "4561dcdce85124a3eceff55a8a45609ecbcdddf7dd479e1e47ea29f3ffc8cc6d",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-ruff.log.gz": {
+      "source_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "retained_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-bandit.log.gz": {
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-docs.log.gz": {
+      "source_sha256": "f758632e84252ede1f6f7ea029328225cd480abe71fe335272480eafd941a130",
+      "retained_sha256": "f758632e84252ede1f6f7ea029328225cd480abe71fe335272480eafd941a130",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-ci-tools.log.gz": {
+      "source_sha256": "a6a5a6f9844c05ab4d699af1de0054eb2fee73f3b44d606b4b7536a5a7777380",
+      "retained_sha256": "2cc14d8b391e1cddadd6c637ddcd63497af27b5c0f6b49cd38aaba3d0c641d95",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-review-readiness.log.gz": {
+      "source_sha256": "9e6b2ed804e6d1bfaf5ebef0e160e4988b21cc1925519dcb23f0defeb3af2851",
+      "retained_sha256": "9e6b2ed804e6d1bfaf5ebef0e160e4988b21cc1925519dcb23f0defeb3af2851",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-release-guard.log.gz": {
+      "source_sha256": "06af4f41edd6079530a11a40553b85f0e25133c05fb47cc53f3bf96faab94a67",
+      "retained_sha256": "06af4f41edd6079530a11a40553b85f0e25133c05fb47cc53f3bf96faab94a67",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-pypi-readme.log.gz": {
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "check-mcp.log.gz": {
+      "source_sha256": "3b5bc6f2082bfd94b88cf770a14bcf1ba1061e9e9f6a6ddcc588da945fb45973",
+      "retained_sha256": "3b5bc6f2082bfd94b88cf770a14bcf1ba1061e9e9f6a6ddcc588da945fb45973",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "compiler.log.gz": {
+      "source_sha256": "cddb07c7a25073c847fdd579319efaea99386bc548b306651361e67b629bf98c",
+      "retained_sha256": "cddb07c7a25073c847fdd579319efaea99386bc548b306651361e67b629bf98c",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-hashed-install.log.gz": {
+      "source_sha256": "709cb8663d0f5e166c69c16862ca6288c0ca01dc12fbe3a0339d2d9b91f8a640",
+      "retained_sha256": "d3d96107f3179e9920875abef4b680fdf87639572c2b2bda46b81f1918d31f09",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-pip-check.log.gz": {
+      "source_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "retained_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-tests.log.gz": {
+      "source_sha256": "31460634ca43fbdf3550b5ba94b1004662ee0e0b0d9d72a51b8c699fc4735f1a",
+      "retained_sha256": "ba72fbff7335017a7948a9d837da76e31d272386e8264303451f5afe3b8879e8",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-direct-pin-guard.log.gz": {
+      "source_sha256": "a6a5a6f9844c05ab4d699af1de0054eb2fee73f3b44d606b4b7536a5a7777380",
+      "retained_sha256": "2cc14d8b391e1cddadd6c637ddcd63497af27b5c0f6b49cd38aaba3d0c641d95",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-sdk-install.log.gz": {
+      "source_sha256": "c4ce252f5d7225bbaba08ad1d9a03868c7c5a5d73cca00f9b19b265b2e7583a5",
+      "retained_sha256": "636e7a5961e567e30c3c19941ba358585d078b9bdaa668ad2ca7551f35adb60d",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-sdk-pip-check.log.gz": {
+      "source_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "retained_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-sdk-doctor.log.gz": {
+      "source_sha256": "8103b4ceb5521634c545c57d6be8cea4cc5bb96d4a52e26b6a0c6110bb1579a2",
+      "retained_sha256": "8103b4ceb5521634c545c57d6be8cea4cc5bb96d4a52e26b6a0c6110bb1579a2",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39-sdk-demo.log.gz": {
+      "source_sha256": "871335009022ffaaa8edbd939d0146f85bad2b8182fdd21f5ede99e488a053b8",
+      "retained_sha256": "871335009022ffaaa8edbd939d0146f85bad2b8182fdd21f5ede99e488a053b8",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    },
+    "python39.junit.xml.gz": {
+      "source_sha256": "562f820fa2861a991f345eb8106544d7652e9de5805d99425112de716965ae2c",
+      "retained_sha256": "562f820fa2861a991f345eb8106544d7652e9de5805d99425112de716965ae2c",
+      "gzip_roundtrip": true,
+      "private_paths_redacted": true
+    }
+  },
+  "hosted_graph_submission": "pending actual generated main run after merge; issue remains open",
+  "sdk_runtime_changes": 0,
+  "workflow_changes": 0,
+  "signoff": "OpenAI | GPT-6 | auto"
+}

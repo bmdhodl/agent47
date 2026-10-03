@@ -9,6 +9,16 @@
 
 **Last Updated:** 2026-10-03
 
+## CI compiler and SDK interpreter (2026-10-03)
+
+- Preserve #662's separate interpreters: compile the CI-tool lock with the
+  configured Python 3.10; install and test those tools and the SDK on 3.9.
+  Dependabot selects the actual pip-compile header before `.python-version`.
+  Retain the explicit `importlib-metadata` pin for build's Python 3.9 dependency.
+  #827 regenerates the lock, preserves all existing pins/hashes, and retains
+  the compiler's Windows `colorama` dependency. Do not relabel compiler provenance
+  or raise the SDK floor to repair dependency submission.
+
 ## Owner-approved local billing correction (2026-10-03)
 
 - #817 may add the runtime-only `free_local_clients` keyword to OpenAI sync/async
