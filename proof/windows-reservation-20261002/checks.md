@@ -25,5 +25,6 @@ checkout basename; the example stdout hashes still matched. No runtime or
 test behavior changed, so the same completed suite output remains the evidence.
 
 The full SDK suite and architecture assertions are recorded separately in
-`sdk-tests.txt`. Published 1.4.0 example results are in the eight named example
+`sdk-tests.txt` (Windows/Python 3.13.2). Published 1.4.0 example results are in the eight named example
 logs and `receipt.json`; the SDK suite tests the current 1.4.1 source candidate.
+Those published-wheel examples used Windows/Python 3.11.9.

@@ -71,8 +71,10 @@ The earlier Linux proofs remain historical evidence. This adds the Windows
 slice from `ops/FOLLOWUP.md`; it does not close #736, promote optional surfaces,
 publish a release, or supply outside-user observations for #746/#737.
 
-The current-source SDK suite passed 1396 tests with three optional Agents
-skips, zero warnings and 92.27% coverage (`sdk-tests.txt`). Configured lint,
+The current-source SDK suite ran separately on Windows/Python 3.13.2: 1396
+tests passed with three optional Agents skips, zero warnings and 92.27%
+coverage (`sdk-tests.txt`). The published-wheel examples above used Python
+3.11.9. Configured lint,
 security, docs, release checks and all 11 MCP tests passed (`checks.md`).
 
 Sign-off: OpenAI | GPT-6 | auto
