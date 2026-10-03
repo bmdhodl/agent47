@@ -1,5 +1,7 @@
 # Inbox Log
 
+2026-10-03 | OpenAI GPT-6 auto | Merged #825 (70bef0d), closes #817: owner-approved exact-client free billing on sync/async OpenAI patches and init; paid estimates and token/call limits remain. Review regressions fixed missing-usage zero accounting, unsupported owner identity, atomic exhausted-dollar refusal and zero-cost provenance with unresolved holds retained. Final source: 1552 passed, 3 existing optional skips, zero warnings, 92.54% coverage; installed Windows floor/current wheel profiles 49/71/71 passes, zero skips, all 51 modules and metadata match. Actual final Copilot source review cleared acb81dd; all PR and five main workflows pass. Exact archive: 102/102 artifact checks, 78 manifest entries equal Git blobs. Current proof: proof/free-local-clients-817/review-r3/. Candidate 1.4.1 remains unpublished. Next authorized work: #736 Responses/Agents floor CI; CrewAI and outside-adoption gates remain.
+
 ## 2026-09-27 | Claude Code | PR #804
 
 - Shipped: the public live-cost logs no longer show org-wide OpenAI spend. The D-2 report prints billed/table ratios only; other models in the window print as a count; same-model org traffic shows as `>N` with the cost redacted; the artifact carries only the report and this run's trace. First CI run with secrets (dispatch on main) passed the gate on all three models.

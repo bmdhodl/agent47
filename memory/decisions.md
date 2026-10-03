@@ -1,5 +1,12 @@
 # SDK Decisions
 
+- 2026-10-03: Patrick approved the prepared #736 Responses/Agents minimum CI
+  job and required-result inventory update. Use the separate hash-pinned
+  OpenAI 1.66.3 / Agents 0.0.3 lock on Ubuntu/Python 3.12, preserving Chat's
+  OpenAI 1.40.0 floor. Real floor tests must run without skips, including the
+  approved #817 free-client cases. This does not authorize a release, CrewAI
+  advisory exception, new runtime API, or broader held adapter work.
+
 **Last Updated:** 2026-10-03
 
 ## Owner-approved local billing correction (2026-10-03)
