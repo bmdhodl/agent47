@@ -1,4 +1,4 @@
-Historical initial proof. Current source and review corrections: [review-r2](review-r2/README.md).
+Historical initial proof. Current source and review corrections: [review-r3](review-r3/README.md).
 
 # Explicit free-client billing proof (#817)
 
