@@ -480,3 +480,37 @@ def test_missing_standard_sdk_owner_refuses_free_configuration_before_activation
     current = getattr(sdk.resources.chat.completions, "AsyncCompletions" if asynchronous else "Completions").create
     assert current is original
     assert not transport.requests
+
+
+@pytest.mark.parametrize("api", ["chat", "responses"])
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("streamed", [False, True], ids=["response", "stream"])
+@pytest.mark.parametrize("stored", [False, True], ids=["memory", "store"])
+def test_free_client_cannot_dispatch_after_recorded_dollar_budget_is_exhausted(sdk, tmp_path, api, asynchronous, streamed, stored):
+    """REGRESSION: a zero-cost reservation cannot bypass an exhausted guard."""
+    if api == "responses" and not _has_responses(sdk):
+        pytest.skip("Responses needs OpenAI >=1.66")
+    body = (_sse(OPENAI_RESPONSE) if api == "responses" else _chat_sse()) if streamed else (OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION)
+    transport = _CountingTransport(sdk, body)
+    guard = BudgetGuard(max_cost_usd=1e-12,
+                        **({"store": JsonFileStateStore(tmp_path / "budget.json"), "key": "exhausted"} if stored else {}))
+    guard.consume(cost_usd=1e-12, calls=0, tokens=0)
+    patch = patch_openai_async if asynchronous else patch_openai
+    tracer = (AsyncTracer if asynchronous else Tracer)()
+
+    async def run():
+        async with _client(sdk, transport, True) as client:
+            patch(tracer, budget_guard=guard, free_local_clients=[client])
+            with pytest.raises(BudgetExceeded, match="Cost budget exhausted"):
+                await _async_call(*_request(client, api, streamed))
+
+    if asynchronous:
+        asyncio.run(run())
+    else:
+        with _client(sdk, transport) as client:
+            patch(tracer, budget_guard=guard, free_local_clients=[client])
+            with pytest.raises(BudgetExceeded, match="Cost budget exhausted"):
+                _sync_call(*_request(client, api, streamed))
+    assert not transport.requests
+    assert guard.state.cost_used == 1e-12
+    assert guard.state.calls_used == guard.state.tokens_used == 0
