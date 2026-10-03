@@ -1,3 +1,6 @@
+> **Superseded:** this initial proof predates the oversized timing fix.
+> Use [final review proof](review-r2/README.md) for the current candidate.
+
 # Elapsed span timeline: issue #820
 
 Windows, 2026-10-02, unpublished AgentGuard 1.4.1 candidate. `report`,

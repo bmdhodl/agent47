@@ -67,6 +67,7 @@ Legacy files without usable start/end timestamps fall back to the longest
 recorded span duration. Missing timing stays unknown in the CLI report and
 zero in the trace/incident summary. `EvalSuite.assert_completes_within()` still
 checks the longest individual span.
+Unusable, non-finite and unrepresentable timing values are ignored.
 
 Only the events you instrument appear in the trace. Review their contents
 before sharing a report.

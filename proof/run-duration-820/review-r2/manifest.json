@@ -1,0 +1,133 @@
+{
+  "line_endings": "LF",
+  "files": [
+    {
+      "path": "baseline313/installed-tests.txt.gz",
+      "sha256": "d8d05b7894787f2eb9c6db6b6a10fc859e2071481eafceb77efbac342a393d31"
+    },
+    {
+      "path": "baseline313/oversized-incident.txt.gz",
+      "sha256": "bfd4effe52fe6222263a42254b82e81030293e3d31b14e14f1d608cb1a75a761"
+    },
+    {
+      "path": "baseline313/oversized-report.txt.gz",
+      "sha256": "78f0fe5001d7b5e64a5d43c0c5c364f42bb724d9e61f46fe028e21c1ecf84040"
+    },
+    {
+      "path": "baseline313/receipt.json",
+      "sha256": "811b490c09f4a080a50ba675286619165b0fd8886795114b18dfbc1dfb050854"
+    },
+    {
+      "path": "baseline313/versions.txt",
+      "sha256": "ee4f2de5cc72550dd0ecabb7c8e6afe0e61a274912f3666d09f450033d00a4a9"
+    },
+    {
+      "path": "checks/bandit.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "checks/ci-tools.txt",
+      "sha256": "ea47001c5d708dd1b1e9a6d46183b74f48d1920c8ba308093fb8f95e10347e36"
+    },
+    {
+      "path": "checks/docs.txt",
+      "sha256": "8469324240d7e577b6086321f5cd40a2fcc9903ad0b8ae269377ddc98c0c11e3"
+    },
+    {
+      "path": "checks/mcp.txt",
+      "sha256": "4e55f10a099c17a9ab89c39f8075abb856ea1560d2815d30654bc2fff2c98278"
+    },
+    {
+      "path": "checks/pypi-readme.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "checks/release-guard.txt",
+      "sha256": "d8e9e68244f4000fc83476c883a71b36377022e51cbe4654d036c2873b7ad6b8"
+    },
+    {
+      "path": "checks/results.json",
+      "sha256": "1495ff517e11fcdb3ca8e0d6a80247c0c1b07c326561f760f891fb9bfde20237"
+    },
+    {
+      "path": "checks/review-readiness.txt",
+      "sha256": "a3423a8c4a1ce188965d72be6ca889ec5f439e61f6404e29dffa4f099be47f58"
+    },
+    {
+      "path": "checks/ruff.txt",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "focused-green.txt",
+      "sha256": "6a3c2b9b46f30b6d2069ae8077246c809ddb61a8867abe2dc64f30458a200e20"
+    },
+    {
+      "path": "oversized-sample.jsonl",
+      "sha256": "c3848b98cfaa1d084d845ff1eb474de949f2bfff07887eb62b425f51f0ab0c34"
+    },
+    {
+      "path": "py313/cli-incident.json",
+      "sha256": "760508ad2c74743a530f141e21ad3d8ac227abfc2b306a113b820354132e99f6"
+    },
+    {
+      "path": "py313/cli-report.json",
+      "sha256": "36d4c1f49ce321db7af8db5e2b4b78f0aec56a9ce5d962e2b367b18ed48e7ce6"
+    },
+    {
+      "path": "py313/installed-tests.txt",
+      "sha256": "1656bb2b682a7f886947710758f457e39bfe958c244a2cd164710ef40ca70165"
+    },
+    {
+      "path": "py313/oversized-incident.json",
+      "sha256": "ff82524f1d14f4ee1b125ff5555e62744d4107c2d85b520d8bbb1b64537a790d"
+    },
+    {
+      "path": "py313/oversized-report.json",
+      "sha256": "a4932bbb1d710a48c4c19ecc43fb4cc34b5a0d5c473d514e32d10828a17c606b"
+    },
+    {
+      "path": "py313/receipt.json",
+      "sha256": "a110cb92f45d6f259bb1f80c66e07b66fc4297c7364934d313f036569d07292c"
+    },
+    {
+      "path": "py313/versions.txt",
+      "sha256": "98de038eec058dd237251b516406369a5e43a83b92d65686a0856a251216ee20"
+    },
+    {
+      "path": "py39/cli-incident.json",
+      "sha256": "760508ad2c74743a530f141e21ad3d8ac227abfc2b306a113b820354132e99f6"
+    },
+    {
+      "path": "py39/cli-report.json",
+      "sha256": "36d4c1f49ce321db7af8db5e2b4b78f0aec56a9ce5d962e2b367b18ed48e7ce6"
+    },
+    {
+      "path": "py39/installed-tests.txt",
+      "sha256": "95976b88bc585267140e125048e1c1c09a7311b4d0f86821b35bb8815547771c"
+    },
+    {
+      "path": "py39/oversized-incident.json",
+      "sha256": "ff82524f1d14f4ee1b125ff5555e62744d4107c2d85b520d8bbb1b64537a790d"
+    },
+    {
+      "path": "py39/oversized-report.json",
+      "sha256": "a4932bbb1d710a48c4c19ecc43fb4cc34b5a0d5c473d514e32d10828a17c606b"
+    },
+    {
+      "path": "py39/receipt.json",
+      "sha256": "62deca8d11796b2abe85bac9ff921cc6afce6e1e90ce509e9baddcf1ccd568ad"
+    },
+    {
+      "path": "py39/versions.txt",
+      "sha256": "3b04d1e30e6d9932b1540ea5780a72093c4e9df80d1a0ac09513ea52213640a2"
+    },
+    {
+      "path": "README.md",
+      "sha256": "af465457cebc1f9bcfcebb2321e468fedd3549091c2855299b56a7d3aa1e92b3"
+    },
+    {
+      "path": "source-suite.txt.gz",
+      "sha256": "cb715969e279c6041c4aad5630c53562c36e91c027dc9aa64fce15acd6ced149"
+    }
+  ]
+}

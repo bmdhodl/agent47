@@ -367,6 +367,17 @@ def _check_total_events_under(events: List[Dict[str, Any]], max_events: int) -> 
 # --- summarize ---
 
 
+def _finite_timing_value(value: Any) -> Optional[float]:
+    """Return a representable finite number, excluding booleans."""
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        return None
+    try:
+        number = float(value)
+    except OverflowError:
+        return None
+    return number if math.isfinite(number) else None
+
+
 def _trace_duration_ms(events: List[Dict[str, Any]]) -> Optional[float]:
     """Observed span timeline; fall back to the longest recorded duration."""
     starts: List[float] = []
@@ -376,18 +387,17 @@ def _trace_duration_ms(events: List[Dict[str, Any]]) -> Optional[float]:
         if event.get("kind") != "span":
             continue
         phase = event.get("phase")
-        timestamp = event.get("ts")
-        if (isinstance(timestamp, (int, float)) and not isinstance(timestamp, bool)
-                and math.isfinite(timestamp)):
+        # Trace ts is in Unix seconds; duration_ms is already milliseconds.
+        timestamp = _finite_timing_value(event.get("ts"))
+        if timestamp is not None:
             if phase == "start":
-                starts.append(float(timestamp))
+                starts.append(timestamp)
             elif phase == "end":
-                ends.append(float(timestamp))
+                ends.append(timestamp)
         if phase == "end":
-            duration = event.get("duration_ms")
-            if (isinstance(duration, (int, float)) and not isinstance(duration, bool)
-                    and math.isfinite(duration) and duration >= 0):
-                longest = max(longest or 0.0, float(duration))
+            duration = _finite_timing_value(event.get("duration_ms"))
+            if duration is not None and duration >= 0:
+                longest = max(longest or 0.0, duration)
     if starts and ends:
         elapsed = (max(ends) - min(starts)) * 1000.0
         if math.isfinite(elapsed) and elapsed >= 0:

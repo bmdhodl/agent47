@@ -42,6 +42,8 @@ _INVALID = [*_span("call", 1, 1.4),
     pytest.param([*_SEQUENTIAL, {"kind": "event", "phase": "emit", "name": "note", "ts": 500}], 446.6, id="ignore-point-events"),
     pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 5}, {"kind": "span", "phase": "end", "name": "call", "ts": 4, "duration_ms": 250}], 250, id="backward-clock-fallback"),
     pytest.param(_INVALID, 400, id="invalid-nonfinite-timing"),
+    pytest.param([*_span("call", 1, 1.4), {"kind": "span", "phase": "start", "name": "invalid", "ts": 10**1000}], 400, id="unrepresentable-timestamp"),
+    pytest.param([*_span("call", 1, 1.4), {"kind": "span", "phase": "end", "name": "invalid", "duration_ms": 10**1000}], 400, id="unrepresentable-duration"),
     pytest.param([{"kind": "span", "phase": "start", "name": "call", "ts": 1}], None, id="incomplete-no-duration"),
 ])
 def test_elapsed_duration_consumers(events, expected_ms, consumer, tmp_path, capsys):

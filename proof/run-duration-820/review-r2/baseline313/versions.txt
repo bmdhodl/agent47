@@ -1,0 +1,7 @@
+agentguard47 @ file:///[VALIDATION]/agent47-duration-820-build-isolated/wheel/agentguard47-1.4.1-py3-none-any.whl#sha256=f864b1e9b79ac2fb55a031275d6d49cda2eb768795266c0d3c811f83e955ae8f
+colorama==0.4.6
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+pytest==8.4.2
