@@ -244,7 +244,17 @@ def _patch_openai_resources(
     prefix = "Async" if asynchronous else ""
     completions = getattr(chat, prefix + "Completions", None)
     if not isinstance(completions, type) or not callable(getattr(completions, "create", None)):
-        return False
+        if getattr(sdk, "__path__", None) is None:
+            return False
+        try:
+            chat_module = importlib.import_module("openai.resources.chat.completions")
+        except ModuleNotFoundError as exc:
+            if exc.name not in {"openai.resources.chat", "openai.resources.chat.completions"}:
+                raise
+            return False
+        completions = getattr(chat_module, prefix + "Completions", None)
+        if not isinstance(completions, type) or not callable(getattr(completions, "create", None)):
+            return False
 
     chat_wrap = _traced_async_chat_method if asynchronous else _traced_chat_method
     response_wrap = _traced_async_openai_method if asynchronous else _traced_responses_method
