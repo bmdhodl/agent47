@@ -2,7 +2,7 @@
 import sys
 import types
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from agentguard.instrument import (
     _originals,
@@ -103,15 +103,12 @@ class TestPatchOpenaiAsync(unittest.TestCase):
         sys.modules.pop("openai", None)
 
     def test_patch_no_openai_installed(self):
-        # Remove openai from sys.modules
-        saved = sys.modules.pop("openai", None)
-        try:
+        # A missing cache entry can still import an installed package.
+        with patch.dict(sys.modules, {"openai": None}):
             tracer = MagicMock()
             # Should not raise
             patch_openai_async(tracer)
-        finally:
-            if saved:
-                sys.modules["openai"] = saved
+            self.assertNotIn("openai_async_init", _originals)
 
     def test_unpatch_without_patch(self):
         # Should not raise
@@ -172,13 +169,10 @@ class TestPatchAnthropicAsync(unittest.TestCase):
         sys.modules.pop("anthropic", None)
 
     def test_patch_no_anthropic_installed(self):
-        saved = sys.modules.pop("anthropic", None)
-        try:
+        with patch.dict(sys.modules, {"anthropic": None}):
             tracer = MagicMock()
             patch_anthropic_async(tracer)
-        finally:
-            if saved:
-                sys.modules["anthropic"] = saved
+            self.assertNotIn("anthropic_async_init", _originals)
 
     def test_unpatch_without_patch(self):
         unpatch_anthropic_async()

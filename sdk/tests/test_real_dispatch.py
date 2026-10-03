@@ -313,16 +313,20 @@ def _sse(body: Dict[str, Any]) -> str:
     return "".join(f"event: {e['type']}\ndata: {json.dumps(e)}\n\n" for e in events)
 
 
-@pytest.fixture
-def responses_sdk(openai_sdk):
+def _has_responses(sdk):
     # Early Responses releases attach resources in __init__, not on the class.
     # Use the SDK's explicit transport, as the dispatch tests do; older client
     # constructors can otherwise pass removed proxy options to newer httpx.
-    with openai_sdk.OpenAI(
-        api_key="sk-compat", http_client=openai_sdk.DefaultHttpxClient()
+    with sdk.OpenAI(
+        api_key="sk-compat", http_client=sdk.DefaultHttpxClient()
     ) as probe:
-        if not hasattr(probe, "responses"):
-            pytest.skip("the Responses API needs openai>=1.66")
+        return hasattr(probe, "responses")
+
+
+@pytest.fixture
+def responses_sdk(openai_sdk):
+    if not _has_responses(openai_sdk):
+        pytest.skip("the Responses API needs openai>=1.66")
     from agentguard.instrument import unpatch_openai_async
 
     yield openai_sdk
@@ -406,6 +410,35 @@ def test_responses_async_create_with_init_tracer(responses_sdk):
         return first
 
     assert isinstance(asyncio.run(run()), responses_sdk.types.responses.Response)
+    assert len(transport.requests) == 1
+    assert guard.state.tokens_used == 15
+
+
+def test_responses_async_tracer_records_billing_to_a_file(responses_sdk, tmp_path):
+    """A real async context emits synchronously, unlike an AsyncMock event."""
+    import asyncio
+
+    from agentguard import AsyncTracer, JsonlFileSink
+    from agentguard.instrument import patch_openai_async
+
+    path = tmp_path / "async-billing.jsonl"
+    transport = _CountingTransport(responses_sdk, OPENAI_RESPONSE)
+    guard = BudgetGuard(max_calls=1)
+    patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+
+    async def run():
+        async with responses_sdk.AsyncOpenAI(
+            api_key="sk-compat",
+            max_retries=0,
+            http_client=responses_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            await client.responses.create(model="gpt-4o-mini", input="hi")
+
+    asyncio.run(run())
+    events = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+    billing = [event for event in events if event["name"] == "llm.result"]
+    assert len(billing) == 1
+    assert billing[0]["cost_usd"] == pytest.approx(4.2e-6)
     assert len(transport.requests) == 1
     assert guard.state.tokens_used == 15
 

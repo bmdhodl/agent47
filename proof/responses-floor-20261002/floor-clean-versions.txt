@@ -1,4 +1,4 @@
-agentguard47 @ file:///[CHECKOUT]/sdk
+agentguard47 @ file:///[USER_HOME]/.codex/tmp/agent47-responses-floor-20261002/wheels/agentguard47-1.4.1-py3-none-any.whl#sha256=04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d
 annotated-types==0.8.0
 anyio==4.15.1
 certifi==2026.7.22
