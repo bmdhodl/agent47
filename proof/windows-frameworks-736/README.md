@@ -84,9 +84,18 @@ independent review diff below its size cap. `verify.py` checks the hashes,
 named installed-case results, source-suite counts and recorded check exits
 before printing success.
 The two installed framework profiles each reject skips, failures, errors,
-empty results or a different set of case names. `manifest.json` binds the
-retained proof files; it excludes itself. Runtime evidence was generated before
+empty results or a different set of case names. `manifest.json` binds committed
+LF text bytes and raw binary proof files; it excludes itself. The verifier
+explicitly normalizes Git's LF/CRLF conversion for UTF-8 text only. Compressed
+logs and the wheel still require exact binary bytes; installed wheel files also
+remain byte-exact. Runtime evidence was generated before
 independent review; regenerate it if review changes the harness or tested behavior.
+
+The post-merge checkout regression is retained in `checkout-regression.json`
+and its five logs: the original normal Windows checkout failed on a converted
+JSON file; the corrected verifier passes both LF and CRLF copies. Altered
+README content and altered wheel bytes are still refused. The runtime runner
+and original six installed-framework results are unchanged.
 
 ## Limits
 

@@ -12,7 +12,11 @@ def main() -> None:
     root = Path(__file__).resolve().parent
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
     for name, expected in manifest.items():
-        assert hashlib.sha256((root / name).read_bytes()).hexdigest() == expected, name
+        data = (root / name).read_bytes()
+        if Path(name).suffix in (".md", ".py", ".json", ".xml", ".lock"):
+            data.decode("utf-8")
+            data = data.replace(b"\r\n", b"\n")
+        assert hashlib.sha256(data).hexdigest() == expected, name
     cases = sorted((
         "test_langchain_dispatch_propagates_budget_stop",
         "test_langgraph_node_budget_stops_the_graph",
