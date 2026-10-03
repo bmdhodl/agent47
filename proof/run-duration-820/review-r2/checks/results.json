@@ -1,0 +1,1 @@
+[{"name":"ruff","exit":0},{"name":"bandit","exit":0},{"name":"docs","exit":0},{"name":"ci-tools","exit":0},{"name":"review-readiness","exit":0},{"name":"release-guard","exit":0},{"name":"pypi-readme","exit":0},{"name":"mcp","exit":0}]

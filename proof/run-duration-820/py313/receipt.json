@@ -1,0 +1,44 @@
+{
+  "profile": "py313",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "f864b1e9b79ac2fb55a031275d6d49cda2eb768795266c0d3c811f83e955ae8f",
+  "baseline": false,
+  "archive_crc_valid": true,
+  "package_files_equal_checkout": 49,
+  "mandatory_runtime_requirements": 0,
+  "agentguard_absent_before_install": true,
+  "installed": {
+    "version": "1.4.1",
+    "origin": "venv/Lib/site-packages/agentguard/__init__.py",
+    "direct_url": {
+      "archive_info": {
+        "hash": "sha256=f864b1e9b79ac2fb55a031275d6d49cda2eb768795266c0d3c811f83e955ae8f",
+        "hashes": {
+          "sha256": "f864b1e9b79ac2fb55a031275d6d49cda2eb768795266c0d3c811f83e955ae8f"
+        }
+      },
+      "url": "file:///[CANDIDATE_WHEEL]/agentguard47-1.4.1-py3-none-any.whl"
+    },
+    "python": "3.13.2",
+    "system": "Windows",
+    "installed_files_equal_archive": 49,
+    "installed_metadata_equal_archive": true,
+    "optional_provider_packages_absent": true
+  },
+  "direct_url_digest_recorded": true,
+  "test_checkout_bytes_sha256": "0413cd0b8a17c55280cd0626b33a50a4786c312613afb6e652db5eb5596063bd",
+  "counts": {
+    "tests": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "passed": 35,
+  "warnings": 0,
+  "expected_exit": 0,
+  "isolated_python": true,
+  "pytest_plugin_autoload_disabled": true,
+  "owner_provider_credentials_scrubbed": true,
+  "offline_span_timeline_fixtures": true,
+  "longest_span_assertion_changed": false
+}

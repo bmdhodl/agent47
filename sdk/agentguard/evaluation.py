@@ -16,6 +16,7 @@ Usage::
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
@@ -366,6 +367,44 @@ def _check_total_events_under(events: List[Dict[str, Any]], max_events: int) -> 
 # --- summarize ---
 
 
+def _finite_timing_value(value: Any) -> Optional[float]:
+    """Return a representable finite number, excluding booleans."""
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        return None
+    try:
+        number = float(value)
+    except OverflowError:
+        return None
+    return number if math.isfinite(number) else None
+
+
+def _trace_duration_ms(events: List[Dict[str, Any]]) -> Optional[float]:
+    """Observed span timeline; fall back to the longest recorded duration."""
+    starts: List[float] = []
+    ends: List[float] = []
+    longest: Optional[float] = None
+    for event in events:
+        if event.get("kind") != "span":
+            continue
+        phase = event.get("phase")
+        # Trace ts is in Unix seconds; duration_ms is already milliseconds.
+        timestamp = _finite_timing_value(event.get("ts"))
+        if timestamp is not None:
+            if phase == "start":
+                starts.append(timestamp)
+            elif phase == "end":
+                ends.append(timestamp)
+        if phase == "end":
+            duration = _finite_timing_value(event.get("duration_ms"))
+            if duration is not None and duration >= 0:
+                longest = max(longest or 0.0, duration)
+    if starts and ends:
+        elapsed = (max(ends) - min(starts)) * 1000.0
+        if math.isfinite(elapsed) and elapsed >= 0:
+            return elapsed
+    return longest
+
+
 def summarize_trace(
     path_or_events: Any,
 ) -> Dict[str, Any]:
@@ -373,6 +412,11 @@ def summarize_trace(
 
     Accepts either a file path (str) to a JSONL trace file or a list of
     event dicts.
+
+    Duration is the elapsed time from the earliest span start to the latest
+    span end in the supplied events, including gaps and overlapping spans.
+    Without usable start/end timestamps, use the longest recorded span
+    duration; without either, return zero. This is wall-clock approximation.
 
     Returns a dict with keys:
         total_events, spans, events, cost_usd, duration_ms,
@@ -398,7 +442,6 @@ def summarize_trace(
     total = len(events)
     spans = 0
     event_count = 0
-    max_duration_ms = 0.0
     tool_calls = 0
     llm_calls = 0
     error_count = 0
@@ -410,10 +453,6 @@ def summarize_trace(
 
         if kind == "span":
             spans += 1
-            if e.get("phase") == "end":
-                dur = e.get("duration_ms")
-                if isinstance(dur, (int, float)) and dur > max_duration_ms:
-                    max_duration_ms = float(dur)
         elif kind == "event":
             event_count += 1
 
@@ -438,7 +477,7 @@ def summarize_trace(
         "spans": spans,
         "events": event_count,
         "cost_usd": _sum_cost(events),
-        "duration_ms": max_duration_ms,
+        "duration_ms": _trace_duration_ms(events) or 0.0,
         "tool_calls": tool_calls,
         "llm_calls": llm_calls,
         "errors": error_count,
