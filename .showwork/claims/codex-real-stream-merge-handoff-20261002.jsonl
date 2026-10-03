@@ -1,0 +1,1 @@
+{"session": "codex-real-stream-merge-handoff-20261002", "ts": "2026-10-02T20:20:12", "claim": "SDK-only handoff names merged #815 and the remaining workflow/CrewAI/adoption gates", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Merged #815"}, "prev": "955e4546f26b8a97e4f4c68d7e02a0e3a22ed57786d19025453a3607c5e8a59a"}
