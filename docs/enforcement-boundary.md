@@ -28,7 +28,7 @@ can retain the original callable: recreate that reference after activation.
 Instance-level overrides and custom SDK resource classes are outside this
 promise. Activate patches before requests and helper construction. Anthropic
 clients still need to be created after their patch. Real-client regressions
-and installed-wheel results are in [the #816 proof](../proof/early-openai-clients-816/README.md).
+and installed-wheel results are in [the #816 proof](../proof/early-openai-clients-816/review-r2/README.md).
 
 ## Classes
 

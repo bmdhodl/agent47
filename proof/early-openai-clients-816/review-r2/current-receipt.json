@@ -1,0 +1,41 @@
+{
+  "profile": "current",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "24817796814f57b6d08ece52a27921b839a90e49bfbb6b9ee906741cbef2afdd",
+  "archive_crc_valid": true,
+  "package_files_equal_checkout": 49,
+  "mandatory_runtime_requirements": 0,
+  "agentguard_absent_before_install": true,
+  "installed": {
+    "version": "1.4.1",
+    "origin": "venv/Lib/site-packages/agentguard/__init__.py",
+    "direct_url": {
+      "archive_info": {
+        "hash": "sha256=24817796814f57b6d08ece52a27921b839a90e49bfbb6b9ee906741cbef2afdd",
+        "hashes": {
+          "sha256": "24817796814f57b6d08ece52a27921b839a90e49bfbb6b9ee906741cbef2afdd"
+        }
+      },
+      "url": "file:///[CANDIDATE_WHEEL]/agentguard47-1.4.1-py3-none-any.whl"
+    },
+    "python": "3.11.9",
+    "system": "Windows",
+    "providers": {
+      "openai": "3.19.2",
+      "anthropic": "1.8.0",
+      "openai-agents": "0.22.3"
+    },
+    "installed_files_equal_archive": 49,
+    "installed_metadata_equal_archive": true
+  },
+  "test_checkout_bytes_sha256": "3e7a670967737d9c70872ef662630853ac2c64546955b9c35270b26b196130a2",
+  "selection": "not langchain and not langgraph and not otel",
+  "passed": 41,
+  "skipped": 0,
+  "warnings": 0,
+  "exit": 0,
+  "isolated_python": true,
+  "pytest_plugin_autoload_disabled": true,
+  "owner_provider_credentials_scrubbed": true,
+  "real_sdk_mock_http_only": true
+}

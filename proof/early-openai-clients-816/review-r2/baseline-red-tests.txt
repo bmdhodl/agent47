@@ -1,0 +1,861 @@
+FFFFFFFFFFFFFFFF                                                         [100%]
+================================== FAILURES ===================================
+___________ test_openai_existing_client_is_guarded[reexported-chat] ___________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_client_is0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020ED806F5D0>
+api = 'chat', resource_export = True
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: a resource obtained before patching must enforce the budget."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+        with _client(openai_sdk, "OpenAI", transport) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                # REGRESSION: cached resource submodules can outlive the root SDK
+                # module, so a re-import need not restore openai.resources.
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=0))
+            resource.create(**kwargs)
+            with _client(openai_sdk, "OpenAI", transport) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:240: Failed
+________ test_openai_existing_client_is_guarded[reexported-responses] _________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_client_is1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDB3CEB10>
+api = 'responses', resource_export = True
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: a resource obtained before patching must enforce the budget."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+        with _client(openai_sdk, "OpenAI", transport) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                # REGRESSION: cached resource submodules can outlive the root SDK
+                # module, so a re-import need not restore openai.resources.
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=0))
+            resource.create(**kwargs)
+            with _client(openai_sdk, "OpenAI", transport) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:240: Failed
+_____________ test_openai_existing_client_is_guarded[cached-chat] _____________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_client_is2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDC541C50>
+api = 'chat', resource_export = False
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: a resource obtained before patching must enforce the budget."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+        with _client(openai_sdk, "OpenAI", transport) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                # REGRESSION: cached resource submodules can outlive the root SDK
+                # module, so a re-import need not restore openai.resources.
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=0))
+            resource.create(**kwargs)
+            with _client(openai_sdk, "OpenAI", transport) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:240: Failed
+__________ test_openai_existing_client_is_guarded[cached-responses] ___________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_client_is3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDC6C4850>
+api = 'responses', resource_export = False
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: a resource obtained before patching must enforce the budget."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+        with _client(openai_sdk, "OpenAI", transport) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                # REGRESSION: cached resource submodules can outlive the root SDK
+                # module, so a re-import need not restore openai.resources.
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai(Tracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=0))
+            resource.create(**kwargs)
+            with _client(openai_sdk, "OpenAI", transport) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:240: Failed
+________ test_openai_existing_async_client_is_guarded[reexported-chat] ________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_async_cli0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDB3DE250>
+api = 'chat', resource_export = True
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: AsyncOpenAI import order must not bypass tracing or refusal."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early-async.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+
+        async def run():
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as early:
+                resource = early.responses if api == "responses" else early.chat.completions
+                if not resource_export:
+                    monkeypatch.delattr(openai_sdk, "resources", raising=False)
+                patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+                patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+                await resource.create(**kwargs)
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as late:
+                    late_resource = late.responses if api == "responses" else late.chat.completions
+                    with pytest.raises(BudgetExceeded):
+                        await late_resource.create(**kwargs)
+                with pytest.raises(BudgetExceeded):
+                    await resource.create(**kwargs)
+
+>       asyncio.run(run())
+
+test_installed_dispatch.py:281:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+            await resource.create(**kwargs)
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:276: Failed
+_____ test_openai_existing_async_client_is_guarded[reexported-responses] ______
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_async_cli1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDB142B10>
+api = 'responses', resource_export = True
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: AsyncOpenAI import order must not bypass tracing or refusal."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early-async.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+
+        async def run():
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as early:
+                resource = early.responses if api == "responses" else early.chat.completions
+                if not resource_export:
+                    monkeypatch.delattr(openai_sdk, "resources", raising=False)
+                patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+                patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+                await resource.create(**kwargs)
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as late:
+                    late_resource = late.responses if api == "responses" else late.chat.completions
+                    with pytest.raises(BudgetExceeded):
+                        await late_resource.create(**kwargs)
+                with pytest.raises(BudgetExceeded):
+                    await resource.create(**kwargs)
+
+>       asyncio.run(run())
+
+test_installed_dispatch.py:281:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+            await resource.create(**kwargs)
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:276: Failed
+__________ test_openai_existing_async_client_is_guarded[cached-chat] __________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_async_cli2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDC910D90>
+api = 'chat', resource_export = False
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: AsyncOpenAI import order must not bypass tracing or refusal."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early-async.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+
+        async def run():
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as early:
+                resource = early.responses if api == "responses" else early.chat.completions
+                if not resource_export:
+                    monkeypatch.delattr(openai_sdk, "resources", raising=False)
+                patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+                patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+                await resource.create(**kwargs)
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as late:
+                    late_resource = late.responses if api == "responses" else late.chat.completions
+                    with pytest.raises(BudgetExceeded):
+                        await late_resource.create(**kwargs)
+                with pytest.raises(BudgetExceeded):
+                    await resource.create(**kwargs)
+
+>       asyncio.run(run())
+
+test_installed_dispatch.py:281:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+            await resource.create(**kwargs)
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:276: Failed
+_______ test_openai_existing_async_client_is_guarded[cached-responses] ________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_openai_existing_async_cli3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020EDB22E590>
+api = 'responses', resource_export = False
+
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    @pytest.mark.parametrize("resource_export", [True, False], ids=["reexported", "cached"])
+    def test_openai_existing_async_client_is_guarded(openai_sdk, tmp_path, monkeypatch, api, resource_export):
+        """REGRESSION: AsyncOpenAI import order must not bypass tracing or refusal."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        path = tmp_path / "early-async.jsonl"
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=1)
+
+        async def run():
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as early:
+                resource = early.responses if api == "responses" else early.chat.completions
+                if not resource_export:
+                    monkeypatch.delattr(openai_sdk, "resources", raising=False)
+                patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+                patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+                await resource.create(**kwargs)
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as late:
+                    late_resource = late.responses if api == "responses" else late.chat.completions
+                    with pytest.raises(BudgetExceeded):
+                        await late_resource.create(**kwargs)
+                with pytest.raises(BudgetExceeded):
+                    await resource.create(**kwargs)
+
+>       asyncio.run(run())
+
+test_installed_dispatch.py:281:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as early:
+            resource = early.responses if api == "responses" else early.chat.completions
+            if not resource_export:
+                monkeypatch.delattr(openai_sdk, "resources", raising=False)
+            patch_openai_async(AsyncTracer(sink=JsonlFileSink(str(path))), budget_guard=guard)
+            patch_openai_async(AsyncTracer(), budget_guard=BudgetGuard(max_calls=0))
+            await resource.create(**kwargs)
+            async with openai_sdk.AsyncOpenAI(
+                api_key="sk-compat", max_retries=0,
+                http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+            ) as late:
+                late_resource = late.responses if api == "responses" else late.chat.completions
+>               with pytest.raises(BudgetExceeded):
+E               Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:276: Failed
+___________ test_init_guards_an_existing_openai_client[chat-False] ____________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_init_guards_an_existing_o0')
+asynchronous = False, api = 'chat'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_init_guards_an_existing_openai_client(openai_sdk, tmp_path, asynchronous, api):
+        """REGRESSION: public init must guard a previously constructed client."""
+        import agentguard
+
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        path = tmp_path / "init-early.jsonl"
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        agentguard.shutdown()
+        try:
+            if asynchronous:
+                async def run():
+                    async with openai_sdk.AsyncOpenAI(
+                        api_key="sk-compat", max_retries=0,
+                        http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                    ) as client:
+                        resource = client.responses if api == "responses" else client.chat.completions
+                        agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+                asyncio.run(run())
+            else:
+                with _client(openai_sdk, "OpenAI", transport) as client:
+                    resource = client.responses if api == "responses" else client.chat.completions
+                    agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+>                   with pytest.raises(BudgetExceeded):
+E                   Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:317: Failed
+____________ test_init_guards_an_existing_openai_client[chat-True] ____________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_init_guards_an_existing_o1')
+asynchronous = True, api = 'chat'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_init_guards_an_existing_openai_client(openai_sdk, tmp_path, asynchronous, api):
+        """REGRESSION: public init must guard a previously constructed client."""
+        import agentguard
+
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        path = tmp_path / "init-early.jsonl"
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        agentguard.shutdown()
+        try:
+            if asynchronous:
+                async def run():
+                    async with openai_sdk.AsyncOpenAI(
+                        api_key="sk-compat", max_retries=0,
+                        http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                    ) as client:
+                        resource = client.responses if api == "responses" else client.chat.completions
+                        agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+>               asyncio.run(run())
+
+test_installed_dispatch.py:312:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            resource = client.responses if api == "responses" else client.chat.completions
+            agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+>           with pytest.raises(BudgetExceeded):
+E           Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:308: Failed
+_________ test_init_guards_an_existing_openai_client[responses-False] _________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_init_guards_an_existing_o2')
+asynchronous = False, api = 'responses'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_init_guards_an_existing_openai_client(openai_sdk, tmp_path, asynchronous, api):
+        """REGRESSION: public init must guard a previously constructed client."""
+        import agentguard
+
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        path = tmp_path / "init-early.jsonl"
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        agentguard.shutdown()
+        try:
+            if asynchronous:
+                async def run():
+                    async with openai_sdk.AsyncOpenAI(
+                        api_key="sk-compat", max_retries=0,
+                        http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                    ) as client:
+                        resource = client.responses if api == "responses" else client.chat.completions
+                        agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+                asyncio.run(run())
+            else:
+                with _client(openai_sdk, "OpenAI", transport) as client:
+                    resource = client.responses if api == "responses" else client.chat.completions
+                    agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+>                   with pytest.raises(BudgetExceeded):
+E                   Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:317: Failed
+_________ test_init_guards_an_existing_openai_client[responses-True] __________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+tmp_path = WindowsPath('[PROFILE_ENV]/pytest/test_init_guards_an_existing_o3')
+asynchronous = True, api = 'responses'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_init_guards_an_existing_openai_client(openai_sdk, tmp_path, asynchronous, api):
+        """REGRESSION: public init must guard a previously constructed client."""
+        import agentguard
+
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        path = tmp_path / "init-early.jsonl"
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        agentguard.shutdown()
+        try:
+            if asynchronous:
+                async def run():
+                    async with openai_sdk.AsyncOpenAI(
+                        api_key="sk-compat", max_retries=0,
+                        http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                    ) as client:
+                        resource = client.responses if api == "responses" else client.chat.completions
+                        agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+                        with pytest.raises(BudgetExceeded):
+                            await resource.create(**kwargs)
+>               asyncio.run(run())
+
+test_installed_dispatch.py:312:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            resource = client.responses if api == "responses" else client.chat.completions
+            agentguard.init(budget_usd=1e-12, trace_file=str(path), local_only=True)
+>           with pytest.raises(BudgetExceeded):
+E           Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_installed_dispatch.py:308: Failed
+__________ test_openai_unpatch_restores_existing_client[chat-False] ___________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+asynchronous = False, api = 'chat'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_openai_unpatch_restores_existing_client(openai_sdk, asynchronous, api):
+        """The shared resource method must be restored for already-created clients."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=0)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        if asynchronous:
+            async def run():
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as client:
+                    resource = client.responses if api == "responses" else client.chat.completions
+                    original = resource.create.__func__
+                    patch_openai_async(AsyncTracer(), budget_guard=guard)
+                    assert resource.create.__func__ is not original
+                    unpatch_openai_async()
+                    assert resource.create.__func__ is original
+                    await resource.create(**kwargs)
+            asyncio.run(run())
+        else:
+            with _client(openai_sdk, "OpenAI", transport) as client:
+                resource = client.responses if api == "responses" else client.chat.completions
+                original = resource.create.__func__
+                patch_openai(Tracer(), budget_guard=guard)
+>               assert resource.create.__func__ is not original
+E               assert <function Completions.create at 0x0000020EDB224D60> is not <function Completions.create at 0x0000020EDB224D60>
+E                +  where <function Completions.create at 0x0000020EDB224D60> = create.__func__
+E                +    where create = <openai.resources.chat.completions.completions.Completions object at 0x0000020EDD7A2150>.create
+
+test_installed_dispatch.py:357: AssertionError
+___________ test_openai_unpatch_restores_existing_client[chat-True] ___________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+asynchronous = True, api = 'chat'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_openai_unpatch_restores_existing_client(openai_sdk, asynchronous, api):
+        """The shared resource method must be restored for already-created clients."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=0)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        if asynchronous:
+            async def run():
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as client:
+                    resource = client.responses if api == "responses" else client.chat.completions
+                    original = resource.create.__func__
+                    patch_openai_async(AsyncTracer(), budget_guard=guard)
+                    assert resource.create.__func__ is not original
+                    unpatch_openai_async()
+                    assert resource.create.__func__ is original
+                    await resource.create(**kwargs)
+>           asyncio.run(run())
+
+test_installed_dispatch.py:351:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            resource = client.responses if api == "responses" else client.chat.completions
+            original = resource.create.__func__
+            patch_openai_async(AsyncTracer(), budget_guard=guard)
+>           assert resource.create.__func__ is not original
+E           assert <function AsyncCompletions.create at 0x0000020EDB2256C0> is not <function AsyncCompletions.create at 0x0000020EDB2256C0>
+E            +  where <function AsyncCompletions.create at 0x0000020EDB2256C0> = create.__func__
+E            +    where create = <openai.resources.chat.completions.completions.AsyncCompletions object at 0x0000020EDD742F50>.create
+
+test_installed_dispatch.py:347: AssertionError
+________ test_openai_unpatch_restores_existing_client[responses-False] ________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+asynchronous = False, api = 'responses'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_openai_unpatch_restores_existing_client(openai_sdk, asynchronous, api):
+        """The shared resource method must be restored for already-created clients."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=0)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        if asynchronous:
+            async def run():
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as client:
+                    resource = client.responses if api == "responses" else client.chat.completions
+                    original = resource.create.__func__
+                    patch_openai_async(AsyncTracer(), budget_guard=guard)
+                    assert resource.create.__func__ is not original
+                    unpatch_openai_async()
+                    assert resource.create.__func__ is original
+                    await resource.create(**kwargs)
+            asyncio.run(run())
+        else:
+            with _client(openai_sdk, "OpenAI", transport) as client:
+                resource = client.responses if api == "responses" else client.chat.completions
+                original = resource.create.__func__
+                patch_openai(Tracer(), budget_guard=guard)
+>               assert resource.create.__func__ is not original
+E               assert <function Responses.create at 0x0000020EDB3D0CC0> is not <function Responses.create at 0x0000020EDB3D0CC0>
+E                +  where <function Responses.create at 0x0000020EDB3D0CC0> = create.__func__
+E                +    where create = <openai.resources.responses.responses.Responses object at 0x0000020EDE8FB190>.create
+
+test_installed_dispatch.py:357: AssertionError
+________ test_openai_unpatch_restores_existing_client[responses-True] _________
+
+openai_sdk = <module 'openai' from '[BASELINE_ENV]\\venv\\Lib\\site-packages\\openai\\__init__.py'>
+asynchronous = True, api = 'responses'
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("api", ["chat", "responses"])
+    def test_openai_unpatch_restores_existing_client(openai_sdk, asynchronous, api):
+        """The shared resource method must be restored for already-created clients."""
+        if api == "responses" and not _has_responses(openai_sdk):
+            pytest.skip("the Responses API needs openai>=1.66")
+        body = OPENAI_RESPONSE if api == "responses" else OPENAI_COMPLETION
+        transport = _CountingTransport(openai_sdk, body)
+        guard = BudgetGuard(max_calls=0)
+        kwargs = {"model": "gpt-4o-mini"}
+        kwargs.update({"input": "hi"} if api == "responses" else {"messages": [{"role": "user", "content": "hi"}]})
+        if asynchronous:
+            async def run():
+                async with openai_sdk.AsyncOpenAI(
+                    api_key="sk-compat", max_retries=0,
+                    http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+                ) as client:
+                    resource = client.responses if api == "responses" else client.chat.completions
+                    original = resource.create.__func__
+                    patch_openai_async(AsyncTracer(), budget_guard=guard)
+                    assert resource.create.__func__ is not original
+                    unpatch_openai_async()
+                    assert resource.create.__func__ is original
+                    await resource.create(**kwargs)
+>           asyncio.run(run())
+
+test_installed_dispatch.py:351:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with openai_sdk.AsyncOpenAI(
+            api_key="sk-compat", max_retries=0,
+            http_client=openai_sdk.DefaultAsyncHttpxClient(transport=transport.transport),
+        ) as client:
+            resource = client.responses if api == "responses" else client.chat.completions
+            original = resource.create.__func__
+            patch_openai_async(AsyncTracer(), budget_guard=guard)
+>           assert resource.create.__func__ is not original
+E           assert <function AsyncResponses.create at 0x0000020EDB3D1BC0> is not <function AsyncResponses.create at 0x0000020EDB3D1BC0>
+E            +  where <function AsyncResponses.create at 0x0000020EDB3D1BC0> = create.__func__
+E            +    where create = <openai.resources.responses.responses.AsyncResponses object at 0x0000020EDD7A0090>.create
+
+test_installed_dispatch.py:347: AssertionError
+- generated xml file: [PROFILE_ENV]\red-tests.xml -
+=========================== short test summary info ===========================
+FAILED test_installed_dispatch.py::test_openai_existing_client_is_guarded[reexported-chat]
+FAILED test_installed_dispatch.py::test_openai_existing_client_is_guarded[reexported-responses]
+FAILED test_installed_dispatch.py::test_openai_existing_client_is_guarded[cached-chat]
+FAILED test_installed_dispatch.py::test_openai_existing_client_is_guarded[cached-responses]
+FAILED test_installed_dispatch.py::test_openai_existing_async_client_is_guarded[reexported-chat]
+FAILED test_installed_dispatch.py::test_openai_existing_async_client_is_guarded[reexported-responses]
+FAILED test_installed_dispatch.py::test_openai_existing_async_client_is_guarded[cached-chat]
+FAILED test_installed_dispatch.py::test_openai_existing_async_client_is_guarded[cached-responses]
+FAILED test_installed_dispatch.py::test_init_guards_an_existing_openai_client[chat-False]
+FAILED test_installed_dispatch.py::test_init_guards_an_existing_openai_client[chat-True]
+FAILED test_installed_dispatch.py::test_init_guards_an_existing_openai_client[responses-False]
+FAILED test_installed_dispatch.py::test_init_guards_an_existing_openai_client[responses-True]
+FAILED test_installed_dispatch.py::test_openai_unpatch_restores_existing_client[chat-False]
+FAILED test_installed_dispatch.py::test_openai_unpatch_restores_existing_client[chat-True]
+FAILED test_installed_dispatch.py::test_openai_unpatch_restores_existing_client[responses-False]
+FAILED test_installed_dispatch.py::test_openai_unpatch_restores_existing_client[responses-True]
+16 failed, 28 deselected in 4.12s

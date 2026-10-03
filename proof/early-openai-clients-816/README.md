@@ -1,5 +1,10 @@
 # Existing OpenAI clients: issue #816
 
+**Initial candidate, superseded by [review revision](review-r2/README.md).**
+These isolated runs passed, but full compatibility-floor CI subsequently failed
+six cases after SDK module replacement in earlier tests. The revision retains
+the cached-export regression and proof for the final reconciled implementation.
+
 This is a Windows spot-check of the unpublished `agentguard47` 1.4.1 candidate,
 checked on 2026-10-02. The fix patches standard shared OpenAI resource methods,
 so ordinary clients and resources created before activation trace usage and

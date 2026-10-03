@@ -230,26 +230,20 @@ def _patch_openai_resources(
         return True
     resources = getattr(sdk, "resources", None)
     chat = getattr(getattr(resources, "chat", None), "completions", None)
-    if chat is None and getattr(sdk, "__path__", None) is not None:
-        # A re-imported SDK can lack resource re-exports when its submodules
-        # remain cached. Resolve the real shared class instead of falling back
-        # to constructors and silently missing existing clients again.
-        try:
-            chat = importlib.import_module("openai.resources.chat.completions")
-        except ModuleNotFoundError as exc:
-            if exc.name not in {
-                "openai.resources", "openai.resources.chat", "openai.resources.chat.completions"
-            }:
-                raise
     prefix = "Async" if asynchronous else ""
     completions = getattr(chat, prefix + "Completions", None)
     if not isinstance(completions, type) or not callable(getattr(completions, "create", None)):
         if getattr(sdk, "__path__", None) is None:
             return False
+        # A re-imported SDK can lack resource re-exports when its submodules
+        # remain cached. Resolve the real shared class instead of falling back
+        # to constructors and silently missing existing clients again.
         try:
             chat_module = importlib.import_module("openai.resources.chat.completions")
         except ModuleNotFoundError as exc:
-            if exc.name not in {"openai.resources.chat", "openai.resources.chat.completions"}:
+            if exc.name not in {
+                "openai.resources", "openai.resources.chat", "openai.resources.chat.completions"
+            }:
                 raise
             return False
         completions = getattr(chat_module, prefix + "Completions", None)
