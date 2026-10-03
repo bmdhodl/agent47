@@ -16,6 +16,10 @@ fail instead of skip. No provider credentials or model requests were used.
 | Minimum | 3.10.11 | 1.6.3 | 1.2.11 / 4.2.0 / 0.4.4 | 1.44.0 / 1.44.0 | 3 passed, 0 skipped, 0 warnings |
 | Current locked | 3.13.2 | 1.6.5 | 1.2.12 / 4.2.0 / 0.4.5 | 1.45.0 / 1.45.0 | 3 passed, 0 skipped, 0 warnings |
 
+Both profiles ran on the same Windows x64 host, build 26200. Python 3.10
+reports it as Windows 10; Python 3.13 reports it as Windows 11. The raw
+identity records retain each interpreter's report, not evidence of two hosts.
+
 The named cases prove these behaviors:
 
 - A real LangChain `CallbackManager` propagates `BudgetExceeded` before a tool starts.
@@ -74,7 +78,11 @@ commands, exit codes, versions, install logs, source hashes and named JUnit
 results. Background subprocesses do not open console windows.
 
 The source SDK suite passed 1,584 tests with three existing optional Agents
-skips, zero warnings and 92.56% coverage. Its log and JUnit are retained here.
+skips, zero warnings and 92.56% coverage. Its log and JUnit are retained here
+as gzip files; compression preserves their raw bytes while keeping the
+independent review diff below its size cap. `verify.py` checks the hashes,
+named installed-case results, source-suite counts and recorded check exits
+before printing success.
 The two installed framework profiles each reject skips, failures, errors,
 empty results or a different set of case names. `manifest.json` binds the
 retained proof files; it excludes itself. Runtime evidence was generated before

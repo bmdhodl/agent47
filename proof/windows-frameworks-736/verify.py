@@ -44,6 +44,14 @@ def main() -> None:
     assert "pywin32>=311" in failure and "ERROR: In --require-hashes mode" in failure
     checks = json.loads((root / "checks.json").read_text(encoding="utf-8"))
     assert len(checks) == 8 and all(check["exit"] == 0 for check in checks)
+    source_xml = gzip.decompress((root / "source-suite.xml.gz").read_bytes())
+    suites = ET.fromstring(source_xml).findall("testsuite")
+    counts = {key: sum(int(s.attrib.get(key, "0")) for s in suites)
+              for key in ("tests", "errors", "failures", "skipped")}
+    assert counts == {"tests": 1587, "errors": 0, "failures": 0, "skipped": 3}
+    source_log = gzip.decompress((root / "source-suite.log.gz").read_bytes()).decode("utf-8")
+    assert "1584 passed, 3 skipped" in source_log and "warnings summary" not in source_log
+    assert "Total coverage: 92.56%" in source_log
     print(f"{len(manifest)} retained artifact hashes verified; six installed framework cases passed; original Windows lock failure retained.")
 
 

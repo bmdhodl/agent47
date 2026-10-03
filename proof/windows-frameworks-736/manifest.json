@@ -33,12 +33,12 @@
   "floor-tests.xml": "e2951cdc377c128a8c6f26963a4b3afc36ec7a2c84152e63c6866726238ec34d",
   "floor-venv.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
   "floor-wheel-install.log.gz": "96fc073f946c13d3d4ef5d1bb545502c574098f75ee2252de8c84ee7bf8e6799",
-  "README.md": "5eaa8e1016f6c20479712049d8f5e59d5eaa910914c368541a37d5a41d0410b5",
+  "README.md": "d2b645d8c0009e1ca900f14cd3cdd5022aad11eea9c78bd835dee415ac8d2126",
   "run.py": "88c70a4439e2f579aed4bf23a674c1499277012663d5f2bc7f1e64f003ceca63",
   "source-suite.log.gz": "7e9b09fdff2e1308d39b7fbd96b2a3f237b6d03f08e3da7bda70fa5b08fd8a20",
-  "source-suite.xml": "a1d09cb881e84c8a260318b92ceb1d1192cf4be8031706629b18d61ead429b73",
+  "source-suite.xml.gz": "94e53b5d7ffcc6235ba695a20310aec7ddb9353412e85837381ad0f88db2c72a",
   "summary.json": "253f0e714aa503a8e70cd87c87defe5da34e660bc4b47de786e3661ca43f587e",
-  "verify.py": "a606bd66f693e24c2bd5a7831511d741baa0c4a867fb28f01b7a971f6809aecc",
+  "verify.py": "f1a5d433127062f29882fc38c1189f2534206d2887d115b309f507e8d8a8bdb2",
   "windows-platform-source.json": "72c5c9ae2e8c6ceb00b561b6287619f39ad4750a648a5590ec6d479abe6643ed",
   "windows-platform.lock": "4c27bddfb0b91b250a85f7089904c625435c645f2f21c49bbf640bfc132579aa"
 }
