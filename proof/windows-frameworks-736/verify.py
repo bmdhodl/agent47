@@ -14,7 +14,7 @@ def main() -> None:
     for name, expected in manifest.items():
         data = (root / name).read_bytes()
         if Path(name).suffix in (".md", ".py", ".json", ".xml", ".lock"):
-            data.decode("utf-8")
+            data.decode("utf-8")  # Validate text before normalizing its bytes.
             data = data.replace(b"\r\n", b"\n")
         assert hashlib.sha256(data).hexdigest() == expected, name
     cases = sorted((

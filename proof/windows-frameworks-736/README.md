@@ -97,6 +97,11 @@ JSON file; the corrected verifier passes both LF and CRLF copies. Altered
 README content and altered wheel bytes are still refused. The runtime runner
 and original six installed-framework results are unchanged.
 
+`checkout-regression-review-r2.json` and its logs retain the fresh post-review
+rerun against the verifier's exact content hash. The LF/CRLF cases record
+different raw input hashes and CRLF counts, command paths and UTC times; their
+success stdout is intentionally identical. Both corruptions still exit 1.
+
 ## Limits
 
 This checks three existing framework dispatch paths on one Windows x64 host
