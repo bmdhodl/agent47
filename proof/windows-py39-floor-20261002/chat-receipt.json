@@ -1,0 +1,34 @@
+{
+  "profile": "chat",
+  "wheel": "agentguard47-1.4.1-py3-none-any.whl",
+  "wheel_sha256": "04b111624f9e91a4047f9932dc3c277ba7ddf015f7588414d5b3d3036869ef8d",
+  "archive_crc_valid": true,
+  "installed_package_files_equal_wheel": 49,
+  "installed_metadata_equal_wheel": true,
+  "direct_url_archive_sha256_recorded": false,
+  "package_files_equal_checkout": 49,
+  "mandatory_runtime_requirements": 0,
+  "agentguard_absent_before_install": true,
+  "installed": {
+    "version": "1.4.1",
+    "origin": "venv/Lib/site-packages/agentguard/__init__.py",
+    "direct_url": {
+      "archive_info": {},
+      "url": "file:///[CANDIDATE_WHEEL]/agentguard47-1.4.1-py3-none-any.whl"
+    },
+    "python": "3.9.6",
+    "system": "Windows",
+    "openai": "1.40.0",
+    "anthropic": "0.34.0"
+  },
+  "test_checkout_bytes_sha256": "2c43797afbb10d617f2b4a1b47ffe0a01f242af61c00a50fb6a1e0a35566bff5",
+  "selection": "not responses and not agents_sdk and not langchain and not langgraph and not otel",
+  "passed": 12,
+  "skipped": 0,
+  "warnings": 0,
+  "exit": 0,
+  "isolated_python": true,
+  "pytest_plugin_autoload_disabled": true,
+  "owner_provider_credentials_scrubbed": true,
+  "real_sdk_mock_http_only": true
+}

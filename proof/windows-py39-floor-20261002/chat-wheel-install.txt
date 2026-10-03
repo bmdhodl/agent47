@@ -1,0 +1,5 @@
+Processing [CANDIDATE_WHEEL]\agentguard47-1.4.1-py3-none-any.whl
+Installing collected packages: agentguard47
+Successfully installed agentguard47-1.4.1
+WARNING: You are using pip version 21.1.3; however, version 26.0.1 is available.
+You should consider upgrading via the '[PROFILE_ENV]\venv\Scripts\python.exe -m pip install --upgrade pip' command.
