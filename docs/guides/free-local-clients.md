@@ -17,8 +17,8 @@ patch_openai(tracer, budget_guard=budget, free_local_clients=[local])
 local.chat.completions.create(model="qwen3.5:4b", messages=[{"role": "user", "content": "Hi"}])
 ```
 
-The named client's model calls record `provider="local"`, cost source `zero`,
-and zero model cost. Actual usage still feeds token and call limits. JSONL,
+A completed result with usage from the named client records `provider="local"`,
+cost source `zero`, and zero model cost. Actual usage still feeds token and call limits. JSONL,
 `agentguard report` and `agentguard incident` retain that zero cost. Unnamed
 clients keep OpenAI accounting, including unknown-model estimates and clients
 with the same base URL or model. This is your explicit billing declaration;
@@ -40,7 +40,9 @@ original tracer, guard and client declarations. Call `unpatch_openai()` /
 paid by default. The declarations use weak references and do not keep clients
 alive. Wrong client kinds, invalid entries and clients without weak-reference
 support raise `TypeError` before activation. A nonempty list requires the
-optional OpenAI SDK and its standard resource classes.
+optional OpenAI SDK and its standard resource classes. Activation validates
+the SDK's internal resource-owner reference (`_client`); an unsupported owner
+layout raises `TypeError` instead of silently charging a declared-free client.
 
 The option covers the existing sync/async Chat Completions and Responses
 patches, including `responses.parse`, completed streams and raw response
@@ -52,6 +54,8 @@ and instance-level overrides remain outside the
 Store-backed sync non-stream calls and store-backed streams reserve zero
 dollars for a named client. Token caps still require an explicit request token
 bound; paid clients still require dollar bounds. Interrupted or missing-usage
-streams retain their existing unresolved token/call holds. Async non-stream
-calls and in-memory guards keep recorded-budget preflight. These limits do not
+streams retain their existing unresolved token/call holds.
+Missing-usage results still record explicit zero model cost for a declared-free
+client; usage remains unknown and the unresolved holds remain in place. Async
+non-stream calls and in-memory guards keep recorded-budget preflight. These limits do not
 guarantee provider invoices or prevent all in-flight token overshoot.

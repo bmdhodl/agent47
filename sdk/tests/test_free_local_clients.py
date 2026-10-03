@@ -419,3 +419,64 @@ def test_async_repeated_patch_and_unpatch_restore_paid_defaults(sdk, tmp_path):
             await local.chat.completions.create(model="local", messages=[])
             assert b.state.cost_used > 0
     asyncio.run(run())
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("cap", ["calls", "tokens", "dollars"])
+def test_completed_free_stream_without_usage_records_zero_and_keeps_unknown_holds(sdk, tmp_path, capsys, asynchronous, cap):
+    """REGRESSION: free billing also applies to the missing-usage settlement branch."""
+    path = tmp_path / "missing-usage.jsonl"
+    body = "\n".join(line for line in _chat_sse().split("\n") if '"usage"' not in line)
+    transport = _CountingTransport(sdk, body)
+    guard = BudgetGuard(max_calls=1,
+                        **({"max_tokens": 15} if cap == "tokens" else {"max_cost_usd": 1e-12} if cap == "dollars" else {}),
+                        store=JsonFileStateStore(tmp_path / "budget.json"), key="missing")
+    tracer = (AsyncTracer if asynchronous else Tracer)(sink=JsonlFileSink(str(path)))
+    async def run():
+        async with _client(sdk, transport, True) as client:
+            patch_openai_async(tracer, budget_guard=guard, free_local_clients=[client])
+            await _async_call(*_request(client, "chat", True))
+    if asynchronous:
+        asyncio.run(run())
+    else:
+        with _client(sdk, transport) as client:
+            patch_openai(tracer, budget_guard=guard, free_local_clients=[client])
+            _sync_call(*_request(client, "chat", True))
+    result = _results(path)[0]
+    assert result["cost_usd"] == 0
+    assert result["data"]["provider"] == "local"
+    assert result["data"]["usage"] is None
+    assert len(transport.requests) == 1
+    totals = guard.reservation_totals()
+    if cap == "calls":
+        assert result["data"]["source_of_cost"] == "zero"
+        assert totals["settled"]["calls"] == 1
+        assert totals["unresolved"]["calls"] == 0
+    else:
+        assert result["data"]["reason"] == "usage_missing"
+        assert totals["unresolved"]["calls"] == 1
+        assert totals["unresolved"]["cost"] == 0
+        assert totals["settled"]["calls"] == 0
+    _assert_free_report(path, capsys)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+def test_missing_standard_sdk_owner_refuses_free_configuration_before_activation(sdk, monkeypatch, asynchronous):
+    """REGRESSION: an unsupported owner layout must not silently charge a named client."""
+    original = getattr(sdk.resources.chat.completions, "AsyncCompletions" if asynchronous else "Completions").create
+    transport = _CountingTransport(sdk, OPENAI_COMPLETION)
+    async def run():
+        async with _client(sdk, transport, True) as client:
+            monkeypatch.delattr(client.chat.completions, "_client")
+            with pytest.raises(TypeError, match=r"free_local_clients.*owner"):
+                patch_openai_async(AsyncTracer(), free_local_clients=[client])
+    if asynchronous:
+        asyncio.run(run())
+    else:
+        with _client(sdk, transport) as client:
+            monkeypatch.delattr(client.chat.completions, "_client")
+            with pytest.raises(TypeError, match=r"free_local_clients.*owner"):
+                patch_openai(Tracer(), free_local_clients=[client])
+    current = getattr(sdk.resources.chat.completions, "AsyncCompletions" if asynchronous else "Completions").create
+    assert current is original
+    assert not transport.requests

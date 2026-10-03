@@ -30,6 +30,13 @@ def validate_free_local_clients(
             weakref.ref(client)
         except TypeError as exc:
             raise TypeError("free_local_clients entries must support weak references") from exc
+        chat = getattr(getattr(client, "chat", None), "completions", None)
+        responses = getattr(client, "responses", None)
+        if chat is None or any(
+            getattr(resource, "_client", None) is not client
+            for resource in (chat, responses) if resource is not None
+        ):
+            raise TypeError("free_local_clients requires standard SDK resource owner references")
     return entries
 
 

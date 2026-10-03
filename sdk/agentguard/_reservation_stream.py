@@ -112,7 +112,7 @@ def settle_stream_reservation(
         )
         return
     if usage is None:
-        _settle_missing(guard, ctx, reservation_id, model, provider)
+        _settle_missing(guard, ctx, reservation_id, model, provider, free_local=free_local)
         return
     _settle_present(
         guard, ctx, reservation_id, model, provider, usage, prices=prices, free_local=free_local
@@ -139,7 +139,8 @@ def _incomplete_reason(
 
 
 def _settle_missing(
-    guard: Any, ctx: Any, reservation_id: str, model: str, provider: str
+    guard: Any, ctx: Any, reservation_id: str, model: str, provider: str,
+    *, free_local: bool = False,
 ) -> None:
     if guard.max_tokens is not None or guard.max_cost_usd is not None:
         guard.mark_reservation_unresolved(reservation_id, reason="usage_missing")
@@ -154,6 +155,7 @@ def _settle_missing(
                 "reason": "usage_missing",
                 "reservation_id": reservation_id,
             },
+            cost_usd=0.0 if free_local else None,
         )
         return
     guard.commit_reservation(reservation_id, tokens=0, cost_usd=0.0, calls=1)
@@ -164,9 +166,10 @@ def _settle_missing(
             "provider": provider,
             "usage": None,
             "stream": True,
-            "source_of_cost": "missing",
+            "source_of_cost": "zero" if free_local else "missing",
             "reservation_id": reservation_id,
         },
+        cost_usd=0.0 if free_local else None,
     )
 
 
