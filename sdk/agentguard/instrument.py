@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import functools
 import importlib
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 
 from agentguard._billing import (
     _check_budget_before_request,
@@ -11,6 +11,7 @@ from agentguard._billing import (
     _emit_llm_result,
     _emit_stream_final,
 )
+from agentguard._openai_local import FreeLocalClients, client_entries, validate_free_local_clients
 from agentguard.instrument_stream import (
     ensure_openai_stream_usage,
     run_traced_create,
@@ -32,6 +33,7 @@ def _traced_provider_create(
     kwargs: Dict[str, Any],
     *,
     wrap_stream: bool,
+    free_local: bool = False,
 ) -> Any:
     return run_traced_create(
         original,
@@ -42,8 +44,9 @@ def _traced_provider_create(
         kwargs,
         wrap_stream=wrap_stream,
         check_budget=_check_budget_before_request,
-        emit_result=_emit_llm_result,
+        emit_result=functools.partial(_emit_llm_result, free_local=True) if free_local else _emit_llm_result,
         consume_budget=_consume_budget,
+        free_local=free_local,
     )
 
 
@@ -56,6 +59,7 @@ async def _traced_provider_create_async(
     kwargs: Dict[str, Any],
     *,
     wrap_stream: bool,
+    free_local: bool = False,
 ) -> Any:
     return await run_traced_create_async(
         original,
@@ -66,8 +70,9 @@ async def _traced_provider_create_async(
         kwargs,
         wrap_stream=wrap_stream,
         check_budget=_check_budget_before_request,
-        emit_result=_emit_llm_result,
+        emit_result=functools.partial(_emit_llm_result, free_local=True) if free_local else _emit_llm_result,
         consume_budget=_consume_budget,
+        free_local=free_local,
     )
 
 
@@ -166,7 +171,9 @@ def trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
 # ---------------------------------------------------------------------------
 
 
-def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
+def patch_openai(
+    tracer: Any, budget_guard: Any = None, *, free_local_clients: Iterable[Any] = ()
+) -> None:
     """Monkey-patch OpenAI client to auto-trace chat completions.
 
     Works with openai >= 1.0 (instance-based client) and < 1.0 (module-based).
@@ -177,14 +184,24 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
     Args:
         tracer: Tracer instance for emitting events.
         budget_guard: Optional BudgetGuard for automatic budget tracking.
+        free_local_clients: Exact OpenAI client instances declared free. They
+            retain token/call limits; unnamed clients retain paid estimates.
+            Set the complete list at activation. Repeated patch calls retain
+            the original tracer, guard and declarations until unpatch.
     """
+    entries = client_entries(free_local_clients)
     try:
         import openai
     except ImportError:
+        if entries:
+            raise
         return
 
-    if _patch_openai_resources(openai, tracer, budget_guard):
+    entries = validate_free_local_clients(entries, openai, asynchronous=False)
+    if _patch_openai_resources(openai, tracer, budget_guard, local_clients=FreeLocalClients(entries)):
         return
+    if entries:
+        raise ValueError("free_local_clients requires standard OpenAI resource classes")
 
     client_cls = getattr(openai, "OpenAI", None)
     if client_cls is not None:
@@ -221,7 +238,8 @@ def patch_openai(tracer: Any, budget_guard: Any = None) -> None:
 
 
 def _patch_openai_resources(
-    sdk: Any, tracer: Any, budget_guard: Any, *, asynchronous: bool = False
+    sdk: Any, tracer: Any, budget_guard: Any, *, asynchronous: bool = False,
+    local_clients: Any = None,
 ) -> bool:
     """Patch standard resource methods shared by old and new SDK clients."""
     key = "openai_async_resources" if asynchronous else "openai_resources"
@@ -274,7 +292,7 @@ def _patch_openai_resources(
         original = getattr(owner, name, None)
         if callable(original):
             originals.append((owner, name, original))
-            setattr(owner, name, wrap(original, tracer, budget_guard))
+            setattr(owner, name, wrap(original, tracer, budget_guard, local_clients))
     _originals[key] = originals
     return True
 
@@ -284,10 +302,11 @@ def _restore_openai_resources(key: str) -> None:
         setattr(owner, name, original)
 
 
-def _traced_chat_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+def _traced_chat_method(original: Any, tracer: Any, budget_guard: Any, local_clients: Any = None) -> Any:
     @functools.wraps(original)
     def traced(*args: Any, **kwargs: Any) -> Any:
-        return _traced_openai_create(original, tracer, budget_guard, *args, **kwargs)
+        return _traced_openai_call(original, tracer, budget_guard, args,
+                                   ensure_openai_stream_usage(kwargs), local_clients=local_clients)
 
     return traced
 
@@ -325,10 +344,10 @@ def _patch_openai_responses(client: Any, wrap: Any, tracer: Any, budget_guard: A
             setattr(responses, name, wrap(original, tracer, budget_guard))
 
 
-def _traced_responses_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+def _traced_responses_method(original: Any, tracer: Any, budget_guard: Any, local_clients: Any = None) -> Any:
     @functools.wraps(original)
     def traced(*args: Any, **kwargs: Any) -> Any:
-        return _traced_openai_call(original, tracer, budget_guard, args, kwargs)
+        return _traced_openai_call(original, tracer, budget_guard, args, kwargs, local_clients=local_clients)
 
     return traced
 
@@ -343,21 +362,25 @@ def _traced_openai_create(
 
 
 def _traced_openai_call(
-    original: Any, tracer: Any, budget_guard: Any, args: tuple, kwargs: Dict[str, Any]
+    original: Any, tracer: Any, budget_guard: Any, args: tuple, kwargs: Dict[str, Any],
+    *, local_clients: Any = None,
 ) -> Any:
     """Sync OpenAI call. A stored budget reserves before a non-stream send."""
+    provider, free_local = local_clients.billing(original, args) if local_clients else ("openai", False)
     if getattr(budget_guard, "_store", None) is not None and not kwargs.get("stream"):
         from ._reservation_path import traced_openai_reserved
 
-        return traced_openai_reserved(original, tracer, budget_guard, args, kwargs)
+        return traced_openai_reserved(original, tracer, budget_guard, args, kwargs,
+                                     provider=provider, free_local=free_local)
     return _traced_provider_create(
         original,
         tracer,
         budget_guard,
-        "openai",
+        provider,
         args,
         kwargs,
         wrap_stream=bool(kwargs.get("stream")),
+        free_local=free_local,
     )
 
 
@@ -575,7 +598,9 @@ def _async_trace_context(tracer: Any, span_name: str, decorator_name: str) -> An
 # ---------------------------------------------------------------------------
 
 
-def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
+def patch_openai_async(
+    tracer: Any, budget_guard: Any = None, *, free_local_clients: Iterable[Any] = ()
+) -> None:
     """Monkey-patch OpenAI AsyncOpenAI client to auto-trace async completions.
 
     Standard clients created before activation are covered too. Bound methods
@@ -585,14 +610,24 @@ def patch_openai_async(tracer: Any, budget_guard: Any = None) -> None:
     Args:
         tracer: Tracer instance for emitting events.
         budget_guard: Optional BudgetGuard for automatic budget tracking.
+        free_local_clients: Exact AsyncOpenAI client instances declared free.
+            Token/call limits remain active. Configure the full list at first
+            activation; unpatch before changing the tracer, guard or list.
     """
+    entries = client_entries(free_local_clients)
     try:
         import openai
     except ImportError:
+        if entries:
+            raise
         return
 
-    if _patch_openai_resources(openai, tracer, budget_guard, asynchronous=True):
+    entries = validate_free_local_clients(entries, openai, asynchronous=True)
+    if _patch_openai_resources(openai, tracer, budget_guard, asynchronous=True,
+                               local_clients=FreeLocalClients(entries)):
         return
+    if entries:
+        raise ValueError("free_local_clients requires standard OpenAI resource classes")
 
     client_cls = getattr(openai, "AsyncOpenAI", None)
     if client_cls is None:
@@ -626,8 +661,8 @@ def _patch_openai_async_instance(client: Any, tracer: Any, budget_guard: Any = N
     completions.create = _traced_async_chat_method(original_create, tracer, budget_guard)
 
 
-def _traced_async_chat_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
-    traced = _traced_async_openai_method(original, tracer, budget_guard)
+def _traced_async_chat_method(original: Any, tracer: Any, budget_guard: Any, local_clients: Any = None) -> Any:
+    traced = _traced_async_openai_method(original, tracer, budget_guard, local_clients)
 
     @functools.wraps(original)
     async def traced_create(*args: Any, **kwargs: Any) -> Any:
@@ -636,17 +671,19 @@ def _traced_async_chat_method(original: Any, tracer: Any, budget_guard: Any) -> 
     return traced_create
 
 
-def _traced_async_openai_method(original: Any, tracer: Any, budget_guard: Any) -> Any:
+def _traced_async_openai_method(original: Any, tracer: Any, budget_guard: Any, local_clients: Any = None) -> Any:
     @functools.wraps(original)
     async def traced(*args: Any, **kwargs: Any) -> Any:
+        provider, free_local = local_clients.billing(original, args) if local_clients else ("openai", False)
         return await _traced_provider_create_async(
             original,
             tracer,
             budget_guard,
-            "openai",
+            provider,
             args,
             kwargs,
             wrap_stream=bool(kwargs.get("stream")),
+            free_local=free_local,
         )
 
     return traced

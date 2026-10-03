@@ -1,0 +1,26 @@
+{
+  "profile": "chat39",
+  "wheel_sha256": "0d63281c8cbc1043d0eb650b82c8dc06b4ddef738883dc91380ea4bd0269ecb0",
+  "installed": {
+    "python": "3.9.6",
+    "platform": "Windows",
+    "version": "1.4.1",
+    "openai": "1.40.0",
+    "installed_files_equal_archive": 51,
+    "installed_metadata_equal_archive": true
+  },
+  "counts": {
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "isolated_python": true,
+  "agentguard_absent_before_install": true,
+  "owner_provider_environment_scrubbed": true,
+  "no_model_requests": true,
+  "input_sha256": {
+    "test_free_local_clients.py": "c73c7a4df745e9d52a9032af970061f7989518344cbc8f1b3374edd23861e1d3",
+    "test_real_dispatch.py": "3e7a670967737d9c70872ef662630853ac2c64546955b9c35270b26b196130a2"
+  }
+}

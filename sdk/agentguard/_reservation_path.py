@@ -198,19 +198,21 @@ def traced_openai_reserved(
     kwargs: Dict[str, Any],
     *,
     before_send: Optional[Callable[[], None]] = None,
+    provider: str = "openai",
+    free_local: bool = False,
 ) -> Any:
     """Reserve, send once, then commit. Cancel only if ``before_send`` aborts."""
     from .guards import BudgetExceeded
 
     model = str(kwargs.get("model", "unknown"))
     span_cm = tracer.trace(
-        f"llm.openai.{model}",
-        data={"model": model, "provider": "openai"},
+        f"llm.{provider}.{model}",
+        data={"model": model, "provider": provider},
     )
     ctx = span_cm.__enter__()
     reservation_id = str(uuid.uuid4())
     try:
-        bounds = _openai_bounds(budget_guard, kwargs)
+        bounds = _openai_bounds(budget_guard, kwargs, free_local=free_local)
         budget_guard.reserve_for_dispatch(reservation_id, **bounds)
     except BaseException as exc:
         if isinstance(exc, (BudgetExceeded, MissingBound)):
@@ -244,7 +246,8 @@ def traced_openai_reserved(
         span_cm.__exit__(*sys.exc_info())
         raise
     try:
-        _commit_provider_result(budget_guard, ctx, reservation_id, model, parsed)
+        _commit_provider_result(budget_guard, ctx, reservation_id, model, parsed,
+                                provider=provider, free_local=free_local)
     except BaseException:
         if _still_holding(budget_guard, reservation_id):
             _best_effort(
@@ -258,7 +261,7 @@ def traced_openai_reserved(
     return result
 
 
-def _openai_bounds(guard: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+def _openai_bounds(guard: Any, kwargs: Dict[str, Any], *, free_local: bool = False) -> Dict[str, Any]:
     # Chat Completions: max_completion_tokens / max_tokens. Responses API: max_output_tokens.
     token_cap = kwargs.get(
         "max_output_tokens", kwargs.get("max_completion_tokens", kwargs.get("max_tokens"))
@@ -266,7 +269,9 @@ def _openai_bounds(guard: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
     tokens_bound = _positive_int_bound(token_cap)
     cost_bound = None
     version = None
-    if guard.max_cost_usd is not None:
+    if guard.max_cost_usd is not None and free_local:
+        cost_bound = 0.0
+    elif guard.max_cost_usd is not None:
         if tokens_bound is None:
             raise MissingBound(
                 "Cannot claim a dollar stop without max_tokens or max_output_tokens on the request"
@@ -299,7 +304,8 @@ def _positive_int_bound(value: Any) -> Optional[int]:
 
 
 def _commit_provider_result(
-    guard: Any, ctx: Any, reservation_id: str, model: str, result: Any
+    guard: Any, ctx: Any, reservation_id: str, model: str, result: Any,
+    *, provider: str = "openai", free_local: bool = False,
 ) -> None:
     from .precision_cost import resolve_billable_cost
 
@@ -312,13 +318,15 @@ def _commit_provider_result(
             "llm.result",
             data={
                 "model": model,
-                "provider": "openai",
+                "provider": provider,
                 "usage": None,
-                "source_of_cost": "missing",
+                "source_of_cost": "zero" if free_local else "missing",
             },
+            cost_usd=0.0 if free_local else None,
         )
         return
-    resolved = resolve_billable_cost(result, model=model, provider="openai", strict=False)
+    resolved = resolve_billable_cost(result, model=model, provider=provider, strict=False,
+                                     free_local=free_local)
     token_map = resolved.get("tokens") or {}
     total = int(token_map.get("total") or 0)
     cost = float(resolved.get("cost_usd") or 0.0)
@@ -329,13 +337,13 @@ def _commit_provider_result(
         "llm.result",
         data={
             "model": model,
-            "provider": "openai",
+            "provider": provider,
             "usage": {"total_tokens": total},
             "source_of_cost": str(resolved.get("source", "estimate")),
             "estimate_overrun": bool(record.get("estimate_overrun")),
             "reservation_id": reservation_id,
         },
-        cost_usd=cost if cost > 0 else None,
+        cost_usd=cost if cost > 0 or free_local else None,
     )
 
 

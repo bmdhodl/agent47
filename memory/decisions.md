@@ -1,6 +1,16 @@
 # SDK Decisions
 
-**Last Updated:** 2026-09-22
+**Last Updated:** 2026-10-03
+
+## Owner-approved local billing correction (2026-10-03)
+
+- #817 may add the runtime-only `free_local_clients` keyword to OpenAI sync/async
+  patches and `init()`. The owner approved the narrow per-client proposal.
+- Declare exact clients free; keep paid defaults, token/call limits, existing
+  reservation boundaries and lifecycle restoration. No URL/model inference,
+  new export, dependency, saved configuration, or release is authorized here.
+- This exception does not remove the external-adoption gate for broader SDK
+  feature work in `ops/FOLLOWUP.md` or the held adapter issues.
 
 ## Locked
 - SDK stays free, MIT, and zero-dependency.

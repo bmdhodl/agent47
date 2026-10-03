@@ -1,0 +1,32 @@
+{
+  "sha256": {
+    "check-bandit.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-ci-tools.txt": "2cbb9109384606ea7f60a71f16d9dd209a7ab8caa4bb69e985fdfe6bf3668b78",
+    "check-docs.txt": "8469324240d7e577b6086321f5cd40a2fcc9903ad0b8ae269377ddc98c0c11e3",
+    "check-mcp.txt": "52e127009d02cf12f7de5840b3abf2b6a70f0057325a23af3bef0d32a49d52e4",
+    "check-pypi-readme.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-release-guard.txt": "d8e9e68244f4000fc83476c883a71b36377022e51cbe4654d036c2873b7ad6b8",
+    "check-review-readiness.txt": "a3423a8c4a1ce188965d72be6ca889ec5f439e61f6404e29dffa4f099be47f58",
+    "check-ruff.txt": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "checks.json": "1495ff517e11fcdb3ca8e0d6a80247c0c1b07c326561f760f891fb9bfde20237",
+    "exhaustion-red.txt.gz": "2528f6536a22e956a3732dfde00836df868626adb8115261ea184db63a19193b",
+    "focused-green.txt": "42e5a881e0ec1def1c1bdc5f2216020a530729776e1ec2204840e165b15abd88",
+    "installed-chat39.json": "b2edb9e8c914934991c893a51cde8e70092e3683666ce1fc337a35a0bd5efd8f",
+    "installed-chat39.txt": "ac4bf2536e4ae4016fd6ebfbc45342d15c772a7ef680fc7fb8e0f3485c2e2946",
+    "installed-chat39.xml": "ba18efb8444d53c4de1a34cc641dd677242b8df9e4894685384352f722836357",
+    "installed-current313.json": "0f8c25ee2dec15b4df46aaa1acfbb98f3d2e6c04871447351355392e475c4713",
+    "installed-current313.txt": "04969b64132a552f0554ad7d6554750d8e251da642f2509bfdca886984b3761b",
+    "installed-current313.xml": "dd6e2be3b57788702e4ad93e62cdd48d522344832de2eb1a631185bdcb53e7a4",
+    "installed-responses39.json": "7a15adbf8baa0de153da7454312ffe076eb6ecc4e8bb891e867790ae67fc6475",
+    "installed-responses39.txt": "31a2a54dc798f1c464c83ff9313c20d6a122dcceb8a7f952588ecac91f6133ee",
+    "installed-responses39.xml": "a552d1243da2946ab89c551d806dbcc8782e0fec731fcccda3f9591508ff4fbd",
+    "provenance-red.txt.gz": "e17738abce9c8b0e2bd69e5e9a2a1cc5a9f1ad75e35205b4a6a25e5aa38533bb",
+    "README.md": "7448a28b97c4780b65c15e48ac04e43360fd6a8027159617146f6eaf8b88a4d5",
+    "review-red.txt.gz": "15791ed1816cad3eff36fac3235864b713006bddde1b31ce7e61ab58e51043bd",
+    "source-binding.json": "942b86b5a4ad61e038a9c218c5639915c4756bdecc6d621529f57600a610104c",
+    "suite-final.xml": "e575d4e90b781e67660b2956283bee5692d45ea7d365491e238eebec2f5f9832",
+    "suite-r3.txt.gz": "54ec0e9f6e46c76c0a047d29859f76dc98a228d1eb5b25c457c607a45edf74f4",
+    "wheel.json": "1eeb25e31f959e19c527dbdf85810abc18e954c05594bc1f88e505db52d51ed6"
+  },
+  "line_endings": "UTF-8 LF text; exact gzip bytes"
+}

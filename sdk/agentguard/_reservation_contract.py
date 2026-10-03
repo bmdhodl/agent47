@@ -214,6 +214,13 @@ class ReservationLedger:
             raise ReservationContractError(
                 f"reservation {reservation_id} already exists with different bounds"
             )
+        # Check settled exhaustion under the same store lock as the new hold.
+        # A free request must not reopen a budget that already hit its cap.
+        if self.max_cost_usd is not None and self.cost_used >= self.max_cost_usd:
+            raise BudgetExceeded(
+                f"Cost budget exhausted: recorded usage reached {self.max_cost_usd}; "
+                "request not sent"
+            )
         remaining = self.remaining()
         if remaining["calls"] is not None and calls > remaining["calls"]:
             raise BudgetExceeded(

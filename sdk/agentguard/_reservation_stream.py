@@ -23,10 +23,10 @@ from typing import Any, Optional
 from ._reservation_path import _best_effort, _openai_bounds, _still_holding
 
 
-def begin_stream_reservation(guard: Any, kwargs: dict) -> str:
+def begin_stream_reservation(guard: Any, kwargs: dict, *, free_local: bool = False) -> str:
     """Hold one stream before the provider function runs."""
     reservation_id = str(uuid.uuid4())
-    guard.reserve_for_dispatch(reservation_id, **_openai_bounds(guard, kwargs))
+    guard.reserve_for_dispatch(reservation_id, **_openai_bounds(guard, kwargs, free_local=free_local))
     return reservation_id
 
 
@@ -78,6 +78,7 @@ def settle_stream_reservation(
     prices: Optional[dict] = None,
     completed: bool = True,
     error: Optional[BaseException] = None,
+    free_local: bool = False,
 ) -> None:
     """Commit final usage once, or keep the hold when the outcome is not billable.
 
@@ -103,17 +104,18 @@ def settle_stream_reservation(
                 "provider": provider,
                 "usage": None,
                 "stream": True,
-                "source_of_cost": "unresolved",
+                "source_of_cost": "zero" if free_local else "unresolved",
                 "reason": reason,
                 "reservation_id": reservation_id,
             },
+            cost_usd=0.0 if free_local else None,
         )
         return
     if usage is None:
-        _settle_missing(guard, ctx, reservation_id, model, provider)
+        _settle_missing(guard, ctx, reservation_id, model, provider, free_local=free_local)
         return
     _settle_present(
-        guard, ctx, reservation_id, model, provider, usage, prices=prices
+        guard, ctx, reservation_id, model, provider, usage, prices=prices, free_local=free_local
     )
 
 
@@ -137,7 +139,8 @@ def _incomplete_reason(
 
 
 def _settle_missing(
-    guard: Any, ctx: Any, reservation_id: str, model: str, provider: str
+    guard: Any, ctx: Any, reservation_id: str, model: str, provider: str,
+    *, free_local: bool = False,
 ) -> None:
     if guard.max_tokens is not None or guard.max_cost_usd is not None:
         guard.mark_reservation_unresolved(reservation_id, reason="usage_missing")
@@ -148,10 +151,11 @@ def _settle_missing(
                 "provider": provider,
                 "usage": None,
                 "stream": True,
-                "source_of_cost": "unresolved",
+                "source_of_cost": "zero" if free_local else "unresolved",
                 "reason": "usage_missing",
                 "reservation_id": reservation_id,
             },
+            cost_usd=0.0 if free_local else None,
         )
         return
     guard.commit_reservation(reservation_id, tokens=0, cost_usd=0.0, calls=1)
@@ -162,9 +166,10 @@ def _settle_missing(
             "provider": provider,
             "usage": None,
             "stream": True,
-            "source_of_cost": "missing",
+            "source_of_cost": "zero" if free_local else "missing",
             "reservation_id": reservation_id,
         },
+        cost_usd=0.0 if free_local else None,
     )
 
 
@@ -177,6 +182,7 @@ def _settle_present(
     usage: Any,
     *,
     prices: Optional[dict],
+    free_local: bool = False,
 ) -> None:
     from .precision_cost import (
         SOURCE_ZERO,
@@ -191,6 +197,7 @@ def _settle_present(
             provider=provider,
             prices=prices,
             strict=False,
+            free_local=free_local,
         )
     except CostResolutionError:
         if _still_holding(guard, reservation_id):
@@ -251,5 +258,5 @@ def _settle_present(
             "estimate_overrun": bool(record.get("estimate_overrun")),
             "reservation_id": reservation_id,
         },
-        cost_usd=cost if cost > 0 else None,
+        cost_usd=cost if cost > 0 or free_local else None,
     )

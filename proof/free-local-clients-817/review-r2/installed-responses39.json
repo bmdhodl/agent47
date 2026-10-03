@@ -1,0 +1,27 @@
+{
+  "profile": "responses39",
+  "wheel_sha256": "5cda0b002359517ff3f10c60a2239adf45b84ba64070f11c7017a12e60a835d0",
+  "installed": {
+    "python": "3.9.6",
+    "platform": "Windows",
+    "version": "1.4.1",
+    "openai": "1.66.3",
+    "installed_files_equal_archive": 51,
+    "installed_metadata_equal_archive": true
+  },
+  "counts": {
+    "tests": 71,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "profile_reused_from_verified_fresh_install": true,
+  "current_wheel_reinstalled_without_dependencies": true,
+  "isolated_python": true,
+  "owner_provider_environment_scrubbed": true,
+  "no_model_requests": true,
+  "input_sha256": {
+    "test_free_local_clients.py": "35241017f83741b38a8ffd50f4c0da77313bb560f9b5e66d1fdb9f93e3b3d8fd",
+    "test_real_dispatch.py": "3e7a670967737d9c70872ef662630853ac2c64546955b9c35270b26b196130a2"
+  }
+}
