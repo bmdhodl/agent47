@@ -21,13 +21,10 @@ dependency, runtime API or release change.
 - Packaged SDK modules remain identical to main; prior installed-wheel
   evidence at free-local-clients-817/review-r3 still binds that runtime.
 
-Actual hosted CI passed at c3985a4: Ubuntu/Python 3.12.14 ran 21 real
-Responses/Agents tests and 71 free-client tests, both with zero skips, failures,
-errors or warnings. All nine CI jobs, including floor/current compatibility
-and the required aggregate, passed. hosted-ci.json binds the actual run to
-identical committed source; hosted-floor.log.gz retains exact test-step output.
-The original local-only receipt is preserved in README.local.md. Final-head
-checks must still pass before merge. Provider/model calls use offline transports.
+Actual Linux execution is pending hosted PR CI; merge requires that job and
+the existing current-version job to pass. No Linux success is claimed before
+that run. Later hosted receipts will be appended here, preserving these local
+results. All provider/model calls in the selected tests use offline transports.
 
 The matrix describes the 1.4.1 source candidate, which remains unpublished;
 published 1.4.0 lacks the Responses patches. #736 remains open for CrewAI/#644
