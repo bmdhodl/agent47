@@ -40,7 +40,8 @@ Previous #821 wheel SHA-256:
 Executed Windows test-file bytes SHA-256: `3dbe16e5879eea7657dfab62358c69ea99880dee47bf747109bd62deafbe5f60`. Git archives
 normalize this checkout's line endings, so archived test bytes can differ.
 Public logs replace checkout/validation paths with neutral labels. Raw local
-logs are retained privately. Showwork checks certify these saved artifacts;
+logs are retained privately. manifest.json hashes repository bytes with LF line endings.
+Showwork checks certify these saved artifacts;
 they do not rerun the behavioral suite.
 
 ## Scope
