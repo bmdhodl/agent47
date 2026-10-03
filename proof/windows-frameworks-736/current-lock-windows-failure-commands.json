@@ -1,0 +1,57 @@
+[
+  {
+    "argv": [
+      "C:\\Python313\\python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "venv",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current\\venv"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current",
+    "log": "venv.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--only-binary=:all:",
+      "--require-hashes",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current\\ci-tools.txt"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current",
+    "log": "ci-tools-install.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--only-binary=:all:",
+      "--require-hashes",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current\\compat-latest.txt"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current",
+    "log": "compat-latest-install.log",
+    "exit": 1
+  }
+]

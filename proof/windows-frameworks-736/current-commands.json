@@ -1,0 +1,140 @@
+[
+  {
+    "argv": [
+      "C:\\Python313\\python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "venv",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "venv.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--only-binary=:all:",
+      "--require-hashes",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\ci-tools.txt"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "ci-tools-install.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--only-binary=:all:",
+      "--require-hashes",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\compat-latest.txt",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\windows-platform.lock"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "compat-latest-install.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-I",
+      "-c",
+      "import importlib.metadata as m; assert not any(d.metadata['Name'].lower() == 'agentguard47' for d in m.distributions())"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "absent-before-install.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--no-deps",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-free-local-817-build-r3\\wheel\\agentguard47-1.4.1-py3-none-any.whl"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "wheel-install.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "check"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "pip-check.log",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-c",
+      "\nimport agentguard, importlib.metadata as m, json, pathlib, platform, sys, zipfile\nd = m.distribution('agentguard47')\nwith zipfile.ZipFile(sys.argv[1]) as z:\n    names = [n for n in z.namelist() if n.startswith('agentguard/') and (n.endswith('.py') or n.endswith('py.typed'))]\n    for name in names:\n        assert pathlib.Path(d.locate_file(name)).read_bytes() == z.read(name), name\n    meta = next(n for n in z.namelist() if n.endswith('.dist-info/METADATA'))\n    assert pathlib.Path(d.locate_file(meta)).read_bytes() == z.read(meta)\norigin = pathlib.Path(agentguard.__file__).resolve()\nassert origin.is_relative_to(pathlib.Path(sys.prefix).resolve())\ndirect = json.loads(d.read_text('direct_url.json'))\nassert direct['url'] == pathlib.Path(sys.argv[1]).as_uri()\nprovenance_hash = direct['archive_info'].get('hashes', {}).get('sha256')\nif provenance_hash is not None:\n    assert provenance_hash == sys.argv[2]\nassert all('extra ==' in value for value in d.requires or [])\npackages = ('langchain-core', 'langgraph', 'langgraph-checkpoint', 'langgraph-sdk', 'opentelemetry-api', 'opentelemetry-sdk', 'pytest')\nprint(json.dumps({'python': platform.python_version(), 'platform': platform.platform(),\n    'sdk': d.version, 'requires_python': d.metadata['Requires-Python'], 'installed_files_equal_wheel': len(names),\n    'installed_metadata_equal_wheel': True, 'mandatory_runtime_dependencies': 0,\n    'import_inside_venv': True, 'origin': str(origin), 'direct_url_verified': True,\n    'pip_provenance_hash_present': provenance_hash is not None,\n    'versions': {name: m.version(name) for name in packages},\n    'all_distributions': {d.metadata['Name']: d.version for d in m.distributions()}}))\n",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-free-local-817-build-r3\\wheel\\agentguard47-1.4.1-py3-none-any.whl",
+      "b6059abc35fa0892a1dee999b67557c83c2d18986d600c78509ebdd244787684"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "identity.json",
+    "exit": 0
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-I",
+      "-m",
+      "pytest",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\test_installed_dispatch.py::test_langchain_dispatch_propagates_budget_stop",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\test_installed_dispatch.py::test_langgraph_node_budget_stops_the_graph",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\test_installed_dispatch.py::test_otel_sink_exports_guard_spans",
+      "-q",
+      "--confcutdir",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+      "--junitxml",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\tests.xml",
+      "--basetemp",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2\\pytest"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-windows-frameworks-736-current-r2",
+    "log": "tests.log",
+    "exit": 0
+  }
+]

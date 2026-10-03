@@ -1,0 +1,41 @@
+{
+  "source_commit": "9a57ba03950229ed2d970d852a08cc2e966e51b1",
+  "wheel_sha256": "b6059abc35fa0892a1dee999b67557c83c2d18986d600c78509ebdd244787684",
+  "passed_profiles": 2,
+  "installed_cases_passed": 6,
+  "installed_skipped": 0,
+  "installed_errors": 0,
+  "installed_failures": 0,
+  "installed_warnings": 0,
+  "profiles": [
+    {
+      "profile": "floor",
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "profile": "current",
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "current_lock_requires_windows_supplement": true,
+  "source_suite": {
+    "passed": 1584,
+    "skipped": 3,
+    "warnings": 0,
+    "coverage_percent": 92.56
+  },
+  "runtime_regenerated_after_review": false,
+  "sdk_runtime_change": false,
+  "workflow_change": false,
+  "published": false
+}
