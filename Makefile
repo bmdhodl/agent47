@@ -24,7 +24,7 @@ lint:
 fix:
 	ruff check sdk/agentguard/ --fix
 
-# Lint + full test suite (mirrors CI for the Python 3.9+ SDK)
+# Lint + full test suite (mirrors CI for the Python 3.11+ SDK)
 check: ci-tools-guard review-readiness lint test mcp
 
 # Fast local feedback based on changed files

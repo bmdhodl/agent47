@@ -1,7 +1,6 @@
 build==1.4.4
-# Dependabot resolves this manifest with Python 3.10, but CI installs the
-# compiled lockfile on Python 3.9. Keep build's Python 3.9-only metadata
-# dependency explicit so a 3.10 lock refresh cannot drop it.
+# The compiler and SDK floor are Python 3.11. Retain these existing explicit
+# transitive pins so the support-policy change does not upgrade other tools.
 importlib-metadata==8.7.1
 pytest==9.0.3
 pytest-cov==7.1.0

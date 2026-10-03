@@ -40,7 +40,7 @@ and [BYOK](https://vercel.com/docs/ai-gateway/authentication-and-byok/byok).
 OpenAI-compatible local endpoint as OpenAI. Unknown model prices use a
 conservative estimate, so a dollar cap can stop a free local run and reports
 can show phantom cost. A loopback URL alone does not prove a call is free.
-The unpublished 1.4.1 candidate adds
+The unpublished 2.0.0 candidate adds
 [`free_local_clients=[client]`](../guides/free-local-clients.md) for exact clients
 you declare free. It keeps paid-client estimates and token/call limits. On
 published 1.4.0, token/call caps do not remove phantom cost from patched traces.
@@ -80,7 +80,7 @@ not reserve concurrent requests. Do not manually count the same call that a
 patch already counts. The explicit event writes JSONL; `consume_billable`
 does not emit trace events by itself. For native `/api/chat` and `/api/generate`
 responses, see the [native Ollama guide](../cost-guardrails.md#native-ollama-responses),
-including the unpublished 1.4.1 candidate's token-field support.
+including the unpublished 2.0.0 candidate's token-field support.
 
 ## When Vercel AI Gateway is the right choice
 

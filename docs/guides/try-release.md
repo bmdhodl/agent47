@@ -63,7 +63,7 @@ CLI command, run:
 ```
 
 Version 1.4.0 does not have `receipt`, `hook`, `run`, or `--version`. Those
-commands are in the unpublished 1.4.1 candidate. This walkthrough needs no
+commands are in the unpublished 2.0.0 candidate. This walkthrough needs no
 provider key or optional framework package. Keep any trace private until you
 have checked its contents.
 

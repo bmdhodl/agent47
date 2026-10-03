@@ -119,7 +119,7 @@ Whichever guard triggers first stops the agent. The loop guard catches pathologi
 pip install agentguard47
 ```
 
-Zero dependencies, MIT licensed, Python 3.9+.
+Zero dependencies, MIT licensed, Python 3.11+ in the 2.0.0 candidate (published 1.4.0 supports Python 3.9+).
 
 Repo: https://github.com/bmdhodl/agent47
 

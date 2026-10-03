@@ -100,3 +100,42 @@ def test_main_reports_value_errors_without_traceback(tmp_path: Path, capsys) -> 
     assert result == 1
     assert "ci-tools requirements guard failed:" in captured.err
     assert "Traceback" not in captured.err
+
+
+def test_default_floor_accepts_pytest9_but_rejects_python312_only_tools(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """REGRESSION: the supported SDK floor must accept pytest 9 without an override."""
+    requirements = tmp_path / "ci-tools.in"
+    requirements.write_text("pytest==9.0.3\n", encoding="utf-8")
+    find = guard.find_incompatible_pins
+    specifier = ">=3.10"
+    monkeypatch.setattr(
+        guard,
+        "find_incompatible_pins",
+        lambda path, version: find(
+            path, version, metadata_lookup=lambda _name, _version: metadata_with_python(specifier)
+        ),
+    )
+
+    assert guard.main(["--requirements", str(requirements)]) == 0
+    assert "support Python 3.11" in capsys.readouterr().out
+
+    specifier = ">=3.12"
+    assert guard.main(["--requirements", str(requirements)]) == 1
+    assert "Requires-Python >=3.12" in capsys.readouterr().err
+
+
+def test_sdk_metadata_ci_matrix_and_tool_guard_share_the_supported_floor() -> None:
+    """REGRESSION: installing tools on a retired interpreter breaks the required checks."""
+    import re
+
+    root = SCRIPT_PATH.parents[1]
+    metadata = (root / "sdk" / "pyproject.toml").read_text(encoding="utf-8")
+    floor = re.search(r'^requires-python = ">=(\d+)\.(\d+)"$', metadata, re.MULTILINE)
+    assert floor is not None
+    assert tuple(map(int, floor.groups())) == guard.DEFAULT_MIN_PYTHON == (3, 11)
+    workflow = (root / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert 'python-version: ["3.11", "3.12"]' in workflow
+    assert '"Programming Language :: Python :: 3.9"' not in metadata
+    assert '"Programming Language :: Python :: 3.10"' not in metadata

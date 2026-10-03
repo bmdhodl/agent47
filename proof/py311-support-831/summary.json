@@ -1,0 +1,46 @@
+{
+  "date_utc": "2026-10-03",
+  "pr": 831,
+  "source_base": "df3f7e3c2abe789222d239b76b6f4b7c868550ec",
+  "owner_support_decision": "Python 3.11 minimum accepted; align CI/metadata/docs; treat support drop as breaking",
+  "candidate_version": "2.0.0",
+  "requires_python": ">=3.11",
+  "published_version_unchanged": "1.4.0",
+  "identity": {
+    "python": "3.11.9",
+    "os": "Windows-10-10.0.26200-SP0",
+    "pytest": "9.0.3"
+  },
+  "tests_passed": 1475,
+  "tests_skipped": 114,
+  "tests_failed": 0,
+  "tests_errored": 0,
+  "coverage_percent": 91.36,
+  "pytest_warning_count": 0,
+  "sdk_runtime_source_unchanged": true,
+  "preserved_tool_versions_and_hashes": 19,
+  "removed_backports": [
+    "exceptiongroup",
+    "tomli",
+    "typing-extensions"
+  ],
+  "actual_rejected_interpreters": {
+    "3.9": "3.9.6",
+    "3.10": "3.10.11"
+  },
+  "offline_commands": [
+    "--version",
+    "doctor",
+    "demo",
+    "report",
+    "quickstart --framework raw --write",
+    "generated raw starter"
+  ],
+  "browser_checks": 12,
+  "browser_viewports": [
+    375,
+    768,
+    1440
+  ],
+  "limits": "Source suite has optional-provider skips. Hosted real-dependency jobs are separate. Pip24 cross-version dry run was not valid rejection evidence; actual old-interpreter installs reject the wheel. No tag, publication, external adoption or live provider billing claimed."
+}

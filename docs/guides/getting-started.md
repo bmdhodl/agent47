@@ -5,7 +5,9 @@ not change another agent's behavior.
 
 ## Install and verify
 
-Use Python 3.9 or newer in a virtual environment.
+Use Python 3.11 or newer in a virtual environment for the 2.0.0 candidate.
+The published 1.4.0 release still supports Python 3.9+; see the
+[Python migration guide](python-311-migration.md).
 
 ```bash
 python -m pip install agentguard47
@@ -58,7 +60,7 @@ agentguard report .agentguard/traces.jsonl
 agentguard incident .agentguard/traces.jsonl
 ```
 
-In the 1.4.1 candidate, report "Approx run time" and incident "Duration" cover
+In the 2.0.0 candidate, report "Approx run time" and incident "Duration" cover
 the earliest span start through the latest span end in the supplied file.
 Sequential calls include the gaps between them; parallel or nested spans are
 not added together. A file containing multiple runs includes the gaps between

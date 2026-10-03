@@ -18,7 +18,7 @@ gh issue list --repo bmdhodl/agent47 --label component:sdk --state open --limit 
 
 ## Current Focus
 
-Current SDK release candidate: `v1.4.1`.
+Current SDK release candidate: `v2.0.0`.
 
 Source of truth for priorities:
 - `ops/00-NORTHSTAR.md`
@@ -68,7 +68,7 @@ Run `make structural` to check compliance.
 ## Conventions
 
 - Zero dependencies. Python stdlib only. Optional extras: `langchain-core`, `langgraph`, `crewai`, `opentelemetry-api`.
-- Python 3.9+ compatibility.
+- Python 3.11+ compatibility.
 - CI uses `pytest` with `--cov-fail-under=80`.
 - All public API surfaces through `agentguard/__init__.py` and `__all__`.
 - TraceSink interface: all sinks implement `emit(event: Dict)`.
