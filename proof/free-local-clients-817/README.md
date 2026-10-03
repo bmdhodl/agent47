@@ -1,3 +1,5 @@
+Historical initial proof. Current source and review corrections: [review-r2](review-r2/README.md).
+
 # Explicit free-client billing proof (#817)
 
 The owner approved the prepared narrow per-client proposal on 2026-10-03.

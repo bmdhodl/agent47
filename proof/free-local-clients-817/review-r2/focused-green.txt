@@ -1,0 +1,11 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [VALIDATION]\sdk
+configfile: pyproject.toml
+collected 71 items
+
+[SDK_CHECKOUT]\sdk\tests\test_free_local_clients.py . [  1%]
+......................................................................   [100%]
+
+- generated xml file: [VALIDATION]\agent47-free-local-817-exhaustion-green\tests.xml -
+============================= 71 passed in 8.33s ==============================
