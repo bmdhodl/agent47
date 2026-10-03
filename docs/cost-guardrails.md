@@ -43,6 +43,43 @@ Two threads can both pass `check()` today; see
 
 ## Configuration
 
+### Native Ollama responses
+
+For code calling Ollama's `/api/chat` or `/api/generate` directly, use the
+existing manual billing helpers. Native responses expose `prompt_eval_count`
+and `eval_count`; AgentGuard maps them to input/output tokens. The optional
+`prompt_eval_cached_count` is a subset of the prompt count and is not added to
+the total again. Response dictionaries and objects with those attributes are
+accepted. Field definitions: [chat](https://docs.ollama.com/api/chat) and
+[generate](https://docs.ollama.com/api/generate).
+
+```python
+from agentguard import BudgetGuard, consume_billable
+
+budget = BudgetGuard(max_tokens=3000, max_calls=10)
+budget.check()  # before each real request
+response = {  # example of a completed native response; no model runs here
+    "model": "qwen3.5:4b", "done": True,
+    "prompt_eval_count": 2000, "eval_count": 500,
+}
+resolved = consume_billable(
+    budget, response, model=response["model"], provider="ollama", free_local=True,
+)
+assert budget.state.tokens_used == 2500
+assert resolved["consume_log"]["total_tokens"] == 2500
+```
+
+Use `free_local=True` only when you know the call is free. Native usage fields
+alone do not prove that. Paid or unknown pricing keeps the existing cost
+resolution rules. `consume_billable` accounts after the call and logs the
+crossing call before raising; it does not intercept an Ollama client or emit
+JSONL trace events automatically. On a native stream, account once using the
+final response that contains usage; intermediate chunks may have none.
+To retain a local trace, callers can write the returned record with the existing
+`span.event("llm.result", data=resolved["consume_log"], cost_usd=resolved["cost_usd"])`.
+The OpenAI-compatible `/v1` patch's local-cost configuration is tracked
+separately in [#817](https://github.com/bmdhodl/agent47/issues/817).
+
 ### BudgetGuard Parameters
 
 | Parameter | Type | Default | Description |

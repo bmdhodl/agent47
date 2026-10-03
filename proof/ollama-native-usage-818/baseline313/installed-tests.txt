@@ -1,0 +1,269 @@
+FFFFFFFFFF.FFFF.F.                                                       [100%]
+================================== FAILURES ===================================
+_________________ test_ollama_native_fields_count[dict-chat] __________________
+
+endpoint = 'chat', as_object = False
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_fields_count(endpoint, as_object):
+        """REGRESSION: native API responses must contribute their actual tokens."""
+        response = _native_response(endpoint, as_object)
+        resolved = resolve_billable_cost(
+            response, model="qwen3.5:4b", provider="ollama", free_local=True,
+        )
+>       assert resolved["tokens"]["input"] == 2000
+E       assert 0 == 2000
+
+test_ollama_usage.py:35: AssertionError
+_______________ test_ollama_native_fields_count[dict-generate] ________________
+
+endpoint = 'generate', as_object = False
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_fields_count(endpoint, as_object):
+        """REGRESSION: native API responses must contribute their actual tokens."""
+        response = _native_response(endpoint, as_object)
+        resolved = resolve_billable_cost(
+            response, model="qwen3.5:4b", provider="ollama", free_local=True,
+        )
+>       assert resolved["tokens"]["input"] == 2000
+E       assert 0 == 2000
+
+test_ollama_usage.py:35: AssertionError
+______________ test_ollama_native_fields_count[attributes-chat] _______________
+
+endpoint = 'chat', as_object = True
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_fields_count(endpoint, as_object):
+        """REGRESSION: native API responses must contribute their actual tokens."""
+        response = _native_response(endpoint, as_object)
+        resolved = resolve_billable_cost(
+            response, model="qwen3.5:4b", provider="ollama", free_local=True,
+        )
+>       assert resolved["tokens"]["input"] == 2000
+E       assert 0 == 2000
+
+test_ollama_usage.py:35: AssertionError
+____________ test_ollama_native_fields_count[attributes-generate] _____________
+
+endpoint = 'generate', as_object = True
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_fields_count(endpoint, as_object):
+        """REGRESSION: native API responses must contribute their actual tokens."""
+        response = _native_response(endpoint, as_object)
+        resolved = resolve_billable_cost(
+            response, model="qwen3.5:4b", provider="ollama", free_local=True,
+        )
+>       assert resolved["tokens"]["input"] == 2000
+E       assert 0 == 2000
+
+test_ollama_usage.py:35: AssertionError
+________ test_ollama_native_consumption_trips_token_budget[dict-chat] _________
+
+endpoint = 'chat', as_object = False
+caplog = <_pytest.logging.LogCaptureFixture object at 0x0000028A098BB380>
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_consumption_trips_token_budget(endpoint, as_object, caplog):
+        """REGRESSION: manual consumption records the crossing call before raising."""
+        caplog.set_level("INFO", logger="agentguard.precision_cost")
+        guard = BudgetGuard(max_tokens=1000)
+>       with pytest.raises(BudgetExceeded):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_ollama_usage.py:48: Failed
+------------------------------ Captured log call ------------------------------
+INFO     agentguard.precision_cost:precision_cost.py:652 budget.consume model=qwen3.5:4b provider=ollama input=0 output=0 cached=0 cost_usd=0.0 source_of_cost=zero request_id=None
+______ test_ollama_native_consumption_trips_token_budget[dict-generate] _______
+
+endpoint = 'generate', as_object = False
+caplog = <_pytest.logging.LogCaptureFixture object at 0x0000028A0B32F750>
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_consumption_trips_token_budget(endpoint, as_object, caplog):
+        """REGRESSION: manual consumption records the crossing call before raising."""
+        caplog.set_level("INFO", logger="agentguard.precision_cost")
+        guard = BudgetGuard(max_tokens=1000)
+>       with pytest.raises(BudgetExceeded):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_ollama_usage.py:48: Failed
+------------------------------ Captured log call ------------------------------
+INFO     agentguard.precision_cost:precision_cost.py:652 budget.consume model=qwen3.5:4b provider=ollama input=0 output=0 cached=0 cost_usd=0.0 source_of_cost=zero request_id=None
+_____ test_ollama_native_consumption_trips_token_budget[attributes-chat] ______
+
+endpoint = 'chat', as_object = True
+caplog = <_pytest.logging.LogCaptureFixture object at 0x0000028A0C000690>
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_consumption_trips_token_budget(endpoint, as_object, caplog):
+        """REGRESSION: manual consumption records the crossing call before raising."""
+        caplog.set_level("INFO", logger="agentguard.precision_cost")
+        guard = BudgetGuard(max_tokens=1000)
+>       with pytest.raises(BudgetExceeded):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_ollama_usage.py:48: Failed
+------------------------------ Captured log call ------------------------------
+INFO     agentguard.precision_cost:precision_cost.py:652 budget.consume model=qwen3.5:4b provider=ollama input=0 output=0 cached=0 cost_usd=0.0 source_of_cost=zero request_id=None
+___ test_ollama_native_consumption_trips_token_budget[attributes-generate] ____
+
+endpoint = 'generate', as_object = True
+caplog = <_pytest.logging.LogCaptureFixture object at 0x0000028A0BB82B10>
+
+    @pytest.mark.parametrize("endpoint", ["chat", "generate"])
+    @pytest.mark.parametrize("as_object", [False, True], ids=["dict", "attributes"])
+    def test_ollama_native_consumption_trips_token_budget(endpoint, as_object, caplog):
+        """REGRESSION: manual consumption records the crossing call before raising."""
+        caplog.set_level("INFO", logger="agentguard.precision_cost")
+        guard = BudgetGuard(max_tokens=1000)
+>       with pytest.raises(BudgetExceeded):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'agentguard.guards.BudgetExceeded'>
+
+test_ollama_usage.py:48: Failed
+------------------------------ Captured log call ------------------------------
+INFO     agentguard.precision_cost:precision_cost.py:652 budget.consume model=qwen3.5:4b provider=ollama input=0 output=0 cached=0 cost_usd=0.0 source_of_cost=zero request_id=None
+________________ test_ollama_native_consume_log_reports_usage _________________
+
+    def test_ollama_native_consume_log_reports_usage():
+        guard = BudgetGuard(max_tokens=4000)
+        resolved = consume_billable(
+            guard, _native_response("chat"), model="qwen3.5:4b",
+            provider="ollama", free_local=True,
+        )
+>       assert resolved["consume_log"]["total_tokens"] == 2500
+E       assert 0 == 2500
+
+test_ollama_usage.py:71: AssertionError
+_________________ test_ollama_native_manual_trace_and_report __________________
+
+tmp_path = WindowsPath('[VALIDATION]/agent47-ollama-818-baseline313/pytest/test_ollama_native_manual_trac0')
+capsys = <_pytest.capture.CaptureFixture object at 0x0000028A098BB380>
+
+    def test_ollama_native_manual_trace_and_report(tmp_path, capsys):
+        """REGRESSION: callers can retain normalized usage in a local JSONL trace."""
+        guard = BudgetGuard(max_tokens=4000)
+        resolved = consume_billable(
+            guard, _native_response("generate"), model="qwen3.5:4b",
+            provider="ollama", free_local=True,
+        )
+        path = tmp_path / "native.jsonl"
+        tracer = Tracer(sink=JsonlFileSink(str(path)), service="native-ollama-test")
+        with tracer.trace("agent.run") as span:
+            # consume_billable returns a record; this explicit event writes JSONL.
+            span.event("llm.result", data=resolved["consume_log"], cost_usd=resolved["cost_usd"])
+        events = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+        result = next(event for event in events if event["name"] == "llm.result")
+>       assert result["data"]["input_tokens"] == 2000
+E       assert 0 == 2000
+
+test_ollama_usage.py:91: AssertionError
+_________ test_ollama_native_zero_partial_counts[payload1-expected1] __________
+
+payload = {'prompt_eval_count': 9}, expected = (9, 0)
+
+    @pytest.mark.parametrize("payload, expected", [
+        ({"prompt_eval_count": 0, "eval_count": 0}, (0, 0)),
+        ({"prompt_eval_count": 9}, (9, 0)),
+        ({"eval_count": 4}, (0, 4)),
+        ({"prompt_eval_count": 3, "eval_count": 0}, (3, 0)),
+    ])
+    def test_ollama_native_zero_partial_counts(payload, expected):
+        tokens = extract_tokens(payload, provider="ollama")
+>       assert (tokens["input"], tokens["output"]) == expected
+E       assert (0, 0) == (9, 0)
+E         
+E         At index 0 diff: 0 != 9
+E         Use -v to get more diff
+
+test_ollama_usage.py:109: AssertionError
+_________ test_ollama_native_zero_partial_counts[payload2-expected2] __________
+
+payload = {'eval_count': 4}, expected = (0, 4)
+
+    @pytest.mark.parametrize("payload, expected", [
+        ({"prompt_eval_count": 0, "eval_count": 0}, (0, 0)),
+        ({"prompt_eval_count": 9}, (9, 0)),
+        ({"eval_count": 4}, (0, 4)),
+        ({"prompt_eval_count": 3, "eval_count": 0}, (3, 0)),
+    ])
+    def test_ollama_native_zero_partial_counts(payload, expected):
+        tokens = extract_tokens(payload, provider="ollama")
+>       assert (tokens["input"], tokens["output"]) == expected
+E       assert (0, 0) == (0, 4)
+E         
+E         At index 1 diff: 0 != 4
+E         Use -v to get more diff
+
+test_ollama_usage.py:109: AssertionError
+_________ test_ollama_native_zero_partial_counts[payload3-expected3] __________
+
+payload = {'eval_count': 0, 'prompt_eval_count': 3}, expected = (3, 0)
+
+    @pytest.mark.parametrize("payload, expected", [
+        ({"prompt_eval_count": 0, "eval_count": 0}, (0, 0)),
+        ({"prompt_eval_count": 9}, (9, 0)),
+        ({"eval_count": 4}, (0, 4)),
+        ({"prompt_eval_count": 3, "eval_count": 0}, (3, 0)),
+    ])
+    def test_ollama_native_zero_partial_counts(payload, expected):
+        tokens = extract_tokens(payload, provider="ollama")
+>       assert (tokens["input"], tokens["output"]) == expected
+E       assert (0, 0) == (3, 0)
+E         
+E         At index 0 diff: 0 != 3
+E         Use -v to get more diff
+
+test_ollama_usage.py:109: AssertionError
+_________________ test_ollama_native_does_not_imply_free_cost _________________
+
+    def test_ollama_native_does_not_imply_free_cost():
+        resolved = resolve_billable_cost(
+            _native_response("chat"), model="unpriced-model", provider="paid-test",
+        )
+>       assert resolved["tokens"]["total"] == 2500
+E       assert 0 == 2500
+
+test_ollama_usage.py:117: AssertionError
+_______________ test_ollama_native_cache_is_not_added_to_total ________________
+
+    def test_ollama_native_cache_is_not_added_to_total():
+        payload = _native_response("generate")
+        payload["prompt_eval_cached_count"] = 500
+        normalized = normalize_usage(payload, provider="ollama")
+>       assert normalized["cached_input_tokens"] == 500
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+test_ollama_usage.py:132: TypeError
+- generated xml file: [VALIDATION]\agent47-ollama-818-baseline313\installed-tests.xml -
+=========================== short test summary info ===========================
+FAILED test_ollama_usage.py::test_ollama_native_fields_count[dict-chat] - ass...
+FAILED test_ollama_usage.py::test_ollama_native_fields_count[dict-generate]
+FAILED test_ollama_usage.py::test_ollama_native_fields_count[attributes-chat]
+FAILED test_ollama_usage.py::test_ollama_native_fields_count[attributes-generate]
+FAILED test_ollama_usage.py::test_ollama_native_consumption_trips_token_budget[dict-chat]
+FAILED test_ollama_usage.py::test_ollama_native_consumption_trips_token_budget[dict-generate]
+FAILED test_ollama_usage.py::test_ollama_native_consumption_trips_token_budget[attributes-chat]
+FAILED test_ollama_usage.py::test_ollama_native_consumption_trips_token_budget[attributes-generate]
+FAILED test_ollama_usage.py::test_ollama_native_consume_log_reports_usage - a...
+FAILED test_ollama_usage.py::test_ollama_native_manual_trace_and_report - ass...
+FAILED test_ollama_usage.py::test_ollama_native_zero_partial_counts[payload1-expected1]
+FAILED test_ollama_usage.py::test_ollama_native_zero_partial_counts[payload2-expected2]
+FAILED test_ollama_usage.py::test_ollama_native_zero_partial_counts[payload3-expected3]
+FAILED test_ollama_usage.py::test_ollama_native_does_not_imply_free_cost - as...
+FAILED test_ollama_usage.py::test_ollama_native_cache_is_not_added_to_total
+15 failed, 3 passed in 0.33s

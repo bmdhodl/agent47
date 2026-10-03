@@ -1,0 +1,10 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: [SDK_CHECKOUT]\sdk
+configfile: pyproject.toml
+collected 18 items
+
+[SDK_CHECKOUT]\sdk\tests\test_ollama_usage.py . [  5%]
+.................                                                        [100%]
+
+============================= 18 passed in 0.26s ==============================

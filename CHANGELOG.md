@@ -33,6 +33,13 @@
   current releases, and the openai floor (1.40.0) predates the Responses API.
 
 ### Fixes
+- Native Ollama `/api/chat` and `/api/generate` responses now contribute
+  `prompt_eval_count` and `eval_count` to `resolve_billable_cost()` and
+  `consume_billable()`, including response objects with attributes. Cached
+  prompt tokens are retained without adding them to the total twice. Token
+  budgets previously stayed at zero. This is manual accounting, not an Ollama
+  client patch; see the [cost guide](docs/cost-guardrails.md).
+
 - OpenAI clients created before `patch_openai()`, `patch_openai_async()`, or
   `init()` now trace and enforce their budget through shared resource methods.
   Previously these calls silently bypassed both. Methods and raw/streaming

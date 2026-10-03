@@ -232,6 +232,11 @@ def _extract_usage_object(response: Any) -> Any:
             },
             "completion_tokens_details": {"reasoning_tokens": first("thoughts_token_count")},
         }
+    # Native Ollama responses keep counts on the response, not under usage.
+    # SDK response objects expose the same fields as attributes.
+    if any(_get_attr_or_key(response, key) is not None
+           for key in ("prompt_eval_count", "eval_count")):
+        return response
     # Bare usage payload passed as response
     if isinstance(response, Mapping):
         keys = set(response.keys())
@@ -258,6 +263,7 @@ def extract_tokens(
 
     OpenAI: prompt_tokens / completion_tokens / total_tokens (+ cached details)
     Anthropic: input_tokens / output_tokens (+ cache read/write)
+    Ollama native: prompt_eval_count / eval_count (+ prompt_eval_cached_count)
     Google/others: similar via normalize_usage / usage_metadata
     total = input + output when total missing.
     """
