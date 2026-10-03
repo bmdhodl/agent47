@@ -54,5 +54,6 @@
     "sdk/agentguard/sinks/otel.py": "4f88774f75dabbc6e2204def589d2d1baf351455ff738350430d4deb6ad9b4e0"
   },
   "wheel_source_equals_git_after_checkout_line_ending_normalization": true,
-  "guide_snippet_compiles": true
+  "guide_snippet_compiles": true,
+  "git_export_autocrlf": false
 }
