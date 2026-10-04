@@ -597,5 +597,5 @@
   },
   "acceptance": "Existing approved Responses/Agents API, minimum/current installed candidate behavior, native max_turns and explicit unsupported boundaries.",
   "limits": "No release, workflow/security change, broad adapter approval or external-adoption claim. Fluarmn dogfood is evaluated separately.",
-  "verifier_sha256": "b990a3782b47bb441b729df50f49adf7a21910e229802bf7c9f458fb99954c8b"
+  "verifier_sha256": "6d68d139dad76b9dd42774b4101e76bc57a056932ace250ce154f014c8ed10c9"
 }

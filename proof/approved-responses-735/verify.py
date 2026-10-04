@@ -80,7 +80,8 @@ def verify():
         require(len(names) == receipt["profiles"][0]["package_files_equal_wheel_and_source"], "Wheel package inventory differs")
         for name in names:
             require(digest(wheel.read(name).replace(b"\r\n", b"\n")) == sources["sdk/" + name], "Wheel source differs: " + name)
-    require(digest(Path(__file__).read_bytes()) == receipt["verifier_sha256"], "Verifier changed after evidence freeze")
+    verifier = Path(__file__).read_bytes().replace(b"\r\n", b"\n")
+    require(digest(verifier) == receipt["verifier_sha256"], "Verifier changed after evidence freeze")
     print("Verified installed AG-06 acceptance evidence: two profiles, no skipped acceptance tests")
 
 
