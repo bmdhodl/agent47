@@ -1,5 +1,19 @@
 # SDK Decisions
 
+## AG-06 architecture approval (2026-10-03)
+
+- Patrick approved proceeding with the held Responses/Agents architecture
+  after the blocker review. Use the existing `init()`, `patch_openai()` and
+  `patch_openai_async()` surface with the standard `OpenAIResponsesModel`;
+  no new public export, store or orchestrator is needed.
+- Audit #735 against real minimum/current SDK objects and the installed
+  candidate. Preserve native `max_turns`, SDK return types/errors and the
+  documented unsupported hosted-tool, background and custom-transport paths.
+- Internal dogfooding is correctness evidence. It is not outside activation
+  or repeat use. Voluntary outside feedback and #737's decision remain separate.
+- This approval does not publish 2.0.0, grant a CrewAI advisory exception,
+  change security/workflow settings or approve later adapters' architecture.
+
 - 2026-10-03: Patrick approved the prepared #736 Responses/Agents minimum CI
   job and required-result inventory update. Use the separate hash-pinned
   OpenAI 1.66.3 / Agents 0.0.3 lock on Ubuntu/Python 3.12, preserving Chat's
