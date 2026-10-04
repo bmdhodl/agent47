@@ -1,0 +1,15 @@
+{
+  "compile.log.gz": "699edd4d73727ad0d38eac4592f5f1d0b8df46d73218c8f591170228e912762b",
+  "compiled.lock.gz": "5e1498ecdd0a277793423c6a0ab61c6a9bb1347cd110231f367cc7bcab867895",
+  "compiler-receipt.json.gz": "c7e1fd187cc1a2216e1142a2778c2b4bc10d1417ceecd21be3bd1b7a3cf7f9c9",
+  "corrected-windows-install.log.gz": "e36651820d656f55e586403a3846a1fb569bbc917f1adbc3f554ee7837f62874",
+  "floor-guard.log.gz": "59b1cf8c208a35745cf4f1b247ed20e520da9514833535e3aa0d26c69ecd370a",
+  "original-windows-install.log.gz": "6d6bb63caabe52f44ff4cbd6fe9cc9daad3594d060c9a74c4128c200dd41a49f",
+  "original.lock.gz": "e4c02541ecb69ad4f803df68caca0e7dbba9ba4ceb654a728b632120278436ee",
+  "pip-check.log.gz": "d0006d55a76ff922a7bd8ede27963017b3c139da1adc5bce8f5c66c374ff859b",
+  "receipt.json": "81ff3f98408d3be3d2bfa87b43fdc8322e84029fbbdc568dbd0fcec931696301",
+  "ruff-ci.log.gz": "f3af4d142827f5aad2eb0c72d556d325488a57fb6219aac10afeb51085667d53",
+  "ruff.log.gz": "8c133879a2c9a0919b0d9bfcef2ba5d5d7fb2e56fdbd7b74afbbda41abbc5f9b",
+  "source-suite.log.gz": "5b1e85afe89ef6dd827f0d18cc79596d1b00074691d099d1cf85e2f3cb45e98d",
+  "venv.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+}

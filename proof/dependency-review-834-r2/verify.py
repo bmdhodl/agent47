@@ -7,7 +7,9 @@ for name, expected in manifest.items():
     data = (root / name).read_bytes()
     if name == "receipt.json":
         data = data.replace(b"\r\n", b"\n")
-    assert hashlib.sha256(data).hexdigest() == expected, name
+    if hashlib.sha256(data).hexdigest() != expected:
+        raise ValueError(f"Artifact hash mismatch: {name}")
 receipt = json.loads((root / "receipt.json").read_text())
-assert all(command["exit"] == 0 for command in receipt["commands"])
+if any(command["exit"] != 0 for command in receipt["commands"]):
+    raise ValueError("A retained acceptance command failed")
 print(f"Verified {len(manifest)} dependency-review artifacts")

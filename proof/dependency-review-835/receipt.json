@@ -1,0 +1,191 @@
+{
+  "commands": [
+    {
+      "name": "venv",
+      "argv": [
+        "py",
+        "-3.11",
+        "-m",
+        "venv",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:25:06.406207+00:00",
+      "finished_utc": "2026-10-04T02:25:14.328892+00:00"
+    },
+    {
+      "name": "original-windows-install",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--require-hashes",
+        "-r",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\original.lock"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 1,
+      "started_utc": "2026-10-04T02:25:14.335324+00:00",
+      "finished_utc": "2026-10-04T02:25:21.242655+00:00"
+    },
+    {
+      "name": "compile",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-compiler\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "piptools",
+        "compile",
+        "--generate-hashes",
+        "--reuse-hashes",
+        "--no-upgrade",
+        "--index-url=https://pypi.org/simple",
+        "--no-emit-index-url",
+        "--pip-args=--isolated --no-input",
+        "--output-file=.github/requirements/ci-tools.txt",
+        ".github/requirements/ci-tools.in"
+      ],
+      "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\stage",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:25:21.260580+00:00",
+      "finished_utc": "2026-10-04T02:25:25.494085+00:00"
+    },
+    {
+      "name": "corrected-windows-install",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--require-hashes",
+        "-r",
+        "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\.github\\requirements\\ci-tools.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:25:25.501995+00:00",
+      "finished_utc": "2026-10-04T02:25:37.611521+00:00"
+    },
+    {
+      "name": "pip-check",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:25:37.612055+00:00",
+      "finished_utc": "2026-10-04T02:25:38.196204+00:00"
+    },
+    {
+      "name": "source-suite",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests",
+        "-q",
+        "--cov=agentguard",
+        "--cov-report=term-missing",
+        "--cov-fail-under=80",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:25:38.196673+00:00",
+      "finished_utc": "2026-10-04T02:26:46.488636+00:00"
+    },
+    {
+      "name": "ruff",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:26:46.489160+00:00",
+      "finished_utc": "2026-10-04T02:26:47.174462+00:00"
+    },
+    {
+      "name": "ruff-ci",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/agentguard",
+        "scripts/generate_pypi_readme.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/live_cost_reconcile.py",
+        "scripts/check_ci_results.py",
+        "sdk/tests/test_ci_results.py",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:28:10.763776+00:00",
+      "finished_utc": "2026-10-04T02:28:10.891472+00:00"
+    },
+    {
+      "name": "floor-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+        "scripts/ci_tools_requirements_guard.py"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:28:10.891503+00:00",
+      "finished_utc": "2026-10-04T02:28:11.974222+00:00"
+    }
+  ],
+  "acceptance": [
+    "venv",
+    "original-windows-install",
+    "compile",
+    "corrected-windows-install",
+    "pip-check",
+    "source-suite",
+    "ruff-ci",
+    "floor-guard"
+  ],
+  "excluded_diagnostic": {
+    "name": "ruff",
+    "reason": "Exploratory lint of every SDK test reported existing test-style findings outside the CI lint target. The unchanged Ruff version is 0.15.13. Required CI lint scope plus the changed guardrail test passed."
+  },
+  "source_result": {
+    "passed": 1477,
+    "skipped": 114,
+    "coverage": 91.36
+  },
+  "scope": "zipp 4.1.0 tool update; explicit colorama 0.4.6 retained by Linux and Windows compilers; all 18 other lock pins and hashes preserved.",
+  "limits": "Optional-provider skips locally; exact-head hosted full and real-provider CI required separately. No runtime SDK dependency change or release."
+}
