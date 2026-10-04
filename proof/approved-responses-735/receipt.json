@@ -593,9 +593,12 @@
     "floor-inventory-initial-failure.log.gz": "36e5dcef64e0f652999f64888a0f608b975ae8f8db35008b07c0afc55e724cff",
     "source-ruff-initial-failure.log.gz": "cde26676b14e2b8a667910c64eb1d74cd971bf70264c3fcec417fbeb2c97dc3a",
     "agent47-approved735-validate.py.gz": "0ca727b079e6edb053c2773ae5c94bc058002f30362a14714c343cf252f0b0da",
-    "agent47-approved735-example.py.gz": "9ed2040ed85dbe014390e5fb258a4e8d24abbce15901ee18ee829b7ebc46edd5"
+    "agent47-approved735-example.py.gz": "9ed2040ed85dbe014390e5fb258a4e8d24abbce15901ee18ee829b7ebc46edd5",
+    "source-tests-traces.jsonl.gz": "2560a1638e07360b61d0c90f09e68cd0c538493017a8e50aafaf4ec78a5dc28c"
   },
   "acceptance": "Existing approved Responses/Agents API, minimum/current installed candidate behavior, native max_turns and explicit unsupported boundaries.",
   "limits": "No release, workflow/security change, broad adapter approval or external-adoption claim. Fluarmn dogfood is evaluated separately.",
-  "verifier_sha256": "fcbd7d4889ae23f0fd1664902847834a708176e58aa9bae3bb1cd92a509e19d7"
+  "verifier_sha256": "7b42875049273de9d0747d06ed5170e9f41c9b2d206d797f3706f7e767c9b857",
+  "scratch_trace_source": "traces.jsonl",
+  "scratch_trace_artifact": "source-tests-traces.jsonl.gz"
 }

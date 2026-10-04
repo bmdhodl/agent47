@@ -2,6 +2,7 @@
 import gzip
 import hashlib
 import json
+import sys
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
@@ -82,6 +83,13 @@ def verify():
             require(digest(wheel.read(name).replace(b"\r\n", b"\n")) == sources["sdk/" + name], "Wheel source differs: " + name)
     verifier = Path(__file__).read_bytes().replace(b"\r\n", b"\n")
     require(digest(verifier) == receipt["verifier_sha256"], "Verifier changed after evidence freeze")
+    if sys.argv[1:]:
+        require(sys.argv[1:] == [receipt["scratch_trace_source"]], "Unknown scratch trace source")
+        name = receipt["scratch_trace_artifact"]
+        require(name in artifacts, "Scratch trace has no retained artifact")
+        events = [json.loads(line) for line in gzip.decompress((HERE / name).read_bytes()).splitlines() if line]
+        require(bool(events), "Retained scratch trace is empty")
+        print("Verified retained scratch trace without requiring the local scratch file")
     print("Verified installed AG-06 acceptance evidence: two profiles, no skipped acceptance tests")
 
 

@@ -33,4 +33,7 @@ review remain separate merge gates. Internal dogfood and outside adoption are
 separate; no Fluarmn or external-user success is inferred from these tests.
 
 Run python proof/approved-responses-735/verify.py for artifact verification.
+Its optional `traces.jsonl` argument verifies the retained source-test scratch
+snapshot, not a file in the reviewer's checkout. The earlier scratch-file
+existence claim is retracted and replaced by this portable artifact check.
 OpenAI | GPT-6 | auto.
