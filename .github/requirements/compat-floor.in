@@ -9,6 +9,6 @@ langgraph-checkpoint==4.2.0
 langgraph-sdk==0.4.4
 opentelemetry-api==1.44.0
 opentelemetry-sdk==1.44.0
-openai==3.22.1
+openai==1.40.0
 anthropic==0.34.0
 pytest==9.0.3

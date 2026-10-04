@@ -1,0 +1,12 @@
+{
+  "compat-floor.lock.gz": "422f9c27f256d117ade56b3500c2c30993848636b442264e965465271081af80",
+  "compat-floor.manifest.gz": "bb94edbadf918bb310801072da72780e98178f873520c4e67f832fc6894772f7",
+  "compat-latest.lock.gz": "02d34dad894d2f4a103f9b187d4edaa7dd62387bcb9c97ec8502242157df308a",
+  "compat-responses-floor.lock.gz": "9e6a91a7dc03027094c9580d2d43cd83a20b4df627a16fbdd2307c986252400a",
+  "compat-responses-floor.manifest.gz": "5ea3e8686101418f90fbdf233b75b237d0292131b97e0f7a06e68f2442a3d50d",
+  "focused.log.gz": "ad2e299afa1f89e3598b5d928e2657b36027e83c5147a119cd3794c05ecf6028",
+  "live-cost.lock.gz": "4010f348f652a3590fe1981286effb5394010c45a0b8aa09db08dccc2307334c",
+  "original-ci-failure.log.gz": "a4b65abad7106b49a2d88eb5fadaa2512e938b58ac017e0aa718c97c9e839cc7",
+  "receipt.json": "000e019a7f87d767dcc1cc51aa1a39e80fb4a9afc31d011cac04b06183b2411c",
+  "ruff.log.gz": "84931ab9ec9e1526cb7bec3ccb46f05bfc2bdd164d156ef72c5d02f319baf464"
+}
