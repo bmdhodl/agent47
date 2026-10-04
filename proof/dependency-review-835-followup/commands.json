@@ -1,0 +1,158 @@
+[
+  {
+    "name": "preexisting-test-lint",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "sdk",
+      "--output-format=json"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 1,
+    "expected": 1,
+    "started_utc": "2026-10-04T02:36:47.404396+00:00",
+    "finished_utc": "2026-10-04T02:36:47.735195+00:00"
+  },
+  {
+    "name": "compile-replay-header",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-compiler\\venv\\Scripts\\python.exe",
+      "-I",
+      "-m",
+      "piptools",
+      "compile",
+      "--generate-hashes",
+      "--reuse-hashes",
+      "--no-upgrade",
+      "--index-url=https://pypi.org/simple",
+      "--no-emit-index-url",
+      "--pip-args=--isolated --no-input",
+      "--output-file=.github/requirements/ci-tools.txt",
+      ".github/requirements/ci-tools.in"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\stage",
+    "exit": 0,
+    "expected": 0,
+    "started_utc": "2026-10-04T02:37:08.948916+00:00",
+    "finished_utc": "2026-10-04T02:37:12.577096+00:00"
+  },
+  {
+    "name": "dependency-review-834-r2-normal",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-834-r2\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected": 0,
+    "started_utc": "2026-10-04T02:37:12.593774+00:00",
+    "finished_utc": "2026-10-04T02:37:12.741754+00:00"
+  },
+  {
+    "name": "dependency-review-834-r2-optimized",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "-O",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-834-r2\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected": 0,
+    "started_utc": "2026-10-04T02:37:12.741814+00:00",
+    "finished_utc": "2026-10-04T02:37:13.171685+00:00"
+  },
+  {
+    "name": "dependency-review-834-r2-tamper-normal",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-834-r2\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 1,
+    "expected": 1,
+    "started_utc": "2026-10-04T02:37:13.172534+00:00",
+    "finished_utc": "2026-10-04T02:37:13.278218+00:00"
+  },
+  {
+    "name": "dependency-review-834-r2-tamper-optimized",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "-O",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-834-r2\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 1,
+    "expected": 1,
+    "started_utc": "2026-10-04T02:37:13.278274+00:00",
+    "finished_utc": "2026-10-04T02:37:13.374773+00:00"
+  },
+  {
+    "name": "dependency-review-835-normal",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-835\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected": 0,
+    "started_utc": "2026-10-04T02:37:13.383664+00:00",
+    "finished_utc": "2026-10-04T02:37:13.534871+00:00"
+  },
+  {
+    "name": "dependency-review-835-optimized",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "-O",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-835\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected": 0,
+    "started_utc": "2026-10-04T02:37:13.534926+00:00",
+    "finished_utc": "2026-10-04T02:37:13.642902+00:00"
+  },
+  {
+    "name": "dependency-review-835-tamper-normal",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-835\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 1,
+    "expected": 1,
+    "started_utc": "2026-10-04T02:37:13.643600+00:00",
+    "finished_utc": "2026-10-04T02:37:13.743857+00:00"
+  },
+  {
+    "name": "dependency-review-835-tamper-optimized",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "-O",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\dependency-review-835\\verify.py"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 1,
+    "expected": 1,
+    "started_utc": "2026-10-04T02:37:13.743910+00:00",
+    "finished_utc": "2026-10-04T02:37:13.839976+00:00"
+  },
+  {
+    "name": "changed-guardrail",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-build\\venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "sdk/tests/test_ci_guardrails.py",
+      "-q",
+      "--basetemp",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr835-review-fixes\\pytest"
+    ],
+    "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+    "exit": 0,
+    "expected": 0,
+    "started_utc": "2026-10-04T02:37:13.840040+00:00",
+    "finished_utc": "2026-10-04T02:37:14.373568+00:00"
+  }
+]
