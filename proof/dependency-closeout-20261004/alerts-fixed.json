@@ -1,0 +1,29 @@
+{
+  "captured_utc": "2026-10-04T04:45:00.225748+00:00",
+  "fixed_pyjwt_alert_count": 2,
+  "alerts": [
+    {
+      "number": 74,
+      "url": "https://github.com/bmdhodl/agent47/security/dependabot/74",
+      "state": "fixed",
+      "updated_at": "2026-10-04T04:39:45Z",
+      "fixed_at": "2026-10-04T04:39:45Z",
+      "manifest": ".github/requirements/mcp-budget.in",
+      "package": "PyJWT",
+      "advisory": "GHSA-42vr-xj54-vc7v"
+    },
+    {
+      "number": 64,
+      "url": "https://github.com/bmdhodl/agent47/security/dependabot/64",
+      "state": "fixed",
+      "updated_at": "2026-10-04T04:22:22Z",
+      "fixed_at": "2026-10-04T04:22:22Z",
+      "manifest": ".github/requirements/mcp-budget.txt",
+      "package": "PyJWT",
+      "advisory": "GHSA-42vr-xj54-vc7v"
+    }
+  ],
+  "open_alert_numbers_at_capture": [],
+  "supersedes_only": "The pending alert74 readback in snapshot.json; historical snapshot is preserved.",
+  "scope": "GitHub indexed-alert readback only. CrewAI/ChromaDB issue644 and the other issue gates remain open."
+}
