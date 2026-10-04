@@ -84,12 +84,21 @@ def verify():
     verifier = Path(__file__).read_bytes().replace(b"\r\n", b"\n")
     require(digest(verifier) == receipt["verifier_sha256"], "Verifier changed after evidence freeze")
     if sys.argv[1:]:
-        require(sys.argv[1:] == [receipt["scratch_trace_source"]], "Unknown scratch trace source")
-        name = receipt["scratch_trace_artifact"]
-        require(name in artifacts, "Scratch trace has no retained artifact")
-        events = [json.loads(line) for line in gzip.decompress((HERE / name).read_bytes()).splitlines() if line]
-        require(bool(events), "Retained scratch trace is empty")
-        print("Verified retained scratch trace without requiring the local scratch file")
+        require(len(sys.argv) == 2, "Expected one original evidence path")
+        if sys.argv[1] == receipt["scratch_trace_source"]:
+            name = receipt["scratch_trace_artifact"]
+            require(name in artifacts, "Scratch trace has no retained artifact")
+            events = [json.loads(line) for line in gzip.decompress((HERE / name).read_bytes()).splitlines() if line]
+            require(bool(events), "Retained scratch trace is empty")
+            print("Verified retained scratch trace without requiring the local scratch file")
+        else:
+            prior = receipt["checkout_newline_evidence"]
+            require(sys.argv[1] == prior["path"], "Unknown original evidence path")
+            archived = gzip.decompress((HERE / prior["artifact"]).read_bytes())
+            require(digest(archived) == prior["normalized_sha256"], "Prior proof snapshot differs")
+            current = (ROOT / prior["path"]).read_bytes().replace(b"\r\n", b"\n")
+            require(current == archived, "Prior proof content changed beyond checkout newlines")
+            print("Verified prior proof identity after checkout newline conversion")
     print("Verified installed AG-06 acceptance evidence: two profiles, no skipped acceptance tests")
 
 

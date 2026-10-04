@@ -594,11 +594,18 @@
     "source-ruff-initial-failure.log.gz": "cde26676b14e2b8a667910c64eb1d74cd971bf70264c3fcec417fbeb2c97dc3a",
     "agent47-approved735-validate.py.gz": "0ca727b079e6edb053c2773ae5c94bc058002f30362a14714c343cf252f0b0da",
     "agent47-approved735-example.py.gz": "9ed2040ed85dbe014390e5fb258a4e8d24abbce15901ee18ee829b7ebc46edd5",
-    "source-tests-traces.jsonl.gz": "2560a1638e07360b61d0c90f09e68cd0c538493017a8e50aafaf4ec78a5dc28c"
+    "source-tests-traces.jsonl.gz": "2560a1638e07360b61d0c90f09e68cd0c538493017a8e50aafaf4ec78a5dc28c",
+    "checkout-newline-prior-proof.md.gz": "a2cffd0dbcbbe2390f844cc2c909ab01e86ac6ca8a5a5a6535ca3c1222831c7c"
   },
   "acceptance": "Existing approved Responses/Agents API, minimum/current installed candidate behavior, native max_turns and explicit unsupported boundaries.",
   "limits": "No release, workflow/security change, broad adapter approval or external-adoption claim. Fluarmn dogfood is evaluated separately.",
-  "verifier_sha256": "7b42875049273de9d0747d06ed5170e9f41c9b2d206d797f3706f7e767c9b857",
+  "verifier_sha256": "f1d0c0d35bd2dc66a4bd002009a64f0dda7c43687239130737ed495b69570768",
   "scratch_trace_source": "traces.jsonl",
-  "scratch_trace_artifact": "source-tests-traces.jsonl.gz"
+  "scratch_trace_artifact": "source-tests-traces.jsonl.gz",
+  "checkout_newline_evidence": {
+    "path": "proof/ollama-native-usage-818/README.md",
+    "artifact": "checkout-newline-prior-proof.md.gz",
+    "normalized_sha256": "5a7f9ab3b164fd75666ebbcce5b45b988d19e6cd05e71f0bfbdd62fdc2058485",
+    "reason": "Original worktree had one LF line amid CRLF. Fresh Windows checkout normalizes all lines. Git content is identical; no prior proof edit is claimed."
+  }
 }
