@@ -51,7 +51,7 @@ def verify():
     for profile, versions, row in zip(("floor", "current"), pairs, receipt["profiles"]):
         require((row["openai"], row["agents"]) == versions, "Provider versions differ")
         require(row["version"] == "2.0.0", "Wrong AgentGuard candidate")
-        require(row["python"].startswith("3.11.") and row["system"] == "Windows", "Wrong floor platform")
+        require(row["python"].startswith("3.11.") and row["system"] == "Windows", f"Wrong platform for {profile}")
         require(row["package_files_equal_wheel_and_source"] >= 40, "Incomplete installed identity proof")
         require(row["metadata_equal_wheel"] and row["mandatory_runtime_requirements"] == 0, "Core dependency contract differs")
         for suite in ("responses", "free-local"):

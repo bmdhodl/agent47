@@ -444,7 +444,7 @@
   ],
   "source_hashes": {
     "docs/integrations/openai-responses.md": "b7baad8feda0e0856727996b71579e5f649a85d66c354a95e9f0ed82aa603a42",
-    "examples/openai_agents_sdk_budget.py": "dada0600b2ae310a4386c681f90d186c6ee5f10c72b9fa0b7f544c8adea8b2af",
+    "examples/openai_agents_sdk_budget.py": "623f040875c325a30f8dd4a39d6acdca9917f4e7f64952d4f424a39e94785273",
     "memory/decisions.md": "f3705c310791f3babceb53c42fcdbeb842916c1a4529344be8a1c094c201921b",
     "sdk/agentguard/__init__.py": "0201795eb9b23b21ede8c9b9a0cf1eb227ea63659bd1ad2398982e4372f9ae77",
     "sdk/agentguard/__main__.py": "629e440994b059ef3114de01d6b4f021f3f5a706ae9519f85178fc931baca213",
@@ -526,7 +526,7 @@
     "source-tools.log.gz": "59b1cf8c208a35745cf4f1b247ed20e520da9514833535e3aa0d26c69ecd370a",
     "source-review.log.gz": "26b44cb5e9ba47633744208304c2e21fce5767d59fb4c414a4de35e39cd5b013",
     "source-00.gz": "7c48584e65e338c7b91d3626eb59da9ee8c6b9973f77ecd673926ecf907ef2d6",
-    "source-01.gz": "d1f35e510757eafe178d7e0df5665a1b0f9f9d88bc3b62c75276c9e92ccd7b85",
+    "source-01.gz": "febc39bb8ab99608eea57a01780e3171ee8af711b19c64d001ad1c334eb81d65",
     "source-02.gz": "03070233d09f9d554b19f0360605d4441d5a69f7ba1e8624b22f57678e938b68",
     "source-03.gz": "e4ae9b7c15edfb993a9dace4be25360369e92774352d61602fa6cedc8febdd2f",
     "source-04.gz": "33c70b56bd7808f704a2081b39b2b707848003c52fd1a5fd3018f04a8ac7ba98",
@@ -583,9 +583,9 @@
     "source-55.gz": "82286f6aafaf9670242670665fe99c24540f36828ceb5c41efe5f947de11a505",
     "source-56.gz": "cd39766f8d77ca1d5f8208584d0c8a0998bf2f76af00b7c31ec546c0d00f7c63",
     "floor-example.log.gz": "436b6eb3ca931d871e38870caa7d258c3341144b7dafa2cd70aba0bf9089f58a",
-    "floor-example-trace.jsonl.gz": "bc7f45f747e604c23b9f029bac9ad12db945e9beca87f662092f212424b9b7c2",
+    "floor-example-trace.jsonl.gz": "2a5b0e1705adb46bd532e16a13dce285f70cdb13cdd89091e0b825ba6b39b4a4",
     "current-example.log.gz": "ed23f688eaa454794d9f97d745935634168da52eabd84c1433beb792f66db278",
-    "current-example-trace.jsonl.gz": "53221e87e0358edca315abca4fdbbe1c68c9696a37ac9e9d8e860cdf5403f00f",
+    "current-example-trace.jsonl.gz": "ad1453a88ee9ea88172074d4b251dee53719a0cea3a2f382dfb104cfa9140863",
     "floor-responses.xml.gz": "39b273ec12a90f601f8cc409f714ca6d01ccab4bb11f58a57a121a9ccbf71068",
     "floor-free-local.xml.gz": "2edc97b5bb655b5197c126dc63ee49a9ebcc100859265351c7c72e11f707d78d",
     "current-responses.xml.gz": "976082e0036fbd5f1d9f1616a7162ab659681867c5d42d864c85e86330df4c5c",
@@ -593,9 +593,9 @@
     "floor-inventory-initial-failure.log.gz": "36e5dcef64e0f652999f64888a0f608b975ae8f8db35008b07c0afc55e724cff",
     "source-ruff-initial-failure.log.gz": "cde26676b14e2b8a667910c64eb1d74cd971bf70264c3fcec417fbeb2c97dc3a",
     "agent47-approved735-validate.py.gz": "0ca727b079e6edb053c2773ae5c94bc058002f30362a14714c343cf252f0b0da",
-    "agent47-approved735-example.py.gz": "29fee8e08ad5404662bd28088a1dd428f24455add9f6de5ec68a94b49853f1d8"
+    "agent47-approved735-example.py.gz": "9ed2040ed85dbe014390e5fb258a4e8d24abbce15901ee18ee829b7ebc46edd5"
   },
   "acceptance": "Existing approved Responses/Agents API, minimum/current installed candidate behavior, native max_turns and explicit unsupported boundaries.",
   "limits": "No release, workflow/security change, broad adapter approval or external-adoption claim. Fluarmn dogfood is evaluated separately.",
-  "verifier_sha256": "6d68d139dad76b9dd42774b4101e76bc57a056932ace250ce154f014c8ed10c9"
+  "verifier_sha256": "fcbd7d4889ae23f0fd1664902847834a708176e58aa9bae3bb1cd92a509e19d7"
 }

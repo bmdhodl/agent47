@@ -6,6 +6,9 @@ docs/integrations/openai-responses.md for the tested versions and installation.
 agentguard.init() instruments the standard OpenAIResponsesModel client path.
 Its model calls are checked before dispatch and charged from reported usage.
 The SDK's own max_turns still applies; whichever limit trips first stops the run.
+In 2.0.0, standard clients created before activation are covered. Activate before
+dispatch and stream-helper construction. Previously saved bound callables,
+custom resource overrides and custom model transports can bypass the patch.
 
 Tool calls and handoffs are not guard points. The model call each one leads to is.
 
