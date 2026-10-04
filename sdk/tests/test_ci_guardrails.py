@@ -24,9 +24,12 @@ def test_dependabot_preserves_fixed_compatibility_floors() -> None:
     """REGRESSION: version updates must not retire declared provider floors."""
     repo_root = Path(__file__).resolve().parents[2]
     config = (repo_root / ".github" / "dependabot.yml").read_text(encoding="utf-8")
-    block = config.split('    directory: "/.github/requirements"', 1)[1]
-    excluded = block.split("    exclude-paths:\n", 1)[1]
-    patterns = re.findall(r'^      - "([^"]+)"$', excluded, re.M)
+    blocks = config.split('    directory: "/.github/requirements"', 1)
+    assert len(blocks) == 2, "Dependabot must maintain the requirements directory"
+    block = blocks[1].split("  - package-ecosystem:", 1)[0]
+    excluded = re.search(r'^    exclude-paths:\n((?:      - "[^"\n]+"\n)+)', block, re.M)
+    assert excluded is not None, "Requirements version updates must exclude the fixed floor files"
+    patterns = re.findall(r'^      - "([^"]+)"$', excluded.group(1), re.M)
     floors = {
         "compat-floor.in", "compat-floor.txt",
         "compat-responses-floor.in", "compat-responses-floor.txt",
@@ -37,7 +40,7 @@ def test_dependabot_preserves_fixed_compatibility_floors() -> None:
         if path.suffix in {".in", ".txt"}
     }
     matched = {name for name in manifests if any(fnmatchcase(name, pattern) for pattern in patterns)}
-    assert matched == floors, "Keep current-version, CI-tool and MCP locks eligible for updates"
+    assert matched == floors, f"Exclude exactly the fixed floor files; got {sorted(matched)}"
 
 
 def _contains_ordered_lines(lines: list[str], expected: list[str]) -> bool:

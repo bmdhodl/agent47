@@ -1,0 +1,29 @@
+[
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "sdk/tests/test_documentation.py",
+      "sdk/tests/test_ci_guardrails.py",
+      "-q",
+      "--basetemp",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pr834-followup-pytest"
+    ],
+    "exit": 0,
+    "started_utc": "2026-10-04T00:26:51.979005+00:00",
+    "finished_utc": "2026-10-04T00:26:52.793748+00:00"
+  },
+  {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "sdk/tests/test_ci_guardrails.py"
+    ],
+    "exit": 0,
+    "started_utc": "2026-10-04T00:26:52.793805+00:00",
+    "finished_utc": "2026-10-04T00:26:53.059478+00:00"
+  }
+]
