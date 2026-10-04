@@ -1,0 +1,1097 @@
+{
+  "captured_utc": "2026-10-04T04:33:48.860591+00:00",
+  "merged_count": 6,
+  "merges": [
+    {
+      "pull_request": {
+        "headRefOid": "bc114d34969d4dd46c2241db8864f84f19ce141f",
+        "mergeCommit": {
+          "oid": "2d3fa2cb3d60481caed102a2d7fdbe85def54db5"
+        },
+        "mergedAt": "2026-10-04T02:22:10Z",
+        "number": 834,
+        "state": "MERGED",
+        "title": "chore(deps): update current OpenAI locks and preserve compatibility floors",
+        "url": "https://github.com/bmdhodl/agent47/pull/834"
+      },
+      "main_ci": {
+        "conclusion": "success",
+        "databaseId": 37170840939,
+        "headSha": "2d3fa2cb3d60481caed102a2d7fdbe85def54db5",
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37170840939"
+      }
+    },
+    {
+      "pull_request": {
+        "headRefOid": "d4ce498a1a983a637cf0f6a25538c38d691c61d1",
+        "mergeCommit": {
+          "oid": "39ef9e58fcdcf3b5b93aaf46ebb0da0544465ad2"
+        },
+        "mergedAt": "2026-10-04T02:43:38Z",
+        "number": 835,
+        "state": "MERGED",
+        "title": "chore(deps): update zipp and retain Windows tool dependencies",
+        "url": "https://github.com/bmdhodl/agent47/pull/835"
+      },
+      "main_ci": {
+        "conclusion": "success",
+        "databaseId": 37171935709,
+        "headSha": "39ef9e58fcdcf3b5b93aaf46ebb0da0544465ad2",
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37171935709"
+      }
+    },
+    {
+      "pull_request": {
+        "headRefOid": "277a72488c5fff0a80895daf6ac816adf04e899b",
+        "mergeCommit": {
+          "oid": "2c028d5146a506e5d0465e847532d2b960a5c9b6"
+        },
+        "mergedAt": "2026-10-04T02:47:09Z",
+        "number": 836,
+        "state": "MERGED",
+        "title": "chore(deps): test current langchain-core 1.6.6",
+        "url": "https://github.com/bmdhodl/agent47/pull/836"
+      },
+      "main_ci": {
+        "conclusion": "success",
+        "databaseId": 37172114738,
+        "headSha": "2c028d5146a506e5d0465e847532d2b960a5c9b6",
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37172114738"
+      }
+    },
+    {
+      "pull_request": {
+        "headRefOid": "a41874561181bd955878a020b7ff9c2d4a61b7a3",
+        "mergeCommit": {
+          "oid": "64b39bdb8b05a543ed4ef562d87320f7fabbf461"
+        },
+        "mergedAt": "2026-10-04T03:11:10Z",
+        "number": 838,
+        "state": "MERGED",
+        "title": "chore(deps): update Ruff and preserve CI guard behavior",
+        "url": "https://github.com/bmdhodl/agent47/pull/838"
+      },
+      "main_ci": {
+        "conclusion": "success",
+        "databaseId": 37173337552,
+        "headSha": "64b39bdb8b05a543ed4ef562d87320f7fabbf461",
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37173337552"
+      }
+    },
+    {
+      "pull_request": {
+        "headRefOid": "9b48253f11e42d3e2379d1e686d5000e56fd2d25",
+        "mergeCommit": {
+          "oid": "abeab8fc46ba5361f8968511f6ed5e5f58f211c3"
+        },
+        "mergedAt": "2026-10-04T03:46:43Z",
+        "number": 839,
+        "state": "MERGED",
+        "title": "chore(ci): update metadata tools and complete Ruff compatibility",
+        "url": "https://github.com/bmdhodl/agent47/pull/839"
+      },
+      "main_ci": {
+        "conclusion": "success",
+        "databaseId": 37175039666,
+        "headSha": "abeab8fc46ba5361f8968511f6ed5e5f58f211c3",
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37175039666"
+      }
+    },
+    {
+      "pull_request": {
+        "headRefOid": "20027c47823c974c0bb0aad67581bafe99dc8af6",
+        "mergeCommit": {
+          "oid": "1fdc4cb8617af619b888430824728ff64340a6ba"
+        },
+        "mergedAt": "2026-10-04T04:22:10Z",
+        "number": 840,
+        "state": "MERGED",
+        "title": "fix(mcp): patch JWT dependency while preserving MCP 1.x",
+        "url": "https://github.com/bmdhodl/agent47/pull/840"
+      },
+      "main_ci": {
+        "conclusion": "success",
+        "databaseId": 37176805691,
+        "headSha": "1fdc4cb8617af619b888430824728ff64340a6ba",
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176805691"
+      }
+    }
+  ],
+  "open_pull_requests": [
+    {
+      "headRefOid": "08326f88e132acb77d6ef72b09509b1f15de6ee5",
+      "number": 837,
+      "title": "chore(deps): bump mcp from 1.30.0 to 2.2.0 in /.github/requirements",
+      "url": "https://github.com/bmdhodl/agent47/pull/837"
+    }
+  ],
+  "held_mcp2_ci": {
+    "conclusion": "failure",
+    "databaseId": 37176924360,
+    "headSha": "08326f88e132acb77d6ef72b09509b1f15de6ee5",
+    "jobs": [
+      {
+        "completedAt": "2026-10-04T04:25:08Z",
+        "conclusion": "success",
+        "databaseId": 111361370238,
+        "name": "responses-floor",
+        "startedAt": "2026-10-04T04:24:50Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:24:52Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:24:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:54Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:24:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:56Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:24:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:02Z",
+            "conclusion": "success",
+            "name": "Install pinned Responses and Agents floor",
+            "number": 4,
+            "startedAt": "2026-10-04T04:24:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Real Responses and Agents floor tests without skips",
+            "number": 5,
+            "startedAt": "2026-10-04T04:25:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 9,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:07Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:07Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T04:25:07Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370238"
+      },
+      {
+        "completedAt": "2026-10-04T04:25:07Z",
+        "conclusion": "failure",
+        "databaseId": 111361370302,
+        "name": "mcp-budget",
+        "startedAt": "2026-10-04T04:24:50Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:24:52Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:24:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:53Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:24:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:55Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:24:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:58Z",
+            "conclusion": "success",
+            "name": "Install tools",
+            "number": 4,
+            "startedAt": "2026-10-04T04:24:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:03Z",
+            "conclusion": "success",
+            "name": "Install local budget MCP dependencies",
+            "number": 5,
+            "startedAt": "2026-10-04T04:24:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "failure",
+            "name": "Local budget MCP lint and tests",
+            "number": 6,
+            "startedAt": "2026-10-04T04:25:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 11,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 12,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370302"
+      },
+      {
+        "completedAt": "2026-10-04T04:25:37Z",
+        "conclusion": "success",
+        "databaseId": 111361370303,
+        "name": "lint",
+        "startedAt": "2026-10-04T04:25:26Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:25:27Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:25:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:29Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:25:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:30Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:25:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:34Z",
+            "conclusion": "success",
+            "name": "Install tools",
+            "number": 4,
+            "startedAt": "2026-10-04T04:25:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:34Z",
+            "conclusion": "success",
+            "name": "Check CI tool pins support the SDK Python floor",
+            "number": 5,
+            "startedAt": "2026-10-04T04:25:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:34Z",
+            "conclusion": "success",
+            "name": "Check PyPI README sync",
+            "number": 6,
+            "startedAt": "2026-10-04T04:25:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:34Z",
+            "conclusion": "success",
+            "name": "Check release metadata sync",
+            "number": 7,
+            "startedAt": "2026-10-04T04:25:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:34Z",
+            "conclusion": "success",
+            "name": "Lint (ruff)",
+            "number": 8,
+            "startedAt": "2026-10-04T04:25:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:36Z",
+            "conclusion": "success",
+            "name": "Security lint (bandit)",
+            "number": 9,
+            "startedAt": "2026-10-04T04:25:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:36Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 17,
+            "startedAt": "2026-10-04T04:25:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:36Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 18,
+            "startedAt": "2026-10-04T04:25:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:36Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-04T04:25:36Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370303"
+      },
+      {
+        "completedAt": "2026-10-04T04:26:37Z",
+        "conclusion": "failure",
+        "databaseId": 111361370306,
+        "name": "compat (latest)",
+        "startedAt": "2026-10-04T04:25:26Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:25:28Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:25:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:29Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:25:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:31Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:25:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:45Z",
+            "conclusion": "success",
+            "name": "Install pinned framework and provider packages",
+            "number": 4,
+            "startedAt": "2026-10-04T04:25:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:35Z",
+            "conclusion": "failure",
+            "name": "Full suite against real packages",
+            "number": 5,
+            "startedAt": "2026-10-04T04:25:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:35Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 9,
+            "startedAt": "2026-10-04T04:26:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:35Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T04:26:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:35Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T04:26:35Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370306"
+      },
+      {
+        "completedAt": "2026-10-04T04:25:41Z",
+        "conclusion": "failure",
+        "databaseId": 111361370312,
+        "name": "compat (floor)",
+        "startedAt": "2026-10-04T04:24:51Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:24:52Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:24:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:55Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:24:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:57Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:24:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:05Z",
+            "conclusion": "success",
+            "name": "Install pinned framework and provider packages",
+            "number": 4,
+            "startedAt": "2026-10-04T04:24:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:39Z",
+            "conclusion": "failure",
+            "name": "Full suite against real packages",
+            "number": 5,
+            "startedAt": "2026-10-04T04:25:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:39Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 9,
+            "startedAt": "2026-10-04T04:25:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:40Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T04:25:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:40Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T04:25:40Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370312"
+      },
+      {
+        "completedAt": "2026-10-04T04:25:09Z",
+        "conclusion": "success",
+        "databaseId": 111361370321,
+        "name": "mcp",
+        "startedAt": "2026-10-04T04:24:52Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:24:54Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:24:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:56Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:24:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:02Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+            "number": 3,
+            "startedAt": "2026-10-04T04:24:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:03Z",
+            "conclusion": "success",
+            "name": "Install MCP server deps",
+            "number": 4,
+            "startedAt": "2026-10-04T04:25:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "MCP build and tests",
+            "number": 5,
+            "startedAt": "2026-10-04T04:25:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+            "number": 9,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:06Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T04:25:06Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370321"
+      },
+      {
+        "completedAt": "2026-10-04T04:25:29Z",
+        "conclusion": "failure",
+        "databaseId": 111361370333,
+        "name": "test (3.11)",
+        "startedAt": "2026-10-04T04:24:50Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:24:51Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:24:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:53Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:24:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:54Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:24:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:57Z",
+            "conclusion": "success",
+            "name": "Install",
+            "number": 4,
+            "startedAt": "2026-10-04T04:24:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:28Z",
+            "conclusion": "failure",
+            "name": "Tests with coverage",
+            "number": 5,
+            "startedAt": "2026-10-04T04:24:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:28Z",
+            "conclusion": "skipped",
+            "name": "Upload coverage artifact",
+            "number": 6,
+            "startedAt": "2026-10-04T04:25:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:28Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 11,
+            "startedAt": "2026-10-04T04:25:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:28Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 12,
+            "startedAt": "2026-10-04T04:25:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:28Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-04T04:25:28Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370333"
+      },
+      {
+        "completedAt": "2026-10-04T04:25:39Z",
+        "conclusion": "cancelled",
+        "databaseId": 111361370338,
+        "name": "test (3.12)",
+        "startedAt": "2026-10-04T04:24:51Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:24:52Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:24:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:55Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:24:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:24:58Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:24:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:00Z",
+            "conclusion": "success",
+            "name": "Install",
+            "number": 4,
+            "startedAt": "2026-10-04T04:24:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:37Z",
+            "conclusion": "cancelled",
+            "name": "Tests with coverage",
+            "number": 5,
+            "startedAt": "2026-10-04T04:25:00Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:37Z",
+            "conclusion": "skipped",
+            "name": "Upload coverage artifact",
+            "number": 6,
+            "startedAt": "2026-10-04T04:25:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:37Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 11,
+            "startedAt": "2026-10-04T04:25:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:37Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 12,
+            "startedAt": "2026-10-04T04:25:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:25:37Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-04T04:25:37Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361370338"
+      },
+      {
+        "completedAt": "2026-10-04T04:26:44Z",
+        "conclusion": "failure",
+        "databaseId": 111361619206,
+        "name": "ci-required",
+        "startedAt": "2026-10-04T04:26:39Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T04:26:40Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T04:26:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:42Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T04:26:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:42Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T04:26:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:42Z",
+            "conclusion": "failure",
+            "name": "Require every job group to pass",
+            "number": 4,
+            "startedAt": "2026-10-04T04:26:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:42Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 7,
+            "startedAt": "2026-10-04T04:26:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:42Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 8,
+            "startedAt": "2026-10-04T04:26:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T04:26:42Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-04T04:26:42Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360/job/111361619206"
+      }
+    ],
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/bmdhodl/agent47/actions/runs/37176924360"
+  },
+  "pyjwt_alerts": [
+    {
+      "number": 74,
+      "state": "open",
+      "manifest": ".github/requirements/mcp-budget.in",
+      "package": "PyJWT",
+      "advisory": "GHSA-42vr-xj54-vc7v",
+      "updated_at": "2026-10-03T16:26:57Z",
+      "fixed_at": null
+    },
+    {
+      "number": 64,
+      "state": "fixed",
+      "manifest": ".github/requirements/mcp-budget.txt",
+      "package": "PyJWT",
+      "advisory": "GHSA-42vr-xj54-vc7v",
+      "updated_at": "2026-10-04T04:22:22Z",
+      "fixed_at": "2026-10-04T04:22:22Z"
+    }
+  ],
+  "graph_run": {
+    "conclusion": "success",
+    "databaseId": 37176807898,
+    "headSha": "1fdc4cb8617af619b888430824728ff64340a6ba",
+    "name": "Configured Graph Update: pip in /.github/requirements #1607377471",
+    "status": "completed",
+    "url": "https://github.com/bmdhodl/agent47/actions/runs/37176807898"
+  },
+  "submitted_mcp_manifest": {
+    "name": "/.github/requirements/mcp-budget.in",
+    "file": {
+      "source_location": ".github/requirements/mcp-budget.in"
+    },
+    "metadata": {
+      "ecosystem": "pypi",
+      "blob_oid": "c6c7d8186d6b64d6550a4cbbea6f4fb0d6cecf00"
+    },
+    "resolved": {
+      "pkg:pypi/annotated-types@0.8.0": {
+        "package_url": "pkg:pypi/annotated-types@0.8.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/anyio@4.15.1": {
+        "package_url": "pkg:pypi/anyio@4.15.1",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/attrs@26.1.0": {
+        "package_url": "pkg:pypi/attrs@26.1.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/certifi@2026.7.22": {
+        "package_url": "pkg:pypi/certifi@2026.7.22",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/cffi@2.1.1": {
+        "package_url": "pkg:pypi/cffi@2.1.1",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/click@8.5.0": {
+        "package_url": "pkg:pypi/click@8.5.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/cryptography@50.0.1": {
+        "package_url": "pkg:pypi/cryptography@50.0.1",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/h11@0.16.0": {
+        "package_url": "pkg:pypi/h11@0.16.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/httpcore@1.0.9": {
+        "package_url": "pkg:pypi/httpcore@1.0.9",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/httpx@0.28.1": {
+        "package_url": "pkg:pypi/httpx@0.28.1",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/httpx-sse@0.4.3": {
+        "package_url": "pkg:pypi/httpx-sse@0.4.3",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/idna@3.20": {
+        "package_url": "pkg:pypi/idna@3.20",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/jsonschema@4.26.0": {
+        "package_url": "pkg:pypi/jsonschema@4.26.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/jsonschema-specifications@2025.9.1": {
+        "package_url": "pkg:pypi/jsonschema-specifications@2025.9.1",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/mcp@1.30.0": {
+        "package_url": "pkg:pypi/mcp@1.30.0",
+        "relationship": "direct",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/pycparser@3.0": {
+        "package_url": "pkg:pypi/pycparser@3.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/pydantic@2.13.5": {
+        "package_url": "pkg:pypi/pydantic@2.13.5",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/pydantic-core@2.46.5": {
+        "package_url": "pkg:pypi/pydantic-core@2.46.5",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/pydantic-settings@2.15.0": {
+        "package_url": "pkg:pypi/pydantic-settings@2.15.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/pyjwt@2.15.1": {
+        "package_url": "pkg:pypi/pyjwt@2.15.1",
+        "relationship": "direct",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/python-dotenv@1.2.3": {
+        "package_url": "pkg:pypi/python-dotenv@1.2.3",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/python-multipart@0.0.32": {
+        "package_url": "pkg:pypi/python-multipart@0.0.32",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/pywin32@312": {
+        "package_url": "pkg:pypi/pywin32@312",
+        "relationship": "direct",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/referencing@0.37.0": {
+        "package_url": "pkg:pypi/referencing@0.37.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/rpds-py@2026.6.3": {
+        "package_url": "pkg:pypi/rpds-py@2026.6.3",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/sse-starlette@3.4.11": {
+        "package_url": "pkg:pypi/sse-starlette@3.4.11",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/starlette@1.6.0": {
+        "package_url": "pkg:pypi/starlette@1.6.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/typing-extensions@4.16.0": {
+        "package_url": "pkg:pypi/typing-extensions@4.16.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/typing-inspection@0.4.4": {
+        "package_url": "pkg:pypi/typing-inspection@0.4.4",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      },
+      "pkg:pypi/uvicorn@0.53.0": {
+        "package_url": "pkg:pypi/uvicorn@0.53.0",
+        "relationship": "indirect",
+        "scope": "runtime",
+        "dependencies": []
+      }
+    }
+  },
+  "graph_log_sha256": "536d749a853085910a911546792dede4ce8f008b860d9ced56c129c037f73574",
+  "interpretation": "Patched dependency submitted and accepted. Alert state is a separate readback; open alert 74 is not claimed fixed.",
+  "publication": "SDK 2.0.0 candidate remains unpublished.",
+  "handoff_location": "Post-merge receipt and inbox entry are backed up on the existing review branch; product fixes and test packets are on main."
+}
