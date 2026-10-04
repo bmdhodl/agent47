@@ -10,14 +10,14 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Callable, Iterable, Optional
 
 try:
     from packaging.markers import InvalidMarker, Marker
     from packaging.specifiers import SpecifierSet
     from packaging.version import Version
-except Exception:  # pragma: no cover - fallback keeps the script stdlib-runnable.
+except ImportError:  # pragma: no cover - fallback keeps the script stdlib-runnable.
     InvalidMarker = None
     Marker = None
     SpecifierSet = None
@@ -35,7 +35,7 @@ class DirectPin:
     name: str
     version: str
     line_number: int
-    marker: Optional[str] = None
+    marker: str | None = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -152,7 +152,7 @@ def _fallback_marker_applies(marker: str, python_version: tuple[int, int]) -> bo
     raise ValueError(f"Unsupported environment marker: {marker!r}")
 
 
-def marker_applies(marker: Optional[str], python_version: tuple[int, int]) -> bool:
+def marker_applies(marker: str | None, python_version: tuple[int, int]) -> bool:
     if not marker:
         return True
     environment = {"python_version": _version_text(python_version)}
@@ -166,7 +166,7 @@ def marker_applies(marker: Optional[str], python_version: tuple[int, int]) -> bo
     return _fallback_marker_applies(marker, python_version)
 
 
-def supports_python(specifier: Optional[str], python_version: tuple[int, int]) -> bool:
+def supports_python(specifier: str | None, python_version: tuple[int, int]) -> bool:
     if not specifier:
         return True
     if SpecifierSet is not None and Version is not None:
@@ -226,7 +226,7 @@ def format_incompatible(incompatible: Iterable[IncompatiblePin], python_version:
     return "\n".join(lines)
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--requirements", type=Path, default=DEFAULT_REQUIREMENTS)
     parser.add_argument("--min-python", default=_version_text(DEFAULT_MIN_PYTHON))

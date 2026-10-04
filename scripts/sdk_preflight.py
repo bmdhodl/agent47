@@ -5,9 +5,9 @@ import argparse
 import json
 import subprocess
 import sys
+from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable, List, Sequence, Set
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 NPM_COMMAND = "npm.cmd" if sys.platform == "win32" else "npm"
@@ -150,7 +150,7 @@ for rel in files:
 class Step:
     label: str
     reason: str
-    command: List[str]
+    command: list[str]
 
 
 def _normalize_path(path: str) -> str:
@@ -160,18 +160,18 @@ def _normalize_path(path: str) -> str:
     return normalized
 
 
-def _existing(paths: Iterable[str]) -> List[str]:
+def _existing(paths: Iterable[str]) -> list[str]:
     return sorted(path for path in {_normalize_path(value) for value in paths} if (REPO_ROOT / path).exists())
 
 
-def discover_changed_files() -> List[str]:
+def discover_changed_files() -> list[str]:
     """Discover tracked and untracked local changes."""
     git_commands = (
         ["git", "diff", "--name-only", "--cached"],
         ["git", "diff", "--name-only"],
         ["git", "ls-files", "--others", "--exclude-standard"],
     )
-    changed: Set[str] = set()
+    changed: set[str] = set()
     for command in git_commands:
         result = subprocess.run(
             command,
@@ -189,10 +189,10 @@ def discover_changed_files() -> List[str]:
     return sorted(changed)
 
 
-def build_plan(changed_files: Sequence[str]) -> List[Step]:
+def build_plan(changed_files: Sequence[str]) -> list[Step]:
     """Build a fast preflight plan from a set of changed files."""
     normalized = {_normalize_path(path) for path in changed_files if _normalize_path(path)}
-    steps: List[Step] = []
+    steps: list[Step] = []
 
     lint_targets = _existing(
         path
@@ -224,7 +224,7 @@ def build_plan(changed_files: Sequence[str]) -> List[Step]:
             )
         )
 
-    pytest_targets: Set[str] = set()
+    pytest_targets: set[str] = set()
     for path in normalized:
         if (
             path.startswith("sdk/tests/")
