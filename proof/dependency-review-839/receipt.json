@@ -1,0 +1,504 @@
+{
+  "commands": [
+    {
+      "name": "venv",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:24:51.391034+00:00",
+      "finished_utc": "2026-10-04T03:25:01.436073+00:00"
+    },
+    {
+      "name": "hash-install",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--disable-pip-version-check",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--require-hashes",
+        "-r",
+        ".github/requirements/ci-tools.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:25:01.436691+00:00",
+      "finished_utc": "2026-10-04T03:25:20.026915+00:00"
+    },
+    {
+      "name": "sdk-install",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--no-deps",
+        "--no-build-isolation",
+        "-e",
+        "./sdk"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:25:20.027468+00:00",
+      "finished_utc": "2026-10-04T03:25:22.680421+00:00"
+    },
+    {
+      "name": "sdk-install-build-isolation",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--no-deps",
+        "--index-url",
+        "https://pypi.org/simple",
+        "-e",
+        "./sdk"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:26:37.537895+00:00",
+      "finished_utc": "2026-10-04T03:26:46.539125+00:00"
+    },
+    {
+      "name": "pip-check",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "check"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:26:46.539715+00:00",
+      "finished_utc": "2026-10-04T03:26:47.564360+00:00"
+    },
+    {
+      "name": "metadata-smoke",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\metadata_smoke.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:26:47.565347+00:00",
+      "finished_utc": "2026-10-04T03:26:47.822994+00:00"
+    },
+    {
+      "name": "source-suite",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests",
+        "-q",
+        "--cov=agentguard",
+        "--cov-report=term-missing",
+        "--cov-fail-under=80",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\pytest-temp"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:26:47.824040+00:00",
+      "finished_utc": "2026-10-04T03:28:20.696296+00:00"
+    },
+    {
+      "name": "ruff-ci",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/agentguard",
+        "scripts/generate_pypi_readme.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "scripts/review_readiness_guard.py",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/live_cost_reconcile.py",
+        "scripts/check_ci_results.py",
+        "sdk/tests/test_ci_results.py",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:28:20.696700+00:00",
+      "finished_utc": "2026-10-04T03:28:21.188800+00:00"
+    },
+    {
+      "name": "focused-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests/test_review_readiness_guard.py",
+        "sdk/tests/test_sdk_preflight.py",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\focused-r2"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:30:36.544801+00:00",
+      "finished_utc": "2026-10-04T03:30:37.807718+00:00"
+    },
+    {
+      "name": "source-suite-r2",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests",
+        "-q",
+        "--cov=agentguard",
+        "--cov-report=term-missing",
+        "--cov-fail-under=80",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\pytest-temp-r2"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:30:37.808399+00:00",
+      "finished_utc": "2026-10-04T03:31:59.752531+00:00"
+    },
+    {
+      "name": "ruff-make-final",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/agentguard",
+        "scripts/generate_pypi_readme.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "scripts/review_readiness_guard.py",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/live_cost_reconcile.py",
+        "scripts/check_ci_results.py",
+        "sdk/tests/test_ci_results.py",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:31:59.753005+00:00",
+      "finished_utc": "2026-10-04T03:31:59.939280+00:00"
+    },
+    {
+      "name": "bandit",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "bandit",
+        "-r",
+        "sdk/agentguard",
+        "-s",
+        "B101,B110,B112,B311",
+        "-q"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:31:59.939767+00:00",
+      "finished_utc": "2026-10-04T03:32:00.877572+00:00"
+    },
+    {
+      "name": "floor-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "scripts/ci_tools_requirements_guard.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:00.878097+00:00",
+      "finished_utc": "2026-10-04T03:32:02.001071+00:00"
+    },
+    {
+      "name": "release-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "scripts/sdk_release_guard.py",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:02.001419+00:00",
+      "finished_utc": "2026-10-04T03:32:02.143415+00:00"
+    },
+    {
+      "name": "review-readiness",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "scripts/review_readiness_guard.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:02.143954+00:00",
+      "finished_utc": "2026-10-04T03:32:02.301071+00:00"
+    },
+    {
+      "name": "readme-sync",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "scripts/generate_pypi_readme.py",
+        "--check"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:02.301560+00:00",
+      "finished_utc": "2026-10-04T03:32:02.409594+00:00"
+    },
+    {
+      "name": "wheel-build",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "build",
+        "--wheel",
+        "--outdir",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\wheel",
+        "sdk"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:02.410112+00:00",
+      "finished_utc": "2026-10-04T03:32:07.604425+00:00"
+    },
+    {
+      "name": "merged-pr-834",
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "834",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "number,url,state,mergedAt,mergeCommit,headRefOid"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:07.605334+00:00",
+      "finished_utc": "2026-10-04T03:32:08.160457+00:00"
+    },
+    {
+      "name": "merged-pr-835",
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "835",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "number,url,state,mergedAt,mergeCommit,headRefOid"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:08.161052+00:00",
+      "finished_utc": "2026-10-04T03:32:08.852386+00:00"
+    },
+    {
+      "name": "merged-pr-836",
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "836",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "number,url,state,mergedAt,mergeCommit,headRefOid"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:08.852913+00:00",
+      "finished_utc": "2026-10-04T03:32:09.754281+00:00"
+    },
+    {
+      "name": "merged-pr-838",
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "838",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "number,url,state,mergedAt,mergeCommit,headRefOid"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:09.754874+00:00",
+      "finished_utc": "2026-10-04T03:32:10.194175+00:00"
+    },
+    {
+      "name": "main-ci-37170840939",
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "37170840939",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "databaseId,url,headSha,status,conclusion,jobs"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:10.194632+00:00",
+      "finished_utc": "2026-10-04T03:32:11.756878+00:00"
+    },
+    {
+      "name": "main-ci-37171935709",
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "37171935709",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "databaseId,url,headSha,status,conclusion,jobs"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:11.757400+00:00",
+      "finished_utc": "2026-10-04T03:32:12.666189+00:00"
+    },
+    {
+      "name": "main-ci-37172114738",
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "37172114738",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "databaseId,url,headSha,status,conclusion,jobs"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:12.666686+00:00",
+      "finished_utc": "2026-10-04T03:32:13.566370+00:00"
+    },
+    {
+      "name": "main-ci-37173337552",
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "37173337552",
+        "--repo",
+        "bmdhodl/agent47",
+        "--json",
+        "databaseId,url,headSha,status,conclusion,jobs"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:13.566786+00:00",
+      "finished_utc": "2026-10-04T03:32:14.490388+00:00"
+    },
+    {
+      "name": "proof-verify",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr839-build\\venv\\Scripts\\python.exe",
+        "proof/dependency-review-839/verify.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T03:32:14.673474+00:00",
+      "finished_utc": "2026-10-04T03:32:14.865371+00:00"
+    }
+  ],
+  "initial_failures": {
+    "sdk-install": "Initial --no-build-isolation wrongly used venv-default setuptools64, below the unchanged declared setuptools>=82.0.1. Original exit1/expected0 retained; corrected build-isolated installation and wheel build pass.",
+    "ruff-ci": "Makefile includes review_readiness_guard.py, absent from hosted CI lint target. Original31 findings retained. Modern annotations and equivalent empty-list checks pass full Makefile lint and25 existing guard/preflight cases."
+  },
+  "source_result": {
+    "passed": 1480,
+    "skipped": 114,
+    "coverage": 91.3
+  },
+  "changed_packages": [
+    "importlib-metadata"
+  ],
+  "preserved_other_pins": 18,
+  "fixed_floor_files": [
+    "compat-floor.in",
+    "compat-floor.txt",
+    "compat-responses-floor.in",
+    "compat-responses-floor.txt"
+  ],
+  "upstream": {
+    "version": "9.0.1",
+    "requires_python": ">=3.10",
+    "requires_dist": [
+      "zipp>=3.20",
+      "pytest!=8.1.*,>=6; extra == \"test\"",
+      "packaging; extra == \"test\"",
+      "pyfakefs; extra == \"test\"",
+      "pytest-perf>=0.17; extra == \"test\"",
+      "sphinx>=3.5; extra == \"doc\"",
+      "jaraco.packaging>=9.3; extra == \"doc\"",
+      "rst.linker>=1.9; extra == \"doc\"",
+      "furo; extra == \"doc\"",
+      "sphinx-lint; extra == \"doc\"",
+      "jaraco.tidelift>=1.4; extra == \"doc\"",
+      "ipython; extra == \"perf\"",
+      "pytest-checkdocs>=2.14; extra == \"check\"",
+      "pytest-ruff>=0.2.1; sys_platform != \"cygwin\" and extra == \"check\"",
+      "pytest-cov; extra == \"cover\"",
+      "pytest-enabler>=3.4; extra == \"enabler\"",
+      "pytest-mypy>=1.0.1; platform_python_implementation != \"PyPy\" and extra == \"type\""
+    ],
+    "hashes": [
+      "ab830580bc0ef3db61ce8fae716389e5462b67e033018bab6d8f80ef17172f99",
+      "bba5600596a7e21f3eef53281cf28d6a5195634d2f2b78ff9501a3272c6eaab0"
+    ]
+  },
+  "source_hashes": {
+    ".github/requirements/ci-tools.in": "83662cc344f3023d83ca37c700eba4619cdde7f75bc371dcd8bc170d0487795c",
+    ".github/requirements/ci-tools.txt": "ff3cce0388a56e1d866d57fce9fd700d9cf3033b3032c4ebcf1c0afdbf4caffd",
+    "scripts/review_readiness_guard.py": "cfa75e8ea0c43dc65e05d31f413992195029ebd2b4221371cd56f1c7b1efd4f4"
+  },
+  "limits": "Local source run omits optional provider extras; real framework CI is a separate exact-head gate. No paid calls or publication. The Dependabot lock was tested as generated, without relabeling compiler provenance."
+}

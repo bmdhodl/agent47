@@ -6,7 +6,7 @@ import json
 import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import yaml
 
@@ -107,11 +107,11 @@ GIT_TREE_TARGET_PATTERN = re.compile(
 )
 
 
-def _executable_shell_lines(run_value: Any) -> List[str]:
+def _executable_shell_lines(run_value: Any) -> list[str]:
     """Return non-empty shell lines, excluding full-line comments."""
     if not isinstance(run_value, str):
         return []
-    lines: List[str] = []
+    lines: list[str] = []
     for line in run_value.splitlines():
         stripped = line.strip()
         if not stripped or stripped.startswith("#"):
@@ -149,7 +149,7 @@ class Finding:
     message: str
 
 
-def check_pr_template(repo_root: Path) -> List[Finding]:
+def check_pr_template(repo_root: Path) -> list[Finding]:
     path = repo_root / PR_TEMPLATE_PATH
     if not path.exists():
         return [
@@ -161,7 +161,7 @@ def check_pr_template(repo_root: Path) -> List[Finding]:
         ]
 
     text = path.read_text(encoding="utf-8")
-    findings: List[Finding] = []
+    findings: list[Finding] = []
     for check, phrase in REQUIRED_TEMPLATE_PHRASES.items():
         if phrase not in text:
             findings.append(
@@ -174,7 +174,7 @@ def check_pr_template(repo_root: Path) -> List[Finding]:
     return findings
 
 
-def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
+def check_claude_review_workflow(repo_root: Path) -> list[Finding]:
     path = repo_root / CLAUDE_REVIEW_PATH
     if not path.exists():
         return [
@@ -186,7 +186,7 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
         ]
 
     text = path.read_text(encoding="utf-8")
-    findings: List[Finding] = []
+    findings: list[Finding] = []
     try:
         document = yaml.safe_load(text)
     except yaml.YAMLError as exc:
@@ -230,12 +230,12 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
     if not isinstance(jobs, dict):
         jobs = {}
 
-    checkout_commands: List[Dict[str, Any]] = []
-    npm_commands: List[Dict[str, Any]] = []
-    cli_commands: List[Dict[str, Any]] = []
-    git_tree_mutations: List[Dict[str, Any]] = []
-    token_steps: List[Dict[str, Any]] = []
-    alternate_working_directories: List[Dict[str, Any]] = []
+    checkout_commands: list[dict[str, Any]] = []
+    npm_commands: list[dict[str, Any]] = []
+    cli_commands: list[dict[str, Any]] = []
+    git_tree_mutations: list[dict[str, Any]] = []
+    token_steps: list[dict[str, Any]] = []
+    alternate_working_directories: list[dict[str, Any]] = []
 
     for job_name, job in jobs.items():
         if not isinstance(job, dict):
@@ -334,10 +334,10 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
             )
         )
 
-    checkout_step: Optional[Dict[str, Any]] = (
+    checkout_step: dict[str, Any] | None = (
         review_checkouts[0]["step"] if review_checkouts else None
     )
-    install_step: Optional[Dict[str, Any]] = (
+    install_step: dict[str, Any] | None = (
         review_npm_commands[0]["step"] if review_npm_commands else None
     )
     local_cli_commands = [
@@ -345,32 +345,30 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
         for command in review_cli_commands
         if CLAUDE_REVIEW_CLI_PATH in command["line"]
     ]
-    review_run_lines: List[str] = []
+    review_run_lines: list[str] = []
     if len(local_cli_commands) == 1:
         review_run_lines = _executable_shell_lines(local_cli_commands[0]["step"].get("run"))
 
-    if len(review_checkouts) != 1:
-        if not review_checkouts:
-            findings.append(
-                _workflow_finding(
-                    "pinned-checkout",
-                    "Claude review must use the pinned trusted-base checkout action.",
-                )
+    if not review_checkouts:
+        findings.append(
+            _workflow_finding(
+                "pinned-checkout",
+                "Claude review must use the pinned trusted-base checkout action.",
             )
-    if len(review_npm_commands) != 1:
-        if not review_npm_commands:
-            findings.append(
-                _workflow_finding(
-                    "trusted-runtime-directory",
-                    "Claude review must install from .github/claude-review.",
-                )
+        )
+    if not review_npm_commands:
+        findings.append(
+            _workflow_finding(
+                "trusted-runtime-directory",
+                "Claude review must install from .github/claude-review.",
             )
-            findings.append(
-                _workflow_finding(
-                    "workflow-local-install",
-                    "Claude review must use the lockfile-backed local npm ci command.",
-                )
+        )
+        findings.append(
+            _workflow_finding(
+                "workflow-local-install",
+                "Claude review must use the lockfile-backed local npm ci command.",
             )
+        )
     if len(review_cli_commands) != 1:
         if not review_cli_commands:
             review_run_lines = []
@@ -584,8 +582,8 @@ def check_claude_review_workflow(repo_root: Path) -> List[Finding]:
     return findings
 
 
-def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
-    findings: List[Finding] = []
+def check_claude_review_dependency_contract(repo_root: Path) -> list[Finding]:
+    findings: list[Finding] = []
     package_path = repo_root / CLAUDE_REVIEW_PACKAGE_PATH
     lock_path = repo_root / CLAUDE_REVIEW_LOCK_PATH
 
@@ -706,8 +704,8 @@ def check_claude_review_dependency_contract(repo_root: Path) -> List[Finding]:
     return findings
 
 
-def collect_findings(repo_root: Path = REPO_ROOT) -> List[Finding]:
-    findings: List[Finding] = []
+def collect_findings(repo_root: Path = REPO_ROOT) -> list[Finding]:
+    findings: list[Finding] = []
     findings.extend(check_pr_template(repo_root))
     findings.extend(check_claude_review_workflow(repo_root))
     findings.extend(check_claude_review_dependency_contract(repo_root))

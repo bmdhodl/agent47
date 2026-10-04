@@ -1,0 +1,70 @@
+{
+  "cases": [
+    {
+      "case": "source-hash",
+      "optimized": false,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "source-hash",
+      "optimized": false,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\source-hash\\verify.py\", line 32, in <module>\r\n    raise ValueError('Tested source snapshot differs: ' + path)\r\nValueError: Tested source snapshot differs: scripts/review_readiness_guard.py\r\n"
+    },
+    {
+      "case": "source-hash",
+      "optimized": true,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "source-hash",
+      "optimized": true,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\source-hash\\verify.py\", line 32, in <module>\r\n    raise ValueError('Tested source snapshot differs: ' + path)\r\nValueError: Tested source snapshot differs: scripts/review_readiness_guard.py\r\n"
+    },
+    {
+      "case": "command-metadata",
+      "optimized": false,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "command-metadata",
+      "optimized": false,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\command-metadata\\verify.py\", line 19, in <module>\r\n    raise ValueError('Invalid recorded command')\r\nValueError: Invalid recorded command\r\n"
+    },
+    {
+      "case": "command-metadata",
+      "optimized": true,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "command-metadata",
+      "optimized": true,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\command-metadata\\verify.py\", line 19, in <module>\r\n    raise ValueError('Invalid recorded command')\r\nValueError: Invalid recorded command\r\n"
+    }
+  ],
+  "result": "Old verifier accepted inconsistent source hashes and empty command metadata; final verifier rejects both with normal and optimized Python.",
+  "current_source_check": "Both normal and optimized --check-source runs passed on this checkout before this test."
+}
