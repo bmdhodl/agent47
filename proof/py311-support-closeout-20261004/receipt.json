@@ -1,0 +1,948 @@
+{
+  "captured_utc": "2026-10-04T00:06:23.684032+00:00",
+  "merged": true,
+  "pr": {
+    "headRefOid": "d37e9ccc92a2c340c2e56ae6efedb62f9b962ae3",
+    "mergeCommit": {
+      "oid": "26c4ebca2a96a8d1418661dd6ef4aafb473213e5"
+    },
+    "mergedAt": "2026-10-04T00:00:24Z",
+    "state": "MERGED",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293312/job/111321021303",
+        "name": "actionlint",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "Actionlint"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021615",
+        "name": "test (3.11)",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:57:23Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163292285/job/111321018198",
+        "name": "claude-review",
+        "startedAt": "2026-10-03T23:56:01Z",
+        "status": "COMPLETED",
+        "workflowName": "Claude PR Review"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:17Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293324/job/111321021226",
+        "name": "analyze",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CodeQL"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:41Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293335/job/111321021598",
+        "name": "docs-consistency",
+        "startedAt": "2026-10-03T23:55:27Z",
+        "status": "COMPLETED",
+        "workflowName": "Docs Consistency"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293318/job/111321021270",
+        "name": "scan",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "Trustabl Agent Scanner"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:18Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021603",
+        "name": "test (3.12)",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:45Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021665",
+        "name": "lint",
+        "startedAt": "2026-10-03T23:55:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:40Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021529",
+        "name": "mcp",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021622",
+        "name": "mcp-budget",
+        "startedAt": "2026-10-03T23:55:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021673",
+        "name": "compat (floor)",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:29Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021666",
+        "name": "compat (latest)",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:51Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321021626",
+        "name": "responses-floor",
+        "startedAt": "2026-10-03T23:55:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:37Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/actions/runs/37163293316/job/111321190774",
+        "name": "ci-required",
+        "startedAt": "2026-10-03T23:56:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "0001-01-01T00:00:00Z",
+        "conclusion": "",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/runs/111321047933",
+        "name": "trustabl",
+        "startedAt": "2026-10-03T23:55:34Z",
+        "status": "QUEUED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:22Z",
+        "conclusion": "NEUTRAL",
+        "detailsUrl": "https://cursor.com/agents/bc-8c943a67-f993-4216-a6b1-a7c8eac70f01",
+        "name": "Cursor Approval Agent: Pull Request Router and Approver",
+        "startedAt": "2026-10-03T23:55:22Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:22Z",
+        "conclusion": "NEUTRAL",
+        "detailsUrl": "https://cursor.com/agents/bc-75ffd9ac-b049-4d3a-b2b3-147494e1b545",
+        "name": "Cursor Security Agent: Security Reviewer",
+        "startedAt": "2026-10-03T23:55:22Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:55:23Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://dependabot-api.githubapp.com",
+        "name": ".github/dependabot.yml",
+        "startedAt": "2026-10-03T23:55:23Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-03T23:56:12Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmdhodl/agent47/runs/111321137976",
+        "name": "CodeQL",
+        "startedAt": "2026-10-03T23:56:09Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ],
+    "url": "https://github.com/bmdhodl/agent47/pull/831"
+  },
+  "main_ci": {
+    "conclusion": "success",
+    "headSha": "26c4ebca2a96a8d1418661dd6ef4aafb473213e5",
+    "jobs": [
+      {
+        "completedAt": "2026-10-04T00:00:46Z",
+        "conclusion": "success",
+        "databaseId": 111321784178,
+        "name": "responses-floor",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:31Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:33Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:35Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Install pinned Responses and Agents floor",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:43Z",
+            "conclusion": "success",
+            "name": "Real Responses and Agents floor tests without skips",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:44Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 9,
+            "startedAt": "2026-10-04T00:00:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:44Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T00:00:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:44Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T00:00:44Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784178"
+      },
+      {
+        "completedAt": "2026-10-04T00:01:23Z",
+        "conclusion": "success",
+        "databaseId": 111321784316,
+        "name": "compat (latest)",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:30Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:31Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:34Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:44Z",
+            "conclusion": "success",
+            "name": "Install pinned framework and provider packages",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:21Z",
+            "conclusion": "success",
+            "name": "Full suite against real packages",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:21Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 9,
+            "startedAt": "2026-10-04T00:01:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:21Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T00:01:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:21Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T00:01:21Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784316"
+      },
+      {
+        "completedAt": "2026-10-04T00:01:14Z",
+        "conclusion": "success",
+        "databaseId": 111321784322,
+        "name": "test (3.12)",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:30Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:32Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:34Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:37Z",
+            "conclusion": "success",
+            "name": "Install",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:10Z",
+            "conclusion": "success",
+            "name": "Tests with coverage",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:11Z",
+            "conclusion": "success",
+            "name": "Upload coverage artifact",
+            "number": 6,
+            "startedAt": "2026-10-04T00:01:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:11Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 11,
+            "startedAt": "2026-10-04T00:01:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:12Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 12,
+            "startedAt": "2026-10-04T00:01:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:12Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-04T00:01:12Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784322"
+      },
+      {
+        "completedAt": "2026-10-04T00:01:14Z",
+        "conclusion": "success",
+        "databaseId": 111321784343,
+        "name": "compat (floor)",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:30Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:32Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:33Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:42Z",
+            "conclusion": "success",
+            "name": "Install pinned framework and provider packages",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:12Z",
+            "conclusion": "success",
+            "name": "Full suite against real packages",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:12Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 9,
+            "startedAt": "2026-10-04T00:01:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:13Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T00:01:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:13Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T00:01:13Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784343"
+      },
+      {
+        "completedAt": "2026-10-04T00:00:41Z",
+        "conclusion": "success",
+        "databaseId": 111321784349,
+        "name": "lint",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:31Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:32Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:34Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:38Z",
+            "conclusion": "success",
+            "name": "Install tools",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:38Z",
+            "conclusion": "success",
+            "name": "Check CI tool pins support the SDK Python floor",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:38Z",
+            "conclusion": "success",
+            "name": "Check PyPI README sync",
+            "number": 6,
+            "startedAt": "2026-10-04T00:00:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:38Z",
+            "conclusion": "success",
+            "name": "Check release metadata sync",
+            "number": 7,
+            "startedAt": "2026-10-04T00:00:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:38Z",
+            "conclusion": "success",
+            "name": "Lint (ruff)",
+            "number": 8,
+            "startedAt": "2026-10-04T00:00:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:39Z",
+            "conclusion": "success",
+            "name": "Security lint (bandit)",
+            "number": 9,
+            "startedAt": "2026-10-04T00:00:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 17,
+            "startedAt": "2026-10-04T00:00:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 18,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784349"
+      },
+      {
+        "completedAt": "2026-10-04T00:00:45Z",
+        "conclusion": "success",
+        "databaseId": 111321784364,
+        "name": "mcp",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:31Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:33Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:39Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Install MCP server deps",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:43Z",
+            "conclusion": "success",
+            "name": "MCP build and tests",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:43Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+            "number": 9,
+            "startedAt": "2026-10-04T00:00:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:44Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 10,
+            "startedAt": "2026-10-04T00:00:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:44Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-04T00:00:44Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784364"
+      },
+      {
+        "completedAt": "2026-10-04T00:00:42Z",
+        "conclusion": "success",
+        "databaseId": 111321784381,
+        "name": "mcp-budget",
+        "startedAt": "2026-10-04T00:00:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:30Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:31Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:33Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:36Z",
+            "conclusion": "success",
+            "name": "Install tools",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:39Z",
+            "conclusion": "success",
+            "name": "Install local budget MCP dependencies",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Local budget MCP lint and tests",
+            "number": 6,
+            "startedAt": "2026-10-04T00:00:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 11,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:41Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 12,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:41Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-04T00:00:41Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784381"
+      },
+      {
+        "completedAt": "2026-10-04T00:01:20Z",
+        "conclusion": "success",
+        "databaseId": 111321784415,
+        "name": "test (3.11)",
+        "startedAt": "2026-10-04T00:00:30Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:00:32Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:00:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:34Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:00:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:36Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:00:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:00:40Z",
+            "conclusion": "success",
+            "name": "Install",
+            "number": 4,
+            "startedAt": "2026-10-04T00:00:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:16Z",
+            "conclusion": "success",
+            "name": "Tests with coverage",
+            "number": 5,
+            "startedAt": "2026-10-04T00:00:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:16Z",
+            "conclusion": "skipped",
+            "name": "Upload coverage artifact",
+            "number": 6,
+            "startedAt": "2026-10-04T00:01:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:17Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 11,
+            "startedAt": "2026-10-04T00:01:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:17Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 12,
+            "startedAt": "2026-10-04T00:01:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:17Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-04T00:01:17Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321784415"
+      },
+      {
+        "completedAt": "2026-10-04T00:01:30Z",
+        "conclusion": "success",
+        "databaseId": 111321948707,
+        "name": "ci-required",
+        "startedAt": "2026-10-04T00:01:25Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T00:01:27Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T00:01:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:28Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 2,
+            "startedAt": "2026-10-04T00:01:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:28Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 3,
+            "startedAt": "2026-10-04T00:01:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:28Z",
+            "conclusion": "success",
+            "name": "Require every job group to pass",
+            "number": 4,
+            "startedAt": "2026-10-04T00:01:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:28Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            "number": 7,
+            "startedAt": "2026-10-04T00:01:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:29Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+            "number": 8,
+            "startedAt": "2026-10-04T00:01:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T00:01:29Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-04T00:01:29Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762/job/111321948707"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/bmdhodl/agent47/actions/runs/37163554762"
+  },
+  "ordinary_windows_checkout_verified": true,
+  "source_hashes_verified": 39,
+  "artifacts_verified": 56,
+  "merge_method": "Owner-authorized admin squash after required CI success and Copilot no-blocker review; no failed check bypassed",
+  "published_version": "1.4.0",
+  "candidate": "2.0.0",
+  "new_open_prs": [
+    834,
+    835,
+    836
+  ],
+  "scope": "PR831 closed; newly generated Dependabot PRs reviewed separately; no publication or broad issue completion."
+}
