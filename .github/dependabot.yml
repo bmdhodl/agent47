@@ -12,4 +12,11 @@ updates:
     directory: "/.github/requirements"
     schedule:
       interval: "weekly"
+    # Fixed minimum-version test fixtures. exclude-paths affects version
+    # updates only; security updates remain enabled for these files.
+    exclude-paths:
+      - "compat-floor.in"
+      - "compat-floor.txt"
+      - "compat-responses-floor.in"
+      - "compat-responses-floor.txt"
     # ci_tools_requirements_guard.py rejects pins above the Python 3.11 floor.

@@ -1,0 +1,11 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\patri\Documents\GitHub\agent47-review-20261002\sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collected 33 items
+
+sdk\tests\test_documentation.py .....................                    [ 63%]
+sdk\tests\test_ci_guardrails.py ............                             [100%]
+
+============================= 33 passed in 0.30s ==============================
