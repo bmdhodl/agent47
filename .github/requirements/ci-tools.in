@@ -4,7 +4,7 @@ build==1.4.4
 importlib-metadata==8.7.1
 pytest==9.0.3
 pytest-cov==7.1.0
-ruff==0.15.13
+ruff==0.16.9
 bandit==1.8.6
 zipp==4.1.0
 # Required on Windows; unconditional so Linux lock regeneration retains it.
