@@ -33,6 +33,7 @@ classifiers = [
 ]
 dependencies = [
   "mcp>=1.23,<2",
+  "pyjwt>=2.15.0,<3",
 ]
 
 [project.urls]

@@ -14,6 +14,10 @@ cd agentguard-mcp
 python -m pip install -e .
 ```
 
+Source installs retain MCP 1.x and require PyJWT 2.15.0 or newer for the
+[malformed-token parser fix](https://github.com/advisories/GHSA-42vr-xj54-vc7v).
+Rerun the install command to update an existing checkout environment.
+
 Run the stdio server with either the editable console script or the module
 entrypoint:
 
