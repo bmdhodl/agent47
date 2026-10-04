@@ -2,3 +2,7 @@
 # Keep this file out of ci-tools.in; that lock must stay installable on the SDK Python 3.11 floor.
 # pytest and ruff stay in ci-tools.txt and are installed first in the job.
 mcp>=1.23,<2
+# GHSA-42vr-xj54-vc7v: keep the MCP1 runtime above the fixed JWT floor.
+pyjwt>=2.15.0,<3
+# MCP1 also needs this on Windows; retain the marker in the shared hash lock.
+pywin32==312; sys_platform == "win32"

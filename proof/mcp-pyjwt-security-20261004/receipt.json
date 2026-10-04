@@ -1,0 +1,411 @@
+{
+  "commands": [
+    {
+      "name": "baseline-venv",
+      "argv": [
+        "py",
+        "-3.11",
+        "-m",
+        "venv",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\baseline"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:50:22.945308+00:00"
+    },
+    {
+      "name": "baseline-tools",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\baseline\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--require-hashes",
+        "-r",
+        ".github/requirements/ci-tools.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:50:35.698496+00:00"
+    },
+    {
+      "name": "baseline-jwt",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\baseline\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--require-hashes",
+        "-r",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\vulnerable-jwt.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:50:37.345434+00:00"
+    },
+    {
+      "name": "baseline-regression",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\baseline\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_jwt_dependency.py",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\baseline-pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\agentguard-mcp",
+      "exit": 1,
+      "expected": 1,
+      "finished_utc": "2026-10-04T03:50:37.930633+00:00"
+    },
+    {
+      "name": "patched-venv",
+      "argv": [
+        "py",
+        "-3.11",
+        "-m",
+        "venv",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:56:52.484979+00:00"
+    },
+    {
+      "name": "patched-tools",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--require-hashes",
+        "-r",
+        ".github/requirements/ci-tools.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:57:08.568708+00:00"
+    },
+    {
+      "name": "patched-runtime",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--require-hashes",
+        "-r",
+        ".github/requirements/mcp-budget.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:57:42.783321+00:00"
+    },
+    {
+      "name": "pip-check",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "check"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:57:43.948069+00:00"
+    },
+    {
+      "name": "mcp-suite",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\mcp-pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\agentguard-mcp",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:57:48.543667+00:00"
+    },
+    {
+      "name": "mcp-lint",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "agentguard_mcp",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\agentguard-mcp",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:57:49.338525+00:00"
+    },
+    {
+      "name": "sdk-guardrails",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests/test_ci_guardrails.py",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\guard-pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:57:50.180132+00:00"
+    },
+    {
+      "name": "sdk-suite",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests",
+        "-q",
+        "--cov=agentguard",
+        "--cov-fail-under=80",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\sdk-pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:24.562510+00:00"
+    },
+    {
+      "name": "ruff-make",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/agentguard",
+        "scripts/generate_pypi_readme.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "scripts/review_readiness_guard.py",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/live_cost_reconcile.py",
+        "scripts/check_ci_results.py",
+        "sdk/tests/test_ci_results.py",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:24.856238+00:00"
+    },
+    {
+      "name": "security",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "bandit",
+        "-r",
+        "sdk/agentguard",
+        "-s",
+        "B101,B110,B112,B311",
+        "-q"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:25.992711+00:00"
+    },
+    {
+      "name": "floor-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "scripts/ci_tools_requirements_guard.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:27.769055+00:00"
+    },
+    {
+      "name": "review-readiness",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "scripts/review_readiness_guard.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:28.163656+00:00"
+    },
+    {
+      "name": "release-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "scripts/sdk_release_guard.py",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:28.362912+00:00"
+    },
+    {
+      "name": "floor-venv",
+      "argv": [
+        "py",
+        "-3.10",
+        "-m",
+        "venv",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:39.943637+00:00"
+    },
+    {
+      "name": "floor-install",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--constraint",
+        ".github/requirements/mcp-budget.txt",
+        "./agentguard-mcp"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 0,
+      "finished_utc": "2026-10-04T03:59:43.258302+00:00"
+    },
+    {
+      "name": "floor-install-with-pins",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--constraint",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\runtime-pin-constraints.txt",
+        "./agentguard-mcp"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 0,
+      "finished_utc": "2026-10-04T04:01:29.759809+00:00"
+    },
+    {
+      "name": "floor-install-runtime-contract",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--constraint",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor-runtime-constraints.txt",
+        "./agentguard-mcp"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T04:04:22.944259+00:00"
+    },
+    {
+      "name": "floor-smoke",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor\\Scripts\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor_smoke.py",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T04:04:25.777236+00:00"
+    },
+    {
+      "name": "floor-pip-check",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\floor\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "--isolated",
+        "check"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "finished_utc": "2026-10-04T04:04:26.746650+00:00"
+    }
+  ],
+  "initial_harness_failures": {
+    "floor-install": "Hash-bearing constraints cannot be used with a local source directory.",
+    "floor-install-with-pins": "The CI lock targets3.12 and its rpds-py2026.6.3 requires Python>=3.11; it is not a3.10 product-install contract. Corrected runtime-contract installation keeps the tested MCP/JWT versions and resolves permitted interpreter-compatible transitives. Original exits1/expected0 retained."
+  },
+  "compile": {
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-compiler\\venv\\Scripts\\python.exe",
+      "-I",
+      "-m",
+      "piptools",
+      "compile",
+      "--generate-hashes",
+      "--reuse-hashes",
+      "--no-upgrade",
+      "--strip-extras",
+      "--index-url=https://pypi.org/simple",
+      "--no-emit-index-url",
+      "--pip-args=--isolated --no-input",
+      "--output-file=.github/requirements/mcp-budget.txt",
+      ".github/requirements/mcp-budget.in"
+    ],
+    "exit": 0,
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\stage",
+    "changed": [
+      "pyjwt",
+      "pywin32"
+    ],
+    "preserved_other_pins": 28,
+    "mcp_version": "1.30.0",
+    "compiler_python": "3.11",
+    "windows_marker": "sys_platform == \"win32\""
+  },
+  "advisory": "GHSA-42vr-xj54-vc7v",
+  "sdk_result": {
+    "passed": 1480,
+    "skipped": 114,
+    "coverage": 91.36
+  },
+  "source_hashes": {
+    ".github/requirements/mcp-budget.in": "3243d5b5500f4a6f76852292768c88f6207fa9f60478c342b210b71aa83e61bd",
+    ".github/requirements/mcp-budget.txt": "b5022127a0398a61a02a1462c385b2df7debdc598c297abed40793602673d2ee",
+    "agentguard-mcp/pyproject.toml": "62ba0cd0e1ae6e8bba5853a53248c8c30f4a2408f859271ae5aff6d9f66d82fb",
+    "agentguard-mcp/tests/test_jwt_dependency.py": "3d04df69afcd4f5fe15b61338bd671ae81e7f7efad5720d61f5412ef9e9c3f2f"
+  },
+  "limits": "Windows3.11 runtime hash install and complete MCP tests; installed3.10 product uses tested MCP1.30/JWT2.15.1 and independently resolves allowed interpreter-compatible transitives, including its exceptiongroup backport. The CI3.12 lock is not a3.10 installation promise. Linux marker/hash installation and stdio tests remain exact-head hosted CI gates. No release or authentication-policy change."
+}

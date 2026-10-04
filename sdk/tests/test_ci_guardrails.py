@@ -193,6 +193,18 @@ def test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip() -> None:
         assert dep in manifest_text, f"{dep} missing from mcp-budget.in"
     assert "pytest==" not in manifest_text
     assert "ruff==" not in manifest_text
+    # REGRESSION: Linux regeneration must retain MCP's Windows hash pin.
+    windows_pin = re.search(
+        r'^pywin32==([^\s;]+)\s*;\s*sys_platform == "win32"', manifest_text, re.M
+    )
+    assert windows_pin is not None, "MCP's Windows dependency must be explicit"
+    windows_lock = re.search(
+        rf'^pywin32=={re.escape(windows_pin.group(1))}\s*;\s*sys_platform == "win32"'
+        r"\s*\\\n\s*--hash=sha256:[a-f0-9]{64}",
+        lock_text,
+        re.M,
+    )
+    assert windows_lock is not None, "Retain the marked Windows package and its hashes"
 
 
 def test_claude_review_checks_out_github_sha_not_pull_request_sha() -> None:

@@ -1,0 +1,41 @@
+{
+  "cases": [
+    {
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\platform_negative.py"
+      ],
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\platform_negative.py\", line 8, in <module>\r\n    assert windows_pin is not None, \"MCP's Windows dependency must be explicit\"\r\n           ^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: MCP's Windows dependency must be explicit\r\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests/test_ci_guardrails.py",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\platform-guard-pytest"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "output": "============================= test session starts =============================\r\nplatform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0\r\nrootdir: C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\sdk\r\nconfigfile: pyproject.toml\r\nplugins: anyio-4.15.1, cov-7.1.0\r\ncollected 13 items\r\n\r\nsdk\\tests\\test_ci_guardrails.py .............                            [100%]\r\n\r\n============================= 13 passed in 0.26s ==============================\r\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-mcp-pyjwt-build\\patched\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "changed_test_hash": "5e4ec4053e82382a239fac523164841014b7a42f3dc3876680dc239555a74aca",
+  "scope": "Existing CI guardrail now rejects absent/missing-marked Windows hash pin; original main lacks it and final13 guard cases pass. Product source unchanged."
+}
