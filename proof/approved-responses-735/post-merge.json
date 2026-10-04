@@ -1,0 +1,44 @@
+{
+  "captured_utc": "2026-10-04T05:38:27.602726+00:00",
+  "pr": 841,
+  "merged": true,
+  "merged_at": "2026-10-04T05:35:35Z",
+  "merge_sha": "2d9f94eb8c308d00f932e0dd6c6fc7c19619a8fc",
+  "reviewed_head": "e15c9a39261f8ee28c107e3b2b30bbf1456f8b49",
+  "main_checks": [
+    {
+      "id": 37180344665,
+      "name": "CI",
+      "head_sha": "2d9f94eb8c308d00f932e0dd6c6fc7c19619a8fc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/bmdhodl/agent47/actions/runs/37180344665"
+    },
+    {
+      "id": 37180344577,
+      "name": "CodeQL",
+      "head_sha": "2d9f94eb8c308d00f932e0dd6c6fc7c19619a8fc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/bmdhodl/agent47/actions/runs/37180344577"
+    },
+    {
+      "id": 37180344666,
+      "name": "OpenSSF Scorecard",
+      "head_sha": "2d9f94eb8c308d00f932e0dd6c6fc7c19619a8fc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/bmdhodl/agent47/actions/runs/37180344666"
+    },
+    {
+      "id": 37180344560,
+      "name": "Trustabl Agent Scanner",
+      "head_sha": "2d9f94eb8c308d00f932e0dd6c6fc7c19619a8fc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/bmdhodl/agent47/actions/runs/37180344560"
+    }
+  ],
+  "release": "Unpublished candidate; no release authorized",
+  "outside_adoption": "Not established by these tests"
+}
