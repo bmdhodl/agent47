@@ -314,6 +314,26 @@ class TestPriceTableAge(unittest.TestCase):
             sdk_release_guard.check_price_table_age(sdk_release_guard.REPO_ROOT, today=edited), []
         )
 
+    def test_default_clock_preserves_local_day_at_utc_midnight(self):
+        from datetime import UTC, datetime, timedelta, timezone
+
+        class LocalClock(datetime):
+            @classmethod
+            def now(cls, tz):
+                if tz != UTC:
+                    raise AssertionError("Use a timezone-aware clock")
+                return cls(2026, 9, 26, 0, 30, tzinfo=UTC)
+
+            def astimezone(self, tz=None):
+                return super().astimezone(tz or timezone(timedelta(hours=-7)))
+
+        local_day = LocalClock.now(UTC).astimezone().date()
+        verified = (local_day - timedelta(days=sdk_release_guard.PRICE_TABLE_MAX_AGE_DAYS)).isoformat()
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = self._repo(tmp, {"openai": verified})
+            with patch.object(sdk_release_guard, "datetime", LocalClock):
+                self.assertEqual(sdk_release_guard.check_price_table_age(repo_root), [])
+
     def test_age_check_runs_only_when_asked(self):
         with patch.object(sdk_release_guard, "check_price_table_age", return_value=["stale"]) as check:
             findings = sdk_release_guard.collect_findings(sdk_release_guard.REPO_ROOT)

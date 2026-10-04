@@ -20,6 +20,42 @@ def metadata_with_python(specifier: str) -> dict:
     }
 
 
+def _load_with_packaging_error(monkeypatch, error):
+    import builtins
+    import runpy
+
+    original_import = builtins.__import__
+
+    def import_package(name, *args, **kwargs):
+        if name.startswith("packaging."):
+            raise error
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", import_package)
+    return runpy.run_path(str(SCRIPT_PATH))
+
+
+def test_missing_packaging_keeps_stdlib_floor_validation(tmp_path, monkeypatch) -> None:
+    fallback = _load_with_packaging_error(monkeypatch, ImportError("packaging absent"))
+    requirements = tmp_path / "ci-tools.in"
+    requirements.write_text("build==1.5.0\n", encoding="utf-8")
+    findings = fallback["find_incompatible_pins"](
+        requirements, (3, 11),
+        metadata_lookup=lambda _name, _version: metadata_with_python(">=3.12"),
+    )
+    assert [finding.pin.name for finding in findings] == ["build"]
+
+
+def test_packaging_runtime_error_is_not_swallowed(monkeypatch) -> None:
+    """REGRESSION: a broken installed dependency must not activate the fallback."""
+    try:
+        _load_with_packaging_error(monkeypatch, RuntimeError("broken packaging import"))
+    except RuntimeError as error:
+        assert str(error) == "broken packaging import"
+    else:
+        raise AssertionError("Unexpected import failures must propagate")
+
+
 def test_rejects_direct_pin_above_ci_python_floor(tmp_path: Path) -> None:
     requirements = tmp_path / "ci-tools.in"
     requirements.write_text("build==1.5.0\n", encoding="utf-8")

@@ -8,10 +8,10 @@ import re
 import runpy
 import subprocess
 import sys
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import List, Optional, Sequence
 
 import generate_pypi_readme
 
@@ -47,7 +47,7 @@ def load_version(repo_root: Path) -> str:
     return generate_pypi_readme._load_version(repo_root)
 
 
-def check_changelog(repo_root: Path, version: str) -> List[Finding]:
+def check_changelog(repo_root: Path, version: str) -> list[Finding]:
     changelog = (repo_root / CHANGELOG_PATH).read_text(encoding="utf-8")
     try:
         generate_pypi_readme.extract_release_notes(changelog, version)
@@ -62,7 +62,7 @@ def check_changelog(repo_root: Path, version: str) -> List[Finding]:
     return []
 
 
-def check_pypi_readme(repo_root: Path) -> List[Finding]:
+def check_pypi_readme(repo_root: Path) -> list[Finding]:
     try:
         exit_code = generate_pypi_readme.check_output(repo_root, generate_pypi_readme.OUTPUT_PATH)
     except ValueError as exc:
@@ -84,8 +84,8 @@ def check_pypi_readme(repo_root: Path) -> List[Finding]:
     ]
 
 
-def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
-    findings: List[Finding] = []
+def check_release_markers(repo_root: Path, version: str) -> list[Finding]:
+    findings: list[Finding] = []
     expected = version
     for relative_path, pattern in RELEASE_MARKERS:
         text = (repo_root / relative_path).read_text(encoding="utf-8")
@@ -111,7 +111,7 @@ def check_release_markers(repo_root: Path, version: str) -> List[Finding]:
     return findings
 
 
-def check_skill_metadata(repo_root: Path, version: str) -> List[Finding]:
+def check_skill_metadata(repo_root: Path, version: str) -> list[Finding]:
     """Verify the public AgentGuard skill advertises the SDK candidate version."""
     skill_path = repo_root / SKILL_METADATA_PATH
     if not skill_path.exists():
@@ -151,7 +151,7 @@ def check_skill_metadata(repo_root: Path, version: str) -> List[Finding]:
     ]
 
 
-def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
+def _release_tag_from_ref(ref: str | None) -> str | None:
     if not ref:
         return None
     if ref.startswith(RELEASE_TAG_PREFIX):
@@ -164,7 +164,7 @@ def _release_tag_from_ref(ref: Optional[str]) -> Optional[str]:
     return None
 
 
-def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
+def check_release_tag(version: str, ref: str | None = None) -> list[Finding]:
     release_ref = ref if ref is not None else os.environ.get("GITHUB_REF")
     tag = _release_tag_from_ref(release_ref)
     if tag is None:
@@ -187,7 +187,7 @@ def check_release_tag(version: str, ref: Optional[str] = None) -> List[Finding]:
     ]
 
 
-def check_mcp_metadata(repo_root: Path) -> List[Finding]:
+def check_mcp_metadata(repo_root: Path) -> list[Finding]:
     package_path = repo_root / MCP_PACKAGE_PATH
     server_json_path = repo_root / MCP_SERVER_JSON_PATH
     runtime_index_path = repo_root / MCP_RUNTIME_INDEX_PATH
@@ -202,7 +202,7 @@ def check_mcp_metadata(repo_root: Path) -> List[Finding]:
     package_entries = server_json.get("packages") or []
     published_version = package_entries[0].get("version") if package_entries else None
 
-    findings: List[Finding] = []
+    findings: list[Finding] = []
     if package_version != server_version:
         findings.append(
             Finding(
@@ -246,7 +246,7 @@ def get_npm_command() -> str:
     return os.environ.get("AGENTGUARD_NPM_COMMAND") or DEFAULT_NPM_COMMAND
 
 
-def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) -> List[Finding]:
+def check_mcp_npm_package(repo_root: Path, npm_command: str | None = None) -> list[Finding]:
     """Optionally verify the repo MCP package version is published on npm."""
     command = npm_command or get_npm_command()
     package_path = repo_root / MCP_PACKAGE_PATH
@@ -335,11 +335,11 @@ def check_mcp_npm_package(repo_root: Path, npm_command: Optional[str] = None) ->
     return []
 
 
-def check_price_table_age(repo_root: Path, today: Optional[date] = None) -> List[Finding]:
+def check_price_table_age(repo_root: Path, today: date | None = None) -> list[Finding]:
     """Fail when a provider's rows were last checked more than PRICE_TABLE_MAX_AGE_DAYS ago."""
     table = runpy.run_path(str(repo_root / PRICE_TABLE_PATH))["DEFAULT_PRICE_TABLE"]
-    today = today or date.today()
-    findings: List[Finding] = []
+    today = today or datetime.now(UTC).astimezone().date()
+    findings: list[Finding] = []
     for provider, verified in sorted(table["verified"].items()):
         age = (today - date.fromisoformat(verified)).days
         if age > PRICE_TABLE_MAX_AGE_DAYS:
@@ -359,9 +359,9 @@ def check_price_table_age(repo_root: Path, today: Optional[date] = None) -> List
 
 def collect_findings(
     repo_root: Path, check_mcp_npm: bool = False, check_price_age: bool = False
-) -> List[Finding]:
+) -> list[Finding]:
     version = load_version(repo_root)
-    findings: List[Finding] = []
+    findings: list[Finding] = []
     findings.extend(check_release_tag(version))
     findings.extend(check_changelog(repo_root, version))
     findings.extend(check_pypi_readme(repo_root))
