@@ -1,5 +1,5 @@
 # Separate Responses/Agents floor; does not raise the Chat Completions floor.
 # CI-only optional providers; no mandatory SDK runtime dependency.
-openai==1.66.3
+openai==3.22.1
 openai-agents==0.0.3
 pytest==9.0.3
