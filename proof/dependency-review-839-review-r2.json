@@ -1,0 +1,69 @@
+{
+  "cases": [
+    {
+      "case": "missing-commands",
+      "optimized": false,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "missing-commands",
+      "optimized": false,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\missing-commands\\verify.py\", line 28, in <module>\r\n    raise ValueError('Missing or duplicate required command evidence')\r\nValueError: Missing or duplicate required command evidence\r\n"
+    },
+    {
+      "case": "missing-commands",
+      "optimized": true,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "missing-commands",
+      "optimized": true,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\missing-commands\\verify.py\", line 28, in <module>\r\n    raise ValueError('Missing or duplicate required command evidence')\r\nValueError: Missing or duplicate required command evidence\r\n"
+    },
+    {
+      "case": "missing-sources",
+      "optimized": false,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "missing-sources",
+      "optimized": false,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\missing-sources\\verify.py\", line 34, in <module>\r\n    raise ValueError('Missing or unexpected tested source evidence')\r\nValueError: Missing or unexpected tested source evidence\r\n"
+    },
+    {
+      "case": "missing-sources",
+      "optimized": true,
+      "verifier": "old-verify.py",
+      "exit": 0,
+      "expected": 0,
+      "output": "Verified metadata upgrade evidence\r\n"
+    },
+    {
+      "case": "missing-sources",
+      "optimized": true,
+      "verifier": "verify.py",
+      "exit": 1,
+      "expected": 1,
+      "output": "Traceback (most recent call last):\r\n  File \"<isolated-test>\\missing-sources\\verify.py\", line 34, in <module>\r\n    raise ValueError('Missing or unexpected tested source evidence')\r\nValueError: Missing or unexpected tested source evidence\r\n"
+    }
+  ],
+  "result": "Previous verifier accepted absent command and source sets; final verifier rejects both with normal and optimized Python."
+}

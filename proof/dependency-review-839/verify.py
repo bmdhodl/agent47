@@ -14,6 +14,24 @@ for name, expected in json.loads((root / "manifest.json").read_text(encoding="ut
     if name.endswith(".json"): data = data.replace(b"\r\n", b"\n")
     if hashlib.sha256(data).hexdigest() != expected: raise ValueError(f"Artifact hash mismatch: {name}")
 receipt = json.loads((root / "receipt.json").read_text(encoding="utf-8"))
+required_commands = {
+    'venv', 'hash-install', 'sdk-install-build-isolation', 'pip-check',
+    'metadata-smoke', 'focused-guard', 'source-suite-r2', 'ruff-make-final',
+    'bandit', 'floor-guard', 'release-guard', 'review-readiness',
+    'readme-sync', 'wheel-build',
+    'merged-pr-834', 'merged-pr-835', 'merged-pr-836', 'merged-pr-838',
+    'main-ci-37170840939', 'main-ci-37171935709',
+    'main-ci-37172114738', 'main-ci-37173337552',
+}
+names = [command['name'] for command in receipt['commands']]
+if len(names) != len(set(names)) or not required_commands.issubset(names):
+    raise ValueError('Missing or duplicate required command evidence')
+required_sources = {
+    '.github/requirements/ci-tools.in', '.github/requirements/ci-tools.txt',
+    'scripts/review_readiness_guard.py',
+}
+if set(receipt['source_hashes']) != required_sources:
+    raise ValueError('Missing or unexpected tested source evidence')
 for command in receipt["commands"]:
     if not command['argv'] or not all(isinstance(arg, str) and arg for arg in command['argv']):
         raise ValueError('Invalid recorded command')
