@@ -43,6 +43,16 @@ def test_dependabot_preserves_fixed_compatibility_floors() -> None:
     assert matched == floors, f"Exclude exactly the fixed floor files; got {sorted(matched)}"
 
 
+def test_ci_tools_pin_windows_colorama_on_all_compiler_platforms() -> None:
+    """REGRESSION: Linux lock regeneration dropped pytest's Windows dependency."""
+    requirements = Path(__file__).resolve().parents[2] / ".github" / "requirements"
+    manifest = (requirements / "ci-tools.in").read_text(encoding="utf-8")
+    colorama = re.search(r"^colorama==([^;\s]+)$", manifest, re.M)
+    assert colorama is not None, "Pin colorama unconditionally so Linux regeneration retains it"
+    lock = (requirements / "ci-tools.txt").read_text(encoding="utf-8")
+    assert f"colorama=={colorama.group(1)} \\\n    --hash=sha256:" in lock
+
+
 def _contains_ordered_lines(lines: list[str], expected: list[str]) -> bool:
     if not expected:
         return True
