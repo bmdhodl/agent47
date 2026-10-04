@@ -1,15 +1,19 @@
 """
 AgentGuard + OpenAI Agents SDK
 
-agentguard.init() patches AsyncOpenAI before the Agents SDK builds its client.
-Every model call the Runner makes goes through responses.create, so the budget
-is checked before each call is sent and charged from its usage after it returns.
+This example requires the unpublished AgentGuard 2.0.0 candidate. See
+docs/integrations/openai-responses.md for the tested versions and installation.
+agentguard.init() instruments the standard OpenAIResponsesModel client path.
+Its model calls are checked before dispatch and charged from reported usage.
 The SDK's own max_turns still applies; whichever limit trips first stops the run.
+In 2.0.0, standard clients created before activation are covered. Activate before
+dispatch and stream-helper construction. Previously saved bound callables,
+custom resource overrides and custom model transports can bypass the patch.
 
 Tool calls and handoffs are not guard points. The model call each one leads to is.
 
-Requirements:
-    pip install agentguard47 openai-agents
+This example makes real provider calls. The integration tests use fake transport
+with no credentials or paid calls; custom model transports are outside this path.
 
 Usage:
     export OPENAI_API_KEY=sk-...
@@ -18,14 +22,12 @@ Usage:
 """
 
 import agentguard
+from agentguard import BudgetExceeded
+from agents import Agent, MaxTurnsExceeded, Runner, function_tool
 
-# Patch first: a client created before init() is not patched.
+# Activate before dispatch and before creating stream helpers. Standard clients
+# created earlier are covered; saved callables and custom transports may bypass it.
 agentguard.init(budget_usd=0.05, trace_file="agents_traces.jsonl", service="agents-sdk")
-
-from agents import Agent, MaxTurnsExceeded, Runner, function_tool  # noqa: E402
-
-from agentguard import BudgetExceeded  # noqa: E402
-
 
 @function_tool
 def search_docs(query: str) -> str:
