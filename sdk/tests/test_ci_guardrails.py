@@ -1,4 +1,5 @@
 import re
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 
@@ -17,6 +18,29 @@ def test_ci_tools_compiler_matches_dependabot_interpreter() -> None:
         "Dependabot chooses the compiler header before .python-version; "
         "regenerate with the configured interpreter instead of relabeling the header"
     )
+
+
+def test_dependabot_preserves_fixed_compatibility_floors() -> None:
+    """REGRESSION: version updates must not retire declared provider floors."""
+    repo_root = Path(__file__).resolve().parents[2]
+    config = (repo_root / ".github" / "dependabot.yml").read_text(encoding="utf-8")
+    blocks = config.split('    directory: "/.github/requirements"', 1)
+    assert len(blocks) == 2, "Dependabot must maintain the requirements directory"
+    block = blocks[1].split("  - package-ecosystem:", 1)[0]
+    excluded = re.search(r'^    exclude-paths:\n((?:      - "[^"\n]+"\n)+)', block, re.M)
+    assert excluded is not None, "Requirements version updates must exclude the fixed floor files"
+    patterns = re.findall(r'^      - "([^"]+)"$', excluded.group(1), re.M)
+    floors = {
+        "compat-floor.in", "compat-floor.txt",
+        "compat-responses-floor.in", "compat-responses-floor.txt",
+    }
+    manifests = {
+        path.name
+        for path in (repo_root / ".github" / "requirements").iterdir()
+        if path.suffix in {".in", ".txt"}
+    }
+    matched = {name for name in manifests if any(fnmatchcase(name, pattern) for pattern in patterns)}
+    assert matched == floors, f"Exclude exactly the fixed floor files; got {sorted(matched)}"
 
 
 def _contains_ordered_lines(lines: list[str], expected: list[str]) -> bool:

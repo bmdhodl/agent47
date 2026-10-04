@@ -1,0 +1,45 @@
+{
+  "original_head": "5e200de0dff81f30966a150dc2f84b8812569a7b",
+  "commands": [
+    {
+      "name": "focused",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests/test_documentation.py",
+        "sdk/tests/test_ci_guardrails.py",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr834-focused-r2"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-04T00:22:36.424877+00:00",
+      "finished_utc": "2026-10-04T00:22:37.039224+00:00"
+    },
+    {
+      "name": "ruff",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-04T00:22:37.039224+00:00",
+      "finished_utc": "2026-10-04T00:22:37.172818+00:00"
+    }
+  ],
+  "snapshots": {
+    "compat-floor.in": "db62b78922f689080a0387c874798856a329c5ad30f6bd222c4adeea3a8c3d73",
+    "compat-floor.txt": "7d4c8e0ed192cee9c610db60acfa037e1b24dd569017cceb2d997aa07e2849a0",
+    "compat-responses-floor.in": "e37de6a134fba886cf4cdb1c56031c999a4e16c861f6a7f3bed8ff50626f3ec5",
+    "compat-responses-floor.txt": "b09110fd9d36887af7195cdb4d2ddb54d93fc826ed3e2c225206347f06e5b447",
+    "compat-latest.txt": "e2f7d3fc009a8ee56db9271b8440c0c9c23d910c3871bde6fce162bbc7d76720",
+    "live-cost.txt": "dc3fbe1768d8b6738c36bc4b6241a2e9963a12072b2d1bf4976a0129c2b791b4"
+  },
+  "behavior": "OpenAI 3.22.1 in current-version and live-cost locks; Chat floor 1.40.0 and Responses floor 1.66.3 retained; four floor files excluded from ordinary version updates only.",
+  "dependabot_reference": "https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#exclude-paths",
+  "limits": "No paid provider calls. Hosted real-provider transport and exact-head CI required before merge."
+}
