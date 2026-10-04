@@ -1,7 +1,7 @@
 build==1.4.4
 # The compiler and SDK floor are Python 3.11. Retain these existing explicit
 # transitive pins so the support-policy change does not upgrade other tools.
-importlib-metadata==8.7.1
+importlib-metadata==9.0.1
 pytest==9.0.3
 pytest-cov==7.1.0
 ruff==0.16.9
