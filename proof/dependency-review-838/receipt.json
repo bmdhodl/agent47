@@ -1,0 +1,271 @@
+{
+  "commands": [
+    {
+      "name": "compile",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-py311-831-compiler\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "piptools",
+        "compile",
+        "--generate-hashes",
+        "--reuse-hashes",
+        "--no-upgrade",
+        "--index-url=https://pypi.org/simple",
+        "--no-emit-index-url",
+        "--pip-args=--isolated --no-input",
+        "--output-file=.github/requirements/ci-tools.txt",
+        ".github/requirements/ci-tools.in"
+      ],
+      "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\stage",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:49:19.564052+00:00",
+      "finished_utc": "2026-10-04T02:49:23.315910+00:00"
+    },
+    {
+      "name": "venv",
+      "argv": [
+        "py",
+        "-3.11",
+        "-m",
+        "venv",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:49:23.323019+00:00",
+      "finished_utc": "2026-10-04T02:49:31.550747+00:00"
+    },
+    {
+      "name": "hash-install",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--require-hashes",
+        "-r",
+        "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\.github\\requirements\\ci-tools.txt"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:49:31.551325+00:00",
+      "finished_utc": "2026-10-04T02:49:47.166819+00:00"
+    },
+    {
+      "name": "pip-check",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:49:47.167209+00:00",
+      "finished_utc": "2026-10-04T02:49:47.812274+00:00"
+    },
+    {
+      "name": "ruff-version",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "--version"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:49:47.812731+00:00",
+      "finished_utc": "2026-10-04T02:49:48.410733+00:00"
+    },
+    {
+      "name": "original-ci-lint",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/agentguard",
+        "scripts/generate_pypi_readme.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/live_cost_reconcile.py",
+        "scripts/check_ci_results.py",
+        "sdk/tests/test_ci_results.py",
+        "sdk/tests/test_ci_guardrails.py",
+        "--output-format=json"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 1,
+      "started_utc": "2026-10-04T02:49:48.411185+00:00",
+      "finished_utc": "2026-10-04T02:49:48.764112+00:00"
+    },
+    {
+      "name": "safe-typing-fixes",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "--select",
+        "UP035,UP006,UP045,I",
+        "--fix"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:49:48.771114+00:00",
+      "finished_utc": "2026-10-04T02:49:48.910355+00:00"
+    },
+    {
+      "name": "baseline-runtime-error-regression",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\test_baseline_guard.py::test_packaging_runtime_error_is_not_swallowed",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\baseline-pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 1,
+      "expected": 1,
+      "started_utc": "2026-10-04T02:57:12.510722+00:00",
+      "finished_utc": "2026-10-04T02:57:13.374732+00:00"
+    },
+    {
+      "name": "source-suite",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "sdk/tests",
+        "-q",
+        "--cov=agentguard",
+        "--cov-report=term-missing",
+        "--cov-fail-under=80",
+        "--basetemp",
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\full-pytest"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:57:13.375490+00:00",
+      "finished_utc": "2026-10-04T02:58:33.382062+00:00"
+    },
+    {
+      "name": "ruff-ci",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "sdk/agentguard",
+        "scripts/generate_pypi_readme.py",
+        "scripts/sdk_preflight.py",
+        "scripts/sdk_release_guard.py",
+        "scripts/ci_tools_requirements_guard.py",
+        "scripts/live_cost_reconcile.py",
+        "scripts/check_ci_results.py",
+        "sdk/tests/test_ci_results.py",
+        "sdk/tests/test_ci_guardrails.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:58:33.382454+00:00",
+      "finished_utc": "2026-10-04T02:58:33.591484+00:00"
+    },
+    {
+      "name": "bandit",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "-m",
+        "bandit",
+        "-r",
+        "sdk/agentguard",
+        "-s",
+        "B101,B110,B112,B311",
+        "-q"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:58:33.592012+00:00",
+      "finished_utc": "2026-10-04T02:58:34.570288+00:00"
+    },
+    {
+      "name": "floor-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "scripts/ci_tools_requirements_guard.py"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:58:34.570660+00:00",
+      "finished_utc": "2026-10-04T02:58:35.619204+00:00"
+    },
+    {
+      "name": "release-guard",
+      "argv": [
+        "C:\\Users\\patri\\.codex\\tmp\\agent47-pr838-build\\venv\\Scripts\\python.exe",
+        "scripts/sdk_release_guard.py",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002",
+      "exit": 0,
+      "expected": 0,
+      "started_utc": "2026-10-04T02:58:35.619621+00:00",
+      "finished_utc": "2026-10-04T02:58:35.753237+00:00"
+    }
+  ],
+  "acceptance": [
+    "compile",
+    "venv",
+    "hash-install",
+    "pip-check",
+    "ruff-version",
+    "original-ci-lint",
+    "baseline-runtime-error-regression",
+    "source-suite",
+    "ruff-ci",
+    "bandit",
+    "floor-guard",
+    "release-guard"
+  ],
+  "intermediate_mutation": "Safe Ruff fixes applied35 edits and left3 deprecated unused imports (exit1); manual import cleanup plus the narrowed import fallback/local-calendar clock fix now pass required lint.",
+  "source_result": {
+    "passed": 1480,
+    "skipped": 114,
+    "coverage": 91.36
+  },
+  "source_hashes": {
+    ".github/requirements/ci-tools.in": "3331b377d0b8fb8812636173c425cdb38300384d087f50bbfa626822c97ffbe0",
+    ".github/requirements/ci-tools.txt": "70da76a1a1442c7305349555a07cc297507e4d8e38601ddf0bde678fa6fe60b6",
+    "scripts/ci_tools_requirements_guard.py": "f5c438b5f7965d379d8dc4026b521de768a770689ceff9ff94d816335df3e3b6",
+    "scripts/sdk_preflight.py": "b8499b9ec421f10e74a0a582fbcc3c818bd0086ec955bf34c2a03cf8d51d7cf6",
+    "scripts/sdk_release_guard.py": "637f10de559ed69e49f6f8255bf533987d91c8f437459f42f69bd47132cc9f12",
+    "sdk/tests/test_ci_tools_requirements_guard.py": "af5c92f66ac1576f58fef848dbc25131c9ab128ec2c8bd5ea9fbba971014d991",
+    "sdk/tests/test_sdk_release_guard.py": "70d82e3c7a76d8f2e83d496002d2c9b5a0ca98b4def7261f3c4ff1f2af183245"
+  },
+  "tested_commit": "d65e85616c2f7a25d674a2fe893d5ae3fc67e66b",
+  "scope": "Ruff0.16.9 tool upgrade; no SDK runtime source/API/dependency changes; all other19-lock package versions/hashes preserved by genuine Python3.11 compilation.",
+  "limits": "114 optional-provider skips locally; exact-head hosted full/provider CI remains separate. No paid calls or release."
+}
