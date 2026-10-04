@@ -1,6 +1,6 @@
 # Enforcement boundary
 
-Checked 2026-10-03 against AgentGuard `1.4.1` source. This is the tested
+Checked 2026-10-03 against AgentGuard `2.0.0` source. This is the tested
 promise. It is not an invoice cap, a host-wide kill switch, or a savings
 guarantee.
 
@@ -30,7 +30,7 @@ promise. Activate patches before requests and helper construction. Anthropic
 clients still need to be created after their patch. Real-client regressions
 and installed-wheel results are in [the #816 proof](../proof/early-openai-clients-816/review-r2/README.md).
 
-The unpublished 1.4.1 candidate accepts explicit
+The unpublished 2.0.0 candidate accepts explicit
 [`free_local_clients`](guides/free-local-clients.md) on OpenAI patches and
 `init()`. Only named client instances record zero model cost; token/call limits
 and the existing reservation boundaries remain active. Unnamed clients retain

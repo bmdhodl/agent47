@@ -68,7 +68,7 @@ def test_published_wheel_matrix_runs_after_each_publish():
     workflow = (ROOT / ".github/workflows/published-wheel.yml").read_text()
     for runner in ("ubuntu-latest", "macos-latest", "windows-latest"):
         assert runner in workflow
-    assert 'python-version: "3.9"' in workflow
+    assert 'python-version: "3.11"' in workflow
     assert "--wheel-only" in workflow
     assert "permissions:\n  contents: read" in workflow
     assert "secrets." not in workflow

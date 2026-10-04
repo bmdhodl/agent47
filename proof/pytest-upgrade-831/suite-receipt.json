@@ -1,0 +1,14 @@
+{
+  "pr": 831,
+  "original_pr_lock_head": "9b39701fadee4c30fc9cbd907fc7fb0a4537ef51",
+  "source_sha": "27c31c11499fc49f2418dc8235561fd97971cd5e",
+  "source_python_floor_unchanged": ">=3.9",
+  "scope": "Current unchanged SDK source with the PR CI-tool lock recompiled on Windows/Python 3.10 to restore colorama; no support-policy or workflow change.",
+  "lock_sha256": "afc83752e7e081fad5a8b82b5f4f6ed8705481e8496dcd2a64228f3b1bbe1590",
+  "tests_passed": 1473,
+  "tests_skipped": 114,
+  "tests_failed": 0,
+  "tests_errored": 0,
+  "junit_sha256": "0e3d2f6834866c41ca0e9c5e6cc54e1d7623807adddd48d0b3fa75f66dc40ab3",
+  "owner_support_decision": "pending"
+}

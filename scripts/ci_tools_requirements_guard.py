@@ -26,7 +26,7 @@ except Exception:  # pragma: no cover - fallback keeps the script stdlib-runnabl
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REQUIREMENTS = REPO_ROOT / ".github" / "requirements" / "ci-tools.in"
-DEFAULT_MIN_PYTHON = (3, 9)
+DEFAULT_MIN_PYTHON = (3, 11)
 PIN_RE = re.compile(r"^(?P<name>[A-Za-z0-9_.-]+)==(?P<version>[^;\s]+)(?:\s*;\s*(?P<marker>.+))?$")
 
 

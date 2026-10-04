@@ -7,14 +7,16 @@ Stop runaway agents with runtime checks in Python.
 [![PyPI version](https://img.shields.io/pypi/v/agentguard47)](https://pypi.org/project/agentguard47/)
 [![Python versions](https://img.shields.io/pypi/pyversions/agentguard47)](https://pypi.org/project/agentguard47/)
 [![CI](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bmdhodl/agent47/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](https://github.com/bmdhodl/agent47/blob/v1.4.1/LICENSE)
+[![License: MIT](https://img.shields.io/github/license/bmdhodl/agent47)](https://github.com/bmdhodl/agent47/blob/v2.0.0/LICENSE)
 
 AgentGuard checks budgets, repeated tool calls, retries, and elapsed time in
 instrumented Python code. Guards raise exceptions so your application can stop
 the next operation. The base SDK has no runtime dependencies and needs no account.
 
 **Names:** this repository is `agent47`, the PyPI package is `agentguard47`,
-and the Python import is `agentguard`. Requires Python 3.9 or newer.
+and the Python import is `agentguard`. The 2.0.0 candidate requires Python 3.11 or newer.
+The published 1.4.0 release supports Python 3.9+. See the
+[Python migration guide](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/guides/python-311-migration.md) before upgrading.
 
 ## Getting started
 
@@ -34,17 +36,17 @@ the trace path printed by the command to inspect its output.
 For a fresh PowerShell install and a runnable raw starter, follow the
 [published-release walkthrough](https://github.com/bmdhodl/agent47/blob/main/docs/guides/try-release.md#windows-powershell).
 
-### Share a stop receipt (1.4.1 candidate)
+### Share a stop receipt (2.0.0 candidate)
 
 The published package is 1.4.0. The `receipt`, `hook`, `run`, and `--version`
-commands below exist in the 1.4.1 candidate source and are not published yet.
+commands below exist in the 2.0.0 candidate source and are not published yet.
 With 1.4.0, use `agentguard report agentguard_demo_traces.jsonl` to inspect stops.
 
 `agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
 
-### Guard a Claude Code session (1.4.1 candidate)
+### Guard a Claude Code session (2.0.0 candidate)
 
 ```bash
 agentguard hook claude-code --install --write
@@ -55,7 +57,7 @@ a row and a call that already failed twice. Refusals go to
 `.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
 subscription quota. See the [Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/claude-code-hook.md).
 
-### Guard a script without editing it (1.4.1 candidate)
+### Guard a script without editing it (2.0.0 candidate)
 
 ```bash
 agentguard run --budget-usd 5 agent.py
@@ -128,7 +130,7 @@ caller already set it.
 
 The OpenAI Agents SDK runs on `responses.create`, so `agentguard.init()` before
 the `Runner` puts every model call under the budget
-([example](https://github.com/bmdhodl/agent47/blob/v1.4.1/examples/openai_agents_sdk_budget.py)). Hosted tools and
+([example](https://github.com/bmdhodl/agent47/blob/v2.0.0/examples/openai_agents_sdk_budget.py)). Hosted tools and
 `background=True` responses are not covered. See the [getting started guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md)
 for setup, traces, and framework starters.
 
@@ -159,8 +161,8 @@ usage. A guard exception returns control to your application's error handler.
 | `X402SpendGuard` | Payment amounts before the payment callback | `BudgetExceeded` |
 
 For task budgets, use `BudgetGuard.goal(...)`. For signatures and defaults,
-read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.4.1/sdk/agentguard/guards.py) and
-[public exports](https://github.com/bmdhodl/agent47/blob/v1.4.1/sdk/agentguard/__init__.py).
+read the [guard source](https://github.com/bmdhodl/agent47/blob/v2.0.0/sdk/agentguard/guards.py) and
+[public exports](https://github.com/bmdhodl/agent47/blob/v2.0.0/sdk/agentguard/__init__.py).
 
 ## Limits and security
 
@@ -179,16 +181,16 @@ read the [guard source](https://github.com/bmdhodl/agent47/blob/v1.4.1/sdk/agent
 - The base SDK uses the standard library. Optional framework extras install
   third-party dependencies and need their own security review.
 - The optional `[crewai]` extra pulls ChromaDB. The
-  [2026-09-12 audit](https://github.com/bmdhodl/agent47/blob/v1.4.1/proof/audit-20260912/README.md) found four unresolved
+  [2026-09-12 audit](https://github.com/bmdhodl/agent47/blob/v2.0.0/proof/audit-20260912/README.md) found four unresolved
   advisories, including [PYSEC-2026-311 / CVE-2026-45829](https://github.com/advisories/GHSA-f4j7-r4q5-qw2c).
   Review that exposure before installing the extra. Base SDK installs do not
   include ChromaDB.
 - Trace content can contain application data. Review it before sharing or
   configuring a remote sink.
 
-See [security reporting](https://github.com/bmdhodl/agent47/blob/v1.4.1/SECURITY.md), the
-[dated dependency audit](https://github.com/bmdhodl/agent47/blob/v1.4.1/proof/audit-20260912/README.md), and
-[release notes](https://github.com/bmdhodl/agent47/blob/v1.4.1/CHANGELOG.md). Audit results describe their recorded date,
+See [security reporting](https://github.com/bmdhodl/agent47/blob/v2.0.0/SECURITY.md), the
+[dated dependency audit](https://github.com/bmdhodl/agent47/blob/v2.0.0/proof/audit-20260912/README.md), and
+[release notes](https://github.com/bmdhodl/agent47/blob/v2.0.0/CHANGELOG.md). Audit results describe their recorded date,
 not a permanent clean bill of health.
 
 ## Local traces and optional hosted ingest
@@ -215,29 +217,42 @@ describes the optional hosted service.
 | --- | --- |
 | See which paths actually stop a call | [Enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md) |
 | Install and trace a first run | [Getting started](https://github.com/bmdhodl/agent47/blob/main/docs/guides/getting-started.md) |
-| Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/README.md) |
-| Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v1.4.1/examples) |
-| Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v1.4.1/docs/integrations) |
-| Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v1.4.1/mcp-server) |
-| Use local budget tools through MCP | [Python budget MCP server](https://github.com/bmdhodl/agent47/tree/v1.4.1/agentguard-mcp) |
+| Find guides and source references | [Documentation index](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/README.md) |
+| Try a runnable example | [Examples](https://github.com/bmdhodl/agent47/tree/v2.0.0/examples) |
+| Connect LangChain, LangGraph, or CrewAI | [Integration guides](https://github.com/bmdhodl/agent47/tree/v2.0.0/docs/integrations) |
+| Inspect hosted data through MCP | [Read-only TypeScript MCP server](https://github.com/bmdhodl/agent47/tree/v2.0.0/mcp-server) |
+| Use local budget tools through MCP | [Python budget MCP server](https://github.com/bmdhodl/agent47/tree/v2.0.0/agentguard-mcp) |
 | Navigate with an AI assistant | [AI documentation index](https://github.com/bmdhodl/agent47/blob/main/llms.txt) |
-| Contribute a fix | [Contributing](https://github.com/bmdhodl/agent47/blob/v1.4.1/CONTRIBUTING.md) |
-| Check what changed | [Changelog](https://github.com/bmdhodl/agent47/blob/v1.4.1/CHANGELOG.md) |
+| Contribute a fix | [Contributing](https://github.com/bmdhodl/agent47/blob/v2.0.0/CONTRIBUTING.md) |
+| Check what changed | [Changelog](https://github.com/bmdhodl/agent47/blob/v2.0.0/CHANGELOG.md) |
 
 ## Help and maintenance
 
 Maintained by [Patrick Hughes](https://github.com/bmdhodl).
 [Report a bug](https://github.com/bmdhodl/agent47/issues) with the package
 version, a minimal reproduction, and the expected result. Report vulnerabilities
-through [SECURITY.md](https://github.com/bmdhodl/agent47/blob/v1.4.1/SECURITY.md).
+through [SECURITY.md](https://github.com/bmdhodl/agent47/blob/v2.0.0/SECURITY.md).
 
 The source metadata defines the branch version. The PyPI badge links to the
 published version. Documentation examples and local links are tested in CI.
 The PyPI README is generated from this README and the changelog.
 
-[MIT license](https://github.com/bmdhodl/agent47/blob/v1.4.1/LICENSE).
+[MIT license](https://github.com/bmdhodl/agent47/blob/v2.0.0/LICENSE).
 
-## Latest Release Notes (1.4.1)
+## Latest Release Notes (2.0.0)
+
+Unreleased candidate. This replaces the planned 1.4.1 candidate; 1.4.0 remains
+the latest published release.
+
+### Breaking
+- The SDK requires Python 3.11 or newer. Python 3.9 and 3.10 are retired.
+  Recreate your virtual environment with Python 3.11+ before upgrading, or pin
+  `agentguard47==1.4.0` on an older interpreter. See the
+  [migration guide](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/guides/python-311-migration.md).
+- CI tests Python 3.11 and 3.12 and uses patched pytest 9.0.3. The CI-tools
+  lock is generated with its configured Python 3.11 interpreter. Other tool
+  versions and hashes remain unchanged.
+
 
 ### Added
 - `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
@@ -265,9 +280,10 @@ The PyPI README is generated from this README and the changelog.
   spent. Store-backed guards reserve on `max_output_tokens`. Hosted tools,
   `background=True`, and the WebSocket transport are not covered; see the
   [enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md) and
-  `examples/openai_agents_sdk_budget.py`. Both are Experimental in the
-  [compatibility matrix](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/compatibility.md): CI runs them against the
-  current releases, and the openai floor (1.40.0) predates the Responses API.
+  `examples/openai_agents_sdk_budget.py`. Both are Supported in the
+  [compatibility matrix](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/compatibility.md): a separate Responses/Agents
+  floor job runs OpenAI 1.66.3 / Agents 0.0.3 without skips. Chat Completions
+  retains its separate OpenAI 1.40.0 floor.
 
 ### Fixes
 - `report`, `incident`, and `summarize_trace()` now calculate elapsed time
@@ -341,11 +357,11 @@ The PyPI README is generated from this README and the changelog.
 ### Release checks
 - Every stable publish now runs the exact PyPI wheel offline on Windows,
   macOS, and Linux. No SDK runtime behavior changed.
-- New [compatibility matrix](https://github.com/bmdhodl/agent47/blob/v1.4.1/docs/compatibility.md). CI now runs the full
+- New [compatibility matrix](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/compatibility.md). CI now runs the full
   suite against the real OpenAI, Anthropic, LangChain, LangGraph, and
   OpenTelemetry packages at the oldest supported versions and at current
   releases. Missing packages fail the job instead of skipping. CrewAI stays
   experimental (#644). The current-release job also runs the OpenAI Agents
   SDK.
 
-Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v1.4.1/CHANGELOG.md)
+Full changelog: [CHANGELOG.md](https://github.com/bmdhodl/agent47/blob/v2.0.0/CHANGELOG.md)

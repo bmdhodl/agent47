@@ -2,10 +2,10 @@
 name: agentguard
 description: Runtime guardrails for AI coding agents. Recorded-budget preflight, loop, retry, and timeout checks in instrumented Python. Zero dependencies, local-first, MIT licensed.
 license: MIT
-compatibility: Requires Python 3.9+
+compatibility: Requires Python 3.11+
 metadata:
   author: bmdhodl
-  version: "1.4.1"
+  version: "2.0.0"
   pypi: agentguard47
 ---
 

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "venv",
+    "argv": [
+      "py",
+      "-3.10",
+      "-m",
+      "venv",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2",
+    "started_utc": "2026-10-03T22:45:54.554421+00:00",
+    "finished_utc": "2026-10-03T22:46:05.755409+00:00",
+    "exit_code": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "install",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "-I",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--require-hashes",
+      "--index-url",
+      "https://pypi.org/simple",
+      "-r",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\pr-ci-tools.txt"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2",
+    "started_utc": "2026-10-03T22:46:05.756378+00:00",
+    "finished_utc": "2026-10-03T22:46:26.114989+00:00",
+    "exit_code": 0,
+    "log_sha256": "548c1761661b2466147564d9d28eeb1334866ce4988c93bb54f083387e0e9196"
+  },
+  {
+    "name": "pip-check",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "-I",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2",
+    "started_utc": "2026-10-03T22:46:26.123584+00:00",
+    "finished_utc": "2026-10-03T22:46:27.473503+00:00",
+    "exit_code": 0,
+    "log_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
+  },
+  {
+    "name": "identity",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "-I",
+      "-c",
+      "import json,platform,sys,pytest; print(json.dumps(dict(python=sys.version,os=platform.platform(),pytest=pytest.__version__)))"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2",
+    "started_utc": "2026-10-03T22:46:27.481141+00:00",
+    "finished_utc": "2026-10-03T22:46:28.773289+00:00",
+    "exit_code": 0,
+    "log_sha256": "d3af632eee970ac25f5705d267bc84f99ca8b5aae02f9bb46173ca4fc6c0764e"
+  },
+  {
+    "name": "suite",
+    "argv": [
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "pytest",
+      "-p",
+      "pytest_cov",
+      "C:\\Users\\patri\\Documents\\GitHub\\agent47-review-20261002\\sdk\\tests",
+      "-q",
+      "--cov=agentguard",
+      "--cov-fail-under=80",
+      "--basetemp",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\pytest",
+      "--junitxml",
+      "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2\\suite.xml"
+    ],
+    "cwd": "C:\\Users\\patri\\.codex\\tmp\\agent47-pytest831-upgrade-verification-r2",
+    "started_utc": "2026-10-03T22:46:28.780806+00:00",
+    "finished_utc": "2026-10-03T22:48:19.547653+00:00",
+    "exit_code": 0,
+    "log_sha256": "953c7400fd4b6762d45d677da9a76dde9f53507601ae9f36a385584dd9ee2a0e"
+  }
+]

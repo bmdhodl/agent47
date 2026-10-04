@@ -9,7 +9,25 @@
 
 **Last Updated:** 2026-10-03
 
-## CI compiler and SDK interpreter (2026-10-03)
+## Python support policy (owner approved 2026-10-03, #831)
+
+- Patrick accepted Python 3.11 as the new SDK minimum after the earlier 3.10
+  recommendation was corrected: Python 3.10 reached EOL on 2026-10-01.
+  Python 3.11 security support is scheduled through October 2027.
+  Source: [Python supported versions](https://devguide.python.org/versions/).
+- This intentionally retires Python 3.9/3.10. Prepare 2.0.0 as the next
+  candidate, align metadata, CI and migration docs, and merge #831 only with
+  green checks. Published 1.4.0 remains available; no tag/publication is authorized.
+- Compile the CI-tools lock with the configured Python 3.11; keep authentic
+  compiler provenance and all retained tool versions/hashes. The compiler
+  removes exceptiongroup, tomli and typing-extensions backports that the
+  new interpreter no longer needs. Retire the old
+  Dependabot version ignores that existed solely for the Python 3.9 floor.
+- Tradeoff: users of older interpreters must recreate their environment with
+  Python 3.11+ or pin 1.4.0. Revisit the supported floor by 2027-07-01, before
+  Python 3.11's scheduled end of security support.
+
+## Previous CI compiler and SDK interpreter decision (superseded by #831)
 
 - Preserve #662's separate interpreters: compile the CI-tool lock with the
   configured Python 3.10; install and test those tools and the SDK on 3.9.

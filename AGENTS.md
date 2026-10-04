@@ -40,7 +40,7 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 
 - **Repo:** github.com/bmdhodl/agent47
 - **Dashboard repo:** github.com/bmdhodl/agent47-dashboard (private)
-- **Package:** `agentguard47` on PyPI (release status tracked in `memory/state.md`; release candidate: v1.4.1)
+- **Package:** `agentguard47` on PyPI (release status tracked in `memory/state.md`; release candidate: v2.0.0)
 - **Landing page:** site/index.html (Vercel)
 
 ## Agent Contract (MANDATORY)
@@ -118,7 +118,7 @@ git tag v1.X.0 && git push origin v1.X.0
 
 **Two products in this repo (dashboard split to private repo `agent47-dashboard`):**
 
-1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.9+. CI uses `pytest` with coverage enforcement (80% minimum). Public API exports from `agentguard/__init__.py`.
+1. **sdk/** — Python SDK (`agentguard47`). Zero stdlib-only dependencies, Python 3.11+. CI uses `pytest` with coverage enforcement (80% minimum). Public API exports from `agentguard/__init__.py`.
 
 2. **mcp-server/** — MCP server (`@agentguard47/mcp-server`). TypeScript, `@modelcontextprotocol/sdk`. Connects AI agents to the read API via stdio transport.
 
@@ -182,7 +182,7 @@ Integration modules (allowed to import core, never the reverse):
 
 ## CI/CD
 
-- **ci.yml:** Python 3.9+3.12 on PRs, full 3.9-3.12 matrix on push to main. `pytest` with `--cov-fail-under=80`, ruff lint.
+- **ci.yml:** Python 3.11 and 3.12 on PRs and push to main. `pytest` with `--cov-fail-under=80`, ruff lint.
 - **publish.yml:** PyPI publish on `v*` tags.
 
 ## Key Decisions
@@ -208,7 +208,7 @@ Read .Codex/agents/sdk-dev.md and follow those instructions.
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
 
-**Current:** current SDK release candidate is 1.4.1. Read `memory/` for the
+**Current:** current SDK release candidate is 2.0.0. Read `memory/` for the
 public package state, blockers, decisions, and distribution priorities.
 
 ## Agent Navigation Guide
@@ -253,7 +253,7 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 ### Identity
 
 - **Package:** `agentguard47`
-- **Version:** current release candidate is 1.4.1. Check `sdk/pyproject.toml` for the branch version under preparation.
+- **Version:** current release candidate is 2.0.0. Check `sdk/pyproject.toml` for the branch version under preparation.
 - **Repo:** https://github.com/bmdhodl/agent47
 - **License:** MIT
 - **Dashboard:** Private repo `agent47-dashboard` (BSL 1.1)

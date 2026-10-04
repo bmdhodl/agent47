@@ -44,7 +44,7 @@ the full supported Python matrix. There is no hourly full-suite rerun.
 The published-wheel workflow runs after publishing, on manual dispatch, and
 nightly at 08:49 UTC. A nightly run resolves the latest stable release once,
 then installs that exact PyPI wheel on Linux, Windows and macOS, plus the Python
-3.9 floor on Linux. The example refuses network calls and checks budget, loop
+3.11 floor on Linux. Older published 1.x wheels can still be checked with Python 3.11. The example refuses network calls and checks budget, loop
 and retry stop events. Scheduled runs are operational verification, not user
 adoption. They do not publish packages or make paid provider calls.
 
@@ -55,7 +55,7 @@ Existing review requirements remain in force.
 
 Prerequisites:
 
-- Python 3.9 through 3.12 for supported runtime testing
+- Python 3.11 and 3.12 for supported runtime testing
 - Git
 - Node.js only if you are working on `mcp-server/`
 

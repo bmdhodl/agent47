@@ -1,6 +1,19 @@
 # Changelog
 
-## 1.4.1
+## 2.0.0
+
+Unreleased candidate. This replaces the planned 1.4.1 candidate; 1.4.0 remains
+the latest published release.
+
+### Breaking
+- The SDK requires Python 3.11 or newer. Python 3.9 and 3.10 are retired.
+  Recreate your virtual environment with Python 3.11+ before upgrading, or pin
+  `agentguard47==1.4.0` on an older interpreter. See the
+  [migration guide](docs/guides/python-311-migration.md).
+- CI tests Python 3.11 and 3.12 and uses patched pytest 9.0.3. The CI-tools
+  lock is generated with its configured Python 3.11 interpreter. Other tool
+  versions and hashes remain unchanged.
+
 
 ### Added
 - `agentguard receipt <trace.jsonl>` prints each guard stop, the recorded
@@ -28,9 +41,10 @@
   spent. Store-backed guards reserve on `max_output_tokens`. Hosted tools,
   `background=True`, and the WebSocket transport are not covered; see the
   [enforcement boundary](docs/enforcement-boundary.md) and
-  `examples/openai_agents_sdk_budget.py`. Both are Experimental in the
-  [compatibility matrix](docs/compatibility.md): CI runs them against the
-  current releases, and the openai floor (1.40.0) predates the Responses API.
+  `examples/openai_agents_sdk_budget.py`. Both are Supported in the
+  [compatibility matrix](docs/compatibility.md): a separate Responses/Agents
+  floor job runs OpenAI 1.66.3 / Agents 0.0.3 without skips. Chat Completions
+  retains its separate OpenAI 1.40.0 floor.
 
 ### Fixes
 - `report`, `incident`, and `summarize_trace()` now calculate elapsed time
