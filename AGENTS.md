@@ -32,7 +32,7 @@ Key constraints:
 
 ---
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file provides guidance to Codex when working with code in this repository.
 
 ## What This Is
 
@@ -43,9 +43,9 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
 - **Package:** `agentguard47` on PyPI (release status tracked in `memory/state.md`; release candidate: v2.0.0)
 - **Landing page:** site/index.html (Vercel)
 
-## Agent Contract (MANDATORY)
+## Agent Contract
 
-**Every Codex session in this repo MUST follow these rules. No exceptions.**
+Every Codex session in this repo follows these rules.
 
 1. **Read ops/ docs first.** Before starting any task, read `ops/00-NORTHSTAR.md`, `ops/03-ROADMAP_NOW_NEXT_LATER.md`, and `ops/04-DEFINITION_OF_DONE.md`.
 2. **Stop on conflict.** If your task conflicts with NORTHSTAR or ROADMAP, stop and propose a correction — do not proceed.
@@ -55,10 +55,10 @@ AgentGuard — a zero-dependency runtime guardrails SDK for coding agents and AI
    - **(c) Non-goals** — what are we NOT doing?
    - **(d) Done criteria** — how do we know it's done? (reference `ops/04-DEFINITION_OF_DONE.md`)
 4. **Structured output.** Every task must include: **plan → diff summary → tests → docs updates needed**.
-5. **Check staleness.** Run `git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md` and `git log -1 --format='%cr' -- ops/02-ARCHITECTURE.md`. If ROADMAP is >5 days old or ARCHITECTURE is >14 days old, warn the user before starting any task.
+5. **Check staleness.** Run `git log -1 --format='%cr' -- ops/03-ROADMAP_NOW_NEXT_LATER.md` and `git log -1 --format='%cr' -- ARCHITECTURE.md`. If ROADMAP is >5 days old or ARCHITECTURE is >14 days old, warn the user before starting any task.
 6. **PR proof is required.** Every PR must include concrete proof that the change works: command output, targeted runtime evidence, screenshots when applicable, or saved artifacts under a local proof folder.
 7. **Open every PR ready for review. Never create a draft.** After opening: wait for CI, verify the relevant preview/deployment health, wait a few minutes for automated review, inspect the full PR timeline plus review comments/threads, address feedback, and rerun checks. Do not ask for merge while comments are still open.
-8. **Address and resolve EVERY comment. Every time.** This is not optional. After CI and after every new review wave:
+8. **Address and resolve every comment.** After CI and after every new review wave:
    - Read the full PR timeline: issue comments, review comments, review threads, and Bot/Bugbot/Claude notes.
    - Fix the code or docs, or explain with evidence why the comment is already handled (exact SHA).
    - Reply on the same thread. Do not leave a comment unanswered.
@@ -111,7 +111,7 @@ npm start             # Run (requires AGENTGUARD_API_KEY env var)
 # Bump version in sdk/pyproject.toml, then:
 make release-guard
 git tag v1.X.0 && git push origin v1.X.0
-# publish.yml auto-publishes to PyPI via PYPI_TOKEN
+# publish.yml publishes to PyPI through Trusted Publishing (OIDC); no API token
 ```
 
 ## Architecture
@@ -127,51 +127,11 @@ git tag v1.X.0 && git push origin v1.X.0
 See [GOLDEN_PRINCIPLES.md](GOLDEN_PRINCIPLES.md) for the 10 mechanical rules enforced by CI.
 Every rule maps to a structural test in `sdk/tests/test_architecture.py`.
 
-### Module Dependency Graph
+### Module Map
 
-Core modules form a DAG — no cycles, no reverse dependencies:
-
-```
-__init__.py (public API surface)
-    ├── setup.py ──→ tracing.py, guards.py, instrument.py, sinks/http.py
-    ├── tracing.py (standalone)
-    ├── guards.py (standalone)
-    ├── escalation.py ──→ guards.py
-    ├── instrument.py ──→ usage.py, guards.py, cost.py
-    ├── atracing.py ──→ tracing.py
-    ├── cost.py (standalone)
-    ├── usage.py (standalone)
-    ├── evaluation.py (standalone)
-    ├── export.py ──→ evaluation.py
-    ├── cli.py ──→ evaluation.py
-    └── sinks/http.py ──→ tracing.py
-
-Integration modules (allowed to import core, never the reverse):
-    integrations/langchain.py ──→ guards.py, tracing.py
-    integrations/langgraph.py ──→ guards.py, tracing.py
-    integrations/crewai.py ──→ guards.py, tracing.py
-    sinks/otel.py ──→ tracing.py
-```
-
-### SDK Key Modules
-
-| Module | Purpose |
-|--------|---------|
-| `tracing.py` | Tracer, TraceSink, TraceContext, JsonlFileSink, StdoutSink |
-| `guards.py` | LoopGuard, FuzzyLoopGuard, BudgetGuard, TimeoutGuard, RateLimitGuard, RetryGuard + exceptions |
-| `escalation.py` | BudgetAwareEscalation, EscalationSignal, EscalationRequired |
-| `instrument.py` | @trace_agent, @trace_tool, patch_openai, patch_anthropic |
-| `usage.py` | Provider inference and normalized token-usage helpers shared across runtime/reporting paths |
-| `sinks/http.py` | HttpSink (batched, gzip, retry, SSRF protection) |
-| `sinks/otel.py` | OtelTraceSink (OpenTelemetry bridge) |
-| `integrations/langchain.py` | LangChain BaseCallbackHandler |
-| `integrations/langgraph.py` | LangGraph guarded_node, guard_node |
-| `integrations/crewai.py` | CrewAI AgentGuardCrewHandler |
-| `evaluation.py` | EvalSuite — chainable assertion-based trace analysis |
-| `cli.py` | CLI: report, summarize, eval |
-| `atracing.py` | AsyncTracer, AsyncTraceContext — async support |
-| `cost.py` | estimate_cost — per-model pricing |
-| `export.py` | JSON, CSV, JSONL conversion utilities |
+Core modules form a DAG — no cycles, no reverse dependencies. Integration modules
+import core modules, never the reverse. `sdk/tests/test_architecture.py` enforces
+both rules. [ARCHITECTURE.md](ARCHITECTURE.md) owns the current module map and data flow.
 
 ## SDK Conventions
 
@@ -192,18 +152,18 @@ Integration modules (allowed to import core, never the reverse):
 
 ## Agent Workflow
 
-This project uses role-based Codex agents. Each agent has a prompt file in `.Codex/agents/`.
+This project uses role-based Codex agents. Each agent has a prompt file in `.claude/agents/`.
 
 | Role | File | Scope |
 |------|------|-------|
-| **PM** | `.Codex/agents/pm.md` | Triage, prioritize, coordinate, unblock |
-| **SDK Dev** | `.Codex/agents/sdk-dev.md` | `component:sdk` — Python SDK code + tests |
-| **Dashboard Dev** | `.Codex/agents/dashboard-dev.md` | Dashboard (private repo: `agent47-dashboard`) |
-| **Marketing** | `.Codex/agents/marketing.md` | Docs, README, launch materials, outreach |
+| **PM** | `.claude/agents/pm.md` | Triage, prioritize, coordinate, unblock |
+| **SDK Dev** | `.claude/agents/sdk-dev.md` | `component:sdk` — Python SDK code + tests |
+| **Dashboard Dev** | `.claude/agents/dashboard-dev.md` | Dashboard (private repo: `agent47-dashboard`) |
+| **Marketing** | `.claude/agents/marketing.md` | Docs, README, launch materials, outreach |
 
 **To start an agent session:** Open Codex in this repo and say:
 ```
-Read .Codex/agents/sdk-dev.md and follow those instructions.
+Read .claude/agents/sdk-dev.md and follow those instructions.
 ```
 
 **Project board:** https://github.com/users/bmdhodl/projects/4
@@ -280,7 +240,7 @@ sdk/                          Python SDK source (PyPI: agentguard47)
       langchain.py            AgentGuardCallbackHandler
       langgraph.py            guarded_node, guard_node
       crewai.py               AgentGuardCrewHandler
-  tests/                      pytest suite, 93% coverage, 80% enforced in CI
+  tests/                      pytest suite, 80% coverage enforced in CI
   pyproject.toml              Package metadata and version
 mcp-server/                   Read-only MCP server (TypeScript, @agentguard47/mcp-server)
 docs/                         Guides, cookbooks, competitive analysis
@@ -344,7 +304,7 @@ agentguard demo         # local proof run
 
 - **Zero dependencies.** Stdlib only. No network calls unless you opt into HttpSink.
 - **No API keys required** for local-only mode.
-- **CI coverage floor:** 80%. Current: 93%.
+- **CI coverage floor:** 80%.
 - **Guards raise exceptions** (not return codes). Catch `BudgetExceeded`, `LoopDetected`, `TimeoutExceeded`, `RetryLimitExceeded`.
 - **TraceSink interface:** All sinks implement `emit(event: Dict)`.
 - **Trace format:** JSONL -- `{service, kind, phase, trace_id, span_id, parent_id, name, ts, duration_ms, data, error, cost_usd}`
