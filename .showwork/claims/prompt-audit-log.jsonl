@@ -1,0 +1,1 @@
+{"session": "prompt-audit-log", "ts": "2026-10-05T09:51:01", "claim": "inbox/log.md records the #842 merge", "severity": "RED", "check": {"type": "file_contains", "path": "inbox/log.md", "pattern": "Merged #842 \\(84b86d1\\)"}, "prev": "ec9ebadb4e15bc8ad02f69d1184e24cc719e41fc94eb92dca413c08a482f1fbe"}
