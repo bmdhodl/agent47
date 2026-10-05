@@ -37,3 +37,9 @@ The first workflow-step run did not use the `gh` stub: a Windows path in
 `PATH` hid it, and the real `gh` opened issues #844 and #845. Both are closed
 as not planned with a note. The saved run uses a POSIX stub path, stops if
 `gh` does not resolve to the stub, and sets an invalid `GH_TOKEN`.
+
+To stub `gh` (or any command) in Git Bash on Windows, convert the stub
+folder with `cygpath -u` before you add it to `PATH`. A path such as
+`C:/Users/...` splits at the colon, so Git Bash never finds the stub and runs
+the real command. Before the run, check that `command -v gh` prints the stub
+path, and stop if it does not.

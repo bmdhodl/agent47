@@ -1,0 +1,1 @@
+{"session": "architecture-doc-pointers-review", "ts": "2026-10-05T10:11:30", "claim": "Proof README tells the next author how to stub gh safely in Git Bash", "severity": "RED", "check": {"type": "file_contains", "path": "proof/architecture-doc-pointers/README.md", "pattern": "cygpath -u"}, "prev": "d8a78b9332d6fc1c29bf046dd27a11386e3b457844666bbf5c9a5799c5b2b700"}
