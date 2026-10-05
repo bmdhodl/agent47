@@ -1,0 +1,3 @@
+$ python -m ruff check sdk/agentguard/ sdk/tests/test_ci_guardrails.py scripts/review_readiness_guard.py
+All checks passed!
+exit=0
