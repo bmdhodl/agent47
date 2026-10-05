@@ -55,8 +55,8 @@ Always:
 - leave proof for every PR
 - open every PR ready for review; never create a draft
 - do the post-PR review loop: CI, automated review, comment sweep, fixes, rerun
-- address and resolve EVERY comment, every time: reply on the thread, fix or
-  cite the SHA, resolve the GitHub conversation, and repeat until none remain
+- address and resolve every comment: reply on the thread, fix or cite the
+  SHA, resolve the GitHub conversation, and repeat until none remain
 
 ## What Claude Should Optimize For Here
 

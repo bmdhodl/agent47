@@ -49,7 +49,7 @@ Filter by label: `focus:cost-guardrail`
 - `src/lib/db.ts` — Lazy-init Postgres, proxy wrapper
 - `src/lib/api-auth.ts` — Bearer token auth, scope checking
 - `src/lib/queries.ts` — All SQL query functions
-- `src/lib/plans.ts` — Plan definitions (free/pro/team: $0/$39/$79)
+- `src/lib/plans.ts` — Plan definitions (free/pro/team; prices are not public)
 - `src/lib/stripe.ts` — Stripe client, plan-to-price mapping
 - `src/lib/alert-dispatch.ts` — Webhook + email alert delivery
 - `src/app/api/ingest/route.ts` — Critical ingest endpoint
