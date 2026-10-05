@@ -23,7 +23,7 @@ jobs:
         run: |
           now=$(date +%s)
           roadmap_age=$(( (now - $(git log -1 --format=%ct -- ops/03-ROADMAP_NOW_NEXT_LATER.md)) / 86400 ))
-          arch_age=$(( (now - $(git log -1 --format=%ct -- ops/02-ARCHITECTURE.md)) / 86400 ))
+          arch_age=$(( (now - $(git log -1 --format=%ct -- ARCHITECTURE.md)) / 86400 ))
           north_age=$(( (now - $(git log -1 --format=%ct -- ops/00-NORTHSTAR.md)) / 86400 ))
           price_date=$(sed -n 's/^LAST_UPDATED = "\(.*\)"/\1/p' sdk/agentguard/cost.py)
           # Validate the exact YYYY-MM-DD shape before passing it to date(1).
@@ -72,7 +72,7 @@ jobs:
           if [ "$DOW" = "1" ]; then
             if [ "$arch_age" -gt 14 ]; then
               body+="### ARCHITECTURE — ${arch_age} days since last update\n"
-              body+="- [ ] Review \`ops/02-ARCHITECTURE.md\` — any boundary changes?\n\n"
+              body+="- [ ] Review \`ARCHITECTURE.md\` — any boundary changes?\n\n"
             fi
             if [ "$north_age" -gt 30 ]; then
               body+="### NORTHSTAR — ${north_age} days since last update\n"

@@ -51,10 +51,13 @@
   interoperability PR, not as a speculative core feature.
 - Prompt-audit leftovers (2026-10-04): `QA_REPORT.md`, `WORK_PLAN.md` and
   `RESEARCH.md` still sit in the repo root against the `CLAUDE.md` rule; move
-  them to `docs/archive/root-reports/` if they are kept. `AGENTS.md` now
-  checks the root `ARCHITECTURE.md` for staleness, but `ops-cadence.yml` and
-  the PR template still track `ops/02-ARCHITECTURE.md`; decide whether they
-  move too.
+  them to `docs/archive/root-reports/` if they are kept.
+- `ops-cadence.yml` has been disabled since 2026-06-11. Before it runs again,
+  fix its price check: it reads a literal `LAST_UPDATED = "YYYY-MM-DD"` from
+  `sdk/agentguard/cost.py`, but since #792 that line is
+  `LAST_UPDATED = DEFAULT_PRICE_TABLE["last_updated"]`. The `sed` now finds
+  nothing, so every weekday run would report a false "missing or unparseable"
+  price warning. Read `"last_updated"` from `sdk/agentguard/price_table.py`.
 - Done 2026-08-15: built the current SDK candidate wheel and installed it into
   an isolated venv. `python -m agentguard`, `doctor`, `demo`, raw
   `quickstart --write`, generated-starter execution, `report`, and `badge` all
