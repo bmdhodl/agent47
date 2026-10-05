@@ -1,6 +1,7 @@
 """Write three runnable copies of the ops-cadence run block for local tests.
 
 Each copy changes only what the case needs and fails if a substitution misses.
+Needs PyYAML (`pip install pyyaml`); the SDK itself does not use it.
 """
 from pathlib import Path
 import sys

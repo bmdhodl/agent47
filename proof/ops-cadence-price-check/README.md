@@ -48,7 +48,8 @@ same run's `.coverage` data.
 
 `price_step.py` writes the three test copies of the run block. It changes
 only `DOW`, `now`, or the file the `sed` reads, and stops if a change does
-not apply. Run it as `python price_step.py <repo> <out-dir>`, then run each
+not apply. It needs PyYAML (`pip install pyyaml`), which is not an SDK
+dependency. Run it as `python price_step.py <repo> <out-dir>`, then run each
 `step-*.sh` in Git Bash with `gh` stubbed and `BROKEN_TABLE` set to the
 `broken_price_table.py` it writes. Convert the stub folder with `cygpath -u`
 before you add it to `PATH`, and stop if `command -v gh` does not print the
