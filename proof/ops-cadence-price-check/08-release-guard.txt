@@ -1,0 +1,3 @@
+$ python scripts/sdk_release_guard.py
+Release guard passed.
+exit=0

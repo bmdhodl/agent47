@@ -2,6 +2,8 @@ import re
 from fnmatch import fnmatchcase
 from pathlib import Path
 
+from agentguard.price_table import DEFAULT_PRICE_TABLE
+
 
 def test_ci_tools_compiler_matches_dependabot_interpreter() -> None:
     """REGRESSION: pip-compile's header takes precedence over .python-version."""
@@ -298,6 +300,20 @@ def test_compat_floor_lock_matches_sdk_extra_floors() -> None:
     )
     for name, version in re.findall(r"^([A-Za-z0-9_.-]+)==(\S+)$", manifest, re.M):
         assert compiled.get(name.lower()) == version, f"compat-floor.txt is stale for {name}=={version}"
+
+
+def test_ops_cadence_reads_the_price_table_date() -> None:
+    """REGRESSION: #792 moved the price date to price_table.py and the cost.py sed went blank."""
+    repo_root = Path(__file__).resolve().parents[2]
+    text = (repo_root / ".github" / "workflows" / "ops-cadence.yml").read_text(encoding="utf-8")
+    found = re.search(r"^ +price_date=\$\(sed -n 's/(.+)/\\1/p' (\S+)\)$", text, re.M)
+    assert found is not None, "ops-cadence.yml must read the price date with one sed substitution"
+    sed_pattern, source = found.groups()
+    # sed BRE writes groups as \( \); the rest of this pattern reads the same in Python.
+    pattern = re.compile(sed_pattern.replace(r"\(", "(").replace(r"\)", ")"))
+    lines = (repo_root / source).read_text(encoding="utf-8").splitlines()
+    dates = [m.group(1) for m in map(pattern.fullmatch, lines) if m]
+    assert dates == [DEFAULT_PRICE_TABLE["last_updated"]], f"the sed would print {dates} from {source}"
 
 
 def test_ci_compat_job_fails_instead_of_skipping() -> None:

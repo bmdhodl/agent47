@@ -1,0 +1,33 @@
+$ python scripts/sdk_preflight.py
+All checks passed!
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: E:\C-Offload\github\agent47\.claude\worktrees\prompt-audit-checkup-38e6e6\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 14 items
+
+sdk\tests\test_ci_guardrails.py::test_ci_tools_compiler_matches_dependabot_interpreter PASSED [  7%]
+sdk\tests\test_ci_guardrails.py::test_dependabot_preserves_fixed_compatibility_floors PASSED [ 14%]
+sdk\tests\test_ci_guardrails.py::test_ci_tools_pin_windows_colorama_on_all_compiler_platforms PASSED [ 21%]
+sdk\tests\test_ci_guardrails.py::test_actionlint_workflow_is_wired PASSED [ 28%]
+sdk\tests\test_ci_guardrails.py::test_release_content_waits_for_published_github_release PASSED [ 35%]
+sdk\tests\test_ci_guardrails.py::test_publish_workflow_release_steps_are_post_publish_rerunnable PASSED [ 42%]
+sdk\tests\test_ci_guardrails.py::test_ci_mcp_budget_job_installs_hashed_deps_without_editable_pip PASSED [ 50%]
+sdk\tests\test_ci_guardrails.py::test_claude_review_checks_out_github_sha_not_pull_request_sha PASSED [ 57%]
+sdk\tests\test_ci_guardrails.py::test_github_actions_under_dot_github_are_pinned PASSED [ 64%]
+sdk\tests\test_ci_guardrails.py::test_code_scanning_proof_logs_do_not_contain_ansi PASSED [ 71%]
+sdk\tests\test_ci_guardrails.py::test_proof_snapshots_are_not_live_pip_requirements PASSED [ 78%]
+sdk\tests\test_ci_guardrails.py::test_compat_floor_lock_matches_sdk_extra_floors PASSED [ 85%]
+sdk\tests\test_ci_guardrails.py::test_ops_cadence_reads_the_price_table_date PASSED [ 92%]
+sdk\tests\test_ci_guardrails.py::test_ci_compat_job_fails_instead_of_skipping PASSED [100%]Running teardown with pytest sessionfinish...
+
+
+============================= 14 passed in 0.36s ==============================
+==> ruff: lint only the Python files touched in this branch
+C:\Python313\python.exe -m ruff check sdk/tests/test_ci_guardrails.py
+==> targeted-pytest: run only the test files most directly tied to the touched SDK paths
+C:\Python313\python.exe -m pytest sdk/tests/test_ci_guardrails.py -v
+exit=0

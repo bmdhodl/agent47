@@ -1,0 +1,30 @@
+$ python -m pytest sdk/tests/ -q -p no:cacheprovider --cov=agentguard --cov-fail-under=80
+'agents': No module named 'agents'")
+Test 
+tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n
+ext_model_call[True] was skipped. Reason: 
+('E:\\C-Offload\\github\\agent47\\.claude\\worktrees\\prompt-audit-checkup-38e6
+e6\\sdk\\tests\\test_real_dispatch.py', 46, "Skipped: could not import 
+'agents': No module named 'agents'")
+Test 
+tests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies was
+skipped. Reason: 
+('E:\\C-Offload\\github\\agent47\\.claude\\worktrees\\prompt-audit-checkup-38e6
+e6\\sdk\\tests\\test_real_dispatch.py', 46, "Skipped: could not import 
+'agents': No module named 'agents'")
+================= 1592 passed, 3 skipped in 172.05s (0:02:52) =================
+Exception ignored in atexit callback <function cleanup_numbered_dir at 0x000001F174FD98A0>:
+Traceback (most recent call last):
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 374, in cleanup_numbered_dir
+    cleanup_dead_symlinks(root)
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 359, in cleanup_dead_symlinks
+    if not left_dir.resolve().exists():
+  File "C:\Python313\Lib\pathlib\_abc.py", line 450, in exists
+    self.stat(follow_symlinks=follow_symlinks)
+  File "C:\Python313\Lib\pathlib\_local.py", line 515, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\patri\\AppData\\Local\\Temp\\pytest-root\\pytest-of-patri\\pytest-current'
+exit=0
+
+$ python -m coverage report --format=total  (same run's .coverage data, 12:30 local; the tail above cut the table)
+93
