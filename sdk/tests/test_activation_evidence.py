@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from urllib.request import Request
 
 import pytest
 
@@ -352,7 +353,18 @@ def test_refresh_from_fixtures_does_not_invent_users(tmp_path):
     assert report["repeat_use"].startswith("unknown")
 
 
-def _off_publish_fixture(tmp_path):
+# Our own published-wheel runs around that window. 09-25 is an ordinary day, so
+# its jobs are our CI inside the 7-day figure. 09-24 is the publish day, already
+# outside the off-publish sum. 09-19 is outside the 7-day window but inside 30,
+# and it has no real-interpreter row at all, which is what the per-day cap is for.
+OWN_CI_RUNS = [
+    {"run_id": 35900000000, "date": "2026-09-19", "wheel_install_jobs": 4},
+    {"run_id": 36100000000, "date": "2026-09-24", "wheel_install_jobs": 4},
+    {"run_id": 36190628659, "date": "2026-09-25", "wheel_install_jobs": 4},
+]
+
+
+def _off_publish_fixture(tmp_path, runs=None, runs_from=None):
     """The 2026-09-20..2026-09-26 window from the AG-29 focus review.
 
     It holds one publish day (09-24) and two 100%-null interpreter days
@@ -386,22 +398,25 @@ def _off_publish_fixture(tmp_path):
     out = tmp_path / "snapshot.json"
     pypi.write_text(json.dumps(overall), encoding="utf-8")
     minor.write_text(json.dumps(python_minor), encoding="utf-8")
-    subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "scripts" / "refresh_activation_snapshot.py"),
-            "--pypi-json",
-            str(pypi),
-            "--python-minor-json",
-            str(minor),
-            "--retrieved-at",
-            "2026-09-27T00:00:00Z",
-            "--out",
-            str(out),
-        ],
-        check=True,
-        cwd=ROOT,
-    )
+    command = [
+        sys.executable,
+        str(ROOT / "scripts" / "refresh_activation_snapshot.py"),
+        "--pypi-json",
+        str(pypi),
+        "--python-minor-json",
+        str(minor),
+        "--retrieved-at",
+        "2026-09-27T00:00:00Z",
+        "--out",
+        str(out),
+    ]
+    if runs is not None:
+        wheel_runs = tmp_path / "published_wheel_runs.json"
+        wheel_runs.write_text(json.dumps(runs), encoding="utf-8")
+        command += ["--published-wheel-runs-json", str(wheel_runs)]
+    if runs_from is not None:
+        command += ["--published-wheel-runs-from", runs_from]
+    subprocess.run(command, check=True, cwd=ROOT)
     return json.loads(out.read_text(encoding="utf-8"))
 
 
@@ -448,6 +463,214 @@ def test_off_publish_downloads_are_numeric_in_the_classifier(tmp_path):
     assert any("null interpreter" in note for note in report["unknowns"])
 
 
+def test_own_ci_net_figure_is_lower_than_the_raw_figure(tmp_path):
+    """The fixture window holds a published-wheel run date, so net < raw."""
+    snapshot = _off_publish_fixture(tmp_path, runs=OWN_CI_RUNS)
+    real = snapshot["pypi"]["off_publish_days"]["window_7d"]["real_interpreter"]
+    net = real["net_of_own_ci"]
+    assert net["status"] == "ok"
+    assert isinstance(real["downloads"], int)
+    assert isinstance(net["downloads"], int)
+    assert net["downloads"] < real["downloads"]
+    # 12 raw off-publish real-interpreter events. The 09-25 run ran four jobs, but
+    # that day holds only three real-interpreter rows, so the subtraction stops at
+    # three and the fourth job is reported rather than taken from another day.
+    assert real["downloads"] == 12
+    assert net["downloads"] == 9
+    assert net["jobs_excluded"] == 3
+    assert net["jobs_not_subtracted"] == 1
+    assert "capped" in net["note"]
+    assert net["day_count"] == 6
+    assert net["mean_per_day"] == 1.5
+    # The 09-24 run is not subtracted: that publish day is already out of the sum.
+    assert [run["run_id"] for run in net["runs_excluded"]] == [36190628659]
+    assert "published-wheel.yml" in snapshot["exclusions"]["published_wheel_ci"]
+    assert {
+        "run_id": 36190628659,
+        "date": "2026-09-25",
+        "wheel_install_jobs": 4,
+    } in snapshot["exclusions"]["published_wheel_ci_runs"]
+    assert any("upper bound" in note for note in snapshot["unknowns"])
+
+    install = _classify(tmp_path, snapshot)["install"]
+    assert install["pypi_real_interpreter_events_outside_publish_burst"] == 12
+    assert install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci"] == 9
+    assert install[
+        "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_mean_per_day"
+    ] == 1.5
+    assert install["published_wheel_ci_jobs_excluded"] == 3
+
+
+def test_own_ci_net_figure_covers_the_thirty_day_window(tmp_path):
+    snapshot = _off_publish_fixture(tmp_path, runs=OWN_CI_RUNS)
+    month = snapshot["pypi"]["off_publish_days"]["window_30d"]["real_interpreter"]
+    net = month["net_of_own_ci"]
+    assert net["status"] == "ok"
+    # The 30-day window starts 2026-08-28, so the 09-19 run counts here too. That
+    # day has no real-interpreter row, so none of its four jobs is subtracted.
+    assert net["jobs_excluded"] == 3
+    assert net["jobs_not_subtracted"] == 5
+    assert isinstance(month["downloads"], int)
+    assert isinstance(net["downloads"], int)
+    assert net["downloads"] == month["downloads"] - 3
+    assert net["downloads"] < month["downloads"]
+    assert "not computed" not in json.dumps(snapshot["pypi"]["off_publish_days"])
+    off_publish = snapshot["pypi"]["off_publish_days"]
+    assert "published-wheel.yml" in off_publish["own_ci_method"]
+    assert "upper bound" in off_publish["own_ci_upper_bound"]
+
+
+def test_own_ci_runs_must_cover_the_whole_window(tmp_path):
+    """A run inventory that starts inside the window cannot net it out."""
+    module = _refresh_module()
+    raw = {"downloads": 12, "day_count": 6}
+    rows = [{"date": "2026-09-25", "downloads": 3}]
+    net = module._net_of_own_ci(
+        raw, rows, OWN_CI_RUNS, "2026-09-20", "2026-09-26", (), runs_from="2026-09-23"
+    )
+    assert net["status"] == "unavailable"
+    assert "2026-09-23" in net["reason"]
+    assert "downloads" not in net
+
+
+def test_a_short_run_inventory_fails_only_the_window_it_cannot_cover(tmp_path):
+    """The 7-day window still nets out when only the 30-day window is uncovered."""
+    snapshot = _off_publish_fixture(tmp_path, runs=OWN_CI_RUNS, runs_from="2026-09-20")
+    windows = snapshot["pypi"]["off_publish_days"]
+    week = windows["window_7d"]["real_interpreter"]["net_of_own_ci"]
+    month = windows["window_30d"]["real_interpreter"]["net_of_own_ci"]
+    assert week["status"] == "ok"
+    assert week["downloads"] == 9
+    assert month["status"] == "unavailable"
+    assert "2026-09-20" in month["reason"]
+    assert "downloads" not in month
+    # The failure is visible outside its own block, by name.
+    assert snapshot["sources"]["github_published_wheel_runs"]["windows_not_subtracted"] == [
+        "window_30d"
+    ]
+    assert any("window_30d" in note for note in snapshot["unknowns"])
+    assert any("upper bound" in note for note in snapshot["unknowns"])
+    install = _classify(tmp_path, snapshot)["install"]
+    assert install["published_wheel_ci_jobs_not_subtracted"] == 1
+
+
+def test_actions_api_unavailable_never_presents_raw_as_net(monkeypatch, tmp_path):
+    module = _refresh_module()
+    _mock_public_feeds(monkeypatch, module, {"releases": {
+        "1.4.0": [{"upload_time_iso_8601": "2026-09-24T12:00:00Z"}],
+    }})
+    snapshot = module.fetch_public("2026-10-02T08:00:00Z")
+    real = snapshot["pypi"]["off_publish_days"]["window_7d"]["real_interpreter"]
+    net = real["net_of_own_ci"]
+    assert net["status"] == "unavailable"
+    assert ": " in net["reason"]
+    assert "downloads" not in net
+    assert snapshot["sources"]["github_published_wheel_runs"]["status"] == "unavailable"
+    assert snapshot["exclusions"]["published_wheel_ci_runs"] == []
+    assert any("could not be subtracted" in note for note in snapshot["unknowns"])
+    install = _classify(tmp_path, snapshot)["install"]
+    reported = install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci"]
+    assert str(reported).startswith("unavailable;")
+    assert reported != install["pypi_real_interpreter_events_outside_publish_burst"]
+
+
+def test_only_the_wheel_install_jobs_count_as_our_own_ci():
+    """The workflow's resolve job installs nothing and must not be subtracted."""
+    module = _refresh_module()
+    installed = {"name": module.WHEEL_INSTALL_STEP, "conclusion": "success"}
+    payload = {"jobs": [
+        {"status": "completed", "steps": [
+            {"name": "Resolve one stable release for the whole matrix", "conclusion": "success"},
+        ]},
+        {"status": "completed", "steps": [
+            {"name": "Set up Python", "conclusion": "success"},
+            installed,
+        ]},
+        {"status": "completed", "steps": [installed]},
+        {"status": "completed", "steps": [
+            {"name": module.WHEEL_INSTALL_STEP, "conclusion": "failure"},
+        ]},
+        {"status": "in_progress"},
+    ]}
+    assert module._wheel_install_jobs(payload) == 2
+    # A completed job with no step list is a payload we do not understand.
+    with pytest.raises(ValueError):
+        module._wheel_install_jobs({"jobs": [{"id": 7, "status": "completed"}]})
+
+
+def test_published_wheel_runs_come_from_the_actions_api(monkeypatch):
+    module = _refresh_module()
+    installed = {"name": module.WHEEL_INSTALL_STEP, "conclusion": "success"}
+    asked = []
+
+    def get_json(url):
+        asked.append(url)
+        if url == module.PUBLISHED_WHEEL_RUNS_URL:
+            return {"workflow_runs": [
+                {"id": 37196396992, "created_at": "2026-10-04T10:45:23Z"},
+                {"id": 37111363411, "created_at": "2026-10-03T08:56:23Z"},
+                {"id": 30000000000, "created_at": "2026-07-01T00:00:00Z"},
+            ]}
+        return {"jobs": [
+            {"status": "completed", "steps": [installed]} for _ in range(4)
+        ]}
+
+    monkeypatch.setattr(module, "_get_json", get_json)
+    runs, covers_from = module.published_wheel_runs("2026-10-05T09:00:00Z")
+    assert runs == [
+        {"run_id": 37111363411, "date": "2026-10-03", "wheel_install_jobs": 4},
+        {"run_id": 37196396992, "date": "2026-10-04", "wheel_install_jobs": 4},
+    ]
+    assert asked[0] == module.PUBLISHED_WHEEL_RUNS_URL
+    # The July run is outside the lookback, so its jobs are never requested.
+    assert not any("30000000000" in url for url in asked)
+    # The page did not fill up, so the inventory covers the whole lookback.
+    assert covers_from == "2026-08-21"
+    assert module.own_ci_runs_from("2026-10-05T09:00:00Z") == "2026-08-21"
+
+
+def test_a_full_run_page_reports_only_the_coverage_it_has(monkeypatch):
+    """One page of runs can end inside the lookback. Say where the data starts."""
+    module = _refresh_module()
+    installed = {"name": module.WHEEL_INSTALL_STEP, "conclusion": "success"}
+
+    def get_json(url):
+        if url == module.PUBLISHED_WHEEL_RUNS_URL:
+            return {"workflow_runs": [
+                {"id": 37000000000 + index, "created_at": f"2026-09-{(index % 5) + 20}T01:00:00Z"}
+                for index in range(module.RUNS_PAGE_SIZE)
+            ]}
+        return {"jobs": [{"status": "completed", "steps": [installed]}]}
+
+    monkeypatch.setattr(module, "_get_json", get_json)
+    _runs, covers_from = module.published_wheel_runs("2026-10-05T09:00:00Z")
+    # The oldest run on the full page is 2026-09-20, not the 2026-08-21 lookback.
+    assert covers_from == "2026-09-20"
+
+
+def test_the_github_token_never_leaves_its_host_or_its_scheme():
+    """urllib copies every header onto a redirect, so the opener must strip it."""
+    module = _refresh_module()
+    handler = module._DropAuthOnHostChange()
+    original = Request(
+        f"{module.GITHUB_API_ROOT}/actions/runs/1/jobs",
+        headers={"Authorization": "Bearer secret", "Accept": "application/json"},
+    )
+    same = handler.redirect_request(
+        original, None, 302, "Found", {}, f"{module.GITHUB_API_ROOT}/actions/runs/2/jobs"
+    )
+    assert same.get_header("Authorization") == "Bearer secret"
+    other_host = handler.redirect_request(
+        original, None, 302, "Found", {}, "https://example.invalid/jobs"
+    )
+    assert other_host.get_header("Authorization") is None
+    downgraded = handler.redirect_request(
+        original, None, 302, "Found", {}, "http://api.github.com/repos/bmdhodl/agent47/other"
+    )
+    assert downgraded.get_header("Authorization") is None
+    assert downgraded.get_header("Accept") == "application/json"
+
+
 def test_off_publish_stays_unknown_without_the_interpreter_feed(tmp_path):
     """An older snapshot must not turn a missing figure into a silent zero."""
     report = _classify(tmp_path, {})
@@ -466,6 +689,10 @@ def _refresh_module():
 
 def _mock_public_feeds(monkeypatch, module, releases):
     def get_json(url):
+        if url.startswith(module.GITHUB_API_ROOT):
+            # No test here reaches the real Actions API. Refuse it out loud so the
+            # unavailable path is asserted on purpose, not by accident.
+            raise OSError("the GitHub Actions API is not reachable in this test")
         if url == "https://pypi.org/pypi/agentguard47/json":
             if isinstance(releases, Exception):
                 raise releases

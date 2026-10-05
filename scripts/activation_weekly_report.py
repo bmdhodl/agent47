@@ -105,6 +105,37 @@ def _section(snapshot: Mapping[str, Any], key: str) -> Mapping[str, Any] | None:
     return value if isinstance(value, Mapping) else None
 
 
+def _net_of_own_ci_fields(net: Any) -> dict[str, Any]:
+    """Read the real-interpreter figure net of our own published-wheel CI.
+
+    A snapshot written before that exclusion existed, or one whose Actions read
+    failed, keeps the field explicitly unavailable. The raw figure is never
+    copied into the net field.
+    """
+    if not isinstance(net, Mapping) or "downloads" not in net:
+        reason = net.get("reason") if isinstance(net, Mapping) else "not supplied"
+        status = net.get("status") if isinstance(net, Mapping) else "unavailable"
+        text = f"{status or 'unavailable'}; {reason or 'not supplied'}"
+        return {
+            "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci": text,
+            "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_mean_per_day": text,
+            "published_wheel_ci_jobs_excluded": text,
+            "published_wheel_ci_jobs_not_subtracted": text,
+        }
+    return {
+        "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci": int(
+            net.get("downloads") or 0
+        ),
+        "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_mean_per_day": float(
+            net.get("mean_per_day") or 0.0
+        ),
+        "published_wheel_ci_jobs_excluded": int(net.get("jobs_excluded") or 0),
+        # Jobs the per-day cap refused. A positive number means the raw figure
+        # held fewer real-interpreter rows than we ran jobs on that day.
+        "published_wheel_ci_jobs_not_subtracted": int(net.get("jobs_not_subtracted") or 0),
+    }
+
+
 def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
     """Read the snapshot's computed off-publish-day figures for the 7-day window.
 
@@ -118,6 +149,10 @@ def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
         "pypi_real_interpreter_events_outside_publish_burst": "unknown",
         "pypi_real_interpreter_events_outside_publish_burst_day_count": "unknown",
         "pypi_real_interpreter_events_outside_publish_burst_mean_per_day": "unknown",
+        "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci": "unknown",
+        "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_mean_per_day": "unknown",
+        "published_wheel_ci_jobs_excluded": "unknown",
+        "published_wheel_ci_jobs_not_subtracted": "unknown",
         "publish_dates_excluded": [],
         "off_publish_method": "unknown",
     }
@@ -143,6 +178,7 @@ def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
         fields["pypi_real_interpreter_events_outside_publish_burst_mean_per_day"] = float(
             real.get("mean_per_day") or 0.0
         )
+        fields.update(_net_of_own_ci_fields(real.get("net_of_own_ci")))
     else:
         reason = real.get("reason") if isinstance(real, Mapping) else "not supplied"
         for key in (
@@ -151,6 +187,7 @@ def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
             "pypi_real_interpreter_events_outside_publish_burst_mean_per_day",
         ):
             fields[key] = f"unavailable; {reason}"
+        fields.update(_net_of_own_ci_fields(None))
     return fields
 
 
