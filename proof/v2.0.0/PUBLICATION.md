@@ -69,10 +69,19 @@ appeared and `report` completed. Each job concluded `success`:
   `agentguard-release:v2.0.0` campaign has a `delivered` record and no error.
   Subscriber counts stay in bmdpat.
 
+## Release page
+
+On 2026-10-06, with Patrick's approval, an overview went above the generated
+notes. It passed the release-notes slop scan (score 0.0, no em dash). It has
+no image and no attached files, because unsigned release assets keep
+Scorecard Signed-Releases at 0 (see `ops/FOLLOWUP.md`). Its video link opens
+the X post. Its CHANGELOG, migration guide and hook guide links returned 200
+at the `v2.0.0` tag. The edit left the release published, not a draft and
+marked latest; `release-content.yml` runs only on `published`, so it did not
+run again.
+
 ## Not done here
 
-- The GitHub Release has the generated notes only. No overview text and no
-  assets were added.
 - OpenAI and Google price rows were checked on 2026-07-15. The `publish.yml`
   age gate fails from 2026-10-14, so recheck those rows before the next tag.
   See `ops/FOLLOWUP.md`.
