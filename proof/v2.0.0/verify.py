@@ -51,7 +51,8 @@ check(len(exits) == steps,
 check(exits[:-1] == ["0"] * (len(exits) - 1) and exits[-1:] == ["1"],
       f"clean install expected passes then one refusal, got {exits}")
 check("agentguard 2.0.0" in log, "agentguard --version did not print 2.0.0")
-check("requires a different Python: 3.10.11 not in '>=3.11'" in log, "Python 3.10 did not refuse the wheel")
+check(re.search(r"requires a different Python: 3\.10\.\d+ not in '>=3\.11'", log) is not None,
+      "Python 3.10 did not refuse the wheel")
 check("sha256 of trace - agentguard47 2.0.0" in log, "receipt did not name agentguard47 2.0.0")
 
 pages = json.loads((HERE / "browser-checks.json").read_text(encoding="utf-8"))

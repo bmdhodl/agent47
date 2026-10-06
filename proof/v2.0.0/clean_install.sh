@@ -2,6 +2,11 @@
 # Build the 2.0.0 wheel and sdist like publish.yml, then run the first-use
 # commands from a clean Python 3.11 venv in an empty directory.
 # Usage: bash proof/v2.0.0/clean_install.sh <work-dir>   (run from the repo root)
+# Windows only (Git Bash): it uses the py launcher and venv Scripts/python.exe.
+case "$OSTYPE" in
+    msys*|cygwin*) ;;
+    *) echo "clean_install.sh targets Windows Git Bash (py launcher, Scripts/python.exe); OSTYPE is $OSTYPE" >&2; exit 1 ;;
+esac
 set -u
 work="$1"
 repo="$(pwd)"

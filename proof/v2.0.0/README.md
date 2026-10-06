@@ -65,7 +65,10 @@ cleanup, after the summary. Python ignores it, and pytest exited 0.
 | `agentguard47-2.0.0-py3-none-any.whl` | `a434b30181ec3a48eda1253f7e53a286271aded8b80cc83c871139189f5cc341` |
 | `agentguard47-2.0.0.tar.gz` | `23706a7f104da57e7dbe103c4867b74fbc45ad9c2011cf712f5c9a8711303d3b` |
 
-The CI build makes the files that go to PyPI. Compare its hashes in
+A rebuild gives the same wheel hash. The sdist hash changes with each build,
+because setuptools stamps build-time mtimes on generated files and the gzip
+header; a rebuild on 2026-10-05 had the same 151 members with the same
+contents. The CI build makes the files that go to PyPI. Compare its hashes in
 `PUBLICATION.md` after the release; this local build is not the upload.
 
 A new Python 3.11 venv installed the wheel with `--no-deps --no-index`. In an
