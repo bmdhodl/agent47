@@ -58,6 +58,8 @@ check("sha256 of trace - agentguard47 2.0.0" in log, "receipt did not name agent
 pages = json.loads((HERE / "browser-checks.json").read_text(encoding="utf-8"))
 check(len(pages) == 12 and all(p["passed"] for p in pages), "browser checks did not all pass")
 
+# 09-test.txt is the suite run saved for this release, not a live run, so later
+# test changes do not affect this check. The numbers match the README table.
 tests = (HERE / "09-test.txt").read_text(encoding="utf-8")
 check(re.search(r"\b1592 passed, 3 skipped\b", tests) is not None and "exit=0" in tests, "full suite result changed")
 

@@ -13,8 +13,16 @@ esac
 set -u
 work="$1"
 repo="$(pwd)"
+# Delete only a missing path, an empty directory or a directory this script
+# made, so a wrong argument such as . cannot remove the repo.
+marker="$work/.clean-install-workdir"
+if [ -e "$work" ] && [ ! -f "$marker" ] && [ -n "$(ls -A "$work")" ]; then
+    echo "clean_install.sh will not delete $work: it is not empty and this script did not make it" >&2
+    exit 1
+fi
 rm -rf "$work"
 mkdir -p "$work/dist" "$work/run" || exit 1
+touch "$marker" || exit 1
 
 step() { echo "\$ $*"; "$@"; echo "exit=$?"; }
 

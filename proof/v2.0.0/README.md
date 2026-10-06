@@ -58,7 +58,9 @@ cleanup, after the summary. Python ignores it, and pytest exited 0.
 ### Clean install
 
 `clean_install.sh` builds the package like `publish.yml`
-(`SOURCE_DATE_EPOCH=315532800 python -m build ./sdk`). Local hashes:
+(`SOURCE_DATE_EPOCH=315532800 python -m build ./sdk`). It deletes `<work>`
+first, but only a missing path, an empty directory or a directory that an
+earlier run made. Local hashes:
 
 | File | SHA-256 |
 |---|---|
