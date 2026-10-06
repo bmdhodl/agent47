@@ -47,7 +47,10 @@ Git Bash 5.2.37. `make` is not installed, so each command ran directly.
 
 The price-table age check passes today. OpenAI and Google rows were checked
 on 2026-07-15, so the `publish.yml` gate fails from 2026-10-14 (more than 90
-days). Tag before then, or re-check those prices first.
+days). Tag before then, or re-check those prices first. `publish.yml` runs
+the check before it builds, so a late tag stops before any PyPI upload. On
+tag day, run `python scripts/sdk_release_guard.py --check-price-table-age`
+before you push the tag.
 
 `09-test.txt` ends with the `PermissionError` from pytest's `atexit` temp-dir
 cleanup, after the summary. Python ignores it, and pytest exited 0.

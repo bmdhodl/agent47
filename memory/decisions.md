@@ -7,7 +7,6 @@
 - The release-prep PR changes public docs, the landing page and the PyPI
   README to release wording, so it merges just before the `v2.0.0` tag.
   Push the tag only on Patrick's go that day; a PyPI upload cannot be undone.
-- Each X or LinkedIn post still needs his approval in chat.
 
 ## AG-06 architecture approval (2026-10-03)
 

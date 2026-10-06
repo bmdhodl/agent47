@@ -41,10 +41,15 @@ for command in (["python", "scripts/sdk_release_guard.py"],
     run = subprocess.run(command, cwd=REPO, capture_output=True, text=True)
     check(run.returncode == 0, f"{' '.join(command)} exited {run.returncode}")
 
+script = (HERE / "clean_install.sh").read_text(encoding="utf-8")
+steps = sum(1 for line in script.splitlines() if not line.lstrip().startswith("#") and re.search(r"\bstep ", line))
 log = (HERE / "10-clean-install.txt").read_text(encoding="utf-8")
 exits = re.findall(r"^exit=(\d+)$", log, re.M)
-check(len(exits) == 17 and set(exits[:-1]) == {"0"} and exits[-1] == "1",
-      f"clean install expected 16 passes then one refusal, got {exits}")
+check(len(exits) == steps,
+      f"10-clean-install.txt has {len(exits)} results but clean_install.sh has {steps} steps; rerun clean_install.sh")
+# Every step passes except the last one: the Python 3.10 install must refuse the wheel.
+check(exits[:-1] == ["0"] * (len(exits) - 1) and exits[-1:] == ["1"],
+      f"clean install expected passes then one refusal, got {exits}")
 check("agentguard 2.0.0" in log, "agentguard --version did not print 2.0.0")
 check("requires a different Python: 3.10.11 not in '>=3.11'" in log, "Python 3.10 did not refuse the wheel")
 check("sha256 of trace - agentguard47 2.0.0" in log, "receipt did not name agentguard47 2.0.0")
