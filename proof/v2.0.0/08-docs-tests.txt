@@ -1,0 +1,29 @@
+$ python -m pytest sdk/tests/test_pypi_readme_sync.py sdk/tests/test_sdk_release_guard.py sdk/tests/test_release_example.py sdk/tests/test_activation_evidence.py sdk/tests/test_first_run.py -q -p no:cacheprovider
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: E:\C-Offload\github\agent47\.claude\worktrees\prompt-audit-checkup-38e6e6\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 94 items
+
+sdk\tests\test_pypi_readme_sync.py ......                                [  6%]
+sdk\tests\test_sdk_release_guard.py ..................                   [ 25%]
+sdk\tests\test_release_example.py .............                          [ 39%]
+sdk\tests\test_activation_evidence.py ..............................     [ 71%]
+sdk\tests\test_first_run.py ...........................                  [100%]Running teardown with pytest sessionfinish...
+
+
+============================= 94 passed in 11.28s =============================
+Exception ignored in atexit callback <function cleanup_numbered_dir at 0x00000129B1B598A0>:
+Traceback (most recent call last):
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 374, in cleanup_numbered_dir
+    cleanup_dead_symlinks(root)
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 359, in cleanup_dead_symlinks
+    if not left_dir.resolve().exists():
+  File "C:\Python313\Lib\pathlib\_abc.py", line 450, in exists
+    self.stat(follow_symlinks=follow_symlinks)
+  File "C:\Python313\Lib\pathlib\_local.py", line 515, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\patri\\AppData\\Local\\Temp\\pytest-root\\pytest-of-patri\\pytest-current'
+exit=0

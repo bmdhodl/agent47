@@ -30,11 +30,11 @@ promise. Activate patches before requests and helper construction. Anthropic
 clients still need to be created after their patch. Real-client regressions
 and installed-wheel results are in [the #816 proof](../proof/early-openai-clients-816/review-r2/README.md).
 
-The unpublished 2.0.0 candidate accepts explicit
+AgentGuard 2.0.0 accepts explicit
 [`free_local_clients`](guides/free-local-clients.md) on OpenAI patches and
 `init()`. Only named client instances record zero model cost; token/call limits
 and the existing reservation boundaries remain active. Unnamed clients retain
-paid estimates, even at localhost. Published 1.4.0 has no such patch option.
+paid estimates, even at localhost. 1.4.0 has no such patch option.
 
 ## Classes
 

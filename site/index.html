@@ -241,12 +241,12 @@ guard stops                            3
           </div>
           <ol class="ways">
             <li>
-              <h3>Claude Code <span class="ver">2.0.0 candidate</span></h3>
+              <h3>Claude Code <span class="ver">new in 2.0.0</span></h3>
               <p>A hook that refuses the third identical tool call in a row and a call that already failed twice.</p>
               <div class="cmd"><code id="way-hook">agentguard hook claude-code --install --write</code><button class="copy" type="button" onclick="copyText('way-hook', this)">Copy</button></div>
             </li>
             <li>
-              <h3>Any Python script <span class="ver">2.0.0 candidate</span></h3>
+              <h3>Any Python script <span class="ver">new in 2.0.0</span></h3>
               <p>Runs your script unchanged with the OpenAI and Anthropic clients patched.</p>
               <div class="cmd"><code id="way-run">agentguard run --budget-usd 5 agent.py</code><button class="copy" type="button" onclick="copyText('way-run', this)">Copy</button></div>
             </li>
@@ -276,7 +276,7 @@ guard stops                            3
               The receipt lists each stop, the cost the trace recorded, and the
               trace's SHA-256 drawn as a barcode. Paste it into the pull request
               that fixed the loop. The hash identifies the file; it is not a
-              signature. <code>agentguard receipt</code> is in the unpublished 2.0.0 candidate.
+              signature. <code>agentguard receipt</code> is new in 2.0.0.
             </p>
           </div>
         </div>
@@ -295,7 +295,7 @@ guard stops                            3
               <li><b>It is not an invoice cap.</b> A dollar limit counts usage after each call returns, so the call that crosses the line has already been sent. With a shared local store, sync OpenAI calls and streams reserve before they go out.</li>
               <li><b>It is not a sandbox.</b> Code that skips the SDK is not counted, and anyone with the repo can remove the hook.</li>
               <li><b>It does not phone home.</b> No telemetry. Traces stay on your machine unless you set a dashboard key or configure an export sink, such as OpenTelemetry.</li>
-              <li><b>Hosted tools run where it cannot see.</b> The 2.0.0 candidate patches the OpenAI Responses API and Agents SDK, but a web search or code interpreter call inside one response is not stopped, and background responses are not counted.</li>
+              <li><b>Hosted tools run where it cannot see.</b> Since 2.0.0 it patches the OpenAI Responses API and Agents SDK, but a web search or code interpreter call inside one response is not stopped, and background responses are not counted.</li>
             </ol>
             <div class="more">
               <a href="/enforcement.html">Every tested limit</a>

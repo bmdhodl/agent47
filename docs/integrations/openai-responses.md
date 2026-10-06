@@ -1,27 +1,26 @@
 # OpenAI Responses and Agents SDK
 
-Status: owner-approved AG-06 architecture, 2026-10-03. This path is in the
-unpublished **AgentGuard 2.0.0 candidate**, which requires Python 3.11+.
-Installing the published 1.4.0 package does not provide this support.
+Status: owner-approved AG-06 architecture, 2026-10-03. This path is new in
+**AgentGuard 2.0.0**, which requires Python 3.11+. 1.4.0 does not provide
+this support.
 
 The adapter uses the existing `init()`, `patch_openai()` and
 `patch_openai_async()` entry points. It adds no core dependency, public export,
 or second agent orchestrator. OpenAI and the Agents SDK remain optional.
 
-## Install the tested candidate
+## Install
 
-Build the wheel from the reviewed candidate checkout, then install that exact
-artifact in a clean environment. The minimum Responses pair is OpenAI 1.66.3
+Install AgentGuard 2.0.0 in a clean environment. The minimum Responses pair is
+OpenAI 1.66.3
 and OpenAI Agents 0.0.3; it does not change Chat Completions' 1.40.0 floor.
 
 ```bash
-python -m pip install ./dist/agentguard47-2.0.0-py3-none-any.whl \
+python -m pip install "agentguard47==2.0.0" \
   "openai==1.66.3" "openai-agents==0.0.3"
 ```
 
-The candidate wheel, supported version pairs and installed tests are recorded
-in [AG-06 acceptance proof](../../proof/approved-responses-735/README.md).
-Do not substitute a stable PyPI install for the candidate artifact.
+The supported version pairs and installed tests are recorded in
+[AG-06 acceptance proof](../../proof/approved-responses-735/README.md).
 
 ## Activate before dispatch
 
@@ -65,6 +64,6 @@ do not reserve; store-backed sync calls and streams have the narrower
 [reservation contract](../guides/reservation-contract.md).
 
 The full [enforcement map](../enforcement-boundary.md) owns these bounds.
-Installed candidate evidence does not establish external adoption or authorize
-publication. Outside activation and repeat use remain tracked in #737; later
-adapters retain their own decisions.
+Installed-wheel evidence does not establish external adoption. Outside
+activation and repeat use remain tracked in #737; later adapters retain their
+own decisions.
