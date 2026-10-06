@@ -12,9 +12,11 @@
   modelled: OpenAI Fast mode (2x), the 10% data-residency and FedRAMP uplift,
   Batch/Flex discounts, and Gemini audio and image rates. GPT-5.6 Sol is at a
   promotional price "at least through November 21, 2026"; recheck it then.
-- 2.0.0 adds `agentguard --version` (owner-approved 2026-09-25). After the
-  tag, confirm the `published-wheel.yml` matrix and PyPI attestations and add
-  `proof/v2.0.0/PUBLICATION.md`.
+- OpenAI and Google price rows were checked on 2026-07-15. The `publish.yml`
+  price-table age gate fails from 2026-10-14, so recheck those rows before
+  the next tag.
+- Done 2026-10-06: 2.0.0 published. The `published-wheel.yml` matrix and PyPI
+  attestations pass; see `proof/v2.0.0/PUBLICATION.md`.
 - The v1.4.0 GitHub Release has an unsigned PNG asset
   (`agentguard-1.4.0.png`), which keeps Scorecard Signed-Releases at 0. Host
   release images outside release assets from now on.

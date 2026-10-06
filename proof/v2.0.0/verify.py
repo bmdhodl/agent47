@@ -33,8 +33,8 @@ for entry in PUBLIC:
 
 decisions = (REPO / "memory/decisions.md").read_text(encoding="utf-8")
 check("## 2.0.0 publication approval (2026-10-05)" in decisions, "memory/decisions.md lacks the release approval")
-check("PyPI remains 1.4.0 until that publish finishes." in (REPO / "memory/state.md").read_text(encoding="utf-8"),
-      "memory/state.md does not record the release timing")
+check("Latest verified published SDK release: 2.0.0" in (REPO / "memory/state.md").read_text(encoding="utf-8"),
+      "memory/state.md does not record the 2.0.0 publication")
 
 for command in (["python", "scripts/sdk_release_guard.py"],
                 ["python", "-m", "pytest", "sdk/tests/test_pypi_readme_sync.py", "-q", "-p", "no:cacheprovider"]):
