@@ -8,7 +8,7 @@ import sys
 REPO = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 PUBLIC = ["README.md", "sdk/PYPI_README.md", "docs", "site", "examples"]
-STALE = re.compile(r"2\.0\.0 candidate|unpublished (AgentGuard )?(\*\*)?2\.0\.0|not published yet"
+STALE = re.compile(r"2\.0\.0 candidate|unpublished (AgentGuard )?(\*\*)?2\.0\.0|2\.0\.0.*not published yet"
                    r"|Unreleased candidate", re.IGNORECASE)
 problems = []
 
