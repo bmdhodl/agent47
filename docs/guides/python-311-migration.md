@@ -1,8 +1,8 @@
 # Move to Python 3.11 for AgentGuard 2.0
 
-The unpublished AgentGuard 2.0.0 candidate requires Python 3.11 or newer.
-It replaces the planned 1.4.1 candidate. This is a breaking support change;
-the latest published package remains 1.4.0. The Python import name, public
+AgentGuard 2.0.0 requires Python 3.11 or newer.
+It replaces the planned 1.4.1 patch. This is a breaking support change;
+1.4.0 is the last release for Python 3.9 and 3.10. The Python import name, public
 guard APIs, MIT license, and zero runtime dependencies stay the same.
 
 Python 3.9 reached end of life in October 2025. Python 3.10 reached end of
@@ -35,11 +35,9 @@ python3.11 -m venv .venv-py311
 .venv-py311/bin/python -m agentguard demo
 ```
 
-These commands install the published release, currently 1.4.0. After 2.0.0
-is published, update your application's package constraint to allow it, install
-the new version in this environment, and rerun your application tests.
-For the candidate from a checkout, use `python -m pip install ./sdk` with the
-new environment's Python. No release tag or PyPI publication is part of #831.
+These commands install the latest release. Update your application's package
+constraint to allow 2.0.0, install it in this environment, and rerun your
+application tests.
 
 ## Stay on an older interpreter
 
@@ -50,5 +48,5 @@ python -m pip install agentguard47==1.4.0
 ```
 
 That preserves the previously released SDK. It does not supply Python runtime
-security updates or the candidate's new SDK fixes. AgentGuard 2.0 metadata
+security updates or the SDK fixes in 2.0.0. AgentGuard 2.0 metadata
 rejects installation on these retired interpreters; do not bypass that check.

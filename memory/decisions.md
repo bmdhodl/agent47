@@ -1,5 +1,14 @@
 # SDK Decisions
 
+## 2.0.0 publication approval (2026-10-05)
+
+- Patrick asked in chat to package and release 2.0.0, live on 2026-10-06.
+  This is the separate release gate that #831 left open.
+- The release-prep PR changes public docs, the landing page and the PyPI
+  README to release wording, so it merges just before the `v2.0.0` tag.
+  Push the tag only on Patrick's go that day; a PyPI upload cannot be undone.
+- Each X or LinkedIn post still needs his approval in chat.
+
 ## AG-06 architecture approval (2026-10-03)
 
 - Patrick approved proceeding with the held Responses/Agents architecture

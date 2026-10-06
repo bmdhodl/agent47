@@ -2,8 +2,7 @@
 
 ## 2.0.0
 
-Unreleased candidate. This replaces the planned 1.4.1 candidate; 1.4.0 remains
-the latest published release.
+This major release replaces the planned 1.4.1 patch.
 
 ### Breaking
 - The SDK requires Python 3.11 or newer. Python 3.9 and 3.10 are retired.

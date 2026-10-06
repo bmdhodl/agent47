@@ -14,8 +14,8 @@ instrumented Python code. Guards raise exceptions so your application can stop
 the next operation. The base SDK has no runtime dependencies and needs no account.
 
 **Names:** this repository is `agent47`, the PyPI package is `agentguard47`,
-and the Python import is `agentguard`. The 2.0.0 candidate requires Python 3.11 or newer.
-The published 1.4.0 release supports Python 3.9+. See the
+and the Python import is `agentguard`. AgentGuard 2.0.0 requires Python 3.11 or newer.
+On Python 3.9 or 3.10, pin `agentguard47==1.4.0`. See the
 [Python migration guide](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/guides/python-311-migration.md) before upgrading.
 
 ## Getting started
@@ -36,17 +36,13 @@ the trace path printed by the command to inspect its output.
 For a fresh PowerShell install and a runnable raw starter, follow the
 [published-release walkthrough](https://github.com/bmdhodl/agent47/blob/main/docs/guides/try-release.md#windows-powershell).
 
-### Share a stop receipt (2.0.0 candidate)
-
-The published package is 1.4.0. The `receipt`, `hook`, `run`, and `--version`
-commands below exist in the 2.0.0 candidate source and are not published yet.
-With 1.4.0, use `agentguard report agentguard_demo_traces.jsonl` to inspect stops.
+### Share a stop receipt (new in 2.0.0)
 
 `agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
 
-### Guard a Claude Code session (2.0.0 candidate)
+### Guard a Claude Code session (new in 2.0.0)
 
 ```bash
 agentguard hook claude-code --install --write
@@ -57,7 +53,7 @@ a row and a call that already failed twice. Refusals go to
 `.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
 subscription quota. See the [Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/claude-code-hook.md).
 
-### Guard a script without editing it (2.0.0 candidate)
+### Guard a script without editing it (new in 2.0.0)
 
 ```bash
 agentguard run --budget-usd 5 agent.py
@@ -241,8 +237,7 @@ The PyPI README is generated from this README and the changelog.
 
 ## Latest Release Notes (2.0.0)
 
-Unreleased candidate. This replaces the planned 1.4.1 candidate; 1.4.0 remains
-the latest published release.
+This major release replaces the planned 1.4.1 patch.
 
 ### Breaking
 - The SDK requires Python 3.11 or newer. Python 3.9 and 3.10 are retired.

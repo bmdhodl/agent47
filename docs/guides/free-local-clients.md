@@ -1,7 +1,7 @@
 # Explicit free local clients
 
-This option is in the unpublished AgentGuard **2.0.0 candidate**. Published
-1.4.0 needs the [manual-accounting example](../../examples/local_cost_manual.py).
+This option is new in AgentGuard **2.0.0**. On
+1.4.0, use the [manual-accounting example](../../examples/local_cost_manual.py).
 
 Create the OpenAI-compatible client first, then declare that exact instance
 free when you activate the patch:
