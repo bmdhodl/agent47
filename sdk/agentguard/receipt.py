@@ -127,7 +127,7 @@ def render_text(receipt: Dict[str, Any], ascii_only: bool = False) -> str:
         lines.append(_row("tool calls", str(receipt["tool_calls"])))
     if receipt["llm_calls"] or receipt["recorded_cost_usd"]:
         lines.append(_row("llm calls", str(receipt["llm_calls"])))
-        lines.append(_row("recorded cost", f"${receipt['recorded_cost_usd']:.2f}"))
+        lines.append(_row("recorded cost", f"${receipt['recorded_cost_usd']:.4f}"))
     if receipt["budget_warnings"]:
         lines.append(_row("budget warnings", str(receipt["budget_warnings"])))
     lines.append(rule)
