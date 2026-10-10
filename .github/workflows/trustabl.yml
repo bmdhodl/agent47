@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   scan:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 15
     concurrency:
       group: trustabl-${{ github.ref }}

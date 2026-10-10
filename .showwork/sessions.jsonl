@@ -69,3 +69,5 @@
 {"event": "session.finish", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:22", "status": "ok", "claims_verdict": "GREEN", "prev": "27522d24f89736e2fa8bc1a7771b3a624bc3d7f8255b9a44c36158e860e73c83"}
 {"event": "session.start", "session": "receipt-published-proof-852", "ts": "2026-10-09T23:43:00", "agent": "codex", "prev": "c146ba93ba2aa90dd232880020970fca24e387053f8fe7a601630dbe94d22eaf"}
 {"event": "session.finish", "session": "receipt-published-proof-852", "ts": "2026-10-09T23:43:00", "status": "ok", "claims_verdict": "GREEN", "prev": "fa85209a37694558eb3a916866a5b31a87ed931e1e5d06417c56bfcabd65fb14"}
+{"event": "session.start", "session": "receipt-review-routing-852", "ts": "2026-10-09T23:46:35", "agent": "codex", "prev": "158e3c26042cff853de5b66af74ae0be89ffe66663682677fd85e5d8988512e8"}
+{"event": "session.finish", "session": "receipt-review-routing-852", "ts": "2026-10-09T23:46:36", "status": "ok", "claims_verdict": "GREEN", "prev": "afe374a73cd80ea9f05cccde4b374f64d6456190ac4abef2b0720bdb0281ff53"}
