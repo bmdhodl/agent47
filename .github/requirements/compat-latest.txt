@@ -612,9 +612,9 @@ openai==3.22.1 \
     # via
     #   -r compat-latest.in
     #   openai-agents
-openai-agents==0.22.3 \
-    --hash=sha256:33c79a5da0c9cf8ace0019bb09e268338d9162a18edbb6c2ce12bc139917109e \
-    --hash=sha256:41dec9e2e703db32a627bf0290f3721a6ca37405603a8cb654213356dbb8ee9d
+openai-agents==0.23.1 \
+    --hash=sha256:0183e6da7370df80f7cf900379d9f113e664e32b426f51aa7486c9091faf8f2d \
+    --hash=sha256:2bbd0a87a42531d25638529396644defd3ff2afd92fd9ec7d2f02167e5458a99
     # via -r compat-latest.in
 opentelemetry-api==1.45.0 \
     --hash=sha256:711ede81773c8025c2c03dac0450bc89f3d30aea6eabcc815c570d4e35a963f7 \
