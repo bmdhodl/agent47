@@ -1,5 +1,10 @@
 name: CI
 
+# Owner policy: local runners only. Checks wait while research owns Fluarmn.
+# The bench yields at a saved experiment when three jobs queue or one waits
+# 30 minutes, then resumes research after CI has been quiet for ten minutes.
+# There is no GitHub-hosted fallback.
+
 on:
   push:
     branches: [main]

@@ -76,3 +76,5 @@
 {"event": "session.finish", "session": "receipt-fork-policy-852", "ts": "2026-10-09T23:54:29", "status": "ok", "claims_verdict": "GREEN", "prev": "02b5f0a2a2d8c52dc9139d43ac33c3ac66d945a9a061c5921eac4d476ddcf41e"}
 {"event": "session.start", "session": "receipt-actionlint-852", "ts": "2026-10-09T23:58:25", "agent": "codex", "prev": "7d43613d01c7dc9b0718ce4db4454e76ef59604a5b1f86c7a9642c8013ae44ff"}
 {"event": "session.finish", "session": "receipt-actionlint-852", "ts": "2026-10-09T23:58:25", "status": "ok", "claims_verdict": "GREEN", "prev": "8b6aedd30a57e8f5143c064f068cb47f78e384bdc8bd5a41a9af19c5b13416aa"}
+{"event": "session.start", "session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:14", "agent": "codex", "prev": "4ff1888fe1eab297c0471f8515e07ff9a6943c61a53652d915a21e02b6384c4b"}
+{"event": "session.finish", "session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:15", "status": "ok", "claims_verdict": "GREEN", "prev": "1943f137a53557d5d2583eb53c6ce01c7ffa512063aa52595d3247218e5a2c0a"}

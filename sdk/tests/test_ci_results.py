@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parents[2]
 JOBS = ("test", "lint", "mcp", "mcp-budget", "compat", "responses-floor")
 
 
-@pytest.mark.parametrize("filename", ["ci.yml", "actionlint.yml", "docs-consistency.yml", "codeql.yml", "trustabl.yml"])
+@pytest.mark.parametrize("filename", [
+    "ci.yml", "actionlint.yml", "docs-consistency.yml", "codeql.yml", "trustabl.yml", "claude-review.yml",
+])
 def test_REGRESSION_local_ci_never_checks_out_fork_code(filename):
     # Local PR jobs must exclude fork heads. The always-running summary rejects
     # a fork before checkout so skipped test groups cannot turn the gate green.
@@ -26,6 +28,11 @@ def test_REGRESSION_local_ci_never_checks_out_fork_code(filename):
             assert "github.event.pull_request.head.repo.full_name != github.repository" in first["if"]
             assert first["run"].rstrip().endswith("exit 1")
             assert "uses" not in first
+        elif name == "claude-review":
+            assert "github.event.pull_request.head.repo.full_name == github.repository" in job["if"]
+            checkout = next(step for step in job["steps"] if step.get("uses", "").startswith("actions/checkout@"))
+            assert checkout["with"]["ref"] == "${{ github.sha }}"
+            assert checkout["with"]["persist-credentials"] is False
         else:
             assert "github.event_name != 'pull_request'" in job["if"]
             assert "github.event.pull_request.head.repo.full_name == github.repository" in job["if"]
