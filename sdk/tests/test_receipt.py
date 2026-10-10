@@ -186,3 +186,21 @@ def test_hash_matches_the_bytes_summarized(tmp_path):
     receipt = build_receipt(str(path))
     assert receipt["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
     assert receipt["events"] == 1
+
+
+@pytest.mark.parametrize("fmt", ["text", "markdown"])
+@pytest.mark.parametrize("cost, expected", [(0.0069, "$0.0069"), (0.0, "$0.0000"), (1.08, "$1.0800")])
+def test_recorded_cost_preserves_four_decimal_places(tmp_path, fmt, cost, expected):
+    # REGRESSION: #852 rounded a sub-cent run to cents in the receipt header.
+    events = [{"kind": "event", "name": "llm.result", "cost_usd": cost}]
+    if cost == 0.0069:
+        events.append({"kind": "event", "name": "guard.budget_exceeded", "data": {
+            "message": "Cost budget exceeded: $0.0069 > $0.0050"}})
+    receipt = build_receipt(str(_write(tmp_path, events)))
+    output = render(receipt, fmt)
+    cost_row = next(line for line in output.splitlines() if line.startswith("recorded cost"))
+    assert cost_row.split()[-1] == expected
+    assert len(cost_row) == WIDTH
+    assert json.loads(render(receipt, "json"))["recorded_cost_usd"] == cost
+    if cost == 0.0069:
+        assert "$0.0069" in receipt["stops"][0]["detail"]
