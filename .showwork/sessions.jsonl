@@ -65,3 +65,5 @@
 {"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:46:04", "status": "ok", "claims_verdict": "GREEN", "prev": "16447845ef167602e36e751781276134d98ac6c738e18120dfcfccbb75720a65"}
 {"event": "session.start", "session": "receipt-cost-852", "ts": "2026-10-09T23:21:02", "agent": "codex", "prev": "f6647c69442b288738a4da51fae2783febee1962c2f120260cfbafeccdc70045"}
 {"event": "session.finish", "session": "receipt-cost-852", "ts": "2026-10-09T23:30:25", "status": "ok", "claims_verdict": "GREEN", "prev": "0b909675227148c11b7e8cf544a8e576c183a9f9dabf4f5d4901f726f18134ff"}
+{"event": "session.start", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:10", "agent": "codex", "prev": "1723af7c495f1e00d42a12458d45d57e3fa91e21d1f535be67b051cd88b25cf2"}
+{"event": "session.finish", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:22", "status": "ok", "claims_verdict": "GREEN", "prev": "27522d24f89736e2fa8bc1a7771b3a624bc3d7f8255b9a44c36158e860e73c83"}
