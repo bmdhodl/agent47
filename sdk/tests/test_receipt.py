@@ -25,7 +25,7 @@ def _write(tmp_path, events):
 def test_demo_receipt_lists_each_stop(demo_trace):
     receipt = build_receipt(str(demo_trace))
     assert receipt["stops"] == [
-        {"kind": "budget", "detail": "$1.08 over $1.00"},
+        {"kind": "budget", "detail": "$1.0800 over $1.0000"},
         {"kind": "loop", "detail": "search x3, same args"},
         {"kind": "retry", "detail": "fetch_docs 3 tries, limit 2"},
     ]
@@ -45,6 +45,32 @@ def test_guard_events_do_not_add_cost(tmp_path):
     receipt = build_receipt(str(_write(tmp_path, [call] * 4 + [stop])))
     assert receipt["recorded_cost_usd"] == 6.0
     assert receipt["stops"] == [{"kind": "budget", "detail": "Cost budget exceeded: $6.0000 > $5.0000"}]
+
+
+@pytest.mark.parametrize("fmt", ["text", "markdown"])
+def test_REGRESSION_small_receipt_cost_keeps_budget_stop_precision(tmp_path, fmt):
+    # REGRESSION #852: the receipt printed $0.01 for the same $0.0069 shown in its stop reason.
+    events = [
+        {"kind": "event", "name": "llm.result", "cost_usd": 0.00345},
+        {"kind": "event", "name": "llm.result", "cost_usd": 0.00345},
+        {"kind": "event", "name": "guard.budget_exceeded", "data": {
+            "message": "Cost budget exceeded: $0.0069 > $0.0050 (this call added $0.0034)"}},
+    ]
+    receipt = build_receipt(str(_write(tmp_path, events)))
+    assert receipt["recorded_cost_usd"] == 0.0069
+    text = render(receipt, fmt, ascii_only=True)
+    cost_line = next(line for line in text.splitlines() if line.startswith("recorded cost"))
+    assert cost_line.endswith("$0.0069")
+    assert "$0.01" not in text
+    assert json.loads(render(receipt, "json"))["recorded_cost_usd"] == 0.0069
+
+
+def test_REGRESSION_structured_budget_stop_keeps_small_dollar_values(tmp_path):
+    # The offline demo's structured stop data also rounded small costs and limits to cents.
+    trace = _write(tmp_path, [{"kind": "event", "name": "guard.budget_exceeded", "data": {
+        "cost_used": 0.0069, "limit_usd": 0.0050}}])
+    receipt = build_receipt(str(trace))
+    assert receipt["stops"] == [{"kind": "budget", "detail": "$0.0069 over $0.0050"}]
 
 
 def test_receipt_cost_matches_report_rule_for_top_level_guard_cost(tmp_path):

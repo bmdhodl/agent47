@@ -1,0 +1,1 @@
+{"trace": "trace.jsonl", "sha256": "663c51e474fd9a37b8d1337b2838155223161d35a56971f95d00b2ec85851dce", "events": 3, "llm_calls": 2, "tool_calls": 0, "recorded_cost_usd": 0.0069, "budget_warnings": 0, "stops": [{"kind": "budget", "detail": "$0.0069 over $0.0050"}], "version": "2.0.0"}

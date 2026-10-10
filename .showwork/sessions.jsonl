@@ -63,3 +63,5 @@
 {"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-20260816", "ts": "2026-08-16T05:28:02", "status": "ok", "claims_verdict": "GREEN", "prev": "619be8768bc070050cb6584ae8ca1217b5edefbaa005a820951bc579adf37cbd"}
 {"event": "session.start", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:44:29", "agent": "codex", "prev": "54b030220c188c34e11615d6107f0044fd09104ce42559885112d1ba0c1fa0d3"}
 {"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:46:04", "status": "ok", "claims_verdict": "GREEN", "prev": "16447845ef167602e36e751781276134d98ac6c738e18120dfcfccbb75720a65"}
+{"event": "session.start", "session": "receipt-cost-852", "ts": "2026-10-09T23:21:02", "agent": "codex", "prev": "f6647c69442b288738a4da51fae2783febee1962c2f120260cfbafeccdc70045"}
+{"event": "session.finish", "session": "receipt-cost-852", "ts": "2026-10-09T23:30:25", "status": "ok", "claims_verdict": "GREEN", "prev": "0b909675227148c11b7e8cf544a8e576c183a9f9dabf4f5d4901f726f18134ff"}

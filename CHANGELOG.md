@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+- Text and Markdown receipts show recorded costs and structured dollar-budget
+  stops to four decimal places. A recorded cost of `$0.0069` no longer appears
+  as `$0.01`. JSON cost values keep their existing precision. (#852)
+
 ## 2.0.0
 
 This major release replaces the planned 1.4.1 patch.
