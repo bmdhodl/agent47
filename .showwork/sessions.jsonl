@@ -67,3 +67,5 @@
 {"event": "session.finish", "session": "receipt-cost-852", "ts": "2026-10-09T23:30:25", "status": "ok", "claims_verdict": "GREEN", "prev": "0b909675227148c11b7e8cf544a8e576c183a9f9dabf4f5d4901f726f18134ff"}
 {"event": "session.start", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:10", "agent": "codex", "prev": "1723af7c495f1e00d42a12458d45d57e3fa91e21d1f535be67b051cd88b25cf2"}
 {"event": "session.finish", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:22", "status": "ok", "claims_verdict": "GREEN", "prev": "27522d24f89736e2fa8bc1a7771b3a624bc3d7f8255b9a44c36158e860e73c83"}
+{"event": "session.start", "session": "receipt-published-proof-852", "ts": "2026-10-09T23:43:00", "agent": "codex", "prev": "c146ba93ba2aa90dd232880020970fca24e387053f8fe7a601630dbe94d22eaf"}
+{"event": "session.finish", "session": "receipt-published-proof-852", "ts": "2026-10-09T23:43:00", "status": "ok", "claims_verdict": "GREEN", "prev": "fa85209a37694558eb3a916866a5b31a87ed931e1e5d06417c56bfcabd65fb14"}
