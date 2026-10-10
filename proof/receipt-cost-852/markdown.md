@@ -1,0 +1,19 @@
+```text
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace                        trace.jsonl
+events                                 3
+llm calls                              2
+recorded cost                    $0.0069
+----------------------------------------
+STOPPED
+  budget  $0.0069 over $0.0050
+----------------------------------------
+guard stops                            1
+
+▉▉▌▋▊▎▉▋█▋█▊▎▍▌█▌▏▊▎▌▌█▌▍▏▌▏▎▊▊▍▍▌▎▉▎▊▌▊
+          663C 51E4 74FD 9A37
+  sha256 of trace - agentguard47 2.0.0
+```
+<sub>Recorded by [AgentGuard47](https://github.com/bmdhodl/agent47). Cost is what the trace recorded, not an invoice.</sub>

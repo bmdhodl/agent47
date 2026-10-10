@@ -1,0 +1,3 @@
+{"kind":"event","name":"llm.result","cost_usd":0.00345}
+{"kind":"event","name":"llm.result","cost_usd":0.00345}
+{"kind":"event","name":"guard.budget_exceeded","data":{"cost_used":0.0069,"limit_usd":0.0050}}

@@ -1,5 +1,10 @@
 name: CI
 
+# Owner policy: local runners only. Checks wait while research owns Fluarmn.
+# The bench yields at a saved experiment when three jobs queue or one waits
+# 30 minutes, then resumes research after CI has been quiet for ten minutes.
+# There is no GitHub-hosted fallback.
+
 on:
   push:
     branches: [main]
@@ -24,9 +29,14 @@ jobs:
     name: ci-required
     if: ${{ always() }}
     needs: [test, lint, mcp, mcp-budget, compat, responses-floor]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 3
     steps:
+      - name: Refuse fork code on local runners
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "Fork PRs need a trusted repository branch before local CI can run." >&2
+          exit 1
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
@@ -39,7 +49,8 @@ jobs:
         run: python scripts/check_ci_results.py
 
   test:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 15
     env:
       PYTHONPATH: sdk
@@ -70,7 +81,8 @@ jobs:
           retention-days: 7
 
   lint:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 10
     env:
       PYTHONPATH: sdk
@@ -94,7 +106,8 @@ jobs:
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
 
   mcp:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -109,7 +122,8 @@ jobs:
         run: npm --prefix mcp-server test
 
   mcp-budget:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -134,8 +148,9 @@ jobs:
   # refreshes compat-latest.txt weekly, so an upstream break shows up as a red
   # PR instead of silently disabling a guard.
   compat:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: compat (${{ matrix.lock }})
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 15
     env:
       PYTHONPATH: sdk
@@ -157,8 +172,9 @@ jobs:
 
   # Keep the Chat Completions 1.40.0 floor; Responses first appears at 1.66.3.
   responses-floor:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: responses-floor
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, pc]
     timeout-minutes: 15
     env:
       PYTHONPATH: sdk
