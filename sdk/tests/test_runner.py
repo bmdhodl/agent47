@@ -112,6 +112,8 @@ def test_run_help_warns_that_local_models_are_priced_as_paid(tmp_path):
     proc = _run(tmp_path, "--help")
     assert proc.returncode == 0
     text = " ".join(proc.stdout.split())
+    # Only `agentguard run --help` prints the run description; top-level help lists names.
+    assert "Run SCRIPT (or -m MODULE) with OpenAI and Anthropic clients patched." in text
     assert "local" in text and "paid rates" in text
     assert "free_local_clients" in text
     # A wheel install has no docs/ tree, so the help must give a URL anyone can open.
