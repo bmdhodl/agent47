@@ -103,3 +103,21 @@ def test_run_restores_argv_and_path(tmp_path, monkeypatch):
     argv, path = sys.argv[:], sys.path[:]
     assert run(["agent.py", "x"], trace_file=str(tmp_path / "t.jsonl"), err=io.StringIO()) == 0
     assert sys.argv == argv and sys.path == path
+
+
+def test_run_help_warns_that_local_models_are_priced_as_paid(tmp_path):
+    """REGRESSION #851: `run` has no way to declare a client free, so its help must say so."""
+    proc = _run(tmp_path, "--help")
+    assert proc.returncode == 0
+    text = " ".join(proc.stdout.split())
+    assert "local" in text and "paid rates" in text
+    assert "free_local_clients" in text
+
+
+@pytest.mark.parametrize("doc", ["README.md", "docs/guides/free-local-clients.md"])
+def test_docs_send_local_model_users_of_run_to_free_local_clients(doc):
+    """REGRESSION #851: the one-command path must not hide the phantom-cost trap."""
+    text = " ".join((Path(SDK).parent / doc).read_text(encoding="utf-8").split())
+    assert "agentguard run" in text
+    assert "paid rates" in text
+    assert "free_local_clients" in text
