@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -121,8 +122,9 @@ def test_run_help_warns_that_local_models_are_priced_as_paid(tmp_path):
 def test_pypi_readme_links_the_run_warning_on_main():
     """The release tag's copy of the guide predates the `agentguard run` warning."""
     text = (Path(SDK) / "PYPI_README.md").read_text(encoding="utf-8")
-    assert FREE_LOCAL_CLIENTS_GUIDE_URL in text
-    assert "blob/v2.0.0/docs/guides/free-local-clients.md" not in text
+    refs = re.findall(r"/blob/([^/]+)/docs/guides/free-local-clients\.md", text)
+    assert refs, "PYPI_README.md must link the free local clients guide"
+    assert set(refs) == {"main"}, f"guide links must use main, not a release tag: {refs}"
 
 
 @pytest.mark.parametrize("doc", ["README.md", "docs/guides/free-local-clients.md"])
