@@ -71,7 +71,7 @@ model behind an OpenAI-compatible URL such as Ollama. A dollar budget can then
 stop a model that costs nothing. For a local model, patch the client in the
 script with `free_local_clients=[client]` and a `BudgetGuard` token or call
 cap, then run the script with `python`; see
-[free local clients](https://github.com/bmdhodl/agent47/blob/v2.0.0/docs/guides/free-local-clients.md).
+[free local clients](https://github.com/bmdhodl/agent47/blob/main/docs/guides/free-local-clients.md).
 
 ### Stop before a third call
 

@@ -10,6 +10,7 @@ import pytest
 from agentguard.runner import split_target
 
 SDK = str(Path(__file__).resolve().parents[1])
+FREE_LOCAL_CLIENTS_GUIDE_URL = "https://github.com/bmdhodl/agent47/blob/main/docs/guides/free-local-clients.md"
 
 SPENDER = """
 import sys
@@ -112,6 +113,16 @@ def test_run_help_warns_that_local_models_are_priced_as_paid(tmp_path):
     text = " ".join(proc.stdout.split())
     assert "local" in text and "paid rates" in text
     assert "free_local_clients" in text
+    # A wheel install has no docs/ tree, so the help must give a URL anyone can open.
+    assert FREE_LOCAL_CLIENTS_GUIDE_URL in text
+    assert "(docs/guides/" not in text
+
+
+def test_pypi_readme_links_the_run_warning_on_main():
+    """The release tag's copy of the guide predates the `agentguard run` warning."""
+    text = (Path(SDK) / "PYPI_README.md").read_text(encoding="utf-8")
+    assert FREE_LOCAL_CLIENTS_GUIDE_URL in text
+    assert "blob/v2.0.0/docs/guides/free-local-clients.md" not in text
 
 
 @pytest.mark.parametrize("doc", ["README.md", "docs/guides/free-local-clients.md"])

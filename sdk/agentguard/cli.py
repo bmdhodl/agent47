@@ -327,7 +327,8 @@ def main() -> None:
         "Every patched call is priced at paid rates, including a local model behind an "
         "OpenAI-compatible URL, so a dollar budget can stop a free model. For a local model, "
         "patch its client in the script with free_local_clients and a BudgetGuard token or "
-        "call cap, and run the script with python (docs/guides/free-local-clients.md).",
+        "call cap, and run the script with python. Guide: "
+        "https://github.com/bmdhodl/agent47/blob/main/docs/guides/free-local-clients.md",
     )
     # Everything after -m MODULE belongs to the module, as with python -m.
     run_cmd.add_argument("-m", dest="module", nargs=argparse.REMAINDER, help="Run a module, like python -m.")
