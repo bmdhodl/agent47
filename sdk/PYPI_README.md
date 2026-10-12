@@ -66,6 +66,13 @@ stderr, ready for `agentguard receipt`. `agentguard run python -m mypkg` works t
 the same as patching the client yourself; see
 [enforcement boundary](https://github.com/bmdhodl/agent47/blob/main/docs/enforcement-boundary.md).
 
+`agentguard run` prices every patched call at paid rates, including a local
+model behind an OpenAI-compatible URL such as Ollama. A dollar budget can then
+stop a model that costs nothing. For a local model, patch the client in the
+script with `free_local_clients=[client]` and a `BudgetGuard` token or call
+cap, then run the script with `python`; see
+[free local clients](https://github.com/bmdhodl/agent47/blob/main/docs/guides/free-local-clients.md).
+
 ### Stop before a third call
 
 Save this as `budget_demo.py` and run `python budget_demo.py`. It makes no

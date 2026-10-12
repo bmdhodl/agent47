@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- `agentguard run --help`, the README and the free-local-clients guide now say
+  that `run` prices every patched call at paid rates, including a local model
+  behind an OpenAI-compatible URL. They send local-model users to
+  `free_local_clients` with a `BudgetGuard` token or call cap (#851).
+
 ## 2.0.0
 
 This major release replaces the planned 1.4.1 patch.

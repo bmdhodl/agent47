@@ -26,6 +26,13 @@ it does not detect localhost, verify provider billing, or account for electricit
 and hardware. A dollar-only cap cannot bound a free loop. A shared guard still
 refuses any next call when its recorded budget is already exhausted.
 
+`agentguard run` has no way to declare a client free. It prices every patched
+call at paid rates, so its dollar budget can stop a local model on cost it
+never had. To guard a local model, put the example above in the script: name
+the client in `free_local_clients` and cap tokens or calls with `BudgetGuard`.
+Run that script with `python`, not `agentguard run`. Under `run`, the patch is
+already active, and a second patch call keeps the first declarations.
+
 Use `patch_openai_async(..., free_local_clients=[async_client])` for
 `AsyncOpenAI` clients. Each patch accepts only its matching client kind.
 `agentguard.init(free_local_clients=[local, async_client], local_only=True)`
