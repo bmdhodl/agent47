@@ -87,6 +87,99 @@ class TestLoopGuardAutoCheck(unittest.TestCase):
         guard.auto_check("tool.search", {"q": "a"})
 
 
+class TestLoopGuardRewordedLoops(unittest.TestCase):
+    def test_defaults_still_match_exact_args_only(self) -> None:
+        guard = LoopGuard(max_repeats=2)
+        guard.check("search", {"q": "Docs"})
+        guard.check("search", {"q": "docs"})
+        for _ in range(5):
+            guard.record_result("search", [])
+        self.assertEqual(repr(guard), "LoopGuard(max_repeats=2, window=6)")
+
+    def test_normalize_matches_case_whitespace_and_key_order(self) -> None:
+        guard = LoopGuard(max_repeats=3, normalize=True)
+        guard.check("search", {"q": "Python asyncio", "n": 5})
+        guard.check("search", {"n": 5, "q": "  python   ASYNCIO "})
+        with self.assertRaises(LoopDetected) as ctx:
+            guard.check("search", {"q": "python asyncio\n", "n": 5})
+        self.assertIn('"q":"python asyncio\\n"', str(ctx.exception))
+
+    def test_normalize_keeps_different_words_apart(self) -> None:
+        guard = LoopGuard(max_repeats=2, normalize=True)
+        guard.check("search", {"q": "python asyncio"})
+        guard.check("search", {"q": "python threading"})
+
+    def test_reworded_queries_that_keep_coming_back_empty(self) -> None:
+        guard = LoopGuard(max_no_progress=3)
+        guard.check("grep", {"pattern": "retry_count"})
+        guard.record_result("grep", [], tool_args={"pattern": "retry_count"})
+        guard.check("grep", {"pattern": "retryCount"})
+        guard.record_result("grep", {"matches": [], "numMatches": 0})
+        guard.check("grep", {"pattern": "retries"})
+        with self.assertRaises(LoopDetected) as ctx:
+            guard.record_result("grep", "", tool_args={"pattern": "retries"})
+        message = str(ctx.exception)
+        self.assertIn("grep came back empty 3 times in a row", message)
+        self.assertIn('last args {"pattern":"retries"}', message)
+
+    def test_reworded_calls_failing_with_the_same_error(self) -> None:
+        guard = LoopGuard(max_no_progress=3)
+        for path in ("src/a.py", "src/b.py"):
+            guard.record_result("read", error=FileNotFoundError(f"No such file: {path}"),
+                                tool_args={"path": path})
+        with self.assertRaises(LoopDetected) as ctx:
+            guard.record_result("read", error=FileNotFoundError("no such  file: lib/c.py"),
+                                tool_args={"path": "lib/c.py"})
+        self.assertIn("failed with the same error 3 times", str(ctx.exception))
+
+    def test_different_errors_are_progress(self) -> None:
+        guard = LoopGuard(max_no_progress=2)
+        guard.record_result("run", error="ImportError: no module named foo")
+        guard.record_result("run", error="AssertionError: expected 3")
+        guard.record_result("run", error="TypeError: bad operand")
+
+    def test_pagination_and_interleaved_tools_do_not_trip(self) -> None:
+        guard = LoopGuard(max_no_progress=2)
+        for page in range(10):
+            guard.check("list_issues", {"page": page})
+            guard.record_result("list_issues", [{"id": page}], tool_args={"page": page})
+        for name in ("grep", "read", "grep", "read", "grep"):
+            guard.record_result(name, [] if name == "grep" else "file body")
+        guard.reset()
+        guard.record_result("grep", [])
+
+    def test_auto_check_counts_traced_tool_results(self) -> None:
+        from agentguard.instrument import trace_tool
+        from agentguard.tracing import Tracer
+
+        tracer = Tracer(guards=[LoopGuard(max_no_progress=3)], watermark=False)
+
+        @trace_tool(tracer)
+        def search(query: str) -> object:
+            return {"a": [], "b": None}.get(query, "")
+
+        search("a")
+        search("b")
+        with self.assertRaises(LoopDetected) as ctx:
+            search("c")
+        self.assertIn("No progress: search came back empty 3 times", str(ctx.exception))
+
+    def test_auto_check_counts_traced_tool_errors(self) -> None:
+        guard = LoopGuard(max_no_progress=2)
+        data = {"tool_name": "fetch", "error_type": "TimeoutError", "message": "timed out after 30s"}
+        guard.auto_check("tool.error", data)
+        with self.assertRaises(LoopDetected) as ctx:
+            guard.auto_check("tool.error", {**data, "message": "timed out after 31s"})
+        self.assertIn("No progress: fetch failed with the same error 2 times", str(ctx.exception))
+
+    def test_max_no_progress_validation_and_repr(self) -> None:
+        for bad in (0, 1, True):
+            with self.assertRaises(ValueError):
+                LoopGuard(max_no_progress=bad)
+        self.assertEqual(repr(LoopGuard(normalize=True, max_no_progress=4)),
+                         "LoopGuard(max_repeats=3, window=6, normalize=True, max_no_progress=4)")
+
+
 # ---------------------------------------------------------------------------
 # BudgetGuard
 # ---------------------------------------------------------------------------

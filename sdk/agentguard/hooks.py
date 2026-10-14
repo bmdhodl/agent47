@@ -1,5 +1,9 @@
 """Claude Code hook: refuse repeated tool calls, retry storms, and runs past a call cap.
 
+Repeats are matched after folding case, whitespace, and key order. A tool that
+keeps coming back empty or with the same error is refused even when the agent
+rewords each call.
+
 Claude Code runs this as a command hook on PreToolUse, PostToolUse, and
 PostToolUseFailure. Each invocation is a fresh process, so per-session counts
 live in a JsonFileStateStore under ``.agentguard/claude-code/`` in the project,
@@ -20,6 +24,13 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TextIO
 
+from agentguard._loop_match import (
+    EMPTY,
+    advance_streak,
+    describe_outcome,
+    normalize_args,
+    outcome_of,
+)
 from agentguard.profiles import CODING_AGENT_PROFILE, get_profile_defaults
 from agentguard.repo_config import load_repo_config
 from agentguard.state import JsonFileStateStore
@@ -34,6 +45,10 @@ HOOK_ARGS = ["-m", "agentguard.cli", "hook", "claude-code"]
 # Bash sends a free-text description that changes between otherwise identical calls.
 _IGNORED_INPUT_KEYS = {"description"}
 _SESSION_RE = re.compile(r"[^A-Za-z0-9_.-]")
+# Empty or same-error results in a row from one tool, with no other result between.
+NO_PROGRESS_MAX = 5
+# Refusal receipts are meant to be shared; keep large inputs (file bodies) short.
+_RECEIPT_VALUE_CHARS = 80
 
 
 class Refusal(Exception):
@@ -45,11 +60,31 @@ class Refusal(Exception):
         self.data = data
 
 
-def signature(tool_name: str, tool_input: Any) -> str:
+def _without_ignored(tool_input: Any) -> Any:
     if isinstance(tool_input, dict):
-        tool_input = {k: v for k, v in tool_input.items() if k not in _IGNORED_INPUT_KEYS}
-    raw = json.dumps([tool_name, tool_input], sort_keys=True, default=str)
+        return {k: v for k, v in tool_input.items() if k not in _IGNORED_INPUT_KEYS}
+    return tool_input
+
+
+def signature(tool_name: str, tool_input: Any) -> str:
+    raw = json.dumps([tool_name, normalize_args(_without_ignored(tool_input))],
+                     sort_keys=True, default=str)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+
+
+def receipt_input(tool_input: Any) -> Any:
+    """The call's input for a refusal receipt, with long values cut short."""
+    def cut(value: Any) -> Any:
+        if isinstance(value, str) and len(value) > _RECEIPT_VALUE_CHARS:
+            return value[:_RECEIPT_VALUE_CHARS] + "..."
+        return value
+
+    tool_input = _without_ignored(tool_input)
+    if isinstance(tool_input, dict):
+        return {k: cut(v if isinstance(v, (str, int, float, bool)) or v is None
+                       else json.dumps(v, sort_keys=True, default=str))
+                for k, v in tool_input.items()}
+    return cut(tool_input if tool_input is None else str(tool_input))
 
 
 def preview(tool_name: str, tool_input: Any) -> str:
@@ -67,12 +102,14 @@ def limits(project_dir: str, max_calls: Optional[int]) -> Dict[str, Any]:
     return {
         "loop_max": config.get("loop_max", defaults["loop_max"]),
         "retry_max": config.get("retry_max", defaults["retry_max"]),
+        "no_progress_max": config.get("no_progress_max", NO_PROGRESS_MAX),
         "max_calls": max_calls,
     }
 
 
 def check_and_record(state: Optional[Dict[str, Any]], sig: str, label: str,
-                     caps: Dict[str, Any]) -> Dict[str, Any]:
+                     caps: Dict[str, Any], tool: Optional[str] = None,
+                     tool_input: Any = None) -> Dict[str, Any]:
     """PreToolUse: raise Refusal, or return the state with this call recorded."""
     state = state or {"calls": 0, "last": None, "streak": 0, "failures": {}}
     if caps["max_calls"] is not None and state["calls"] >= caps["max_calls"]:
@@ -80,30 +117,56 @@ def check_and_record(state: Optional[Dict[str, Any]], sig: str, label: str,
                       f"{state['calls']} tool calls (limit {caps['max_calls']}). Stop and "
                       "report progress to the user.",
                       {"calls_used": state["calls"], "calls_limit": caps["max_calls"]})
+    call = {"tool_name": label, "tool_input": receipt_input(tool_input)}
     streak = state["streak"] + 1 if state["last"] == sig else 1
     if caps["loop_max"] and streak >= caps["loop_max"]:
         raise Refusal("loop", f"AgentGuard refused {label}: the same call just ran "
                       f"{streak - 1} times in a row (limit {caps['loop_max'] - 1}). Change the "
                       "input or the approach.",
-                      {"tool_name": label, "repeats": streak - 1, "limit": caps["loop_max"] - 1})
+                      {**call, "repeats": streak - 1, "limit": caps["loop_max"] - 1})
     failures = state["failures"].get(sig, 0)
     if caps["retry_max"] and failures >= caps["retry_max"]:
         raise Refusal("retry", f"AgentGuard refused {label}: the same call already failed "
                       f"{failures} times (limit {caps['retry_max']}). Diagnose the failure "
                       "before trying again.",
-                      {"tool_name": label, "failures": failures, "limit": caps["retry_max"]})
+                      {**call, "failures": failures, "limit": caps["retry_max"]})
+    stall = state.get("stall")
+    limit = caps.get("no_progress_max")
+    if limit and tool and stall and stall["tool"] == tool and stall["count"] >= limit:
+        raise Refusal("loop", f"AgentGuard refused {label}: {tool} "
+                      f"{describe_outcome(stall['outcome'])} the last "
+                      f"{stall['count']} times in a row, even with changed input (limit "
+                      f"{limit}). Rewording the call is not working; try a different approach "
+                      "or report to the user.",
+                      {**call, "rule": "no_progress", "results": stall["count"], "limit": limit,
+                       "outcome": "empty" if stall["outcome"] == EMPTY else "same error"})
     state.update(calls=state["calls"] + 1, last=sig, streak=streak)
     return state
 
 
-def record_result(state: Optional[Dict[str, Any]], sig: str, failed: bool) -> Dict[str, Any]:
-    """PostToolUse / PostToolUseFailure: count failures per call signature."""
+def record_result(state: Optional[Dict[str, Any]], sig: str, failed: bool,
+                  tool: Optional[str] = None, outcome: Optional[str] = None) -> Dict[str, Any]:
+    """PostToolUse / PostToolUseFailure: count failures per call and the no-progress run."""
     state = state or {"calls": 0, "last": None, "streak": 0, "failures": {}}
     if failed:
         state["failures"][sig] = state["failures"].get(sig, 0) + 1
     else:
         state["failures"].pop(sig, None)
+    if tool is not None:
+        state["stall"] = advance_streak(state.get("stall"), tool, outcome)
     return state
+
+
+def _outcome(event: Dict[str, Any]) -> Optional[str]:
+    tool_input = _without_ignored(event.get("tool_input"))
+    if event["hook_event_name"] == "PostToolUseFailure":
+        # A user interrupt says nothing about whether the tool is stuck.
+        if event.get("is_interrupt"):
+            return None
+        return outcome_of(error=event.get("error") or "failed", args=tool_input)
+    if "tool_response" not in event:
+        return None
+    return outcome_of(event["tool_response"], args=tool_input)
 
 
 _GUARD_EVENTS = {
@@ -139,14 +202,16 @@ def run(stdin: TextIO, stderr: TextIO, max_calls: Optional[int] = None) -> int:
     tool_input = event.get("tool_input")
     sig = signature(tool_name, tool_input)
     if name != "PreToolUse":
-        store.update(session, lambda s: record_result(s, sig, name == "PostToolUseFailure"))
+        outcome = _outcome(event)
+        store.update(session, lambda s: record_result(s, sig, name == "PostToolUseFailure",
+                                                      tool_name, outcome))
         return 0
     label = preview(tool_name, tool_input)
     caps = limits(project_dir, max_calls)
     tracer = Tracer(sink=JsonlFileSink(str(root / TRACE_FILE)), service="claude-code",
                     watermark=False)
     try:
-        store.update(session, lambda s: check_and_record(s, sig, label, caps))
+        store.update(session, lambda s: check_and_record(s, sig, label, caps, tool_name, tool_input))
     except Refusal as refusal:
         with tracer.trace("claude_code.tool_call", data={"session": session}) as ctx:
             ctx.event(_GUARD_EVENTS[refusal.kind], data={**refusal.data, "message": str(refusal)})
