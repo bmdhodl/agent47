@@ -1,16 +1,32 @@
 # Claude Code hook
 
 `agentguard hook claude-code` runs as a Claude Code command hook. It refuses
-three kinds of tool call before they run:
+four kinds of tool call before they run:
 
 | Stop | Default | Set with |
 | --- | --- | --- |
 | The same call, with the same input, again and again in a row | third in a row is refused | `loop_max` in `.agentguard.json` |
 | A call that already failed, tried again unchanged | refused after 2 failures | `retry_max` in `.agentguard.json` |
+| One tool that keeps coming back empty, or with the same error, while the input is reworded | refused after 5 such results in a row | `no_progress_max` in `.agentguard.json`; `0` turns it off |
 | Any call past a per-session count | off | `--max-calls N` |
 
-Defaults come from the `coding-agent` profile. Edit, test, edit, test is not a
-loop: only identical calls with nothing between them count.
+`loop_max` and `retry_max` come from the `coding-agent` profile. Edit, test,
+edit, test is not a loop: only calls with nothing between them count.
+
+"The same input" ignores case, runs of whitespace, and JSON key order, so
+`npm test`, `npm  test`, and `NPM test` match. Different words do not.
+
+The empty-or-same-error rule ignores the input entirely. It counts results:
+
+- Empty means no matches, such as Grep or Glob reporting zero files, or an
+  empty list or string. A command that succeeds quietly, like `mkdir`, is
+  progress, not empty.
+- Two errors are the same after case, whitespace, digits, and the words of the
+  call's own input are masked. `cat: a.log: No such file` and
+  `cat: b.log: No such file` match.
+- Any other result in between, from any tool, starts the count over. So does
+  a user interrupt. After a refusal, the agent can use another tool, and the
+  next result from that tool resets the count.
 
 When a call is refused, the hook exits 2. Claude Code blocks the call and shows
 the reason to the model, for example:
@@ -18,6 +34,12 @@ the reason to the model, for example:
 ```text
 AgentGuard refused Bash(npm test): the same call just ran 2 times in a row
 (limit 2). Change the input or the approach.
+```
+
+```text
+AgentGuard refused Grep(retry_max): Grep came back empty the last 5 times in a
+row, even with changed input (limit 5). Rewording the call is not working; try
+a different approach or report to the user.
 ```
 
 ## Install
@@ -52,7 +74,10 @@ Only AgentGuard's handlers are removed.
   Code session. Each hook call reads only its own session file, and a lock
   keeps parallel tool calls from losing counts.
 - `.agentguard/claude-code/trace.jsonl`: one event per allowed call and per
-  refusal. A refusal includes up to 60 characters of the command, path, or URL.
+  refusal. A refusal records the refused call's input, without Bash's
+  `description`, with each value cut to 80 characters. `agentguard receipt`
+  prints the first 120 characters of it. Check the receipt before you share
+  it: a command can contain a token.
 - `.agentguard/claude-code/.gitignore`: ignores the directory, so none of this
   is committed by accident.
 

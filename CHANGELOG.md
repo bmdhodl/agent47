@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### Added
+- `agentguard hook claude-code` catches reworded loops (#853). Repeats now
+  match after case, whitespace, and JSON key order are folded, so `npm test`
+  and `NPM  test` count as the same call. A new rule refuses a tool whose last
+  5 results in a row came back empty or with the same error, whatever the
+  input; set `no_progress_max` in `.agentguard.json`, or `0` to turn it off.
+  A quiet success such as `mkdir` is progress, and any other result in between
+  starts the count over. Every refusal now records the refused call's input,
+  each value cut to 80 characters, and `agentguard receipt` prints it.
+- `LoopGuard(normalize=True)` matches calls that differ only in case,
+  whitespace, or key order. `LoopGuard(max_no_progress=N)` with the new
+  `record_result()` method, or `tool.result` / `tool.error` trace events from
+  `trace_tool`, raises `LoopDetected` when one tool comes back empty or with
+  the same error N times in a row; the message includes the last call's
+  arguments. Both are off by default, so existing `LoopGuard` configs behave
+  as before.
+
 ### Fixed
 - `agentguard run --help`, the README and the free-local-clients guide now say
   that `run` prices every patched call at paid rates, including a local model
