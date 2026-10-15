@@ -22,6 +22,12 @@ AgentGuard refused Bash(npm test): the same call just ran 2 times in a row
 
 ## Install
 
+Installation requires **Claude Code 2.1.295 or later**. The installer checks
+`claude --version` before either a preview or a write. An old, missing, or
+unrecognized version stops installation without changing settings. Run the
+installed hooks with that same supported Claude Code installation; the check
+does not protect against a later host downgrade or a different executable.
+
 Preview the settings, then write them:
 
 ```bash
@@ -45,6 +51,21 @@ agentguard hook claude-code --uninstall --write
 ```
 
 Only AgentGuard's handlers are removed.
+Removal does not require Claude Code to be installed.
+
+## Hook failures
+
+The generated synchronous `PreToolUse` command handler sets
+`"onFailure": "block"`. On a supported Claude Code host, a missing executable,
+crash, timeout, or invalid JSON output blocks the pending tool call. An
+intentional guard refusal still exits 2. A normal allow exits 0.
+The post-tool handlers record results after the action and do not get this
+setting. AgentGuard does not install background policy handlers.
+
+Reinstall to update an existing AgentGuard hook. Existing installations do not
+gain failure blocking merely from an SDK upgrade. Review the preview before
+`--write`; unrelated settings and hook handlers are preserved.
+See the [official Claude Code failure behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
 
 ## What it writes
 
@@ -67,11 +88,13 @@ agentguard receipt .agentguard/claude-code/trace.jsonl
 - It checks tool calls that fire `PreToolUse`. It does not see model tokens,
   work inside a subagent's own process, or your subscription quota.
 - It counts per session. A new session starts at zero.
-- Hook input it cannot read is reported as a hook error and the call
-  proceeds. It does not fail closed.
+- Legacy handlers without `onFailure: "block"`, unsupported hosts, and disabled
+  hooks can let a call proceed after a hook failure. Only the generated
+  synchronous pre-tool handler on a supported host requests failure blocking.
 - A user can remove or edit the hook. It is a guardrail, not a sandbox.
-- Run against Claude Code 2.1.283 on Linux. Windows and macOS were not
-  executed.
+- Earlier guard-refusal proof ran against Claude Code 2.1.283 on Linux. It
+  does not establish the new host failure behavior; that requires separate
+  acceptance evidence on Claude Code 2.1.295 or later.
 
 Where this sits among the other paths:
 [enforcement boundary](../enforcement-boundary.md).
