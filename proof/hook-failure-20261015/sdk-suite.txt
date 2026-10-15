@@ -3,11 +3,11 @@ platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
 rootdir: D:\local-ai\agentguard-worktrees\hook-failure-20261015\sdk
 configfile: pyproject.toml
 plugins: cov-7.1.0
-collected 1632 items
+collected 1634 items
 
 sdk\tests\test_activation_evidence.py ..............................     [  1%]
 sdk\tests\test_architecture.py .........                                 [  2%]
-sdk\tests\test_async_patches.py ..........                               [  3%]
+sdk\tests\test_async_patches.py ..........                               [  2%]
 sdk\tests\test_atracing.py ........................                      [  4%]
 sdk\tests\test_budget_preflight.py .......................               [  5%]
 sdk\tests\test_ci_guardrails.py ..............                           [  6%]
@@ -42,7 +42,7 @@ sdk\tests\test_guard_persistence.py ..........                           [ 39%]
 sdk\tests\test_guards.py ............................................... [ 42%]
 .................................................                        [ 45%]
 sdk\tests\test_hardening.py ...........................................  [ 47%]
-sdk\tests\test_hook_install_failure.py ..................                [ 48%]
+sdk\tests\test_hook_install_failure.py ....................              [ 48%]
 sdk\tests\test_hooks.py ......................                           [ 50%]
 sdk\tests\test_hosted_ingest_contract.py ....                            [ 50%]
 sdk\tests\test_http_sink.py .......................                      [ 51%]
@@ -127,12 +127,12 @@ sdk\agentguard\feedback.py                       27      2    93%   37, 76
 sdk\agentguard\first_run.py                      55      0   100%
 sdk\agentguard\goal.py                          189     13    93%   143, 146-148, 150-152, 218, 287, 335, 339, 341, 349
 sdk\agentguard\guards.py                        341      4    99%   170, 238, 346, 350
-sdk\agentguard\hooks.py                         164      2    99%   61, 201
+sdk\agentguard\hooks.py                         166      2    99%   61, 203
 sdk\agentguard\instrument.py                    360     43    88%   198, 204, 223-237, 261-266, 269, 280-284, 322, 394-395, 409-410, 414, 435, 501-508, 525, 579, 622, 630, 659, 716, 737
 sdk\agentguard\instrument_stream.py             489     67    86%   42, 45, 60, 62, 81, 88, 94, 103, 105-106, 161, 205-216, 249-255, 263-269, 273, 289, 303, 349, 357-359, 381, 407-408, 434-436, 443-452, 565-570, 655
 sdk\agentguard\integrations\__init__.py           4      0   100%
 sdk\agentguard\integrations\crewai.py            79      0   100%
-sdk\agentguard\integrations\langchain.py        233     47    80%   16-18, 84, 95-99, 114-115, 186-190, 204, 236-237, 252-253, 262-266, 294-298, 319, 326-331, 338-342, 355-356, 373-374
+sdk\agentguard\integrations\langchain.py        233     50    79%   16-18, 70-72, 84, 95-99, 114-115, 186-190, 204, 236-237, 252-253, 262-266, 294-298, 319, 326-331, 338-342, 355-356, 373-374
 sdk\agentguard\integrations\langgraph.py         43      0   100%
 sdk\agentguard\precision_cost.py                250     36    86%   120-154, 167, 171, 174-180, 191-199, 318, 356, 400-402, 510, 581, 629, 657
 sdk\agentguard\price_table.py                   108      5    95%   57, 59, 61, 334, 337
@@ -155,6 +155,8 @@ sdk\agentguard\tracing.py                       228     12    95%   104, 142, 16
 sdk\agentguard\usage.py                         106      7    93%   15, 17, 19, 61, 131, 133, 135
 sdk\agentguard\x402.py                          120      4    97%   77, 82, 153, 160
 ---------------------------------------------------------------------------
-TOTAL                                          6382    474    93%
-Required test coverage of 80% reached. Total coverage: 92.57%
-================= 1629 passed, 3 skipped in 176.40s (0:02:56) =================
+TOTAL                                          6384    477    93%
+Required test coverage of 80% reached. Total coverage: 92.53%
+=========================== short test summary info ===========================
+SKIPPED [3] sdk\tests\test_real_dispatch.py:46: could not import 'agents': No module named 'agents'
+================= 1631 passed, 3 skipped in 221.87s (0:03:41) =================

@@ -25,8 +25,9 @@ From the repository root, with `PYTHONPATH=sdk`:
 - Final focused hook, installer and architectural tests: **51 passed**, exit 0.
   Raw: `focused-after.txt`. Includes two later empty-settings regressions;
   their initial failing result is in `empty-settings-before.txt`.
-- Full SDK suite with pytest-cov, cache disabled, unique disposable basetemp:
-  **1629 passed, 3 skipped**, **92.57% coverage**, exit 0. Raw: `sdk-suite.txt`.
+- Final full SDK suite with pytest-cov, cache disabled, unique disposable basetemp:
+  **1631 passed, 3 skipped**, **92.53% coverage**, exit 0. Raw: `sdk-suite.txt`.
+  The three skips need the optional `agents` package, absent in this interpreter.
   This Windows run used Python 3.13.2; supported Python 3.11/3.12 remain CI gates.
 - `python -m ruff check sdk/agentguard/ scripts/claude_hook_failure_acceptance.py
   sdk/tests/test_hook_install_failure.py sdk/tests/test_hooks.py`: exit 0.
@@ -56,8 +57,13 @@ retained. Arbitrary stdout is not a deny, and no broader claim is made.
 Official minimum and failure contract, checked 2026-10-15:
 [Claude Code hooks reference](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
 No paid-model, production-profile, macOS or Linux native acceptance is claimed.
+`child-cleanup.json` records zero remaining owned native/timeout-helper processes.
 No package release or merge is authorized by these receipts. Final-head CI and
 independent review remain separate gates. Proof predates automated PR review;
-rerun affected checks after any review-driven code change.
+rerun affected checks after any review-driven code change. The initial hosted
+review found a missing repository showwork receipt and a stale canonical hook
+row. The row now distinguishes candidate from legacy behavior. A new isolated
+showwork session explicitly records its late start and rechecks the proof;
+it does not claim that the initial code work had an earlier repository ledger.
 
 Sign-off: OpenAI | GPT-6 | auto.
