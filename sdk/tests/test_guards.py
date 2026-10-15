@@ -96,13 +96,13 @@ class TestLoopGuardRewordedLoops(unittest.TestCase):
             guard.record_result("search", [])
         self.assertEqual(repr(guard), "LoopGuard(max_repeats=2, window=6)")
 
-    def test_normalize_matches_case_whitespace_and_key_order(self) -> None:
+    def test_normalize_matches_key_order_without_changing_values(self) -> None:
         guard = LoopGuard(max_repeats=3, normalize=True)
         guard.check("search", {"q": "Python asyncio", "n": 5})
-        guard.check("search", {"n": 5, "q": "  python   ASYNCIO "})
+        guard.check("search", {"n": 5, "q": "Python asyncio"})
         with self.assertRaises(LoopDetected) as ctx:
-            guard.check("search", {"q": "python asyncio\n", "n": 5})
-        self.assertIn('"q":"python asyncio\\n"', str(ctx.exception))
+            guard.check("search", {"q": "Python asyncio", "n": 5})
+        self.assertIn("same arguments", str(ctx.exception))
 
     def test_normalize_keeps_different_words_apart(self) -> None:
         guard = LoopGuard(max_repeats=2, normalize=True)
@@ -120,7 +120,7 @@ class TestLoopGuardRewordedLoops(unittest.TestCase):
             guard.record_result("grep", "", tool_args={"pattern": "retries"})
         message = str(ctx.exception)
         self.assertIn("grep came back empty 3 times in a row", message)
-        self.assertIn('last args {"pattern":"retries"}', message)
+        self.assertNotIn("retries", message)
 
     def test_reworded_calls_failing_with_the_same_error(self) -> None:
         guard = LoopGuard(max_no_progress=3)

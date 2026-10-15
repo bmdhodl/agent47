@@ -1,6 +1,6 @@
 """Claude Code hook: refuse repeated tool calls, retry storms, and runs past a call cap.
 
-Repeats are matched after folding case, whitespace, and key order. A tool that
+Repeats preserve argument case and whitespace while ignoring JSON key order. A tool that
 keeps coming back empty or with the same error is refused even when the agent
 rewords each call.
 
@@ -46,9 +46,7 @@ HOOK_ARGS = ["-m", "agentguard.cli", "hook", "claude-code"]
 _IGNORED_INPUT_KEYS = {"description"}
 _SESSION_RE = re.compile(r"[^A-Za-z0-9_.-]")
 # Empty or same-error results in a row from one tool, with no other result between.
-NO_PROGRESS_MAX = 5
-# Refusal receipts are meant to be shared; keep large inputs (file bodies) short.
-_RECEIPT_VALUE_CHARS = 80
+NO_PROGRESS_MAX = 0
 
 
 class Refusal(Exception):
@@ -72,26 +70,9 @@ def signature(tool_name: str, tool_input: Any) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
 
 
-def receipt_input(tool_input: Any) -> Any:
-    """The call's input for a refusal receipt, with long values cut short."""
-    def cut(value: Any) -> Any:
-        if isinstance(value, str) and len(value) > _RECEIPT_VALUE_CHARS:
-            return value[:_RECEIPT_VALUE_CHARS] + "..."
-        return value
-
-    tool_input = _without_ignored(tool_input)
-    if isinstance(tool_input, dict):
-        return {k: cut(v if isinstance(v, (str, int, float, bool)) or v is None
-                       else json.dumps(v, sort_keys=True, default=str))
-                for k, v in tool_input.items()}
-    return cut(tool_input if tool_input is None else str(tool_input))
-
-
 def preview(tool_name: str, tool_input: Any) -> str:
-    if isinstance(tool_input, dict):
-        for key in ("command", "file_path", "pattern", "url", "prompt"):
-            if key in tool_input:
-                return f"{tool_name}({str(tool_input[key])[:60]})"
+    # Refusal messages also persist in JSONL. Even a truncated input or an
+    # arbitrary argument key can disclose credentials; keep the tool name only.
     return tool_name
 
 
@@ -117,7 +98,7 @@ def check_and_record(state: Optional[Dict[str, Any]], sig: str, label: str,
                       f"{state['calls']} tool calls (limit {caps['max_calls']}). Stop and "
                       "report progress to the user.",
                       {"calls_used": state["calls"], "calls_limit": caps["max_calls"]})
-    call = {"tool_name": label, "tool_input": receipt_input(tool_input)}
+    call = {"tool_name": tool or label}
     streak = state["streak"] + 1 if state["last"] == sig else 1
     if caps["loop_max"] and streak >= caps["loop_max"]:
         raise Refusal("loop", f"AgentGuard refused {label}: the same call just ran "
@@ -163,7 +144,10 @@ def _outcome(event: Dict[str, Any]) -> Optional[str]:
         # A user interrupt says nothing about whether the tool is stuck.
         if event.get("is_interrupt"):
             return None
-        return outcome_of(error=event.get("error") or "failed", args=tool_input)
+        outcome = outcome_of(error=event.get("error") or "failed", args=tool_input)
+        # Only equality is needed across hook processes. Error text can contain
+        # private input even after normalization, so persist its digest only.
+        return hashlib.sha256(outcome.encode("utf-8")).hexdigest() if outcome else None
     if "tool_response" not in event:
         return None
     return outcome_of(event["tool_response"], args=tool_input)

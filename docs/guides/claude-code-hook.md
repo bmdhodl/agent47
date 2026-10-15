@@ -7,16 +7,18 @@ four kinds of tool call before they run:
 | --- | --- | --- |
 | The same call, with the same input, again and again in a row | third in a row is refused | `loop_max` in `.agentguard.json` |
 | A call that already failed, tried again unchanged | refused after 2 failures | `retry_max` in `.agentguard.json` |
-| One tool that keeps coming back empty, or with the same error, while the input is reworded | refused after 5 such results in a row | `no_progress_max` in `.agentguard.json`; `0` turns it off |
+| One tool that keeps coming back empty, or with the same error, while the input is reworded | off | `no_progress_max` in `.agentguard.json`; set an integer of at least `2` to opt in, `0` to turn it off |
 | Any call past a per-session count | off | `--max-calls N` |
 
 `loop_max` and `retry_max` come from the `coding-agent` profile. Edit, test,
 edit, test is not a loop: only calls with nothing between them count.
 
-"The same input" ignores case, runs of whitespace, and JSON key order, so
-`npm test`, `npm  test`, and `NPM test` match. Different words do not.
+"The same input" ignores JSON key order and Bash's descriptive label. Case
+and whitespace in values stay exact: paths, code indentation, search patterns,
+and quoted shell literals can change meaning when those characters change.
 
-The empty-or-same-error rule ignores the input entirely. It counts results:
+The opt-in empty-or-same-error rule counts results rather than repeated inputs.
+For example, `{"no_progress_max": 5}` enables it after five matching results:
 
 - Empty means no matches, such as Grep or Glob reporting zero files, or an
   empty list or string. A command that succeeds quietly, like `mkdir`, is
@@ -32,12 +34,12 @@ When a call is refused, the hook exits 2. Claude Code blocks the call and shows
 the reason to the model, for example:
 
 ```text
-AgentGuard refused Bash(npm test): the same call just ran 2 times in a row
+AgentGuard refused Bash: the same call just ran 2 times in a row
 (limit 2). Change the input or the approach.
 ```
 
 ```text
-AgentGuard refused Grep(retry_max): Grep came back empty the last 5 times in a
+AgentGuard refused Grep: Grep came back empty the last 5 times in a
 row, even with changed input (limit 5). Rewording the call is not working; try
 a different approach or report to the user.
 ```
@@ -74,10 +76,10 @@ Only AgentGuard's handlers are removed.
   Code session. Each hook call reads only its own session file, and a lock
   keeps parallel tool calls from losing counts.
 - `.agentguard/claude-code/trace.jsonl`: one event per allowed call and per
-  refusal. A refusal records the refused call's input, without Bash's
-  `description`, with each value cut to 80 characters. `agentguard receipt`
-  prints the first 120 characters of it. Check the receipt before you share
-  it: a command can contain a token.
+  refusal. Refusals record the tool name, rule and counts. Raw input keys and
+  values are omitted from receipts and labels, since commands, URLs, paths
+  and nested values can contain credentials. Original arguments are used
+  in memory for matching, not copied into the trace.
 - `.agentguard/claude-code/.gitignore`: ignores the directory, so none of this
   is committed by accident.
 
@@ -89,6 +91,10 @@ agentguard receipt .agentguard/claude-code/trace.jsonl
 
 ## Limits
 
+- The no-progress rule is off by default. When enabled, it may refuse a
+  different recovery command from the same tool after repeated failures.
+  Choose a threshold for your workflow and keep it off for unrestricted
+  diagnostic work. SDK `LoopGuard(max_no_progress=N)` is also opt-in.
 - It checks tool calls that fire `PreToolUse`. It does not see model tokens,
   work inside a subagent's own process, or your subscription quota.
 - It counts per session. A new session starts at zero.

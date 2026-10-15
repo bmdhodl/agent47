@@ -3,21 +3,21 @@
 ## Unreleased
 
 ### Added
-- `agentguard hook claude-code` catches reworded loops (#853). Repeats now
-  match after case, whitespace, and JSON key order are folded, so `npm test`
-  and `NPM  test` count as the same call. A new rule refuses a tool whose last
-  5 results in a row came back empty or with the same error, whatever the
-  input; set `no_progress_max` in `.agentguard.json`, or `0` to turn it off.
+- `agentguard hook claude-code` can catch reworded loops (#853). Matching
+  ignores JSON key order but preserves case and whitespace in argument values.
+  An opt-in rule refuses a tool whose last N results came back empty or with
+  the same error, whatever the input. Set `no_progress_max` to at least `2`
+  in `.agentguard.json`; the default `0` keeps the rule off.
   A quiet success such as `mkdir` is progress, and any other result in between
-  starts the count over. Every refusal now records the refused call's input,
-  each value cut to 80 characters, and `agentguard receipt` prints it.
-- `LoopGuard(normalize=True)` matches calls that differ only in case,
-  whitespace, or key order. `LoopGuard(max_no_progress=N)` with the new
+  starts the count over. Refusal receipts retain rule, tool and counts while
+  omitting raw argument keys and values from messages and persisted input.
+- `LoopGuard(normalize=True)` canonicalizes containers without changing
+  case or whitespace in values. `LoopGuard(max_no_progress=N)` with the new
   `record_result()` method, or `tool.result` / `tool.error` trace events from
   `trace_tool`, raises `LoopDetected` when one tool comes back empty or with
-  the same error N times in a row; the message includes the last call's
-  arguments. Both are off by default, so existing `LoopGuard` configs behave
-  as before.
+  the same error N times in a row. Decorated tools pass raw results and
+  invocation arguments to guards in memory without adding raw inputs to trace
+  events. Both options are off by default.
 
 ### Fixed
 - Text and Markdown receipts show recorded costs and structured dollar-budget

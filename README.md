@@ -104,8 +104,8 @@ Expected output: `Stopped before call 3`.
 A stuck agent often rewords each retry, so no call repeats exactly.
 `max_no_progress` counts results instead: the same tool coming back empty, or
 with the same error, N times in a row stops the run whatever the arguments.
-`normalize=True` also treats case, whitespace, and key-order changes as
-repeats. Both are off by default.
+`normalize=True` canonicalizes containers while preserving case and whitespace
+in argument values. Both options are off by default.
 
 ```python
 from agentguard import LoopDetected, LoopGuard
@@ -122,7 +122,7 @@ for pattern in ["retry_count", "retryCount", "retries"]:
 ```
 
 Expected output: `No progress: grep came back empty 3 times in a row (limit:
-3), last args {"pattern":"retries"}. Change the approach instead of rewording
+3). Change the approach instead of rewording
 the call.` Functions wrapped with `trace_tool` feed results to the guard
 automatically. Any other result in between starts the count over, so
 pagination and edit-then-test cycles do not trip it.

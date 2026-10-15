@@ -2,7 +2,7 @@
 
 Two ways a stuck agent repeats itself without repeating a call byte for byte:
 
-- trivial rewording of the same call: case, whitespace, or JSON key order;
+- structural differences in the same call, such as JSON key order;
 - the same tool coming back empty, or with the same error, call after call
   while the agent rewords the input each time.
 
@@ -36,9 +36,12 @@ def _text(value: str) -> str:
 
 
 def normalize_args(value: Any) -> Any:
-    """Fold case and whitespace in every string. Key order is handled by stable_json."""
-    if isinstance(value, str):
-        return _text(value)
+    """Canonicalize containers without changing meaningful argument values.
+
+    Case and whitespace can select different files or alter code and shell
+    literals. They must remain exact even when normalization is requested.
+    Key order is handled by stable_json.
+    """
     if isinstance(value, dict):
         return {str(k): normalize_args(v) for k, v in value.items()}
     if isinstance(value, (list, tuple)):

@@ -26,8 +26,8 @@ class LoopGuard(BaseGuard):
         guard.check("search", {"query": "docs"})  # ok
         guard.check("search", {"query": "docs"})  # raises LoopDetected
 
-    Reworded loops are opt-in. ``normalize=True`` also matches calls that differ
-    only in case or whitespace. ``max_no_progress=N`` raises when one tool comes
+    Reworded loops are opt-in. ``normalize=True`` canonicalizes containers but
+    preserves case and whitespace in values. ``max_no_progress=N`` raises when one tool comes
     back empty, or with the same error, N results in a row whatever its args;
     feed outcomes with ``record_result()`` or ``tool.result`` / ``tool.error``
     trace events. Any other result in between starts the count over.
@@ -35,7 +35,7 @@ class LoopGuard(BaseGuard):
     Args:
         max_repeats: How many identical calls in a row trigger detection.
         window: Size of the sliding history window.
-        normalize: Ignore case and whitespace in string arguments.
+        normalize: Canonicalize containers while preserving argument values.
         max_no_progress: Empty or same-error results in a row that trigger
             detection. None (default) turns the check off.
     """
@@ -76,10 +76,9 @@ class LoopGuard(BaseGuard):
                 return
             last_n = list(self._history)[-self._max_repeats:]
             if len(set(last_n)) == 1:
-                args_str = _stable_json(args)
                 raise LoopDetected(
-                    f"Loop detected: {tool_name}({args_str}) repeated "
-                    f"{self._max_repeats} times in last {len(self._history)} calls. "
+                    f"Loop detected: {tool_name} repeated {self._max_repeats} times "
+                    f"with the same arguments in last {len(self._history)} calls. "
                     f"Consider varying the arguments or breaking the loop."
                 )
 
@@ -100,7 +99,7 @@ class LoopGuard(BaseGuard):
         if count >= self._max_no_progress:
             raise LoopDetected(
                 f"No progress: {tool_name} {describe_outcome(outcome)} {count} times in a row "
-                f"(limit: {self._max_no_progress}), last args {_stable_json(tool_args or {})}. "
+                f"(limit: {self._max_no_progress}). "
                 f"Change the approach instead of rewording the call."
             )
 
@@ -112,9 +111,11 @@ class LoopGuard(BaseGuard):
             return
         data = event_data or {}
         if event_name == "tool.error":
-            self.record_result(tool_name, error=f"{data.get('error_type', '')}: {data.get('message', '')}")
+            self.record_result(tool_name, error=f"{data.get('error_type', '')}: {data.get('message', '')}",
+                               tool_args=data.get("tool_args"))
         elif event_name == "tool.result":
-            self.record_result(tool_name, data.get("result", data.get("output")))
+            self.record_result(tool_name, data.get("result", data.get("output")),
+                               tool_args=data.get("tool_args"))
 
     @property
     def max_repeats(self) -> int:

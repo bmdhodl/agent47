@@ -100,27 +100,26 @@ def test_run_refuses_with_exit_2_and_logs_a_receipt(project):
     assert _run(project) == (0, "")
     code, err = _run(project)
     assert code == 2
-    assert "AgentGuard refused Bash(npm test)" in err
+    assert "AgentGuard refused Bash:" in err
     receipt = build_receipt(str(project / ".agentguard" / "claude-code" / "trace.jsonl"))
     assert receipt["tool_calls"] == 2
     assert receipt["stops"] == [{"kind": "loop", "detail":
-                                 'Bash(npm test) x2, same args; args {"command": "npm test"}'}]
+                                 'Bash x2, same args'}]
 
 
-def test_signature_ignores_case_whitespace_and_key_order():
+def test_signature_ignores_key_order_but_preserves_case_and_whitespace():
     assert signature("Grep", {"pattern": "retryCount", "path": "src"}) == signature(
-        "Grep", {"path": "src ", "pattern": "  RETRYCOUNT"}
+        "Grep", {"path": "src", "pattern": "retryCount"}
     )
-    assert signature("Grep", {"pattern": "retry count"}) == signature("Grep", {"pattern": "retry\tcount"})
+    assert signature("Grep", {"pattern": "retry count"}) != signature("Grep", {"pattern": "retry\tcount"})
     assert signature("Grep", {"pattern": "retry_count"}) != signature("Grep", {"pattern": "retryCount2"})
 
 
-def test_run_refuses_normalized_repeats(project):
+def test_run_preserves_command_case_and_whitespace(project):
     assert _run(project, command="npm test")[0] == 0
     assert _run(project, command="npm  test ")[0] == 0
     code, err = _run(project, command="NPM test")
-    assert code == 2
-    assert "ran 2 times in a row" in err
+    assert (code, err) == (0, "")
 
 
 def _grep(project, pattern, name="PreToolUse", **extra):
@@ -133,6 +132,7 @@ NO_MATCHES = {"mode": "files_with_matches", "filenames": [], "numFiles": 0}
 
 
 def test_run_refuses_reworded_searches_that_keep_coming_back_empty(project):
+    (project / ".agentguard.json").write_text('{"no_progress_max": 5}', encoding="utf-8")
     patterns = ["retry_count", "retryCount", "retries", "max_retry", "RETRY_LIMIT"]
     for pattern in patterns:
         assert _grep(project, pattern) == (0, "")
@@ -142,7 +142,7 @@ def test_run_refuses_reworded_searches_that_keep_coming_back_empty(project):
     assert "Grep came back empty the last 5 times in a row" in err
     receipt = build_receipt(str(project / ".agentguard" / "claude-code" / "trace.jsonl"))
     assert receipt["stops"] == [{"kind": "loop", "detail":
-                                 'Grep(retry_max): empty x5, input varied; args {"pattern": "retry_max"}'}]
+                                 'Grep: empty x5, input varied'}]
     # Another tool's result ends the run, so the agent can change approach.
     assert _run(project, command="ls src")[0] == 0
     assert _run(project, name="PostToolUse", command="ls src", tool_response={"stdout": "a.py"})[0] == 0
@@ -150,6 +150,7 @@ def test_run_refuses_reworded_searches_that_keep_coming_back_empty(project):
 
 
 def test_run_refuses_reworded_commands_failing_with_the_same_error(project):
+    (project / ".agentguard.json").write_text('{"no_progress_max": 5}', encoding="utf-8")
     for path in ["a.log", "b.log", "c.log", "logs/d.log", "logs/e.log"]:
         assert _run(project, command=f"cat {path}")[0] == 0
         assert _run(project, name="PostToolUseFailure", command=f"cat {path}",
@@ -209,13 +210,12 @@ def test_state_files_from_before_no_progress_still_load():
     assert state["stall"] == {"tool": "Grep", "outcome": "empty", "count": 1}
 
 
-def test_receipt_input_cuts_long_values():
-    from agentguard.hooks import receipt_input
-
-    body = "x" * 500
-    trimmed = receipt_input({"file_path": "a.py", "content": body, "description": "d",
-                             "edits": [{"old": "a"}]})
-    assert trimmed == {"file_path": "a.py", "content": "x" * 80 + "...", "edits": '[{"old": "a"}]'}
+def test_refusal_data_omits_arbitrary_input_keys_and_values():
+    state = check_and_record(None, "a", "Bash", CAPS, "Bash", {"private-key": "private-value"})
+    state = check_and_record(state, "a", "Bash", CAPS, "Bash", {"private-key": "private-value"})
+    with pytest.raises(Refusal) as refusal:
+        check_and_record(state, "a", "Bash", CAPS, "Bash", {"private-key": "private-value"})
+    assert refusal.value.data == {"tool_name": "Bash", "repeats": 2, "limit": 2}
 
 
 def test_run_counts_failures_from_post_tool_use_failure(project):

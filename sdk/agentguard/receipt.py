@@ -23,20 +23,11 @@ _KINDS = {
     "guard.loop_detected": "loop",
     "guard.retry_limit_exceeded": "retry",
 }
-_ARGS_CHARS = 120
 _LOOP_RE = re.compile(r"repeated (\d+) times")
 _RETRY_RE = re.compile(r"attempted (\d+) times \(limit: (\d+)\)")
 
 
 def _stop_detail(kind: str, data: Dict[str, Any]) -> str:
-    detail = _stop_summary(kind, data)
-    if data.get("tool_input") is not None:
-        args = json.dumps(data["tool_input"], sort_keys=True, ensure_ascii=False, default=str)
-        detail += f"; args {args[:_ARGS_CHARS]}{'...' if len(args) > _ARGS_CHARS else ''}"
-    return detail
-
-
-def _stop_summary(kind: str, data: Dict[str, Any]) -> str:
     # The LangChain integration stores the reason under "error".
     message = str(data.get("message") or data.get("error") or "")
     tool = data.get("tool_name")
