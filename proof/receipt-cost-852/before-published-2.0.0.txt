@@ -1,0 +1,16 @@
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace                        trace.jsonl
+events                                 3
+llm calls                              2
+recorded cost                      $0.01
+----------------------------------------
+STOPPED
+  budget  $0.01 over $0.01
+----------------------------------------
+guard stops                            1
+
+▉▉▌▋▊▎▉▋█▋█▊▎▍▌█▌▏▊▎▌▌█▌▍▏▌▏▎▊▊▍▍▌▎▉▎▊▌▊
+          663C 51E4 74FD 9A37
+  sha256 of trace - agentguard47 2.0.0

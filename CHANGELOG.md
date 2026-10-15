@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Fixed
+- Text and Markdown receipts show recorded costs and structured dollar-budget
+  stops to four decimal places. A recorded cost of `$0.0069` no longer appears
+  as `$0.01`. JSON cost values keep their existing precision. (#852)
 - `agentguard run --help`, the README and the free-local-clients guide now say
   that `run` prices every patched call at paid rates, including a local model
   behind an OpenAI-compatible URL. They send local-model users to
