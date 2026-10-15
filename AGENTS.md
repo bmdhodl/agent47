@@ -1,5 +1,19 @@
 # AGENTS.md
 
+## Shared human-facing design
+
+Read `DESIGN.md` before changing websites, apps, email, HTML reports, graphics
+or video. It is the versioned BMD human-first reference. Generated
+`design-tokens.json` and `design-tokens.css` carry its shared values; use the
+existing renderer or bundler to consume them when a surface is migrated.
+Project implementation notes must follow this rubric.
+
+Run `python scripts/check_design_contract.py` to detect local artifact drift. Update the
+reference and generated values together from the canonical design export.
+Keep automated parity, responsive/accessibility checks, visual critique and
+human comprehension evidence separate. A current token file does not certify
+a rendered surface. Existing surfaces require their own reviewed migration.
+
 ## READ THIS FIRST: SDK Memory
 Before touching any code, read these tracked SDK-only memory files. They are
 the ground truth for this public repository.
