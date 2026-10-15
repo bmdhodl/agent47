@@ -248,7 +248,7 @@ def test_repo_config_sets_caps(project):
 
 
 @pytest.mark.parametrize("payload", ["not json", "[]", '{"hook_event_name": "PreToolUse"}'])
-def test_unreadable_input_is_a_non_blocking_error(payload):
+def test_unreadable_input_is_a_hook_failure(payload):
     stderr = io.StringIO()
     assert run(io.StringIO(payload), stderr) == 1
     assert "unreadable hook input" in stderr.getvalue()
@@ -290,6 +290,7 @@ def test_install_keeps_user_hooks_and_is_idempotent():
 def test_cli_install_preview_then_write(project, capsys, monkeypatch):
     from agentguard import cli
 
+    monkeypatch.setattr("agentguard.hooks._require_supported_claude", lambda: "2.1.295")
     argv = ["agentguard", "hook", "claude-code", "--install", "--project-dir", str(project)]
     monkeypatch.setattr(sys, "argv", argv)
     with pytest.raises(SystemExit) as exit_info:
