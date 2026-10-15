@@ -1,17 +1,18 @@
-Command: C:\Python313\python.exe -m pytest sdk/tests/test_loop_maintenance_regressions.py sdk/tests/test_guards.py sdk/tests/test_hooks.py sdk/tests/test_instrument.py sdk/tests/test_tracing.py sdk/tests/test_receipt.py -q --tb=short --basetemp C:\Users\patri\AppData\Local\Temp\agentguard-loop-check-kbmh0yr6\pytest
+Command: C:\Python313\python.exe -m pytest sdk/tests/test_loop_maintenance_regressions.py sdk/tests/test_guards.py sdk/tests/test_hooks.py sdk/tests/test_instrument.py sdk/tests/test_tracing.py sdk/tests/test_receipt.py sdk/tests/test_dx.py -q --tb=short --basetemp C:\Users\patri\AppData\Local\Temp\agentguard-loop-check-emql7prc\pytest
 ============================= test session starts =============================
 platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
 rootdir: D:\local-ai\agentguard-worktrees\pr869-maintenance-20261015\sdk
 configfile: pyproject.toml
-collected 200 items
+collected 245 items
 
-sdk\tests\test_loop_maintenance_regressions.py ...............           [  7%]
-sdk\tests\test_guards.py ............................................... [ 31%]
-...........................................................              [ 60%]
-sdk\tests\test_hooks.py ................................                 [ 76%]
-sdk\tests\test_instrument.py ............                                [ 82%]
-sdk\tests\test_tracing.py ..............                                 [ 89%]
-sdk\tests\test_receipt.py .....................                          [100%]
+sdk\tests\test_loop_maintenance_regressions.py ...............           [  6%]
+sdk\tests\test_guards.py ............................................... [ 25%]
+...........................................................              [ 49%]
+sdk\tests\test_hooks.py ................................                 [ 62%]
+sdk\tests\test_instrument.py ............                                [ 67%]
+sdk\tests\test_tracing.py ..............                                 [ 73%]
+sdk\tests\test_receipt.py .....................                          [ 81%]
+sdk\tests\test_dx.py .............................................       [100%]
 
-============================= 200 passed in 9.06s =============================
+============================= 245 passed in 7.99s =============================
 Exit code: 0

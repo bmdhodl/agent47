@@ -8,10 +8,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 TESTS = ["test_loop_maintenance_regressions.py", "test_guards.py", "test_hooks.py",
-         "test_instrument.py", "test_tracing.py", "test_receipt.py"]
+         "test_instrument.py", "test_tracing.py", "test_receipt.py", "test_dx.py"]
 
 
 def main():
+    # Positional file paths declare the affected artifacts to showwork. The
+    # behavioral checks below remain the acceptance test; file presence alone
+    # is not treated as proof of the guard repairs.
+    for relative in sys.argv[1:]:
+        if not (ROOT / relative).is_file():
+            raise SystemExit(f"Missing declared artifact: {relative}")
     env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
     with tempfile.TemporaryDirectory(prefix="agentguard-loop-check-") as tmp:
         args = [sys.executable, "-m", "pytest", *[f"sdk/tests/{test}" for test in TESTS],
