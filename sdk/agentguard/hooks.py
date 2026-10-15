@@ -16,7 +16,7 @@ import hashlib
 import json
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TextIO
@@ -182,6 +182,7 @@ def install_settings(settings: Dict[str, Any], python: str, max_calls: Optional[
 def uninstall_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
     """Remove only AgentGuard handlers; drop groups and events left empty. Modifies and returns settings."""
     hooks = settings.get("hooks", {})
+    removed_any = False
     for name in list(hooks):
         groups: List[Dict[str, Any]] = []
         removed = False
@@ -191,13 +192,14 @@ def uninstall_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
                 groups.append(group)
                 continue
             removed = True
+            removed_any = True
             if kept:
                 groups.append({**group, "hooks": kept})
         if groups:
             hooks[name] = groups
         elif removed:
             del hooks[name]
-    if "hooks" in settings and not hooks:
+    if removed_any and not hooks:
         del settings["hooks"]
     return settings
 
@@ -207,7 +209,9 @@ def _require_supported_claude() -> str:
     requirement = ("AgentGuard hook installation requires Claude Code 2.1.295 or later "
                    "with onFailure support. No settings were changed.")
     try:
-        result = subprocess.run(
+        # Resolve the host exactly as its CLI invocation would; neither the
+        # command name nor arguments come from hook payloads or project config.
+        result = subprocess.run(  # nosec B603, B607
             ["claude", "--version"], capture_output=True, text=True, timeout=5,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )

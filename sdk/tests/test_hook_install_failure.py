@@ -102,3 +102,8 @@ def test_reinstall_and_uninstall_preserve_all_unrelated_handlers_and_settings(tm
     assert configure(str(tmp_path), True, True, None, io.StringIO()) == 0
     assert json.loads(path.read_text(encoding="utf-8")) == expected
     assert calls == []  # Removal must still work when Claude is unavailable.
+
+
+@pytest.mark.parametrize("settings", [{"hooks": {}}, {"hooks": {"PostToolUse": []}}])
+def test_uninstall_without_agentguard_does_not_normalize_user_settings(settings):
+    assert uninstall_settings(deepcopy(settings)) == settings
