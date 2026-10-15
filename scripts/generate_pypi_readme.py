@@ -42,6 +42,7 @@ UNRELEASED_PATHS = {
     "docs/guards/budget-aware-escalation.md",
     "docs/guides/dashboard-contract.md",
     "docs/guides/decision-tracing.md",
+    "docs/guides/free-local-clients.md",
     "docs/guides/managed-agent-sessions.md",
     "docs/release/cadence.md",
     "docs/release/trusted-publishing.md",

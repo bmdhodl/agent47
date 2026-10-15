@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -10,6 +11,7 @@ import pytest
 from agentguard.runner import split_target
 
 SDK = str(Path(__file__).resolve().parents[1])
+FREE_LOCAL_CLIENTS_GUIDE_URL = "https://github.com/bmdhodl/agent47/blob/main/docs/guides/free-local-clients.md"
 
 SPENDER = """
 import sys
@@ -103,3 +105,34 @@ def test_run_restores_argv_and_path(tmp_path, monkeypatch):
     argv, path = sys.argv[:], sys.path[:]
     assert run(["agent.py", "x"], trace_file=str(tmp_path / "t.jsonl"), err=io.StringIO()) == 0
     assert sys.argv == argv and sys.path == path
+
+
+def test_run_help_warns_that_local_models_are_priced_as_paid(tmp_path):
+    """REGRESSION #851: `run` has no way to declare a client free, so its help must say so."""
+    proc = _run(tmp_path, "--help")
+    assert proc.returncode == 0
+    text = " ".join(proc.stdout.split())
+    # Only `agentguard run --help` prints the run description; top-level help lists names.
+    assert "Run SCRIPT (or -m MODULE) with OpenAI and Anthropic clients patched." in text
+    assert "local" in text and "paid rates" in text
+    assert "free_local_clients" in text
+    # A wheel install has no docs/ tree, so the help must give a URL anyone can open.
+    assert FREE_LOCAL_CLIENTS_GUIDE_URL in text
+    assert "(docs/guides/" not in text
+
+
+def test_pypi_readme_links_the_run_warning_on_main():
+    """The release tag's copy of the guide predates the `agentguard run` warning."""
+    text = (Path(SDK) / "PYPI_README.md").read_text(encoding="utf-8")
+    refs = re.findall(r"/blob/([^/]+)/docs/guides/free-local-clients\.md", text)
+    assert refs, "PYPI_README.md must link the free local clients guide"
+    assert set(refs) == {"main"}, f"guide links must use main, not a release tag: {refs}"
+
+
+@pytest.mark.parametrize("doc", ["README.md", "docs/guides/free-local-clients.md"])
+def test_docs_send_local_model_users_of_run_to_free_local_clients(doc):
+    """REGRESSION #851: the one-command path must not hide the phantom-cost trap."""
+    text = " ".join((Path(SDK).parent / doc).read_text(encoding="utf-8").split())
+    assert "agentguard run" in text
+    assert "paid rates" in text
+    assert "free_local_clients" in text
