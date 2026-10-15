@@ -163,14 +163,15 @@ class TestTracerGuardsParam(unittest.TestCase):
 
 
 class TestBetterErrorMessages(unittest.TestCase):
-    def test_loop_detected_includes_args(self):
+    def test_loop_detected_omits_raw_args(self):
         guard = LoopGuard(max_repeats=2, window=4)
         guard.check("search", {"query": "docs"})
         with self.assertRaises(LoopDetected) as ctx:
             guard.check("search", {"query": "docs"})
         msg = str(ctx.exception)
         self.assertIn("search", msg)
-        self.assertIn("docs", msg)
+        self.assertNotIn("docs", msg)
+        self.assertIn("same arguments", msg)
         self.assertIn("2 times", msg)
 
     def test_budget_exceeded_includes_call_detail(self):

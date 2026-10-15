@@ -1,0 +1,143 @@
+{
+  "case": "default-off",
+  "passed": true,
+  "returncode": 0,
+  "failure_hook_count": 5,
+  "pre_hook_count": 6,
+  "marker_exists": true,
+  "refused": false,
+  "state": {
+    "5992934a-c8d6-4f1d-a0fb-71cf412f19a9": {
+      "calls": 6,
+      "last": "2ff27096b9c56280",
+      "streak": 1,
+      "failures": {
+        "29a8b142f3af7b81": 1,
+        "8f6535a5192dcefa": 1,
+        "64dfec04d6900b0e": 1,
+        "89a654c9cec04678": 1,
+        "a7c0c984335235b6": 1
+      },
+      "stall": null
+    }
+  },
+  "tool_results": {
+    "toolu_loop_0": {
+      "type": "tool_result",
+      "content": "Exit code 1\ncat: agentguard-missing-alpha.log: No such file or directory",
+      "is_error": true,
+      "tool_use_id": "toolu_loop_0"
+    },
+    "toolu_loop_1": {
+      "type": "tool_result",
+      "content": "Exit code 1\ncat: agentguard-missing-bravo.log: No such file or directory",
+      "is_error": true,
+      "tool_use_id": "toolu_loop_1"
+    },
+    "toolu_loop_2": {
+      "type": "tool_result",
+      "content": "Exit code 1\ncat: agentguard-missing-charlie.log: No such file or directory",
+      "is_error": true,
+      "tool_use_id": "toolu_loop_2"
+    },
+    "toolu_loop_3": {
+      "type": "tool_result",
+      "content": "Exit code 1\ncat: agentguard-missing-delta.log: No such file or directory",
+      "is_error": true,
+      "tool_use_id": "toolu_loop_3"
+    },
+    "toolu_loop_4": {
+      "type": "tool_result",
+      "content": "Exit code 1\ncat: agentguard-missing-echo.log: No such file or directory",
+      "is_error": true,
+      "tool_use_id": "toolu_loop_4"
+    },
+    "toolu_loop_5": {
+      "tool_use_id": "toolu_loop_5",
+      "type": "tool_result",
+      "content": "(Bash completed with no output)",
+      "is_error": false
+    }
+  },
+  "settings": {
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "C:\\Python313\\python.exe",
+              "args": [
+                "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\capture_hook.py",
+                "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\hook-payloads.jsonl"
+              ],
+              "timeout": 10
+            }
+          ]
+        }
+      ],
+      "PostToolUse": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "C:\\Python313\\python.exe",
+              "args": [
+                "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\capture_hook.py",
+                "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\hook-payloads.jsonl"
+              ],
+              "timeout": 10
+            }
+          ]
+        }
+      ],
+      "PostToolUseFailure": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "C:\\Python313\\python.exe",
+              "args": [
+                "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\capture_hook.py",
+                "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\hook-payloads.jsonl"
+              ],
+              "timeout": 10
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "argv": [
+    "C:/Users/patri/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/bin/claude.exe",
+    "-p",
+    "Run each scripted offline diagnostic call and finish.",
+    "--model",
+    "offline-fixture",
+    "--tools",
+    "Bash",
+    "--allowedTools",
+    "Bash",
+    "--permission-mode",
+    "dontAsk",
+    "--permission-prompts",
+    "none",
+    "--setting-sources",
+    "",
+    "--settings",
+    "C:\\Users\\patri\\AppData\\Local\\Temp\\claude-loop-default-off-ci6bo82i\\settings.json",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--max-turns",
+    "8"
+  ],
+  "boundary": "Native host, scripted loopback model; no live provider or active profile"
+}

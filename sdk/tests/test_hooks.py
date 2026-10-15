@@ -22,13 +22,15 @@ CAPS = {"loop_max": 3, "retry_max": 2, "max_calls": None}
 SDK = str(Path(__file__).resolve().parents[1])
 
 
-def _event(project, name="PreToolUse", command="npm test", session="s1"):
+def _event(project, name="PreToolUse", command="npm test", session="s1", tool="Bash",
+           tool_input=None, **extra):
     return {
         "session_id": session,
         "hook_event_name": name,
         "cwd": str(project),
-        "tool_name": "Bash",
-        "tool_input": {"command": command, "description": "run it"},
+        "tool_name": tool,
+        "tool_input": tool_input or {"command": command, "description": "run it"},
+        **extra,
     }
 
 
@@ -98,10 +100,122 @@ def test_run_refuses_with_exit_2_and_logs_a_receipt(project):
     assert _run(project) == (0, "")
     code, err = _run(project)
     assert code == 2
-    assert "AgentGuard refused Bash(npm test)" in err
+    assert "AgentGuard refused Bash:" in err
     receipt = build_receipt(str(project / ".agentguard" / "claude-code" / "trace.jsonl"))
     assert receipt["tool_calls"] == 2
-    assert receipt["stops"] == [{"kind": "loop", "detail": "Bash(npm test) x2, same args"}]
+    assert receipt["stops"] == [{"kind": "loop", "detail":
+                                 'Bash x2, same args'}]
+
+
+def test_signature_ignores_key_order_but_preserves_case_and_whitespace():
+    assert signature("Grep", {"pattern": "retryCount", "path": "src"}) == signature(
+        "Grep", {"path": "src", "pattern": "retryCount"}
+    )
+    assert signature("Grep", {"pattern": "retry count"}) != signature("Grep", {"pattern": "retry\tcount"})
+    assert signature("Grep", {"pattern": "retry_count"}) != signature("Grep", {"pattern": "retryCount2"})
+
+
+def test_run_preserves_command_case_and_whitespace(project):
+    assert _run(project, command="npm test")[0] == 0
+    assert _run(project, command="npm  test ")[0] == 0
+    code, err = _run(project, command="NPM test")
+    assert (code, err) == (0, "")
+
+
+def _grep(project, pattern, name="PreToolUse", **extra):
+    stderr = io.StringIO()
+    payload = _event(project, name=name, tool="Grep", tool_input={"pattern": pattern}, **extra)
+    return run(io.StringIO(json.dumps(payload)), stderr), stderr.getvalue()
+
+
+NO_MATCHES = {"mode": "files_with_matches", "filenames": [], "numFiles": 0}
+
+
+def test_run_refuses_reworded_searches_that_keep_coming_back_empty(project):
+    (project / ".agentguard.json").write_text('{"no_progress_max": 5}', encoding="utf-8")
+    patterns = ["retry_count", "retryCount", "retries", "max_retry", "RETRY_LIMIT"]
+    for pattern in patterns:
+        assert _grep(project, pattern) == (0, "")
+        assert _grep(project, pattern, name="PostToolUse", tool_response=NO_MATCHES)[0] == 0
+    code, err = _grep(project, "retry_max")
+    assert code == 2
+    assert "Grep came back empty the last 5 times in a row" in err
+    receipt = build_receipt(str(project / ".agentguard" / "claude-code" / "trace.jsonl"))
+    assert receipt["stops"] == [{"kind": "loop", "detail":
+                                 'Grep: empty x5, input varied'}]
+    # Another tool's result ends the run, so the agent can change approach.
+    assert _run(project, command="ls src")[0] == 0
+    assert _run(project, name="PostToolUse", command="ls src", tool_response={"stdout": "a.py"})[0] == 0
+    assert _grep(project, "retry_max")[0] == 0
+
+
+def test_run_refuses_reworded_commands_failing_with_the_same_error(project):
+    (project / ".agentguard.json").write_text('{"no_progress_max": 5}', encoding="utf-8")
+    for path in ["a.log", "b.log", "c.log", "logs/d.log", "logs/e.log"]:
+        assert _run(project, command=f"cat {path}")[0] == 0
+        assert _run(project, name="PostToolUseFailure", command=f"cat {path}",
+                    error=f"Exit code 1\ncat: {path}: No such file or directory")[0] == 0
+    code, err = _run(project, command="cat f.log")
+    assert code == 2
+    assert "Bash failed with the same error the last 5 times" in err
+
+
+def test_edit_and_test_cycle_with_failing_tests_is_not_refused(project):
+    # retry_max separately refuses an unchanged command that already failed; isolate no-progress.
+    (project / ".agentguard.json").write_text(json.dumps({"retry_max": 100}), encoding="utf-8")
+    for attempt in range(8):
+        assert _run(project, command="pytest -q")[0] == 0
+        assert _run(project, name="PostToolUseFailure", command="pytest -q",
+                    error="Exit code 1\n1 failed in 0.4s")[0] == 0
+        edit = {"file_path": "app.py", "old_string": f"v{attempt}", "new_string": f"v{attempt + 1}"}
+        stderr = io.StringIO()
+        for name, more in (("PreToolUse", {}), ("PostToolUse", {"tool_response": {"filePath": "app.py"}})):
+            payload = _event(project, name=name, tool="Edit", tool_input=edit, **more)
+            assert run(io.StringIO(json.dumps(payload)), stderr) == 0
+
+
+def test_quiet_successes_and_pagination_are_progress(project):
+    for i in range(12):
+        assert _run(project, command=f"mkdir -p out/{i}")[0] == 0
+        assert _run(project, name="PostToolUse", command=f"mkdir -p out/{i}",
+                    tool_response={"stdout": "", "stderr": "", "interrupted": False})[0] == 0
+    for page in range(12):
+        fetch = {"url": f"https://api.example.com/items?page={page}"}
+        for name, more in (("PreToolUse", {}), ("PostToolUse", {"tool_response": {"result": f"item {page}"}})):
+            payload = _event(project, name=name, tool="WebFetch", tool_input=fetch, **more)
+            assert run(io.StringIO(json.dumps(payload)), io.StringIO()) == 0
+
+
+def test_interrupts_and_missing_responses_do_not_count(project):
+    for pattern in ["a1", "b2", "c3", "d4", "e5", "f6"]:
+        assert _grep(project, pattern)[0] == 0
+        assert _grep(project, pattern, name="PostToolUseFailure", error="interrupted",
+                     is_interrupt=True)[0] == 0
+        assert _grep(project, pattern, name="PostToolUse")[0] == 0
+    assert _grep(project, "g7")[0] == 0
+
+
+def test_repo_config_can_turn_no_progress_off(project):
+    (project / ".agentguard.json").write_text(json.dumps({"no_progress_max": 0}), encoding="utf-8")
+    for pattern in ["a1", "b2", "c3", "d4", "e5", "f6", "g7"]:
+        assert _grep(project, pattern)[0] == 0
+        assert _grep(project, pattern, name="PostToolUse", tool_response=NO_MATCHES)[0] == 0
+
+
+def test_state_files_from_before_no_progress_still_load():
+    old = {"calls": 3, "last": "x", "streak": 1, "failures": {}}
+    state = check_and_record(dict(old), "y", "Grep(y)", {**CAPS, "no_progress_max": 5}, "Grep", {})
+    assert state["calls"] == 4
+    state = record_result(state, "y", failed=False, tool="Grep", outcome="empty")
+    assert state["stall"] == {"tool": "Grep", "outcome": "empty", "count": 1}
+
+
+def test_refusal_data_omits_arbitrary_input_keys_and_values():
+    state = check_and_record(None, "a", "Bash", CAPS, "Bash", {"private-key": "private-value"})
+    state = check_and_record(state, "a", "Bash", CAPS, "Bash", {"private-key": "private-value"})
+    with pytest.raises(Refusal) as refusal:
+        check_and_record(state, "a", "Bash", CAPS, "Bash", {"private-key": "private-value"})
+    assert refusal.value.data == {"tool_name": "Bash", "repeats": 2, "limit": 2}
 
 
 def test_run_counts_failures_from_post_tool_use_failure(project):

@@ -1,0 +1,98 @@
+showwork verify - session repair869-20261015  =>  RED  (2/22 checks passed)
+Outcome: UNVERIFIED. Some acceptance checks or session checks did not pass.
+Scope: 1 behavior checks, 0 artifact checks. Undeclared requirements: unknown.
+  OK  check for claim: Loop repair regressions and existing focused guard hook tracing and receipt tests pass without persisting hook argument values
+       exit 0
+  OK  check for claim: Behavioral regression acceptance for exact values, structured/error outcomes, default off and omitted hook arguments
+       exit 0
+  XX  check for claim: undeclared change: .github/workflows/actionlint.yml
+       .github/workflows/actionlint.yml changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: .github/workflows/ci.yml
+       .github/workflows/ci.yml changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: .github/workflows/claude-review.yml
+       .github/workflows/claude-review.yml changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: .github/workflows/codeql.yml
+       .github/workflows/codeql.yml changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: .github/workflows/docs-consistency.yml
+       .github/workflows/docs-consistency.yml changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: .github/workflows/trustabl.yml
+       .github/workflows/trustabl.yml changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: CHANGELOG.md
+       CHANGELOG.md changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: README.md
+       README.md changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: docs/guides/claude-code-hook.md
+       docs/guides/claude-code-hook.md changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/PYPI_README.md
+       sdk/PYPI_README.md changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/agentguard/_loop_match.py
+       sdk/agentguard/_loop_match.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/agentguard/hooks.py
+       sdk/agentguard/hooks.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/agentguard/instrument.py
+       sdk/agentguard/instrument.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/agentguard/loop_guard.py
+       sdk/agentguard/loop_guard.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/agentguard/receipt.py
+       sdk/agentguard/receipt.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/agentguard/tracing.py
+       sdk/agentguard/tracing.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/tests/test_ci_results.py
+       sdk/tests/test_ci_results.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/tests/test_guards.py
+       sdk/tests/test_guards.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/tests/test_hooks.py
+       sdk/tests/test_hooks.py changed since session.start; no active claim named that path
+  XX  check for claim: undeclared change: sdk/tests/test_receipt.py
+       sdk/tests/test_receipt.py changed since session.start; no active claim named that path
+
+20 gap(s): a claimed 'done' is not backed by reality.
+Observation: current_rerun. Historical finish: absent.
+Check verdict: RED. Outcome: UNVERIFIED. Integrity: unknown.
+Limitations: undeclared requirements: unknown; test adequacy: not assessed; formatting does not change the verdict.
+Recovery: Repair the failed check, then rerun verify. This text does not authorize a merge or a clean close.
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:0 revision:absent
+       exit 0
+  requirement:Behavioral regression acceptance for exact values, structured/error outcomes, default off and omitted hook arguments check:command scope:behavior result:pass evidence:requirement:loop-repairs revision:6ee66715751d
+       exit 0
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:2 revision:absent
+       .github/workflows/actionlint.yml changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:3 revision:absent
+       .github/workflows/ci.yml changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:4 revision:absent
+       .github/workflows/claude-review.yml changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:5 revision:absent
+       .github/workflows/codeql.yml changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:6 revision:absent
+       .github/workflows/docs-consistency.yml changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:7 revision:absent
+       .github/workflows/trustabl.yml changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:8 revision:absent
+       CHANGELOG.md changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:9 revision:absent
+       README.md changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:10 revision:absent
+       docs/guides/claude-code-hook.md changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:11 revision:absent
+       sdk/PYPI_README.md changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:12 revision:absent
+       sdk/agentguard/_loop_match.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:13 revision:absent
+       sdk/agentguard/hooks.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:14 revision:absent
+       sdk/agentguard/instrument.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:15 revision:absent
+       sdk/agentguard/loop_guard.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:16 revision:absent
+       sdk/agentguard/receipt.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:17 revision:absent
+       sdk/agentguard/tracing.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:18 revision:absent
+       sdk/tests/test_ci_results.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:19 revision:absent
+       sdk/tests/test_guards.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:20 revision:absent
+       sdk/tests/test_hooks.py changed since session.start; no active claim named that path
+  requirement:absent check:undeclared_change scope:individual_check result:fail evidence:claim:21 revision:absent
+       sdk/tests/test_receipt.py changed since session.start; no active claim named that path
+REFUSED: a clean close requires this session's claims to verify (claims_red). Fix the gap, retract the claim, or finish --status blocked.
