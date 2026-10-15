@@ -38,3 +38,38 @@ def test_regression_json_edit_cannot_keep_old_hashes(tmp_path):
     data["tokens"]["rounded"]["md"] = "24px"
     path.write_text(json.dumps(data), encoding="utf-8")
     assert "CSS values differ from the generated token data" in contract.verify(tmp_path)
+
+
+def test_regression_rehashed_source_cannot_leave_stale_values(tmp_path):
+    import hashlib
+    for name in ("DESIGN.md", "design-tokens.json", "design-tokens.css"):
+        shutil.copyfile(ROOT / name, tmp_path / name)
+    source = tmp_path / "DESIGN.md"
+    markdown = contract.read_text(source).replace("#FF8200", "#FE8200")
+    source.write_text(markdown, encoding="utf-8")
+    path = tmp_path / "design-tokens.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["source_sha256"] = hashlib.sha256(markdown.encode("utf-8")).hexdigest()
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert "Source token values differ from generated data" in contract.verify(tmp_path)
+
+
+def test_source_aliases_resolve_chains_and_embedded_values():
+    markdown = contract.read_text(ROOT / "DESIGN.md")
+    markdown = markdown.replace('on-accent: "#111827"', 'on-accent: "{colors.light-text}"')
+    markdown = markdown.replace('padding: "12px 20px"', 'padding: "{spacing.sm} {spacing.lg}"')
+    tokens = contract.source_tokens(markdown)
+    assert tokens["components"]["button-primary"]["textColor"] == "#111827"
+    assert tokens["components"]["button-primary"]["padding"] == "8px 24px"
+
+
+@pytest.mark.parametrize("before,after,error", [
+    ('accent: "#FF8200"', 'accent: "{colors.missing}"', "Unknown"),
+    ('accent: "#FF8200"', 'accent: "{colors.accent}"', "Cyclic"),
+    ('fontWeight: "600"', 'fontWeight: 600', "JSON-quoted"),
+    ('  raised:', '   raised:', "indentation"),
+])
+def test_unsupported_or_invalid_source_tokens_fail(before, after, error):
+    markdown = contract.read_text(ROOT / "DESIGN.md").replace(before, after)
+    with pytest.raises(ValueError, match=error):
+        contract.source_tokens(markdown)

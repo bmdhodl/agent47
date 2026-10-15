@@ -279,3 +279,24 @@ py', 46, "Skipped: could not import 'agents': No module named 'agents'")
 ================= 1617 passed, 3 skipped in 184.03s (0:03:04) =================
 
 exit_code: 0
+
+PR review correction: changing source plus its manifest hash must not accept stale values. Regression failed before source-token parsing was added.
+$ python -m pytest sdk/tests/test_design_contract.py -q --basetemp
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <validation-path>\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 12 items
+
+sdk\tests\test_design_contract.py ............                           [100%]Running teardown with pytest sessionfinish...
+
+
+============================= 12 passed in 0.20s ==============================
+
+exit_code: 0
+$ python -m ruff check scripts/check_design_contract.py sdk/tests/test_design_contract.py
+All checks passed!
+
+exit_code: 0

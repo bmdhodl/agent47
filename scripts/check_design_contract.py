@@ -23,6 +23,71 @@ def properties(tokens: dict, prefix: str = "bmd") -> dict[str, str]:
     return result
 
 
+TOKEN_GROUPS = ("colors", "typography", "spacing", "rounded", "motion", "components")
+
+
+def source_tokens(markdown: str) -> dict:
+    """Read the exported mapping/JSON-string token subset, never general YAML.
+
+    Unsupported YAML fails closed; update the exporter and this reader together
+    if the shared token grammar changes. Human-readable metadata is ignored.
+    """
+    match = re.match(r"\A---\n(.*?)\n---(?:\n|$)", markdown, re.DOTALL)
+    if not match:
+        raise ValueError("DESIGN.md requires frontmatter")
+    groups = {}
+    stack = [(-2, groups)]
+    active = False
+    for line in match.group(1).splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        entry = re.fullmatch(r"( *)([A-Za-z0-9_-]+):(?:[ \t]+(.*))?", line)
+        if not entry:
+            raise ValueError("Unsupported design frontmatter syntax")
+        indent, key, raw = len(entry[1]), entry[2], entry[3]
+        if indent == 0:
+            active = key in TOKEN_GROUPS
+            stack = [(-2, groups)]
+        if not active:
+            continue
+        while indent <= stack[-1][0]:
+            stack.pop()
+        if indent != stack[-1][0] + 2 or key in stack[-1][1]:
+            raise ValueError("Invalid token indentation or duplicate key")
+        parent = stack[-1][1]
+        if raw is None:
+            parent[key] = {}
+            stack.append((indent, parent[key]))
+        else:
+            value = json.loads(raw)
+            if not isinstance(value, str):
+                raise ValueError("Design token values require JSON-quoted strings")
+            parent[key] = value
+    if set(groups) != set(TOKEN_GROUPS):
+        raise ValueError("Missing source token groups")
+
+    def resolve(value, references=()):
+        if isinstance(value, dict):
+            return {key: resolve(item, references) for key, item in value.items()}
+
+        def replace(match):
+            name = match[1]
+            if name in references:
+                raise ValueError("Cyclic source token reference")
+            target = groups
+            for key in name.split("."):
+                if not isinstance(target, dict) or key not in target:
+                    raise ValueError("Unknown source token reference")
+                target = target[key]
+            if isinstance(target, dict):
+                raise ValueError("Source token reference must name a value")
+            return resolve(target, references + (name,))
+
+        return re.sub(r"\{([A-Za-z0-9_.-]+)\}", replace, value)
+
+    return resolve(groups)
+
+
 def verify(root: Path) -> list[str]:
     try:
         markdown = read_text(root / "DESIGN.md")
@@ -31,6 +96,8 @@ def verify(root: Path) -> list[str]:
         if not isinstance(data, dict) or not isinstance(data.get("tokens"), dict):
             return ["Generated design token data is missing"]
         errors = []
+        if source_tokens(markdown) != data["tokens"]:
+            errors.append("Source token values differ from generated data")
         for label, content, key in (("DESIGN.md", markdown, "source_sha256"),
                                     ("design-tokens.css", css, "css_sha256")):
             if hashlib.sha256(content.encode("utf-8")).hexdigest() != data.get(key):
