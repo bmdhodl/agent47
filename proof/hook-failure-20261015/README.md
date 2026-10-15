@@ -25,7 +25,8 @@ From the repository root, with `PYTHONPATH=sdk`:
 - Final focused hook, installer and architectural tests: **51 passed**, exit 0.
   Raw: `focused-after.txt`. Includes two later empty-settings regressions;
   their initial failing result is in `empty-settings-before.txt`.
-- Final full SDK suite with pytest-cov, cache disabled, unique disposable basetemp:
+- Full SDK suite before the later Windows wrapper follow-up, with pytest-cov,
+  cache disabled and a unique disposable basetemp:
   **1631 passed, 3 skipped**, **92.53% coverage**, exit 0. Raw: `sdk-suite.txt`.
   The three skips need the optional `agents` package, absent in this interpreter.
   This Windows run used Python 3.13.2; supported Python 3.11/3.12 remain CI gates.
@@ -74,5 +75,9 @@ without `shell=True`. Two new regressions failed before this repair; all
 the actual installed npm wrapper returning 2.1.296 through the real CLI preview;
 no `.claude` directory or settings file was created. This repair changes host
 discovery, not the already-exercised native hook policy.
+The final post-wrapper SDK suite passed **1633 tests**, with **3 optional
+`agents` dependency skips** and **92.66% coverage**, exit 0. Its separate raw
+receipt is `windows-wrapper-sdk-suite.txt`; the earlier `sdk-suite.txt` remains
+the historical run bound by the initial review receipt.
 
 Sign-off: OpenAI | GPT-6 | auto.
