@@ -47,10 +47,11 @@ agentguard hook claude-code --install --write
 ```
 
 This installs a Claude Code hook that refuses the third identical tool call in
-a row and a call that already failed twice. "Identical" ignores case,
-whitespace, and key order. It also refuses a tool that came back empty, or with
-the same error, 5 times in a row while the agent reworded the input. Refusals,
-with the refused call's input, go to `.agentguard/claude-code/trace.jsonl`. It
+a row and a call that already failed twice. "Identical" ignores JSON key order
+and preserves case and whitespace in values. The optional `no_progress_max`
+rule refuses a tool after repeated empty or same-error results even when input
+changes; it is off by default. Refusals omit raw input and go to
+`.agentguard/claude-code/trace.jsonl`. It
 checks tool calls, not tokens or subscription quota. See the
 [Claude Code hook guide](docs/guides/claude-code-hook.md).
 

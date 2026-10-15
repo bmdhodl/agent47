@@ -2,8 +2,7 @@
 
 Windows, CPython 3.13.2. No provider API calls, package release, active Claude
 settings changes or real credentials were used. The argument markers in the
-regressions are synthetic. Claude Code host acceptance and supported-version
-CI remain separate gates.
+regressions are synthetic. Supported-version CI remains a separate gate.
 
 - `regressions-before.txt`: 12 failing behavior regressions and one passing
   budget privacy control before production changes. This supersedes the
@@ -24,6 +23,12 @@ CI remain separate gates.
   lacked declarations for files inherited from main; another detected the
   live full-suite log changing during verification. Neither was bypassed.
   `showwork-closed.txt` records the later stable close.
+- `native/summary.json`: actual Claude Code 2.1.296 executed five varied
+  failing Bash commands with captured `PostToolUseFailure` payloads, then a
+  distinct recovery command. Default `0` allowed it and wrote the marker;
+  explicit `5` refused it and the marker stayed absent. Both native-host
+  cases pass against a loopback scripted provider. This is not evidence of
+  live provider use, real empty Grep/Glob payloads, or active-profile setup.
 
 The fixes retain semantic argument strings, send structured results and raw
 invocation arguments to guards only in memory, omit raw argument data from

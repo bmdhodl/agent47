@@ -101,8 +101,12 @@ agentguard receipt .agentguard/claude-code/trace.jsonl
 - Hook input it cannot read is reported as a hook error and the call
   proceeds. It does not fail closed.
 - A user can remove or edit the hook. It is a guardrail, not a sandbox.
-- Run against Claude Code 2.1.283 on Linux. Windows and macOS were not
-  executed.
+- Native Claude Code 2.1.296 on Windows passed an offline scripted-model
+  check with five actual Bash failure payloads: the default allowed a recovery
+  command; opt-in `no_progress_max: 5` refused it. The payloads and marker
+  evidence are in `proof/pr869-maintenance-20261015/native/`. Actual empty
+  Grep/Glob payloads, live provider use and macOS remain untested. Earlier
+  Linux host proof used Claude Code 2.1.283.
 
 Where this sits among the other paths:
 [enforcement boundary](../enforcement-boundary.md).
