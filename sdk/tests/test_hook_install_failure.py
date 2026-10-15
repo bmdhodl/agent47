@@ -1,6 +1,7 @@
 """Regression coverage for fail-closed Claude Code hook installation (#871)."""
 import io
 import json
+import shutil
 import subprocess
 from copy import deepcopy
 
@@ -17,6 +18,7 @@ def _host(monkeypatch, version="2.1.295 (Claude Code)", returncode=0):
         return subprocess.CompletedProcess(argv, returncode, version, "")
 
     monkeypatch.setattr(subprocess, "run", probe)
+    monkeypatch.setattr(shutil, "which", lambda name: "/installed/claude")
     return calls
 
 
@@ -36,11 +38,28 @@ def test_install_checks_supported_host_before_preview(tmp_path, monkeypatch, ver
     output = io.StringIO()
     assert configure(str(tmp_path), False, False, None, output) == 0
     assert len(calls) == 1
-    assert calls[0][0] == ["claude", "--version"]
+    assert calls[0][0] == ["/installed/claude", "--version"]
     assert calls[0][1]["timeout"] > 0
     assert not calls[0][1].get("shell", False)
     assert "onFailure" in output.getvalue()
     assert version.split()[0] in output.getvalue()
+    assert not (tmp_path / ".claude").exists()
+
+
+def test_windows_npm_wrapper_path_is_resolved_before_version_probe(tmp_path, monkeypatch):
+    calls = _host(monkeypatch)
+    wrapper = r"C:\Program Files\npm\claude.CMD"
+    monkeypatch.setattr(shutil, "which", lambda name: wrapper if name == "claude" else None)
+    assert configure(str(tmp_path), False, False, None, io.StringIO()) == 0
+    assert calls[0][0] == [wrapper, "--version"]
+
+
+def test_missing_host_does_not_spawn_or_change_settings(tmp_path, monkeypatch):
+    calls = _host(monkeypatch)
+    monkeypatch.setattr(shutil, "which", lambda name: None)
+    with pytest.raises(SystemExit, match=r"Claude Code 2\.1\.295 or later"):
+        configure(str(tmp_path), True, False, None, io.StringIO())
+    assert calls == []
     assert not (tmp_path / ".claude").exists()
 
 
@@ -63,6 +82,7 @@ def test_failed_version_probe_does_not_create_settings(tmp_path, monkeypatch, er
         raise error
 
     monkeypatch.setattr(subprocess, "run", fail)
+    monkeypatch.setattr(shutil, "which", lambda name: "/installed/claude")
     with pytest.raises(SystemExit, match=r"Claude Code 2\.1\.295 or later"):
         configure(str(tmp_path), True, False, None, io.StringIO())
     assert not (tmp_path / ".claude").exists()

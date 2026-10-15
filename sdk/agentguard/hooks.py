@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess  # nosec B404
 import sys
 from pathlib import Path
@@ -208,11 +209,14 @@ def _require_supported_claude() -> str:
     """Fail before installation when the host cannot enforce onFailure=block."""
     requirement = ("AgentGuard hook installation requires Claude Code 2.1.295 or later "
                    "with onFailure support. No settings were changed.")
+    executable = shutil.which("claude")
+    if executable is None:
+        raise SystemExit(f"{requirement} Could not find claude on PATH.")
     try:
         # Resolve the host exactly as its CLI invocation would; neither the
         # command name nor arguments come from hook payloads or project config.
-        result = subprocess.run(  # nosec B603, B607
-            ["claude", "--version"], capture_output=True, text=True, timeout=5,
+        result = subprocess.run(  # nosec B603
+            [executable, "--version"], capture_output=True, text=True, timeout=5,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
     except (OSError, subprocess.TimeoutExpired) as exc:

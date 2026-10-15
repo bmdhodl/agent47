@@ -32,7 +32,7 @@ From the repository root, with `PYTHONPATH=sdk`:
 - `python -m ruff check sdk/agentguard/ scripts/claude_hook_failure_acceptance.py
   sdk/tests/test_hook_install_failure.py sdk/tests/test_hooks.py`: exit 0.
 - `python -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q`: exit 0.
-  The fixed local `claude --version` probe has narrowly scoped B404/B603/B607
+  The fixed local `claude --version` probe has narrowly scoped B404/B603
   annotations: no shell, no event/config-controlled command or arguments.
 - CI-tools requirements and review-readiness guards: exit 0.
 - `python scripts/claude_hook_failure_acceptance.py --output <fresh-output>
@@ -65,5 +65,14 @@ review found a missing repository showwork receipt and a stale canonical hook
 row. The row now distinguishes candidate from legacy behavior. A new isolated
 showwork session explicitly records its late start and rechecks the proof;
 it does not claim that the initial code work had an earlier repository ledger.
+
+A later independent review found that bare `claude` lookup fails for npm's
+Windows `.CMD` wrapper. The installer now resolves the executable with
+`shutil.which` and passes that absolute path plus the fixed `--version` argument,
+without `shell=True`. Two new regressions failed before this repair; all
+73 hook/map/architecture checks then passed. `windows-real-preview.txt` records
+the actual installed npm wrapper returning 2.1.296 through the real CLI preview;
+no `.claude` directory or settings file was created. This repair changes host
+discovery, not the already-exercised native hook policy.
 
 Sign-off: OpenAI | GPT-6 | auto.
