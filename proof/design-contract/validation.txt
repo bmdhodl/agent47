@@ -300,3 +300,17 @@ $ python -m ruff check scripts/check_design_contract.py sdk/tests/test_design_co
 All checks passed!
 
 exit_code: 0
+
+Independent CSS review regression: appended live override plus recomputed css_sha256 failed before exact generated CSS serialization comparison.
+$ python -m pytest sdk/tests/test_design_contract.py -q --basetemp <fresh-temp>
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: <validation-path>\sdk
+configfile: pyproject.toml
+collected 13 items
+
+sdk\tests\test_design_contract.py .............                          [100%]
+
+============================= 13 passed in 0.17s ==============================
+exit_code:0

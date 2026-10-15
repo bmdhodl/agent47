@@ -96,7 +96,8 @@ def verify(root: Path) -> list[str]:
         if not isinstance(data, dict) or not isinstance(data.get("tokens"), dict):
             return ["Generated design token data is missing"]
         errors = []
-        if source_tokens(markdown) != data["tokens"]:
+        tokens = source_tokens(markdown)
+        if tokens != data["tokens"]:
             errors.append("Source token values differ from generated data")
         for label, content, key in (("DESIGN.md", markdown, "source_sha256"),
                                     ("design-tokens.css", css, "css_sha256")):
@@ -105,6 +106,14 @@ def verify(root: Path) -> list[str]:
         version = re.search(r'^design_version:[ \t]*[\'"]?([0-9]+\.[0-9]+\.[0-9]+)', markdown, re.MULTILINE)
         if not version or version.group(1) != data.get("design_version"):
             errors.append("Design versions differ")
+        expected_css = (
+            f"/* Generated from DESIGN.md v{data.get('design_version')}; do not edit.\n"
+            f"   Source SHA256: {hashlib.sha256(markdown.encode('utf-8')).hexdigest()} */\n:root {{\n"
+            + "".join(f"  --{name}: {value};\n" for name, value in properties(tokens).items())
+            + "}\n"
+        )
+        if css != expected_css:
+            errors.append("CSS differs from the generated source serialization")
         declarations = re.findall(r"^  --([a-z0-9-]+): (.*);$", css, re.MULTILINE)
         if len(declarations) != len(dict(declarations)) or dict(declarations) != properties(data["tokens"]):
             errors.append("CSS values differ from the generated token data")

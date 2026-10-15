@@ -73,3 +73,17 @@ def test_unsupported_or_invalid_source_tokens_fail(before, after, error):
     markdown = contract.read_text(ROOT / "DESIGN.md").replace(before, after)
     with pytest.raises(ValueError, match=error):
         contract.source_tokens(markdown)
+
+
+def test_regression_rehashed_css_override_is_rejected(tmp_path):
+    import hashlib
+    for name in ("DESIGN.md", "design-tokens.json", "design-tokens.css"):
+        shutil.copyfile(ROOT / name, tmp_path / name)
+    css = tmp_path / "design-tokens.css"
+    modified = contract.read_text(css) + ":root { --bmd-colors-accent: #000000; }\n"
+    css.write_text(modified, encoding="utf-8")
+    path = tmp_path / "design-tokens.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["css_sha256"] = hashlib.sha256(modified.encode("utf-8")).hexdigest()
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert "CSS differs from the generated source serialization" in contract.verify(tmp_path)
