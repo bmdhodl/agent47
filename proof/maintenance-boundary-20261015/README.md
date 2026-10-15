@@ -17,6 +17,12 @@ marker also cover a failed controller path. No unrelated process is stopped.
 The new regression failed before the reproduction existed (`background-red.txt`).
 It then passed. An initial local implementation did not explicitly pass the
 Windows output handles to the child and failed cleanup; the final version does.
+Independent review also found inherited AgentGuard sink settings could escape
+the scratch directory or initialize remote ingest. A poisoned trace-destination
+regression failed (`env-regression-red.txt`); the example now strips all
+`AGENTGUARD_*` variables and explicitly puts its trace inside the owned scratch.
+A synthetic-key regression blocks DNS and socket connections before they can
+reach the network and confirms remote ingest is never initialized.
 This does not reproduce a provider bill or independently verify the reported
 Bedrock incident. It establishes that a parent guard does not supervise children.
 
@@ -25,8 +31,11 @@ Bedrock incident. It establishes that a parent guard does not supervise children
 - Focused boundary, daily persistence, shared-store preflight and reservation
   tests: 78 passed, exit 0. This includes restart persistence and concurrent
   admission on the existing covered store-backed paths.
-- Full SDK: 1612 passed, 3 optional skips, 92.54% coverage, exit 0.
+- Initial full SDK: 1612 passed, 3 optional skips, 92.54% coverage, exit 0.
   Raw output: `sdk-suite.txt`.
+- After the independent environment-isolation repair: **1614 passed, 3 optional
+  skips, 92.54% coverage**, exit 0 (`sdk-final.txt`). The replayable boundary
+  checks pass 4/4, including both poisoned-environment regressions.
 - Structural: 9 passed, exit 0 (`structural.txt`).
 - Ruff and Bandit: exit 0 (`lint.txt`, `security.txt`).
 - Release metadata guard: exit 0 (`release-guard.txt`). No version bump or tag.

@@ -57,11 +57,16 @@ def reproduce(scratch_parent: Path | None) -> dict[str, object]:
         scratch = Path(directory)
         command = [
             sys.executable, "-m", "agentguard", "run", "--budget-usd", "0.01",
+            "--trace-file", str(scratch / "trace.jsonl"),
             str(SCRIPT), "--parent", str(scratch),
         ]
+        # A caller's credentials or sink defaults must not turn an offline
+        # example into remote ingest, or redirect its trace outside this scratch.
+        environment = {key: value for key, value in os.environ.items()
+                       if not key.upper().startswith("AGENTGUARD_")}
         process = subprocess.Popen(
             command, cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            text=True, encoding="utf-8", creationflags=HIDDEN,
+            text=True, encoding="utf-8", creationflags=HIDDEN, env=environment,
         )
         try:
             # wait() observes the guarded parent's exit independently of the
