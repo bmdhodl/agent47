@@ -1,0 +1,11 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\hook-failure-20261015\sdk
+configfile: pyproject.toml
+collected 51 items
+
+sdk\tests\test_hooks.py ......................                           [ 43%]
+sdk\tests\test_hook_install_failure.py ....................              [ 82%]
+sdk\tests\test_architecture.py .........                                 [100%]
+
+============================= 51 passed in 2.38s ==============================

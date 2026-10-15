@@ -16,6 +16,8 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TextIO
@@ -121,8 +123,8 @@ def run(stdin: TextIO, stderr: TextIO, max_calls: Optional[int] = None) -> int:
         tool_name = event["tool_name"]
         session = _SESSION_RE.sub("_", str(event["session_id"])) or "unknown"
     except (ValueError, KeyError, TypeError) as exc:
-        # Any exit other than 0 or 2 is a non-blocking error: the call proceeds and
-        # Claude Code shows a hook error.
+        # Installed PreToolUse handlers set onFailure=block on supported hosts,
+        # so an unreadable event is a blocking hook failure rather than an allow.
         stderr.write(f"agentguard hook: unreadable hook input ({exc})\n")
         return 1
     if name not in EVENTS:
@@ -168,9 +170,12 @@ def install_settings(settings: Dict[str, Any], python: str, max_calls: Optional[
     args = HOOK_ARGS + ([] if max_calls is None else ["--max-calls", str(max_calls)])
     hooks = settings.setdefault("hooks", {})
     for name in EVENTS:
+        handler = {"type": "command", "command": python, "args": args, "timeout": 10}
+        if name == "PreToolUse":
+            handler["onFailure"] = "block"
         hooks.setdefault(name, []).append({
             "matcher": "*",
-            "hooks": [{"type": "command", "command": python, "args": args, "timeout": 10}],
+            "hooks": [handler],
         })
     return settings
 
@@ -178,19 +183,50 @@ def install_settings(settings: Dict[str, Any], python: str, max_calls: Optional[
 def uninstall_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
     """Remove only AgentGuard handlers; drop groups and events left empty. Modifies and returns settings."""
     hooks = settings.get("hooks", {})
+    removed_any = False
     for name in list(hooks):
         groups: List[Dict[str, Any]] = []
+        removed = False
         for group in hooks[name]:
             kept = [h for h in group.get("hooks", []) if not _handler(h)]
+            if len(kept) == len(group.get("hooks", [])):
+                groups.append(group)
+                continue
+            removed = True
+            removed_any = True
             if kept:
                 groups.append({**group, "hooks": kept})
         if groups:
             hooks[name] = groups
-        else:
+        elif removed:
             del hooks[name]
-    if "hooks" in settings and not hooks:
+    if removed_any and not hooks:
         del settings["hooks"]
     return settings
+
+
+def _require_supported_claude() -> str:
+    """Fail before installation when the host cannot enforce onFailure=block."""
+    requirement = ("AgentGuard hook installation requires Claude Code 2.1.295 or later "
+                   "with onFailure support. No settings were changed.")
+    executable = shutil.which("claude")
+    if executable is None:
+        raise SystemExit(f"{requirement} Could not find claude on PATH.")
+    try:
+        # Resolve the host exactly as its CLI invocation would; neither the
+        # command name nor arguments come from hook payloads or project config.
+        result = subprocess.run(  # nosec B603
+            [executable, "--version"], capture_output=True, text=True, timeout=5,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise SystemExit(f"{requirement} Could not verify claude --version ({exc}).") from exc
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+) \(Claude Code\)", result.stdout.strip())
+    if result.returncode != 0 or match is None:
+        raise SystemExit(f"{requirement} claude --version did not return a supported version.")
+    if tuple(int(part) for part in match.groups()) < (2, 1, 295):
+        raise SystemExit(f"{requirement} Detected {result.stdout.strip()}.")
+    return ".".join(match.groups())
 
 
 def configure(project_dir: str, write: bool, remove: bool, max_calls: Optional[int],
@@ -200,9 +236,12 @@ def configure(project_dir: str, write: bool, remove: bool, max_calls: Optional[i
         current = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     except json.JSONDecodeError as exc:
         raise SystemExit(f"{path} is not valid JSON ({exc}). Fix it, then run this again.") from exc
+    version = None if remove else _require_supported_claude()
     updated = (uninstall_settings(current) if remove
                else install_settings(current, sys.executable, max_calls))
     text = json.dumps(updated, indent=2) + "\n"
+    if version is not None:
+        out.write(f"# Verified Claude Code {version}; PreToolUse blocks hook failures.\n")
     if not write:
         out.write(f"# Preview of {path}. Add --write to save it.\n{text}")
         return 0
