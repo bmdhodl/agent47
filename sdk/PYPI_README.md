@@ -54,9 +54,13 @@ agentguard hook claude-code --install --write
 ```
 
 This installs a Claude Code hook that refuses the third identical tool call in
-a row and a call that already failed twice. Refusals go to
-`.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
-subscription quota. See the [Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/claude-code-hook.md).
+a row and a call that already failed twice. "Identical" ignores JSON key order
+and preserves case and whitespace in values. The optional `no_progress_max`
+rule refuses a tool after repeated empty or same-error results even when input
+changes; it is off by default. Refusals omit raw input and go to
+`.agentguard/claude-code/trace.jsonl`. It
+checks tool calls, not tokens or subscription quota. See the
+[Claude Code hook guide](https://github.com/bmdhodl/agent47/blob/main/docs/guides/claude-code-hook.md).
 
 ### Guard a script without editing it (new in 2.0.0)
 
@@ -107,6 +111,34 @@ assert completed == 2
 ```
 
 Expected output: `Stopped before call 3`.
+
+### Stop a reworded loop
+
+A stuck agent often rewords each retry, so no call repeats exactly.
+`max_no_progress` counts results instead: the same tool coming back empty, or
+with the same error, N times in a row stops the run whatever the arguments.
+`normalize=True` canonicalizes containers while preserving case and whitespace
+in argument values. Both options are off by default.
+
+```python
+from agentguard import LoopDetected, LoopGuard
+
+loop = LoopGuard(normalize=True, max_no_progress=3)
+
+for pattern in ["retry_count", "retryCount", "retries"]:
+    loop.check("grep", {"pattern": pattern})
+    matches = []  # Put your search here. This one finds nothing.
+    try:
+        loop.record_result("grep", matches, tool_args={"pattern": pattern})
+    except LoopDetected as stop:
+        print(stop)
+```
+
+Expected output: `No progress: grep came back empty 3 times in a row (limit:
+3). Change the approach instead of rewording
+the call.` Functions wrapped with `trace_tool` feed results to the guard
+automatically. Any other result in between starts the count over, so
+pagination and edit-then-test cycles do not trip it.
 
 ### Connect a provider
 
@@ -166,7 +198,7 @@ usage. A guard exception returns control to your application's error handler.
 | Guard | Checks | Raises |
 | --- | --- | --- |
 | `BudgetGuard` | Recorded calls, tokens, or estimated cost | `BudgetExceeded` |
-| `LoopGuard` | Repeated tool calls | `LoopDetected` |
+| `LoopGuard` | Repeated tool calls; opt in to `normalize=True` and `max_no_progress=N` for reworded ones | `LoopDetected` |
 | `FuzzyLoopGuard` | Tool frequency and alternating patterns | `LoopDetected` |
 | `RetryGuard` | Retries per tool | `RetryLimitExceeded` |
 | `TimeoutGuard` | Elapsed time when checked | `TimeoutExceeded` |

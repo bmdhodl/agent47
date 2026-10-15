@@ -1,0 +1,20 @@
+showwork verify - session repair869-integrate873-20261015  =>  GREEN  (3/3 checks passed)
+Outcome: VERIFIED. Declared acceptance checks passed; requirement coverage and test adequacy need review.
+Scope: 1 behavior checks, 0 artifact checks. Undeclared requirements: unknown.
+  OK  check for claim: Combined hook installer and loop regression acceptance passes after main merge with affected files declared
+       exit 0
+  OK  check for claim: Actual combined native host acceptance passed both loop cases and all seven hook failure cases offline
+       /"all_nine_cases_passed": true/ found in proof/pr869-integrate873-20261015/native-summary.json
+  OK  check for claim: Combined fail-closed installer and opt-in loop regression suite passes
+       exit 0
+Observation: current_rerun. Historical finish: absent.
+Check verdict: GREEN. Outcome: VERIFIED. Integrity: unknown.
+Limitations: undeclared requirements: unknown; test adequacy: not assessed; formatting does not change the verdict.
+Recovery: Repair the failed check, then rerun verify. This text does not authorize a merge or a clean close.
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:0 revision:absent
+       exit 0
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:1 revision:absent
+       /"all_nine_cases_passed": true/ found in proof/pr869-integrate873-20261015/native-summary.json
+  requirement:Combined fail-closed installer and opt-in loop regression suite passes check:command scope:behavior result:pass evidence:requirement:combined-hooks revision:56dbe14b48a6
+       exit 0
+session.finish recorded: repair869-integrate873-20261015

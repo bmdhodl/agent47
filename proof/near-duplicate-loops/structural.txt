@@ -1,0 +1,20 @@
+python -m pytest sdk/tests/test_architecture.py -v
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /home/ubuntu/.local/bin/python
+cachedir: .pytest_cache
+rootdir: /workspace/sdk
+configfile: pyproject.toml
+plugins: cov-7.1.0, showwork-0.6.6, anyio-4.15.1
+collecting ... collected 9 items
+
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_core_modules_stdlib_only PASSED [ 11%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_core_does_not_import_integrations PASSED [ 22%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_module_exceeds_line_limit PASSED [ 33%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_public_exports_have_docstrings PASSED [ 44%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_public_naming_conventions PASSED [ 55%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_no_hardcoded_absolute_paths PASSED [ 66%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_thread_safe_classes_have_lock PASSED [ 77%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_guard_check_methods_raise_not_return PASSED [ 88%]
+sdk/tests/test_architecture.py::TestArchitecturalInvariants::test_all_sinks_implement_emit PASSED [100%]
+
+============================== 9 passed in 0.24s ===============================

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Python313\\python.exe",
+    "-m",
+    "agentguard.cli",
+    "hook",
+    "claude-code",
+    "--install",
+    "--project-dir",
+    "D:\\local-ai\\tmp\\agentguard-preview-fmwsc4td"
+  ],
+  "resolved_host": "C:\\Users\\patri\\AppData\\Roaming\\npm\\claude.CMD",
+  "exit_code": 0,
+  "settings_created": false,
+  "stdout": "# Verified Claude Code 2.1.296; PreToolUse blocks hook failures.\n# Preview of D:\\local-ai\\tmp\\agentguard-preview-fmwsc4td\\.claude\\settings.local.json. Add --write to save it.\n{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"C:\\\\Python313\\\\python.exe\",\n            \"args\": [\n              \"-m\",\n              \"agentguard.cli\",\n              \"hook\",\n              \"claude-code\"\n            ],\n            \"timeout\": 10,\n            \"onFailure\": \"block\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"C:\\\\Python313\\\\python.exe\",\n            \"args\": [\n              \"-m\",\n              \"agentguard.cli\",\n              \"hook\",\n              \"claude-code\"\n            ],\n            \"timeout\": 10\n          }\n        ]\n      }\n    ],\n    \"PostToolUseFailure\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"C:\\\\Python313\\\\python.exe\",\n            \"args\": [\n              \"-m\",\n              \"agentguard.cli\",\n              \"hook\",\n              \"claude-code\"\n            ],\n            \"timeout\": 10\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+  "stderr": ""
+}

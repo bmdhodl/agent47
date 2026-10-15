@@ -26,6 +26,7 @@ SDK_ROOT = Path(__file__).parent.parent / "agentguard"
 # Core modules — must use stdlib only (no third-party imports at module level)
 CORE_MODULES = [
     "_budget_validation.py",
+    "_loop_match.py",
     "_reservation_contract.py",
     "_reservation_path.py",
     "_reservation_stream.py",
@@ -46,6 +47,7 @@ CORE_MODULES = [
     "_billing.py",
     "instrument.py",
     "instrument_stream.py",
+    "loop_guard.py",
     "profiles.py",
     "quickstart.py",
     "receipt.py",
@@ -363,11 +365,12 @@ class TestArchitecturalInvariants:
 
         Golden Principle #4: Guards raise exceptions.
         """
-        from agentguard import guards
+        from agentguard import guards, loop_guard
 
         violations = []
-        for name in dir(guards):
-            cls = getattr(guards, name)
+        classes = {name: getattr(guards, name) for name in dir(guards)}
+        classes.update((name, getattr(loop_guard, name)) for name in dir(loop_guard))
+        for name, cls in sorted(classes.items()):
             if not inspect.isclass(cls):
                 continue
             if not issubclass(cls, guards.BaseGuard) or cls is guards.BaseGuard:

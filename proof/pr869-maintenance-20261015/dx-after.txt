@@ -1,0 +1,9 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\pr869-maintenance-20261015\sdk
+configfile: pyproject.toml
+collected 45 items
+
+sdk\tests\test_dx.py .............................................       [100%]
+
+============================= 45 passed in 1.13s ==============================

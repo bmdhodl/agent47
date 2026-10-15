@@ -31,6 +31,8 @@ def _stop_detail(kind: str, data: Dict[str, Any]) -> str:
     # The LangChain integration stores the reason under "error".
     message = str(data.get("message") or data.get("error") or "")
     tool = data.get("tool_name")
+    if kind == "loop" and tool and data.get("rule") == "no_progress":
+        return f"{tool}: {data.get('outcome')} x{data.get('results')}, input varied"
     if kind == "budget" and "cost_used" in data and "limit_usd" in data:
         return f"${data['cost_used']:.4f} over ${data['limit_usd']:.4f}"
     limit = data.get("calls_limit")
