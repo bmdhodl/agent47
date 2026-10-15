@@ -1,0 +1,2 @@
+Command: C:\Python313\python.exe -m bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
+Exit: 0

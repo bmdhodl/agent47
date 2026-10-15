@@ -1,6 +1,6 @@
 # Enforcement boundary
 
-Checked 2026-10-03 against AgentGuard `2.0.0` source. This is the tested
+Checked 2026-10-15 against AgentGuard `2.0.0` source. This is the tested
 promise. It is not an invoice cap, a host-wide kill switch, or a savings
 guarantee.
 
@@ -16,8 +16,9 @@ already stored on `BudgetGuard`. It does **not** reserve concurrent in-flight
 calls, predict the next response's tokens or dollars, intercept a direct SDK
 callable outside the patch, or cap a provider subscription quota.
 
-Installing `agentguard47` does nothing to Cursor, Claude Code, Copilot, or
-Codex until your code (or a generated starter) calls the SDK.
+Installing `agentguard47` alone does not intercept Cursor, Claude Code,
+Copilot, or Codex tools. Python code must call the SDK, or Claude Code must
+have the separate project hook installed. That hook does not cover Codex.
 
 `patch_openai()` and `patch_openai_async()` instrument the standard OpenAI
 resource classes shared by existing and new clients. `init()` activates both.
@@ -35,6 +36,33 @@ AgentGuard 2.0.0 accepts explicit
 `init()`. Only named client instances record zero model cost; token/call limits
 and the existing reservation boundaries remain active. Unnamed clients retain
 paid estimates, even at localhost. 1.4.0 has no such patch option.
+
+## Budget scope in published 2.0.0
+
+AgentGuard is not limited to one run. Persistence and admission are separate:
+sharing counters does not make every provider path reserve before dispatch.
+
+| Capability | Status and scope | Evidence |
+| --- | --- | --- |
+| Persistent shared daily SDK counters | Supported with `JsonFileStateStore`, an explicit shared `key`, and `period="day"` (UTC). Every participating worker must select that store and key. | `sdk/tests/test_guard_persistence.py`, `sdk/tests/test_budget_preflight.py::test_preflight_reads_shared_store_and_current_day` |
+| Warning at 80% | Supported when configured with `warn_at_pct=0.8` and `on_warning`; not enabled by default. | `sdk/tests/test_guards.py::TestBudgetGuard`, `sdk/tests/test_reservation_path.py::test_commit_emits_one_warning` |
+| Restart persistence and concurrent admission | Stored usage and unresolved holds survive restart. Selected store-backed provider paths reserve before dispatch; see the surface map below. Plain `check()` does not reserve. | `sdk/tests/test_guard_persistence.py`, `sdk/tests/test_reservation_path.py` |
+| Automatic parent/child agent budget inheritance | Not implemented. Passing one store and key explicitly can aggregate participating workers; it does not capture uninstrumented descendants. Deferred proposal [#862](https://github.com/bmdhodl/agent47/issues/862). | `BudgetGuard` configuration in `sdk/agentguard/guards.py` |
+| Monthly SDK budgets | Not implemented; the SDK accepts `period="day"` or no period. Deferred with #862. | `sdk/agentguard/guards.py` |
+| Session/day/month in Python MCP sibling | Exists only in the unpublished `agentguard-mcp` checkout. Cooperative clients call `record_call`; it does not intercept arbitrary tools or share the SDK store automatically. | [Python MCP README](../agentguard-mcp/README.md) |
+| Generic Codex tools or subscription quota | Unsupported. Claude Code hooks and SDK patches do not intercept generic Codex tool calls or read account quota. | [#866](https://github.com/bmdhodl/agent47/issues/866) |
+
+## What a stop receipt proves
+
+`agentguard receipt` formats a recorded guard refusal and a trace-file SHA-256.
+The hash identifies those bytes; it is not a signed attestation, an invoice,
+or proof that a detached process stopped. The command remains stable.
+
+Anthropic's official
+[`/receipts` plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/receipts/README.md)
+summarizes historical Claude Code work, with a default 30-day window. It does
+not enforce AgentGuard guards. These are different records with different
+coverage; neither establishes a measured saving by itself.
 
 ## Classes
 
@@ -75,6 +103,7 @@ paths are marked `unsupported`.
 | CLI `hook claude-code` loop and retry checks | recorded-event preflight | `sdk/tests/test_hooks.py::test_run_refuses_with_exit_2_and_logs_a_receipt` | Installed `PreToolUse` calls only. Refuses the `loop_max`-th identical call (key order ignored; value case/whitespace preserved) and unchanged calls after `retry_max` failures. Opt-in `no_progress_max` refuses repeated empty/same-error results despite changed input; default `0` disables it. Unknown payload shapes count as progress. Refusals omit raw input. The candidate installer verifies Claude Code 2.1.295+ and sets `onFailure: block` on synchronous PreToolUse only; unreadable input, crashes, missing executables, timeouts and rejected JSON then block. Published 2.0.0/legacy handlers require explicit reinstall and otherwise fail open. Plain-text or incomplete JSON stdout is not a host failure. Later downgrade/removal is not prevented. Tokens, subagent-internal work and subscription quota are unsupported. Native Windows 2.1.296 offline proof: [seven failure cases](../proof/hook-failure-20261015/README.md) and [diagnostic/recovery loop cases](../proof/pr869-maintenance-20261015/native/summary.json). Actual empty Grep/Glob results, live providers and macOS/Linux failure acceptance remain untested. Earlier Linux guard-refusal proof used 2.1.283. |
 | CLI `hook claude-code --max-calls` | recorded-budget preflight | `sdk/tests/test_hooks.py::test_parallel_hook_processes_do_not_lose_counts` | Per-session tool-call count in a locked `JsonFileStateStore`; parallel hook processes do not lose counts. A call count, not a token or dollar budget. |
 | CLI `run` | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_agentguard_run_stops_an_unmodified_openai_script` | Calls `init()`, which patches OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages, then runs the script in the same interpreter. Same bounds as those patch rows: the call that crosses a dollar cap is already sent. Subprocesses the script starts are not patched. |
+| Detached uninstrumented child process | unsupported | `sdk/tests/test_background_boundary.py::test_uninstrumented_child_can_continue_after_guarded_parent_exits` | Offline reproduction runs a parent through `agentguard run`, waits for that parent to exit, then permits its child to make two simulated dispatches. No provider calls. A hook or parent guard does not supervise or cancel descendants, including direct uninstrumented Bedrock calls. |
 | npm `@agentguard47/mcp-server` | advisory | `mcp-server/src/__tests__/tools.test.ts` | Read-only hosted traces, alerts, usage, costs, and event-quota health. `check_budget` is hosted event quota, not `BudgetGuard` and not a provider invoice. Mutating budget tools are denied. |
 | Python `agentguard-mcp` `record_call` | reservation-backed | `agentguard-mcp/tests/test_storage.py::test_concurrent_record_call_never_exceeds_budget` | SQLite `BEGIN IMMEDIATE` for clients that call this server. Does not intercept other MCP servers. Unpublished checkout package. |
 | OpenAI Responses API patch (`responses.create`, `responses.parse`, `responses.stream()`; sync, async, stream) | recorded-budget preflight | `sdk/tests/test_real_dispatch.py::test_responses_create_counts_once_and_blocks_before_dispatch` | Needs openai 1.66 or later. Bills `response.usage`, or the usage on the `response.completed` stream event. `with_raw_response` and `with_streaming_response` count when the response is parsed. Store-backed sync non-stream calls and store-backed streams reserve like Chat Completions; token and dollar holds need `max_output_tokens`. In-flight responses can exceed remaining tokens or cost. |
@@ -96,6 +125,12 @@ paths are marked `unsupported`.
   including when the stream stops early after a partial usage chunk.
 - **Subscription quota.** AgentGuard does not read or enforce OpenAI,
   Anthropic, or cloud-account billing quotas.
+- **Detached processes.** Parent hooks, timeouts, and `agentguard run` do not
+  supervise uninstrumented descendants. Reproduce offline with
+  `python examples/enforcement_boundary/background_child.py`. Every test child
+  has a bounded wait and is drained before the example removes its own scratch
+  directory. This is boundary evidence for [#870](https://github.com/bmdhodl/agent47/issues/870),
+  not a process supervisor or protection for the reported Bedrock incident.
 - **Concurrent recorded-budget paths.** Two threads can both pass `check()`
   before either `consume()`. Reproduce with
   `examples/enforcement_boundary/two_worker_overshoot.py`. Store-backed
@@ -125,6 +160,11 @@ Read 2026-09-20. These are vendor docs, not a benchmark:
   is [reservation-contract.md](guides/reservation-contract.md). It reserves
   store-backed OpenAI calls and store-backed streams that share a
   `StateStore`. It does not reserve the other recorded-budget paths.
+
+Read 2026-10-15: Google's [Gemini at Work announcement](https://cloud.google.com/blog/products/ai-machine-learning/welcome-to-gemini-at-work-2026?hl=en)
+documents a project-level spend limit that pauses the project's agent when
+reached. This supports the relevance of enforced budgets; it does not establish
+a general per-agent cap or commit AgentGuard to new features.
 
 ## History
 
