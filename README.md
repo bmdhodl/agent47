@@ -39,6 +39,11 @@ For a fresh PowerShell install and a runnable raw starter, follow the
 `agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
+This **stop receipt** records a covered guard refusal. Anthropic's official
+[`/receipts` plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/receipts/README.md)
+summarizes past Claude Code work (30 days by default). Neither output proves
+prevented spend or provides a signed attestation. The `agentguard receipt`
+command stays the same.
 
 ### Guard a Claude Code session (new in 2.0.0)
 
@@ -63,6 +68,11 @@ interpreter. Settings come from flags, then environment variables, then
 stderr, ready for `agentguard receipt`. `agentguard run python -m mypkg` works too. The bounds are
 the same as patching the client yourself; see
 [enforcement boundary](docs/enforcement-boundary.md).
+
+Subprocesses start a separate interpreter and are not patched by the parent.
+A detached, uninstrumented child can keep running after the guarded script
+exits. The [offline reproduction](docs/enforcement-boundary.md#remaining-exposure)
+demonstrates that boundary with two simulated calls and no network access.
 
 `agentguard run` prices every patched call at paid rates, including a local
 model behind an OpenAI-compatible URL such as Ollama. A dollar budget can then
@@ -164,6 +174,12 @@ usage. A guard exception returns control to your application's error handler.
 For task budgets, use `BudgetGuard.goal(...)`. For signatures and defaults,
 read the [guard source](sdk/agentguard/guards.py) and
 [public exports](sdk/agentguard/__init__.py).
+
+Budgets can also persist across runs: configure `JsonFileStateStore`, a shared
+`key`, and `period="day"` for a daily counter. Set `warn_at_pct=0.8` and an
+`on_warning` callback for an 80% warning. Workers must explicitly share the
+store and key; child-agent budget inheritance is not automatic. Monthly SDK
+limits are not implemented. See the [capability matrix](docs/enforcement-boundary.md#budget-scope-in-published-200).
 
 ## Limits and security
 
