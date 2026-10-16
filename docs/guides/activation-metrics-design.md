@@ -35,20 +35,47 @@ Regenerate a weekly aggregate with:
 python scripts/activation_weekly_report.py docs/guides/activation-baseline-2026-09-18.json
 ```
 
-Refresh public PyPI and npm counts, then classify them. This does not read site events, GitHub traffic, or identities:
+Refresh public PyPI and npm counts, then classify them. This does not read site events, GitHub traffic, or identities. It does read this repository's own GitHub Actions runs, to subtract our own installs:
 
 ```bash
-python scripts/refresh_activation_snapshot.py --fetch-public --retrieved-at 2026-09-25T01:40:00Z --out docs/guides/activation-snapshot-2026-09-25.json
-python scripts/activation_weekly_report.py docs/guides/activation-snapshot-2026-09-25.json
+python scripts/refresh_activation_snapshot.py --fetch-public --retrieved-at 2026-10-05T10:21:28Z --out docs/guides/activation-snapshot-2026-10-05.json
+python scripts/activation_weekly_report.py docs/guides/activation-snapshot-2026-10-05.json
 ```
 
-The 2026-09-25 snapshot records 255 PyPI `without_mirrors` events for 2026-09-18 through 2026-09-24 and 537 for 2026-08-26 through 2026-09-24. Release dates stay annotated on those totals. Repository visits, site events, real-workflow activation, and repeat use are unknown. The September 18 landing-page `install_intent` rows stay navigation in that baseline and are not copied forward.
+`.github/workflows/published-wheel.yml` installs the published wheel from PyPI on
+an OS matrix, so a wheel-install job that fetches the wheel adds one
+real-interpreter download of our own. The refresh reads those runs from the
+GitHub Actions API, lists the dates they ran with the job count on each, and
+reports the off-publish-day real-interpreter figure twice: `downloads` and
+`mean_per_day` stay raw, and `net_of_own_ci` holds the figure net of our own CI.
+
+Three rules keep that subtraction honest. A run on a publish day is not
+subtracted, because that whole day is already outside the sum. Each day's
+subtraction stops at that day's real-interpreter rows, and any surplus is
+reported as `jobs_not_subtracted` rather than taken from another day. If the
+Actions API is unavailable, or its run inventory starts after the window does,
+the net field reads `unavailable` with the reason; the raw figure is never
+presented as the net one. No row is deleted.
+
+The net figure is still an upper bound: other CI, reinstalls and
+mirrors-excluded tooling also use real interpreters, an interpreter does not
+identify a person, and one job is not provably one download. Set `GITHUB_TOKEN`
+or `GH_TOKEN` to get past the 60-request hourly limit that applies to
+unauthenticated reads; one refresh can exhaust it. A read-only token with
+`actions:read` is enough, and it is sent to `api.github.com` only, on the first
+request and on any redirect that keeps both that host and `https`. Worked
+numbers:
+[proof/published-wheel-ci-exclusion-20261005](../../proof/published-wheel-ci-exclusion-20261005/README.md).
+
+The earlier 2026-09-25 snapshot records 255 PyPI `without_mirrors` events for 2026-09-18 through 2026-09-24 and 537 for 2026-08-26 through 2026-09-24. Release dates stay annotated on those totals. Repository visits, site events, real-workflow activation, and repeat use are unknown. The September 18 landing-page `install_intent` rows stay navigation in that baseline and are not copied forward.
 
 The script is offline by default. It never scrapes identities. Unknowns stay
-unknown. Publication dates and CI clones are exclusions, not users.
+unknown. Publication dates, CI clones and our own published-wheel installs are
+exclusions, not users.
 
-Exact query windows, dedup rules, and unknowns live in that JSON. As of
-2026-09-18:
+Exact query windows, dedup rules, and unknowns live in each snapshot JSON. The
+figures below are the 2026-09-18 baseline, which predates the committed
+snapshots:
 
 - PyPI `without_mirrors` 7d ending 2026-09-17: 266 package events. 241 (90.6%)
   fell on publication burst days 2026-09-12 and 2026-09-15.

@@ -1,0 +1,253 @@
+{
+  "accepted_contribution": 0,
+  "as_of": "2026-10-05",
+  "consented_feedback_failure": 0,
+  "data_lag": {
+    "pypi": "series ends 2026-10-04; retrieved 2026-10-05; later days are lag, not zero"
+  },
+  "dedup": {
+    "pypi": "none; each download is a package event, not a unique user"
+  },
+  "demo_feedback_success": 0,
+  "downloads": {
+    "note": "package events, not unique users; release-day rows are annotated and not removed as CI",
+    "off_publish_days": {
+      "caveat": "a null interpreter almost always means tooling rather than a person, and a real interpreter still does not prove a distinct person",
+      "method": "Off-publish-day figures sum without_mirrors downloads on the window days whose date is not in exclusions.publish_dates, divided by the count of those days; publish-day rows stay in the data, annotated, and are never deleted. The real-interpreter figures read python_minor?mirrors=false and count only rows whose category is not null. Inside real_interpreter, downloads and mean_per_day are the raw figures; net_of_own_ci holds the same figures net of our own published-wheel CI.",
+      "own_ci_method": "Runs of .github/workflows/published-wheel.yml are read from the GitHub Actions API, dated by the UTC day the run started, and counted by the jobs that completed the step named 'Install the published wheel and run the offline example'. Jobs on a window day that is not a publish date are subtracted from the raw off-publish-day real-interpreter downloads; a run on a publish date is not subtracted, because that whole day is already out of the sum. Each day's subtraction is capped at that day's real-interpreter rows, and any surplus is reported as jobs_not_subtracted rather than taken from another day. No row is deleted.",
+      "own_ci_upper_bound": "the net figure is still an upper bound: other CI, reinstalls and mirrors-excluded tooling also use real interpreters, an interpreter does not identify a person, and one job is not provably one download",
+      "window_30d": {
+        "day_count": 26,
+        "downloads": 188,
+        "mean_per_day": 7.2,
+        "publish_dates_excluded": [
+          "2026-09-12",
+          "2026-09-15",
+          "2026-09-18",
+          "2026-09-24"
+        ],
+        "real_interpreter": {
+          "day_count": 26,
+          "downloads": 36,
+          "mean_per_day": 1.4,
+          "net_of_own_ci": {
+            "day_count": 26,
+            "downloads": 24,
+            "jobs_excluded": 12,
+            "jobs_not_subtracted": 0,
+            "mean_per_day": 0.9,
+            "runs_excluded": [
+              {
+                "date": "2026-09-25",
+                "run_id": 36190628659,
+                "wheel_install_jobs": 4
+              },
+              {
+                "date": "2026-10-03",
+                "run_id": 37111363411,
+                "wheel_install_jobs": 4
+              },
+              {
+                "date": "2026-10-04",
+                "run_id": 37196396992,
+                "wheel_install_jobs": 4
+              }
+            ],
+            "source": "https://api.github.com/repos/bmdhodl/agent47/actions/workflows/published-wheel.yml/runs?per_page=100",
+            "status": "ok"
+          },
+          "publish_dates_excluded": [
+            "2026-09-12",
+            "2026-09-15",
+            "2026-09-18",
+            "2026-09-24"
+          ],
+          "source": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false",
+          "window_downloads": 91
+        },
+        "window": {
+          "end": "2026-10-04",
+          "start": "2026-09-05"
+        },
+        "window_downloads": 600
+      },
+      "window_7d": {
+        "day_count": 7,
+        "downloads": 37,
+        "mean_per_day": 5.3,
+        "publish_dates_excluded": [],
+        "real_interpreter": {
+          "day_count": 7,
+          "downloads": 19,
+          "mean_per_day": 2.7,
+          "net_of_own_ci": {
+            "day_count": 7,
+            "downloads": 11,
+            "jobs_excluded": 8,
+            "jobs_not_subtracted": 0,
+            "mean_per_day": 1.6,
+            "runs_excluded": [
+              {
+                "date": "2026-10-03",
+                "run_id": 37111363411,
+                "wheel_install_jobs": 4
+              },
+              {
+                "date": "2026-10-04",
+                "run_id": 37196396992,
+                "wheel_install_jobs": 4
+              }
+            ],
+            "source": "https://api.github.com/repos/bmdhodl/agent47/actions/workflows/published-wheel.yml/runs?per_page=100",
+            "status": "ok"
+          },
+          "publish_dates_excluded": [],
+          "source": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false",
+          "window_downloads": 19
+        },
+        "window": {
+          "end": "2026-10-04",
+          "start": "2026-09-28"
+        },
+        "window_downloads": 37
+      }
+    },
+    "pypi_without_mirrors_30d": 600,
+    "pypi_without_mirrors_7d": 37,
+    "release_day_events": [
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-12",
+        "downloads": 145
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-15",
+        "downloads": 96
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-18",
+        "downloads": 85
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-24",
+        "downloads": 86
+      }
+    ]
+  },
+  "exclusions": {
+    "landing_page_install_intent": "a marketing-origin target never counts as install",
+    "mirrors": "PyPI counts use without_mirrors",
+    "publish_dates": [
+      "2026-02-05",
+      "2026-02-06",
+      "2026-02-08",
+      "2026-02-09",
+      "2026-02-14",
+      "2026-02-15",
+      "2026-03-17",
+      "2026-03-28",
+      "2026-04-01",
+      "2026-04-03",
+      "2026-04-04",
+      "2026-04-18",
+      "2026-04-26",
+      "2026-05-02",
+      "2026-05-30",
+      "2026-09-12",
+      "2026-09-15",
+      "2026-09-18",
+      "2026-09-24"
+    ],
+    "published_wheel_ci": "a wheel-install job of our own .github/workflows/published-wheel.yml is not an outside user",
+    "published_wheel_ci_runs": [
+      {
+        "date": "2026-09-25",
+        "run_id": 36190628659,
+        "wheel_install_jobs": 4
+      },
+      {
+        "date": "2026-10-03",
+        "run_id": 37111363411,
+        "wheel_install_jobs": 4
+      },
+      {
+        "date": "2026-10-04",
+        "run_id": 37196396992,
+        "wheel_install_jobs": 4
+      },
+      {
+        "date": "2026-10-05",
+        "run_id": 37287563982,
+        "wheel_install_jobs": 4
+      }
+    ],
+    "simulated_reports": "a simulated report cannot count as demand"
+  },
+  "feedback_excluded": {
+    "duplicates": 0,
+    "internal": 0,
+    "simulated": 0
+  },
+  "guard_activation": 0,
+  "install": {
+    "note": "package events, not unique users",
+    "off_publish_method": "Off-publish-day figures sum without_mirrors downloads on the window days whose date is not in exclusions.publish_dates, divided by the count of those days; publish-day rows stay in the data, annotated, and are never deleted. The real-interpreter figures read python_minor?mirrors=false and count only rows whose category is not null. Inside real_interpreter, downloads and mean_per_day are the raw figures; net_of_own_ci holds the same figures net of our own published-wheel CI.",
+    "publish_dates_excluded": [],
+    "published_wheel_ci_jobs_excluded": 8,
+    "published_wheel_ci_jobs_not_subtracted": 0,
+    "pypi_events_outside_publish_burst": 37,
+    "pypi_events_outside_publish_burst_day_count": 7,
+    "pypi_events_outside_publish_burst_mean_per_day": 5.3,
+    "pypi_real_interpreter_events_outside_publish_burst": 19,
+    "pypi_real_interpreter_events_outside_publish_burst_day_count": 7,
+    "pypi_real_interpreter_events_outside_publish_burst_mean_per_day": 2.7,
+    "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci": 11,
+    "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_mean_per_day": 1.6,
+    "pypi_without_mirrors_7d": 37
+  },
+  "install_intent_proven": "unknown",
+  "landing_page_never_counts_as_install": true,
+  "page_navigation": {
+    "ai_crawl_events": "unknown",
+    "bot_view_events": "unknown",
+    "cta_clicks": "unknown",
+    "misclassified_landing_install_intent": "unknown",
+    "view_events": "unknown"
+  },
+  "real_workflow_activation": "unknown",
+  "repeat_use": "unknown without a consented reporter",
+  "repository_visits": "unknown",
+  "retrieved_at": "2026-10-05T10:21:28Z",
+  "unknowns": [
+    "unique PyPI installers",
+    "repeat use without a consented reporter",
+    "repository visits; GitHub traffic was not retrieved",
+    "site events were not retrieved; 2026-09-18 landing-page install_intent rows stay navigation in that baseline and are not reused here",
+    "real-workflow activation; demo success is not production use",
+    "a null interpreter almost always means tooling rather than a person, and a real interpreter still does not prove a distinct person",
+    "the net figure is still an upper bound: other CI, reinstalls and mirrors-excluded tooling also use real interpreters, an interpreter does not identify a person, and one job is not provably one download",
+    "pypi missing days: 2026-09-05, 2026-09-06, 2026-09-09, 2026-09-14, 2026-10-05"
+  ],
+  "windows": {
+    "npm_30d": {
+      "end": "2026-10-05",
+      "query": "https://api.npmjs.org/downloads/point/2026-09-06:2026-10-05/@agentguard47/mcp-server",
+      "start": "2026-09-06"
+    },
+    "pypi_30d": {
+      "end": "2026-10-04",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-05"
+    },
+    "pypi_7d": {
+      "end": "2026-10-04",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-28"
+    }
+  }
+}
