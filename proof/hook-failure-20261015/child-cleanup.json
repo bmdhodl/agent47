@@ -1,0 +1,6 @@
+{
+  "checked_at": "2026-10-15T15:44:48.2629275Z",
+  "owned_native_or_timeout_helper_count": 0,
+  "processes": [],
+  "scope": "Exact native fixture settings paths and exact owned timeout-helper argv; no process was stopped"
+}

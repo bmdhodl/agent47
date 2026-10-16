@@ -1,0 +1,33 @@
+Command: ['python', '-m', 'pytest', 'sdk/tests/test_background_boundary.py', '-q', '-p', 'no:cacheprovider', '-o', 'addopts=', '--basetemp', 'D:\\local-ai\\agentguard-proof-20261015\\background-red-47315109dc524cad9f13a81734fb3235']
+F                                                                        [100%]
+================================== FAILURES ===================================
+______ test_uninstrumented_child_can_continue_after_guarded_parent_exits ______
+
+tmp_path = WindowsPath('D:/local-ai/agentguard-proof-20261015/background-red-47315109dc524cad9f13a81734fb3235/test_uninstrumented_child_can_0')
+
+    def test_uninstrumented_child_can_continue_after_guarded_parent_exits(tmp_path):
+        script = ROOT / "examples/enforcement_boundary/background_child.py"
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(ROOT / "sdk")
+        result = subprocess.run(
+            [sys.executable, str(script), "--scratch-parent", str(tmp_path)],
+            cwd=tmp_path,
+            env=env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=45,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: C:\Python313\python.exe: can't open file 'D:\\local-ai\\agentguard-worktrees\\maintenance-boundary-docs-20261015\\examples\\enforcement_boundary\\background_child.py': [Errno 2] No such file or directory
+E         
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['C:\\Python313\\python.exe', 'D:\\local-ai\\agentguard-worktrees\\maintenance-boundary-docs-202...dary-docs-20261015\\\\examples\\\\enforcement_boundary\\\\background_child.py': [Errno 2] No such file or directory\n").returncode
+
+sdk\tests\test_background_boundary.py:28: AssertionError
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_background_boundary.py::test_uninstrumented_child_can_continue_after_guarded_parent_exits
+1 failed in 0.27s
+
+Exit: 1

@@ -3,9 +3,17 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-24
+**Last reviewed:** 2026-10-15 (maintenance scope and capability claims)
 
 ## Current Focus Notes
+
+- October maintenance review: repair near-duplicate matching in #869, repair
+  Claude Code hook failure handling in #871, and correct published capability
+  claims. Keep no-progress detection opt-in until host acceptance supports a
+  default change. Automatic tree-budget inheritance, monthly SDK limits,
+  process supervision, and security scanning remain deferred proposals.
+  The current capability matrix and detached-child reproduction live in
+  [enforcement boundary](../docs/enforcement-boundary.md).
 
 - Planning authority for 2026 weekly work is
   [GitHub #729](https://github.com/bmdhodl/agent47/issues/729) and

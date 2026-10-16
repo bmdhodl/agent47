@@ -1,0 +1,1 @@
+{"case": "malformed-json", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}
