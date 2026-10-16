@@ -1,0 +1,20 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\hook-failure-20261015\sdk
+configfile: pyproject.toml
+collected 20 items / 18 deselected / 2 selected
+
+sdk\tests\test_hook_install_failure.py F.                                [100%]
+
+================================== FAILURES ===================================
+_ test_uninstall_without_agentguard_does_not_normalize_user_settings[settings0] _
+sdk\tests\test_hook_install_failure.py:109: in test_uninstall_without_agentguard_does_not_normalize_user_settings
+    assert uninstall_settings(deepcopy(settings)) == settings
+E   AssertionError: assert {} == {'hooks': {}}
+E     
+E     Right contains 1 more item:
+E     {'hooks': {}}
+E     Use -v to get more diff
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_hook_install_failure.py::test_uninstall_without_agentguard_does_not_normalize_user_settings[settings0]
+================= 1 failed, 1 passed, 18 deselected in 0.51s ==================

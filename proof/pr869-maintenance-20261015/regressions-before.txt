@@ -1,0 +1,106 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\pr869-maintenance-20261015\sdk
+configfile: pyproject.toml
+collected 13 items
+
+sdk\tests\test_loop_maintenance_regressions.py FFFFFFFFFFF.F             [100%]
+
+================================== FAILURES ===================================
+__ test_regression_argument_values_keep_case_and_whitespace[first0-second0] ___
+sdk\tests\test_loop_maintenance_regressions.py:22: in test_regression_argument_values_keep_case_and_whitespace
+    assert signature("Tool", first) != signature("Tool", second)
+E   AssertionError: assert '6c9b729a3d5596c8' != '6c9b729a3d5596c8'
+E    +  where '6c9b729a3d5596c8' = signature('Tool', {'file_path': 'src/Foo.py'})
+E    +  and   '6c9b729a3d5596c8' = signature('Tool', {'file_path': 'src/foo.py'})
+__ test_regression_argument_values_keep_case_and_whitespace[first1-second1] ___
+sdk\tests\test_loop_maintenance_regressions.py:22: in test_regression_argument_values_keep_case_and_whitespace
+    assert signature("Tool", first) != signature("Tool", second)
+E   AssertionError: assert '88cf6666f02f4349' != '88cf6666f02f4349'
+E    +  where '88cf6666f02f4349' = signature('Tool', {'content': 'if ready:\n    run()'})
+E    +  and   '88cf6666f02f4349' = signature('Tool', {'content': 'if ready:\nrun()'})
+__ test_regression_argument_values_keep_case_and_whitespace[first2-second2] ___
+sdk\tests\test_loop_maintenance_regressions.py:22: in test_regression_argument_values_keep_case_and_whitespace
+    assert signature("Tool", first) != signature("Tool", second)
+E   assert '8d4d8ca0f73fdec6' != '8d4d8ca0f73fdec6'
+E    +  where '8d4d8ca0f73fdec6' = signature('Tool', {'command': "printf 'a b'"})
+E    +  and   '8d4d8ca0f73fdec6' = signature('Tool', {'command': "printf 'a  b'"})
+__ test_regression_argument_values_keep_case_and_whitespace[first3-second3] ___
+sdk\tests\test_loop_maintenance_regressions.py:22: in test_regression_argument_values_keep_case_and_whitespace
+    assert signature("Tool", first) != signature("Tool", second)
+E   AssertionError: assert '57683b1b8806a440' != '57683b1b8806a440'
+E    +  where '57683b1b8806a440' = signature('Tool', {'pattern': 'RetryCount'})
+E    +  and   '57683b1b8806a440' = signature('Tool', {'pattern': 'retrycount'})
+__________ test_regression_structured_empty_results_reach_guard[0.0] __________
+sdk\tests\test_loop_maintenance_regressions.py:42: in test_regression_structured_empty_results_reach_guard
+    with pytest.raises(LoopDetected, match="No progress: search came back empty 3 times"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'agentguard.guards.LoopDetected'>
+__________ test_regression_structured_empty_results_reach_guard[1.0] __________
+sdk\tests\test_loop_maintenance_regressions.py:42: in test_regression_structured_empty_results_reach_guard
+    with pytest.raises(LoopDetected, match="No progress: search came back empty 3 times"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'agentguard.guards.LoopDetected'>
+_____ test_regression_traced_errors_use_positional_and_keyword_args[0.0] ______
+sdk\tests\test_loop_maintenance_regressions.py:64: in test_regression_traced_errors_use_positional_and_keyword_args
+    read("lib/third.py", token=secret)
+sdk\agentguard\instrument.py:147: in wrapper
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+sdk\tests\test_loop_maintenance_regressions.py:57: in read
+    raise FileNotFoundError(f"missing file {path}")
+E   FileNotFoundError: missing file lib/third.py
+_____ test_regression_traced_errors_use_positional_and_keyword_args[1.0] ______
+sdk\tests\test_loop_maintenance_regressions.py:64: in test_regression_traced_errors_use_positional_and_keyword_args
+    read("lib/third.py", token=secret)
+sdk\agentguard\instrument.py:147: in wrapper
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+sdk\tests\test_loop_maintenance_regressions.py:57: in read
+    raise FileNotFoundError(f"missing file {path}")
+E   FileNotFoundError: missing file lib/third.py
+___ test_regression_no_progress_default_does_not_block_diagnostic_recovery ____
+sdk\tests\test_loop_maintenance_regressions.py:81: in test_regression_no_progress_default_does_not_block_diagnostic_recovery
+    assert _hook(tmp_path, tool_input=args)[0] == 0
+E   assert 2 == 0
+____ test_regression_hook_receipts_never_capture_raw_argument_values[loop] ____
+sdk\tests\test_loop_maintenance_regressions.py:127: in test_regression_hook_receipts_never_capture_raw_argument_values
+    assert secret not in content
+E   assert 'synthetic-c...-not-persist' not in '{"data": {"...lures": {}}}'
+E     
+E     'synthetic-credential-do-not-persist' is contained here:
+E       n: Bearer synthetic-credential-do-not-persist'", "nested": "[{\"synthetic-key-that-is-private\": \"synthetic-credential-do-not-persist\"}]", "url": "https://example.invalid/?token=synthetic-credential-do-not-persist"}, "tool_name": "Bash(curl -H 'Authorization: Bearer synthetic-credential-do-not-p)"}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.loop_detected", "parent_id": null, "phase": "emit", "service": "claude-code", "span_id": "aa17446a93df4145a38f06d027ab4e0e", "trace_id": "f78113c7d...
+E     
+E     ...Full output truncated (50 lines hidden), use '-vv' to show
+___ test_regression_hook_receipts_never_capture_raw_argument_values[retry] ____
+sdk\tests\test_loop_maintenance_regressions.py:127: in test_regression_hook_receipts_never_capture_raw_argument_values
+    assert secret not in content
+E   assert 'synthetic-c...-not-persist' not in '{"data": {"...count": 2}}}'
+E     
+E     'synthetic-credential-do-not-persist' is contained here:
+E       n: Bearer synthetic-credential-do-not-persist'", "nested": "[{\"synthetic-key-that-is-private\": \"synthetic-credential-do-not-persist\"}]", "url": "https://example.invalid/?token=synthetic-credential-do-not-persist"}, "tool_name": "Bash(curl -H 'Authorization: Bearer synthetic-credential-do-not-p)"}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.retry_limit_exceeded", "parent_id": null, "phase": "emit", "service": "claude-code", "span_id": "2563503a82214516a5b8f8ddcd13627a", "trace_id": "c7...
+E     
+E     ...Full output truncated (50 lines hidden), use '-vv' to show
+_ test_regression_hook_receipts_never_capture_raw_argument_values[no_progress] _
+sdk\tests\test_loop_maintenance_regressions.py:127: in test_regression_hook_receipts_never_capture_raw_argument_values
+    assert secret not in content
+E   assert 'synthetic-c...-not-persist' not in '{"data": {"...count": 2}}}'
+E     
+E     'synthetic-credential-do-not-persist' is contained here:
+E       n: Bearer synthetic-credential-do-not-persist'", "nested": "[{\"synthetic-key-that-is-private\": \"synthetic-credential-do-not-persist\"}]", "url": "https://example.invalid/?token=synthetic-credential-do-not-persist"}, "tool_name": "Bash(curl -H 'Authorization: Bearer synthetic-credential-do-not-p)"}, "duration_ms": null, "error": null, "kind": "event", "name": "guard.loop_detected", "parent_id": null, "phase": "emit", "service": "claude-code", "span_id": "c9e87fd7659f42d0a489c4af95115328", "trace_id": "7d7b40869...
+E     
+E     ...Full output truncated (50 lines hidden), use '-vv' to show
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_argument_values_keep_case_and_whitespace[first0-second0]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_argument_values_keep_case_and_whitespace[first1-second1]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_argument_values_keep_case_and_whitespace[first2-second2]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_argument_values_keep_case_and_whitespace[first3-second3]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_structured_empty_results_reach_guard[0.0]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_structured_empty_results_reach_guard[1.0]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_traced_errors_use_positional_and_keyword_args[0.0]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_traced_errors_use_positional_and_keyword_args[1.0]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_no_progress_default_does_not_block_diagnostic_recovery
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_hook_receipts_never_capture_raw_argument_values[loop]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_hook_receipts_never_capture_raw_argument_values[retry]
+FAILED sdk\tests\test_loop_maintenance_regressions.py::test_regression_hook_receipts_never_capture_raw_argument_values[no_progress]
+======================== 12 failed, 1 passed in 1.15s =========================

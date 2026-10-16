@@ -1,0 +1,41 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+____________ test_reproduction_ignores_inherited_trace_destination ____________
+
+tmp_path = WindowsPath('C:/Users/patri/AppData/Local/Temp/pytest-root/pytest-of-patri/pytest-575/test_reproduction_ignores_inhe0')
+
+    def test_reproduction_ignores_inherited_trace_destination(tmp_path):
+        script = ROOT / "examples/enforcement_boundary/background_child.py"
+        outside = tmp_path / "unowned-output" / "trace.jsonl"
+        env = {key: value for key, value in os.environ.items()
+               if not key.upper().startswith("AGENTGUARD_")}
+        env["PYTHONPATH"] = str(ROOT / "sdk")
+        env["AGENTGUARD_TRACE_FILE"] = str(outside)
+        result = subprocess.run(
+            [sys.executable, str(script), "--scratch-parent", str(tmp_path)],
+            cwd=tmp_path, env=env, capture_output=True, text=True, encoding="utf-8",
+            timeout=45, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+        assert result.returncode == 0, result.stderr
+>       assert not outside.parent.exists(), "The offline example wrote outside its owned scratch"
+E       AssertionError: The offline example wrote outside its owned scratch
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = WindowsPath('C:/Users/patri/AppData/Local/Temp/pytest-root/pytest-of-patri/pytest-575/test_reproduction_ignores_inhe0/unowned-output').exists
+E        +      where WindowsPath('C:/Users/patri/AppData/Local/Temp/pytest-root/pytest-of-patri/pytest-575/test_reproduction_ignores_inhe0/unowned-output') = WindowsPath('C:/Users/patri/AppData/Local/Temp/pytest-root/pytest-of-patri/pytest-575/test_reproduction_ignores_inhe0/unowned-output/trace.jsonl').parent
+
+sdk\tests\test_background_boundary.py:49: AssertionError
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_background_boundary.py::test_reproduction_ignores_inherited_trace_destination
+1 failed in 3.42s
+Exception ignored in atexit callback <function cleanup_numbered_dir at 0x0000024D7827D9E0>:
+Traceback (most recent call last):
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 374, in cleanup_numbered_dir
+    cleanup_dead_symlinks(root)
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 359, in cleanup_dead_symlinks
+    if not left_dir.resolve().exists():
+  File "C:\Python313\Lib\pathlib\_abc.py", line 450, in exists
+    self.stat(follow_symlinks=follow_symlinks)
+  File "C:\Python313\Lib\pathlib\_local.py", line 515, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\patri\\AppData\\Local\\Temp\\pytest-root\\pytest-of-patri\\pytest-current'

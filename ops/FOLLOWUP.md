@@ -32,6 +32,11 @@
   (and names them) before the cap. Add new bulk generated paths to its `OMIT`
   list. Workflow changes on a PR do not apply until merge
   (`pull_request_target` uses the base workflow).
+- #853's no-progress hook rule reads `tool_response` / `error` from
+  `PostToolUse` and `PostToolUseFailure`. Its tests use the Grep/Glob
+  zero-match shape (`numFiles: 0`, `filenames: []`). Record one live
+  Claude Code session that refuses a reworded empty-Grep loop, and adjust
+  `_loop_match.is_empty_result` if the real payload differs.
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.

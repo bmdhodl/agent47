@@ -63,3 +63,18 @@
 {"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-20260816", "ts": "2026-08-16T05:28:02", "status": "ok", "claims_verdict": "GREEN", "prev": "619be8768bc070050cb6584ae8ca1217b5edefbaa005a820951bc579adf37cbd"}
 {"event": "session.start", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:44:29", "agent": "codex", "prev": "54b030220c188c34e11615d6107f0044fd09104ce42559885112d1ba0c1fa0d3"}
 {"event": "session.finish", "session": "agentguard-claude-review-native-wrapper-path-20260816", "ts": "2026-08-16T05:46:04", "status": "ok", "claims_verdict": "GREEN", "prev": "16447845ef167602e36e751781276134d98ac6c738e18120dfcfccbb75720a65"}
+{"event": "session.start", "session": "receipt-cost-852", "ts": "2026-10-09T23:21:02", "agent": "codex", "prev": "f6647c69442b288738a4da51fae2783febee1962c2f120260cfbafeccdc70045"}
+{"event": "session.finish", "session": "receipt-cost-852", "ts": "2026-10-09T23:30:25", "status": "ok", "claims_verdict": "GREEN", "prev": "0b909675227148c11b7e8cf544a8e576c183a9f9dabf4f5d4901f726f18134ff"}
+{"event": "session.start", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:10", "agent": "codex", "prev": "1723af7c495f1e00d42a12458d45d57e3fa91e21d1f535be67b051cd88b25cf2"}
+{"event": "session.finish", "session": "receipt-ci-852", "ts": "2026-10-09T23:35:22", "status": "ok", "claims_verdict": "GREEN", "prev": "27522d24f89736e2fa8bc1a7771b3a624bc3d7f8255b9a44c36158e860e73c83"}
+{"event": "session.start", "session": "receipt-published-proof-852", "ts": "2026-10-09T23:43:00", "agent": "codex", "prev": "c146ba93ba2aa90dd232880020970fca24e387053f8fe7a601630dbe94d22eaf"}
+{"event": "session.finish", "session": "receipt-published-proof-852", "ts": "2026-10-09T23:43:00", "status": "ok", "claims_verdict": "GREEN", "prev": "fa85209a37694558eb3a916866a5b31a87ed931e1e5d06417c56bfcabd65fb14"}
+{"event": "session.start", "session": "receipt-review-routing-852", "ts": "2026-10-09T23:46:35", "agent": "codex", "prev": "158e3c26042cff853de5b66af74ae0be89ffe66663682677fd85e5d8988512e8"}
+{"event": "session.finish", "session": "receipt-review-routing-852", "ts": "2026-10-09T23:46:36", "status": "ok", "claims_verdict": "GREEN", "prev": "afe374a73cd80ea9f05cccde4b374f64d6456190ac4abef2b0720bdb0281ff53"}
+{"event": "session.start", "session": "receipt-fork-policy-852", "ts": "2026-10-09T23:51:39", "agent": "codex", "prev": "5883dc9fccd720733f43dac4b66b4c71907751250edf860f7fe98854dd61105c"}
+{"event": "session.finish", "session": "receipt-fork-policy-852", "ts": "2026-10-09T23:53:10", "status": "ok", "claims_verdict": "YELLOW", "prev": "724b67db29dfe9be7a2b1089e69c77c5f71ddea135a2ac2d4ba469de6349e6f0"}
+{"event": "session.finish", "session": "receipt-fork-policy-852", "ts": "2026-10-09T23:54:29", "status": "ok", "claims_verdict": "GREEN", "prev": "02b5f0a2a2d8c52dc9139d43ac33c3ac66d945a9a061c5921eac4d476ddcf41e"}
+{"event": "session.start", "session": "receipt-actionlint-852", "ts": "2026-10-09T23:58:25", "agent": "codex", "prev": "7d43613d01c7dc9b0718ce4db4454e76ef59604a5b1f86c7a9642c8013ae44ff"}
+{"event": "session.finish", "session": "receipt-actionlint-852", "ts": "2026-10-09T23:58:25", "status": "ok", "claims_verdict": "GREEN", "prev": "8b6aedd30a57e8f5143c064f068cb47f78e384bdc8bd5a41a9af19c5b13416aa"}
+{"event": "session.start", "session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:14", "agent": "codex", "prev": "4ff1888fe1eab297c0471f8515e07ff9a6943c61a53652d915a21e02b6384c4b"}
+{"event": "session.finish", "session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:15", "status": "ok", "claims_verdict": "GREEN", "prev": "1943f137a53557d5d2583eb53c6ce01c7ffa512063aa52595d3247218e5a2c0a"}

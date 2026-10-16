@@ -1,0 +1,28 @@
+showwork verify - session hook-failure-871-20261015  =>  GREEN  (5/5 checks passed)
+Outcome: VERIFIED. Declared acceptance checks passed; requirement coverage and test adequacy need review.
+Scope: 1 behavior checks, 0 artifact checks. Undeclared requirements: unknown.
+  OK  check for claim: Claude Code hook installer enforces the supported-host failure policy and preserves unrelated settings; focused regression, canonical-map, structural and security checks pass.
+       exit 0
+  OK  check for claim: Canonical enforcement row distinguishes candidate failure blocking, published legacy behavior and native Windows evidence.
+       /candidate installer verifies Claude Code 2\.1\.295\+.*Published 2\.0\.0/legacy handlers.*Native Windows/ found in docs/enforcement-boundary.md
+  OK  check for claim: Dated proof summary records the final full SDK counts and late repository-ledger timing.
+       /(?s)1631 passed, 3 skipped.*explicitly records its late start/ found in proof/hook-failure-20261015/README.md
+  OK  check for claim: Final full SDK raw output proves 1631 passed, three optional-agents dependency skips and coverage over the required threshold.
+       /1631 passed, 3 skipped/ found in proof/hook-failure-20261015/sdk-suite.txt
+  OK  check for claim: Installer support gate, synchronous onFailure policy, preservation and canonical map pass executable regression checks
+       exit 0
+Observation: current_rerun. Historical finish: absent.
+Check verdict: GREEN. Outcome: VERIFIED. Integrity: unknown.
+Limitations: undeclared requirements: unknown; test adequacy: not assessed; formatting does not change the verdict.
+Recovery: Repair the failed check, then rerun verify. This text does not authorize a merge or a clean close.
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:0 revision:absent
+       exit 0
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:1 revision:absent
+       /candidate installer verifies Claude Code 2\.1\.295\+.*Published 2\.0\.0/legacy handlers.*Native Windows/ found in docs/enforcement-boundary.md
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:2 revision:absent
+       /(?s)1631 passed, 3 skipped.*explicitly records its late start/ found in proof/hook-failure-20261015/README.md
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:3 revision:absent
+       /1631 passed, 3 skipped/ found in proof/hook-failure-20261015/sdk-suite.txt
+  requirement:Installer support gate, synchronous onFailure policy, preservation and canonical map pass executable regression checks check:command scope:behavior result:pass evidence:requirement:hook-behavior revision:ca30010ba040
+       exit 0
+session.finish recorded: hook-failure-871-20261015
