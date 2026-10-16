@@ -19,9 +19,9 @@ python -m agentguard.cli report agentguard_demo_traces.jsonl
 
 ## Windows PowerShell
 
-This walkthrough uses the published 1.4.0 wheel, checked on October 2, 2026.
+This walkthrough uses the published 2.0.0 wheel.
 Run it from a directory where `agentguard-first-run` does not already exist.
-Use Python 3.9 or newer. The commands call the virtual environment's Python
+Use Python 3.11 or newer. The commands call the virtual environment's Python
 directly, so they need no activation script or PowerShell policy change.
 The pinned package has no runtime dependencies, so `--no-deps` is safe for
 this version.
@@ -32,7 +32,7 @@ New-Item -ItemType Directory -Path agentguard-first-run | Out-Null
 Set-Location -LiteralPath agentguard-first-run
 python -m venv .venv
 if ($LASTEXITCODE -ne 0) { throw 'Virtual environment creation failed.' }
-& .\.venv\Scripts\python.exe -I -m pip --isolated install --index-url https://pypi.org/simple --only-binary=:all: --no-deps agentguard47==1.4.0
+& .\.venv\Scripts\python.exe -I -m pip --isolated install --index-url https://pypi.org/simple --only-binary=:all: --no-deps agentguard47==2.0.0
 if ($LASTEXITCODE -ne 0) { throw 'Package installation failed.' }
 & .\.venv\Scripts\python.exe -I -m agentguard doctor
 if ($LASTEXITCODE -ne 0) { throw 'The installation check failed.' }
@@ -62,8 +62,8 @@ CLI command, run:
 & .\.venv\Scripts\python.exe -I -c "import importlib.metadata; print(importlib.metadata.version('agentguard47'))"
 ```
 
-Version 1.4.0 does not have `receipt`, `hook`, `run`, or `--version`. Those
-commands are in the unpublished 2.0.0 candidate. This walkthrough needs no
+Version 2.0.0 adds `receipt`, `hook`, `run`, and `--version`; 1.4.0 does not
+have them. This walkthrough needs no
 provider key or optional framework package. Keep any trace private until you
 have checked its contents.
 

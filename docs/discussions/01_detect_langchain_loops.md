@@ -107,7 +107,7 @@ guard = FuzzyLoopGuard(max_tool_repeats=5, max_alternations=3, window=10)
 pip install agentguard47[langchain]
 ```
 
-The SDK is MIT licensed, zero dependencies, and works with Python 3.11+ in the 2.0.0 candidate (published 1.4.0 supports Python 3.9+).
+The SDK is MIT licensed, zero dependencies, and works with Python 3.11+ from 2.0.0 (1.4.0 supports Python 3.9+).
 
 Repo: https://github.com/bmdhodl/agent47
 

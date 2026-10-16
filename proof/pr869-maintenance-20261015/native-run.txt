@@ -1,0 +1,2 @@
+{"case": "default-off", "passed": true, "returncode": 0, "failure_hook_count": 5, "pre_hook_count": 6, "marker_exists": true, "refused": false}
+{"case": "opt-in", "passed": true, "returncode": 0, "failure_hook_count": 5, "pre_hook_count": 6, "marker_exists": false, "refused": true}

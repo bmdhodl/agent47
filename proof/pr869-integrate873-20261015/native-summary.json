@@ -1,0 +1,78 @@
+{
+  "merged_main_commit": "ff21dea510f0c8442002c658cf380e07275ecc3b",
+  "loop_cases": [
+    {
+      "case": "default-off",
+      "passed": true,
+      "returncode": 0,
+      "failure_hook_count": 5,
+      "pre_hook_count": 6,
+      "marker_exists": true,
+      "refused": false
+    },
+    {
+      "case": "opt-in",
+      "passed": true,
+      "returncode": 0,
+      "failure_hook_count": 5,
+      "pre_hook_count": 6,
+      "marker_exists": false,
+      "refused": true
+    }
+  ],
+  "failure_cases": [
+    {
+      "case": "allow",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": true
+    },
+    {
+      "case": "deny",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "missing-executable",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "crash",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "timeout",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "malformed-json",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "invalid-schema",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    }
+  ],
+  "all_nine_cases_passed": true,
+  "host": "2.1.296 (Claude Code)",
+  "runtime_source_sha256": "e38d2c30e907bdc508d7487e456db489ec6774bc5e91c294ef5e94aa069c30c8",
+  "boundary": "Combined candidate; native Windows host and loopback scripted provider; no active profile, real provider or package release."
+}

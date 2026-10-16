@@ -3,9 +3,17 @@
 SDK repo work only. Distribution-facing docs and package metadata count when
 they directly strengthen coding-agent adoption.
 
-**Last reviewed:** 2026-09-24
+**Last reviewed:** 2026-10-15 (maintenance scope and capability claims)
 
 ## Current Focus Notes
+
+- October maintenance review: repair near-duplicate matching in #869, repair
+  Claude Code hook failure handling in #871, and correct published capability
+  claims. Keep no-progress detection opt-in until host acceptance supports a
+  default change. Automatic tree-budget inheritance, monthly SDK limits,
+  process supervision, and security scanning remain deferred proposals.
+  The current capability matrix and detached-child reproduction live in
+  [enforcement boundary](../docs/enforcement-boundary.md).
 
 - Planning authority for 2026 weekly work is
   [GitHub #729](https://github.com/bmdhodl/agent47/issues/729) and
@@ -99,7 +107,7 @@ they directly strengthen coding-agent adoption.
 | One atomic reservation path (AG-04 / #733) | Store-backed sync OpenAI non-stream reserves before send. Barrier race dispatches once. Not an invoice cap. |
 | Stream reservation (AG-05 / #734) | Store-backed OpenAI and Anthropic streams reserve before send. Missing token or dollar usage stays unresolved. Not an invoice cap. |
 | 1.4.0 release | Published 2026-09-24. Receipts in `proof/v1.4.0/PUBLICATION.md`. AG-06 and later adapters stay held. |
-| 2.0.0 candidate | Owner-approved Python 3.11 minimum (#831, 2026-10-03) replaces the planned 1.4.1 patch. `agentguard --version` and release metadata match `2.0.0`. Publication needs its separate release gate. |
+| 2.0.0 release | Published 2026-10-06. Owner-approved Python 3.11 minimum (#831, 2026-10-03) replaced the planned 1.4.1 patch. Receipts in `proof/v2.0.0/PUBLICATION.md`. |
 | Release proof hygiene | The tag publish path verifies the tag matches `sdk/pyproject.toml`, publishes to PyPI first, then creates the GitHub Release |
 | MCP distribution hygiene | Official MCP Registry metadata is current at `0.2.2` and `awesome-mcp-servers` PR `#7164` is merged; Glama's empty public `tools` response remains an external listing check, not SDK work |
 | Dashboard contract drift checks | Hosted ingest, decision-trace event names, required fields, and remote-kill boundaries remain documented and covered by tests before any release |

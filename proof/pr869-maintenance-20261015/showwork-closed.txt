@@ -1,0 +1,24 @@
+showwork verify - session repair869-20261015  =>  GREEN  (4/4 checks passed)
+Outcome: VERIFIED. Declared acceptance checks passed; requirement coverage and test adequacy need review.
+Scope: 1 behavior checks, 0 artifact checks. Undeclared requirements: unknown.
+  OK  check for claim: Loop repair regressions and existing focused guard hook tracing and receipt tests pass without persisting hook argument values
+       exit 0
+  OK  check for claim: Declared affected files exist after merge from origin/main and the focused loop receipt and tracing acceptance checks pass
+       exit 0
+  OK  check for claim: Affected file declarations include the DX privacy expectation and focused behavior acceptance still passes
+       exit 0
+  OK  check for claim: Behavioral regression acceptance for exact values, structured/error outcomes, default off and omitted hook arguments
+       exit 0
+Observation: current_rerun. Historical finish: absent.
+Check verdict: GREEN. Outcome: VERIFIED. Integrity: unknown.
+Limitations: undeclared requirements: unknown; test adequacy: not assessed; formatting does not change the verdict.
+Recovery: Repair the failed check, then rerun verify. This text does not authorize a merge or a clean close.
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:0 revision:absent
+       exit 0
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:1 revision:absent
+       exit 0
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:2 revision:absent
+       exit 0
+  requirement:Behavioral regression acceptance for exact values, structured/error outcomes, default off and omitted hook arguments check:command scope:behavior result:pass evidence:requirement:loop-repairs revision:6ee66715751d
+       exit 0
+session.finish recorded: repair869-20261015

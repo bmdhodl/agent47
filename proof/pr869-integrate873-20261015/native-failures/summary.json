@@ -1,0 +1,56 @@
+{
+  "host": "2.1.296 (Claude Code)",
+  "root": "D:\\local-ai\\agentguard-proof-20261015\\pr869-integrated-native-failures\\native-host-rym2n_t4",
+  "cases": [
+    {
+      "case": "allow",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": true
+    },
+    {
+      "case": "deny",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "missing-executable",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "crash",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "timeout",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "malformed-json",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    },
+    {
+      "case": "invalid-schema",
+      "passed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "marker_exists": false
+    }
+  ],
+  "boundary": "Native host, offline scripted model; no live paid provider or active profile test"
+}

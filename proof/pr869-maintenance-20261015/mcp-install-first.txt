@@ -1,0 +1,9 @@
+npm error code EEXIST
+npm error syscall open
+npm error path C:\Users\patri\AppData\Local\npm-cache\_cacache\tmp\b61d3cc1
+npm error errno -4075
+npm error EEXIST: file already exists, open 'C:\Users\patri\AppData\Local\npm-cache\_cacache\tmp\b61d3cc1'
+npm error File exists: C:\Users\patri\AppData\Local\npm-cache\_cacache\tmp\b61d3cc1
+npm error Remove the existing file and try again, or run npm
+npm error with --force to overwrite files recklessly.
+npm error A complete log of this run can be found in: C:\Users\patri\AppData\Local\npm-cache\_logs\2026-10-15T15_44_29_722Z-debug-0.log

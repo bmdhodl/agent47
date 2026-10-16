@@ -1,0 +1,3 @@
+$ python scripts/review_readiness_guard.py
+Review readiness guard passed.
+exit=0

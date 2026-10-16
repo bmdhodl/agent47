@@ -1,7 +1,7 @@
 """
 AgentGuard + OpenAI Agents SDK
 
-This example requires the unpublished AgentGuard 2.0.0 candidate. See
+This example requires AgentGuard 2.0.0 or newer. See
 docs/integrations/openai-responses.md for the tested versions and installation.
 agentguard.init() instruments the standard OpenAIResponsesModel client path.
 Its model calls are checked before dispatch and charged from reported usage.

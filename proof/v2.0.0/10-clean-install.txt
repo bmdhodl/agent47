@@ -1,0 +1,634 @@
+$ python -m build ./sdk --outdir <work>/dist
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=82.0.1
+  - wheel
+* Getting build dependencies for sdist...
+running egg_info
+writing agentguard47.egg-info\PKG-INFO
+writing dependency_links to agentguard47.egg-info\dependency_links.txt
+writing entry points to agentguard47.egg-info\entry_points.txt
+writing requirements to agentguard47.egg-info\requires.txt
+writing top-level names to agentguard47.egg-info\top_level.txt
+reading manifest file 'agentguard47.egg-info\SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'agentguard47.egg-info\SOURCES.txt'
+* Building sdist...
+running sdist
+running egg_info
+writing agentguard47.egg-info\PKG-INFO
+writing dependency_links to agentguard47.egg-info\dependency_links.txt
+writing entry points to agentguard47.egg-info\entry_points.txt
+writing requirements to agentguard47.egg-info\requires.txt
+writing top-level names to agentguard47.egg-info\top_level.txt
+reading manifest file 'agentguard47.egg-info\SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'agentguard47.egg-info\SOURCES.txt'
+running check
+creating agentguard47-2.0.0
+creating agentguard47-2.0.0\agentguard
+creating agentguard47-2.0.0\agentguard\integrations
+creating agentguard47-2.0.0\agentguard\sinks
+creating agentguard47-2.0.0\agentguard47.egg-info
+creating agentguard47-2.0.0\tests
+copying files to agentguard47-2.0.0...
+copying LICENSE -> agentguard47-2.0.0
+copying PYPI_README.md -> agentguard47-2.0.0
+copying README.md -> agentguard47-2.0.0
+copying pyproject.toml -> agentguard47-2.0.0
+copying .\agentguard\__init__.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\__main__.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_billing.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_budget_validation.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_instrument_stream_budget.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_openai_local.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_reservation_contract.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_reservation_path.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_reservation_stream.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\_trace_naming.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\atracing.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\cli.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\cost.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\decision.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\demo.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\doctor.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\escalation.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\evaluation.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\export.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\feedback.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\first_run.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\goal.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\guards.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\hooks.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\instrument.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\instrument_stream.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\precision_cost.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\price_table.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\profiles.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\py.typed -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\quickstart.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\receipt.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\repo_config.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\reporting.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\runner.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\savings.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\schemas.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\setup.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\skillpack.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\state.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\tracing.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\usage.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\x402.py -> agentguard47-2.0.0\.\agentguard
+copying .\agentguard\integrations\__init__.py -> agentguard47-2.0.0\.\agentguard\integrations
+copying .\agentguard\integrations\crewai.py -> agentguard47-2.0.0\.\agentguard\integrations
+copying .\agentguard\integrations\langchain.py -> agentguard47-2.0.0\.\agentguard\integrations
+copying .\agentguard\integrations\langgraph.py -> agentguard47-2.0.0\.\agentguard\integrations
+copying .\agentguard\sinks\__init__.py -> agentguard47-2.0.0\.\agentguard\sinks
+copying .\agentguard\sinks\_transport.py -> agentguard47-2.0.0\.\agentguard\sinks
+copying .\agentguard\sinks\http.py -> agentguard47-2.0.0\.\agentguard\sinks
+copying .\agentguard\sinks\otel.py -> agentguard47-2.0.0\.\agentguard\sinks
+copying agentguard47.egg-info\PKG-INFO -> agentguard47-2.0.0\agentguard47.egg-info
+copying agentguard47.egg-info\SOURCES.txt -> agentguard47-2.0.0\agentguard47.egg-info
+copying agentguard47.egg-info\dependency_links.txt -> agentguard47-2.0.0\agentguard47.egg-info
+copying agentguard47.egg-info\entry_points.txt -> agentguard47-2.0.0\agentguard47.egg-info
+copying agentguard47.egg-info\requires.txt -> agentguard47-2.0.0\agentguard47.egg-info
+copying agentguard47.egg-info\top_level.txt -> agentguard47-2.0.0\agentguard47.egg-info
+copying tests\test_activation_evidence.py -> agentguard47-2.0.0\tests
+copying tests\test_architecture.py -> agentguard47-2.0.0\tests
+copying tests\test_async_patches.py -> agentguard47-2.0.0\tests
+copying tests\test_atracing.py -> agentguard47-2.0.0\tests
+copying tests\test_budget_preflight.py -> agentguard47-2.0.0\tests
+copying tests\test_ci_guardrails.py -> agentguard47-2.0.0\tests
+copying tests\test_ci_results.py -> agentguard47-2.0.0\tests
+copying tests\test_ci_tools_requirements_guard.py -> agentguard47-2.0.0\tests
+copying tests\test_claude_review_filter.py -> agentguard47-2.0.0\tests
+copying tests\test_cli_report.py -> agentguard47-2.0.0\tests
+copying tests\test_concurrency.py -> agentguard47-2.0.0\tests
+copying tests\test_cost.py -> agentguard47-2.0.0\tests
+copying tests\test_cost_guardrail.py -> agentguard47-2.0.0\tests
+copying tests\test_coverage_gaps.py -> agentguard47-2.0.0\tests
+copying tests\test_crewai_integration.py -> agentguard47-2.0.0\tests
+copying tests\test_dashboard_handoff_docs.py -> agentguard47-2.0.0\tests
+copying tests\test_decision_trace.py -> agentguard47-2.0.0\tests
+copying tests\test_demo.py -> agentguard47-2.0.0\tests
+copying tests\test_doctor.py -> agentguard47-2.0.0\tests
+copying tests\test_documentation.py -> agentguard47-2.0.0\tests
+copying tests\test_dx.py -> agentguard47-2.0.0\tests
+copying tests\test_e2e_pipeline.py -> agentguard47-2.0.0\tests
+copying tests\test_enforcement_boundary.py -> agentguard47-2.0.0\tests
+copying tests\test_evaluation.py -> agentguard47-2.0.0\tests
+copying tests\test_example_starters.py -> agentguard47-2.0.0\tests
+copying tests\test_export.py -> agentguard47-2.0.0\tests
+copying tests\test_exports.py -> agentguard47-2.0.0\tests
+copying tests\test_first_run.py -> agentguard47-2.0.0\tests
+copying tests\test_free_local_clients.py -> agentguard47-2.0.0\tests
+copying tests\test_goal.py -> agentguard47-2.0.0\tests
+copying tests\test_guard_persistence.py -> agentguard47-2.0.0\tests
+copying tests\test_guards.py -> agentguard47-2.0.0\tests
+copying tests\test_hardening.py -> agentguard47-2.0.0\tests
+copying tests\test_hooks.py -> agentguard47-2.0.0\tests
+copying tests\test_hosted_ingest_contract.py -> agentguard47-2.0.0\tests
+copying tests\test_http_sink.py -> agentguard47-2.0.0\tests
+copying tests\test_init.py -> agentguard47-2.0.0\tests
+copying tests\test_instrument.py -> agentguard47-2.0.0\tests
+copying tests\test_instrument_patch.py -> agentguard47-2.0.0\tests
+copying tests\test_instrument_stream.py -> agentguard47-2.0.0\tests
+copying tests\test_integration_cost_guardrail.py -> agentguard47-2.0.0\tests
+copying tests\test_integration_dashboard_script.py -> agentguard47-2.0.0\tests
+copying tests\test_langchain_integration.py -> agentguard47-2.0.0\tests
+copying tests\test_langgraph_integration.py -> agentguard47-2.0.0\tests
+copying tests\test_live_cost_reconcile.py -> agentguard47-2.0.0\tests
+copying tests\test_local_cost_docs.py -> agentguard47-2.0.0\tests
+copying tests\test_local_first_template.py -> agentguard47-2.0.0\tests
+copying tests\test_mcp_registry_metadata.py -> agentguard47-2.0.0\tests
+copying tests\test_ollama_usage.py -> agentguard47-2.0.0\tests
+copying tests\test_otel_sink.py -> agentguard47-2.0.0\tests
+copying tests\test_precision_cost.py -> agentguard47-2.0.0\tests
+copying tests\test_price_table.py -> agentguard47-2.0.0\tests
+copying tests\test_production.py -> agentguard47-2.0.0\tests
+copying tests\test_pypi_readme_sync.py -> agentguard47-2.0.0\tests
+copying tests\test_quickstart.py -> agentguard47-2.0.0\tests
+copying tests\test_real_dispatch.py -> agentguard47-2.0.0\tests
+copying tests\test_real_dispatch_capabilities.py -> agentguard47-2.0.0\tests
+copying tests\test_receipt.py -> agentguard47-2.0.0\tests
+copying tests\test_release_audit.py -> agentguard47-2.0.0\tests
+copying tests\test_release_discussion_category.py -> agentguard47-2.0.0\tests
+copying tests\test_release_email.py -> agentguard47-2.0.0\tests
+copying tests\test_release_example.py -> agentguard47-2.0.0\tests
+copying tests\test_repo_config.py -> agentguard47-2.0.0\tests
+copying tests\test_report_duration.py -> agentguard47-2.0.0\tests
+copying tests\test_reporting.py -> agentguard47-2.0.0\tests
+copying tests\test_reservation_contract.py -> agentguard47-2.0.0\tests
+copying tests\test_reservation_path.py -> agentguard47-2.0.0\tests
+copying tests\test_reservation_stream.py -> agentguard47-2.0.0\tests
+copying tests\test_review_readiness_guard.py -> agentguard47-2.0.0\tests
+copying tests\test_richard_task_budget_scenarios.py -> agentguard47-2.0.0\tests
+copying tests\test_runner.py -> agentguard47-2.0.0\tests
+copying tests\test_savings.py -> agentguard47-2.0.0\tests
+copying tests\test_schemas.py -> agentguard47-2.0.0\tests
+copying tests\test_sdk_preflight.py -> agentguard47-2.0.0\tests
+copying tests\test_sdk_release_guard.py -> agentguard47-2.0.0\tests
+copying tests\test_skillpack.py -> agentguard47-2.0.0\tests
+copying tests\test_smoke.py -> agentguard47-2.0.0\tests
+copying tests\test_sticky_agent_proof.py -> agentguard47-2.0.0\tests
+copying tests\test_touchpoints.py -> agentguard47-2.0.0\tests
+copying tests\test_tracing.py -> agentguard47-2.0.0\tests
+copying tests\test_v1_coverage.py -> agentguard47-2.0.0\tests
+copying tests\test_x402.py -> agentguard47-2.0.0\tests
+Writing agentguard47-2.0.0\setup.cfg
+Creating tar archive
+removing 'agentguard47-2.0.0' (and everything under it)
+* Building wheel from sdist
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=82.0.1
+  - wheel
+* Getting build dependencies for wheel...
+running egg_info
+writing agentguard47.egg-info\PKG-INFO
+writing dependency_links to agentguard47.egg-info\dependency_links.txt
+writing entry points to agentguard47.egg-info\entry_points.txt
+writing requirements to agentguard47.egg-info\requires.txt
+writing top-level names to agentguard47.egg-info\top_level.txt
+reading manifest file 'agentguard47.egg-info\SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'agentguard47.egg-info\SOURCES.txt'
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+creating build\lib\agentguard
+copying .\agentguard\atracing.py -> build\lib\agentguard
+copying .\agentguard\cli.py -> build\lib\agentguard
+copying .\agentguard\cost.py -> build\lib\agentguard
+copying .\agentguard\decision.py -> build\lib\agentguard
+copying .\agentguard\demo.py -> build\lib\agentguard
+copying .\agentguard\doctor.py -> build\lib\agentguard
+copying .\agentguard\escalation.py -> build\lib\agentguard
+copying .\agentguard\evaluation.py -> build\lib\agentguard
+copying .\agentguard\export.py -> build\lib\agentguard
+copying .\agentguard\feedback.py -> build\lib\agentguard
+copying .\agentguard\first_run.py -> build\lib\agentguard
+copying .\agentguard\goal.py -> build\lib\agentguard
+copying .\agentguard\guards.py -> build\lib\agentguard
+copying .\agentguard\hooks.py -> build\lib\agentguard
+copying .\agentguard\instrument.py -> build\lib\agentguard
+copying .\agentguard\instrument_stream.py -> build\lib\agentguard
+copying .\agentguard\precision_cost.py -> build\lib\agentguard
+copying .\agentguard\price_table.py -> build\lib\agentguard
+copying .\agentguard\profiles.py -> build\lib\agentguard
+copying .\agentguard\quickstart.py -> build\lib\agentguard
+copying .\agentguard\receipt.py -> build\lib\agentguard
+copying .\agentguard\reporting.py -> build\lib\agentguard
+copying .\agentguard\repo_config.py -> build\lib\agentguard
+copying .\agentguard\runner.py -> build\lib\agentguard
+copying .\agentguard\savings.py -> build\lib\agentguard
+copying .\agentguard\schemas.py -> build\lib\agentguard
+copying .\agentguard\setup.py -> build\lib\agentguard
+copying .\agentguard\skillpack.py -> build\lib\agentguard
+copying .\agentguard\state.py -> build\lib\agentguard
+copying .\agentguard\tracing.py -> build\lib\agentguard
+copying .\agentguard\usage.py -> build\lib\agentguard
+copying .\agentguard\x402.py -> build\lib\agentguard
+copying .\agentguard\_billing.py -> build\lib\agentguard
+copying .\agentguard\_budget_validation.py -> build\lib\agentguard
+copying .\agentguard\_instrument_stream_budget.py -> build\lib\agentguard
+copying .\agentguard\_openai_local.py -> build\lib\agentguard
+copying .\agentguard\_reservation_contract.py -> build\lib\agentguard
+copying .\agentguard\_reservation_path.py -> build\lib\agentguard
+copying .\agentguard\_reservation_stream.py -> build\lib\agentguard
+copying .\agentguard\_trace_naming.py -> build\lib\agentguard
+copying .\agentguard\__init__.py -> build\lib\agentguard
+copying .\agentguard\__main__.py -> build\lib\agentguard
+creating build\lib\agentguard\integrations
+copying .\agentguard\integrations\crewai.py -> build\lib\agentguard\integrations
+copying .\agentguard\integrations\langchain.py -> build\lib\agentguard\integrations
+copying .\agentguard\integrations\langgraph.py -> build\lib\agentguard\integrations
+copying .\agentguard\integrations\__init__.py -> build\lib\agentguard\integrations
+creating build\lib\agentguard\sinks
+copying .\agentguard\sinks\http.py -> build\lib\agentguard\sinks
+copying .\agentguard\sinks\otel.py -> build\lib\agentguard\sinks
+copying .\agentguard\sinks\_transport.py -> build\lib\agentguard\sinks
+copying .\agentguard\sinks\__init__.py -> build\lib\agentguard\sinks
+running egg_info
+writing agentguard47.egg-info\PKG-INFO
+writing dependency_links to agentguard47.egg-info\dependency_links.txt
+writing entry points to agentguard47.egg-info\entry_points.txt
+writing requirements to agentguard47.egg-info\requires.txt
+writing top-level names to agentguard47.egg-info\top_level.txt
+reading manifest file 'agentguard47.egg-info\SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'agentguard47.egg-info\SOURCES.txt'
+copying .\agentguard\py.typed -> build\lib\agentguard
+warning: build_py: byte-compiling is disabled, skipping.
+
+installing to build\bdist.win-amd64\wheel
+running install
+running install_lib
+creating build\bdist.win-amd64\wheel
+creating build\bdist.win-amd64\wheel\agentguard
+copying build\lib\agentguard\atracing.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\cli.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\cost.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\decision.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\demo.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\doctor.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\escalation.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\evaluation.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\export.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\feedback.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\first_run.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\goal.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\guards.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\hooks.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\instrument.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\instrument_stream.py -> build\bdist.win-amd64\wheel\.\agentguard
+creating build\bdist.win-amd64\wheel\agentguard\integrations
+copying build\lib\agentguard\integrations\crewai.py -> build\bdist.win-amd64\wheel\.\agentguard\integrations
+copying build\lib\agentguard\integrations\langchain.py -> build\bdist.win-amd64\wheel\.\agentguard\integrations
+copying build\lib\agentguard\integrations\langgraph.py -> build\bdist.win-amd64\wheel\.\agentguard\integrations
+copying build\lib\agentguard\integrations\__init__.py -> build\bdist.win-amd64\wheel\.\agentguard\integrations
+copying build\lib\agentguard\precision_cost.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\price_table.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\profiles.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\py.typed -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\quickstart.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\receipt.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\reporting.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\repo_config.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\runner.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\savings.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\schemas.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\setup.py -> build\bdist.win-amd64\wheel\.\agentguard
+creating build\bdist.win-amd64\wheel\agentguard\sinks
+copying build\lib\agentguard\sinks\http.py -> build\bdist.win-amd64\wheel\.\agentguard\sinks
+copying build\lib\agentguard\sinks\otel.py -> build\bdist.win-amd64\wheel\.\agentguard\sinks
+copying build\lib\agentguard\sinks\_transport.py -> build\bdist.win-amd64\wheel\.\agentguard\sinks
+copying build\lib\agentguard\sinks\__init__.py -> build\bdist.win-amd64\wheel\.\agentguard\sinks
+copying build\lib\agentguard\skillpack.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\state.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\tracing.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\usage.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\x402.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_billing.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_budget_validation.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_instrument_stream_budget.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_openai_local.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_reservation_contract.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_reservation_path.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_reservation_stream.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\_trace_naming.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\__init__.py -> build\bdist.win-amd64\wheel\.\agentguard
+copying build\lib\agentguard\__main__.py -> build\bdist.win-amd64\wheel\.\agentguard
+warning: install_lib: byte-compiling is disabled, skipping.
+
+running install_egg_info
+Copying agentguard47.egg-info to build\bdist.win-amd64\wheel\.\agentguard47-2.0.0-py3.13.egg-info
+running install_scripts
+creating build\bdist.win-amd64\wheel\agentguard47-2.0.0.dist-info\WHEEL
+creating '<work>\\dist\\.tmp-pkhgzz67\\agentguard47-2.0.0-py3-none-any.whl' and adding 'build\\bdist.win-amd64\\wheel' to it
+adding 'agentguard/__init__.py'
+adding 'agentguard/__main__.py'
+adding 'agentguard/_billing.py'
+adding 'agentguard/_budget_validation.py'
+adding 'agentguard/_instrument_stream_budget.py'
+adding 'agentguard/_openai_local.py'
+adding 'agentguard/_reservation_contract.py'
+adding 'agentguard/_reservation_path.py'
+adding 'agentguard/_reservation_stream.py'
+adding 'agentguard/_trace_naming.py'
+adding 'agentguard/atracing.py'
+adding 'agentguard/cli.py'
+adding 'agentguard/cost.py'
+adding 'agentguard/decision.py'
+adding 'agentguard/demo.py'
+adding 'agentguard/doctor.py'
+adding 'agentguard/escalation.py'
+adding 'agentguard/evaluation.py'
+adding 'agentguard/export.py'
+adding 'agentguard/feedback.py'
+adding 'agentguard/first_run.py'
+adding 'agentguard/goal.py'
+adding 'agentguard/guards.py'
+adding 'agentguard/hooks.py'
+adding 'agentguard/instrument.py'
+adding 'agentguard/instrument_stream.py'
+adding 'agentguard/precision_cost.py'
+adding 'agentguard/price_table.py'
+adding 'agentguard/profiles.py'
+adding 'agentguard/py.typed'
+adding 'agentguard/quickstart.py'
+adding 'agentguard/receipt.py'
+adding 'agentguard/repo_config.py'
+adding 'agentguard/reporting.py'
+adding 'agentguard/runner.py'
+adding 'agentguard/savings.py'
+adding 'agentguard/schemas.py'
+adding 'agentguard/setup.py'
+adding 'agentguard/skillpack.py'
+adding 'agentguard/state.py'
+adding 'agentguard/tracing.py'
+adding 'agentguard/usage.py'
+adding 'agentguard/x402.py'
+adding 'agentguard/integrations/__init__.py'
+adding 'agentguard/integrations/crewai.py'
+adding 'agentguard/integrations/langchain.py'
+adding 'agentguard/integrations/langgraph.py'
+adding 'agentguard/sinks/__init__.py'
+adding 'agentguard/sinks/_transport.py'
+adding 'agentguard/sinks/http.py'
+adding 'agentguard/sinks/otel.py'
+adding 'agentguard47-2.0.0.dist-info/licenses/LICENSE'
+adding 'agentguard47-2.0.0.dist-info/METADATA'
+adding 'agentguard47-2.0.0.dist-info/WHEEL'
+adding 'agentguard47-2.0.0.dist-info/entry_points.txt'
+adding 'agentguard47-2.0.0.dist-info/top_level.txt'
+adding 'agentguard47-2.0.0.dist-info/RECORD'
+removing build\bdist.win-amd64\wheel
+Successfully built agentguard47-2.0.0.tar.gz and agentguard47-2.0.0-py3-none-any.whl
+exit=0
+$ sha256sum agentguard47-2.0.0-py3-none-any.whl agentguard47-2.0.0.tar.gz
+a434b30181ec3a48eda1253f7e53a286271aded8b80cc83c871139189f5cc341 *agentguard47-2.0.0-py3-none-any.whl
+23706a7f104da57e7dbe103c4867b74fbc45ad9c2011cf712f5c9a8711303d3b *agentguard47-2.0.0.tar.gz
+exit=0
+$ py -3.11 -m venv <work>/venv311
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m pip --isolated install --quiet --no-deps --no-index <work>/dist/agentguard47-2.0.0-py3-none-any.whl
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m pip show agentguard47
+Name: agentguard47
+Version: 2.0.0
+Summary: Zero-dependency runtime control for production Python agents - stop loops, retry storms, and budget burn
+Home-page: 
+Author: 
+Author-email: BMD PAT LLC <pat@bmdpat.com>
+License: 
+Location: <work>\venv311\Lib\site-packages
+Requires: 
+Required-by: 
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard --version
+agentguard 2.0.0
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard doctor
+AgentGuard doctor
+No dashboard. No network calls. Local verification only.
+
+[ok] Python: 3.11.9
+[ok] agentguard47: 2.0.0
+[ok] init(local_only=True): wrote 4 events to agentguard_doctor_trace.jsonl
+[ok] Optional integrations detected: none
+
+Suggested repo config (.agentguard.json):
+{
+  "profile": "coding-agent",
+  "service": "my-agent",
+  "trace_file": ".agentguard/traces.jsonl",
+  "budget_usd": 5.0
+}
+
+Suggested next step:
+import agentguard
+
+agentguard.init(
+    service="my-agent",
+    budget_usd=5.00,
+    local_only=True,
+)
+
+Helpful commands:
+  agentguard demo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+  agentguard report agentguard_doctor_trace.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli demo
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+  python -m agentguard.cli report agentguard_doctor_trace.jsonl
+
+If AgentGuard saved you a runaway run, star it so others find it: https://github.com/bmdhodl/agent47
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard demo
+AgentGuard offline demo
+No API keys. No dashboard. No network calls.
+
+1. BudgetGuard: stopping runaway spend
+  warning: Budget warning: cost 84% of limit reached (threshold: 80%)
+  warning fired at $0.84
+  stopped on call 9: cost $1.08 exceeded $1.00
+
+2. LoopGuard: stopping repeated tool calls
+  tool.search attempt 1 allowed
+  tool.search attempt 2 allowed
+  stopped on repeated tool call: Loop detected: tool.search({"query":"python asyncio"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+
+3. RetryGuard: stopping retry storms
+  fetch_docs retry 1 allowed
+  fetch_docs retry 2 allowed
+  stopped retry storm: Retry limit exceeded: fetch_docs attempted 3 times (limit: 2)
+
+Local proof complete.
+Trace written to: agentguard_demo_traces.jsonl
+View summary: agentguard report agentguard_demo_traces.jsonl
+View incident report: agentguard incident agentguard_demo_traces.jsonl
+Share the stops: agentguard receipt agentguard_demo_traces.jsonl --format markdown
+
+Next: add AgentGuard to a repo
+  agentguard quickstart --framework raw --write
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli report agentguard_demo_traces.jsonl
+  python -m agentguard.cli incident agentguard_demo_traces.jsonl
+  python -m agentguard.cli quickstart --framework raw --write
+  python -m agentguard.cli report .agentguard/traces.jsonl
+SDK gives you local enforcement. The dashboard adds alerts, retained history, and remote controls.
+
+Show your repo is guarded (and help others find it): agentguard badge
+If AgentGuard saved you a runaway run, star it so others find it: https://github.com/bmdhodl/agent47
+
+Optional: inspect a redacted feedback report (nothing is sent):
+  agentguard demo --feedback
+Decline by skipping that command.
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard report agentguard_demo_traces.jsonl
+AgentGuard report
+  Total events: 36
+  Spans: 6  Events: 30
+  Approx run time: 8.1 ms
+  Reasoning steps: 9
+  Tool results: 0
+  LLM results: 9
+  Estimated cost: $1.0800
+  Savings ledger: exact 0 tokens / $0.0000, estimated 500 tokens / $0.1200
+  Loop guard triggered: 1 time(s)
+  Guard events:
+    guard.budget_warning: 1
+    guard.budget_exceeded: 1
+    guard.loop_detected: 1
+    guard.retry_limit_exceeded: 1
+  Incident hint: rerun with `agentguard incident` for a shareable incident report
+
+Traced by AgentGuard | agentguard47.com
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard receipt agentguard_demo_traces.jsonl
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace       agentguard_demo_traces.jsonl
+events                                36
+llm calls                              9
+recorded cost                      $1.08
+budget warnings                        1
+----------------------------------------
+STOPPED
+  budget  $1.08 over $1.00
+  loop    search x3, same args
+  retry   fetch_docs 3 tries, limit 2
+----------------------------------------
+guard stops                            3
+
+I.::.|I::I:.||:|||.|.||I.|||:.III::I:..|
+          7123 956B 3E30 553D
+  sha256 of trace - agentguard47 2.0.0
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard quickstart --framework raw --write
+AgentGuard quickstart
+Framework: raw
+Wrote starter: agentguard_raw_quickstart.py
+
+Install:
+  pip install agentguard47
+
+Offline starter that proves local tracing plus budget and loop stops without any API keys.
+
+Notes:
+  - This path is fully local. No dashboard and no provider API keys are required.
+  - The generated file catches simulated guard exceptions so the script exits cleanly.
+  - Copy the call_model and tool-event pattern into the loop that drives your coding agent.
+  - Commit a .agentguard.json file if you want coding agents to reuse the same local defaults.
+
+Next commands:
+  agentguard doctor
+  python agentguard_raw_quickstart.py
+  agentguard report .agentguard/traces.jsonl
+
+If 'agentguard' is not on PATH:
+  python -m agentguard.cli doctor
+  python -m agentguard.cli report .agentguard/traces.jsonl
+exit=0
+$ <work>/venv311/Scripts/python.exe -I agentguard_raw_quickstart.py
+BudgetGuard stopped simulated spend: Cost budget exceeded: $5.0200 > $5.0000 (this call added $2.5100)
+LoopGuard stopped repeated tool calls: Loop detected: tool.search({"query":"agentguard quickstart"}) repeated 3 times in last 6 calls. Consider varying the arguments or breaking the loop.
+Traces saved to .agentguard/traces.jsonl
+Inspect with: agentguard report .agentguard/traces.jsonl
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard report .agentguard/traces.jsonl
+AgentGuard report
+  Total events: 14
+  Spans: 4  Events: 9
+  Approx run time: 4.5 ms
+  Reasoning steps: 0
+  Tool results: 1
+  LLM results: 2
+  Estimated cost: $5.0200
+  Savings ledger: exact 0 tokens / $0.0000, estimated 0 tokens / $2.5100
+  Loop guard triggered: 1 time(s)
+  Guard events:
+    guard.budget_exceeded: 1
+    guard.loop_detected: 1
+  Incident hint: rerun with `agentguard incident` for a shareable incident report
+
+Traced by AgentGuard | agentguard47.com
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard hook claude-code --help
+usage: agentguard hook [-h] [--max-calls MAX_CALLS] [--install | --uninstall]
+                       [--write] [--project-dir PROJECT_DIR]
+                       {claude-code}
+
+positional arguments:
+  {claude-code}
+
+options:
+  -h, --help            show this help message and exit
+  --max-calls MAX_CALLS
+                        Refuse tool calls after this many per session.
+  --install             Add hooks to .claude/settings.local.json. Previews
+                        unless --write.
+  --uninstall           Remove AgentGuard hooks. Previews unless --write.
+  --write               Save the --install or --uninstall result.
+  --project-dir PROJECT_DIR
+                        Project root for --install/--uninstall.
+exit=0
+$ <work>/venv311/Scripts/python.exe -I -m agentguard run --help
+usage: agentguard run [-h] [-m ...] [--budget-usd BUDGET_USD]
+                      [--service SERVICE] [--trace-file TRACE_FILE]
+                      [--profile PROFILE]
+                      ...
+
+Run SCRIPT (or -m MODULE) with OpenAI and Anthropic clients patched. Options
+come before the script; everything after it goes to the script.
+
+positional arguments:
+  target                script.py [args]
+
+options:
+  -h, --help            show this help message and exit
+  -m ...                Run a module, like python -m.
+  --budget-usd BUDGET_USD
+                        Dollar budget for patched LLM calls.
+  --service SERVICE     Service name in the trace.
+  --trace-file TRACE_FILE
+                        Local JSONL trace path.
+  --profile PROFILE     Guard profile: default, coding-agent, or deployed-
+                        agent.
+exit=0
+$ py -3.10 -m venv <work>/venv310
+exit=0
+$ <work>/venv310/Scripts/python.exe -I -m pip --isolated install --quiet --no-deps --no-index <work>/dist/agentguard47-2.0.0-py3-none-any.whl
+ERROR: Package 'agentguard47' requires a different Python: 3.10.11 not in '>=3.11'
+exit=1

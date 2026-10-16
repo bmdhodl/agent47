@@ -95,6 +95,14 @@ def load_repo_config(start_path: Optional[str] = None) -> Tuple[Optional[str], D
             raise ValueError("retry_max in .agentguard.json must be an integer >= 1")
         parsed["retry_max"] = retry_max
 
+    no_progress_max = raw.get("no_progress_max")
+    if no_progress_max is not None:
+        if (isinstance(no_progress_max, bool) or not isinstance(no_progress_max, int)
+                or no_progress_max == 1 or no_progress_max < 0):
+            raise ValueError("no_progress_max in .agentguard.json must be an integer >= 2, "
+                             "or 0 to turn it off")
+        parsed["no_progress_max"] = no_progress_max
+
     return config_path, parsed
 
 

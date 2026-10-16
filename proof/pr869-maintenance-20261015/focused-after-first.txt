@@ -1,0 +1,60 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\pr869-maintenance-20261015\sdk
+configfile: pyproject.toml
+collected 177 items
+
+sdk\tests\test_loop_maintenance_regressions.py .............             [  7%]
+sdk\tests\test_guards.py ..............F..F............................. [ 33%]
+...........................................................              [ 67%]
+sdk\tests\test_hooks.py ......FFFFF.....F...............                 [ 85%]
+sdk\tests\test_instrument.py ............                                [ 92%]
+sdk\tests\test_tracing.py ..............                                 [100%]
+
+================================== FAILURES ===================================
+_ TestLoopGuardRewordedLoops.test_normalize_matches_case_whitespace_and_key_order _
+sdk\tests\test_guards.py:103: in test_normalize_matches_case_whitespace_and_key_order
+    with self.assertRaises(LoopDetected) as ctx:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: LoopDetected not raised
+_ TestLoopGuardRewordedLoops.test_reworded_queries_that_keep_coming_back_empty _
+sdk\tests\test_guards.py:123: in test_reworded_queries_that_keep_coming_back_empty
+    self.assertIn('last args {"pattern":"retries"}', message)
+E   AssertionError: 'last args {"pattern":"retries"}' not found in 'No progress: grep came back empty 3 times in a row (limit: 3). Change the approach instead of rewording the call.'
+_______________ test_run_refuses_with_exit_2_and_logs_a_receipt _______________
+sdk\tests\test_hooks.py:103: in test_run_refuses_with_exit_2_and_logs_a_receipt
+    assert "AgentGuard refused Bash(npm test)" in err
+E   AssertionError: assert 'AgentGuard refused Bash(npm test)' in 'AgentGuard refused Bash: the same call just ran 2 times in a row (limit 2). Change the input or the approach.\n'
+____________ test_signature_ignores_case_whitespace_and_key_order _____________
+sdk\tests\test_hooks.py:111: in test_signature_ignores_case_whitespace_and_key_order
+    assert signature("Grep", {"pattern": "retryCount", "path": "src"}) == signature(
+E   AssertionError: assert '1bde9c86a83a4ecd' == '0da5618e6485d21b'
+E     
+E     - 0da5618e6485d21b
+E     + 1bde9c86a83a4ecd
+_____________________ test_run_refuses_normalized_repeats _____________________
+sdk\tests\test_hooks.py:122: in test_run_refuses_normalized_repeats
+    assert code == 2
+E   assert 0 == 2
+_______ test_run_refuses_reworded_searches_that_keep_coming_back_empty ________
+sdk\tests\test_hooks.py:141: in test_run_refuses_reworded_searches_that_keep_coming_back_empty
+    assert code == 2
+E   assert 0 == 2
+_______ test_run_refuses_reworded_commands_failing_with_the_same_error ________
+sdk\tests\test_hooks.py:158: in test_run_refuses_reworded_commands_failing_with_the_same_error
+    assert code == 2
+E   assert 0 == 2
+_____________________ test_receipt_input_cuts_long_values _____________________
+sdk\tests\test_hooks.py:213: in test_receipt_input_cuts_long_values
+    from agentguard.hooks import receipt_input
+E   ImportError: cannot import name 'receipt_input' from 'agentguard.hooks' (D:\local-ai\agentguard-worktrees\pr869-maintenance-20261015\sdk\agentguard\hooks.py)
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_guards.py::TestLoopGuardRewordedLoops::test_normalize_matches_case_whitespace_and_key_order
+FAILED sdk\tests\test_guards.py::TestLoopGuardRewordedLoops::test_reworded_queries_that_keep_coming_back_empty
+FAILED sdk\tests\test_hooks.py::test_run_refuses_with_exit_2_and_logs_a_receipt
+FAILED sdk\tests\test_hooks.py::test_signature_ignores_case_whitespace_and_key_order
+FAILED sdk\tests\test_hooks.py::test_run_refuses_normalized_repeats - assert ...
+FAILED sdk\tests\test_hooks.py::test_run_refuses_reworded_searches_that_keep_coming_back_empty
+FAILED sdk\tests\test_hooks.py::test_run_refuses_reworded_commands_failing_with_the_same_error
+FAILED sdk\tests\test_hooks.py::test_receipt_input_cuts_long_values - ImportE...
+======================== 8 failed, 169 passed in 6.34s ========================

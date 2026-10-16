@@ -1,0 +1,1 @@
+{"session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:14", "claim": "The CI fork regression covers the trusted-base Claude review workflow.", "severity": "RED", "check": {"type": "file_contains", "path": "sdk/tests/test_ci_results.py", "pattern": "claude-review.yml"}, "prev": "6441feba01bf128afb8d59404101d87e5e63e59a7e59e72de377ec6ef02401c2"}

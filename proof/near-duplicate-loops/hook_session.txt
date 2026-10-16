@@ -1,0 +1,54 @@
+== legit: paginate and mkdir quietly (never refused)
+allowed WebFetch {"url": "https://api.example.com/items?page=1"} -> {"tool_response": {"result": "10 items on page 1"}}
+allowed WebFetch {"url": "https://api.example.com/items?page=2"} -> {"tool_response": {"result": "10 items on page 2"}}
+allowed WebFetch {"url": "https://api.example.com/items?page=3"} -> {"tool_response": {"result": "10 items on page 3"}}
+allowed WebFetch {"url": "https://api.example.com/items?page=4"} -> {"tool_response": {"result": "10 items on page 4"}}
+allowed WebFetch {"url": "https://api.example.com/items?page=5"} -> {"tool_response": {"result": "10 items on page 5"}}
+allowed WebFetch {"url": "https://api.example.com/items?page=6"} -> {"tool_response": {"result": "10 items on page 6"}}
+allowed Bash {"command": "mkdir -p out/0"} -> {"tool_response": {"stdout": "", "stderr": "", "interrupted": false}}
+allowed Bash {"command": "mkdir -p out/1"} -> {"tool_response": {"stdout": "", "stderr": "", "interrupted": false}}
+allowed Bash {"command": "mkdir -p out/2"} -> {"tool_response": {"stdout": "", "stderr": "", "interrupted": false}}
+allowed Bash {"command": "mkdir -p out/3"} -> {"tool_response": {"stdout": "", "stderr": "", "interrupted": false}}
+allowed Bash {"command": "mkdir -p out/4"} -> {"tool_response": {"stdout": "", "stderr": "", "interrupted": false}}
+allowed Bash {"command": "mkdir -p out/5"} -> {"tool_response": {"stdout": "", "stderr": "", "interrupted": false}}
+
+== near-duplicate: same command, reworded only in case and spacing
+allowed Bash {"command": "npm test", "description": "run tests"} -> {"tool_response": {"stdout": "ok"}}
+allowed Bash {"command": "npm  test", "description": "run tests"} -> {"tool_response": {"stdout": "ok"}}
+REFUSED Bash {"command": "NPM test", "description": "run tests"}
+  AgentGuard refused Bash(NPM test): the same call just ran 2 times in a row (limit 2). Change the input or the approach.
+
+== reworded search loop: every grep comes back empty
+allowed Grep {"pattern": "retry_count", "path": "src"} -> {"tool_response": {"mode": "files_with_matches", "filenames": [], "num
+allowed Grep {"pattern": "retryCount", "path": "src"} -> {"tool_response": {"mode": "files_with_matches", "filenames": [], "num
+allowed Grep {"pattern": "retries", "path": "src"} -> {"tool_response": {"mode": "files_with_matches", "filenames": [], "num
+allowed Grep {"pattern": "max_retry", "path": "src"} -> {"tool_response": {"mode": "files_with_matches", "filenames": [], "num
+allowed Grep {"pattern": "RETRY_LIMIT", "path": "src"} -> {"tool_response": {"mode": "files_with_matches", "filenames": [], "num
+REFUSED Grep {"pattern": "retry_max", "path": "src"}
+  AgentGuard refused Grep(retry_max): Grep came back empty the last 5 times in a row, even with changed input (limit 5). Rewording the call is not working; try a different approach or report to the user.
+
+== agent changes approach: another tool, then grep is allowed again
+allowed Read {"file_path": "src/config.py"} -> {"tool_response": {"content": "MAX = 3"}}
+allowed Grep {"pattern": "MAX", "path": "src"} -> {"tool_response": {"mode": "files_with_matches", "filenames": ["src/co
+
+== agentguard receipt
+              AGENTGUARD47
+              run receipt
+----------------------------------------
+trace                        trace.jsonl
+events                                69
+tool calls                            21
+----------------------------------------
+STOPPED
+  loop    Bash(NPM test) x2, same args;
+          args {"command": "NPM test"}
+  loop    Grep(retry_max): empty x5,
+          input varied; args {"path":
+          "src", "pattern": "retry_max"}
+----------------------------------------
+guard stops                            2
+
+▏▍▎▌█▎▎▋▊▎▌▏▊██▌▌▉█▋▉▋▉▍▋▏▉▎▍▉▏▊▏▉▋▌▊▊▉▋
+          0A93 7194 D138 5773
+  sha256 of trace - agentguard47 2.0.0
+

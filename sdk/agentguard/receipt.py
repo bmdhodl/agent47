@@ -31,8 +31,10 @@ def _stop_detail(kind: str, data: Dict[str, Any]) -> str:
     # The LangChain integration stores the reason under "error".
     message = str(data.get("message") or data.get("error") or "")
     tool = data.get("tool_name")
+    if kind == "loop" and tool and data.get("rule") == "no_progress":
+        return f"{tool}: {data.get('outcome')} x{data.get('results')}, input varied"
     if kind == "budget" and "cost_used" in data and "limit_usd" in data:
-        return f"${data['cost_used']:.2f} over ${data['limit_usd']:.2f}"
+        return f"${data['cost_used']:.4f} over ${data['limit_usd']:.4f}"
     limit = data.get("calls_limit")
     if kind == "budget" and limit is not None and data.get("calls_used", 0) >= limit:
         return f"{data['calls_used']} calls, limit {limit}"
@@ -127,7 +129,7 @@ def render_text(receipt: Dict[str, Any], ascii_only: bool = False) -> str:
         lines.append(_row("tool calls", str(receipt["tool_calls"])))
     if receipt["llm_calls"] or receipt["recorded_cost_usd"]:
         lines.append(_row("llm calls", str(receipt["llm_calls"])))
-        lines.append(_row("recorded cost", f"${receipt['recorded_cost_usd']:.2f}"))
+        lines.append(_row("recorded cost", f"${receipt['recorded_cost_usd']:.4f}"))
     if receipt["budget_warnings"]:
         lines.append(_row("budget warnings", str(receipt["budget_warnings"])))
     lines.append(rule)
