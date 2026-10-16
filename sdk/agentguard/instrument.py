@@ -146,18 +146,23 @@ def trace_tool(tracer: Any, name: Optional[str] = None) -> Callable[[F], F]:
                 try:
                     result = fn(*args, **kwargs)
                 except Exception as exc:
-                    ctx.event(
+                    error_data = {
+                        "tool_name": tool_name,
+                        "error_type": type(exc).__name__,
+                        "message": str(exc)[:500],
+                    }
+                    ctx._event(
                         "tool.error",
-                        data={
-                            "tool_name": tool_name,
-                            "error_type": type(exc).__name__,
-                            "message": str(exc)[:500],
-                        },
+                        data=error_data,
+                        guard_data={**error_data, "message": str(exc),
+                                    "tool_args": {"args": args, "kwargs": kwargs}},
                     )
                     raise
-                ctx.event(
+                ctx._event(
                     "tool.result",
                     data={"tool_name": tool_name, "result": str(result)[:500]},
+                    guard_data={"tool_name": tool_name, "result": result,
+                                "tool_args": {"args": args, "kwargs": kwargs}},
                 )
                 return result
 

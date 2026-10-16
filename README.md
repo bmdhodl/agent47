@@ -39,6 +39,11 @@ For a fresh PowerShell install and a runnable raw starter, follow the
 `agentguard receipt agentguard_demo_traces.jsonl` prints a receipt of each stop
 with the trace's SHA-256 drawn as a barcode. Add `--format markdown` to paste it
 into a PR or issue. The hash identifies the trace file; it is not a signature.
+This **stop receipt** records a covered guard refusal. Anthropic's official
+[`/receipts` plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/receipts/README.md)
+summarizes past Claude Code work (30 days by default). Neither output proves
+prevented spend or provides a signed attestation. The `agentguard receipt`
+command stays the same.
 
 ### Guard a Claude Code session (new in 2.0.0)
 
@@ -47,9 +52,13 @@ agentguard hook claude-code --install --write
 ```
 
 This installs a Claude Code hook that refuses the third identical tool call in
-a row and a call that already failed twice. Refusals go to
-`.agentguard/claude-code/trace.jsonl`. It checks tool calls, not tokens or
-subscription quota. See the [Claude Code hook guide](docs/guides/claude-code-hook.md).
+a row and a call that already failed twice. "Identical" ignores JSON key order
+and preserves case and whitespace in values. The optional `no_progress_max`
+rule refuses a tool after repeated empty or same-error results even when input
+changes; it is off by default. Refusals omit raw input and go to
+`.agentguard/claude-code/trace.jsonl`. It
+checks tool calls, not tokens or subscription quota. See the
+[Claude Code hook guide](docs/guides/claude-code-hook.md).
 
 ### Guard a script without editing it (new in 2.0.0)
 
@@ -63,6 +72,18 @@ interpreter. Settings come from flags, then environment variables, then
 stderr, ready for `agentguard receipt`. `agentguard run python -m mypkg` works too. The bounds are
 the same as patching the client yourself; see
 [enforcement boundary](docs/enforcement-boundary.md).
+
+Subprocesses start a separate interpreter and are not patched by the parent.
+A detached, uninstrumented child can keep running after the guarded script
+exits. The [offline reproduction](docs/enforcement-boundary.md#remaining-exposure)
+demonstrates that boundary with two simulated calls and no network access.
+
+`agentguard run` prices every patched call at paid rates, including a local
+model behind an OpenAI-compatible URL such as Ollama. A dollar budget can then
+stop a model that costs nothing. For a local model, patch the client in the
+script with `free_local_clients=[client]` and a `BudgetGuard` token or call
+cap, then run the script with `python`; see
+[free local clients](docs/guides/free-local-clients.md).
 
 ### Stop before a third call
 
@@ -88,6 +109,34 @@ assert completed == 2
 ```
 
 Expected output: `Stopped before call 3`.
+
+### Stop a reworded loop
+
+A stuck agent often rewords each retry, so no call repeats exactly.
+`max_no_progress` counts results instead: the same tool coming back empty, or
+with the same error, N times in a row stops the run whatever the arguments.
+`normalize=True` canonicalizes containers while preserving case and whitespace
+in argument values. Both options are off by default.
+
+```python
+from agentguard import LoopDetected, LoopGuard
+
+loop = LoopGuard(normalize=True, max_no_progress=3)
+
+for pattern in ["retry_count", "retryCount", "retries"]:
+    loop.check("grep", {"pattern": pattern})
+    matches = []  # Put your search here. This one finds nothing.
+    try:
+        loop.record_result("grep", matches, tool_args={"pattern": pattern})
+    except LoopDetected as stop:
+        print(stop)
+```
+
+Expected output: `No progress: grep came back empty 3 times in a row (limit:
+3). Change the approach instead of rewording
+the call.` Functions wrapped with `trace_tool` feed results to the guard
+automatically. Any other result in between starts the count over, so
+pagination and edit-then-test cycles do not trip it.
 
 ### Connect a provider
 
@@ -147,7 +196,7 @@ usage. A guard exception returns control to your application's error handler.
 | Guard | Checks | Raises |
 | --- | --- | --- |
 | `BudgetGuard` | Recorded calls, tokens, or estimated cost | `BudgetExceeded` |
-| `LoopGuard` | Repeated tool calls | `LoopDetected` |
+| `LoopGuard` | Repeated tool calls; opt in to `normalize=True` and `max_no_progress=N` for reworded ones | `LoopDetected` |
 | `FuzzyLoopGuard` | Tool frequency and alternating patterns | `LoopDetected` |
 | `RetryGuard` | Retries per tool | `RetryLimitExceeded` |
 | `TimeoutGuard` | Elapsed time when checked | `TimeoutExceeded` |
@@ -157,6 +206,12 @@ usage. A guard exception returns control to your application's error handler.
 For task budgets, use `BudgetGuard.goal(...)`. For signatures and defaults,
 read the [guard source](sdk/agentguard/guards.py) and
 [public exports](sdk/agentguard/__init__.py).
+
+Budgets can also persist across runs: configure `JsonFileStateStore`, a shared
+`key`, and `period="day"` for a daily counter. Set `warn_at_pct=0.8` and an
+`on_warning` callback for an 80% warning. Workers must explicitly share the
+store and key; child-agent budget inheritance is not automatic. Monthly SDK
+limits are not implemented. See the [capability matrix](docs/enforcement-boundary.md#budget-scope-in-published-200).
 
 ## Limits and security
 

@@ -1,0 +1,27 @@
+COMMAND ['C:\\Python313\\python.exe', 'scripts/generate_pypi_readme.py', '--check']
+
+EXIT 0
+
+COMMAND ['C:\\Python313\\python.exe', 'scripts/sdk_release_guard.py']
+Release guard passed.
+
+EXIT 0
+
+COMMAND ['C:\\Python313\\python.exe', 'scripts/review_readiness_guard.py']
+Review readiness guard passed.
+
+EXIT 0
+
+COMMAND ['C:\\Python313\\python.exe', 'scripts/ci_tools_requirements_guard.py']
+D:\local-ai\agentguard-worktrees\maintenance-boundary-docs-20261015\.github\requirements\ci-tools.in direct pins support Python 3.11
+
+EXIT 0
+
+COMMAND ['C:\\Python313\\python.exe', '-m', 'ruff', 'check', 'sdk/agentguard/']
+All checks passed!
+
+EXIT 0
+
+COMMAND ['C:\\Python313\\python.exe', '-m', 'bandit', '-r', 'sdk/agentguard/', '-s', 'B101,B110,B112,B311', '-q']
+
+EXIT 0

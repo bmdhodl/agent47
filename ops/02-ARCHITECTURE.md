@@ -70,6 +70,7 @@ __init__.py (public API surface)
   -> tracing.py
   -> decision.py -> tracing.py
   -> guards.py
+  -> loop_guard.py -> guards.py, _loop_match.py (guards.py re-exports LoopGuard lazily)
   -> instrument.py -> usage.py, guards.py, cost.py
   -> atracing.py -> tracing.py
   -> cost.py
