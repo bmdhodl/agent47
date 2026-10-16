@@ -1,0 +1,232 @@
+{
+  "accepted_external_contributions": 0,
+  "as_of": "2026-10-16",
+  "data_lag": {
+    "pypi": "series ends 2026-10-03; retrieved 2026-10-16; later days are lag, not zero"
+  },
+  "dedup": {
+    "pypi": "none; each download is a package event, not a unique user"
+  },
+  "exclusions": {
+    "landing_page_install_intent": "a marketing-origin target never counts as install",
+    "mirrors": "PyPI counts use without_mirrors",
+    "publish_dates": [
+      "2026-02-05",
+      "2026-02-06",
+      "2026-02-08",
+      "2026-02-09",
+      "2026-02-14",
+      "2026-02-15",
+      "2026-03-17",
+      "2026-03-28",
+      "2026-04-01",
+      "2026-04-03",
+      "2026-04-04",
+      "2026-04-18",
+      "2026-04-26",
+      "2026-05-02",
+      "2026-05-30",
+      "2026-09-12",
+      "2026-09-15",
+      "2026-09-18",
+      "2026-09-24",
+      "2026-10-06"
+    ],
+    "published_wheel_ci": {
+      "method": "published-wheel.yml installs the published wheel from PyPI once per matrix job, with a real interpreter. Each run in the reporting window is read from the GitHub Actions API with its run id, date and count of completed wheel-install jobs, which are jobs whose install step concluded success. net_of_own_ci subtracts those jobs from the real-interpreter rows of the same off-publish day, never below zero for a day. Publish days are already outside the sum and are not subtracted again. Rows stay in the data and are never deleted.",
+      "runs": [
+        {
+          "date": "2026-09-25",
+          "event": "workflow_dispatch",
+          "run_id": 36190628659,
+          "wheel_install_jobs": 4
+        },
+        {
+          "date": "2026-10-03",
+          "event": "schedule",
+          "run_id": 37111363411,
+          "wheel_install_jobs": 4
+        }
+      ],
+      "source": "https://api.github.com/repos/bmdhodl/agent47/actions/workflows/published-wheel.yml/runs",
+      "workflow": ".github/workflows/published-wheel.yml"
+    },
+    "simulated_reports": "a simulated report cannot count as demand"
+  },
+  "feedback_reports": [],
+  "pypi": {
+    "missing_days": [
+      "2026-09-04",
+      "2026-09-05",
+      "2026-09-06",
+      "2026-09-09",
+      "2026-09-14",
+      "2026-10-04",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-10",
+      "2026-10-11",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16"
+    ],
+    "off_publish_days": {
+      "caveat": "a null interpreter almost always means tooling rather than a person, and a real interpreter still does not prove a distinct person",
+      "method": "Off-publish-day figures sum without_mirrors downloads on the window days whose date is not in exclusions.publish_dates, divided by the count of those days; publish-day rows stay in the data, annotated, and are never deleted. The real-interpreter figures read python_minor?mirrors=false and count only rows whose category is not null. They are raw; net_of_own_ci also removes the installs listed in exclusions.published_wheel_ci.",
+      "window_30d": {
+        "day_count": 26,
+        "downloads": 180,
+        "mean_per_day": 6.9,
+        "publish_dates_excluded": [
+          "2026-09-12",
+          "2026-09-15",
+          "2026-09-18",
+          "2026-09-24"
+        ],
+        "real_interpreter": {
+          "day_count": 26,
+          "downloads": 32,
+          "mean_per_day": 1.2,
+          "net_of_own_ci": {
+            "bound": "upper bound: other CI, reinstalls and tooling that reports an interpreter still count here, and an interpreter does not identify a person",
+            "day_count": 26,
+            "days_clamped_at_zero": [],
+            "downloads": 24,
+            "mean_per_day": 0.9,
+            "own_ci_dates": [
+              "2026-09-25",
+              "2026-10-03"
+            ],
+            "own_ci_wheel_install_jobs": 8,
+            "publish_dates_excluded": [
+              "2026-09-12",
+              "2026-09-15",
+              "2026-09-18",
+              "2026-09-24"
+            ]
+          },
+          "publish_dates_excluded": [
+            "2026-09-12",
+            "2026-09-15",
+            "2026-09-18",
+            "2026-09-24"
+          ],
+          "source": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false",
+          "window_downloads": 87
+        },
+        "window": {
+          "end": "2026-10-03",
+          "start": "2026-09-04"
+        },
+        "window_downloads": 592
+      },
+      "window_7d": {
+        "day_count": 7,
+        "downloads": 32,
+        "mean_per_day": 4.6,
+        "publish_dates_excluded": [],
+        "real_interpreter": {
+          "day_count": 7,
+          "downloads": 15,
+          "mean_per_day": 2.1,
+          "net_of_own_ci": {
+            "bound": "upper bound: other CI, reinstalls and tooling that reports an interpreter still count here, and an interpreter does not identify a person",
+            "day_count": 7,
+            "days_clamped_at_zero": [],
+            "downloads": 11,
+            "mean_per_day": 1.6,
+            "own_ci_dates": [
+              "2026-10-03"
+            ],
+            "own_ci_wheel_install_jobs": 4,
+            "publish_dates_excluded": []
+          },
+          "publish_dates_excluded": [],
+          "source": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false",
+          "window_downloads": 15
+        },
+        "window": {
+          "end": "2026-10-03",
+          "start": "2026-09-27"
+        },
+        "window_downloads": 32
+      }
+    },
+    "release_day_events": [
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-12",
+        "downloads": 145
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-15",
+        "downloads": 96
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-18",
+        "downloads": 85
+      },
+      {
+        "annotated_not_removed": true,
+        "date": "2026-09-24",
+        "downloads": 86
+      }
+    ],
+    "without_mirrors_30d": 592,
+    "without_mirrors_7d": 32
+  },
+  "retrieved_at": "2026-10-16T19:22:43Z",
+  "sources": {
+    "github_traffic": {
+      "reason": "GitHub traffic API is not available to this refresh",
+      "status": "unavailable"
+    },
+    "npm": {
+      "reason": "not supplied",
+      "status": "unavailable"
+    },
+    "pypi": {
+      "retrieved_at": "2026-10-16T19:22:43Z",
+      "status": "ok",
+      "url": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false"
+    },
+    "pypi_python_minor": {
+      "retrieved_at": "2026-10-16T19:22:43Z",
+      "status": "ok",
+      "url": "https://pypistats.org/api/packages/agentguard47/python_minor?mirrors=false"
+    },
+    "site_events": {
+      "reason": "no fresh site-event export was retrieved",
+      "status": "unavailable"
+    }
+  },
+  "unknowns": [
+    "unique PyPI installers",
+    "repeat use without a consented reporter",
+    "repository visits; GitHub traffic was not retrieved",
+    "site events were not retrieved; 2026-09-18 landing-page install_intent rows stay navigation in that baseline and are not reused here",
+    "real-workflow activation; demo success is not production use",
+    "a null interpreter almost always means tooling rather than a person, and a real interpreter still does not prove a distinct person"
+  ],
+  "windows": {
+    "pypi_30d": {
+      "end": "2026-10-03",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-04"
+    },
+    "pypi_7d": {
+      "end": "2026-10-03",
+      "note": "calendar window, without_mirrors",
+      "query": "https://pypistats.org/api/packages/agentguard47/overall?mirrors=false",
+      "start": "2026-09-27"
+    }
+  }
+}

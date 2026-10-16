@@ -35,7 +35,7 @@ Regenerate a weekly aggregate with:
 python scripts/activation_weekly_report.py docs/guides/activation-baseline-2026-09-18.json
 ```
 
-Refresh public PyPI and npm counts, then classify them. This does not read site events, GitHub traffic, or identities:
+Refresh public PyPI and npm counts and the `published-wheel.yml` run list, then classify them. This does not read site events, GitHub traffic, or identities:
 
 ```bash
 python scripts/refresh_activation_snapshot.py --fetch-public --retrieved-at 2026-09-25T01:40:00Z --out docs/guides/activation-snapshot-2026-09-25.json
@@ -46,6 +46,13 @@ The 2026-09-25 snapshot records 255 PyPI `without_mirrors` events for 2026-09-18
 
 The script is offline by default. It never scrapes identities. Unknowns stay
 unknown. Publication dates and CI clones are exclusions, not users.
+
+Our own `published-wheel.yml` installs are an exclusion too. Each run installs
+the published wheel once per matrix job with a real interpreter. The refresh
+reads every run in the window from the GitHub Actions API and reports the
+off-publish real-interpreter figure twice: raw, and `net_of_own_ci`. The net
+figure is still an upper bound. If the Actions API is unavailable, the net
+figure reads `unavailable` with a reason. It never falls back to the raw figure.
 
 Exact query windows, dedup rules, and unknowns live in that JSON. As of
 2026-09-18:

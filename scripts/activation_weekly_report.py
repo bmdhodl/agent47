@@ -19,6 +19,8 @@ INTERPRETER_CAVEAT = (
     "a null interpreter almost always means tooling rather than a person, and a real "
     "interpreter still does not prove a distinct person"
 )
+NET_KEY = "pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci"
+NET_MEAN_KEY = NET_KEY + "_mean_per_day"
 
 
 def is_install_intent_target(target: str) -> bool:
@@ -118,6 +120,8 @@ def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
         "pypi_real_interpreter_events_outside_publish_burst": "unknown",
         "pypi_real_interpreter_events_outside_publish_burst_day_count": "unknown",
         "pypi_real_interpreter_events_outside_publish_burst_mean_per_day": "unknown",
+        NET_KEY: "unknown",
+        NET_MEAN_KEY: "unknown",
         "publish_dates_excluded": [],
         "off_publish_method": "unknown",
     }
@@ -143,12 +147,23 @@ def _off_publish_fields(pypi: Mapping[str, Any] | None) -> dict[str, Any]:
         fields["pypi_real_interpreter_events_outside_publish_burst_mean_per_day"] = float(
             real.get("mean_per_day") or 0.0
         )
+        net = real.get("net_of_own_ci")
+        if isinstance(net, Mapping) and "downloads" in net:
+            fields[NET_KEY] = int(net.get("downloads") or 0)
+            fields[NET_MEAN_KEY] = float(net.get("mean_per_day") or 0.0)
+            fields[NET_KEY + "_bound"] = net.get("bound") or "upper bound"
+        elif isinstance(net, Mapping):
+            fields[NET_KEY] = fields[NET_MEAN_KEY] = f"unavailable; {net.get('reason') or 'not supplied'}"
+        else:
+            fields[NET_KEY] = fields[NET_MEAN_KEY] = "unknown"
     else:
         reason = real.get("reason") if isinstance(real, Mapping) else "not supplied"
         for key in (
             "pypi_real_interpreter_events_outside_publish_burst",
             "pypi_real_interpreter_events_outside_publish_burst_day_count",
             "pypi_real_interpreter_events_outside_publish_burst_mean_per_day",
+            NET_KEY,
+            NET_MEAN_KEY,
         ):
             fields[key] = f"unavailable; {reason}"
     return fields

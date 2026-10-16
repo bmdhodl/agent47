@@ -352,7 +352,7 @@ def test_refresh_from_fixtures_does_not_invent_users(tmp_path):
     assert report["repeat_use"].startswith("unknown")
 
 
-def _off_publish_fixture(tmp_path):
+def _off_publish_fixture(tmp_path, extra_args=()):
     """The 2026-09-20..2026-09-26 window from the AG-29 focus review.
 
     It holds one publish day (09-24) and two 100%-null interpreter days
@@ -398,9 +398,11 @@ def _off_publish_fixture(tmp_path):
             "2026-09-27T00:00:00Z",
             "--out",
             str(out),
+            *extra_args,
         ],
         check=True,
         cwd=ROOT,
+        capture_output=True,
     )
     return json.loads(out.read_text(encoding="utf-8"))
 
@@ -519,6 +521,241 @@ def test_release_metadata_unavailable_keeps_off_publish_unknown(monkeypatch, tmp
     assert snapshot["exclusions"]["publish_dates"] == []
     assert ": " in snapshot["sources"]["pypi_releases"]["reason"]
     assert report["install"]["pypi_events_outside_publish_burst"] == "unknown"
+
+
+WHEEL_STEP = "Install the published wheel and run the offline example"
+# Live pypistats rows for 2026-09-24..2026-10-03, read 2026-10-04 (AG-08 card).
+# 09-24 is a publish day. 09-25 and 10-03 each carry a four-job
+# published-wheel.yml run that installed the wheel with a real interpreter.
+OWN_CI_OVERALL = {
+    "2026-09-24": 86, "2026-09-25": 21, "2026-09-26": 10, "2026-09-27": 3,
+    "2026-09-28": 8, "2026-09-29": 5, "2026-09-30": 7, "2026-10-01": 2,
+    "2026-10-02": 1, "2026-10-03": 6,
+}
+OWN_CI_REAL = {
+    "2026-09-24": 16, "2026-09-25": 8, "2026-09-26": 3, "2026-09-27": 0,
+    "2026-09-28": 1, "2026-09-29": 2, "2026-09-30": 5, "2026-10-01": 2,
+    "2026-10-02": 0, "2026-10-03": 5,
+}
+
+
+def _wheel_job(name, day, conclusion="success"):
+    return {"name": name, "steps": [
+        {"name": "Run actions/checkout", "conclusion": "success", "started_at": f"{day}T08:56:30Z"},
+        {"name": WHEEL_STEP, "conclusion": conclusion, "started_at": f"{day}T08:57:00Z"},
+    ]}
+
+
+def _run_jobs(day):
+    release = {"name": "release", "steps": [
+        {"name": "Resolve one stable release for the whole matrix", "conclusion": "success",
+         "started_at": f"{day}T08:56:25Z"},
+    ]}
+    matrix = ("windows-latest / Python 3.12", "ubuntu-latest / Python 3.9",
+              "ubuntu-latest / Python 3.12", "macos-latest / Python 3.12")
+    return [release] + [_wheel_job(name, day) for name in matrix]
+
+
+OWN_CI_RUNS = [
+    {"id": 37111363411, "event": "schedule", "status": "completed", "conclusion": "success",
+     "created_at": "2026-10-03T08:56:23Z"},
+    {"id": 36190628659, "event": "workflow_dispatch", "status": "completed", "conclusion": "success",
+     "created_at": "2026-09-25T21:16:25Z"},
+]
+OWN_CI_JOBS = {37111363411: _run_jobs("2026-10-03"), 36190628659: _run_jobs("2026-09-25")}
+
+
+def _mock_own_ci_feeds(monkeypatch, module, *, runs=OWN_CI_RUNS, jobs=OWN_CI_JOBS, github_error=None):
+    def get_json(url):
+        if url == module.PYPI_RELEASES_URL:
+            return {"releases": {"1.4.0": [{"upload_time_iso_8601": "2026-09-24T12:00:00Z"}]}}
+        if url == module.PYPI_URL:
+            return {"data": [
+                {"category": "without_mirrors", "date": day, "downloads": count}
+                for day, count in OWN_CI_OVERALL.items()
+            ]}
+        if url == module.PYTHON_MINOR_URL:
+            rows = [{"category": "null", "date": day, "downloads": OWN_CI_OVERALL[day] - count}
+                    for day, count in OWN_CI_REAL.items()]
+            rows += [{"category": "3.12", "date": day, "downloads": count}
+                     for day, count in OWN_CI_REAL.items() if count]
+            return {"data": rows}
+        if url.startswith("https://api.github.com/"):
+            if github_error is not None:
+                raise github_error
+            if "/actions/workflows/published-wheel.yml/runs?" in url:
+                return {"total_count": len(runs), "workflow_runs": runs}
+            for run_id, run_jobs in jobs.items():
+                if f"/actions/runs/{run_id}/jobs?" in url:
+                    return {"total_count": len(run_jobs), "jobs": run_jobs}
+            raise AssertionError(f"unexpected GitHub URL {url}")
+        return {"downloads": 0, "start": "2026-09-05", "end": "2026-10-04"}
+    monkeypatch.setattr(module, "_get_json", get_json)
+
+
+def test_net_of_own_ci_is_lower_than_raw_on_a_published_wheel_day(monkeypatch, tmp_path):
+    module = _refresh_module()
+    _mock_own_ci_feeds(monkeypatch, module)
+    snapshot = module.fetch_public("2026-10-04T08:00:00Z")
+    off = snapshot["pypi"]["off_publish_days"]
+
+    week = off["window_7d"]["real_interpreter"]
+    assert off["window_7d"]["window"] == {"start": "2026-09-27", "end": "2026-10-03"}
+    net = week["net_of_own_ci"]
+    assert isinstance(week["downloads"], int) and isinstance(net["downloads"], int)
+    assert isinstance(week["mean_per_day"], float) and isinstance(net["mean_per_day"], float)
+    # 15 raw real-interpreter rows; four of them are the 10-03 matrix installs.
+    assert week["downloads"] == 15
+    assert net["downloads"] == 11
+    assert net["downloads"] < week["downloads"]
+    assert net["mean_per_day"] < week["mean_per_day"]
+    assert net["day_count"] == 7
+    assert net["own_ci_wheel_install_jobs"] == 4
+    assert net["own_ci_dates"] == ["2026-10-03"]
+    assert "upper bound" in net["bound"]
+    assert "does not identify a person" in net["bound"]
+
+    month = off["window_30d"]["real_interpreter"]
+    # 09-25 + 09-26 + the 15 above; 09-24 is a publish day and stays out.
+    assert month["downloads"] == 26
+    assert month["net_of_own_ci"]["downloads"] == 18
+    assert month["net_of_own_ci"]["downloads"] < month["downloads"]
+    assert month["net_of_own_ci"]["own_ci_dates"] == ["2026-09-25", "2026-10-03"]
+
+    exclusions = snapshot["exclusions"]
+    assert {"mirrors", "simulated_reports", "publish_dates"} <= set(exclusions)
+    own_ci = exclusions["published_wheel_ci"]
+    assert own_ci["workflow"] == ".github/workflows/published-wheel.yml"
+    assert "published-wheel.yml" in own_ci["method"]
+    assert own_ci["runs"] == [
+        {"run_id": 36190628659, "date": "2026-09-25", "event": "workflow_dispatch",
+         "wheel_install_jobs": 4},
+        {"run_id": 37111363411, "date": "2026-10-03", "event": "schedule",
+         "wheel_install_jobs": 4},
+    ]
+    assert snapshot["sources"]["github_actions"]["status"] == "ok"
+
+    install = _classify(tmp_path, snapshot)["install"]
+    assert install["pypi_real_interpreter_events_outside_publish_burst"] == 15
+    assert install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci"] == 11
+    assert install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_mean_per_day"] == 1.6
+    assert "upper bound" in install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci_bound"]
+    for key, value in install.items():
+        assert "not computed" not in str(value), key
+
+
+def test_net_of_own_ci_is_unavailable_when_the_actions_api_fails(monkeypatch, tmp_path):
+    module = _refresh_module()
+    _mock_own_ci_feeds(monkeypatch, module, github_error=OSError("actions api down"))
+    snapshot = module.fetch_public("2026-10-04T08:00:00Z")
+    for label in ("window_7d", "window_30d"):
+        real = snapshot["pypi"]["off_publish_days"][label]["real_interpreter"]
+        assert isinstance(real["downloads"], int)
+        net = real["net_of_own_ci"]
+        assert net["status"] == "unavailable"
+        assert "OSError" in net["reason"]
+        assert "downloads" not in net and "mean_per_day" not in net
+    own_ci = snapshot["exclusions"]["published_wheel_ci"]
+    assert own_ci["status"] == "unavailable"
+    assert "runs" not in own_ci
+    assert snapshot["sources"]["github_actions"]["status"] == "unavailable"
+    install = _classify(tmp_path, snapshot)["install"]
+    net_value = install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci"]
+    assert str(net_value).startswith("unavailable; ")
+    assert net_value != install["pypi_real_interpreter_events_outside_publish_burst"]
+
+
+def test_net_of_own_ci_stays_unknown_in_an_older_snapshot(tmp_path):
+    older = json.loads(
+        (ROOT / "docs" / "guides" / "activation-snapshot-2026-09-28.json").read_text(encoding="utf-8")
+    )
+    install = _classify(tmp_path, older)["install"]
+    assert install["pypi_real_interpreter_events_outside_publish_burst"] == 12
+    assert install["pypi_real_interpreter_events_outside_publish_burst_net_of_own_ci"] == "unknown"
+
+
+def test_offline_refresh_reads_saved_run_records(tmp_path):
+    runs = tmp_path / "runs.json"
+    runs.write_text(json.dumps([
+        {"run_id": 36190628659, "date": "2026-09-25", "event": "workflow_dispatch",
+         "wheel_install_jobs": 2},
+    ]), encoding="utf-8")
+    snapshot = _off_publish_fixture(tmp_path, ("--published-wheel-runs-json", str(runs)))
+    real = snapshot["pypi"]["off_publish_days"]["window_7d"]["real_interpreter"]
+    assert real["downloads"] == 12
+    assert real["net_of_own_ci"]["downloads"] == 10
+    assert snapshot["exclusions"]["published_wheel_ci"]["runs"][0]["run_id"] == 36190628659
+
+    without = _off_publish_fixture(tmp_path)
+    net = without["pypi"]["off_publish_days"]["window_7d"]["real_interpreter"]["net_of_own_ci"]
+    assert net == {
+        "status": "unavailable",
+        "reason": "published-wheel.yml runs not supplied",
+        "source": _refresh_module().OWN_CI_RUNS_URL,
+    }
+
+    runs.write_text(json.dumps([{"run_id": "x", "date": "2026-09-25"}]), encoding="utf-8")
+    with pytest.raises(subprocess.CalledProcessError):
+        _off_publish_fixture(tmp_path, ("--published-wheel-runs-json", str(runs)))
+
+
+def test_published_wheel_collector_pages_and_counts_only_finished_installs(monkeypatch):
+    module = _refresh_module()
+    jobs = _run_jobs("2026-10-03")
+    jobs[1] = _wheel_job("windows-latest / Python 3.12", "2026-10-03", conclusion="failure")
+    jobs.append(_wheel_job("windows-latest / Python 3.12", "2026-10-03"))  # re-run attempt
+    jobs.append({"name": "macos-latest / Python 3.12", "steps": None})  # queued, no steps yet
+    pages = {1: OWN_CI_RUNS[:1], 2: OWN_CI_RUNS[1:]}
+
+    def get_json(url):
+        if "/actions/workflows/published-wheel.yml/runs?" in url:
+            page = int(url.rsplit("page=", 1)[1])
+            return {"total_count": 2, "workflow_runs": pages[page]}
+        if "/actions/runs/37111363411/jobs?" in url:
+            assert "filter=all" in url
+            return {"total_count": len(jobs), "jobs": jobs}
+        if "/actions/runs/36190628659/jobs?" in url:
+            return {"total_count": 5, "jobs": _run_jobs("2026-09-25")}
+        raise AssertionError(url)
+
+    monkeypatch.setattr(module, "_get_json", get_json)
+    records = module.fetch_published_wheel_runs("2026-09-04", "2026-10-03")
+    assert records == [
+        {"run_id": 36190628659, "date": "2026-09-25", "event": "workflow_dispatch",
+         "wheel_install_jobs": 4},
+        {"run_id": 37111363411, "date": "2026-10-03", "event": "schedule",
+         "wheel_install_jobs": 4},
+    ]
+
+
+@pytest.mark.parametrize("payload,error", [
+    ({"workflow_runs": []}, TypeError),
+    ({"total_count": 1, "workflow_runs": None}, TypeError),
+    ({"total_count": 1, "workflow_runs": ["not an object"]}, TypeError),
+    ({"total_count": 3, "workflow_runs": OWN_CI_RUNS[:1]}, ValueError),
+])
+def test_published_wheel_collector_rejects_bad_or_partial_pages(monkeypatch, payload, error):
+    module = _refresh_module()
+
+    def get_json(url):
+        if "/actions/workflows/published-wheel.yml/runs?" in url:
+            return payload if url.endswith("&page=1") else {"total_count": 3, "workflow_runs": []}
+        return {"total_count": 5, "jobs": _run_jobs("2026-10-03")}
+
+    monkeypatch.setattr(module, "_get_json", get_json)
+    with pytest.raises(error):
+        module.fetch_published_wheel_runs("2026-09-04", "2026-10-03")
+
+
+def test_published_wheel_collector_refuses_a_renamed_install_step(monkeypatch):
+    """A successful run with no install step must not read as zero CI installs."""
+    module = _refresh_module()
+    renamed = [{"name": "ubuntu-latest / Python 3.12", "steps": [
+        {"name": "Install wheel", "conclusion": "success", "started_at": "2026-10-03T08:57:00Z"},
+    ]}]
+    _mock_own_ci_feeds(monkeypatch, module, runs=OWN_CI_RUNS[:1], jobs={37111363411: renamed})
+    with pytest.raises(ValueError, match="install step"):
+        module.fetch_published_wheel_runs("2026-09-04", "2026-10-03")
 
 
 def test_empty_report_has_no_interpreter_caveat(tmp_path):

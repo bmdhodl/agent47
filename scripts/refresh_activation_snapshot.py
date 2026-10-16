@@ -2,12 +2,16 @@
 """Build an activation snapshot from public counts or local fixtures.
 
 Offline unless --fetch-public is set. That flag reads PyPI release metadata,
-PyPI Stats and the npm downloads API. It does not read identities or site events.
+PyPI Stats, the npm downloads API and the GitHub Actions run list for
+published-wheel.yml. It does not read identities or site events. GitHub reads
+work without a token; set GITHUB_TOKEN or GH_TOKEN to raise the rate limit.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
+from collections import Counter
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -24,11 +28,30 @@ OFF_PUBLISH_METHOD = (
     "date is not in exclusions.publish_dates, divided by the count of those days; "
     "publish-day rows stay in the data, annotated, and are never deleted. The "
     "real-interpreter figures read python_minor?mirrors=false and count only rows "
-    "whose category is not null."
+    "whose category is not null. They are raw; net_of_own_ci also removes the "
+    "installs listed in exclusions.published_wheel_ci."
 )
 INTERPRETER_CAVEAT = (
     "a null interpreter almost always means tooling rather than a person, and a real "
     "interpreter still does not prove a distinct person"
+)
+GITHUB_API = "https://api.github.com"
+GITHUB_REPO = "bmdhodl/agent47"
+OWN_CI_WORKFLOW = ".github/workflows/published-wheel.yml"
+OWN_CI_RUNS_URL = f"{GITHUB_API}/repos/{GITHUB_REPO}/actions/workflows/published-wheel.yml/runs"
+WHEEL_INSTALL_STEP = "Install the published wheel and run the offline example"
+OWN_CI_METHOD = (
+    "published-wheel.yml installs the published wheel from PyPI once per matrix job, "
+    "with a real interpreter. Each run in the reporting window is read from the GitHub "
+    "Actions API with its run id, date and count of completed wheel-install jobs, which "
+    "are jobs whose install step concluded success. net_of_own_ci subtracts those jobs "
+    "from the real-interpreter rows of the same off-publish day, never below zero for a "
+    "day. Publish days are already outside the sum and are not subtracted again. Rows "
+    "stay in the data and are never deleted."
+)
+NET_OF_OWN_CI_BOUND = (
+    "upper bound: other CI, reinstalls and tooling that reports an interpreter still "
+    "count here, and an interpreter does not identify a person"
 )
 
 
@@ -98,6 +121,138 @@ def _window_total(rows: list[dict[str, Any]], start: str, end: str) -> int:
     return sum(int(row["downloads"]) for row in rows if start <= row["date"] <= end)
 
 
+def _net_of_own_ci(
+    interpreter_rows: list[dict[str, Any]],
+    start: str,
+    end: str,
+    publish_dates: tuple[str, ...],
+    ci_runs: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Real-interpreter off-publish figures less our own published-wheel installs.
+
+    A day never goes below zero. Days where our jobs outnumber the rows are listed.
+    """
+    skip = set(publish_dates)
+    ci_by_day: Counter[str] = Counter()
+    for run in ci_runs:
+        if start <= run["date"] <= end and run["date"] not in skip:
+            ci_by_day[run["date"]] += int(run["wheel_install_jobs"])
+    real_by_day: Counter[str] = Counter()
+    for row in interpreter_rows:
+        if start <= row["date"] <= end:
+            real_by_day[row["date"]] += int(row["downloads"])
+    net_rows = [
+        {"date": day, "downloads": max(0, real_by_day[day] - ci_by_day[day])}
+        for day in sorted(set(real_by_day) | set(ci_by_day))
+    ]
+    block = _off_publish(net_rows, start, end, publish_dates)
+    block["own_ci_wheel_install_jobs"] = sum(ci_by_day.values())
+    block["own_ci_dates"] = sorted(day for day, jobs in ci_by_day.items() if jobs)
+    block["days_clamped_at_zero"] = sorted(
+        day for day, jobs in ci_by_day.items() if real_by_day[day] < jobs
+    )
+    block["bound"] = NET_OF_OWN_CI_BOUND
+    return block
+
+
+def _without_mirrors_rows(pypi_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return sorted(
+        (
+            {"date": row["date"], "downloads": int(row["downloads"])}
+            for row in pypi_rows
+            if row.get("category", "without_mirrors") == "without_mirrors"
+        ),
+        key=lambda row: row["date"],
+    )
+
+
+def _series_end(rows: list[dict[str, Any]], retrieved: date) -> date:
+    return date.fromisoformat(rows[-1]["date"]) if rows else retrieved
+
+
+def _utc_day(stamp: Any) -> str:
+    if not isinstance(stamp, str):
+        raise TypeError("missing GitHub timestamp")
+    moment = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    if moment.tzinfo is None:
+        raise ValueError("GitHub timestamp needs a timezone")
+    return moment.astimezone(timezone.utc).date().isoformat()
+
+
+def _github_list(url: str, key: str) -> list[dict[str, Any]]:
+    """Read every page of a GitHub list endpoint. A short or malformed page raises."""
+    items: list[dict[str, Any]] = []
+    page = 1
+    while True:
+        payload = _get_json(f"{url}&per_page=100&page={page}")
+        batch = payload.get(key)
+        total = payload.get("total_count")
+        if not isinstance(batch, list) or not isinstance(total, int):
+            raise TypeError(f"GitHub response has no {key} list or total_count")
+        if not all(isinstance(item, dict) for item in batch):
+            raise TypeError(f"GitHub {key} entry is not an object")
+        items.extend(batch)
+        if len(items) >= total:
+            return items
+        if not batch:
+            raise ValueError(f"GitHub {key} stopped at {len(items)} of {total}")
+        page += 1
+
+
+def _run_records(run: dict[str, Any], jobs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """One record per run and UTC day, with the count of finished wheel installs."""
+    run_id = run["id"]
+    per_day: Counter[str] = Counter()
+    for job in jobs:
+        for step in job.get("steps") or []:
+            if step.get("name") == WHEEL_INSTALL_STEP and step.get("conclusion") == "success":
+                per_day[_utc_day(step.get("started_at") or job.get("started_at"))] += 1
+    if not per_day:
+        if run.get("conclusion") == "success":
+            raise ValueError(
+                f"run {run_id} succeeded without the {WHEEL_INSTALL_STEP!r} install step"
+            )
+        per_day[_utc_day(run.get("created_at"))] = 0
+    return [
+        {"run_id": run_id, "date": day, "event": run.get("event"), "wheel_install_jobs": count}
+        for day, count in sorted(per_day.items())
+    ]
+
+
+def fetch_published_wheel_runs(start: str, end: str) -> list[dict[str, Any]]:
+    """Read published-wheel.yml runs for the window from the GitHub Actions API.
+
+    Re-run attempts count, because each attempt installs the wheel again.
+    """
+    created_from = (date.fromisoformat(start) - timedelta(days=1)).isoformat()
+    runs = _github_list(f"{OWN_CI_RUNS_URL}?created={created_from}..{end}", "workflow_runs")
+    records: list[dict[str, Any]] = []
+    for run in runs:
+        if not isinstance(run.get("id"), int):
+            raise TypeError("GitHub workflow run has no id")
+        jobs = _github_list(
+            f"{GITHUB_API}/repos/{GITHUB_REPO}/actions/runs/{run['id']}/jobs?filter=all",
+            "jobs",
+        )
+        records.extend(_run_records(run, jobs))
+    return sorted(records, key=lambda record: (record["date"], record["run_id"]))
+
+
+def _run_records_from_file(payload: Any) -> list[dict[str, Any]]:
+    """Validate run records saved from an earlier API read, for offline fixtures."""
+    if not isinstance(payload, list):
+        raise TypeError("published-wheel run records must be a list")
+    for record in payload:
+        if not (
+            isinstance(record, dict)
+            and isinstance(record.get("run_id"), int)
+            and isinstance(record.get("date"), str)
+            and isinstance(record.get("wheel_install_jobs"), int)
+        ):
+            raise TypeError("published-wheel run record needs run_id, date and wheel_install_jobs")
+    return payload
+
+
 def _publish_dates(metadata: dict[str, Any]) -> tuple[str, ...]:
     """Use the first artifact upload in each release, in UTC."""
     releases = metadata.get("releases")
@@ -138,6 +293,8 @@ def build_snapshot(
     python_minor_error: str | None = None,
     release_dates: tuple[str, ...] | None = RELEASE_DATES,
     releases_error: str | None = None,
+    published_wheel_runs: list[dict[str, Any]] | None = None,
+    published_wheel_error: str | None = None,
 ) -> dict[str, Any]:
     retrieved = datetime.fromisoformat(retrieved_at.replace("Z", "+00:00")).date()
     sources: dict[str, Any] = {
@@ -171,22 +328,25 @@ def build_snapshot(
         },
         "dedup": {"pypi": "none; each download is a package event, not a unique user"},
     }
+    own_ci_available = not published_wheel_error and published_wheel_runs is not None
+    own_ci: dict[str, Any] = {"workflow": OWN_CI_WORKFLOW, "method": OWN_CI_METHOD, "source": OWN_CI_RUNS_URL}
+    snapshot["exclusions"]["published_wheel_ci"] = own_ci
+    if not own_ci_available:
+        own_ci["status"] = "unavailable"
+        own_ci["reason"] = published_wheel_error or "published-wheel.yml runs not supplied"
     if pypi_error or pypi_rows is None:
         sources["pypi"] = {"status": "unavailable", "url": PYPI_URL, "reason": pypi_error or "not supplied"}
         snapshot["data_lag"] = {"pypi": "unavailable"}
     else:
         snapshot["unknowns"].append(INTERPRETER_CAVEAT)
-        rows = sorted(
-            (
-                {"date": row["date"], "downloads": int(row["downloads"])}
-                for row in pypi_rows
-                if row.get("category", "without_mirrors") == "without_mirrors"
-            ),
-            key=lambda row: row["date"],
-        )
-        end = date.fromisoformat(rows[-1]["date"]) if rows else retrieved
+        rows = _without_mirrors_rows(pypi_rows)
+        end = _series_end(rows, retrieved)
         start7, end7, total7, _missing7 = _window(rows, end, 7)
         start30, end30, total30, missing30 = _window(rows, end, 30)
+        if own_ci_available:
+            own_ci["runs"] = [
+                run for run in published_wheel_runs or [] if start30 <= run["date"] <= end30
+            ]
         lag_days = []
         cursor = end + timedelta(days=1)
         while cursor <= retrieved:
@@ -219,6 +379,16 @@ def build_snapshot(
                 real = _off_publish(interpreter_rows, w_start, w_end, release_dates)
                 real["window_downloads"] = _window_total(interpreter_rows, w_start, w_end)
                 real["source"] = PYTHON_MINOR_URL
+                if own_ci_available:
+                    real["net_of_own_ci"] = _net_of_own_ci(
+                        interpreter_rows, w_start, w_end, release_dates, published_wheel_runs or []
+                    )
+                else:
+                    real["net_of_own_ci"] = {
+                        "status": "unavailable",
+                        "reason": own_ci["reason"],
+                        "source": OWN_CI_RUNS_URL,
+                    }
                 block["real_interpreter"] = real
             else:
                 block["real_interpreter"] = {
@@ -266,7 +436,13 @@ def build_snapshot(
 
 
 def _get_json(url: str) -> dict[str, Any]:
-    request = Request(url, headers={"User-Agent": "agentguard-activation-refresh"})
+    headers = {"User-Agent": "agentguard-activation-refresh"}
+    if url.startswith(f"{GITHUB_API}/"):
+        headers["Accept"] = "application/vnd.github+json"
+        token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+    request = Request(url, headers=headers)
     with urlopen(request, timeout=30) as response:
         payload = json.loads(response.read().decode("utf-8"))
     if not isinstance(payload, dict):
@@ -292,6 +468,17 @@ def fetch_public(retrieved_at: str) -> dict[str, Any]:
     except Exception as exc:
         python_minor_error = type(exc).__name__
     retrieved = datetime.fromisoformat(retrieved_at.replace("Z", "+00:00")).date()
+    published_wheel_runs = None
+    published_wheel_error = "PyPI series unavailable, so there is no reporting window"
+    if pypi_rows is not None:
+        series_end = _series_end(_without_mirrors_rows(pypi_rows), retrieved)
+        try:
+            published_wheel_runs = fetch_published_wheel_runs(
+                (series_end - timedelta(days=29)).isoformat(), series_end.isoformat()
+            )
+            published_wheel_error = None
+        except (OSError, TypeError, ValueError) as exc:
+            published_wheel_error = f"{type(exc).__name__}: {exc}"
     start = (retrieved - timedelta(days=29)).isoformat()
     end = retrieved.isoformat()
     npm_url = f"https://api.npmjs.org/downloads/point/{start}:{end}/{NPM_PACKAGE}"
@@ -310,7 +497,14 @@ def fetch_public(retrieved_at: str) -> dict[str, Any]:
         python_minor_error=python_minor_error,
         release_dates=release_dates,
         releases_error=releases_error,
+        published_wheel_runs=published_wheel_runs,
+        published_wheel_error=published_wheel_error,
     )
+    snapshot["sources"]["github_actions"] = {
+        "status": "unavailable" if published_wheel_error else "ok",
+        "url": OWN_CI_RUNS_URL,
+        **({"reason": published_wheel_error} if published_wheel_error else {"retrieved_at": retrieved_at}),
+    }
     snapshot["sources"]["pypi_releases"] = {
         "status": "unavailable" if releases_error else "ok",
         "url": PYPI_RELEASES_URL,
@@ -327,6 +521,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--npm-json", type=Path)
     parser.add_argument("--python-minor-json", type=Path)
     parser.add_argument("--pypi-releases-json", type=Path, help="Offline PyPI release metadata")
+    parser.add_argument(
+        "--published-wheel-runs-json",
+        type=Path,
+        help="Offline published-wheel.yml run records saved from an earlier API read",
+    )
     parser.add_argument("--feedback-json", type=Path)
     parser.add_argument("--retrieved-at", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
     args = parser.parse_args(argv)
@@ -351,6 +550,12 @@ def main(argv: list[str] | None = None) -> int:
             release_dates=(
                 _publish_dates(json.loads(args.pypi_releases_json.read_text(encoding="utf-8")))
                 if args.pypi_releases_json else RELEASE_DATES
+            ),
+            published_wheel_runs=(
+                _run_records_from_file(
+                    json.loads(args.published_wheel_runs_json.read_text(encoding="utf-8"))
+                )
+                if args.published_wheel_runs_json else None
             ),
         )
     args.out.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")

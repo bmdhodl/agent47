@@ -1,0 +1,15 @@
+________ test_published_wheel_collector_refuses_a_renamed_install_step ________
+sdk\tests\test_activation_evidence.py:729: in test_published_wheel_collector_refuses_a_renamed_install_step
+    module.fetch_published_wheel_runs("2026-09-04", "2026-10-03")
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'refresh_activation_snapshot' has no attribute 'fetch_published_wheel_runs'
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_activation_evidence.py::test_net_of_own_ci_is_lower_than_raw_on_a_published_wheel_day
+FAILED sdk\tests\test_activation_evidence.py::test_net_of_own_ci_is_unavailable_when_the_actions_api_fails
+FAILED sdk\tests\test_activation_evidence.py::test_net_of_own_ci_stays_unknown_in_an_older_snapshot
+FAILED sdk\tests\test_activation_evidence.py::test_published_wheel_collector_pages_and_counts_only_finished_installs
+FAILED sdk\tests\test_activation_evidence.py::test_published_wheel_collector_rejects_bad_or_partial_pages[payload0]
+FAILED sdk\tests\test_activation_evidence.py::test_published_wheel_collector_rejects_bad_or_partial_pages[payload1]
+FAILED sdk\tests\test_activation_evidence.py::test_published_wheel_collector_rejects_bad_or_partial_pages[payload2]
+FAILED sdk\tests\test_activation_evidence.py::test_published_wheel_collector_refuses_a_renamed_install_step
+====================== 8 failed, 30 deselected in 0.52s =======================
