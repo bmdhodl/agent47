@@ -1,0 +1,137 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\hook-failure-20261015\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 18 items
+
+sdk\tests\test_hook_install_failure.py FFFFFFFFFFFFFFFFFF                [100%]Running teardown with pytest sessionfinish...
+
+
+================================== FAILURES ===================================
+________ test_pre_tool_handler_blocks_failure_and_remains_synchronous _________
+sdk\tests\test_hook_install_failure.py:26: in test_pre_tool_handler_blocks_failure_and_remains_synchronous
+    assert pre["onFailure"] == "block"
+           ^^^^^^^^^^^^^^^^
+E   KeyError: 'onFailure'
+__ test_install_checks_supported_host_before_preview[2.1.295 (Claude Code)] ___
+sdk\tests\test_hook_install_failure.py:38: in test_install_checks_supported_host_before_preview
+    assert len(calls) == 1
+E   assert 0 == 1
+E    +  where 0 = len([])
+__ test_install_checks_supported_host_before_preview[2.1.296 (Claude Code)] ___
+sdk\tests\test_hook_install_failure.py:38: in test_install_checks_supported_host_before_preview
+    assert len(calls) == 1
+E   assert 0 == 1
+E    +  where 0 = len([])
+___ test_install_checks_supported_host_before_preview[3.0.0 (Claude Code)] ____
+sdk\tests\test_hook_install_failure.py:38: in test_install_checks_supported_host_before_preview
+    assert len(calls) == 1
+E   assert 0 == 1
+E    +  where 0 = len([])
+_ test_unsupported_or_unknown_host_does_not_change_settings[False-2.1.294 (Claude Code)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[False-1.9.0 (Claude Code)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+__ test_unsupported_or_unknown_host_does_not_change_settings[False-unknown] ___
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[False-2.1.295-beta (Claude Code)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[False-2.1.296 (Other App)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[True-2.1.294 (Claude Code)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[True-1.9.0 (Claude Code)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+___ test_unsupported_or_unknown_host_does_not_change_settings[True-unknown] ___
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[True-2.1.295-beta (Claude Code)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_ test_unsupported_or_unknown_host_does_not_change_settings[True-2.1.296 (Other App)] _
+sdk\tests\test_hook_install_failure.py:55: in test_unsupported_or_unknown_host_does_not_change_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_________ test_failed_version_probe_does_not_create_settings[error0] __________
+sdk\tests\test_hook_install_failure.py:66: in test_failed_version_probe_does_not_create_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+_________ test_failed_version_probe_does_not_create_settings[error1] __________
+sdk\tests\test_hook_install_failure.py:66: in test_failed_version_probe_does_not_create_settings
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+______________ test_nonzero_probe_does_not_trust_version_output _______________
+sdk\tests\test_hook_install_failure.py:73: in test_nonzero_probe_does_not_trust_version_output
+    with pytest.raises(SystemExit, match="Claude Code 2.1.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+__ test_reinstall_and_uninstall_preserve_all_unrelated_handlers_and_settings __
+sdk\tests\test_hook_install_failure.py:97: in test_reinstall_and_uninstall_preserve_all_unrelated_handlers_and_settings
+    assert uninstall_settings(deepcopy(installed)) == expected
+E   AssertionError: assert {'hooks': {'P...: 'untouched'} == {'hooks': {'P...: 'untouched'}
+E     
+E     Omitting 1 identical items, use -vv to show
+E     Differing items:
+E     {'hooks': {'PreToolUse': [{'hooks': [{'command': 'lint', 'onFailure': 'continue', 'type': 'command'}], 'matcher': 'Bash'}, {'hooks': [{'command': 'after-policy', 'type': 'command'}], 'matcher': '*'}]}} != {'hooks': {'PostToolUse': [], 'PreToolUse': [{'hooks': [], 'matcher': 'Read'}, {'hooks': [{'command': 'lint', 'onFailu...: [{'command': 'after-policy', 'type': 'command'}], 'matcher': '*'}], 'SessionStart': [{'hooks': [], 'matcher': '*'}]}}
+E     Use -v to get more diff
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_hook_install_failure.py::test_pre_tool_handler_blocks_failure_and_remains_synchronous
+FAILED sdk\tests\test_hook_install_failure.py::test_install_checks_supported_host_before_preview[2.1.295 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_install_checks_supported_host_before_preview[2.1.296 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_install_checks_supported_host_before_preview[3.0.0 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[False-2.1.294 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[False-1.9.0 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[False-unknown]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[False-2.1.295-beta (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[False-2.1.296 (Other App)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[True-2.1.294 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[True-1.9.0 (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[True-unknown]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[True-2.1.295-beta (Claude Code)]
+FAILED sdk\tests\test_hook_install_failure.py::test_unsupported_or_unknown_host_does_not_change_settings[True-2.1.296 (Other App)]
+FAILED sdk\tests\test_hook_install_failure.py::test_failed_version_probe_does_not_create_settings[error0]
+FAILED sdk\tests\test_hook_install_failure.py::test_failed_version_probe_does_not_create_settings[error1]
+FAILED sdk\tests\test_hook_install_failure.py::test_nonzero_probe_does_not_trust_version_output
+FAILED sdk\tests\test_hook_install_failure.py::test_reinstall_and_uninstall_preserve_all_unrelated_handlers_and_settings
+============================= 18 failed in 2.63s ==============================
+Exception ignored in atexit callback <function cleanup_numbered_dir at 0x000002C38D3899E0>:
+Traceback (most recent call last):
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 374, in cleanup_numbered_dir
+    cleanup_dead_symlinks(root)
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 359, in cleanup_dead_symlinks
+    if not left_dir.resolve().exists():
+  File "C:\Python313\Lib\pathlib\_abc.py", line 450, in exists
+    self.stat(follow_symlinks=follow_symlinks)
+  File "C:\Python313\Lib\pathlib\_local.py", line 515, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\patri\\AppData\\Local\\Temp\\pytest-root\\pytest-of-patri\\pytest-current'

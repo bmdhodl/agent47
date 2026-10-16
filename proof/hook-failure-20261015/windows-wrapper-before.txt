@@ -1,0 +1,25 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\hook-failure-20261015\sdk
+configfile: pyproject.toml
+collected 22 items / 20 deselected / 2 selected
+
+sdk\tests\test_hook_install_failure.py FF                                [100%]
+
+================================== FAILURES ===================================
+_______ test_windows_npm_wrapper_path_is_resolved_before_version_probe ________
+sdk\tests\test_hook_install_failure.py:54: in test_windows_npm_wrapper_path_is_resolved_before_version_probe
+    assert calls[0][0] == [wrapper, "--version"]
+E   AssertionError: assert ['claude', '--version'] == ['C:\\Program..., '--version']
+E     
+E     At index 0 diff: 'claude' != 'C:\\Program Files\\npm\\claude.CMD'
+E     Use -v to get more diff
+_____________ test_missing_host_does_not_spawn_or_change_settings _____________
+sdk\tests\test_hook_install_failure.py:60: in test_missing_host_does_not_spawn_or_change_settings
+    with pytest.raises(SystemExit, match=r"Claude Code 2\.1\.295 or later"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'SystemExit'>
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_hook_install_failure.py::test_windows_npm_wrapper_path_is_resolved_before_version_probe
+FAILED sdk\tests\test_hook_install_failure.py::test_missing_host_does_not_spawn_or_change_settings
+====================== 2 failed, 20 deselected in 0.45s =======================

@@ -1,0 +1,7 @@
+{"case": "allow", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": true}
+{"case": "deny", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}
+{"case": "missing-executable", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}
+{"case": "crash", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}
+{"case": "timeout", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}
+{"case": "malformed-json", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}
+{"case": "invalid-schema", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}

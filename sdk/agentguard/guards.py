@@ -16,13 +16,12 @@ Usage::
 """
 from __future__ import annotations
 
-import json
 import math
 import threading
 import time
 from collections import Counter, deque
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, Deque, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Deque, Dict, Optional
 
 from ._budget_validation import validate_budget_config, validate_budget_state, validate_consumption
 
@@ -95,87 +94,6 @@ class BaseGuard:
 
     def reset(self) -> None:
         """Reset guard state. Override in subclasses."""
-
-
-class LoopGuard(BaseGuard):
-    """Detect repeated identical tool calls within a sliding window.
-
-    Thread-safe. Uses a lock to protect history mutations.
-
-    Tracks the last ``window`` tool calls and raises ``LoopDetected`` if
-    the same (tool_name, tool_args) pair appears ``max_repeats`` times
-    consecutively at the end of the window.
-
-    Usage::
-
-        guard = LoopGuard(max_repeats=3, window=6)
-        guard.check("search", {"query": "docs"})  # ok
-        guard.check("search", {"query": "docs"})  # ok
-        guard.check("search", {"query": "docs"})  # raises LoopDetected
-
-    Args:
-        max_repeats: How many identical calls in a row trigger detection.
-        window: Size of the sliding history window.
-    """
-
-    def __init__(self, max_repeats: int = 3, window: int = 6) -> None:
-        if max_repeats < 2:
-            raise ValueError("max_repeats must be >= 2")
-        if window < max_repeats:
-            raise ValueError("window must be >= max_repeats")
-        self._max_repeats = max_repeats
-        self._window = window
-        self._history: Deque[Tuple[str, str]] = deque(maxlen=window)
-        self._lock = threading.Lock()
-
-    def check(self, tool_name: str, tool_args: Optional[Dict[str, Any]] = None) -> None:
-        """Record a tool call and check for loops.
-
-        Thread-safe: uses a lock to protect history mutations.
-
-        Args:
-            tool_name: Name of the tool being called.
-            tool_args: Arguments passed to the tool.
-
-        Raises:
-            LoopDetected: If the same call was repeated max_repeats times.
-        """
-        args = tool_args or {}
-        signature = (tool_name, _stable_json(args))
-        with self._lock:
-            self._history.append(signature)
-            if len(self._history) < self._max_repeats:
-                return
-            last_n = list(self._history)[-self._max_repeats:]
-            if len(set(last_n)) == 1:
-                args_str = _stable_json(args)
-                raise LoopDetected(
-                    f"Loop detected: {tool_name}({args_str}) repeated "
-                    f"{self._max_repeats} times in last {len(self._history)} calls. "
-                    f"Consider varying the arguments or breaking the loop."
-                )
-
-    def auto_check(self, event_name: str, event_data: Optional[Dict[str, Any]] = None) -> None:
-        """Auto-check: delegates to check(event_name, event_data)."""
-        self.check(event_name, event_data)
-
-    @property
-    def max_repeats(self) -> int:
-        """Maximum identical calls before triggering detection."""
-        return self._max_repeats
-
-    @property
-    def window(self) -> int:
-        """Size of the sliding history window."""
-        return self._window
-
-    def reset(self) -> None:
-        """Clear the call history."""
-        with self._lock:
-            self._history.clear()
-
-    def __repr__(self) -> str:
-        return f"LoopGuard(max_repeats={self._max_repeats}, window={self._window})"
 
 
 @dataclass
@@ -778,9 +696,6 @@ def _extract_tool_name(
     return None
 
 
-def _stable_json(data: Dict[str, Any]) -> str:
-    return json.dumps(data, sort_keys=True, separators=(",", ":"), default=str)
-
 _ESCALATION_COMPAT_EXPORTS = {"BudgetAwareEscalation", "EscalationRequired", "EscalationSignal"}
 
 
@@ -788,6 +703,10 @@ def __getattr__(name: str) -> Any:
     if name in _ESCALATION_COMPAT_EXPORTS:
         from . import escalation as _escalation
         return getattr(_escalation, name)
+    # LoopGuard lives in loop_guard.py, which imports this module.
+    if name == "LoopGuard":
+        from .loop_guard import LoopGuard
+        return LoopGuard
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
