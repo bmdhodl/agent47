@@ -1,0 +1,1 @@
+{"session": "qw-20261018-mcp-hosted-metadata-r2", "ts": "2026-10-18T02:44:17", "claim": "Prepared MCP metadata discloses closed hosted admission with local SDK alternative", "severity": "RED", "check": {"type": "file_contains", "path": "mcp-server/server.json", "pattern": "no new accounts"}, "prev": "bf2647778714d9bb9b3f3c918b471993c725561eb96b11ccc1bb11777ae81831"}

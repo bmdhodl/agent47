@@ -1,14 +1,17 @@
 # AgentGuard MCP Server
 
-Read-only MCP (Model Context Protocol) server that connects coding agents to
-the AgentGuard Read API. Use it after the local SDK is already in place and
-you want Codex, Claude Code, Cursor, or another MCP client to inspect traces,
-decision events, alerts, usage, costs, and budget health.
+This server reads the hosted AgentGuard API, which is **not accepting new
+accounts**. New users should use the local SDK: `pip install agentguard47`.
+The SDK needs no hosted account or API key.
+
+For existing hosted accounts, this read-only MCP (Model Context Protocol)
+server lets Codex, Claude Code, Cursor, or another MCP client inspect retained
+traces, decision events, alerts, usage, costs, and budget health.
 
 The boundary is deliberate:
 - The SDK proves runtime enforcement locally
 - The MCP server gives coding agents a narrow read surface over retained data
-- The hosted dashboard stays the operational control plane
+- The server requires a key from an existing hosted account
 
 ## Published Package
 
@@ -34,7 +37,7 @@ Glama listing: <https://glama.ai/mcp/servers/bmdhodl/agent47>
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `AGENTGUARD_API_KEY` | Yes | Bearer token for the Read API (`ag_...`) |
+| `AGENTGUARD_API_KEY` | Yes | Read API key from an existing hosted account (`ag_...`); new accounts are closed |
 | `AGENTGUARD_URL` | No | API base URL (defaults to production) |
 
 ## Setup for Claude Code
@@ -97,18 +100,16 @@ source.
 Current public status:
 
 - npm: `@agentguard47/mcp-server@0.2.2`
-- Official MCP Registry: live as `io.github.bmdhodl/agentguard47`; registry
-  search still reports package `0.2.1` and needs metadata refresh
+- Official MCP Registry: `io.github.bmdhodl/agentguard47` has historical
+  `0.2.1` and latest `0.2.2` entries. The older entry is normal registry history
+  and stays in place
 - Glama: first release live at <https://glama.ai/mcp/servers/bmdhodl/agent47>;
   environment schema is indexed, but the public API still returns an empty
   `tools` array as of 2026-05-08
 
-Official MCP registry publication:
-
-```bash
-mcp-publisher login github
-mcp-publisher publish
-```
+These account-admission notices are prepared in this repository. The published
+npm package and MCP Registry entry need a separately approved metadata release
+before they show the same notices. See the [publication workflow](../.github/workflows/publish-mcp-registry.yml).
 
 Glama release verification:
 

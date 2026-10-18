@@ -46,6 +46,32 @@ def test_mcp_registry_metadata_declares_required_env_vars():
     assert env_vars["AGENTGUARD_URL"]["isSecret"] is False
 
 
+def test_mcp_discovery_descriptions_disclose_closed_accounts():
+    """REGRESSION: discovery must not offer a hosted account to new users."""
+    for path in (MCP_SERVER, MCP_PACKAGE):
+        description = _load_json(path)["description"]
+        assert "hosted AgentGuard API" in description
+        assert "no new accounts" in description
+        assert "local SDK: pip install agentguard47" in description
+        assert len(description) <= 100
+
+
+def test_mcp_readme_discloses_closed_accounts_before_install():
+    """REGRESSION: npm readers must see the local SDK path before npx."""
+    readme = (REPO_ROOT / "mcp-server" / "README.md").read_text(encoding="utf-8")
+    before_install = " ".join(readme.split("npx -y @agentguard47/mcp-server", 1)[0].split())
+    assert "not accepting new accounts" in before_install
+    assert "pip install agentguard47" in before_install
+
+
+def test_mcp_key_description_requires_an_existing_account():
+    """REGRESSION: required-key metadata must disclose account admission."""
+    env_vars = _load_json(MCP_SERVER)["packages"][0]["environmentVariables"]
+    key = next(entry for entry in env_vars if entry["name"] == "AGENTGUARD_API_KEY")
+    assert "existing hosted account" in key["description"]
+    assert "new accounts are closed" in key["description"]
+
+
 def test_mcp_glama_packaging_files_are_present():
     assert ROOT_DOCKERFILE.exists()
     assert ROOT_DOCKERIGNORE.exists()
