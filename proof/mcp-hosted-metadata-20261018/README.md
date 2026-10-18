@@ -27,6 +27,10 @@ The first dependency install failed on a shared npm cache collision. Repeating `
 
 Two independent correctness and house-style/scope reviews found no actionable issue. Both checked the diff before reading the implementation narrative.
 
+The first-commit Codex review found no issue. Copilot and Bugbot reported quota skips. The rendered README was checked in headless Chrome on GitHub; the notice and local SDK command are visible before the server installation. The screenshot is [`readme-preview.png`](readme-preview.png).
+
+Main advanced with #883 during review. Its guard-limit documentation and tests were synchronized without changing this PR's metadata diff. The showwork receipt explicitly acknowledges that imported document; the tracked session gate covers 7 checks and 5 declared metadata artifact requirements. The full-suite counts above precede this main synchronization; final-head focused checks and CI are recorded in the PR.
+
 ## Public readback and unfinished acceptance
 
 [`readback.json`](readback.json) records primary-source npm and MCP Registry readback, official schema validation, and the local archive hash. Public npm remains 0.2.2 without the notice. The official registry has historical 0.2.1 and latest 0.2.2 entries. Neither was modified.
