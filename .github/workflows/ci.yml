@@ -1,9 +1,9 @@
 name: CI
 
-# Owner policy: local runners only. Checks wait while research owns Fluarmn.
-# The bench yields at a saved experiment when three jobs queue or one waits
-# 30 minutes, then resumes research after CI has been quiet for ten minutes.
-# There is no GitHub-hosted fallback.
+# Owner policy (2026-10-19): agent47 is public, so CI runs on GitHub-hosted
+# runners. The self-hosted pc pool had no agent47 runner from 2026-10-16 and
+# every required check queued with nothing to run it. Fork heads still need a
+# trusted repository branch before CI runs.
 
 on:
   push:
@@ -29,13 +29,13 @@ jobs:
     name: ci-required
     if: ${{ always() }}
     needs: [test, lint, mcp, mcp-budget, compat, responses-floor]
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Refuse fork code on local runners
+      - name: Refuse fork code
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
         run: |
-          echo "Fork PRs need a trusted repository branch before local CI can run." >&2
+          echo "Fork PRs need a trusted repository branch before CI can run." >&2
           exit 1
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -50,7 +50,7 @@ jobs:
 
   test:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       PYTHONPATH: sdk
@@ -82,7 +82,7 @@ jobs:
 
   lint:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       PYTHONPATH: sdk
@@ -107,7 +107,7 @@ jobs:
 
   mcp:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -123,7 +123,7 @@ jobs:
 
   mcp-budget:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -150,7 +150,7 @@ jobs:
   compat:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: compat (${{ matrix.lock }})
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       PYTHONPATH: sdk
@@ -174,7 +174,7 @@ jobs:
   responses-floor:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: responses-floor
-    runs-on: [self-hosted, linux, x64, pc]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       PYTHONPATH: sdk
