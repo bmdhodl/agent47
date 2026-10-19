@@ -53,13 +53,16 @@ def test_mcp_discovery_descriptions_disclose_closed_accounts():
         assert "hosted AgentGuard API" in description
         assert "no new accounts" in description
         assert "local SDK: pip install agentguard47" in description
-        assert len(description) <= 100
+        if path == MCP_SERVER:
+            assert len(description) <= 100
 
 
 def test_mcp_readme_discloses_closed_accounts_before_install():
     """REGRESSION: npm readers must see the local SDK path before npx."""
     readme = (REPO_ROOT / "mcp-server" / "README.md").read_text(encoding="utf-8")
-    before_install = " ".join(readme.split("npx -y @agentguard47/mcp-server", 1)[0].split())
+    install_command = "npx -y @agentguard47/mcp-server"
+    assert install_command in readme, "npx install command missing from README"
+    before_install = " ".join(readme.split(install_command, 1)[0].split())
     assert "not accepting new accounts" in before_install
     assert "pip install agentguard47" in before_install
 
@@ -67,7 +70,8 @@ def test_mcp_readme_discloses_closed_accounts_before_install():
 def test_mcp_key_description_requires_an_existing_account():
     """REGRESSION: required-key metadata must disclose account admission."""
     env_vars = _load_json(MCP_SERVER)["packages"][0]["environmentVariables"]
-    key = next(entry for entry in env_vars if entry["name"] == "AGENTGUARD_API_KEY")
+    key = next((entry for entry in env_vars if entry["name"] == "AGENTGUARD_API_KEY"), None)
+    assert key is not None, "AGENTGUARD_API_KEY env var missing from server.json"
     assert "existing hosted account" in key["description"]
     assert "new accounts are closed" in key["description"]
 

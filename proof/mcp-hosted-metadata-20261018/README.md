@@ -40,4 +40,33 @@ Main advanced with #883 during review. Its guard-limit documentation and tests w
 - Dependency audit reports the existing `@modelcontextprotocol/sdk` high and `proxy-addr` critical advisories. They are already tracked in [#878](https://github.com/bmdhodl/agent47/issues/878), with upgrade PRs [#865](https://github.com/bmdhodl/agent47/pull/865) and [#848](https://github.com/bmdhodl/agent47/pull/848). This metadata patch does not remediate them.
 - SDK/runtime code, versions, dashboard, credentials and registry history stay unchanged.
 
-Sign-off: OpenAI | GPT-6.1 Sol | xhigh
+Author sign-off: Codex agent, OpenAI | gpt-6.1-sol | xhigh. This identifies the implementation session, not an independent reviewer.
+
+## Review correction, 2026-10-19
+
+The prior closeout missed two Claude issue comments. The README contract now
+fails explicitly when the `npx` install command is absent. The 100-character
+schema limit applies only to the Registry description. A missing API-key
+declaration now produces a descriptive assertion instead of `StopIteration`.
+
+Three mutation probes against the pre-fix test file reproduced all three
+findings (3 failed). After the correction, those probes plus the eight metadata
+tests passed (11 passed). The probes substitute temporary README/metadata
+fixtures; they do not modify the real package or README.
+
+The earlier session receipt contains three append-only finish events after
+additional claims. These are separate re-verifications, not rewritten history.
+Its artifact-only requirements do not prove live-account or publication
+acceptance. The correction uses a fresh session,
+`qw-20261019-mcp-metadata-review`, with all requirements and claims before one
+gated finish. Prior ledger files remain unchanged.
+
+The rendered README and package metadata are unchanged by this correction.
+Publication and existing-account smoke remain unfinished as described above.
+
+Correction validation: full SDK suite **1687 passed, 3 optional Agents SDK
+skips**; structural **9 passed**; MCP build/tests **11 passed**. CI-tool pins,
+review-readiness guard, Ruff, Bandit, release guard and whitespace checks passed.
+The full suite enforced the existing 80% coverage floor on Python 3.13.2.
+Independent correctness/security and house-style/scope lenses passed. Exact
+pushed-head CI and remote review results belong to the PR timeline.
