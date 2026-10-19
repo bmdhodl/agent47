@@ -59,7 +59,11 @@ additional claims. These are separate re-verifications, not rewritten history.
 Its artifact-only requirements do not prove live-account or publication
 acceptance. The correction uses a fresh session,
 `qw-20261019-mcp-metadata-review`, with all requirements and claims before one
-gated finish. Prior ledger files remain unchanged.
+gated finish. Prior ledger files remain unchanged. The first close attempt was
+refused because SDK validation changed an ignored local `traces.jsonl` file.
+A shell sequence incorrectly continued to commit without the finish event;
+the corrective receipt commit records that generated artifact and includes the
+successful gate. The refusal was not bypassed or represented as a pass.
 
 The rendered README and package metadata are unchanged by this correction.
 Publication and existing-account smoke remain unfinished as described above.
