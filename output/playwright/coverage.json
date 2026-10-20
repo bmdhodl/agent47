@@ -117,7 +117,31 @@
       ],
       "reduced_motion": true,
       "zoom_200_percent": true,
-      "visible_words": 282,
+      "visible_words": 291,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "security",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 307,
       "count_method": "rendered innerText of main/article; navigation excluded when present"
     },
     {

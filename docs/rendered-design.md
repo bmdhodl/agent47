@@ -37,3 +37,8 @@ history. `site/README.md` says the deployed landing page is owned by the retired
 dashboard checkout. That source/deployment ownership remains unresolved; local
 tests do not claim that the public domain changed. The retired app is untouched.
 Release-email content uses the central bmdpat email renderer, outside this repo.
+
+The browser run captures 12 cases at three widths (36 screenshots), including
+the security redirect destination. The install copy button is checked with
+keyboard activation, clipboard success and a blocked-clipboard recovery state.
+The copyable README badge uses the same approved loop identity.

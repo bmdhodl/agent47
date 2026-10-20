@@ -35,3 +35,11 @@ def test_site_asset_copies_cannot_drift():
     root = Path(__file__).resolve().parents[2]
     assert (root / "site/assets/bmd-loop-mark-512.png").read_bytes() == (root / "bmd-loop-mark-512.png").read_bytes()
     assert (root / "site/assets/design-tokens.css").read_text(encoding="utf-8") == (root / "design-tokens.css").read_text(encoding="utf-8")
+
+
+def test_readme_badge_preview_uses_shared_identity():
+    """REGRESSION: the copyable badge still used a separate red brand."""
+    root = Path(__file__).resolve().parents[2]
+    markup = (root / 'site/quickstart.html').read_text(encoding='utf-8')
+    assert 'shields.io/badge/guarded' not in markup
+    assert 'https://bmdpat.com/icons/mark-512.png' in markup

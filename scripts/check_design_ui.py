@@ -82,7 +82,7 @@ def fixtures(folder):
     sys.path.insert(0,str(ROOT/'sdk'))
     from agentguard.reporting import render_incident_report
     shutil.copytree(ROOT/'site',folder,dirs_exist_ok=True)
-    cases=[(p.relative_to(folder).as_posix().replace('/','-').removesuffix('.html'),p.relative_to(folder).as_posix()) for p in folder.rglob('*.html') if p.name!='security.html']
+    cases=[(p.relative_to(folder).as_posix().replace('/','-').removesuffix('.html'),p.relative_to(folder).as_posix()) for p in folder.rglob('*.html')]
     for name,events in [('incident-empty',[]),('incident-error',[{'kind':'event','name':'guard.budget_exceeded','data':{'message':'Fixture limit exceeded'},'error':None}])]:
         path=name+'.html'
         (folder/path).write_text(render_incident_report(events,output_format='html'),encoding='utf-8')
@@ -90,7 +90,22 @@ def fixtures(folder):
     return cases
 
 def extra_checks(page):
-    pass
+    from playwright.sync_api import expect
+    origin='/'.join(page.url.split('/')[:3])
+    page.goto(origin+'/index.html',wait_until='networkidle')
+    assert len(page.locator('main').inner_text().split()) <= 400
+    assert len(page.locator('.hero-copy').inner_text().split()) <= 40
+    page.context.grant_permissions(['clipboard-read','clipboard-write'])
+    copy=page.locator('button.copy').first
+    copy.focus();page.keyboard.press('Enter')
+    expect(copy).to_have_text('Copied')
+    assert page.evaluate('navigator.clipboard.readText()') == 'pip install agentguard47'
+    page.reload(wait_until='networkidle')
+    page.evaluate("() => { navigator.clipboard.writeText=()=>Promise.reject(new Error('fixture blocked clipboard')); }")
+    copy=page.locator('button.copy').first
+    copy.click();expect(copy).to_have_text('Select text')
+    assert page.locator('#install-command').inner_text() == 'pip install agentguard47'
+
 
 if __name__ == "__main__":
     main()
