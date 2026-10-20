@@ -1,0 +1,60 @@
+{
+  "observed_at": "2026-10-18T07:40:50.897548+00:00",
+  "registry": {
+    "source": "https://registry.modelcontextprotocol.io/v0/servers?search=agentguard47",
+    "entries": [
+      {
+        "name": "io.github.bmdhodl/agentguard47",
+        "version": "0.2.1",
+        "description": "MCP server for coding-agent traces, alerts, costs, usage, and budget health.",
+        "meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-04-02T16:27:26.234163Z",
+            "publishedAt": "2026-04-02T16:27:26.234163Z",
+            "updatedAt": "2026-04-02T16:27:26.234163Z",
+            "isLatest": false
+          }
+        }
+      },
+      {
+        "name": "io.github.bmdhodl/agentguard47",
+        "version": "0.2.2",
+        "description": "Read-only MCP server for coding-agent traces, alerts, costs, usage, and budget health.",
+        "meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-05-31T00:08:31.349645Z",
+            "publishedAt": "2026-05-31T00:08:31.349645Z",
+            "updatedAt": "2026-05-31T00:08:31.349645Z",
+            "isLatest": true
+          }
+        }
+      }
+    ]
+  },
+  "npm": {
+    "source": "https://registry.npmjs.org/@agentguard47%2Fmcp-server",
+    "version": "0.2.2",
+    "description": "Read-only MCP server for coding-agent traces, decision events, alerts, costs, usage, and budget health",
+    "readme_has_closed_account_notice": false,
+    "readme_sha256": "b1fab73ecc9c5003e4fe045607752163f5cae9a72fd9c5b5e38b2672f52fd392"
+  },
+  "schema": {
+    "source": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "local_server_json_valid": true,
+    "description_limit": 100
+  },
+  "local_npm_pack": {
+    "published": false,
+    "version": "0.2.2",
+    "readme_notice_before_install": true,
+    "description": "Read the hosted AgentGuard API (no new accounts); use the local SDK: pip install agentguard47.",
+    "tarball_sha256": "de5311854df634450c75f23843c044cd3f4673024b03ab367fba11f5c97e7a99",
+    "entries": 21
+  },
+  "existing_account_smoke": {
+    "performed": false,
+    "reason": "No configured AGENTGUARD_API_KEY in this process; unit-test bearer-auth proof is not live-account proof."
+  }
+}

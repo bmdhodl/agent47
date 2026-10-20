@@ -1,0 +1,6 @@
+{
+  "checked_at_utc": "2026-10-15T16:23:12.6673052+00:00",
+  "matched_native_or_timeout_process_count": 0,
+  "processes": [],
+  "process_scope": "Exact task-native paths or the known timeout fixture argv; read only, no process stopped"
+}

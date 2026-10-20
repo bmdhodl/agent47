@@ -26,7 +26,8 @@ export const tools: ToolDefinition[] = [
     name: "query_traces",
     description:
       "Read-only search for retained AgentGuard trace summaries from the AgentGuard Read API. " +
-      "Requires AGENTGUARD_API_KEY with read access; create keys in the AgentGuard dashboard. " +
+      "Requires AGENTGUARD_API_KEY with read access from an existing hosted account; new accounts are closed. " +
+      "For local runtime guardrails, use the SDK: pip install agentguard47. " +
       "Returns JSON with a traces array, newest traces first when the API supports ordering; " +
       "items include trace_id, service, root_name, event_count, error_count, duration_ms, " +
       "started_at, API key metadata, and total_cost when available. Defaults to a small page, " +

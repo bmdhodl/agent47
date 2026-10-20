@@ -389,6 +389,17 @@ class TraceContext:
             data: Optional data to attach to the event (max 64 KB serialized).
             cost_usd: Optional cost in USD for this event.
         """
+        self._event(name, data, cost_usd)
+
+    def _event(
+        self,
+        name: str,
+        data: Optional[Dict[str, Any]] = None,
+        cost_usd: Optional[float] = None,
+        *,
+        guard_data: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Emit trace data while keeping raw tool outcomes in guard memory only."""
         truncated_name = truncate_name(name)
         safe_data = _sanitize_data(data)
         if self._sampled:
@@ -401,10 +412,11 @@ class TraceContext:
                 name=truncated_name,
                 data=safe_data,
                 cost_usd=cost_usd,
+                guard_data=guard_data,
             )
         else:
             # Guards must still fire even when trace is sampled out
-            self.tracer._check_guards(truncated_name, safe_data)
+            self.tracer._check_guards(truncated_name, guard_data if guard_data is not None else safe_data)
 
 
 class Tracer:
@@ -500,6 +512,7 @@ class Tracer:
         duration_ms: Optional[float] = None,
         error: Optional[Dict[str, Any]] = None,
         cost_usd: Optional[float] = None,
+        guard_data: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Internal: build and emit a trace event.
 
@@ -538,7 +551,7 @@ class Tracer:
 
         # Auto-check guards
         if kind == "event":
-            self._check_guards(name, safe_data)
+            self._check_guards(name, guard_data if guard_data is not None else safe_data)
 
     def _check_guards(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
         """Run all attached guards. Called on every event, even sampled-out ones."""

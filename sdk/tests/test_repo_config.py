@@ -116,6 +116,9 @@ def test_load_repo_config_rejects_invalid_profile() -> None:
         ({"warn_pct": False}, "warn_pct"),
         ({"loop_max": True}, "loop_max"),
         ({"retry_max": False}, "retry_max"),
+        ({"no_progress_max": True}, "no_progress_max"),
+        ({"no_progress_max": 1}, "no_progress_max"),
+        ({"no_progress_max": -2}, "no_progress_max"),
     ],
 )
 def test_load_repo_config_rejects_boolean_numerics(
@@ -129,6 +132,14 @@ def test_load_repo_config_rejects_boolean_numerics(
 
         with pytest.raises(ValueError, match=message):
             load_repo_config(tmpdir)
+
+
+@pytest.mark.parametrize("value", [0, 2, 8])
+def test_load_repo_config_accepts_no_progress_max(value: int) -> None:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with open(os.path.join(tmpdir, ".agentguard.json"), "w", encoding="utf-8") as handle:
+            json.dump({"no_progress_max": value}, handle)
+        assert load_repo_config(tmpdir)[1] == {"no_progress_max": value}
 
 
 def test_load_repo_config_safely_returns_error_string() -> None:

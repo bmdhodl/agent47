@@ -1,0 +1,28 @@
+showwork verify - session hook-failure-wrapper-871-20261015  =>  GREEN  (5/5 checks passed)
+Outcome: VERIFIED. Declared acceptance checks passed; requirement coverage and test adequacy need review.
+Scope: 1 behavior checks, 0 artifact checks. Undeclared requirements: unknown.
+  OK  check for claim: Windows npm wrapper lookup succeeds through an absolute discovered executable; supported-host checks and preservation regressions pass.
+       exit 0
+  OK  check for claim: The actual installed Windows npm host passes the real CLI preview without a settings write.
+       /(?s)exit_code.: 0.*settings_created.: false.*Verified Claude Code 2\.1\.296/ found in proof/hook-failure-20261015/windows-real-preview.txt
+  OK  check for claim: Full post-wrapper SDK run passed 1633 tests with three optional agents dependency skips.
+       /1633 passed, 3 skipped/ found in proof/hook-failure-20261015/windows-wrapper-sdk-suite.txt
+  OK  check for claim: The full SDK run retains dated raw proof; its ignored repo-local test trace is a declared execution byproduct.
+       /1633 passed, 3 skipped/ found in proof/hook-failure-20261015/windows-wrapper-sdk-suite.txt
+  OK  check for claim: Resolve Windows npm host wrapper and preserve supported-host enforcement and installation behavior
+       exit 0
+Observation: current_rerun. Historical finish: absent.
+Check verdict: GREEN. Outcome: VERIFIED. Integrity: unknown.
+Limitations: undeclared requirements: unknown; test adequacy: not assessed; formatting does not change the verdict.
+Recovery: Repair the failed check, then rerun verify. This text does not authorize a merge or a clean close.
+  requirement:absent check:command scope:individual_check result:pass evidence:claim:0 revision:absent
+       exit 0
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:1 revision:absent
+       /(?s)exit_code.: 0.*settings_created.: false.*Verified Claude Code 2\.1\.296/ found in proof/hook-failure-20261015/windows-real-preview.txt
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:2 revision:absent
+       /1633 passed, 3 skipped/ found in proof/hook-failure-20261015/windows-wrapper-sdk-suite.txt
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:3 revision:absent
+       /1633 passed, 3 skipped/ found in proof/hook-failure-20261015/windows-wrapper-sdk-suite.txt
+  requirement:Resolve Windows npm host wrapper and preserve supported-host enforcement and installation behavior check:command scope:behavior result:pass evidence:requirement:wrapper-probe revision:4d0c16f2cb76
+       exit 0
+session.finish recorded: hook-failure-wrapper-871-20261015

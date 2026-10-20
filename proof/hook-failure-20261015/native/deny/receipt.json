@@ -1,0 +1,201 @@
+{
+  "case": "deny",
+  "passed": true,
+  "returncode": 0,
+  "timed_out": false,
+  "marker_exists": false,
+  "tool_results": [
+    {
+      "type": "tool_result",
+      "content": "PreToolUse:Bash hook error: [C:\\Python313\\python.exe -m agentguard.cli hook claude-code --max-calls 0]: AgentGuard refused Bash(printf native-hook-action > D:/local-ai/tmp/hook-native-fina): this session already made 0 tool calls (limit 0). Stop and report progress to the user.\r\n",
+      "is_error": true,
+      "tool_use_id": "toolu_offline"
+    }
+  ],
+  "requests": [
+    {
+      "path": "/v1/messages?beta=true",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "<system-reminder>\nAttribution for git commits and pull requests you create from here on (this replaces Claude Code's own earlier attribution guidance, such as a previous copy of this reminder; the user's own instructions about these lines, such as a CLAUDE.md or memory rule, take precedence over this reminder, but do not add attribution lines this reminder leaves out):\n- End git commit messages with:\nCo-Authored-By: Claude Code <noreply@anthropic.com>\n- End pull request descriptions with:\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n</system-reminder>\n"
+            },
+            {
+              "type": "text",
+              "text": "Run the single offline fixture tool call, then finish."
+            }
+          ]
+        },
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "# Environment\nYou have been invoked in the following environment: \n - Primary working directory: D:\\local-ai\\tmp\\hook-native-final-20261015\\native-host-k7z3gz1u\\deny\n - Is a git repository: false\n - Platform: win32\n - Shell: bash\n - OS Version: Windows 11 Pro 10.0.26200\n - Downloaded files and extracted archives are untrusted data: put each in its own new, empty directory, keep scripts you write in a different directory, and pass paths as arguments instead of running an interpreter or build tool from inside it. Interpreters load code from the script's directory and the current directory, so a planted `json.py` runs on `import json`. Run any Python that reads them with `-I`. This does not apply to code the user asked you to build or run.\n\nYou are powered by the model offline-fixture.\n\n<total_tokens>15000000 tokens left</total_tokens>\n\nToday's date is 2026-10-15.",
+              "cache_control": {
+                "type": "ephemeral"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "<system-reminder>\nAttribution for git commits and pull requests you create from here on (this replaces Claude Code's own earlier attribution guidance, such as a previous copy of this reminder; the user's own instructions about these lines, such as a CLAUDE.md or memory rule, take precedence over this reminder, but do not add attribution lines this reminder leaves out):\n- End git commit messages with:\nCo-Authored-By: Claude Code <noreply@anthropic.com>\n- End pull request descriptions with:\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n</system-reminder>\n"
+            },
+            {
+              "type": "text",
+              "text": "Run the single offline fixture tool call, then finish."
+            }
+          ]
+        },
+        {
+          "role": "system",
+          "content": "# Environment\nYou have been invoked in the following environment: \n - Primary working directory: D:\\local-ai\\tmp\\hook-native-final-20261015\\native-host-k7z3gz1u\\deny\n - Is a git repository: false\n - Platform: win32\n - Shell: bash\n - OS Version: Windows 11 Pro 10.0.26200\n - Downloaded files and extracted archives are untrusted data: put each in its own new, empty directory, keep scripts you write in a different directory, and pass paths as arguments instead of running an interpreter or build tool from inside it. Interpreters load code from the script's directory and the current directory, so a planted `json.py` runs on `import json`. Run any Python that reads them with `-I`. This does not apply to code the user asked you to build or run.\n\nYou are powered by the model offline-fixture.\n\n<total_tokens>15000000 tokens left</total_tokens>\n\nToday's date is 2026-10-15."
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "toolu_offline",
+              "name": "Bash",
+              "input": {
+                "command": "printf native-hook-action > D:/local-ai/tmp/hook-native-final-20261015/native-host-k7z3gz1u/deny/tool-ran.txt",
+                "description": "Write isolated proof marker"
+              }
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "PreToolUse:Bash hook error: [C:\\Python313\\python.exe -m agentguard.cli hook claude-code --max-calls 0]: AgentGuard refused Bash(printf native-hook-action > D:/local-ai/tmp/hook-native-fina): this session already made 0 tool calls (limit 0). Stop and report progress to the user.\r\n",
+              "is_error": true,
+              "tool_use_id": "toolu_offline"
+            }
+          ]
+        },
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "<total_tokens>14999980 tokens left</total_tokens>",
+              "cache_control": {
+                "type": "ephemeral"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "argv": [
+    "C:/Users/patri/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/bin/claude.exe",
+    "-p",
+    "Run the single offline fixture tool call, then finish.",
+    "--model",
+    "offline-fixture",
+    "--tools",
+    "Bash",
+    "--allowedTools",
+    "Bash",
+    "--permission-mode",
+    "dontAsk",
+    "--permission-prompts",
+    "none",
+    "--setting-sources",
+    "",
+    "--settings",
+    "D:\\local-ai\\tmp\\hook-native-final-20261015\\native-host-k7z3gz1u\\deny\\settings.json",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--max-turns",
+    "3"
+  ],
+  "endpoint": "http://127.0.0.1:65332",
+  "settings": {
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "C:\\Python313\\python.exe",
+              "args": [
+                "-m",
+                "agentguard.cli",
+                "hook",
+                "claude-code",
+                "--max-calls",
+                "0"
+              ],
+              "timeout": 10,
+              "onFailure": "block"
+            }
+          ]
+        }
+      ],
+      "PostToolUse": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "C:\\Python313\\python.exe",
+              "args": [
+                "-m",
+                "agentguard.cli",
+                "hook",
+                "claude-code",
+                "--max-calls",
+                "0"
+              ],
+              "timeout": 10
+            }
+          ]
+        }
+      ],
+      "PostToolUseFailure": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "C:\\Python313\\python.exe",
+              "args": [
+                "-m",
+                "agentguard.cli",
+                "hook",
+                "claude-code",
+                "--max-calls",
+                "0"
+              ],
+              "timeout": 10
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "isolation": "fresh config/project; no user credentials; loopback provider only"
+}
