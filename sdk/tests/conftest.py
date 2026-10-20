@@ -333,9 +333,9 @@ def _validate_decision_event(event: Dict[str, Any]) -> Optional[str]:
 
 @pytest.fixture(autouse=True)
 def clean_agentguard_environment(monkeypatch):
-    """Give each test SDK defaults; tests may set explicit values afterward."""
+    """Clear SDK overrides while preserving CI dependency enforcement."""
     for name in list(os.environ):
-        if name.startswith("AGENTGUARD_"):
+        if name.startswith("AGENTGUARD_") and name != "AGENTGUARD_REQUIRE_REAL_DEPS":
             monkeypatch.delenv(name)
 
 
