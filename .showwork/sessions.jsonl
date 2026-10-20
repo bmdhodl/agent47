@@ -78,3 +78,6 @@
 {"event": "session.finish", "session": "receipt-actionlint-852", "ts": "2026-10-09T23:58:25", "status": "ok", "claims_verdict": "GREEN", "prev": "8b6aedd30a57e8f5143c064f068cb47f78e384bdc8bd5a41a9af19c5b13416aa"}
 {"event": "session.start", "session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:14", "agent": "codex", "prev": "4ff1888fe1eab297c0471f8515e07ff9a6943c61a53652d915a21e02b6384c4b"}
 {"event": "session.finish", "session": "receipt-review-coverage-852", "ts": "2026-10-10T00:05:15", "status": "ok", "claims_verdict": "GREEN", "prev": "1943f137a53557d5d2583eb53c6ce01c7ffa512063aa52595d3247218e5a2c0a"}
+{"event": "session.start", "session": "issue-866-guard-boundary", "ts": "2026-10-17T21:50:09", "agent": "codex", "prev": "d850ee94b7cf9430bde24a094ba23d21d15ca4c2887cbc6bed7a459241b3ef3e"}
+{"event": "session.finish", "session": "issue-866-guard-boundary", "ts": "2026-10-17T21:54:05", "status": "ok", "claims_verdict": "YELLOW", "prev": "c9e4018260d67f24ef0d852b7ee155118012cf13e676437b0440f49b726e45bf"}
+{"event": "session.finish", "session": "issue-866-guard-boundary", "ts": "2026-10-17T21:54:43", "status": "ok", "claims_verdict": "GREEN", "prev": "5135635417843aba8f8b10d6cf7a57b84bc1d87e94d3b30073446297ece3b21a"}
