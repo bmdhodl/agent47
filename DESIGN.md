@@ -117,8 +117,10 @@ ring with three square stations. Build at the top is orange; Manage and Deploy
 are neutral. The 2026-10-17 mark replaces PH, bp and node-triad logos. Keep
 product names alongside the shared mark; do not invent a logo for each surface.
 
-- Reuse the existing two masters: the pixel-fitted 16-unit master at 16-63px,
-  and the optically centered 24-unit master at 64px and above. Do not redraw,
+- For vector marks and generated app icons, reuse the existing two masters:
+  the pixel-fitted 16-unit master at 16-63px and the optically centered 24-unit
+  master at 64px and above. Email and raster media may scale the approved 512px
+  tile; check its legibility at the actual display size. Do not redraw,
   distort, crop, rotate or animate the logo geometry. Orange background particles
   remain separate and retain their established motion.
 - Default colors: ring `#e5e5e5`, Build `#FF8200`, other stations `#a3a3a3`,
