@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import os
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -329,6 +330,14 @@ def _validate_decision_event(event: Dict[str, Any]) -> Optional[str]:
 
 
 # ---- Pytest fixtures ----
+
+@pytest.fixture(autouse=True)
+def clean_agentguard_environment(monkeypatch):
+    """Give each test SDK defaults; tests may set explicit values afterward."""
+    for name in list(os.environ):
+        if name.startswith("AGENTGUARD_"):
+            monkeypatch.delenv(name)
+
 
 @pytest.fixture(scope="session")
 def ingest_server():
