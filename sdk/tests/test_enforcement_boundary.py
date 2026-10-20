@@ -55,6 +55,18 @@ def _rows():
     return rows
 
 
+def test_regression_claude_native_retry_wait_boundary():
+    """REGRESSION: native API waits must not look like guarded tool retries."""
+    guide = (ROOT / "docs" / "guides" / "claude-code-hook.md").read_text(encoding="utf-8")
+    boundary = MAP.read_text(encoding="utf-8")
+    for text in (guide, boundary):
+        assert "CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS" in text
+        assert "https://github.com/anthropics/claude-code/releases/tag/v2.1.301" in text
+        assert "cannot interrupt" in text
+        assert "session deadline" in text
+    assert "## Claude Code unattended retry waits" in boundary
+
+
 def test_enforcement_map_classes_and_tests_exist():
     for surface, class_name, test_ref, limitations in _rows():
         assert class_name in CLASSES, surface
