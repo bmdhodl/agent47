@@ -8,8 +8,8 @@ export class AgentGuardClient {
     const apiKey = process.env.AGENTGUARD_API_KEY;
     if (!apiKey) {
       throw new Error(
-        "AGENTGUARD_API_KEY environment variable is required. " +
-        "Generate one at your AgentGuard dashboard under Settings > API Keys."
+        "AGENTGUARD_API_KEY environment variable is required for an existing hosted account. " +
+        "New hosted accounts are closed. For the local SDK, run: pip install agentguard47."
       );
     }
     this.apiKey = apiKey;
