@@ -314,3 +314,13 @@ sdk\tests\test_design_contract.py .............                          [100%]
 
 ============================= 13 passed in 0.17s ==============================
 exit_code:0
+
+
+2026-10-19 shared design v1.2.0 refresh
+- Canonical source parity and python scripts/check_design_contract.py passed.
+- 13 focused contract tests passed.
+- Full SDK suite: 1624 passed, 3 optional agents-package skips; required 80 percent coverage threshold passed.
+- Ruff, CI-tools guard, review-readiness guard, structural checks, Bandit and MCP build/tests passed.
+- Style token values unchanged; refreshed source/version hashes include reading budgets, approved loop-mark rules and the ambient-motion clarification.
+- docs/site-design.md explicitly marks the former red/barcode treatment historical. Current rendered pages require a separate reviewed migration.
+- No SDK, public API or rendered behavior changed. Branch-only review candidate, no main merge or release.

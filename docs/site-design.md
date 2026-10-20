@@ -1,7 +1,10 @@
-# Site design: the handler
+# Site implementation history: the handler
 
-Design rules for agentguard47.com. The landing page follows all of them; the
-other pages share the tokens and components.
+The shared [DESIGN.md](../DESIGN.md) is the current authority for new and
+changed surfaces, including reading budgets, typography, motion and the BMD
+loop mark. The description below records the earlier handler treatment; its
+red palette, barcode identity and type rules are historical, not a competing
+standard. Existing rendered pages still require a separately reviewed migration.
 
 ## Premise
 

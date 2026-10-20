@@ -1,6 +1,6 @@
 ---
 name: BMD
-design_version: "1.0.0"
+design_version: "1.2.0"
 description: One human-first design family for websites, apps, email, reports and media.
 colors:
   background: "#0a0a0a"
@@ -110,6 +110,38 @@ documents describe implementation and medium constraints, not competing rules.
 Versioned copies and generated tokens must match this source. An exported copy
 does not certify the rendered product. Historical releases keep their history.
 
+## Brand mark
+
+Use the approved BMD loop mark everywhere BMD identifies itself: one unbroken
+ring with three square stations. Build at the top is orange; Manage and Deploy
+are neutral. The 2026-10-17 mark replaces PH, bp and node-triad logos. Keep
+product names alongside the shared mark; do not invent a logo for each surface.
+
+- Reuse the existing two masters: the pixel-fitted 16-unit master at 16-63px,
+  and the optically centered 24-unit master at 64px and above. Do not redraw,
+  distort, crop, rotate or animate the logo geometry. Orange background particles
+  remain separate and retain their established motion.
+- Default colors: ring `#e5e5e5`, Build `#FF8200`, other stations `#a3a3a3`,
+  tile `#0a0a0a`. Use the approved paper palette or the dark tile on light
+  surfaces. Keep clear space on each side equal to at least one sixth of the
+  mark's box width (4 units on the standard master). The approved small favicon
+  may fill its 16-unit tile to preserve legibility; don't add padding to it.
+- Website: shared header/home link, favicon/app icons and social preview.
+  Desktop: app chrome, launcher icon, About and startup/recovery screens.
+  Email: one header or footer mark with readable sender text when images fail.
+  Graphics: a consistent brand position outside the information area. Video:
+  the same mark on the poster and a brief end card or unobtrusive signature;
+  never delay the useful demonstration with a logo intro.
+- Decorative marks next to the visible name have empty alternative text. A
+  logo-only home link has a useful accessible name. At actual phone/embed size,
+  keep the mark recognizable and all content clear; don't use a watermark over
+  controls, data or captions.
+- Pin copied assets or generated geometry in implementation tests. The approved
+  512px dark tile is `bmd-loop-mark-512.png`, SHA-256
+  `362d797dd2920fadda6ae91488143780ba6ca2951aefedda3d71061de3a3c1cc`.
+  Existing product implementation notes own asset paths and generators. New
+  and revised media use this mark; published historical assets stay historical.
+
 ## Colors
 
 Websites and apps default to dark neutrals; email defaults to a light surface.
@@ -162,6 +194,42 @@ Navigation names the user's tasks. Preserve useful direct paths and product
 behavior. Secondary actions should not compete with the primary action.
 Do not add dashboards, settings or layers to explain implementation internals.
 
+### Reading budget
+
+Use word budgets, not a text-to-image percentage. The guidance cited below does
+not establish a universal percentage; viewport, page purpose and content change
+what the ratio means. These are BMD editorial defaults, not research thresholds
+or WCAG requirements. Less is welcome; never add copy to reach a target.
+
+| Marketing surface | Default budget |
+|---|---|
+| Homepage or landing page | Aim for 250-400 default-visible words total |
+| Hero, including heading, support and actions | At most 40 words |
+| Supporting section introduction | At most 60 words, one main point |
+| Card supporting copy | At most 20 words |
+
+Lead with the customer benefit: time saved, cost avoided or a useful result.
+Claims about savings or revenue need evidence. Show the working path with a
+useful demo, diagram or comparison when it explains faster than prose. Keep the
+established orange background motion; visuals do not need a percentage quota.
+
+Count authored, default-visible main content, including headings, control labels
+and captions. Exclude repeated site navigation/footer and dynamic data records;
+record expanded content separately. The page total includes its sections and
+cards. Never fit a budget by shrinking text, removing necessary labels, hiding
+essential warnings or baking text into images. Keep paragraphs below 50 words
+where practical and put their point first.
+
+Apps and result flows lead with the outcome, state and next action; keep task
+data and necessary instructions available. Documentation, articles, reports,
+newsletters and legal content do not inherit the marketing-page cap. Use a short
+summary and clear sections. Email must still make sense with images blocked.
+
+When changing a surface, record its type, visible word count and counting method
+in the existing task or PR. Explain any budget overrun by the user's task. Review
+the rendered layout at 375/768/1440 and check comprehension separately: a word
+count cannot prove that a page is clear, useful or visually engaging.
+
 ## Elevation & Depth
 
 Use space and a clearly brighter surface for raised content. Borders distinguish
@@ -188,9 +256,15 @@ first. Details remain available. Tables support actual comparison; cards group
 related content. Avoid repeated summaries of the same fact.
 
 **Motion:** use the short duration tokens for feedback and state transitions.
-Animate only when it explains a change or helps orientation. Honor reduced motion,
-provide controls for persistent movement, and keep content usable with motion off.
-Avoid scroll hijacking, pointer tilt, flashing and automatic repeated entrances.
+Preserve established brand motion, including the website's swirling orange-dot
+background. Ambient animation can express the identity and make a surface feel
+alive. Improve readability and grouping while retaining that visual character.
+Keep moving artwork behind the content, with readable text, clear controls and
+visible boundaries. Honor reduced motion, provide a pause control for persistent
+movement, and keep content usable with motion off. Pause background rendering
+when it is offscreen or the page is hidden. Avoid scroll hijacking, pointer tilt,
+flashing and automatic repeated entrances. Background motion and user-controlled
+product video serve different purposes; retain both where established.
 
 **Video and diagrams:** show an actual task and result. Prefer real product
 footage with concise callouts; animated explanations may clarify invisible steps.
@@ -236,6 +310,10 @@ one real product demo. A human reviewer must be able to identify purpose, state
 and next action without coaching. Record who reviewed what and the actual result.
 Automated checks, agent critique and human review are distinct forms of evidence.
 
+The 2026-10-19 motion clarification preserves the established orange particle
+background alongside the readable layout. A simpler interface keeps its approved
+visual identity; it does not require a static, text-only presentation.
+
 This standard supersedes earlier blanket square-corner, monospace-prose,
 near-invisible-boundary, icon, layout-count and hover-motion bans. It also replaces
 mandatory code-only, silent, fixed-aspect and HDR demo production. Accessibility,
@@ -252,3 +330,12 @@ Research checked 2026-10-15:
 - [Video performance](https://web.dev/learn/performance/video-performance),
   [motion controls](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html),
   and [email video constraints](https://mailchimp.com/help/add-video-to-an-email/).
+
+Reading-budget guidance checked 2026-10-19:
+
+- [W3C succinct text](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o3p05-succinct-text/):
+  short, focused chunks; consider splitting English paragraphs over 50 words.
+  This is supplemental accessibility guidance, not a mandatory WCAG word limit.
+- [Google expressive design research](https://design.google/library/expressive-material-design-google-research):
+  hierarchy, grouping and motion support comprehension; removing needed action
+  labels can harm usability. BMD's page and component budgets are house defaults.

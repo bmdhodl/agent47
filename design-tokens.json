@@ -1,7 +1,7 @@
 {
-  "design_version": "1.0.0",
-  "source_sha256": "1f24c867549a88a41b2fb023220d184d436bbf4795c1536d20827d5ac503537e",
-  "css_sha256": "68c66fcd24e3c4213ef6eeb34936478c353a74c3d735a3db665f68073e71f200",
+  "design_version": "1.2.0",
+  "source_sha256": "1e838ec7b3196554c53e6a9bc89a054ac22b7655f9d0e4e8f7fcd552b5183122",
+  "css_sha256": "993c357c693e9c6cf50a52791c420bf9743e3d6f16bcf6757c3914178e1a37da",
   "tokens": {
     "colors": {
       "background": "#0a0a0a",
