@@ -52,6 +52,83 @@ sharing counters does not make every provider path reserve before dispatch.
 | Session/day/month in Python MCP sibling | Exists only in the unpublished `agentguard-mcp` checkout. Cooperative clients call `record_call`; it does not intercept arbitrary tools or share the SDK store automatically. | [Python MCP README](../agentguard-mcp/README.md) |
 | Generic Codex tools or subscription quota | Unsupported. Claude Code hooks and SDK patches do not intercept generic Codex tool calls or read account quota. | [#866](https://github.com/bmdhodl/agent47/issues/866) |
 
+## Codex loop reports: what local guards can stop (#866)
+
+Checked 2026-10-18 against source with offline Python workers. These checks
+do not reproduce a provider accounting fault or measure subscription usage.
+The reports in [#866](https://github.com/bmdhodl/agent47/issues/866) do not
+establish their cause. That issue remains open for the unsupported Codex path.
+
+`agentguard run` accepts a Python script or module. It calls `init()` and
+runs that code in the same interpreter; it is not an executable or process
+supervisor. `agentguard run codex ...` is not a supported Codex integration.
+The `coding-agent` profile sets loop/retry defaults, but does not install a
+Codex hook or a wall-clock watchdog. `init()` does not add a `TimeoutGuard`.
+
+Run the behavior checks from a checkout of `agentguard47`:
+
+```bash
+python -m pytest sdk/tests/test_local_guard_limits.py sdk/tests/test_background_boundary.py -q
+```
+
+| Offline case | Observed boundary |
+| --- | --- |
+| Repeated `tool.search` events, emitted before simulated dispatch, with `loop_max=3` | Two dispatches finish; the third event raises `LoopDetected`, and the runner exits 1. |
+| `tool.retry` events before simulated dispatch, with `retry_max=2` | Two dispatches finish; the third event raises `RetryLimitExceeded`. |
+| `tool.error` events after simulated dispatch, with `retry_max=2` | Three dispatches finish before the third error event raises. Recording failure cannot undo the failed attempt. |
+| Explicit `TimeoutGuard.start()` and a check after bounded blocking work | The work finishes after the time limit; the next check raises before further work. The context manager also checks only after its body returns normally. |
+| Eight uninstrumented simulated dispatches under `run --profile coding-agent --budget-usd 0.01` | All eight finish and recorded calls stay at zero. A configured guard cannot count work that never reaches it. |
+| Uninstrumented child released after its guarded parent exits | The child completes two simulated dispatches. Parent exit does not prove child cancellation; see the existing detached-child reproduction below. |
+
+All dispatches above are local simulations. No provider requests run. The
+tests assert exit codes and completed work, rather than infer a stop from a
+receipt. No runtime patch was needed for these documented bounds.
+
+`RetryGuard` needs explicit `check()` calls or retry/error trace events.
+Retries hidden inside a client, tool, or remote service do not become guard
+events automatically. Bound retries at each layer you control. OpenAI's
+[API retry guidance](https://developers.openai.com/api/docs/guides/rate-limits)
+calls for limits on attempts and total retry time, and warns that nested
+application/SDK retries can multiply requests. This is API guidance, not a
+description of subscription accounting.
+
+For Codex, the official [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+lists provider HTTP `request_max_retries`, SSE `stream_max_retries`, and
+`stream_idle_timeout_ms`. Their documented scope is request retries and stream
+inactivity, not a total tool-loop, wall-time, or subscription cap. This audit
+does not change those settings or claim host acceptance of an AgentGuard hook.
+
+OpenAI's [usage documentation](https://learn.chatgpt.com/docs/pricing)
+says allowance use depends on the model, context, reasoning, tool use,
+retrieval, and caching, and points users to the usage dashboard or CLI
+`/status` for current limits. A local call count or elapsed timer cannot infer
+hidden provider accounting. AgentGuard neither reads nor enforces that quota.
+Official sources checked 2026-10-18; no claim here confirms the reported
+GPT-6.1 Sol fault or a provider-side fix.
+
+## Claude Code unattended retry waits (#876)
+
+Claude Code's own API retries and usage-limit waits do not reach AgentGuard's
+tool hooks or Python SDK patches. The hook's retry rule counts failed tool
+calls, not provider retries. `RetryGuard` needs checks or retry/error events,
+`TimeoutGuard` needs an elapsed-time check, and `BudgetGuard` needs recorded
+usage. They cannot interrupt a native host wait or infer subscription quota.
+`agentguard run` executes Python; it does not supervise the Claude Code process.
+
+Anthropic's [2.1.301 release](https://github.com/anthropics/claude-code/releases/tag/v2.1.301)
+added `CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS` for unattended retry
+mode (`CLAUDE_CODE_RETRY_WATCHDOG`). Set that native control to your allowed
+usage-limit wait in milliseconds if using the mode. It bounds a request's wait
+for a distant reset, not total retries, session duration or subscription spend.
+A firm session deadline requires a host or external process supervisor that
+enforces it; this hook supplies no process watchdog. See the
+[hook guide](guides/claude-code-hook.md#unattended-retry-waits).
+
+Native guidance checked 2026-10-20 against that release. Existing offline
+`test_local_guard_limits.py` and `test_background_boundary.py` checks verify
+cooperative guard bounds; they do not activate or time a real Claude Code retry
+loop. No runtime or host configuration change is claimed.
+
 ## What a stop receipt proves
 
 `agentguard receipt` formats a recorded guard refusal and a trace-file SHA-256.

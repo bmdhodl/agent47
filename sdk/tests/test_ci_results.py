@@ -15,12 +15,15 @@ JOBS = ("test", "lint", "mcp", "mcp-budget", "compat", "responses-floor")
 @pytest.mark.parametrize("filename", [
     "ci.yml", "actionlint.yml", "docs-consistency.yml", "codeql.yml", "trustabl.yml", "claude-review.yml",
 ])
-def test_REGRESSION_local_ci_never_checks_out_fork_code(filename):
-    # Local PR jobs must exclude fork heads. The always-running summary rejects
-    # a fork before checkout so skipped test groups cannot turn the gate green.
+def test_REGRESSION_pr_ci_never_checks_out_fork_code(filename):
+    # PR jobs must exclude fork heads. The always-running summary rejects a
+    # fork before checkout so skipped test groups cannot turn the gate green.
+    # agent47 is public, so its jobs run on GitHub-hosted runners: the
+    # self-hosted pc pool had no agent47 runner from 2026-10-16, and every
+    # required check queued with nothing to run it.
     workflow = yaml.safe_load((ROOT / ".github/workflows" / filename).read_text(encoding="utf-8"))
     for name, job in workflow["jobs"].items():
-        assert job["runs-on"] == ["self-hosted", "linux", "x64", "pc"]
+        assert job["runs-on"] == "ubuntu-latest"
         if name == "ci-required":
             assert "always()" in job["if"]
             first = job["steps"][0]

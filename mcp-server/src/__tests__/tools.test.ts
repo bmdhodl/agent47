@@ -3,6 +3,15 @@ import assert from "node:assert/strict";
 
 import { tools } from "../tools.js";
 
+test("REGRESSION: query_traces discloses closed hosted accounts", () => {
+  const tool = tools.find((entry) => entry.name === "query_traces");
+  assert.ok(tool);
+  assert.match(tool.description, /existing hosted account/i);
+  assert.match(tool.description, /new accounts are closed/i);
+  assert.match(tool.description, /pip install agentguard47/);
+  assert.doesNotMatch(tool.description, /create keys|generate one/i);
+});
+
 test("query_traces exposes read-only annotations and agent-use guidance", () => {
   const tool = tools.find((entry) => entry.name === "query_traces");
   assert.ok(tool);
