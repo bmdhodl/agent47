@@ -1,0 +1,11 @@
+Command: C:\Python313\python.exe -m pytest sdk/tests/test_architecture.py -q -p no:cacheprovider
+Exit: 0
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\maintenance-boundary-docs-20261015\sdk
+configfile: pyproject.toml
+collected 9 items
+
+sdk\tests\test_architecture.py .........                                 [100%]
+
+============================== 9 passed in 0.52s ==============================

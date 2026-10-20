@@ -1,0 +1,2 @@
+{"case": "allow", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": true}
+{"case": "deny", "passed": true, "returncode": 0, "timed_out": false, "marker_exists": false}

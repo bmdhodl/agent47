@@ -1,0 +1,16 @@
+showwork verify - session repair869-native-20261015  =>  GREEN  (2/2 checks passed)
+Outcome: VERIFIED. Declared acceptance checks passed; requirement coverage and test adequacy need review.
+Scope: 1 behavior checks, 0 artifact checks. Undeclared requirements: unknown.
+  OK  check for claim: Actual Claude Code 2.1.296 passed default-off recovery and opt-in refusal with five real failure hook payloads each
+       /"passed": true/ found in proof/pr869-maintenance-20261015/native/summary.json
+  OK  check for claim: Actual Claude Code allows recovery by default after five failures, and opt-in threshold refuses it
+       exit 0
+Observation: current_rerun. Historical finish: absent.
+Check verdict: GREEN. Outcome: VERIFIED. Integrity: unknown.
+Limitations: undeclared requirements: unknown; test adequacy: not assessed; formatting does not change the verdict.
+Recovery: Repair the failed check, then rerun verify. This text does not authorize a merge or a clean close.
+  requirement:absent check:file_contains scope:individual_check result:pass evidence:claim:0 revision:absent
+       /"passed": true/ found in proof/pr869-maintenance-20261015/native/summary.json
+  requirement:Actual Claude Code allows recovery by default after five failures, and opt-in threshold refuses it check:command scope:behavior result:pass evidence:requirement:native-host-loop revision:4e292c56693e
+       exit 0
+session.finish recorded: repair869-native-20261015

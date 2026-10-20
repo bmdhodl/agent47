@@ -68,6 +68,7 @@ class RepoConfig:
     warn_pct: Optional[float] = None
     loop_max: Optional[int] = None
     retry_max: Optional[int] = None
+    no_progress_max: Optional[int] = None
 
     def validate(self) -> None:
         if self.service is not None:
@@ -107,6 +108,14 @@ class RepoConfig:
                 or self.retry_max < 0
             ):
                 raise ValueError("retry_max must be a non-negative int")
+        if self.no_progress_max is not None:
+            if (
+                isinstance(self.no_progress_max, bool)
+                or not isinstance(self.no_progress_max, int)
+                or self.no_progress_max == 1
+                or self.no_progress_max < 0
+            ):
+                raise ValueError("no_progress_max must be an int >= 2, or 0 to turn it off")
 
     def to_dict(self) -> Dict[str, Any]:
         """Return a dict of only the set (non-None) fields."""

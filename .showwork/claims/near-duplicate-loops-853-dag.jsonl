@@ -1,0 +1,1 @@
+{"session": "near-duplicate-loops-853-dag", "ts": "2026-10-14T14:14:07", "claim": "Module DAG lists loop_guard.py and _loop_match.py", "severity": "RED", "check": {"type": "file_contains", "path": "ops/02-ARCHITECTURE.md", "pattern": "loop_guard.py -> guards.py, _loop_match.py"}, "prev": "4033962a2a79fa1aaaa31e8eae724c82afb90b9fca7c57b1bcd455c4617c0765"}
