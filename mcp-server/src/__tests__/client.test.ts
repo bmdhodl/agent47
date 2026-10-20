@@ -3,11 +3,19 @@ import assert from "node:assert/strict";
 
 import { AgentGuardClient } from "../client.js";
 
-test("client requires AGENTGUARD_API_KEY", () => {
+test("REGRESSION: missing key directs new users to the local SDK", () => {
   const previousKey = process.env.AGENTGUARD_API_KEY;
   delete process.env.AGENTGUARD_API_KEY;
   try {
-    assert.throws(() => new AgentGuardClient(), /AGENTGUARD_API_KEY/);
+    assert.throws(() => new AgentGuardClient(), (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.match(error.message, /AGENTGUARD_API_KEY/);
+      assert.match(error.message, /existing hosted account/i);
+      assert.match(error.message, /new hosted accounts are closed/i);
+      assert.match(error.message, /pip install agentguard47/);
+      assert.doesNotMatch(error.message, /generate one|create keys/i);
+      return true;
+    });
   } finally {
     if (previousKey === undefined) {
       delete process.env.AGENTGUARD_API_KEY;

@@ -112,6 +112,25 @@ Print what it refused:
 agentguard receipt .agentguard/claude-code/trace.jsonl
 ```
 
+## Unattended retry waits
+
+Claude Code's native API retries and usage-limit waits do not fire tool hooks.
+AgentGuard's hook cannot interrupt those waits. Its retry rule counts failed
+tool calls; it does not count the host's provider retries, model tokens, or
+subscription usage. Python `RetryGuard`, `TimeoutGuard`, and `BudgetGuard` do
+not intercept Claude Code's own requests either. `TimeoutGuard` checks elapsed
+time only when called; it is not a process timer installed by this hook.
+
+Anthropic's [Claude Code 2.1.301 release](https://github.com/anthropics/claude-code/releases/tag/v2.1.301)
+added `CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS` for native unattended
+retry mode (`CLAUDE_CODE_RETRY_WATCHDOG`). If you use that mode, set the max
+usage-limit wait to a millisecond budget appropriate for your run. It ends a
+request when the usage limit resets too far away. It is not an overall session
+deadline or a subscription-spend cap. For a firm session deadline, use a host
+or external process supervisor that enforces one; AgentGuard's hook provides
+no such watchdog. Native guidance checked against that release on 2026-10-20;
+no unattended retry mode or host setting was changed in this verification.
+
 ## Limits
 
 - The no-progress rule is off by default. When enabled, it may refuse a
