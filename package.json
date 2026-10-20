@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "test:e2e": "python scripts/check_design_ui.py"
+  }
+}
