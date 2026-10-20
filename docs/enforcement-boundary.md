@@ -106,6 +106,29 @@ hidden provider accounting. AgentGuard neither reads nor enforces that quota.
 Official sources checked 2026-10-18; no claim here confirms the reported
 GPT-6.1 Sol fault or a provider-side fix.
 
+## Claude Code unattended retry waits (#876)
+
+Claude Code's own API retries and usage-limit waits do not reach AgentGuard's
+tool hooks or Python SDK patches. The hook's retry rule counts failed tool
+calls, not provider retries. `RetryGuard` needs checks or retry/error events,
+`TimeoutGuard` needs an elapsed-time check, and `BudgetGuard` needs recorded
+usage. They cannot interrupt a native host wait or infer subscription quota.
+`agentguard run` executes Python; it does not supervise the Claude Code process.
+
+Anthropic's [2.1.301 release](https://github.com/anthropics/claude-code/releases/tag/v2.1.301)
+added `CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS` for unattended retry
+mode (`CLAUDE_CODE_RETRY_WATCHDOG`). Set that native control to your allowed
+usage-limit wait in milliseconds if using the mode. It bounds a request's wait
+for a distant reset, not total retries, session duration or subscription spend.
+A firm session deadline requires a host or external process supervisor that
+enforces it; this hook supplies no process watchdog. See the
+[hook guide](guides/claude-code-hook.md#unattended-retry-waits).
+
+Native guidance checked 2026-10-20 against that release. Existing offline
+`test_local_guard_limits.py` and `test_background_boundary.py` checks verify
+cooperative guard bounds; they do not activate or time a real Claude Code retry
+loop. No runtime or host configuration change is claimed.
+
 ## What a stop receipt proves
 
 `agentguard receipt` formats a recorded guard refusal and a trace-file SHA-256.
