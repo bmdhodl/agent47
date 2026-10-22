@@ -6,6 +6,6 @@ pytest==9.0.3
 pytest-cov==7.1.0
 ruff==0.16.10
 bandit==1.8.6
-zipp==4.1.0
+zipp==4.1.1
 # Required on Windows; unconditional so Linux lock regeneration retains it.
 colorama==0.4.6
