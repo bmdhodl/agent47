@@ -323,3 +323,23 @@ def test_ci_compat_job_fails_instead_of_skipping() -> None:
     assert 'AGENTGUARD_REQUIRE_REAL_DEPS: "1"' in job
     assert "lock: [floor, latest]" in job
     assert "--require-hashes -r .github/requirements/compat-${{ matrix.lock }}.txt" in job
+
+
+def test_codeql_action_steps_move_together() -> None:
+    """REGRESSION (#880, #899): CodeQL fails a run when its sub-actions differ in version.
+
+    Dependabot bumped `codeql-action/analyze` alone, leaving `init` behind, and the
+    analyze job ended in a configuration error. One Dependabot group keeps every
+    `github/codeql-action/*` pin on the same commit.
+    """
+    repo_root = Path(__file__).resolve().parents[2]
+    pins = set()
+    for workflow in (repo_root / ".github" / "workflows").glob("*.yml"):
+        pins.update(re.findall(r"uses: github/codeql-action/[\w-]+@([0-9a-f]{40})", workflow.read_text(encoding="utf-8")))
+    assert len(pins) == 1, f"Every github/codeql-action step must pin one commit; got {sorted(pins)}"
+
+    config = (repo_root / ".github" / "dependabot.yml").read_text(encoding="utf-8")
+    actions_block = config.split('package-ecosystem: "github-actions"', 1)[1].split("  - package-ecosystem:", 1)[0]
+    assert re.search(r'^      codeql-action:\n        patterns:\n          - "github/codeql-action\*"$', actions_block, re.M), (
+        "The github-actions block must group every github/codeql-action sub-action"
+    )
