@@ -1,5 +1,11 @@
 # CLAUDE.md
 
+## Shared human-facing design
+
+Before changing any human-facing surface, read `DESIGN.md` and follow the
+shared-design instructions in `AGENTS.md`, including artifact drift checks
+and separate rendered-surface acceptance.
+
 Claude Code already injects broad tool, style, memory, and session guidance.
 This file is only for AgentGuard-specific repo rules that Claude would not know
 otherwise.
@@ -55,8 +61,8 @@ Always:
 - leave proof for every PR
 - open every PR ready for review; never create a draft
 - do the post-PR review loop: CI, automated review, comment sweep, fixes, rerun
-- address and resolve EVERY comment, every time: reply on the thread, fix or
-  cite the SHA, resolve the GitHub conversation, and repeat until none remain
+- address and resolve every comment: reply on the thread, fix or cite the
+  SHA, resolve the GitHub conversation, and repeat until none remain
 
 ## What Claude Should Optimize For Here
 

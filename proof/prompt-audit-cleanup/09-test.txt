@@ -1,0 +1,182 @@
+$ python -m pytest sdk/tests/ -q --cov=agentguard --cov-report=term-missing:skip-covered --cov-fail-under=80
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: E:\C-Offload\github\agent47\.claude\worktrees\prompt-audit-checkup-38e6e6\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 1594 items
+
+sdk\tests\test_activation_evidence.py ..............................     [  1%]
+sdk\tests\test_architecture.py .........                                 [  2%]
+sdk\tests\test_async_patches.py ..........                               [  3%]
+sdk\tests\test_atracing.py ........................                      [  4%]
+sdk\tests\test_budget_preflight.py .......................               [  6%]
+sdk\tests\test_ci_guardrails.py .............                            [  6%]
+sdk\tests\test_ci_results.py ........................................... [  9%]
+......                                                                   [  9%]
+sdk\tests\test_ci_tools_requirements_guard.py ...........                [ 10%]
+sdk\tests\test_claude_review_filter.py ........                          [ 11%]
+sdk\tests\test_cli_report.py ..........                                  [ 11%]
+sdk\tests\test_concurrency.py ........                                   [ 12%]
+sdk\tests\test_cost.py .......................                           [ 13%]
+sdk\tests\test_cost_guardrail.py ...................................     [ 15%]
+sdk\tests\test_coverage_gaps.py ........................................ [ 18%]
+......                                                                   [ 18%]
+sdk\tests\test_crewai_integration.py ..........                          [ 19%]
+sdk\tests\test_dashboard_handoff_docs.py ..                              [ 19%]
+sdk\tests\test_decision_trace.py .............                           [ 20%]
+sdk\tests\test_demo.py ...                                               [ 20%]
+sdk\tests\test_doctor.py ..........                                      [ 21%]
+sdk\tests\test_documentation.py .....................                    [ 22%]
+sdk\tests\test_dx.py .............................................       [ 25%]
+sdk\tests\test_e2e_pipeline.py ....                                      [ 25%]
+sdk\tests\test_enforcement_boundary.py ....................              [ 26%]
+sdk\tests\test_evaluation.py ...............................             [ 28%]
+sdk\tests\test_example_starters.py ...........                           [ 29%]
+sdk\tests\test_export.py ...........                                     [ 30%]
+sdk\tests\test_exports.py ...............                                [ 31%]
+sdk\tests\test_first_run.py ...........................                  [ 32%]
+sdk\tests\test_free_local_clients.py ................................... [ 34%]
+....................................                                     [ 37%]
+sdk\tests\test_goal.py ..............................                    [ 39%]
+sdk\tests\test_guard_persistence.py ..........                           [ 39%]
+sdk\tests\test_guards.py ............................................... [ 42%]
+.................................................                        [ 45%]
+sdk\tests\test_hardening.py ...........................................  [ 48%]
+sdk\tests\test_hooks.py ......................                           [ 49%]
+sdk\tests\test_hosted_ingest_contract.py ....                            [ 50%]
+sdk\tests\test_http_sink.py .......................                      [ 51%]
+sdk\tests\test_init.py ................................................. [ 54%]
+.                                                                        [ 54%]
+sdk\tests\test_instrument.py ............                                [ 55%]
+sdk\tests\test_instrument_patch.py ..........                            [ 56%]
+sdk\tests\test_instrument_stream.py .....................                [ 57%]
+sdk\tests\test_integration_cost_guardrail.py .                           [ 57%]
+sdk\tests\test_integration_dashboard_script.py ...........               [ 58%]
+sdk\tests\test_langchain_integration.py ........................         [ 59%]
+sdk\tests\test_langgraph_integration.py ..............                   [ 60%]
+sdk\tests\test_live_cost_reconcile.py ................                   [ 61%]
+sdk\tests\test_local_cost_docs.py ..                                     [ 61%]
+sdk\tests\test_local_first_template.py ......                            [ 61%]
+sdk\tests\test_mcp_registry_metadata.py .....                            [ 62%]
+sdk\tests\test_ollama_usage.py ..................                        [ 63%]
+sdk\tests\test_otel_sink.py ............                                 [ 64%]
+sdk\tests\test_precision_cost.py ............................            [ 65%]
+sdk\tests\test_price_table.py .......................................... [ 68%]
+............                                                             [ 69%]
+sdk\tests\test_production.py ................                            [ 70%]
+sdk\tests\test_pypi_readme_sync.py ......                                [ 70%]
+sdk\tests\test_quickstart.py ..............                              [ 71%]
+sdk\tests\test_real_dispatch.py ........................................ [ 74%]
+.sss                                                                     [ 74%]
+sdk\tests\test_real_dispatch_capabilities.py ..                          [ 74%]
+sdk\tests\test_receipt.py ............                                   [ 75%]
+sdk\tests\test_release_audit.py ........................................ [ 77%]
+..............                                                           [ 78%]
+sdk\tests\test_release_discussion_category.py .....                      [ 78%]
+sdk\tests\test_release_email.py ......................                   [ 80%]
+sdk\tests\test_release_example.py .............                          [ 81%]
+sdk\tests\test_repo_config.py ............                               [ 81%]
+sdk\tests\test_report_duration.py ...................................... [ 84%]
+...                                                                      [ 84%]
+sdk\tests\test_reporting.py ........                                     [ 84%]
+sdk\tests\test_reservation_contract.py .....................             [ 86%]
+sdk\tests\test_reservation_path.py ........................              [ 87%]
+sdk\tests\test_reservation_stream.py ................................... [ 89%]
+..                                                                       [ 90%]
+sdk\tests\test_review_readiness_guard.py ..............                  [ 90%]
+sdk\tests\test_richard_task_budget_scenarios.py ...                      [ 91%]
+sdk\tests\test_runner.py ..............                                  [ 92%]
+sdk\tests\test_savings.py ...............                                [ 92%]
+sdk\tests\test_schemas.py ........................                       [ 94%]
+sdk\tests\test_sdk_preflight.py ...........                              [ 95%]
+sdk\tests\test_sdk_release_guard.py ..................                   [ 96%]
+sdk\tests\test_skillpack.py ...........                                  [ 96%]
+sdk\tests\test_smoke.py .                                                [ 97%]
+sdk\tests\test_sticky_agent_proof.py ..                                  [ 97%]
+sdk\tests\test_touchpoints.py .......                                    [ 97%]
+sdk\tests\test_tracing.py ..............                                 [ 98%]
+sdk\tests\test_v1_coverage.py .............                              [ 99%]
+sdk\tests\test_x402.py ...........                                       [100%]Running teardown with pytest sessionfinish...
+
+
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.13.2-final-0 _______________
+
+Name                                          Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------------
+sdk\agentguard\__init__.py                       57      1    98%   79
+sdk\agentguard\_billing.py                       62     14    77%   101-130
+sdk\agentguard\_budget_validation.py             48      4    92%   19, 21, 23, 29
+sdk\agentguard\_instrument_stream_budget.py      40      2    95%   21, 84
+sdk\agentguard\_reservation_contract.py         178      4    98%   48, 283, 315, 329
+sdk\agentguard\_reservation_path.py             196      7    96%   118-120, 302, 314, 451-452
+sdk\agentguard\_reservation_stream.py            82      5    94%   39, 208-213
+sdk\agentguard\cli.py                           230      6    97%   30-31, 161, 504-505, 512
+sdk\agentguard\cost.py                           46      1    98%   58
+sdk\agentguard\decision.py                      214     30    86%   91, 97, 100-101, 110, 112, 116-117, 125, 149, 156-161, 167, 169, 181, 184, 203, 205, 209, 234, 540-542, 549, 551, 773, 780
+sdk\agentguard\demo.py                          121      6    95%   135-136, 180, 197, 222, 231
+sdk\agentguard\doctor.py                        135     11    92%   57, 121, 159, 220-227, 231
+sdk\agentguard\escalation.py                    225     23    90%   51, 57, 69, 81, 94, 105, 152, 154, 161-164, 166, 168, 181, 186, 244, 307, 362, 390-392, 398, 411, 414
+sdk\agentguard\feedback.py                       27      2    93%   37, 76
+sdk\agentguard\goal.py                          189     13    93%   143, 146-148, 150-152, 218, 287, 335, 339, 341, 349
+sdk\agentguard\guards.py                        341      4    99%   170, 238, 346, 350
+sdk\agentguard\hooks.py                         139      2    99%   60, 192
+sdk\agentguard\instrument.py                    360     43    88%   198, 204, 223-237, 261-266, 269, 280-284, 322, 394-395, 409-410, 414, 435, 501-508, 525, 579, 622, 630, 659, 716, 737
+sdk\agentguard\instrument_stream.py             489     67    86%   42, 45, 60, 62, 81, 88, 94, 103, 105-106, 161, 205-216, 249-255, 263-269, 273, 289, 303, 349, 357-359, 381, 407-408, 434-436, 443-452, 565-570, 655
+sdk\agentguard\integrations\langchain.py        233     50    79%   16-18, 70-72, 84, 95-99, 114-115, 186-190, 204, 236-237, 252-253, 262-266, 294-298, 319, 326-331, 338-342, 355-356, 373-374
+sdk\agentguard\precision_cost.py                250     36    86%   120-154, 167, 171, 174-180, 191-199, 318, 356, 400-402, 510, 581, 629, 657
+sdk\agentguard\price_table.py                   108      5    95%   57, 59, 61, 334, 337
+sdk\agentguard\quickstart.py                    172      2    99%   71, 218
+sdk\agentguard\receipt.py                       101      2    98%   60-61
+sdk\agentguard\repo_config.py                    81      6    93%   19, 39-40, 57, 73, 84
+sdk\agentguard\reporting.py                     129      7    95%   21, 46, 131, 253-258
+sdk\agentguard\runner.py                         44      6    86%   47-49, 54-56
+sdk\agentguard\savings.py                       140      7    95%   29, 91, 138, 154, 158, 172, 180
+sdk\agentguard\schemas.py                        96     11    89%   75, 78, 102, 109, 194-200
+sdk\agentguard\setup.py                         107      6    94%   264-267, 276-277
+sdk\agentguard\sinks\_transport.py               48     13    73%   18, 27, 37, 40-43, 48-49, 54-55, 67-69
+sdk\agentguard\sinks\http.py                    193     15    92%   67, 101, 160-161, 356, 366-372, 379-390
+sdk\agentguard\sinks\otel.py                     98      8    92%   38-39, 64, 152-153, 179, 198-199
+sdk\agentguard\skillpack.py                     128      4    97%   64-66, 83
+sdk\agentguard\state.py                         136     31    77%   114-125, 134-137, 139, 161-169, 208-209, 211, 220, 235-240, 266-271, 284, 299
+sdk\agentguard\tracing.py                       228     12    95%   104, 142, 164-170, 237-238, 264, 271
+sdk\agentguard\usage.py                         106      7    93%   15, 17, 19, 61, 131, 133, 135
+sdk\agentguard\x402.py                          120      4    97%   77, 82, 153, 160
+---------------------------------------------------------------------------
+TOTAL                                          6357    477    92%
+
+12 files skipped due to complete coverage.
+Required test coverage of 80% reached. Total coverage: 92.50%
+Test 
+tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n
+ext_model_call[False] was skipped. Reason: 
+('E:\\C-Offload\\github\\agent47\\.claude\\worktrees\\prompt-audit-checkup-38e6
+e6\\sdk\\tests\\test_real_dispatch.py', 46, "Skipped: could not import 
+'agents': No module named 'agents'")
+Test 
+tests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n
+ext_model_call[True] was skipped. Reason: 
+('E:\\C-Offload\\github\\agent47\\.claude\\worktrees\\prompt-audit-checkup-38e6
+e6\\sdk\\tests\\test_real_dispatch.py', 46, "Skipped: could not import 
+'agents': No module named 'agents'")
+Test 
+tests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies was
+skipped. Reason: 
+('E:\\C-Offload\\github\\agent47\\.claude\\worktrees\\prompt-audit-checkup-38e6
+e6\\sdk\\tests\\test_real_dispatch.py', 46, "Skipped: could not import 
+'agents': No module named 'agents'")
+================= 1591 passed, 3 skipped in 123.33s (0:02:03) =================
+Exception ignored in atexit callback <function cleanup_numbered_dir at 0x000001D348DC98A0>:
+Traceback (most recent call last):
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 374, in cleanup_numbered_dir
+    cleanup_dead_symlinks(root)
+  File "C:\Users\patri\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py", line 359, in cleanup_dead_symlinks
+    if not left_dir.resolve().exists():
+  File "C:\Python313\Lib\pathlib\_abc.py", line 450, in exists
+    self.stat(follow_symlinks=follow_symlinks)
+  File "C:\Python313\Lib\pathlib\_local.py", line 515, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\patri\\AppData\\Local\\Temp\\pytest-root\\pytest-of-patri\\pytest-current'
+exit=0

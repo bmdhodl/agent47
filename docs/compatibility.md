@@ -1,11 +1,11 @@
 # Compatibility
 
-Checked 2026-10-03 against AgentGuard `2.0.0` candidate source. A row is **Supported**
+Checked 2026-10-03 against AgentGuard `2.0.0` source. A row is **Supported**
 only when a CI job runs the real package, not a stand-in. Enforcement
 semantics for each path are in the [enforcement boundary](enforcement-boundary.md).
 
-The candidate retires Python 3.9/3.10 and moves the SDK to a major release.
-Published 1.4.0 and the dated 1.4.1 candidate receipts below keep their original
+2.0.0 retires Python 3.9/3.10 and moves the SDK to a major release.
+1.4.0 and the dated 1.4.1 candidate receipts below keep their original
 support and artifact identity. See [migration](guides/python-311-migration.md).
 
 ## Matrix
@@ -18,8 +18,8 @@ support and artifact identity. See [migration](guides/python-311-migration.md).
 | LangChain callbacks (`[langchain]`) | Supported, Python 3.11+ | langchain-core 1.6.3 | `compat` job: a real `CallbackManager` propagates `BudgetExceeded`. |
 | LangGraph nodes (`[langgraph]`) | Supported, Python 3.11+ | langgraph 1.2.11, langgraph-checkpoint 4.2.0, langgraph-sdk 0.4.4 | `compat` job: a real `StateGraph` stops at the node budget. |
 | OpenTelemetry sink (`[otel]`) | Supported | opentelemetry-api 1.44.0, opentelemetry-sdk 1.44.0 | `compat` job: spans and events reach a real in-memory exporter. |
-| OpenAI Responses API, sync, async, and streamed (`patch_openai`, `patch_openai_async`) | Supported in the 2.0.0 candidate | openai 1.66.3 | `responses-floor` and `compat (latest)` run the real client over a mocked transport: `create`, `stream()`, `with_streaming_response`, provider errors, and a store-backed `max_output_tokens` hold. The floor job rejects skips and also runs the explicit free-client tests. [CI proof](../proof/responses-floor-ci-736/README.md); [additional installed Windows proof](../proof/responses-floor-20261002/README.md). Chat's separate 1.40.0 floor remains unchanged. |
-| OpenAI Agents SDK (`Runner.run`, `Runner.run_streamed`) | Supported in the 2.0.0 candidate | openai-agents 0.0.3 | `responses-floor` and `compat (latest)`: a real `Runner` with a looping function tool stops before the fourth model call, streamed and not, and `max_turns` still applies. The floor job rejects skips. [CI proof](../proof/responses-floor-ci-736/README.md); installed-wheel spot-check covers 0.0.3 and 0.22.3 with an explicit mocked model provider. |
+| OpenAI Responses API, sync, async, and streamed (`patch_openai`, `patch_openai_async`) | Supported from 2.0.0 | openai 1.66.3 | `responses-floor` and `compat (latest)` run the real client over a mocked transport: `create`, `stream()`, `with_streaming_response`, provider errors, and a store-backed `max_output_tokens` hold. The floor job rejects skips and also runs the explicit free-client tests. [CI proof](../proof/responses-floor-ci-736/README.md); [additional installed Windows proof](../proof/responses-floor-20261002/README.md). Chat's separate 1.40.0 floor remains unchanged. |
+| OpenAI Agents SDK (`Runner.run`, `Runner.run_streamed`) | Supported from 2.0.0 | openai-agents 0.0.3 | `responses-floor` and `compat (latest)`: a real `Runner` with a looping function tool stops before the fourth model call, streamed and not, and `max_turns` still applies. The floor job rejects skips. [CI proof](../proof/responses-floor-ci-736/README.md); installed-wheel spot-check covers 0.0.3 and 0.22.3 with an explicit mocked model provider. |
 | Async and streamed Chat Completions and Anthropic calls | Supported | openai 1.40.0, anthropic 0.34.0 | `compat` runs eight real-client cases in `test_real_dispatch.py` at floor/current: sync streams, async create/streams and Anthropic `messages.stream`. Final usage bills once, completed holds settle and the second call is refused before HTTP dispatch. [Installed candidate-wheel proof](../proof/real-chat-stream-20261002/README.md) covers both pairs on Windows/Python 3.11. |
 | CrewAI (`[crewai]`) | Experimental | crewai 1.15.21 | Not in the `compat` job. The extra resolves ChromaDB with unresolved advisories; see [#644](https://github.com/bmdhodl/agent47/issues/644) and the [CrewAI guide](integrations/crewai.md). |
 

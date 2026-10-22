@@ -36,14 +36,14 @@ it does not count toward those budgets. They are soft caps: a crossing request
 can finish above the limit. See [Gateway budgets](https://vercel.com/docs/ai-gateway/observability-and-spend/budgets)
 and [BYOK](https://vercel.com/docs/ai-gateway/authentication-and-byok/byok).
 
-**AgentGuard's local-cost limit:** published 1.4.0's `patch_openai()` classifies an
+**AgentGuard's local-cost limit:** by default, `patch_openai()` classifies an
 OpenAI-compatible local endpoint as OpenAI. Unknown model prices use a
 conservative estimate, so a dollar cap can stop a free local run and reports
 can show phantom cost. A loopback URL alone does not prove a call is free.
-The unpublished 2.0.0 candidate adds
+AgentGuard 2.0.0 adds
 [`free_local_clients=[client]`](../guides/free-local-clients.md) for exact clients
 you declare free. It keeps paid-client estimates and token/call limits. On
-published 1.4.0, token/call caps do not remove phantom cost from patched traces.
+1.4.0, token/call caps do not remove phantom cost from patched traces.
 
 Use the existing manual helper for calls you know are free. This offline
 example represents one completed OpenAI-compatible response. It does not run
@@ -80,7 +80,7 @@ not reserve concurrent requests. Do not manually count the same call that a
 patch already counts. The explicit event writes JSONL; `consume_billable`
 does not emit trace events by itself. For native `/api/chat` and `/api/generate`
 responses, see the [native Ollama guide](../cost-guardrails.md#native-ollama-responses),
-including the unpublished 2.0.0 candidate's token-field support.
+including the token-field support added in 2.0.0.
 
 ## When Vercel AI Gateway is the right choice
 

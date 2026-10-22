@@ -2,6 +2,8 @@ import re
 from fnmatch import fnmatchcase
 from pathlib import Path
 
+from agentguard.price_table import DEFAULT_PRICE_TABLE
+
 
 def test_ci_tools_compiler_matches_dependabot_interpreter() -> None:
     """REGRESSION: pip-compile's header takes precedence over .python-version."""
@@ -300,6 +302,20 @@ def test_compat_floor_lock_matches_sdk_extra_floors() -> None:
         assert compiled.get(name.lower()) == version, f"compat-floor.txt is stale for {name}=={version}"
 
 
+def test_ops_cadence_reads_the_price_table_date() -> None:
+    """REGRESSION: #792 moved the price date to price_table.py and the cost.py sed went blank."""
+    repo_root = Path(__file__).resolve().parents[2]
+    text = (repo_root / ".github" / "workflows" / "ops-cadence.yml").read_text(encoding="utf-8")
+    found = re.search(r"^ +price_date=\$\(sed -n 's/(.+)/\\1/p' (\S+)\)$", text, re.M)
+    assert found is not None, "ops-cadence.yml must read the price date with one sed substitution"
+    sed_pattern, source = found.groups()
+    # sed BRE writes groups as \( \); the rest of this pattern reads the same in Python.
+    pattern = re.compile(sed_pattern.replace(r"\(", "(").replace(r"\)", ")"))
+    lines = (repo_root / source).read_text(encoding="utf-8").splitlines()
+    dates = [m.group(1) for m in map(pattern.fullmatch, lines) if m]
+    assert dates == [DEFAULT_PRICE_TABLE["last_updated"]], f"the sed would print {dates} from {source}"
+
+
 def test_ci_compat_job_fails_instead_of_skipping() -> None:
     repo_root = Path(__file__).resolve().parents[2]
     text = (repo_root / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
@@ -307,3 +323,23 @@ def test_ci_compat_job_fails_instead_of_skipping() -> None:
     assert 'AGENTGUARD_REQUIRE_REAL_DEPS: "1"' in job
     assert "lock: [floor, latest]" in job
     assert "--require-hashes -r .github/requirements/compat-${{ matrix.lock }}.txt" in job
+
+
+def test_codeql_action_steps_move_together() -> None:
+    """REGRESSION (#880, #899): CodeQL fails a run when its sub-actions differ in version.
+
+    Dependabot bumped `codeql-action/analyze` alone, leaving `init` behind, and the
+    analyze job ended in a configuration error. One Dependabot group keeps every
+    `github/codeql-action/*` pin on the same commit.
+    """
+    repo_root = Path(__file__).resolve().parents[2]
+    pins = set()
+    for workflow in (repo_root / ".github" / "workflows").glob("*.yml"):
+        pins.update(re.findall(r"uses: github/codeql-action/[\w-]+@([0-9a-f]{40})", workflow.read_text(encoding="utf-8")))
+    assert len(pins) == 1, f"Every github/codeql-action step must pin one commit; got {sorted(pins)}"
+
+    config = (repo_root / ".github" / "dependabot.yml").read_text(encoding="utf-8")
+    actions_block = config.split('package-ecosystem: "github-actions"', 1)[1].split("  - package-ecosystem:", 1)[0]
+    assert re.search(r'^      codeql-action:\n        patterns:\n          - "github/codeql-action\*"$', actions_block, re.M), (
+        "The github-actions block must group every github/codeql-action sub-action"
+    )

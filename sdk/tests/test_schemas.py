@@ -115,6 +115,13 @@ class TestRepoConfig:
         with pytest.raises(ValueError, match="warn_pct"):
             RepoConfig(warn_pct=2.0).validate()
 
+    def test_no_progress_max(self) -> None:
+        RepoConfig(no_progress_max=0).validate()
+        RepoConfig(no_progress_max=5).validate()
+        for bad in (1, -1, True):
+            with pytest.raises(ValueError, match="no_progress_max"):
+                RepoConfig(no_progress_max=bad).validate()
+
 
 class TestProfileDefaults:
     def test_valid(self) -> None:

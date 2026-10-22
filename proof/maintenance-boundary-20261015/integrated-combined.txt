@@ -1,0 +1,22 @@
+Command: C:\Python313\python.exe -m pytest sdk/tests/test_loop_maintenance_regressions.py sdk/tests/test_hook_install_failure.py sdk/tests/test_guards.py sdk/tests/test_hooks.py sdk/tests/test_instrument.py sdk/tests/test_tracing.py sdk/tests/test_receipt.py sdk/tests/test_dx.py sdk/tests/test_architecture.py sdk/tests/test_documentation.py sdk/tests/test_enforcement_boundary.py -q --tb=short -p no:cacheprovider --basetemp C:\Users\patri\AppData\Local\Temp\agentguard-combined-check-7_ext_eg\pytest
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\maintenance-boundary-docs-20261015\sdk
+configfile: pyproject.toml
+collected 317 items
+
+sdk\tests\test_loop_maintenance_regressions.py ...............           [  4%]
+sdk\tests\test_hook_install_failure.py ......................            [ 11%]
+sdk\tests\test_guards.py ............................................... [ 26%]
+...........................................................              [ 45%]
+sdk\tests\test_hooks.py ................................                 [ 55%]
+sdk\tests\test_instrument.py ............                                [ 58%]
+sdk\tests\test_tracing.py ..............                                 [ 63%]
+sdk\tests\test_receipt.py .....................                          [ 70%]
+sdk\tests\test_dx.py .............................................       [ 84%]
+sdk\tests\test_architecture.py .........                                 [ 87%]
+sdk\tests\test_documentation.py .....................                    [ 93%]
+sdk\tests\test_enforcement_boundary.py ....................              [100%]
+
+============================ 317 passed in 20.65s =============================
+Exit code: 0

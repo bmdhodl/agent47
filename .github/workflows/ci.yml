@@ -1,5 +1,10 @@
 name: CI
 
+# Owner policy (2026-10-19): agent47 is public, so CI runs on GitHub-hosted
+# runners. The self-hosted pc pool had no agent47 runner from 2026-10-16 and
+# every required check queued with nothing to run it. Fork heads still need a
+# trusted repository branch before CI runs.
+
 on:
   push:
     branches: [main]
@@ -27,6 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
+      - name: Refuse fork code
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "Fork PRs need a trusted repository branch before CI can run." >&2
+          exit 1
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
@@ -39,6 +49,7 @@ jobs:
         run: python scripts/check_ci_results.py
 
   test:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -63,13 +74,14 @@ jobs:
             --cov-fail-under=80
       - name: Upload coverage artifact
         if: matrix.python-version == '3.12'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage-report
           path: coverage.xml
           retention-days: 7
 
   lint:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -94,11 +106,12 @@ jobs:
         run: bandit -r sdk/agentguard/ -s B101,B110,B112,B311 -q
 
   mcp:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "20"
           cache: "npm"
@@ -109,6 +122,7 @@ jobs:
         run: npm --prefix mcp-server test
 
   mcp-budget:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -134,6 +148,7 @@ jobs:
   # refreshes compat-latest.txt weekly, so an upstream break shows up as a red
   # PR instead of silently disabling a guard.
   compat:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: compat (${{ matrix.lock }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -157,6 +172,7 @@ jobs:
 
   # Keep the Chat Completions 1.40.0 floor; Responses first appears at 1.66.3.
   responses-floor:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: responses-floor
     runs-on: ubuntu-latest
     timeout-minutes: 15

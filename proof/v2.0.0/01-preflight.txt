@@ -1,0 +1,24 @@
+$ python scripts/sdk_preflight.py
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: E:\C-Offload\github\agent47\.claude\worktrees\prompt-audit-checkup-38e6e6\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 6 items
+
+sdk\tests\test_pypi_readme_sync.py::test_generated_pypi_readme_includes_current_release_notes PASSED [ 16%]
+sdk\tests\test_pypi_readme_sync.py::test_generated_pypi_readme_keeps_core_product_copy PASSED [ 33%]
+sdk\tests\test_pypi_readme_sync.py::test_generated_pypi_readme_links_docs_and_examples PASSED [ 50%]
+sdk\tests\test_pypi_readme_sync.py::test_candidate_first_use_guides_do_not_need_an_unpublished_tag PASSED [ 66%]
+sdk\tests\test_pypi_readme_sync.py::test_committed_pypi_readme_is_in_sync PASSED [ 83%]
+sdk\tests\test_pypi_readme_sync.py::test_generated_pypi_readme_does_not_embed_unreleased_contract PASSED [100%]Running teardown with pytest sessionfinish...
+
+
+============================== 6 passed in 0.12s ==============================
+==> pypi-readme-sync: README/changelog metadata must stay in sync with the generated PyPI description
+C:\Python313\python.exe scripts/generate_pypi_readme.py --check
+==> pypi-readme-test: the committed PyPI README snapshot should still match the generator output
+C:\Python313\python.exe -m pytest sdk/tests/test_pypi_readme_sync.py -v
+exit=0

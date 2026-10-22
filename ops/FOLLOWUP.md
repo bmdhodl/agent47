@@ -12,9 +12,11 @@
   modelled: OpenAI Fast mode (2x), the 10% data-residency and FedRAMP uplift,
   Batch/Flex discounts, and Gemini audio and image rates. GPT-5.6 Sol is at a
   promotional price "at least through November 21, 2026"; recheck it then.
-- 2.0.0 adds `agentguard --version` (owner-approved 2026-09-25). After the
-  tag, confirm the `published-wheel.yml` matrix and PyPI attestations and add
-  `proof/v2.0.0/PUBLICATION.md`.
+- OpenAI and Google price rows were checked on 2026-07-15. The `publish.yml`
+  price-table age gate fails from 2026-10-14, so recheck those rows before
+  the next tag.
+- Done 2026-10-06: 2.0.0 published. The `published-wheel.yml` matrix and PyPI
+  attestations pass; see `proof/v2.0.0/PUBLICATION.md`.
 - The v1.4.0 GitHub Release has an unsigned PNG asset
   (`agentguard-1.4.0.png`), which keeps Scorecard Signed-Releases at 0. Host
   release images outside release assets from now on.
@@ -30,6 +32,11 @@
   (and names them) before the cap. Add new bulk generated paths to its `OMIT`
   list. Workflow changes on a PR do not apply until merge
   (`pull_request_target` uses the base workflow).
+- #853's no-progress hook rule reads `tool_response` / `error` from
+  `PostToolUse` and `PostToolUseFailure`. Its tests use the Grep/Glob
+  zero-match shape (`numFiles: 0`, `filenames: []`). Record one live
+  Claude Code session that refuses a reworded empty-Grep loop, and adjust
+  `_loop_match.is_empty_result` if the real payload differs.
 - Keep the official MCP Registry readback in the weekly MCP train. It currently
   serves `0.2.2` as `isLatest: true`; the older `0.2.1` result is expected
   historical metadata.
@@ -49,6 +56,12 @@
   `PyJWT` plus `cryptography`; adding it would require an explicit optional
   dependency and key-management contract. Revisit after spec adoption or an
   interoperability PR, not as a speculative core feature.
+- Prompt-audit leftovers (2026-10-04): `QA_REPORT.md`, `WORK_PLAN.md` and
+  `RESEARCH.md` still sit in the repo root against the `CLAUDE.md` rule; move
+  them to `docs/archive/root-reports/` if they are kept.
+- `ops-cadence.yml` has been disabled since 2026-06-11. Its price check reads
+  `"last_updated"` from `sdk/agentguard/price_table.py` again (fixed
+  2026-10-05). Turning the workflow back on is the owner's call.
 - Done 2026-08-15: built the current SDK candidate wheel and installed it into
   an isolated venv. `python -m agentguard`, `doctor`, `demo`, raw
   `quickstart --write`, generated-starter execution, `report`, and `badge` all

@@ -83,10 +83,6 @@
       ]
     }
     </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
     <link rel="stylesheet" href="assets/site.css" />
     <script>
       (function() {
@@ -119,12 +115,13 @@
         }
       })();
     </script>
+    <link rel="icon" href="assets/bmd-loop-mark-512.png">
   </head>
   <body data-ag-metric="page-navigation">
     <header class="top">
       <div class="wrap">
         <a class="brand" href="/" aria-label="AgentGuard47 home">
-          <svg viewBox="0 0 34 18" aria-hidden="true"><rect x="0" width="2" height="18"/><rect x="4" width="1" height="18"/><rect x="7" width="3" height="18"/><rect x="12" width="1" height="18"/><rect x="15" width="2" height="18"/><rect x="19" width="1" height="18"/><rect x="22" width="3" height="18"/><rect x="27" width="1" height="18"/><rect x="30" width="2" height="18"/><rect x="33" width="1" height="18"/></svg>
+          <img class="bmd-mark" src="assets/bmd-loop-mark-512.png" width="48" height="48" alt="">
           <span>AgentGuard<b>47</b></span>
         </a>
         <nav class="nav" aria-label="Primary">
@@ -143,15 +140,10 @@
       <section class="hero" id="top">
         <div class="wrap">
           <div class="hero-copy">
-            <p class="kicker">Case file &middot; the runaway agent</p>
-            <h1>The agent gets three tries. <em>Not thirty.</em></h1>
-            <p class="lead">
-              AgentGuard sits inside your agent's process and watches its calls.
-              When one crosses your limit on spend, repeats, retries, or time,
-              the next call raises instead of going out. Then it hands you a
-              receipt.
-            </p>
-            <p class="plain">Python. MIT. No dependencies, no account, no proxy.</p>
+
+            <h1>Set a limit. <em>Stop the next call.</em></h1>
+            <p class="lead">Limit spend, repeated calls, retries, and time. Get a local receipt when a guard trips.</p>
+            <p class="plain">Python. MIT. No account.</p>
             <div class="install">
               <code id="install-command">pip install agentguard47</code>
               <button class="copy" type="button" data-ag-metric="install-intent-candidate" onclick="copyText('install-command', this)">Copy</button>
@@ -161,7 +153,6 @@
               <a href="/quickstart.html">Quickstart</a>
               <a href="https://github.com/bmdhodl/agent47">Source</a>
             </div>
-            <p class="fine">Viewing this page is not an install. <a href="/activation.html">How we count use</a>.</p>
           </div>
 
           <figure class="evidence" aria-label="Receipt printed by agentguard receipt for the offline demo: three calls stopped">
@@ -188,7 +179,7 @@ guard stops                            3
               <span class="crosshair" aria-hidden="true"></span>
               <span class="stamp" aria-hidden="true">Stopped</span>
             </div>
-            <figcaption>Real output of <code>agentguard receipt</code> on the offline demo, agentguard47 1.4.1. Your hash will differ.</figcaption>
+            <figcaption>Offline demo receipt, agentguard47 1.4.1. Your trace hash will differ.</figcaption>
           </figure>
         </div>
       </section>
@@ -198,35 +189,31 @@ guard stops                            3
           <div class="side">
             <div class="num">01</div>
             <h2>Four ways an agent runs away</h2>
-            <p>Each one raises its own exception. Catch it, log it, or let the run end.</p>
+            <p>Four limits. Four clear exceptions.</p>
           </div>
           <div class="files">
             <article class="dossier">
               <header><span>File 01</span><span>Spend</span></header>
               <code>BudgetExceeded</code>
               <p>Dollars, tokens, or calls pass the cap you set.</p>
-              <p class="seen">Demo: call 9 hit $1.08 against a $1.00 cap.</p>
               <span class="mark">Stopped</span>
             </article>
             <article class="dossier">
               <header><span>File 02</span><span>Loop</span></header>
               <code>LoopDetected</code>
               <p>The same tool, called with the same arguments, again.</p>
-              <p class="seen">Demo: search(&quot;python asyncio&quot;) three times.</p>
               <span class="mark">Stopped</span>
             </article>
             <article class="dossier">
               <header><span>File 03</span><span>Retry</span></header>
               <code>RetryLimitExceeded</code>
               <p>A failing tool, retried with no ceiling.</p>
-              <p class="seen">Demo: fetch_docs, three tries against a limit of two.</p>
               <span class="mark">Stopped</span>
             </article>
             <article class="dossier">
               <header><span>File 04</span><span>Time</span></header>
               <code>TimeoutExceeded</code>
               <p>A run that outlives the window you gave it.</p>
-              <p class="seen">Not in the demo. Set <code>TimeoutGuard(max_seconds=120)</code>.</p>
             </article>
           </div>
         </div>
@@ -241,18 +228,18 @@ guard stops                            3
           </div>
           <ol class="ways">
             <li>
-              <h3>Claude Code <span class="ver">2.0.0 candidate</span></h3>
-              <p>A hook that refuses the third identical tool call in a row and a call that already failed twice.</p>
+              <h3>Claude Code <span class="ver">new in 2.0.0</span></h3>
+              <p>Refuse repeated or repeatedly failed tool calls.</p>
               <div class="cmd"><code id="way-hook">agentguard hook claude-code --install --write</code><button class="copy" type="button" onclick="copyText('way-hook', this)">Copy</button></div>
             </li>
             <li>
-              <h3>Any Python script <span class="ver">2.0.0 candidate</span></h3>
-              <p>Runs your script unchanged with the OpenAI and Anthropic clients patched.</p>
+              <h3>Any Python script <span class="ver">new in 2.0.0</span></h3>
+              <p>Patch OpenAI and Anthropic clients as your script runs.</p>
               <div class="cmd"><code id="way-run">agentguard run --budget-usd 5 agent.py</code><button class="copy" type="button" onclick="copyText('way-run', this)">Copy</button></div>
             </li>
             <li>
               <h3>Your own code</h3>
-              <p>Patch the client once. Call 21 is refused before it is sent.</p>
+              <p>Patch your client with a call limit.</p>
 <pre class="term"><span class="r">patch_openai(Tracer(), budget_guard=BudgetGuard(max_calls=20))</span></pre>
             </li>
           </ol>
@@ -264,7 +251,7 @@ guard stops                            3
           <div class="side">
             <div class="num">03</div>
             <h2>Evidence</h2>
-            <p>The demo, <code>agentguard run</code>, and the hook write every stop to a JSONL file on your disk. In your own code, pass a <code>JsonlFileSink</code>.</p>
+            <p>Run the offline demo. Inspect each stopped call.</p>
           </div>
           <div id="local-proof">
 <pre class="term"><span class="p">$</span> pip install agentguard47
@@ -272,12 +259,7 @@ guard stops                            3
 <span class="p">$</span> agentguard demo       <span class="c"># trips the spend, loop, and retry limits</span>
 <span class="r">  stopped on call 9: cost $1.08 exceeded $1.00</span>
 <span class="p">$</span> agentguard receipt agentguard_demo_traces.jsonl --format markdown</pre>
-            <p class="after">
-              The receipt lists each stop, the cost the trace recorded, and the
-              trace's SHA-256 drawn as a barcode. Paste it into the pull request
-              that fixed the loop. The hash identifies the file; it is not a
-              signature. <code>agentguard receipt</code> is in the unpublished 2.0.0 candidate.
-            </p>
+            <p class="after">The receipt lists stops, recorded cost, and the trace hash. The hash identifies the file; it is not a signature.</p>
           </div>
         </div>
       </section>
@@ -291,11 +273,11 @@ guard stops                            3
           </div>
           <div>
             <ol class="rules">
-              <li><b>It only sees what you point it at.</b> Patched OpenAI and Anthropic clients, LangChain, LangGraph, the Claude Code hook, or your own <code>check()</code> calls. Nothing else on the machine.</li>
-              <li><b>It is not an invoice cap.</b> A dollar limit counts usage after each call returns, so the call that crosses the line has already been sent. With a shared local store, sync OpenAI calls and streams reserve before they go out.</li>
-              <li><b>It is not a sandbox.</b> Code that skips the SDK is not counted, and anyone with the repo can remove the hook.</li>
-              <li><b>It does not phone home.</b> No telemetry. Traces stay on your machine unless you set a dashboard key or configure an export sink, such as OpenTelemetry.</li>
-              <li><b>Hosted tools run where it cannot see.</b> The 2.0.0 candidate patches the OpenAI Responses API and Agents SDK, but a web search or code interpreter call inside one response is not stopped, and background responses are not counted.</li>
+              <li><b>Only connected code is checked.</b> Other processes and calls outside the SDK are not covered.</li>
+              <li><b>Budgets are not invoice caps.</b> Usage arrives after a call. Shared local stores reserve supported synchronous OpenAI calls before sending.</li>
+              <li><b>Not a sandbox.</b> Code can bypass the SDK or remove a hook.</li>
+              <li><b>Local by default.</b> Export requires a configured sink or dashboard key.</li>
+              <li><b>Hosted tools and background responses are not stopped.</b> Check the full boundary before use.</li>
             </ol>
             <div class="more">
               <a href="/enforcement.html">Every tested limit</a>
@@ -310,7 +292,7 @@ guard stops                            3
           <div>
             <div class="num">05</div>
             <h2>For teams</h2>
-            <p>The hosted dashboard keeps incidents, sends alerts, and can stop a run remotely. The SDK does not need it.</p>
+            <p>Optional hosted history and alerts. The SDK works locally.</p>
           </div>
           <div class="links">
             <a class="btn red" href="https://app.agentguard47.com/sign-up">Start hosted trial</a>

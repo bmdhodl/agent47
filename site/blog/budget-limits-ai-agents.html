@@ -9,7 +9,7 @@
     <meta name="author" content="AgentGuard Team" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://agentguard47.com/blog/budget-limits-ai-agents.html" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+
 
     <!-- Open Graph -->
     <meta property="og:type" content="article" />
@@ -54,10 +54,6 @@
       "keywords": ["ai agent budget limits", "openai budget enforcement", "agent cost control python"]
     }
     </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
     <link rel="stylesheet" href="../assets/site.css" />
     <script>
       (function() {
@@ -90,11 +86,12 @@
         }
       })();
     </script>
+    <link rel="icon" href="../assets/bmd-loop-mark-512.png">
   </head>
   <body class="post">
     <div class="wrap">
       <nav class="nav">
-        <a href="/">AgentGuard</a>
+        <a class="brand" href="/"><img class="bmd-mark" src="../assets/bmd-loop-mark-512.png" width="48" height="48" alt="">AgentGuard47</a>
         <span class="sep">/</span>
         <a href="https://bmdpat.com/blog">Blog</a>
         <span class="sep">/</span>
@@ -180,7 +177,7 @@ guard = <span class="fn">BudgetGuard</span>(
 
         <h2>Pattern 3: Auto-Tracking with patch_openai</h2>
 
-        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function intercepts patched Chat Completions calls, extracts token usage from the response, and feeds it to the BudgetGuard. From 2.0.0 candidate it patches the Responses API too.</p>
+        <p>Manual <code>consume()</code> calls work but require discipline. Miss one call and your budget tracking is wrong. The <code>patch_openai</code> function intercepts patched Chat Completions calls, extracts token usage from the response, and feeds it to the BudgetGuard. From 2.0.0 it patches the Responses API too.</p>
 
 <pre class="code"><span class="kw">from</span> agentguard <span class="kw">import</span> Tracer, BudgetGuard, patch_openai
 
@@ -188,7 +185,7 @@ guard = <span class="fn">BudgetGuard</span>(
 budget = <span class="fn">BudgetGuard</span>(max_cost_usd=<span class="str">5.00</span>, warn_at_pct=<span class="str">0.8</span>)
 tracer = <span class="fn">Tracer</span>(service=<span class="str">"my-agent"</span>, guards=[budget])
 
-<span class="comment"># Patch OpenAI Chat Completions (and, from 2.0.0 candidate, the Responses API)</span>
+<span class="comment"># Patch OpenAI Chat Completions (and, from 2.0.0, the Responses API)</span>
 <span class="fn">patch_openai</span>(tracer, budget_guard=budget)
 
 <span class="comment"># Use OpenAI normally. No manual consume() calls needed.</span>

@@ -23,7 +23,7 @@ Planning authority is [GitHub #729](https://github.com/bmdhodl/agent47/issues/72
 gh issue list --repo bmdhodl/agent47 --state open --label roadmap:2026-weekly --limit 50
 ```
 
-Take the first open ticket in the newest ordered sequence table in #729 (for example "Adoption sequence updated September 24"). Only if #729 has no such table, take the lowest open `AG-` issue. Skip any ticket that #729, the ticket, or a linked issue marks held, conditional, or blocked on an unmet gate; AG-06 (#735) stays held per #767. Read that issue before coding.
+Take the first open ticket in the newest ordered sequence table in #729 (for example "Adoption sequence updated September 24"). Only if #729 has no such table, take the lowest open `AG-` issue. Skip any ticket that #729, the ticket, or a linked issue marks held, conditional, or blocked on an unmet gate. Read that issue before coding.
 
 If the next ticket's acceptance needs outside people (testers, posts, replies) that an agent cannot produce, ship only the repo-side slice the ticket names and tell the owner what is still theirs. Also read `memory/`, `ops/00-NORTHSTAR.md`, `ops/03-ROADMAP_NOW_NEXT_LATER.md`, `ops/04-DEFINITION_OF_DONE.md`, and `ops/FOLLOWUP.md`.
 

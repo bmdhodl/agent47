@@ -1,0 +1,3 @@
+$ python proof/v2.0.0/browser_check.py
+12 of 12 page checks passed
+exit=0

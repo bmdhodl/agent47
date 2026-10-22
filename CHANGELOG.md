@@ -1,9 +1,36 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- `agentguard hook claude-code` can catch reworded loops (#853). Matching
+  ignores JSON key order but preserves case and whitespace in argument values.
+  An opt-in rule refuses a tool whose last N results came back empty or with
+  the same error, whatever the input. Set `no_progress_max` to at least `2`
+  in `.agentguard.json`; the default `0` keeps the rule off.
+  A quiet success such as `mkdir` is progress, and any other result in between
+  starts the count over. Refusal receipts retain rule, tool and counts while
+  omitting raw argument keys and values from messages and persisted input.
+- `LoopGuard(normalize=True)` canonicalizes containers without changing
+  case or whitespace in values. `LoopGuard(max_no_progress=N)` with the new
+  `record_result()` method, or `tool.result` / `tool.error` trace events from
+  `trace_tool`, raises `LoopDetected` when one tool comes back empty or with
+  the same error N times in a row. Decorated tools pass raw results and
+  invocation arguments to guards in memory without adding raw inputs to trace
+  events. Both options are off by default.
+
+### Fixed
+- Text and Markdown receipts show recorded costs and structured dollar-budget
+  stops to four decimal places. A recorded cost of `$0.0069` no longer appears
+  as `$0.01`. JSON cost values keep their existing precision. (#852)
+- `agentguard run --help`, the README and the free-local-clients guide now say
+  that `run` prices every patched call at paid rates, including a local model
+  behind an OpenAI-compatible URL. They send local-model users to
+  `free_local_clients` with a `BudgetGuard` token or call cap (#851).
+
 ## 2.0.0
 
-Unreleased candidate. This replaces the planned 1.4.1 candidate; 1.4.0 remains
-the latest published release.
+This major release replaces the planned 1.4.1 patch.
 
 ### Breaking
 - The SDK requires Python 3.11 or newer. Python 3.9 and 3.10 are retired.

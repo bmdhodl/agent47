@@ -1,0 +1,19 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0
+rootdir: D:\local-ai\agentguard-worktrees\pr869-maintenance-20261015\sdk
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 45 items
+
+sdk\tests\test_dx.py .......................F
+
+================================== FAILURES ===================================
+__________ TestBetterErrorMessages.test_loop_detected_includes_args ___________
+sdk\tests\test_dx.py:173: in test_loop_detected_includes_args
+    self.assertIn("docs", msg)
+E   AssertionError: 'docs' not found in 'Loop detected: search repeated 2 times with the same arguments in last 2 calls. Consider varying the arguments or breaking the loop.'
+=========================== short test summary info ===========================
+FAILED sdk\tests\test_dx.py::TestBetterErrorMessages::test_loop_detected_includes_args
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+======================== 1 failed, 23 passed in 0.72s =========================

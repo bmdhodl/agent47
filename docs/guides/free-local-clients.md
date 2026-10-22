@@ -1,7 +1,7 @@
 # Explicit free local clients
 
-This option is in the unpublished AgentGuard **2.0.0 candidate**. Published
-1.4.0 needs the [manual-accounting example](../../examples/local_cost_manual.py).
+This option is new in AgentGuard **2.0.0**. On
+1.4.0, use the [manual-accounting example](../../examples/local_cost_manual.py).
 
 Create the OpenAI-compatible client first, then declare that exact instance
 free when you activate the patch:
@@ -25,6 +25,13 @@ with the same base URL or model. This is your explicit billing declaration;
 it does not detect localhost, verify provider billing, or account for electricity
 and hardware. A dollar-only cap cannot bound a free loop. A shared guard still
 refuses any next call when its recorded budget is already exhausted.
+
+`agentguard run` has no way to declare a client free. It prices every patched
+call at paid rates, so its dollar budget can stop a local model on cost it
+never had. To guard a local model, put the example above in the script: name
+the client in `free_local_clients` and cap tokens or calls with `BudgetGuard`.
+Run that script with `python`, not `agentguard run`. Under `run`, the patch is
+already active, and a second patch call keeps the first declarations.
 
 Use `patch_openai_async(..., free_local_clients=[async_client])` for
 `AsyncOpenAI` clients. Each patch accepts only its matching client kind.

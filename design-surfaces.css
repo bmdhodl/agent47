@@ -1,0 +1,35 @@
+/* Shared BMD presentation. Data and status semantics stay with each renderer. */
+:root { color-scheme: dark; --bg:var(--bmd-colors-background); --fg:var(--bmd-colors-text-primary);
+ --ink:var(--bmd-colors-text-primary); --dim:var(--bmd-colors-text-secondary);
+ --muted:var(--bmd-colors-text-secondary); --line:var(--bmd-colors-border);
+ --card:var(--bmd-colors-surface); --panel:var(--bmd-colors-surface);
+ --red:var(--bmd-colors-danger); --green:var(--bmd-colors-success);
+ --amber:var(--bmd-colors-warning); --accent:var(--bmd-colors-accent);
+ --blue:var(--bmd-colors-accent); --verified:var(--bmd-colors-success);
+ --claimed:var(--bmd-colors-warning); --failed:var(--bmd-colors-danger);
+ --unknown:var(--bmd-colors-text-secondary); }
+* { box-sizing:border-box; }
+body { font-family:var(--bmd-typography-body-font-family); font-size: 16px; line-height:1.6;
+ background:var(--bg); color:var(--fg); overflow-wrap:anywhere; }
+.bmd-mark { width:48px; height:48px; object-fit:contain; padding:6px; flex:none; vertical-align:middle; }
+.bmd-identity { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+.bmd-identity h1 { margin:0; }
+h1,h2,h3 { font-family:var(--bmd-typography-body-font-family); line-height:1.3; }
+h1 { font-size:clamp(1.75rem,4vw,2.25rem); }
+h2 { font-size:1.5rem; margin-top:32px; }
+h3 { font-size:1.125rem; }
+p { max-width:66ch; }
+a { color:var(--accent); text-underline-offset:3px; }
+button,summary { font-family:inherit; min-height:44px; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+code,pre,.mono { font-family:var(--bmd-typography-mono-font-family); }
+pre { overflow:auto; max-width:100%; font-size:14px; }
+.wrap { max-width:1200px; margin-inline:auto; }
+.card,.stat,.panel,.metric { border-radius:8px; }
+.sub,.note,.panel,.badge,.tag,small,footer { font-size:14px; }
+.stat .l,th { font-size:14px; text-transform:none; letter-spacing:normal; }
+.scroll,.table-wrap { overflow:auto; max-width:100%; }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+@media(max-width:600px) { body { padding:16px; } .bmd-identity { gap:8px; } .card,.panel { padding:16px; } }
+
+table,td { font-size:14px; }
