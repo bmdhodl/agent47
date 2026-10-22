@@ -4,6 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      # CodeQL fails a run when its sub-actions differ in version, so init,
+      # analyze and upload-sarif move together (#880, #899).
+      codeql-action:
+        patterns:
+          - "github/codeql-action*"
   - package-ecosystem: "pip"
     directory: "/sdk"
     schedule:
