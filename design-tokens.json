@@ -1,0 +1,110 @@
+{
+  "design_version": "1.2.0",
+  "source_sha256": "3f92c372c69c7bbfa9f70b77b6dc4e75508cc3b5025e43a020456d0469cf5455",
+  "css_sha256": "de820f75148a76dc2e8e6776633d6513a79fdcdea8bd78b995ea06d19053891b",
+  "tokens": {
+    "colors": {
+      "background": "#0a0a0a",
+      "surface": "#161616",
+      "raised": "#222222",
+      "border": "#525252",
+      "control-border": "#737373",
+      "text-primary": "#f5f5f5",
+      "text-secondary": "#b8b8b8",
+      "accent": "#FF8200",
+      "on-accent": "#111827",
+      "success": "#34d399",
+      "warning": "#fbbf24",
+      "danger": "#f87171",
+      "light-background": "#ffffff",
+      "light-surface": "#f8fafc",
+      "light-border": "#cbd5e1",
+      "light-control-border": "#64748b",
+      "light-text": "#111827",
+      "light-secondary": "#475569",
+      "light-link": "#B45309"
+    },
+    "typography": {
+      "display": {
+        "fontFamily": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        "fontSize": "3rem",
+        "fontWeight": "600",
+        "lineHeight": "1.15"
+      },
+      "h1": {
+        "fontFamily": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        "fontSize": "2rem",
+        "fontWeight": "600",
+        "lineHeight": "1.2"
+      },
+      "h2": {
+        "fontFamily": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        "fontSize": "1.5rem",
+        "fontWeight": "600",
+        "lineHeight": "1.3"
+      },
+      "h3": {
+        "fontFamily": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        "fontSize": "1.125rem",
+        "fontWeight": "600",
+        "lineHeight": "1.4"
+      },
+      "body": {
+        "fontFamily": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        "fontSize": "1rem",
+        "fontWeight": "400",
+        "lineHeight": "1.6"
+      },
+      "secondary": {
+        "fontFamily": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        "fontSize": "0.875rem",
+        "fontWeight": "400",
+        "lineHeight": "1.5"
+      },
+      "mono": {
+        "fontFamily": "'JetBrains Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace",
+        "fontSize": "0.875rem",
+        "fontWeight": "400",
+        "lineHeight": "1.6"
+      }
+    },
+    "spacing": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px",
+      "3xl": "64px"
+    },
+    "rounded": {
+      "none": "0px",
+      "sm": "4px",
+      "md": "8px"
+    },
+    "motion": {
+      "feedback": "150ms",
+      "transition": "220ms",
+      "easing": "cubic-bezier(0.2, 0, 0, 1)"
+    },
+    "components": {
+      "button-primary": {
+        "backgroundColor": "#FF8200",
+        "textColor": "#111827",
+        "rounded": "4px",
+        "padding": "12px 20px"
+      },
+      "panel": {
+        "backgroundColor": "#161616",
+        "textColor": "#f5f5f5",
+        "rounded": "8px",
+        "padding": "24px"
+      },
+      "email": {
+        "backgroundColor": "#ffffff",
+        "textColor": "#111827",
+        "padding": "24px"
+      }
+    }
+  }
+}

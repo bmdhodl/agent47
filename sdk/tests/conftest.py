@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import os
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -329,6 +330,14 @@ def _validate_decision_event(event: Dict[str, Any]) -> Optional[str]:
 
 
 # ---- Pytest fixtures ----
+
+@pytest.fixture(autouse=True)
+def clean_agentguard_environment(monkeypatch):
+    """Clear SDK overrides while preserving CI dependency enforcement."""
+    for name in list(os.environ):
+        if name.startswith("AGENTGUARD_") and name != "AGENTGUARD_REQUIRE_REAL_DEPS":
+            monkeypatch.delenv(name)
+
 
 @pytest.fixture(scope="session")
 def ingest_server():
