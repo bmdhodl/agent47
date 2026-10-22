@@ -5,6 +5,8 @@ import html
 import json
 from typing import Any, Dict, List
 
+from agentguard._design import CSS as DESIGN_CSS
+from agentguard._design import LOGO
 from agentguard.evaluation import _extract_cost, _load_events, summarize_trace
 from agentguard.savings import summarize_savings
 
@@ -302,16 +304,21 @@ def _render_incident_html(incident: Dict[str, Any]) -> str:
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AgentGuard Incident Report</title>
     <style>
       body {{ font-family: Arial, sans-serif; margin: 32px; color: #1e1b16; }}
       .card {{ border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-bottom: 20px; }}
       code {{ background: #f6f6f6; padding: 2px 4px; }}
       pre {{ background: #111827; color: #f9fafb; padding: 16px; border-radius: 10px; overflow-x: auto; }}
+      {design_css}
+      body {{ max-width:1200px; margin:0 auto; padding:24px; }}
+      .card {{ background:var(--card); border-color:var(--line); border-radius:8px; }}
+      code,pre {{ background:var(--card); color:var(--fg); }}
     </style>
   </head>
   <body>
-    <h1>AgentGuard Incident Report</h1>
+    <header class="bmd-identity">{logo}<h1>AgentGuard Incident Report</h1></header>
     <div class="card">
       <p><strong>Status:</strong> {status}</p>
       <p><strong>Severity:</strong> {severity}</p>
@@ -344,6 +351,8 @@ tracer = Tracer(sink=HttpSink(url="https://app.agentguard47.com/api/ingest", api
   </body>
 </html>
 """.format(
+        design_css=DESIGN_CSS,
+        logo=LOGO,
         status=html.escape(incident["status"]),
         severity=html.escape(incident["severity"]),
         primary_cause=html.escape(incident["primary_cause"]),

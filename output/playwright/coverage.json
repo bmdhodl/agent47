@@ -1,0 +1,293 @@
+{
+  "surfaces": [
+    {
+      "surface": "activation",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 149,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "compare",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 328,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "enforcement",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 380,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "index",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 399,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "quickstart",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 291,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "security",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 307,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "trust",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 307,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "blog-ai-agent-cost-overruns",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 868,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "blog-budget-limits-ai-agents",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 879,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "blog-langchain-cost-tracking",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 1267,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "incident-empty",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 123,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    },
+    {
+      "surface": "incident-error",
+      "checks": [
+        {
+          "width": 375,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "logo_loaded": true
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "logo_loaded": true
+        }
+      ],
+      "reduced_motion": true,
+      "zoom_200_percent": true,
+      "visible_words": 133,
+      "count_method": "rendered innerText of main/article; navigation excluded when present"
+    }
+  ],
+  "human_review": "separate; not established by automated checks"
+}

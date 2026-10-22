@@ -1,19 +1,20 @@
-/* AgentGuard47 site styles. Black suit, white shirt, red tie. */
+@import url("design-tokens.css");
+/* AgentGuard layout; shared BMD tokens own color and typography. */
 :root {
-  --suit: #0b0b0c;
-  --suit-2: #141315;
-  --shirt: #f2eee6;
-  --paper: #ebe5d8;
-  --ink: #1a1718;
-  --tie: #b3121d;
-  --tie-bright: #ea4049;
-  --steel: #a39c95;
-  --steel-dark: #8a827c;
-  --rule: rgba(242, 238, 230, 0.14);
-  --rule-strong: rgba(242, 238, 230, 0.32);
-  --cond: "Archivo", "Arial Narrow", sans-serif;
-  --sans: "IBM Plex Sans", "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+  --suit: var(--bmd-colors-background);
+  --suit-2: var(--bmd-colors-surface);
+  --shirt: var(--bmd-colors-text-primary);
+  --paper: var(--bmd-colors-light-surface);
+  --ink: var(--bmd-colors-light-text);
+  --tie: var(--bmd-colors-accent);
+  --tie-bright: var(--bmd-colors-accent);
+  --steel: var(--bmd-colors-text-secondary);
+  --steel-dark: var(--bmd-colors-text-secondary);
+  --rule: var(--bmd-colors-border);
+  --rule-strong: var(--bmd-colors-control-border);
+  --cond: var(--bmd-typography-body-font-family);
+  --sans: var(--bmd-typography-body-font-family);
+  --mono: var(--bmd-typography-mono-font-family);
 }
 
 * { box-sizing: border-box; }
@@ -247,3 +248,29 @@ footer.site a:hover { color: var(--shirt); }
   .ways li, .rules li { padding-left: 38px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .stamp { animation: none; } }
+
+/* Human-first presentation across the existing page layouts. */
+.bmd-mark{width:48px;height:48px;padding:6px;object-fit:contain;flex:none}
+body{font-size:16px;overflow-wrap:anywhere}
+.brand{font:600 18px/1.3 var(--sans);text-transform:none;letter-spacing:normal}
+.brand b{color:inherit;font-weight:600}
+h1,h2{font-weight:600;text-transform:none;line-height:1.15;letter-spacing:normal}
+h1,.page-head h1{font-size:clamp(36px,5vw,64px)}h2{font-size:clamp(26px,3vw,36px)}
+.hero{padding:48px 0 64px}.hero::before{content:none}
+.lead{font-size:18px;max-width:60ch}.hero .lead{margin-top:20px}
+.kicker,.num,.ver,.tag,table.plain th,.dossier header{font-family:var(--sans);font-size:14px;text-transform:none;letter-spacing:normal}
+.fine,.evidence figcaption,.evidence figcaption code,.dossier .seen{font-size:14px}
+.copy,.btn.red{color:var(--bmd-colors-on-accent)}
+.btn,.install,.cmd,.term{border-radius:4px}.copy,button,.btn{min-height:44px}
+.install code::before{content:none}
+.evidence .paper{transform:none;border-radius:8px;mask:none;-webkit-mask:none;box-shadow:none;border:1px solid var(--bmd-colors-light-border)}
+.evidence pre{font-size:14px;overflow:auto}.evidence pre .red,.stamp,.dossier .mark{color:var(--bmd-colors-light-link);border-color:var(--bmd-colors-light-link)}
+.evidence .stamp{background:var(--paper)}
+.crosshair{display:none}.dossier{border-radius:8px}.dossier code{color:var(--bmd-colors-light-link)}
+.dossier .seen{color:var(--bmd-colors-light-secondary)}
+section.block{padding:48px 0}p{max-width:66ch}
+@media(max-width:600px){.nav{gap:8px 16px;flex-wrap:wrap}.nav a{min-height:44px;display:flex;align-items:center}.hero .wrap{gap:32px}.install code{min-width:0}.brand{margin:8px 0}.evidence{max-width:100%}}
+
+.post .cta-buttons .btn{color:var(--bmd-colors-on-accent)}
+.post .cta-buttons .btn.secondary{color:var(--shirt)}
+.term,.post .code,.install code,.cmd .copy{font-size:14px}
