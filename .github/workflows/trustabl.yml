@@ -23,17 +23,23 @@ jobs:
       security-events: write
     env:
       TRUSTABL_TELEMETRY: "0"
+      TRUSTABL_RULES_SHA: "97918c43909166334a2df941cff64d9f63acb115"
     # Findings are advisory; an execution error must remain visible.
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+      - name: Verify inspected rules tag
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/verify_trustabl_rules.py --ref v0.2.0 --expected "$TRUSTABL_RULES_SHA"
       - uses: trustabl/trustabl-action@d97575c864814bf4965fa2c72c044224d372723a # v0.4.3
         id: trustabl
         continue-on-error: true
         with:
           version: v0.1.6
-          rules-ref: v0.2.0 # 97918c43909166334a2df941cff64d9f63acb115
+          # v0.2.0 stays deliberate pending re-inspection of upstream v0.6.0.
+          rules-ref: v0.2.0
           comment-on-pr: "false"
       - name: Require a completed scan
         if: ${{ always() }}
