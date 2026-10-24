@@ -606,9 +606,9 @@ mcp-types==2.2.0 \
     --hash=sha256:d3ed53703ddd10d9c6399f29d322bb66f3f67ab41348ac8556ba23e07fedefad \
     --hash=sha256:ea476b73ee86709ab5abc9452385ed36cc05907e582355622e294595c9a04f13
     # via mcp
-openai==3.22.1 \
-    --hash=sha256:2575f961e4c1df8761f8eeb4d78e967de3f9b9f91b22f7120d60e393e970094d \
-    --hash=sha256:43ff3de5457a8beb4afa177d4e0ba6841cfadd5219ebc62297fde6c8a9d401a6
+openai==3.35.1 \
+    --hash=sha256:264fd0fafc889021f526b7c1e5a2df5ca3e8dea874738ecd31da666434f25967 \
+    --hash=sha256:b33e6561b90586e450def8a388e7d364755325da6884fc71348be5542e043bd0
     # via
     #   -r compat-latest.in
     #   openai-agents
