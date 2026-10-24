@@ -10,5 +10,5 @@ opentelemetry-api
 opentelemetry-sdk
 openai
 anthropic
-pytest==9.0.3
+pytest==9.1.1
 openai-agents
