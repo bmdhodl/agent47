@@ -124,7 +124,7 @@ npm start             # Run (requires AGENTGUARD_API_KEY env var)
 ```bash
 # Bump version in sdk/pyproject.toml, then:
 make release-guard
-git tag v1.X.0 && git push origin v1.X.0
+git tag vX.Y.Z && git push origin vX.Y.Z
 # publish.yml publishes to PyPI through Trusted Publishing (OIDC); no API token
 ```
 
@@ -238,14 +238,15 @@ Step-by-step instructions for common tasks. Follow these patterns for consistenc
 sdk/                          Python SDK source (PyPI: agentguard47)
   agentguard/
     __init__.py               Public API surface -- all exports here
-    guards.py                 BudgetGuard, LoopGuard, FuzzyLoopGuard, TimeoutGuard, RateLimitGuard, RetryGuard
+    guards.py                 BudgetGuard, FuzzyLoopGuard, TimeoutGuard, RateLimitGuard, RetryGuard
+    loop_guard.py             LoopGuard
     tracing.py                Tracer, TraceContext, TraceSink, JsonlFileSink, StdoutSink
     atracing.py               AsyncTracer, AsyncTraceContext
     instrument.py             @trace_agent, @trace_tool, patch_openai, patch_anthropic
     cost.py                   estimate_cost() -- per-model pricing lookup
     evaluation.py             EvalSuite -- chainable assertion-based trace analysis
     export.py                 JSON, CSV, JSONL conversion
-    cli.py                    CLI entrypoint (doctor, demo, report, eval, incident, quickstart)
+    cli.py                    CLI entrypoint (doctor, demo, quickstart, report, receipt, summarize, eval, incident, decisions, hook, skillpack, badge, welcome)
     usage.py                  Provider inference and normalized token-usage helpers
     sinks/
       http.py                 HttpSink (batched, gzip, retry, SSRF protection)
