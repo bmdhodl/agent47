@@ -3,21 +3,33 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       # CodeQL fails a run when its sub-actions differ in version, so init,
       # analyze and upload-sarif move together (#880, #899).
       codeql-action:
         patterns:
           - "github/codeql-action*"
+      # Maintenance mode: one PR per month for every other action.
+      actions:
+        patterns:
+          - "*"
   - package-ecosystem: "pip"
     directory: "/sdk"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      sdk:
+        patterns:
+          - "*"
   - package-ecosystem: "pip"
     directory: "/.github/requirements"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      ci-requirements:
+        patterns:
+          - "*"
     # Fixed minimum-version test fixtures. exclude-paths affects version
     # updates only; security updates remain enabled for these files.
     exclude-paths:
