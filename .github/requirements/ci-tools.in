@@ -1,11 +1,11 @@
 build==1.6.1
 # The compiler and SDK floor are Python 3.11. Retain these existing explicit
 # transitive pins so the support-policy change does not upgrade other tools.
-importlib-metadata==9.0.1
-pytest==9.0.3
+importlib-metadata==10.1.0
+pytest==9.2.0
 pytest-cov==7.1.0
-ruff==0.16.10
-bandit==1.8.6
-zipp==4.1.1
+ruff==0.17.3
+bandit==1.9.4
+zipp==4.1.2
 # Required on Windows; unconditional so Linux lock regeneration retains it.
 colorama==0.4.6
