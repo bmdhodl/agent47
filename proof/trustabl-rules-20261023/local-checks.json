@@ -1,0 +1,159 @@
+[
+  {
+    "argv": [
+      "python",
+      "-m",
+      "pytest",
+      "sdk/tests/test_trustabl_rules.py",
+      "-q"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "============================= test session starts =============================\nplatform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0\nrootdir: <repo>\\sdk\nconfigfile: pyproject.toml\nplugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 12 items\n\nsdk\\tests\\test_trustabl_rules.py ............                            [100%]Running teardown with pytest sessionfinish...\n\n\n============================= 12 passed in 0.07s ==============================\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "-m",
+      "pytest",
+      "sdk/tests",
+      "-q",
+      "--cov=agentguard",
+      "--cov-report=term",
+      "--cov-fail-under=80"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "============================= test session starts =============================\nplatform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0\nrootdir: <repo>\\sdk\nconfigfile: pyproject.toml\nplugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 1733 items\n\nsdk\\tests\\test_activation_evidence.py .................................. [  1%]\n.....                                                                    [  2%]\nsdk\\tests\\test_architecture.py .........                                 [  2%]\nsdk\\tests\\test_async_patches.py ..........                               [  3%]\nsdk\\tests\\test_atracing.py ........................                      [  4%]\nsdk\\tests\\test_background_boundary.py ...                                [  4%]\nsdk\\tests\\test_budget_preflight.py .......................               [  6%]\nsdk\\tests\\test_ci_guardrails.py ...............                          [  7%]\nsdk\\tests\\test_ci_results.py ........................................... [  9%]\n............                                                             [ 10%]\nsdk\\tests\\test_ci_tools_requirements_guard.py ...........                [ 10%]\nsdk\\tests\\test_claude_review_filter.py ........                          [ 11%]\nsdk\\tests\\test_cli_report.py ..........                                  [ 11%]\nsdk\\tests\\test_concurrency.py ........                                   [ 12%]\nsdk\\tests\\test_cost.py .......................                           [ 13%]\nsdk\\tests\\test_cost_guardrail.py ...................................     [ 15%]\nsdk\\tests\\test_coverage_gaps.py ........................................ [ 18%]\n......                                                                   [ 18%]\nsdk\\tests\\test_crewai_integration.py ..........                          [ 18%]\nsdk\\tests\\test_dashboard_handoff_docs.py ..                              [ 19%]\nsdk\\tests\\test_decision_trace.py .............                           [ 19%]\nsdk\\tests\\test_demo.py ...                                               [ 20%]\nsdk\\tests\\test_design_contract.py .............                          [ 20%]\nsdk\\tests\\test_doctor.py ..........                                      [ 21%]\nsdk\\tests\\test_documentation.py .....................                    [ 22%]\nsdk\\tests\\test_dx.py .............................................       [ 25%]\nsdk\\tests\\test_e2e_pipeline.py ....                                      [ 25%]\nsdk\\tests\\test_enforcement_boundary.py .....................             [ 26%]\nsdk\\tests\\test_environment_isolation.py ..                               [ 26%]\nsdk\\tests\\test_evaluation.py ...............................             [ 28%]\nsdk\\tests\\test_example_starters.py ...........                           [ 29%]\nsdk\\tests\\test_export.py ...........                                     [ 29%]\nsdk\\tests\\test_exports.py ...............                                [ 30%]\nsdk\\tests\\test_first_run.py ...........................                  [ 32%]\nsdk\\tests\\test_free_local_clients.py ................................... [ 34%]\n....................................                                     [ 36%]\nsdk\\tests\\test_goal.py ..............................                    [ 38%]\nsdk\\tests\\test_guard_persistence.py ..........                           [ 38%]\nsdk\\tests\\test_guards.py ............................................... [ 41%]\n...........................................................              [ 44%]\nsdk\\tests\\test_hardening.py ...........................................  [ 47%]\nsdk\\tests\\test_hook_install_failure.py ......................            [ 48%]\nsdk\\tests\\test_hooks.py ................................                 [ 50%]\nsdk\\tests\\test_hosted_ingest_contract.py ....                            [ 50%]\nsdk\\tests\\test_http_sink.py .......................                      [ 51%]\nsdk\\tests\\test_init.py ................................................. [ 54%]\n.                                                                        [ 54%]\nsdk\\tests\\test_instrument.py ............                                [ 55%]\nsdk\\tests\\test_instrument_patch.py ..........                            [ 56%]\nsdk\\tests\\test_instrument_stream.py .....................                [ 57%]\nsdk\\tests\\test_integration_cost_guardrail.py .                           [ 57%]\nsdk\\tests\\test_integration_dashboard_script.py ...........               [ 57%]\nsdk\\tests\\test_langchain_integration.py ........................         [ 59%]\nsdk\\tests\\test_langgraph_integration.py ..............                   [ 60%]\nsdk\\tests\\test_live_cost_reconcile.py ................                   [ 61%]\nsdk\\tests\\test_local_cost_docs.py ..                                     [ 61%]\nsdk\\tests\\test_local_first_template.py ......                            [ 61%]\nsdk\\tests\\test_local_guard_limits.py ......                              [ 61%]\nsdk\\tests\\test_loop_maintenance_regressions.py ...............           [ 62%]\nsdk\\tests\\test_mcp_registry_metadata.py ........                         [ 63%]\nsdk\\tests\\test_ollama_usage.py ..................                        [ 64%]\nsdk\\tests\\test_otel_sink.py ............                                 [ 64%]\nsdk\\tests\\test_precision_cost.py ............................            [ 66%]\nsdk\\tests\\test_price_table.py .......................................... [ 68%]\n............                                                             [ 69%]\nsdk\\tests\\test_production.py ................                            [ 70%]\nsdk\\tests\\test_pypi_readme_sync.py ......                                [ 70%]\nsdk\\tests\\test_quickstart.py ..............                              [ 71%]\nsdk\\tests\\test_real_dispatch.py ........................................ [ 74%]\n.sss                                                                     [ 74%]\nsdk\\tests\\test_real_dispatch_capabilities.py ..                          [ 74%]\nsdk\\tests\\test_receipt.py .....................                          [ 75%]\nsdk\\tests\\test_release_audit.py ........................................ [ 77%]\n..............                                                           [ 78%]\nsdk\\tests\\test_release_discussion_category.py .....                      [ 78%]\nsdk\\tests\\test_release_email.py ......................                   [ 80%]\nsdk\\tests\\test_release_example.py .............                          [ 81%]\nsdk\\tests\\test_rendered_design.py .....                                  [ 81%]\nsdk\\tests\\test_repo_config.py ..................                         [ 82%]\nsdk\\tests\\test_report_duration.py ...................................... [ 84%]\n...                                                                      [ 84%]\nsdk\\tests\\test_reporting.py ........                                     [ 85%]\nsdk\\tests\\test_reservation_contract.py .....................             [ 86%]\nsdk\\tests\\test_reservation_path.py ........................              [ 87%]\nsdk\\tests\\test_reservation_stream.py ................................... [ 89%]\n..                                                                       [ 89%]\nsdk\\tests\\test_review_readiness_guard.py ..............                  [ 90%]\nsdk\\tests\\test_richard_task_budget_scenarios.py ...                      [ 90%]\nsdk\\tests\\test_runner.py ..................                              [ 91%]\nsdk\\tests\\test_savings.py ...............                                [ 92%]\nsdk\\tests\\test_schemas.py .........................                      [ 94%]\nsdk\\tests\\test_sdk_preflight.py ...........                              [ 94%]\nsdk\\tests\\test_sdk_release_guard.py ..................                   [ 95%]\nsdk\\tests\\test_skillpack.py ...........                                  [ 96%]\nsdk\\tests\\test_smoke.py .                                                [ 96%]\nsdk\\tests\\test_sticky_agent_proof.py ..                                  [ 96%]\nsdk\\tests\\test_touchpoints.py .......                                    [ 97%]\nsdk\\tests\\test_tracing.py ..............                                 [ 97%]\nsdk\\tests\\test_trustabl_rules.py ............                            [ 98%]\nsdk\\tests\\test_v1_coverage.py .............                              [ 99%]\nsdk\\tests\\test_x402.py ...........                                       [100%]Running teardown with pytest sessionfinish...\n\n\n=============================== tests coverage ================================\n_______________ coverage: platform win32, python 3.13.2-final-0 _______________\n\nName                                          Stmts   Miss  Cover\n-----------------------------------------------------------------\nsdk\\agentguard\\__init__.py                       57      1    98%\nsdk\\agentguard\\__main__.py                        1      0   100%\nsdk\\agentguard\\_billing.py                       62     14    77%\nsdk\\agentguard\\_budget_validation.py             48      4    92%\nsdk\\agentguard\\_design.py                         2      0   100%\nsdk\\agentguard\\_instrument_stream_budget.py      40      2    95%\nsdk\\agentguard\\_loop_match.py                    69      2    97%\nsdk\\agentguard\\_openai_local.py                  43      0   100%\nsdk\\agentguard\\_reservation_contract.py         178      4    98%\nsdk\\agentguard\\_reservation_path.py             196      7    96%\nsdk\\agentguard\\_reservation_stream.py            82      5    94%\nsdk\\agentguard\\_trace_naming.py                  16      0   100%\nsdk\\agentguard\\atracing.py                       72      0   100%\nsdk\\agentguard\\cli.py                           230      6    97%\nsdk\\agentguard\\cost.py                           46      1    98%\nsdk\\agentguard\\decision.py                      214     30    86%\nsdk\\agentguard\\demo.py                          121      6    95%\nsdk\\agentguard\\doctor.py                        135     11    92%\nsdk\\agentguard\\escalation.py                    225     23    90%\nsdk\\agentguard\\evaluation.py                    298      0   100%\nsdk\\agentguard\\export.py                         31      0   100%\nsdk\\agentguard\\feedback.py                       27      2    93%\nsdk\\agentguard\\first_run.py                      55      0   100%\nsdk\\agentguard\\goal.py                          189     13    93%\nsdk\\agentguard\\guards.py                        307      3    99%\nsdk\\agentguard\\hooks.py                         188      2    99%\nsdk\\agentguard\\instrument.py                    361     43    88%\nsdk\\agentguard\\instrument_stream.py             489     67    86%\nsdk\\agentguard\\integrations\\__init__.py           4      0   100%\nsdk\\agentguard\\integrations\\crewai.py            79      0   100%\nsdk\\agentguard\\integrations\\langchain.py        233     46    80%\nsdk\\agentguard\\integrations\\langgraph.py         43      0   100%\nsdk\\agentguard\\loop_guard.py                     66      1    98%\nsdk\\agentguard\\precision_cost.py                250     36    86%\nsdk\\agentguard\\price_table.py                   108      5    95%\nsdk\\agentguard\\profiles.py                       15      0   100%\nsdk\\agentguard\\quickstart.py                    172      2    99%\nsdk\\agentguard\\receipt.py                       103      2    98%\nsdk\\agentguard\\repo_config.py                    86      6    93%\nsdk\\agentguard\\reporting.py                     131      7    95%\nsdk\\agentguard\\runner.py                         44      6    86%\nsdk\\agentguard\\savings.py                       140      7    95%\nsdk\\agentguard\\schemas.py                       100     11    89%\nsdk\\agentguard\\setup.py                         107      6    94%\nsdk\\agentguard\\sinks\\__init__.py                  3      0   100%\nsdk\\agentguard\\sinks\\_transport.py               48     13    73%\nsdk\\agentguard\\sinks\\http.py                    193     15    92%\nsdk\\agentguard\\sinks\\otel.py                     98      8    92%\nsdk\\agentguard\\skillpack.py                     128      4    97%\nsdk\\agentguard\\state.py                         136     31    77%\nsdk\\agentguard\\tracing.py                       230     12    95%\nsdk\\agentguard\\usage.py                         106      7    93%\nsdk\\agentguard\\x402.py                          120      4    97%\n-----------------------------------------------------------------\nTOTAL                                          6525    475    93%\nRequired test coverage of 80% reached. Total coverage: 92.72%\nTest \ntests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n\next_model_call[False] was skipped. Reason: \n('<repo>\\\\\nsdk\\\\tests\\\\test_real_dispatch.py', 46, \"Skipped: could not import 'agents': No\nmodule named 'agents'\")\nTest \ntests/test_real_dispatch.py::test_agents_sdk_run_stops_a_tool_loop_before_the_n\next_model_call[True] was skipped. Reason: \n('<repo>\\\\\nsdk\\\\tests\\\\test_real_dispatch.py', 46, \"Skipped: could not import 'agents': No\nmodule named 'agents'\")\nTest \ntests/test_real_dispatch.py::test_agents_sdk_native_max_turns_still_applies was\nskipped. Reason: \n('<repo>\\\\\nsdk\\\\tests\\\\test_real_dispatch.py', 46, \"Skipped: could not import 'agents': No\nmodule named 'agents'\")\n================= 1730 passed, 3 skipped in 120.59s (0:02:00) =================\n",
+    "stderr": "Exception ignored in atexit callback <function cleanup_numbered_dir at 0x0000023081CDD9E0>:\nTraceback (most recent call last):\n  File \"<user-home>\\AppData\\Roaming\\Python\\Python313\\site-packages\\_pytest\\pathlib.py\", line 374, in cleanup_numbered_dir\n    cleanup_dead_symlinks(root)\n  File \"<user-home>\\AppData\\Roaming\\Python\\Python313\\site-packages\\_pytest\\pathlib.py\", line 359, in cleanup_dead_symlinks\n    if not left_dir.resolve().exists():\n  File \"<python>\\Lib\\pathlib\\_abc.py\", line 450, in exists\n    self.stat(follow_symlinks=follow_symlinks)\n  File \"<python>\\Lib\\pathlib\\_local.py\", line 515, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\nPermissionError: [WinError 5] Access is denied: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-root\\\\pytest-of-user\\\\pytest-current'\n"
+  },
+  {
+    "argv": [
+      "python",
+      "-m",
+      "pytest",
+      "sdk/tests/test_architecture.py",
+      "-q"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "============================= test session starts =============================\nplatform win32 -- Python 3.13.2, pytest-8.4.2, pluggy-1.6.0\nrootdir: <repo>\\sdk\nconfigfile: pyproject.toml\nplugins: anyio-4.9.0, deepeval-4.1.3, langsmith-0.3.45, asyncio-1.4.0, cov-7.1.0, repeat-0.9.4, rerunfailures-16.4, xdist-3.8.0, showwork-0.6.5\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 9 items\n\nsdk\\tests\\test_architecture.py .........                                 [100%]Running teardown with pytest sessionfinish...\n\n\n============================== 9 passed in 0.28s ==============================\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "scripts/ci_tools_requirements_guard.py"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "<repo>\\.github\\requirements\\ci-tools.in direct pins support Python 3.11\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "scripts/review_readiness_guard.py"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "Review readiness guard passed.\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "scripts/sdk_release_guard.py"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "Release guard passed.\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "-m",
+      "ruff",
+      "check",
+      "sdk/agentguard/",
+      "scripts/generate_pypi_readme.py",
+      "scripts/sdk_preflight.py",
+      "scripts/sdk_release_guard.py",
+      "scripts/ci_tools_requirements_guard.py",
+      "scripts/review_readiness_guard.py",
+      "scripts/live_cost_reconcile.py",
+      "scripts/check_ci_results.py",
+      "sdk/tests/test_ci_results.py",
+      "scripts/verify_trustabl_rules.py",
+      "sdk/tests/test_trustabl_rules.py"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "-m",
+      "bandit",
+      "-r",
+      "sdk/agentguard/",
+      "-s",
+      "B101,B110,B112,B311",
+      "-q"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "scripts/generate_pypi_readme.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "npm.cmd",
+      "--prefix",
+      "mcp-server",
+      "ci"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "\nadded 96 packages, and audited 97 packages in 2s\n\n31 packages are looking for funding\n  run `npm fund` for details\n\n3 moderate severity vulnerabilities\n\nSome issues need review, and may require choosing\na different dependency.\n\nRun `npm audit` for details.\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "npm.cmd",
+      "--prefix",
+      "mcp-server",
+      "test"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "\n> @agentguard47/mcp-server@0.2.2 test\n> npm run build && node --test dist/__tests__/*.test.js\n\n\n> @agentguard47/mcp-server@0.2.2 build\n> tsc\n\nTAP version 13\n# Subtest: REGRESSION: missing key directs new users to the local SDK\nok 1 - REGRESSION: missing key directs new users to the local SDK\n  ---\n  duration_ms: 0.7253\n  ...\n# Subtest: client trims base URL, encodes trace IDs, and sends bearer auth\nok 2 - client trims base URL, encodes trace IDs, and sends bearer auth\n  ---\n  duration_ms: 13.4555\n  ...\n# Subtest: isDecisionEvent recognizes decision lifecycle events\nok 3 - isDecisionEvent recognizes decision lifecycle events\n  ---\n  duration_ms: 0.4616\n  ...\n# Subtest: extractDecisionPayload normalizes trace and event fields\nok 4 - extractDecisionPayload normalizes trace and event fields\n  ---\n  duration_ms: 0.1138\n  ...\n# Subtest: extractDecisionEvents filters by workflow and trace\nok 5 - extractDecisionEvents filters by workflow and trace\n  ---\n  duration_ms: 0.1354\n  ...\n# Subtest: buildToolShape supports string, number, and boolean fields\nok 6 - buildToolShape supports string, number, and boolean fields\n  ---\n  duration_ms: 1.2875\n  ...\n# Subtest: REGRESSION: query_traces discloses closed hosted accounts\nok 7 - REGRESSION: query_traces discloses closed hosted accounts\n  ---\n  duration_ms: 0.946\n  ...\n# Subtest: query_traces exposes read-only annotations and agent-use guidance\nok 8 - query_traces exposes read-only annotations and agent-use guidance\n  ---\n  duration_ms: 0.1346\n  ...\n# Subtest: get_trace_decisions returns normalized decision payloads\nok 9 - get_trace_decisions returns normalized decision payloads\n  ---\n  duration_ms: 0.4258\n  ...\n# Subtest: check_budget returns warning status and cost summary\nok 10 - check_budget returns warning status and cost summary\n  ---\n  duration_ms: 0.3234\n  ...\n# Subtest: all tools expose object input schemas\nok 11 - all tools expose object input schemas\n  ---\n  duration_ms: 0.2018\n  ...\n# Subtest: published MCP tools are read-only and deny mutating budget names\nok 12 - published MCP tools are read-only and deny mutating budget names\n  ---\n  duration_ms: 0.6724\n  ...\n1..12\n# tests 12\n# suites 0\n# pass 12\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 79.359\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]
